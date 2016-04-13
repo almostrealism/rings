@@ -3,16 +3,19 @@ package com.almostrealism.feedgrow.test;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import javax.sound.sampled.LineUnavailableException;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.Envelope;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.audio.WaveOutput;
 import com.almostrealism.feedgrow.metering.AudioMeter;
+import com.almostrealism.receptor.player.ReceptorPlayer;
 
 public class SineWaveCellTest {
 	public static int max = 10 * 1000 * AudioProteinCache.sampleRate; // 100 Seconds
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws LineUnavailableException {
 		AudioProteinCache cache = new AudioProteinCache();
 		
 		AudioMeter meter = new AudioMeter(cache);
@@ -40,12 +43,18 @@ public class SineWaveCellTest {
 			}
 		});
 		
+		ReceptorPlayer p = new ReceptorPlayer();
+		p.setProteinCache(cache);
+		
 		generator.setReceptor(meter);
+		meter.setForwarding(p);
 		
 		long l;
 		
 		for (l = 0; l < max; l++) {
 			generator.push(0);
 		}
+		
+		p.finish();
 	}
 }
