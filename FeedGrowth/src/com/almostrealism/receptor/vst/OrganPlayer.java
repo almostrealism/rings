@@ -1,4 +1,4 @@
-package com.almostrealism.feedgrow.vst;
+package com.almostrealism.receptor.vst;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.cellular.CellAdapter;

@@ -1,4 +1,4 @@
-package com.almostrealism.feedgrow.vst;
+package com.almostrealism.receptor.vst;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -5,4 +5,4 @@
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.feedgrow.vst;
+package com.almostrealism.receptor.vst;
