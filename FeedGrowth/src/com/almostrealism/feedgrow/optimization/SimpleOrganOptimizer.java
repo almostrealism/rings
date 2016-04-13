@@ -20,11 +20,11 @@ import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.heredity.Chromosome;
 import com.almostrealism.feedgrow.heredity.DefaultRandomChromosomeFactory;
 import com.almostrealism.feedgrow.heredity.FloatingPointRandomChromosomeFactory;
-import com.almostrealism.feedgrow.io.Console;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulationGenerator;
+import com.almostrealism.io.Console;
 
 public class SimpleOrganOptimizer<T> {
 	public static Console console = new Console();

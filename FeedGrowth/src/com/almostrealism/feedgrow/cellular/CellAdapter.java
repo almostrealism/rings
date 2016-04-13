@@ -19,9 +19,7 @@ public abstract class CellAdapter<T> implements Cell<T> {
 	
 	public void setMeter(Receptor<T> m) { this.meter = m; }
 	
-	/**
-	 * Push to the {@link Receptor}.
-	 */
+	/** Push to the {@link Receptor}. */
 	public void push(long proteinIndex) {
 		if (meter != null) meter.push(proteinIndex);
 		if (r != null) r.push(proteinIndex);

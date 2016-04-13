@@ -10,11 +10,11 @@ import com.almostrealism.feedgrow.heredity.DoubleScaleFactor;
 import com.almostrealism.feedgrow.heredity.Factor;
 import com.almostrealism.feedgrow.heredity.Gene;
 import com.almostrealism.feedgrow.heredity.LongScaleFactor;
-import com.almostrealism.feedgrow.io.Console;
 import com.almostrealism.feedgrow.organ.Organ;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
+import com.almostrealism.io.Console;
 
 public class PopulationProgramSet extends SimpleOrganPopulation<Long> {
 	public static Console console = new Console();
