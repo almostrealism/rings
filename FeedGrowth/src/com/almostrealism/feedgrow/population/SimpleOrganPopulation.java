@@ -1,0 +1,111 @@
+package com.almostrealism.feedgrow.population;
+
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import com.almostrealism.feedgrow.breeding.Genome;
+import com.almostrealism.feedgrow.content.ProteinCache;
+import com.almostrealism.feedgrow.heredity.Chromosome;
+import com.almostrealism.feedgrow.organ.SimpleOrgan;
+import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
+
+public class SimpleOrganPopulation<T> implements Population<T> {
+	private List<Chromosome<Double>> xSomes;
+	private List<Chromosome<T>> ySomes;
+	private List<SimpleOrgan<T>> organs;
+	
+	public SimpleOrganPopulation() {
+		this(new ArrayList<Chromosome<Double>>(), new ArrayList<Chromosome<T>>());
+	}
+	
+	public SimpleOrganPopulation(List<Genome> g) {
+		this(); // Initialize lists using default constructor
+		
+		Iterator<Genome> itr = g.iterator();
+		
+		// Extract chromosomes (X and Y) for each organ
+		while (itr.hasNext()) {
+			Genome c = itr.next();
+			
+			if (c.size() != 2)
+				throw new IllegalArgumentException("Simple organs can only be created with genomes of size 2");
+			
+			xSomes.add((Chromosome<Double>) c.get(0));
+			ySomes.add((Chromosome<T>) c.get(1));
+		}
+	}
+	
+	public SimpleOrganPopulation(List<Chromosome<Double>> xSomes, List<Chromosome<T>> ySomes) {
+		this.xSomes = xSomes;
+		this.ySomes = ySomes;
+		this.organs = new ArrayList<SimpleOrgan<T>>();
+	}
+	
+	public void init(SimpleOrganFactory<T> factory) {
+		for (int i = 0; i < xSomes.size(); i++) {
+			this.organs.add(factory.generateOrgan(xSomes.get(i), ySomes.get(i)));
+		}
+	}
+	
+	public void merge(SimpleOrganPopulation<T> pop) {
+		for (int i = 0; i < pop.size(); i++) {
+			this.xSomes.add(pop.getXChromosome(i));
+			this.ySomes.add(pop.getYChromosome(i));
+			this.organs.add(pop.getOrgan(i));
+		}
+	}
+	
+	public void setProteinCache(ProteinCache<T> cache) {
+		Iterator<SimpleOrgan<T>> itr = organs.iterator();
+		
+		while (itr.hasNext()) {
+			itr.next().setProteinCache(cache);
+		}
+	}
+
+	public Chromosome<Double> getXChromosome(SimpleOrgan<T> o) { return this.xSomes.get(organs.indexOf(o)); }
+	public Chromosome<T> getYChromosome(SimpleOrgan<T> o) { return this.ySomes.get(organs.indexOf(o)); }
+	public Chromosome<Double> getXChromosome(int index) { return this.xSomes.get(index); }
+	public Chromosome<T> getYChromosome(int index) { return this.ySomes.get(index); }
+	
+	public SimpleOrgan<T> getOrgan(int index) { return this.organs.get(index); }
+	
+	public int size() { return this.organs.size(); }
+	
+	public void store(OutputStream s) {
+		XMLEncoder enc = new XMLEncoder(s);
+		
+		for (int i = 0; i < xSomes.size() && i < ySomes.size(); i++) {
+			enc.writeObject(xSomes.get(i));
+			enc.writeObject(ySomes.get(i));
+		}
+		
+		enc.flush();
+		enc.close();
+	}
+	
+	public void read(InputStream in) {
+		XMLDecoder dec = new XMLDecoder(in);
+		
+		Object read = null;
+		
+		try {
+			for (int i = 0; (read = dec.readObject()) != null; i++) {
+				if (i % 2 == 0) {
+					xSomes.add((Chromosome<Double>) read);
+				} else {
+					ySomes.add((Chromosome<T>) read);
+				}
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// End of file
+		}
+		
+		dec.close();
+	}
+}
