@@ -46,8 +46,8 @@ public class SineWaveCellTest {
 		ReceptorPlayer p = new ReceptorPlayer();
 		p.setProteinCache(cache);
 		
-		generator.setReceptor(meter);
-		meter.setForwarding(p);
+		generator.setReceptor(p);
+//		meter.setForwarding(p);
 		
 		long l;
 		
