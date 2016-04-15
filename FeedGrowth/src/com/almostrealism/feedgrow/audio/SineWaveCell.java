@@ -37,7 +37,6 @@ public class SineWaveCell extends AudioCellAdapter {
 	public void setNoteLength(int msec) { this.note = toFrames(msec); }
 	
 	public void push(long index) {
-		/*
 		if (noteEnded) {
 			super.push(addProtein(0l));
 			return;
@@ -57,9 +56,8 @@ public class SineWaveCell extends AudioCellAdapter {
 		notePos += 1.0 / note;
 		
 		super.push(l);
-		*/
 		
-		super.push(addProtein((long) (sineWave[bufIndex++])));
+//		super.push(addProtein((long) (sineWave[bufIndex++])));
 	}
 	
 	public static int[] createSinWaveBuffer(double freq, int ms) {
