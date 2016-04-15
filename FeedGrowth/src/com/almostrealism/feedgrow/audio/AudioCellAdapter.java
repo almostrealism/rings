@@ -3,7 +3,7 @@ package com.almostrealism.feedgrow.audio;
 import com.almostrealism.feedgrow.cellular.CellAdapter;
 
 public abstract class AudioCellAdapter extends CellAdapter<Long> {
-	public static int depth = AudioProteinCache.depth / 100;
+	public static int depth = Byte.MAX_VALUE; // AudioProteinCache.depth / 100;
 	public static double PI = Math.PI;
 	
 	public AudioCellAdapter(AudioProteinCache c) {
