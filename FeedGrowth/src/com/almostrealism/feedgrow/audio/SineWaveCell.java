@@ -17,8 +17,6 @@ public class SineWaveCell extends AudioCellAdapter {
 	private int note;
 	private boolean noteEnded = false;
 	
-	private int bufIndex;
-	
 	public SineWaveCell(AudioProteinCache c) { super(c); }
 	
 	public void strike() { this.notePos = 0; }
