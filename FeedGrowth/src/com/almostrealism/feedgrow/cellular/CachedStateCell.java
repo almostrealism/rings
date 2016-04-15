@@ -1,8 +1,9 @@
 package com.almostrealism.feedgrow.cellular;
 
 import com.almostrealism.feedgrow.heredity.Factor;
+import com.almostrealism.time.Clock;
 
-public class CachedStateCell<T> extends FilteredCell<T> implements Factor<T> {
+public class CachedStateCell<T> extends FilteredCell<T> implements Factor<T>, Clock {
 	public static boolean enableWarning = false;
 	
 	private T cachedValue;
