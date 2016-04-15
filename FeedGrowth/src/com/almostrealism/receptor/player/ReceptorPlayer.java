@@ -22,8 +22,6 @@ public class ReceptorPlayer implements Receptor<Long> {
 	private SourceDataLine line;
 	private AudioProteinCache cache;
 	
-	private int index;
-	
 	public ReceptorPlayer(ProteinCache<Long> cache) throws LineUnavailableException {
 		setProteinCache(cache);
 		System.out.println("ReceptorPlayer: Frame size is " + frameSize);
@@ -43,7 +41,6 @@ public class ReceptorPlayer implements Receptor<Long> {
 	public void push(long proteinIndex) {
 		if (proteinIndex % frameSize == 0 && proteinIndex >= frameSize) {
 			line.write(cache.getByteData(), ((int) proteinIndex - frameSize), frameSize);
-			index = index + frameSize;
 		}
 	}
 	
