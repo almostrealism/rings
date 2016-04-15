@@ -78,23 +78,20 @@ public class SimpleOrganPopulation<T> implements Population<T> {
 	public int size() { return this.organs.size(); }
 	
 	public void store(OutputStream s) {
-		XMLEncoder enc = new XMLEncoder(s);
-		
-		for (int i = 0; i < xSomes.size() && i < ySomes.size(); i++) {
-			enc.writeObject(xSomes.get(i));
-			enc.writeObject(ySomes.get(i));
+		try (XMLEncoder enc = new XMLEncoder(s)) {	
+			for (int i = 0; i < xSomes.size() && i < ySomes.size(); i++) {
+				enc.writeObject(xSomes.get(i));
+				enc.writeObject(ySomes.get(i));
+			}
+			
+			enc.flush();
 		}
-		
-		enc.flush();
-		enc.close();
 	}
 	
 	public void read(InputStream in) {
-		XMLDecoder dec = new XMLDecoder(in);
-		
-		Object read = null;
-		
-		try {
+		try (XMLDecoder dec = new XMLDecoder(in)) {
+			Object read = null;
+			
 			for (int i = 0; (read = dec.readObject()) != null; i++) {
 				if (i % 2 == 0) {
 					xSomes.add((Chromosome<Double>) read);
@@ -105,7 +102,5 @@ public class SimpleOrganPopulation<T> implements Population<T> {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// End of file
 		}
-		
-		dec.close();
 	}
 }

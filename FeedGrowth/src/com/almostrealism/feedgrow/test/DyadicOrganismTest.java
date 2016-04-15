@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import javax.sound.sampled.LineUnavailableException;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.optimization.StableDurationHealthComputation;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 
@@ -18,13 +19,14 @@ public class DyadicOrganismTest {
 		StableDurationHealthComputation h = new StableDurationHealthComputation(cache);
 //		h.computeHealth(s);
 		
-		
-		ReceptorPlayer p = new ReceptorPlayer(null);
-		p.setProteinCache(cache);
+		SineWaveCell sine = new SineWaveCell(cache);
+		sine.setReceptor(s.getCellA());
+		ReceptorPlayer p = new ReceptorPlayer(cache);
 		s.getCellA().setMeter(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
-			s.push(0);
+			sine.push(0);
+			s.tick();
 		}
 		
 		p.finish();

@@ -5,6 +5,15 @@ import com.almostrealism.feedgrow.cellular.CellAdapter;
 import com.almostrealism.feedgrow.metering.AudioMeter;
 import com.almostrealism.feedgrow.organ.Organ;
 
+/**
+ * The {@link StableDurationHealthComputation} is a {@link HealthComputationAdapter} which
+ * computes a health score based on the duration that an {@link Organ} can be used before
+ * a clip value is reached.
+ * 
+ * @see  #clipValue
+ * 
+ * @author  Michael Murray
+ */
 public class StableDurationHealthComputation extends HealthComputationAdapter {
 	public static int clipValue = (int) (StrictMath.pow(10, 7));
 	
