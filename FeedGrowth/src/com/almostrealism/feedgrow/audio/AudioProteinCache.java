@@ -26,7 +26,7 @@ public class AudioProteinCache implements ProteinCache<Long> {
 		
 		// Instead flatten to one byte
 //		byteData[cursor] = flatten(p);
-		byteData[cursor] = p.byteValue();
+		byteData[cursor % byteData.length] = p.byteValue();
 		
 		cursor++;
 		

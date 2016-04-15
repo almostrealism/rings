@@ -1,11 +1,11 @@
 package com.almostrealism.feedgrow.audio;
 
 public class SineWaveCell extends AudioCellAdapter {
-	private static int sineWave[];
-	
-	static {
-		sineWave = createSinWaveBuffer(800, 30000);
-	}
+//	private static int sineWave[];
+//	
+//	static {
+//		sineWave = createSinWaveBuffer(800, 30000);
+//	}
 	
 	private Envelope env;
 	
