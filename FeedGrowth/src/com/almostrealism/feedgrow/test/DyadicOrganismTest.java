@@ -19,9 +19,9 @@ public class DyadicOrganismTest {
 //		h.computeHealth(s);
 		
 		
-		ReceptorPlayer p = new ReceptorPlayer();
+		ReceptorPlayer p = new ReceptorPlayer(null);
 		p.setProteinCache(cache);
-		s.firstCell().setReceptor(p);
+		s.getCellA().setMeter(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
 			s.push(0);

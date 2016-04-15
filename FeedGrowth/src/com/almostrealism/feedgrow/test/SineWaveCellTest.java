@@ -43,7 +43,7 @@ public class SineWaveCellTest {
 			}
 		});
 		
-		ReceptorPlayer p = new ReceptorPlayer();
+		ReceptorPlayer p = new ReceptorPlayer(null);
 		p.setProteinCache(cache);
 		
 		generator.setReceptor(p);

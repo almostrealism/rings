@@ -21,11 +21,11 @@ public class ReceptorPlayer implements Receptor<Long> {
 
 	private SourceDataLine line;
 	private AudioProteinCache cache;
-	private byte buf[];
 	
 	private int index;
 	
-	public ReceptorPlayer() throws LineUnavailableException {
+	public ReceptorPlayer(ProteinCache<Long> cache) throws LineUnavailableException {
+		setProteinCache(cache);
 		System.out.println("ReceptorPlayer: Frame size is " + frameSize);
 		
 		SourceDataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
@@ -37,13 +37,12 @@ public class ReceptorPlayer implements Receptor<Long> {
 	@Override
 	public void setProteinCache(ProteinCache<Long> p) {
 		cache = (AudioProteinCache) p;
-		buf = cache.getByteData();
 	}
 	
 	@Override
 	public void push(long proteinIndex) {
 		if (proteinIndex % frameSize == 0 && proteinIndex >= frameSize) {
-			line.write(buf, ((int) proteinIndex - frameSize), frameSize);
+			line.write(cache.getByteData(), ((int) proteinIndex - frameSize), frameSize);
 			index = index + frameSize;
 		}
 	}
