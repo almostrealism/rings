@@ -2,10 +2,14 @@ package com.almostrealism.feedgrow.cellular;
 
 public class SummationCell extends CachedStateCell<Long> {
 	public void push(long index) {
+		long value = getProtein(index);
+		
 		if (getCachedValue() == null) {
-			setCachedValue(getProtein(index));
+			System.out.println("Caching " + value);
+			setCachedValue(value);
 		} else {
-			setCachedValue(getCachedValue() + getProtein(index));
+			System.out.println("Caching " + getCachedValue() + " + " + value);
+			setCachedValue(getCachedValue() + value);
 		}
 	}
 }

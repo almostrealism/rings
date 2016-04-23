@@ -18,7 +18,7 @@ public class ReceptorPlayer implements Receptor<Long> {
 	static {
 		format = new AudioFormat(AudioProteinCache.sampleRate, 24, 1, true, true);
 		frameSize = format.getFrameSize();
-		pushSize = frameSize * 30;
+		pushSize = frameSize;
 	}
 
 	private SourceDataLine line;

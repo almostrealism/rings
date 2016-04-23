@@ -28,8 +28,7 @@ public class DyadicOrganismTest {
 		
 		sine.setReceptor(s.getCellA());
 		ReceptorPlayer p = new ReceptorPlayer(cache);
-//		sine.setReceptor(p);
-		s.getCellA().setReceptor(p);
+		s.getCellA().setMeter(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
 			sine.push(0);

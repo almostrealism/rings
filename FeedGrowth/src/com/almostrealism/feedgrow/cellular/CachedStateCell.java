@@ -4,7 +4,7 @@ import com.almostrealism.feedgrow.heredity.Factor;
 import com.almostrealism.time.Clock;
 
 public class CachedStateCell<T> extends FilteredCell<T> implements Factor<T>, Clock {
-	public static boolean enableWarning = false;
+	public static boolean enableWarning = true;
 	
 	private T cachedValue;
 	private T outValue;
@@ -23,6 +23,7 @@ public class CachedStateCell<T> extends FilteredCell<T> implements Factor<T>, Cl
 	public void push(long index) {
 		if (cachedValue == null) {
 			cachedValue = getProtein(index);
+			System.out.println("Caching " + cachedValue);
 		} else if (enableWarning) {
 			System.out.println("Warning: Cached cell is pushed when full");
 		}
