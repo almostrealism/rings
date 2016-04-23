@@ -13,16 +13,23 @@ public class DyadicOrganismTest {
 	public static void main(String args[]) throws FileNotFoundException, LineUnavailableException {
 		AudioProteinCache cache = new AudioProteinCache();
 		
-		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
-		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
+//		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
+//		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
+		
+		BasicDyadicChromosome c = new BasicDyadicChromosome(1.0, 1.0);
+		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(50000, c, cache);
 		
 		StableDurationHealthComputation h = new StableDurationHealthComputation(cache);
 //		h.computeHealth(s);
 		
 		SineWaveCell sine = new SineWaveCell(cache);
+		sine.setAmplitude(0.5);
+		sine.setFreq(400);
+		
 		sine.setReceptor(s.getCellA());
 		ReceptorPlayer p = new ReceptorPlayer(cache);
-		s.getCellA().setMeter(p);
+//		sine.setReceptor(p);
+		s.getCellA().setReceptor(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
 			sine.push(0);

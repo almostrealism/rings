@@ -1,11 +1,14 @@
 package com.almostrealism.feedgrow.audio;
 
+import java.util.Arrays;
+
 public class SineWaveCell extends AudioCellAdapter {
-//	private static int sineWave[];
-//	
-//	static {
-//		sineWave = createSinWaveBuffer(800, 30000);
-//	}
+	private static int sineWave[];
+	
+	static {
+		sineWave = createSinWaveBuffer(400, 5000);
+		System.out.println(Arrays.toString(sineWave));
+	}
 	
 	private Envelope env;
 	
@@ -55,7 +58,7 @@ public class SineWaveCell extends AudioCellAdapter {
 		
 		super.push(l);
 		
-//		super.push(addProtein((long) (sineWave[bufIndex++])));
+//		super.push(addProtein((long) (sineWave[bufIndex++ % sineWave.length])));
 	}
 	
 	public static int[] createSinWaveBuffer(double freq, int ms) {
