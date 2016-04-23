@@ -51,13 +51,14 @@ public class ReceptorPlayer implements Receptor<Long> {
 	public void push(long proteinIndex) {
 		int locx = (int) (bufIndex / byteBufSize);
 		int locy = (int) (bufIndex % byteBufSize);
-		byteData[locx][locy] = cache.getProtein(proteinIndex).byteValue();
+
+		byte data[] = byteData[locx];
+		data[locy] = cache.getProtein(proteinIndex).byteValue();
 		bufIndex++;
 		
 		if (locy % pushSize == 0 && locy >= pushSize) {
 			int index = (int) (locy - pushSize);
 			
-			byte data[] = byteData[locx];
 			index = index % byteBufSize;
 			
 			line.write(data, index, pushSize);

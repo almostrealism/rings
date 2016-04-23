@@ -1,13 +1,10 @@
 package com.almostrealism.feedgrow.audio;
 
-import java.util.Arrays;
-
 public class SineWaveCell extends AudioCellAdapter {
 	private static int sineWave[];
 	
 	static {
 		sineWave = createSinWaveBuffer(400, 5000);
-		System.out.println(Arrays.toString(sineWave));
 	}
 	
 	private Envelope env;
@@ -51,6 +48,8 @@ public class SineWaveCell extends AudioCellAdapter {
 		
 		double d = ampScale * Math.sin((wavePos + phase) * 2 * PI) * depth;
 		if (env != null) d = d * env.getScale(notePos);
+		
+//		System.out.println(this + ": Pushing " + d);
 		
 		long l = addProtein((long) d);
 		wavePos += wavelength;

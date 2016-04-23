@@ -5,10 +5,10 @@ public class SummationCell extends CachedStateCell<Long> {
 		long value = getProtein(index);
 		
 		if (getCachedValue() == null) {
-			System.out.println("Caching " + value);
+//			System.out.println(this + " is caching " + value);
 			setCachedValue(value);
 		} else {
-			System.out.println("Caching " + getCachedValue() + " + " + value);
+//			System.out.println(this + " is caching " + getCachedValue() + " + " + value);
 			setCachedValue(getCachedValue() + value);
 		}
 	}

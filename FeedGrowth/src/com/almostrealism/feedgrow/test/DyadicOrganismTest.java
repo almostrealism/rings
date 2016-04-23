@@ -16,8 +16,8 @@ public class DyadicOrganismTest {
 //		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
 //		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
 		
-		BasicDyadicChromosome c = new BasicDyadicChromosome(1.0, 1.0);
-		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(50000, c, cache);
+		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
+		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
 		
 		StableDurationHealthComputation h = new StableDurationHealthComputation(cache);
 //		h.computeHealth(s);

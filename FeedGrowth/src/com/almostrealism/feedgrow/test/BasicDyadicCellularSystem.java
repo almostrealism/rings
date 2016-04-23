@@ -12,11 +12,20 @@ import com.almostrealism.feedgrow.organ.SimpleOrgan;
 public class BasicDyadicCellularSystem extends SimpleOrgan<Long> {
 	private BasicDelayCell cellA, cellB;
 	
+	/**
+	 * 
+	 * @param delay  Delay in milliseconds
+	 * @param chromosome
+	 * @param cache
+	 */
 	public BasicDyadicCellularSystem(int delay, Chromosome<Long> chromosome, ProteinCache<Long> cache) {
 		super(createCells(delay), chromosome);
 		setProteinCache(cache);
 		this.cellA = (BasicDelayCell) getCells().get(0);
 		this.cellB = (BasicDelayCell) getCells().get(1);
+		
+		this.cellA.setName("Cell A");
+		this.cellB.setName("Cell B");
 	}
 	
 	public BasicDelayCell getCellA() { return cellA; }

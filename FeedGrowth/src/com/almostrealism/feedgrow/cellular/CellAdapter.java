@@ -7,6 +7,12 @@ public abstract class CellAdapter<T> implements Cell<T> {
 	private Receptor<T> r;
 	private Receptor<T> meter;
 	
+	private String name;
+	
+	public void setName(String n) { this.name = n; }
+	
+	public String getName() { return this.name; }
+	
 	public void setReceptor(Receptor<T> r) { this.r = r; }
 	
 	public Receptor<T> getReceptor() { return this.r; }
@@ -23,5 +29,10 @@ public abstract class CellAdapter<T> implements Cell<T> {
 	public void push(long proteinIndex) {
 		if (meter != null) meter.push(proteinIndex);
 		if (r != null) r.push(proteinIndex);
+	}
+	
+	public String toString() {
+		String className = getClass().getSimpleName();
+		return name == null ? className : (name + " (" + className + ")");
 	}
 }

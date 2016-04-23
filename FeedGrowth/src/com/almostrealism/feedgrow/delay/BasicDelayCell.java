@@ -26,6 +26,7 @@ public class BasicDelayCell extends SummationCell implements Delay {
 		int dPos = (cursor + delay) % buffer.length;
 		
 		this.buffer[dPos] += getProtein(i);
+		
 		long out = addProtein(this.buffer[cursor]);
 		
 		this.buffer[cursor] = 0;
