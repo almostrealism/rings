@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import javax.sound.sampled.LineUnavailableException;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.feedgrow.audio.Envelope;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.optimization.StableDurationHealthComputation;
 import com.almostrealism.receptor.player.ReceptorPlayer;
@@ -26,6 +27,14 @@ public class DyadicOrganismTest {
 		sine.setNoteLength(500);
 		sine.setAmplitude(0.5);
 		sine.setFreq(200);
+		sine.setEnvelope(new Envelope() {
+			public double getScale(double time) {
+				if (time < 0.1)
+					return (time / 0.1); // Attenuate the first 10% of audio
+				else
+					return Math.cos(time * Math.PI / 2);
+			}
+		});
 		
 		sine.setReceptor(s.getCellA());
 		ReceptorPlayer p = new ReceptorPlayer(cache);
