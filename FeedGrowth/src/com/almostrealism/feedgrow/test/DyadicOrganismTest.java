@@ -16,15 +16,16 @@ public class DyadicOrganismTest {
 //		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
 //		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
 		
-		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
-		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
+		BasicDyadicChromosome c = new BasicDyadicChromosome(0.999, 0.99);
+		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(1000, c, cache);
 		
 		StableDurationHealthComputation h = new StableDurationHealthComputation(cache);
-//		h.computeHealth(s);
+		h.computeHealth(s);
 		
 		SineWaveCell sine = new SineWaveCell(cache);
+		sine.setNoteLength(500);
 		sine.setAmplitude(0.5);
-		sine.setFreq(400);
+		sine.setFreq(200);
 		
 		sine.setReceptor(s.getCellA());
 		ReceptorPlayer p = new ReceptorPlayer(cache);
