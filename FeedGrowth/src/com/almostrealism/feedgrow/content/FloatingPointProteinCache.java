@@ -12,7 +12,7 @@ public class FloatingPointProteinCache implements ProteinCache<Double> {
 	
 	public long addProtein(Double p) {
 		tryWait();
-		data[cursor] = p;
+		data[cursor] = p == null ? 0.0 : p;
 		cursor++;
 		
 		long index = cursor - 1;
