@@ -32,6 +32,8 @@ public class Receptor {
 		f.getContentPane().setLayout(new BorderLayout());
 		f.getContentPane().add(panel, BorderLayout.CENTER);
 		f.setSize(400, 250);
+		f.setLocationRelativeTo(null);
+		f.setLocation(f.getLocation().x, f.getLocation().y - 200);
 		f.setVisible(true);
 		
 		JFrame s = new JFrame("Sampler");
