@@ -18,11 +18,23 @@ public class ReceptorPlayerPanel extends JPanel {
 	
 	public void addDelayCell(BasicDelayCell c, int min, int max) {
 		BasicDelayCellDisplay disp = new BasicDelayCellDisplay(c);
-		c.setUpdatable(disp);
+		
+		final DelaySlider s = new DelaySlider(c, JSlider.HORIZONTAL, min, max);
+		
+		c.setUpdatable(new Updatable() {
+			@Override
+			public void update() {
+				s.setValue(c.getDelay());
+				disp.update();
+			}
+			
+			@Override
+			public int getResolution() { return disp.getResolution(); }
+		});
 
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(disp, BorderLayout.CENTER);
-		p.add(new DelaySlider(c, JSlider.HORIZONTAL, min, max), BorderLayout.SOUTH);
+		p.add(s, BorderLayout.SOUTH);
 		this.add(p);
 	}
 }

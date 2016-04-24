@@ -23,7 +23,10 @@ public class BasicDelayCell extends SummationCell implements Delay {
 	
 	public synchronized int getDelay() { return 1000 * delay / AudioProteinCache.sampleRate; }
 	
-	public synchronized void setDelayInFrames(long frames) { this.delay = (int) frames; }
+	public synchronized void setDelayInFrames(long frames) {
+		this.delay = (int) frames;
+		if (delay <= 0) delay = 1;
+	}
 	
 	public synchronized long getDelayInFrames() { return this.delay; }
 	

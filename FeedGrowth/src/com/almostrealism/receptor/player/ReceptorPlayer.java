@@ -51,7 +51,7 @@ public class ReceptorPlayer implements Receptor<Long> {
 		int locx = (int) (bufIndex / byteBufSize);
 		int locy = (int) (bufIndex % byteBufSize);
 
-		byte data[] = byteData[locx];
+		byte data[] = byteData[locx % byteData.length];
 		data[locy] = cache.getProtein(proteinIndex).byteValue();
 		bufIndex++;
 		

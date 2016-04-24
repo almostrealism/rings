@@ -31,14 +31,13 @@ public class PeriodicCellAdjustment implements CellAdjustment<Long, Double>, Rec
 		generator.setFreq(freq);
 		generator.setPhase(0.5);
 		generator.setNoteLength(0);
-		generator.setAmplitude(0.1);
+		generator.setAmplitude(10);
 		generator.setReceptor(this);
 	}
 	
 	public void adjust(Cell<Long> toAdjust, Double arg) {
 		generator.push(0);
 		long frames = (long) ((min + factor * (max - min)) * AudioProteinCache.sampleRate);
-		if (StrictMath.random() < 0.001) System.out.println("Setting frames to " + frames);
 		((BasicDelayCell) toAdjust).setDelayInFrames(frames);
 	}
 	

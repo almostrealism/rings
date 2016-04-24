@@ -47,33 +47,30 @@ public class Receptor {
 		ReceptorPlayer p = new ReceptorPlayer(cache);
 		r.setPlayer(p);
 		
-		BasicDyadicChromosome y = new BasicDyadicChromosome(0.85, 1.15);
 		ArrayListChromosome<Double> a = new ArrayListChromosome<Double>();
 		
 		ArrayListGene<Double> g1 = new ArrayListGene<Double>();
-		g1.add(new DoubleScaleFactor(0.0));
-		g1.add(new DoubleScaleFactor(0.0));
+		g1.add(new DoubleScaleFactor(1.0));
+		g1.add(new DoubleScaleFactor(1.0));
 		a.add(g1);
 		
 		ArrayListGene<Double> g2 = new ArrayListGene<Double>();
-		g2.add(new DoubleScaleFactor(0.0));
-		g2.add(new DoubleScaleFactor(0.0));
+		g2.add(new DoubleScaleFactor(1.0));
+		g2.add(new DoubleScaleFactor(1.0));
 		a.add(g2);
 		
-		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, y, cache);
+		BasicDyadicChromosome y = new BasicDyadicChromosome(1.0, 0.99);
+		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(5000, y, cache);
 		
 		AdjustmentLayerOrganSystem<Long, Double> system = new AdjustmentLayerOrganSystem<Long, Double>(s,
 			new CellAdjustmentFactory<Long, Double>() {
 				public CellAdjustment<Long, Double> generateAdjustment(double arg) {
-					return new PeriodicCellAdjustment(0.1, 0.2, 1.0, cache);
+					return new PeriodicCellAdjustment(0.002, 2.0, 2.2, cache);
 				}
 			},
 		a);
 		
 		system.setAdjustmentLayerProteinCache(new FloatingPointProteinCache());
-		
-//		BasicDyadicChromosome c = new BasicDyadicChromosome(1.0, 1.0);
-//		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(1000, c, cache);
 		
 		r.getPlayerPanel().addDelayCell(s.getCellA(), 0, 10000);
 		r.getPlayerPanel().addDelayCell(s.getCellB(), 0, 10000);
@@ -96,10 +93,10 @@ public class Receptor {
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
 			sine.push(0);
-			s.tick();
+//			system.getCell(0).push(0);
 			
 //			TODO  To use the adjustment layer, call this tick method
-//			system.tick();
+			system.tick();
 		}
 		
 		p.finish();

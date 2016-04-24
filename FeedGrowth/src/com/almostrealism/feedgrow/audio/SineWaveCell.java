@@ -48,7 +48,5 @@ public class SineWaveCell extends AudioCellAdapter {
 		notePos += 1.0 / note;
 		
 		super.push(l);
-		
-//		super.push(addProtein((long) (sineWave[bufIndex++ % sineWave.length])));
 	}
 }

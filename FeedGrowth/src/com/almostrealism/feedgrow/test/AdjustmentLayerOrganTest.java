@@ -34,7 +34,7 @@ public class AdjustmentLayerOrganTest {
 		AdjustmentLayerOrganSystem<Long, Double> system = new AdjustmentLayerOrganSystem<Long, Double>(s,
 				new CellAdjustmentFactory<Long, Double>() {
 					public CellAdjustment<Long, Double> generateAdjustment(double arg) {
-						return new PeriodicCellAdjustment(0.1, 0.2, 1.0, cache);
+						return new PeriodicCellAdjustment(0.001, 0.2, 1.0, cache);
 					}
 				},
 		a);

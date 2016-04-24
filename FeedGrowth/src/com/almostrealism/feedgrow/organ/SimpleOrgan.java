@@ -44,6 +44,8 @@ public class SimpleOrgan<T> implements Organ<T> {
 			}
 			
 			MultiCell<T> m = new MultiCell<T>(cells, chrom.getGene(i));
+			m.setName("SimpleOrgan[" + i + "]");
+			
 			CellPair<T> p = new CellPair<T>(c, m);
 			p.setReceptorFactorA(null);
 			p.setReceptorFactorB(new IdentityFactor<T>());
