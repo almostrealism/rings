@@ -43,6 +43,10 @@ public class BasicDelayCellDisplay extends JPanel {
 		
 		Thread t = new Thread(() -> {
 			while (true) {
+				try {
+					Thread.sleep(50);
+				} catch (Exception e) { }
+				
 				frame();
 			}
 		});
@@ -51,7 +55,7 @@ public class BasicDelayCellDisplay extends JPanel {
 	
 	public void update() { repaint(); }
 	
-	public void frame() {
+	public synchronized void frame() {
 		Position p = cell.getPosition();
 		
 		index = p.pos * 2 * Math.PI;
@@ -59,28 +63,23 @@ public class BasicDelayCellDisplay extends JPanel {
 		double x = Math.cos(index);
 		double y = Math.sin(index);
 		
-		double value = p.value / 1.0;
+		double value = p.value;
 		
 		int startX = (int) (centerX + x * len);
 		int startY = (int) (centerY + y * len);
 		int signalX = (int) (centerX + x * (len + value));
 		int signalY = (int) (centerY + y * (len + value));
-		int maxX = (int) (centerX + x * (2 * len));
-		int maxY = (int) (centerY + y * (2 * len));
 		
 		Graphics g = image.getGraphics();
 		
-		g.setColor(Color.gray);
-		g.fillOval(centerX / 2, centerY / 2, len * 2, len * 2);
+		g.setColor(getBackground());
+		g.fillOval(0, 0, w, h);
 		
 		g.setColor(Color.black);
-		g.drawLine(startX, startY, signalX , signalY);
-		
-		g.setColor(Color.lightGray);
-		g.drawLine(signalX, signalY, maxX, maxY);
+		g.drawLine(startX, startY, signalX, signalY);
 	}
 	
-	public void paintComponent(Graphics g) {
+	public synchronized void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, this);
 	}
