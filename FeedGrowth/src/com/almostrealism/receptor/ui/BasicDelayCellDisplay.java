@@ -27,7 +27,7 @@ public class BasicDelayCellDisplay extends JPanel implements Updatable {
 	private double index;
 	private int len = 50;
 	
-	public BasicDelayCellDisplay(BasicDelayCell c, int resolution) {
+	public BasicDelayCellDisplay(BasicDelayCell c) {
 		cell = c;
 		
 		image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -52,7 +52,7 @@ public class BasicDelayCellDisplay extends JPanel implements Updatable {
 		double x = Math.cos(index);
 		double y = Math.sin(index);
 		
-		double value = Math.abs(p.value);
+		double value = p.value;
 		
 		int startX = (int) (centerX + x * len);
 		int startY = (int) (centerY + y * len);

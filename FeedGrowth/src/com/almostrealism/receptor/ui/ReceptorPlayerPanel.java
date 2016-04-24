@@ -16,8 +16,8 @@ public class ReceptorPlayerPanel extends JPanel {
 	
 	public void setReceptorPlayer(ReceptorPlayer p) { this.player = p; }
 	
-	public void addDelayCell(BasicDelayCell c, int min, int max, int displayResolution) {
-		BasicDelayCellDisplay disp = new BasicDelayCellDisplay(c, displayResolution);
+	public void addDelayCell(BasicDelayCell c, int min, int max) {
+		BasicDelayCellDisplay disp = new BasicDelayCellDisplay(c);
 		c.setUpdatable(disp);
 
 		JPanel p = new JPanel(new BorderLayout());
