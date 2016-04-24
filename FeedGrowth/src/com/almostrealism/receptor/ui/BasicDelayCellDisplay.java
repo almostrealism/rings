@@ -25,33 +25,59 @@ public class BasicDelayCellDisplay extends JPanel {
 	private int h = 200;
 	
 	private double index;
-	private int len = 100;
+	private int len = 50;
 	
 	public BasicDelayCellDisplay(BasicDelayCell c, int resolution) {
 		cell = c;
 		
 		image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		timer = new Timer(c.getDelay() / resolution,  (e) -> update());
+		timer = new Timer(50,  (e) -> update());
 		
 		setPreferredSize(new Dimension(w, h));
 		
 		beginDisplay();
 	}
 	
-	public void beginDisplay() { timer.start(); }
+	public void beginDisplay() {
+		timer.start();
+		
+		Thread t = new Thread(() -> {
+			while (true) {
+				frame();
+			}
+		});
+		t.start();
+	}
 	
-	public void update() {
+	public void update() { repaint(); }
+	
+	public void frame() {
 		Position p = cell.getPosition();
 		
-		Graphics g = image.getGraphics();
-		g.setColor(Color.black);
-
 		index = p.pos * 2 * Math.PI;
-		g.drawLine(centerX, centerY,
-				(int) (centerX + Math.cos(index) * len),
-				(int) (centerY + Math.sin(index) * len));
 		
-		repaint();
+		double x = Math.cos(index);
+		double y = Math.sin(index);
+		
+		double value = p.value / 1.0;
+		
+		int startX = (int) (centerX + x * len);
+		int startY = (int) (centerY + y * len);
+		int signalX = (int) (centerX + x * (len + value));
+		int signalY = (int) (centerY + y * (len + value));
+		int maxX = (int) (centerX + x * (2 * len));
+		int maxY = (int) (centerY + y * (2 * len));
+		
+		Graphics g = image.getGraphics();
+		
+		g.setColor(Color.gray);
+		g.fillOval(centerX / 2, centerY / 2, len * 2, len * 2);
+		
+		g.setColor(Color.black);
+		g.drawLine(startX, startY, signalX , signalY);
+		
+		g.setColor(Color.lightGray);
+		g.drawLine(signalX, signalY, maxX, maxY);
 	}
 	
 	public void paintComponent(Graphics g) {
