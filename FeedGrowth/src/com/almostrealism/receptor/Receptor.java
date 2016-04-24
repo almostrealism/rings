@@ -39,7 +39,7 @@ public class Receptor {
 		ReceptorPlayer p = new ReceptorPlayer(cache);
 		r.setPlayer(p);
 		
-		BasicDyadicChromosome c = new BasicDyadicChromosome(0.95, 1.05);
+		BasicDyadicChromosome c = new BasicDyadicChromosome(1.0, 1.0);
 		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(1000, c, cache);
 		
 		r.getPlayerPanel().addDelayCell(s.getCellA(), 0, 10000);
@@ -48,7 +48,7 @@ public class Receptor {
 		SineWaveCell sine = new SineWaveCell(cache);
 		sine.setNoteLength(500);
 		sine.setAmplitude(0.5);
-		sine.setFreq(200);
+		sine.setFreq(100);
 		sine.setEnvelope(new Envelope() {
 			public double getScale(double time) {
 				if (time < 0.1)
