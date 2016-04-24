@@ -14,14 +14,11 @@ public class DyadicOrganismTest {
 	public static void main(String args[]) throws FileNotFoundException, LineUnavailableException {
 		AudioProteinCache cache = new AudioProteinCache();
 		
-//		BasicDyadicChromosome c = new BasicDyadicChromosome(0.8, 0.85);
-//		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(500, c, cache);
-		
 		BasicDyadicChromosome c = new BasicDyadicChromosome(0.999, 0.99);
 		BasicDyadicCellularSystem s = new BasicDyadicCellularSystem(1000, c, cache);
 		
 		StableDurationHealthComputation h = new StableDurationHealthComputation(cache);
-		h.computeHealth(s);
+//		h.computeHealth(s);
 		
 		SineWaveCell sine = new SineWaveCell(cache);
 		sine.setNoteLength(500);

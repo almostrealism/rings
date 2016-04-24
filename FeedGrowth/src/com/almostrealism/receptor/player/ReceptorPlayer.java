@@ -31,7 +31,6 @@ public class ReceptorPlayer implements Receptor<Long> {
 	
 	public ReceptorPlayer(ProteinCache<Long> cache) throws LineUnavailableException {
 		setProteinCache(cache);
-		System.out.println("ReceptorPlayer: Frame size is " + frameSize);
 		
 		byteBufSize = AudioProteinCache.sampleRate * frameSize;
 		byteData = new byte[AudioProteinCache.bufferDuration][byteBufSize];
