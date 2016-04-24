@@ -32,6 +32,7 @@ public class BasicDelayCell extends SummationCell implements Delay {
 	
 	public synchronized Position getPosition() {
 		Position p = new Position();
+		if (delay == 0) delay = 1;
 		p.pos = (cursor % delay) / ((double) delay);
 		p.value = buffer[cursor];
 		return p;

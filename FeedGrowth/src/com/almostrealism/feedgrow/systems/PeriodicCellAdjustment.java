@@ -42,6 +42,6 @@ public class PeriodicCellAdjustment implements CellAdjustment<Long, Double>, Rec
 	}
 	
 	public void push(long proteinIndex) {
-		this.factor = cache.getProtein(proteinIndex) / ((double) generator.depth);
+		this.factor = (generator.depth + cache.getProtein(proteinIndex)) / ((double) generator.depth);
 	}
 }

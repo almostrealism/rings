@@ -65,7 +65,7 @@ public class Receptor {
 		AdjustmentLayerOrganSystem<Long, Double> system = new AdjustmentLayerOrganSystem<Long, Double>(s,
 			new CellAdjustmentFactory<Long, Double>() {
 				public CellAdjustment<Long, Double> generateAdjustment(double arg) {
-					return new PeriodicCellAdjustment(0.002, 2.0, 2.2, cache);
+					return new PeriodicCellAdjustment(0.012, 2.0, 2.2, cache);
 				}
 			},
 		a);
