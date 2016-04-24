@@ -20,6 +20,7 @@ import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
+import com.almostrealism.receptor.ui.SamplerPanel;
 
 public class Receptor {
 	private ReceptorPlayerPanel panel;
@@ -32,6 +33,13 @@ public class Receptor {
 		f.getContentPane().add(panel, BorderLayout.CENTER);
 		f.setSize(400, 250);
 		f.setVisible(true);
+		
+		JFrame s = new JFrame("Sampler");
+		s.getContentPane().setLayout(new BorderLayout());
+		s.getContentPane().add(new SamplerPanel(4, 4), BorderLayout.CENTER);
+		s.setSize(400, 400);
+		s.setLocation(f.getLocation().x, f.getLocation().y + f.getHeight());
+		s.setVisible(true);
 	}
 	
 	protected void setPlayer(ReceptorPlayer p) { panel.setReceptorPlayer(p); }
