@@ -68,20 +68,4 @@ public class ReceptorPlayer implements Receptor<Long> {
 		line.drain();
 		line.stop();
 	}
-	
-//	private byte flatten(long l) {
-//		return (byte) (l / convertToByte);
-//	}
-//	
-//	private void insertIntoByteBuffer(int cursor, long value) {
-//		int xloc = 8 * cursor;
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc] = (byte) (data[cursor] >> 56);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 1] = (byte) (data[cursor] >> 48);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 2] = (byte) (data[cursor] >> 40);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 3] = (byte) (data[cursor] >> 32);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 4] = (byte) (data[cursor] >> 24);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 5] = (byte) (data[cursor] >> 16);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 6] = (byte) (data[cursor] >> 8);
-//		byteData[cursor % AudioProteinCache.bufferDuration][xloc + 7] = (byte) (data[cursor]);
-//	}
 }

@@ -22,7 +22,7 @@ public class Receptor {
 		JFrame f = new JFrame("Receptor");
 		f.getContentPane().setLayout(new BorderLayout());
 		f.getContentPane().add(panel, BorderLayout.CENTER);
-		f.setSize(400, 300);
+		f.setSize(400, 250);
 		f.setVisible(true);
 	}
 	

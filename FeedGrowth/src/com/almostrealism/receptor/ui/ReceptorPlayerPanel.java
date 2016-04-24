@@ -1,5 +1,6 @@
 package com.almostrealism.receptor.ui;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
@@ -12,7 +13,7 @@ public class ReceptorPlayerPanel extends JPanel {
 	private ReceptorPlayer player;
 	
 	public ReceptorPlayerPanel() {
-		super(new GridLayout(0, 1));
+		super(new GridLayout(1, 0));
 	}
 	
 	public void setReceptorPlayer(ReceptorPlayer p) {
@@ -20,6 +21,9 @@ public class ReceptorPlayerPanel extends JPanel {
 	}
 	
 	public void addDelayCell(BasicDelayCell c, int min, int max) {
-		this.add(new DelaySlider(c, JSlider.HORIZONTAL, min, max));
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(new BasicDelayCellDisplay(c, 10000), BorderLayout.CENTER);
+		p.add(new DelaySlider(c, JSlider.HORIZONTAL, min, max), BorderLayout.SOUTH);
+		this.add(p);
 	}
 }
