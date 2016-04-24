@@ -1,8 +1,10 @@
 package com.almostrealism.receptor;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
@@ -18,14 +20,17 @@ import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
+import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
 import com.almostrealism.receptor.ui.SamplerPanel;
 
 public class Receptor {
+	private static Mixer globalMixer;
+	
 	private ReceptorPlayerPanel panel;
 	
-	protected void initUI() {
+	protected void initUI() throws UnsupportedAudioFileException, IOException {
 		panel = new ReceptorPlayerPanel();
 		
 		JFrame f = new JFrame("Receptor");
@@ -48,7 +53,7 @@ public class Receptor {
 	
 	public ReceptorPlayerPanel getPlayerPanel() { return panel; }
 	
-	public static void main(String args[]) throws LineUnavailableException {
+	public static void main(String args[]) throws LineUnavailableException, UnsupportedAudioFileException, IOException {
 		AudioProteinCache cache = new AudioProteinCache();
 		
 		Receptor r = new Receptor();
@@ -85,6 +90,8 @@ public class Receptor {
 		r.getPlayerPanel().addDelayCell(s.getCellA(), 0, 10000);
 		r.getPlayerPanel().addDelayCell(s.getCellB(), 0, 10000);
 		
+		globalMixer = new Mixer(cache, s.getCellA());
+		
 		SineWaveCell sine = new SineWaveCell(cache);
 		sine.setNoteLength(500);
 		sine.setAmplitude(0.5);
@@ -102,13 +109,15 @@ public class Receptor {
 		s.getCellA().setMeter(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
-			sine.push(0);
-//			system.getCell(0).push(0);
+//			sine.push(0);
+//			s.getCell(0).push(0);
 			
-//			TODO  To use the adjustment layer, call this tick method
+			globalMixer.tick();
 			system.tick();
 		}
 		
 		p.finish();
 	}
+	
+	public static Mixer getGlobalMixer() { return globalMixer; }
 }
