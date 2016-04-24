@@ -14,7 +14,8 @@ public class SamplerPanel extends JPanel {
 		
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
-				add(new SamplePad(SampleFactory.createSample("/Users/mike/Downloads/KICKS/FE_MD_KICK.wav")));
+//				add(new SamplePad(SampleFactory.createSample("/Users/mike/Downloads/KICKS/FE_MD_KICK.wav")));
+				add(new SamplePad(SampleFactory.createSample(700, 500)));
 			}
 		}
 	}
