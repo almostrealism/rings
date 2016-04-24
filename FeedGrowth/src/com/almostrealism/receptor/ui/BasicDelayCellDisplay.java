@@ -31,7 +31,7 @@ public class BasicDelayCellDisplay extends JPanel implements Updatable {
 		cell = c;
 		
 		image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		timer = new Timer(50,  (e) -> repaint());
+		timer = new Timer(5,  (e) -> repaint());
 		
 		setPreferredSize(new Dimension(w, h));
 		
