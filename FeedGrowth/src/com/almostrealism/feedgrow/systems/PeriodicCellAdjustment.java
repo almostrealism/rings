@@ -38,6 +38,7 @@ public class PeriodicCellAdjustment implements CellAdjustment<Long, Double>, Rec
 	public void adjust(Cell<Long> toAdjust, Double arg) {
 		generator.push(0);
 		long frames = (long) ((min + factor * (max - min)) * AudioProteinCache.sampleRate);
+//		long frames = (long) factor * ((BasicDelayCell) toAdjust).getDelay();
 		((BasicDelayCell) toAdjust).setDelayInFrames(frames);
 	}
 	
