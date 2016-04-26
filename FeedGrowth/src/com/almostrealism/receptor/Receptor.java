@@ -24,29 +24,41 @@ import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
 import com.almostrealism.receptor.ui.SamplerPanel;
+import com.almostrealism.visualize.gl.ReceptorCanvas;
 
 public class Receptor {
 	private static Mixer globalMixer;
 	
+	private ReceptorCanvas canvas;
 	private ReceptorPlayerPanel panel;
 	
 	protected void initUI() throws UnsupportedAudioFileException, IOException {
+		canvas = new ReceptorCanvas();
 		panel = new ReceptorPlayerPanel();
 		
-		JFrame f = new JFrame("Receptor");
+		JFrame r = new JFrame("Receptor");
+		r.getContentPane().setLayout(new BorderLayout());
+		r.getContentPane().add(canvas, BorderLayout.CENTER);
+		r.setSize(400, 400);
+		r.setLocationRelativeTo(null);
+		r.setLocation(r.getLocation().x, r.getLocation().y - 200);
+		r.setVisible(true);
+		
+		JFrame f = new JFrame("Feedback");
 		f.getContentPane().setLayout(new BorderLayout());
 		f.getContentPane().add(panel, BorderLayout.CENTER);
 		f.setSize(400, 250);
-		f.setLocationRelativeTo(null);
-		f.setLocation(f.getLocation().x, f.getLocation().y - 200);
+		f.setLocation(r.getLocation().x, r.getLocation().y + r.getHeight());
 		f.setVisible(true);
 		
 		JFrame s = new JFrame("Sampler");
 		s.getContentPane().setLayout(new BorderLayout());
 		s.getContentPane().add(new SamplerPanel(4, 4), BorderLayout.CENTER);
 		s.setSize(400, 400);
-		s.setLocation(f.getLocation().x, f.getLocation().y + f.getHeight());
+		s.setLocation(r.getLocation().x + r.getWidth(), r.getLocation().y);
 		s.setVisible(true);
+		
+		canvas.start();
 	}
 	
 	protected void setPlayer(ReceptorPlayer p) { panel.setReceptorPlayer(p); }

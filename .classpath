@@ -11,5 +11,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jvst_system"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jvst_wrapper"/>
 	<classpathentry kind="lib" path="FeedGrowth/lib/jogl-all.jar"/>
+	<classpathentry kind="lib" path="FeedGrowth/lib/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="FeedGrowth/lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="FeedGrowth/lib/jogl-all-natives-macosx-universal.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
