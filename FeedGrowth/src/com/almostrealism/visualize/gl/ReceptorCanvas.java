@@ -1,6 +1,11 @@
 package com.almostrealism.visualize.gl;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -10,14 +15,10 @@ import javax.media.opengl.awt.GLJPanel;
 
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseAdapter;
-import com.jogamp.newt.event.MouseEvent;
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public class ReceptorCanvas extends GLJPanel implements GLEventListener {
+public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
 	private FPSAnimator animator;
 	
 	private float view_rotx = 20.0f, view_roty = 30.0f;
@@ -32,6 +33,9 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 	public ReceptorCanvas() {
 		animator = new FPSAnimator(this, 60);
 		addGLEventListener(this);
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addKeyListener(this);
 		this.swapInterval = 1;
 	}
 	
@@ -94,15 +98,15 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 			System.err.println("gear1 list reused: "+gear1);
 		}
 
-		if(0>=gear2) {
+		if(0 >= gear2) {
 			gear2 = gl.glGenLists(1);
 			gl.glNewList(gear2, GL2.GL_COMPILE);
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, green, 0);
 			gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
 			gl.glEndList();
-			System.err.println("gear2 list created: "+gear2);
+			System.err.println("gear2 list created: " + gear2);
 		} else {
-			System.err.println("gear2 list reused: "+gear2);
+			System.err.println("gear2 list reused: " + gear2);
 		}
 
 		if (0 >= gear3) {
@@ -119,10 +123,8 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_NORMALIZE);
 
 		// MouseListener gearsMouse = new TraceMouseAdapter(new GearsMouseAdapter());
-		MouseListener gearsMouse = new GearsMouseAdapter();
-		KeyListener gearsKeys = new GearsKeyAdapter();
-	
-		
+		com.jogamp.newt.event.MouseListener gearsMouse = new GearsMouseAdapter();
+		com.jogamp.newt.event.KeyListener gearsKeys = new GearsKeyAdapter();
 		
 		if (drawable instanceof Window) {
 			Window window = (Window) drawable;
@@ -325,7 +327,7 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 
 	class GearsKeyAdapter extends KeyAdapter {
 		@Override
-		public void keyPressed(KeyEvent e) {
+		public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
 			int kc = e.getKeyCode();
 			
 			if (KeyEvent.VK_LEFT == kc) {
@@ -342,16 +344,16 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 
 	class GearsMouseAdapter extends MouseAdapter {
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
 			prevMouseX = e.getX();
 			prevMouseY = e.getY();
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e) { }
+		public void mouseReleased(com.jogamp.newt.event.MouseEvent e) { }
 
 		@Override
-		public void mouseDragged(MouseEvent e) {
+		public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
 			final int x = e.getX();
 			final int y = e.getY();
 			float width = 0, height = 0;
@@ -382,5 +384,98 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener {
 			view_rotx += thetaX;
 			view_roty += thetaY;
 		}
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		prevMouseX = e.getX();
+		prevMouseY = e.getY();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) { }
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		final int x = e.getX();
+		final int y = e.getY();
+		float width = 0, height = 0;
+		Object source = e.getSource();
+		
+		if (source instanceof Window) {
+			Window window = (Window) source;
+			width = window.getWidth();
+			height = window.getHeight();
+		} else if (source instanceof GLAutoDrawable) {
+			GLAutoDrawable glad = (GLAutoDrawable) source;
+			width = glad.getWidth();
+			height = glad.getHeight();
+		} else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
+			Component comp = (Component) source;
+			width = comp.getWidth();
+			height = comp.getHeight();
+		} else {
+			throw new RuntimeException("Event source neither Window nor Component: " + source);
+		}
+		
+		float thetaY = 360.0f * ((x - prevMouseX) / width);
+		float thetaX = 360.0f * ((prevMouseY - y) / height);
+		
+		prevMouseX = x;
+		prevMouseY = y;
+
+		view_rotx += thetaX;
+		view_roty += thetaY;
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int kc = e.getKeyCode();
+		
+		if (KeyEvent.VK_LEFT == kc) {
+			view_roty -= 1;
+		} else if(KeyEvent.VK_RIGHT == kc) {
+			view_roty += 1;
+		} else if(KeyEvent.VK_UP == kc) {
+			view_rotx -= 1;
+		} else if(KeyEvent.VK_DOWN == kc) {
+			view_rotx += 1;
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
