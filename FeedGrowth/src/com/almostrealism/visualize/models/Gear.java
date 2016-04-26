@@ -2,7 +2,7 @@ package com.almostrealism.visualize.models;
 
 import javax.media.opengl.GL2;
 
-import com.almostrealism.visualize.renderable.DisplayList;
+import com.almostrealism.visualize.gl.DisplayList;
 
 public class Gear extends DisplayList {
 	private float innerRadius, outerRadius;
@@ -22,7 +22,7 @@ public class Gear extends DisplayList {
 		
 		displayListIndex = gl.glGenLists(1);
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, color, 0);
+		initMaterial(gl);
 		gear(gl, innerRadius, outerRadius, width, teeth, toothDepth);
 		gl.glEndList();
 	}

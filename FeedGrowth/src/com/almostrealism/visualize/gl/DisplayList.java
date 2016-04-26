@@ -1,4 +1,4 @@
-package com.almostrealism.visualize.renderable;
+package com.almostrealism.visualize.gl;
 
 import javax.media.opengl.GL2;
 
