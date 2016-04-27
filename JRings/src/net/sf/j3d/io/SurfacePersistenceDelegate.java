@@ -19,9 +19,9 @@ import java.beans.DefaultPersistenceDelegate;
 import java.beans.Encoder;
 import java.beans.Statement;
 
-import net.sf.j3d.raytracer.engine.AbstractSurface;
-import net.sf.j3d.raytracer.primitives.Triangle;
-import net.sf.j3d.raytracer.shaders.Shader;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.primitives.Triangle;
+import com.almostrealism.raytracer.shaders.Shader;
 
 // TODO  Add more efficient encoding of Mesh (avoid storing so many vector objects = decreased file size)
 

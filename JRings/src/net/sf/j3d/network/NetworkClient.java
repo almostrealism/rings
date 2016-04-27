@@ -50,6 +50,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import com.almostrealism.raytracer.JobProducer;
+import com.almostrealism.raytracer.RayTracingJob;
 import com.almostrealism.ui.ScrollingTextDisplay;
 
 import net.sf.j3d.io.Storable;
@@ -62,8 +64,6 @@ import net.sf.j3d.network.interfaces.RTSPInterface;
 import net.sf.j3d.network.resources.DistributedResource;
 import net.sf.j3d.network.resources.ResourceDistributionTask;
 import net.sf.j3d.network.tests.TestJobFactory;
-import net.sf.j3d.raytracer.JobProducer;
-import net.sf.j3d.raytracer.RayTracingJob;
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.NetworkDialog;
 import net.sf.j3d.ui.GraphDisplay;

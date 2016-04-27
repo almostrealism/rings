@@ -17,7 +17,7 @@ package net.sf.j3d.io;
 
 import java.beans.*;
 
-import net.sf.j3d.raytracer.lighting.*;
+import com.almostrealism.raytracer.lighting.*;
 
 /**
   A LightPersistenceDelegate object adjusts the way the a Light object is encoded into XML

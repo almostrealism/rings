@@ -34,8 +34,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import com.almostrealism.raytracer.RayTracingJobFactory;
+
 import net.sf.j3d.network.Server;
-import net.sf.j3d.raytracer.RayTracingJobFactory;
 import net.sf.j3d.run.Settings;
 
 
