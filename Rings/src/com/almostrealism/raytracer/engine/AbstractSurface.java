@@ -31,9 +31,10 @@ import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;
 
 /**
- * AbstractSurface is an abstract implementation of Surface that takes care of all of the standard methods of Surface
- * that are shared by all Surface implementations in the same way. By default the location is at the origin,
- * the size is 1.0, and the color is black. Also, an AbstractSurface uses a DiffuseShader by default.
+ * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes care of all of the
+ * standard methods of {@link Surface} that are shared by all Surface implementations in the same way.
+ * By default the location is at the origin, the size is 1.0, and the color is black. Also, an
+ * {@link AbstractSurface} uses a {@link DiffuseShader} by default.
  * 
  * @author  Mike Murray
  */
