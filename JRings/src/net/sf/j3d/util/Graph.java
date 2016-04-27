@@ -139,12 +139,11 @@ public class Graph extends ArrayList {
 	}
 	
 	public void storeValues(File f) throws IOException {
-		PrintStream p = new PrintStream(new FileOutputStream(f));
-		
-		Iterator itr = this.values.iterator();
-		while(itr.hasNext()) p.println(itr.next());
-		
-		p.flush();
-		p.close();
+		try (PrintStream p = new PrintStream(new FileOutputStream(f))) {
+			Iterator itr = this.values.iterator();
+			while(itr.hasNext()) p.println(itr.next());
+			
+			p.flush();
+		}
 	}
 }
