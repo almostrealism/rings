@@ -75,8 +75,8 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		GLUgl2 glu = new GLUgl2();
 		GLUnurbs nurbs = glu.gluNewNurbsRenderer();
 		
-		AnimatedNurbsSurface n = new AnimatedNurbsSurface(glu, nurbs);
-		n.setPosition(-5.0f, 0.0f, 0.0f);
+		AnimatedNurbsSurface n = new AnimatedNurbsSurface(8, 8, glu, nurbs);
+		n.setPosition(-6.0f, -5.0f, 0.0f);
 		n.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
 		
 		add(n);

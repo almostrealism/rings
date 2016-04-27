@@ -5,15 +5,22 @@ import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
 public class AnimatedNurbsSurface extends NurbsSurface {
-	private static final float defaultKnots[] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	private static final float defaultKnots[] = { 0.0f, 0.0f, 0.0f, 0.0f,
+												0.0f, 0.0f, 0.0f, 0.0f,
+												1.0f, 1.0f, 1.0f, 1.0f,
+												1.0f, 1.0f, 1.0f, 1.0f };
 	
-	private float[][][] points = new float[4][4][3];
+	private int width, height;
+	private float[][][] points = new float[8][8][3];
 	
-	public AnimatedNurbsSurface(GLUgl2 glu, GLUnurbs nurbs) {
+	public AnimatedNurbsSurface(int w, int h, GLUgl2 glu, GLUnurbs nurbs) {
 		super(defaultKnots, null, glu, nurbs);
 		
-		for (int u = 0; u < 4; u++) {
-			for (int v=0; v < 4; v++) {
+		width = w;
+		height = h;
+		
+		for (int u = 0; u < width; u++) {
+			for (int v = 0; v < height; v++) {
 				/* Red. */
 				points[u][v][0] = 2f * u;
 				points[u][v][1] = 2f * v;
@@ -32,9 +39,13 @@ public class AnimatedNurbsSurface extends NurbsSurface {
 		super.display(gl);
 	}
 	
+	public int getWidth() { return width; }
+	
+	public int getHeight() { return height; }
+	
 	public float[][][] getPoints() {
-		for (int u = 0; u < 4; u++) {
-			for (int v=0; v < 4; v++) {
+		for (int u = 0; u < width; u++) {
+			for (int v=0; v < height; v++) {
 				points[u][v][2] = points[u][v][2] + 0.5f * (float) (Math.random() - 0.5);
 			}
 		}

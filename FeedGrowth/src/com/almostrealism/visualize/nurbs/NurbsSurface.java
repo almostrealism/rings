@@ -26,6 +26,9 @@ public class NurbsSurface extends DisplayList {
 		if (pts != null) { buildSurface(gl); }
 	}
 	
+	public int getWidth() { return pts.length; }
+	public int getHeight() { return pts[0].length; }
+	
 	public float[][][] getPoints() { return pts; }
 	
 	protected void buildSurface(GL2 gl) {
@@ -34,8 +37,9 @@ public class NurbsSurface extends DisplayList {
 		glu.gluBeginSurface(nurbs);
 		glu.gluNurbsSurface(nurbs, knots.length, knots,
 							knots.length, knots,
-							4 * 3, 3, flatten(getPoints()),
-							4, 4, GL2.GL_MAP2_VERTEX_3);
+							getWidth() * 3, 3, flatten(getPoints()),
+							getWidth(), getHeight(),
+							GL2.GL_MAP2_VERTEX_3);
 		glu.gluEndSurface(nurbs);
 		gl.glEndList();
 	}
