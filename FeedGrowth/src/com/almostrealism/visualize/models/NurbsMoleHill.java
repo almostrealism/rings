@@ -9,13 +9,7 @@ import com.almostrealism.visualize.renderable.RenderableList;
 
 public class NurbsMoleHill extends RenderableList {
 	private GLUgl2 glu;
-
-	float mat_green_diffuse[] = { 0.0f, 0.7f, 0.1f, 1.0f };
-	float mat_blue_diffuse[] = { 0.0f, 0.1f, 0.7f, 1.0f };
-	float mat_yellow_diffuse[] = { 0.7f, 0.8f, 0.1f, 1.0f };
-	float mat_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float mat_shininess[] = { 100.0f };
-
+	
 	float knots[] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 	float pts1[][][] = new float[4][4][3];
 	float pts2[][][] = new float[4][4][3];
