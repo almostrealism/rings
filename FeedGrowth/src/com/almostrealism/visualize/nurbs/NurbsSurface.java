@@ -22,11 +22,14 @@ public class NurbsSurface extends DisplayList {
 	@Override
 	public void init(GL2 gl) {
 		super.init(gl);
-		
+
+		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
+		initMaterial(gl);
 		glu.gluBeginSurface(nurbs);
 		glu.gluNurbsSurface(nurbs, knots.length, knots, knots.length, knots,
-								4 * 3, 3, flatten(pts), 4, 4, GL2.GL_MAP2_VERTEX_3);
+						4 * 3, 3, flatten(pts), 4, 4, GL2.GL_MAP2_VERTEX_3);
 		glu.gluEndSurface(nurbs);
+		gl.glEndList();
 	}
 	
 	protected float[] flatten(float f[][][]) {

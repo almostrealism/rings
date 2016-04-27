@@ -48,9 +48,9 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		this.swapInterval = 1;
 		
 		Gear g1 = new Gear(1.0f, 4.0f, 1.0f, 20, 0.7f);
-		g1.setPosition(-3.0f, -2.0f, 0.0f);
-		g1.setOrientation(angle, 0.0f, 0.0f, 1.0f);
-		g1.setColor(0.8f, 0.1f, 0.0f, 0.7f);
+//		g1.setPosition(-3.0f, -2.0f, 0.0f);
+//		g1.setOrientation(angle, 0.0f, 0.0f, 1.0f);
+//		g1.setColor(0.8f, 0.1f, 0.0f, 0.7f);
 //		add(g1);
 //
 //		Gear g2 = new Gear(0.5f, 2.0f, 2.0f, 10, 0.7f);
@@ -66,9 +66,10 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 //		add(g3);
 		
 		NurbsMoleHill m = new NurbsMoleHill();
-		m.add(g1);
+		RenderableGLList l = new RenderableGLList(m);
+		l.setShininess(100);
 		
-		add(new RenderableGLList(m));
+		add(l);
 	}
 	
 	public void add(Renderable r) { scene.add(r); }
@@ -122,8 +123,7 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-//		gl.glTranslatef(0.0f, 0.0f, -40.0f);
-		gl.glTranslatef(0.0f, 0.0f, -15.0f);
+		gl.glTranslatef(0.0f, 0.0f, -40.0f);
 		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
 	}
 

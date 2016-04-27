@@ -35,7 +35,7 @@ public class NurbsMoleHill extends RenderableList {
 	
 	protected void buildNurbs() {
 		/* Build control points for NURBS mole hills. */
-		for(u=0; u<4; u++) {
+		for (u=0; u<4; u++) {
 			for(v=0; v<4; v++) {
 				/* Red. */
 				pts1[u][v][0] = 2f * u;
@@ -62,7 +62,7 @@ public class NurbsMoleHill extends RenderableList {
 				/* Blue. */
 				pts3[u][v][0] = 2f * (u - 3.0f);
 				pts3[u][v][1] = 2f * (v - 3.0f);
-				if((u==1 || u == 2) && (v == 1 || v == 2))
+				if ((u==1 || u == 2) && (v == 1 || v == 2))
 					if(u == 1 && v == 2)
 						/* Pull up on single middple square. */
 						pts3[u][v][2] = 11.0f;
@@ -75,7 +75,7 @@ public class NurbsMoleHill extends RenderableList {
 				/* Yellow. */
 				pts4[u][v][0] = 2f * u;
 				pts4[u][v][1] = 2f * (v - 3f);
-				if((u==1 || u == 2 || u == 3) && (v == 1 || v == 2))
+				if ((u==1 || u == 2 || u == 3) && (v == 1 || v == 2))
 					if(v == 1) 
 						/* Push down front middle and right squares. */
 						pts4[u][v][2] = -2.0f;
@@ -100,16 +100,16 @@ public class NurbsMoleHill extends RenderableList {
 		n1.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
 		add(n1);
 		
-		NurbsSurface n2 = new NurbsSurface(knots, pts1, glu, nurb);
-		n2.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
+		NurbsSurface n2 = new NurbsSurface(knots, pts2, glu, nurb);
+		n2.setDiffuse(0.0f, 0.7f, 0.1f, 1.0f);
 		add(n2);
 		
-		NurbsSurface n3 = new NurbsSurface(knots, pts1, glu, nurb);
-		n3.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
+		NurbsSurface n3 = new NurbsSurface(knots, pts3, glu, nurb);
+		n3.setDiffuse(0.0f, 0.1f, 0.7f, 1.0f);
 		add(n3);
 		
-		NurbsSurface n4 = new NurbsSurface(knots, pts1, glu, nurb);
-		n4.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
+		NurbsSurface n4 = new NurbsSurface(knots, pts4, glu, nurb);
+		n4.setDiffuse(0.7f, 0.8f, 0.1f, 1.0f);
 		add(n4);
 	}
 	

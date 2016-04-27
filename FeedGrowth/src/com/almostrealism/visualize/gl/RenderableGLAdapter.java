@@ -22,9 +22,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	private boolean ambient;
 	
-	public RenderableGLAdapter() {
-		ambient = true;
-	}
+	public RenderableGLAdapter() { }
 	
 	@Override
 	public void init(GL2 gl) { }
@@ -73,7 +71,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public void setAmbient(boolean a) { ambient = a; }
 	
 	@Override
-	public void setDiffuse(float r, float g, float b, float a) { specular = new float[] { r, g, b, a}; }
+	public void setDiffuse(float r, float g, float b, float a) { diffuse = new float[] { r, g, b, a}; }
 	
 	@Override
 	public float[] getDiffuse() { return diffuse; }
