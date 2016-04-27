@@ -14,8 +14,10 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
+import javax.media.opengl.glu.gl2.GLUgl2;
 
 import com.almostrealism.visualize.models.Gear;
+import com.almostrealism.visualize.models.NurbsMoleHill;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
@@ -49,19 +51,24 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		g1.setPosition(-3.0f, -2.0f, 0.0f);
 		g1.setOrientation(angle, 0.0f, 0.0f, 1.0f);
 		g1.setColor(0.8f, 0.1f, 0.0f, 0.7f);
-		add(g1);
-
-		Gear g2 = new Gear(0.5f, 2.0f, 2.0f, 10, 0.7f);
-		g2.setPosition(3.1f, -2.0f, 0.0f);
-		g2.setOrientation(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
-		g2.setColor(0.0f, 0.8f, 0.2f, 0.7f);
-		add(g2);
+//		add(g1);
+//
+//		Gear g2 = new Gear(0.5f, 2.0f, 2.0f, 10, 0.7f);
+//		g2.setPosition(3.1f, -2.0f, 0.0f);
+//		g2.setOrientation(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
+//		g2.setColor(0.0f, 0.8f, 0.2f, 0.7f);
+//		add(g2);
+//		
+//		Gear g3 = new Gear(1.3f, 2.0f, 0.5f, 10, 0.7f);
+//		g3.setPosition(-3.1f, 4.2f, 0.0f);
+//		g3.setOrientation(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
+//		g3.setColor(0.2f, 0.2f, 1.0f, 0.7f);
+//		add(g3);
 		
-		Gear g3 = new Gear(1.3f, 2.0f, 0.5f, 10, 0.7f);
-		g3.setPosition(-3.1f, 4.2f, 0.0f);
-		g3.setOrientation(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
-		g3.setColor(0.2f, 0.2f, 1.0f, 0.7f);
-		add(g3);
+		NurbsMoleHill m = new NurbsMoleHill();
+		m.add(g1);
+		
+		add(new RenderableGLList(m));
 	}
 	
 	public void add(Renderable r) { scene.add(r); }
@@ -88,6 +95,7 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_LIGHT0);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
+		gl.glEnable(GL2.GL_AUTO_NORMAL);
 		
 		initRenderables(gl);
 
@@ -107,12 +115,16 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		float h = (float) height / (float) width;
 		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
+		
+		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 24.0f);
 
 		gl.glLoadIdentity();
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -40.0f);
+//		gl.glTranslatef(0.0f, 0.0f, -40.0f);
+		gl.glTranslatef(0.0f, 0.0f, -15.0f);
+		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
 	}
 
 	@Override

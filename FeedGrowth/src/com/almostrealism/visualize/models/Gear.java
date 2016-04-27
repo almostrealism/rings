@@ -19,8 +19,6 @@ public class Gear extends DisplayList {
 	
 	public void init(GL2 gl) {
 		super.init(gl);
-		
-		displayListIndex = gl.glGenLists(1);
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 		initMaterial(gl);
 		gear(gl, innerRadius, outerRadius, width, teeth, toothDepth);

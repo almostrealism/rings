@@ -10,7 +10,12 @@ public class DisplayList extends RenderableGLAdapter {
 	public DisplayList(int displayListIndex) {
 		this.displayListIndex = displayListIndex;
 	}
-
+	
+	public void init(GL2 gl) {
+		super.init(gl);
+		displayListIndex = gl.glGenLists(1);
+	}
+	
 	@Override
 	public void display(GL2 gl) {
 		push(gl);

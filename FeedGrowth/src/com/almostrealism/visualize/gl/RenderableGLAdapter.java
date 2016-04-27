@@ -8,24 +8,32 @@ import com.almostrealism.visualize.renderable.Colored;
 import com.almostrealism.visualize.renderable.Oriented;
 import com.almostrealism.visualize.renderable.Positioned;
 import com.almostrealism.visualize.renderable.Renderable;
+import com.almostrealism.visualize.shading.Diffuse;
 import com.almostrealism.visualize.shading.Specular;
 
-public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Specular {
+public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Diffuse, Specular {
 	private float position[] = { 0.0f, 0.0f, 0.0f };
 	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
 	private float color[] = { 0.5f, 0.5f, 0.5f, 0.5f };
+	private float diffuse[] = {0.0f, 0.0f, 0.0f, 0.0f };
 	private float specular[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	private float shininess = 0.0f;
 	
-	private boolean diffuse;
+	private boolean ambient;
+	
+	public RenderableGLAdapter() {
+		ambient = true;
+	}
 	
 	@Override
 	public void init(GL2 gl) { }
 	
 	public void initMaterial(GL2 gl) {
-		if (diffuse) {
+		if (ambient) {
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, color, 0);
+		} else {
+			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(diffuse));
 		}
 		
 		if (shininess > 0.0f) {
@@ -62,13 +70,19 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	@Override
 	public float[] getColor() { return color; }
 	
-	public void setDiffuse(boolean d) { diffuse = d; }
+	public void setAmbient(boolean a) { ambient = a; }
+	
+	@Override
+	public void setDiffuse(float r, float g, float b, float a) { specular = new float[] { r, g, b, a}; }
+	
+	@Override
+	public float[] getDiffuse() { return diffuse; }
 	
 	@Override
 	public void setSpecular(float r, float g, float b, float a) { specular = new float[] { r, g, b, a}; }
 
 	@Override
-	public float getSpecular() { return 0; }
+	public float[] getSpecular() { return specular; }
 
 	@Override
 	public void setShininess(float s) { shininess = s; }
