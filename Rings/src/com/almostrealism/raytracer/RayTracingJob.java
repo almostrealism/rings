@@ -108,18 +108,17 @@ public class RayTracingJob implements Job, SceneLoader {
 													RayTracingOutputHandler.this.image.length + ", " + 
 													RayTracingOutputHandler.this.image[0].length + ")...");
 								
-								PrintStream p = new PrintStream(new FileOutputStream(
+								try (PrintStream p = new PrintStream(new FileOutputStream(
 											"images/NetworkRender-" +
-											RayTracingOutputHandler.this.taskId + ".raw"));
-								
-								for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
-									for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
-										p.println("[" + i + ", " + j + "]: " + RayTracingOutputHandler.this.image[i][j]);
+											RayTracingOutputHandler.this.taskId + ".raw"))) {
+									for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
+										for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
+											p.println("[" + i + ", " + j + "]: " + RayTracingOutputHandler.this.image[i][j]);
+										}
 									}
+									
+									p.flush();
 								}
-								
-								p.flush();
-								p.close();
 								
 								FileEncoder.encodeImageFile(RayTracingOutputHandler.this.getImage(),
 										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
@@ -157,17 +156,16 @@ public class RayTracingJob implements Job, SceneLoader {
 									RayTracingOutputHandler.this.image.length + ", " + 
 									RayTracingOutputHandler.this.image[0].length + ")...");
 				
-				PrintStream p = new PrintStream(new FileOutputStream(
-							"NetworkRender-" + RayTracingOutputHandler.this.taskId + ".raw"));
-				
-				for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
-					for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
-						p.println("[" + i + ", " + j + "]: " + RayTracingOutputHandler.this.image[i][j]);
+				try (PrintStream p = new PrintStream(new FileOutputStream(
+							"NetworkRender-" + RayTracingOutputHandler.this.taskId + ".raw"))) {
+					for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
+						for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
+							p.println("[" + i + ", " + j + "]: " + RayTracingOutputHandler.this.image[i][j]);
+						}
 					}
+					
+					p.flush();
 				}
-				
-				p.flush();
-				p.close();
 				
 				FileEncoder.encodeImageFile(RayTracingOutputHandler.this.getImage(),
 						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
@@ -244,15 +242,13 @@ public class RayTracingJob implements Job, SceneLoader {
 				this.lastTaskId = this.currentTaskId;
 				this.currentTaskId = id;
 				
-				try {
-					System.out.println("RayTracingOutputHandler: Writing index.html");
-					
-					String s = RayTracingJob.htmlPre + this.lastTaskId + RayTracingJob.htmlPost;
-					
-					PrintStream out = new PrintStream(new FileOutputStream("index.html"));
+				System.out.println("RayTracingOutputHandler: Writing index.html");
+				
+				String s = RayTracingJob.htmlPre + this.lastTaskId + RayTracingJob.htmlPost;
+				
+				try (PrintStream out = new PrintStream(new FileOutputStream("index.html"))) {
 					out.println(s);
 					out.flush();
-					out.close();
 				} catch (IOException ioe) {
 					System.out.println("RayTracingOutputHandler: IO error writing index.html (" +
 										ioe.getMessage() + ")");
@@ -579,15 +575,15 @@ public class RayTracingJob implements Job, SceneLoader {
 	}
 	
 	public Scene loadScene(String uri) throws MalformedURLException, IOException {
-		InputStream in;
-		
 		if (this.local) {
-			in = (new URL(uri)).openStream();
+			try (InputStream in = (new URL(uri)).openStream()) {
+				return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);
+			}
 		} else {
-			in = Client.getCurrentClient().getServer().loadResource(uri).getInputStream();
+			try (InputStream in = Client.getCurrentClient().getServer().loadResource(uri).getInputStream()) {
+				return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);
+			}
 		}
-		
-		return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);
 	}
 	
 	public void setSceneLoader(String loader) { this.sLoader = loader; }
