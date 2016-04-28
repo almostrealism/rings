@@ -177,7 +177,7 @@ public class SendTaskDialog extends JPanel {
 	}
 	
 	/**
-	 * @see net.sf.j3d.threeD.ui.dialogs.Dialog#showDialog()
+	 * @see net.sf.j3d.ui.dialogs.Dialog#showDialog()
 	 */
 	public void showDialog() {
 		if (!this.open) {
@@ -187,7 +187,7 @@ public class SendTaskDialog extends JPanel {
 	}
 
 	/**
-	 * @see net.sf.j3d.threeD.ui.dialogs.Dialog#closeDialog()
+	 * @see net.sf.j3d.ui.dialogs.Dialog#closeDialog()
 	 */
 	public void closeDialog() {
 		if (this.open) {

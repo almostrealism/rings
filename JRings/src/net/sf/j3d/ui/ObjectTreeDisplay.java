@@ -39,7 +39,7 @@ import javax.swing.tree.TreeCellRenderer;
 
 import net.sf.j3d.obj.ObjectFactory;
 import net.sf.j3d.physics.pfield.util.VectorMath;
-import net.sf.j3d.threeD.ui.panels.PercentagePanel;
+import net.sf.j3d.ui.panels.PercentagePanel;
 
 /**
  * @author Mike Murray

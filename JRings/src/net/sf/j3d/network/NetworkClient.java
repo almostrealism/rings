@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.ImageIcon;
@@ -84,8 +83,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 	
 	private static final String internalConfig = "config/node.conf";
-	private static final String plySceneLoaderClass = "net.sf.j3d.raytracer.loaders.PlySceneLoader";
-	private static final String gtsSceneLoaderClass = "net.sf.j3d.raytracer.loaders.GtsSceneLoader";
+	private static final String plySceneLoaderClass = "com.almostrealism.raytracer.loaders.PlySceneLoader";
+	private static final String gtsSceneLoaderClass = "com.almostrealism.raytracer.loaders.GtsSceneLoader";
 	
 	private static final int defaultPort = 6767;
 	

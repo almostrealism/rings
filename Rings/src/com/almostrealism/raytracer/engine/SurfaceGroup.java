@@ -103,7 +103,7 @@ public class SurfaceGroup extends AbstractSurface {
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.engine.Surface#shade(net.sf.j3d.threeD.raytracer.engine.ShaderParameters)
+	 * @see com.almostrealism.raytracer.engine.Surface#shade(com.almostrealism.raytracer.engine.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) {
 		RGB color = null;

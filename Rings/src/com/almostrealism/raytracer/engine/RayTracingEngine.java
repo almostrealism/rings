@@ -19,7 +19,6 @@ import com.almostrealism.raytracer.lighting.SurfaceLight;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.ui.displays.ProgressDisplay;
 import net.sf.j3d.ui.ProgressMonitor;
 import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;
