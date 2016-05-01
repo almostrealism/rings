@@ -176,22 +176,21 @@ public class PhotonFieldJob implements JobFactory, Job {
 					continue w;
 				}
 				
-				try {
-					if (plane.imageAvailable()) {
-						String outputfile = this.outDir +
-											"PhotonFieldTask-" + this.taskid +
-												"-" + this.index + ".ppm";
-						OutputStream o = Client.getCurrentClient().
-										getServer().getOutputStream(outputfile);
+				if (plane.imageAvailable()) {
+					String outputfile = this.outDir +
+										"PhotonFieldTask-" + this.taskid +
+											"-" + this.index + ".ppm";
+					
+					try (OutputStream o = Client.getCurrentClient().
+										getServer().getOutputStream(outputfile)) {
 						plane.writeImage(o);
-						o.close();
 						System.out.println("PhotonFieldJob: Wrote " + outputfile);
-					} else {
-						System.out.println("PhotonFieldJob: No image available.");
+					} catch (IOException ioe) {
+						System.out.println("PhotonFieldJob: Could not write image (" +
+											ioe.getMessage() + ")");
 					}
-				} catch (IOException ioe) {
-					System.out.println("PhotonFieldJob: Could not write image (" +
-										ioe.getMessage() + ")");
+				} else {
+					System.out.println("PhotonFieldJob: No image available.");
 				}
 				
 				first = false;
