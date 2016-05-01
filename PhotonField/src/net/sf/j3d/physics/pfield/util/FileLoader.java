@@ -27,7 +27,6 @@ import java.util.Stack;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -46,10 +45,7 @@ import net.sf.j3d.physics.pfield.DefaultPhotonField;
 import net.sf.j3d.physics.pfield.network.PhotonFieldSceneLoader;
 import net.sf.j3d.physics.pfield.raytracer.AbsorberSetRayTracer;
 import net.sf.j3d.physics.pfield.raytracer.PinholeCameraAbsorber;
-import net.sf.j3d.physics.pfield.xml.AbsorberSetNode;
-import net.sf.j3d.physics.pfield.xml.NodeDisplay;
 import net.sf.j3d.io.FileEncoder;
-import net.sf.j3d.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.panels.DebugOutputPanel;
