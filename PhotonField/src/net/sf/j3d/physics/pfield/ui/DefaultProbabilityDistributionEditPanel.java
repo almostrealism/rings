@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007  Almost Realism Software Group
+ * Copyright (C) 2007-2016  Almost Realism Software Group
  *
  *  All rights reserved.
  *  This document may not be reused without
@@ -14,7 +14,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
