@@ -208,6 +208,8 @@ public class Vector implements Cloneable {
 		return product;
 	}
 	
+	public float[] toFloat() { return new float[] { (float) getX(), (float) getY(), (float) getZ() }; }
+	
 	/**
 	 * Returns the length of the vector represented by this Vector object as a double value.
 	 */

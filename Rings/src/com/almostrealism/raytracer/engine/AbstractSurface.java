@@ -19,47 +19,37 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 import com.almostrealism.raytracer.shaders.ShaderSet;
 
-import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.TransformMatrix;
 import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;
 
 /**
- * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes care of all of the
- * standard methods of {@link Surface} that are shared by all Surface implementations in the same way.
- * By default the location is at the origin, the size is 1.0, and the color is black. Also, an
- * {@link AbstractSurface} uses a {@link DiffuseShader} by default.
+ * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes
+ * care of all of the standard methods of {@link Surface} that are shared by most
+ * {@link Surface} implementations in the same way. By default the location is at the
+ * origin, the size is 1.0, and the color is black. Also, an {@link AbstractSurface}
+ * uses a {@link DiffuseShader} by default.
  * 
  * @author  Mike Murray
  */
-public abstract class AbstractSurface implements Surface {
-  private Vector location;
-  private double size;
-  
-  private boolean shadeFront, shadeBack;
-  
-  private double scaleX, scaleY, scaleZ;
-  private double rotateX, rotateY, rotateZ;
-  
-  private TransformMatrix transforms[];
-  private TransformMatrix transform, completeTransform;
-  private boolean transformCurrent;
-  
-  private RGB color;
-  
-  private double rindex = 1.0, reflectP = 1.0, refractP = 0.0;
-  
-  private Texture textures[];
-  private ShaderSet shaders;
-  
-  private AbstractSurface parent;
+public abstract class AbstractSurface extends BasicGeometry implements Surface {
+	private boolean shadeFront, shadeBack;
 
+	private RGB color;
+
+	private double rindex = 1.0, reflectP = 1.0, refractP = 0.0;
+
+	private Texture textures[];
+	private ShaderSet shaders;
+
+	private AbstractSurface parent;
+	
 	/**
 	 * Sets all values of this AbstractSurface to the defaults specified above.
 	 */
@@ -67,16 +57,8 @@ public abstract class AbstractSurface implements Surface {
 		this.setShadeFront(true);
 		this.setShadeBack(false);
 		
-		this.setTransforms(new TransformMatrix[0]);
-		
 		this.setTextures(new Texture[0]);
 		this.setShaders(new Shader[] {DiffuseShader.defaultDiffuseShader});
-		
-		this.setLocation(new Vector(0.0, 0.0, 0.0));
-		this.setSize(1.0);
-		
-		this.setScaleCoefficients(1.0, 1.0, 1.0);
-		this.setRotationCoefficients(0.0, 0.0, 0.0);
 		
 		this.setColor(new RGB(0.0, 0.0, 0.0));
 	}
@@ -85,43 +67,17 @@ public abstract class AbstractSurface implements Surface {
 	 * Sets the location and size of this AbstractSurface to those specifed, and uses the defaults for the other values.
 	 */
 	public AbstractSurface(Vector location, double size) {
-		this.setShadeFront(true);
-		this.setShadeBack(false);
-		
-		this.setTransforms(new TransformMatrix[0]);
-		
-		this.setTextures(new Texture[0]);
-		this.setShaders(new Shader[] {DiffuseShader.defaultDiffuseShader});
+		this();
 		
 		this.setLocation(location);
 		this.setSize(size);
-		
-		this.setScaleCoefficients(1.0, 1.0, 1.0);
-		this.setRotationCoefficients(0.0, 0.0, 0.0);
-		
-		this.setColor(new RGB(0.0, 0.0, 0.0));
 	}
 	
 	/**
 	 * Sets the location, size, and color of this AbstractSurface to those specified.
 	 */
 	public AbstractSurface(Vector location, double size, RGB color) {
-		this.setShadeFront(true);
-		this.setShadeBack(false);
-		
-		this.setTransforms(new TransformMatrix[0]);
-		
-		this.setTextures(new Texture[0]);
-		this.setShaders(new Shader[] {DiffuseShader.defaultDiffuseShader});
-		
-		this.setLocation(location);
-		this.setSize(size);
-		
-		this.setScaleCoefficients(1.0, 1.0, 1.0);
-		this.setRotationCoefficients(0.0, 0.0, 0.0);
-		
-		this.setTransforms(new TransformMatrix[0]);
-		
+		this(location, size);
 		this.setColor(color);
 	}
 	
@@ -129,24 +85,10 @@ public abstract class AbstractSurface implements Surface {
 	 * Sets the location, size, and color of this AbstractSurface to those specified.
 	 */
 	public AbstractSurface(Vector location, double size, RGB color, boolean addDefaultDiffuseShader) {
-		this.setShadeFront(true);
-		this.setShadeBack(false);
+		this(location, size, color);
 		
-		this.setTransforms(new TransformMatrix[0]);
-		
-		this.setTextures(new Texture[0]);
-		if (addDefaultDiffuseShader)
-			this.setShaders(new Shader[] {DiffuseShader.defaultDiffuseShader});
-		
-		this.setLocation(location);
-		this.setSize(size);
-		
-		this.setScaleCoefficients(1.0, 1.0, 1.0);
-		this.setRotationCoefficients(0.0, 0.0, 0.0);
-		
-		this.setTransforms(new TransformMatrix[0]);
-		
-		this.setColor(color);
+		if (!addDefaultDiffuseShader)
+			this.setShaders(new Shader[0]);
 	}
 	
 	/**
@@ -155,9 +97,9 @@ public abstract class AbstractSurface implements Surface {
 	public void setParent(SurfaceGroup parent) { this.parent = parent; }
 	
 	/**
-	 * Returns the parent of this AbstractSurface as a SurfaceGroup object.
+	 * Returns the parent of this {@link AbstractSurface} as a {@link SurfaceGroup} object.
 	 */
-	public SurfaceGroup getParent() { return (SurfaceGroup)this.parent; }
+	public SurfaceGroup getParent() { return (SurfaceGroup) parent; }
 	
 	/**
 	 * Sets the flag indicating that the front side of this AbstractSurface should be shaded
@@ -200,15 +142,8 @@ public abstract class AbstractSurface implements Surface {
 	 *          rotation coefficients, and transformations as this AbstractSurface.
 	 */
 	public Mesh triangulate() {
-		Mesh m = new Mesh();
-		
-		m.setLocation(this.getLocation());
-		m.setSize(this.getSize());
+		Mesh m = super.triangulate();
 		m.setColor(this.getColor());
-		m.setScaleCoefficients(this.scaleX, this.scaleY, this.scaleZ);
-		m.setRotationCoefficients(this.rotateX, this.rotateY, this.rotateZ);
-		m.setTransforms(this.getTransforms());
-		
 		return m;
 	}
 	
@@ -223,168 +158,6 @@ public abstract class AbstractSurface implements Surface {
 	public double getReflectedPercentage(Vector p) { return this.reflectP; }
 	public double getRefractedPercentage() { return this.refractP; }
 	public double getRefractedPercentage(Vector p) { return this.refractP; }
-	
-	/**
-	 * Sets the location of this AbstractSurface to the specified Vector object.
-	 * This method calls calulateTransform() after it is completed.
-	 */
-	public void setLocation(Vector location) {
-		this.location = location;
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Sets the size of this AbstractSurface to the specified double value.
-	 */
-	public void setSize(double size) {
-		this.size = size;
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Sets the values used to scale this AbstractSurface on the x, y, and z axes when it is rendered to the specified double values.
-	 * This method calls calculateTransform() after it is completed.
-	 */
-	public void setScaleCoefficients(double x, double y, double z) {
-		this.scaleX = x;
-		this.scaleY = y;
-		this.scaleZ = z;
-		
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Sets the angle measurements (in radians) used to rotate this AbstractSurface about the x, y, and z axes when it is rendered
-	 * to the specified double values. This method calls calculateTransform() after it is completed.
-	 */
-	public void setRotationCoefficients(double x, double y, double z) {
-		this.rotateX = x;
-		this.rotateY = y;
-		this.rotateZ = z;
-		
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Sets the TransformMatrix object at the specified index used to transform this Surface object when it is rendered
-	 * to the TransformMatrix object specified. This method calls calculateTransform() after it is completed.
-	 */
-	public void setTransform(int index, TransformMatrix transform) {
-		this.transforms[index] = transform;
-		
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Sets the TransformMatrix objects used to transform this AbstractSurface when it is rendered
-	 * to those stored in the specified TransformMatrix object array. If the specified array is null,
-	 * an IllegalArgumentException will be thrown. This method calls calculateTransform() after it
-	 * is completed.
-	 */
-	public void setTransforms(TransformMatrix transforms[]) throws IllegalArgumentException {
-		if (transforms == null)
-			throw new IllegalArgumentException();
-		
-		this.transforms = transforms;
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Applies the transformation represented by the specified TransformMatrix to this AbstractSurface when it is rendered.
-	 * This method calls calculateTransform() after it is completed.
-	 */
-	public void addTransform(TransformMatrix transform) {
-		TransformMatrix newTransforms[] = new TransformMatrix[this.transforms.length + 1];
-		
-		System.arraycopy(this.transforms, 0, newTransforms, 0, this.transforms.length);
-		newTransforms[newTransforms.length - 1] = transform;
-		
-		this.transforms = newTransforms;
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Removes the TransformMatrix object at the specified index from this Surface object.
-	 * This method calls calculateTransform() after it is completed.
-	 */
-	public void removeTransform(int index) {
-		TransformMatrix newTransforms[] = new TransformMatrix[this.transforms.length - 1];
-		
-		System.arraycopy(this.transforms, 0, newTransforms, 0, index);
-		
-		if (index != this.transforms.length - 1) {
-			System.arraycopy(this.transforms, index + 1, newTransforms, index, this.transforms.length - (index + 1));
-		}
-		
-		this.transforms = newTransforms;
-		this.transformCurrent = false;
-		// this.calculateTransform();
-	}
-	
-	/**
-	 * Calculates the complete transformation that will be applied to this AbstractSurface when it is rendered
-	 * and stores it for later use. The transformations are applied in the following order: translate (location),
-	 * scale (size), rotate x, rotate y, rotate z. Other transforms are applied last and in the order they were added.
-	 */
-	public void calculateTransform() {
-		if (this.transformCurrent) return;
-		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Calculating transform...");
-		}
-		
-		
-		this.transform = new TransformMatrix();
-		
-		for(int i = 0; i < this.transforms.length; i++) {
-			this.transform = this.transform.multiply(this.transforms[i]);
-		}
-		
-		this.completeTransform = new TransformMatrix();
-		
-		if (this.location != null) {
-			this.completeTransform =
-				this.completeTransform.multiply(TransformMatrix.createTranslationMatrix(
-						this.location.getX(), this.location.getY(), this.location.getZ()));
-		}
-		
-		this.completeTransform = this.completeTransform.multiply(TransformMatrix.createScaleMatrix(this.scaleX * this.size, this.scaleY * this.size, this.scaleZ * this.size));
-		
-		if (this.rotateX != 0.0) {
-			this.completeTransform = this.completeTransform.multiply(TransformMatrix.createRotateXMatrix(this.rotateX));
-		}
-		
-		if (this.rotateY != 0.0) {
-			this.completeTransform = this.completeTransform.multiply(TransformMatrix.createRotateYMatrix(this.rotateY));
-		}
-		
-		if (this.rotateZ != 0.0) {
-			this.completeTransform = this.completeTransform.multiply(TransformMatrix.createRotateZMatrix(this.rotateZ));
-		}
-		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Basic transform:");
-			Settings.surfaceOut.println(this.completeTransform.toString());
-		}
-		
-		if (this.transform != null) {
-			this.completeTransform = this.completeTransform.multiply(this.transform);
-		}
-		
-		this.transformCurrent = true;
-		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Complete transform:");
-			Settings.surfaceOut.println(this.completeTransform.toString());
-		}
-	}
 	
 	/**
 	 * Sets the Texture object (used to color this AbstractSurface) at the specified index
@@ -715,63 +488,6 @@ public abstract class AbstractSurface implements Surface {
 	public void setColor(RGB color) { this.color = color; }
 	
 	/**
-	 * Returns the location of this AbstractSurface as a Vector object.
-	 */
-	public Vector getLocation() { return this.location; }
-	
-	/**
-	 * Returns the size of this AbstractSurface as a double value.
-	 */
-	public double getSize() { return this.size; }
-	
-	/**
-	 * Returns an array of double values containing the values used to scale this AbstractSurface
-	 * on the x, y, and z axes when it is rendered.
-	 */
-	public double[] getScaleCoefficients() {
-		double scale[] = {this.scaleX, this.scaleY, this.scaleZ};
-		
-		return scale;
-	}
-	
-	/**
-	 * Returns an array of double values containing the angle measurements (in radians) used to rotate
-	 * this AbstractSurface about the x, y, and z axes when it is rendered as an array of double values.
-	 */
-	public double[] getRotationCoefficients() {
-		double rotation[] = {this.rotateX, this.rotateY, this.rotateZ};
-		
-		return rotation;
-	}
-	
-	/**
-	 * Returns the TransformMatrix object used to transform this AbstractSurface when it is rendered.
-	 * This TransformMatrix does not represents the transformations due to fixed scaling and rotation.
-	 */
-	public TransformMatrix getTransform() { return this.getTransform(false); }
-	
-	/**
-	 * Returns the TransformMatrix object used to transform this AbstractSurface when it is rendered.
-	 * If the specified boolean value is true, this TransformMatrix includes the transformations due to fixed scaling and rotation.
-	 */
-	public TransformMatrix getTransform(boolean include) {
-		this.calculateTransform();
-		
-		if (include) {
-			return this.completeTransform;
-		} else {
-			return this.transform;
-		}
-	}
-	
-	/**
-	 * Returns the TransformMatrix objects used to transform this Surface object when it is rendered
-	 * as an array of TransformMatrix objects. This array does not include the TransformMatrix objects
-	 * that account for fixed scaling and rotation.
-	 */
-	public TransformMatrix[] getTransforms() { return this.transforms; }
-	
-	/**
 	 * Returns the Texture object at the specified index in the list of Texture objects used
 	 * to color this AbstractSurface.
 	 */
@@ -796,7 +512,7 @@ public abstract class AbstractSurface implements Surface {
 	 * @return  The color of this AbstractSurface at the specified point as an RGB object.
 	 */
 	public RGB getColorAt(Vector point, boolean transform) {
-	    if (transform) point = this.completeTransform.getInverse().transformAsLocation(point);
+	    if (transform) point = getTransform(true).getInverse().transformAsLocation(point);
 	    
 	    RGB colorAt = new RGB(0.0, 0.0, 0.0);
 	    
