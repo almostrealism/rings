@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.j3d.physics.pfield.AbsorberHashSet;
 import net.sf.j3d.physics.pfield.network.PhotonFieldSceneLoader;
 import net.sf.j3d.util.graphics.RGB;
 
