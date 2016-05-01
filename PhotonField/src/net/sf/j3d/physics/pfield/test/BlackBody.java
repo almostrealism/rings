@@ -23,7 +23,6 @@ import net.sf.j3d.physics.pfield.VolumeAbsorber;
 import net.sf.j3d.physics.pfield.geometry.Sphere;
 import net.sf.j3d.physics.pfield.light.LightBulb;
 import net.sf.j3d.physics.pfield.util.PhysicalConstants;
-import net.sf.j3d.physics.pfield.util.VectorMath;
 
 /**
  * A BlackBody absorbs all photons it detects and keeps track of a
