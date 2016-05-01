@@ -209,12 +209,11 @@ public class DefaultPhotonField implements PhotonField {
 			this.sizeGraph.addEntry(this.getSize());
 			
 			if (this.file != null) {
-				try {
-					StringBuffer b = new StringBuffer();
-					this.sizeGraph.print(b);
-					BufferedWriter out = new BufferedWriter(new FileWriter(this.file));
+				StringBuffer b = new StringBuffer();
+				this.sizeGraph.print(b);
+				
+				try (BufferedWriter out = new BufferedWriter(new FileWriter(this.file))) {
 					out.write(b.toString());
-					out.close();
 				} catch (IOException e) {
 					System.out.println("DefaultPhotonField: " + e.getMessage());
 				}
