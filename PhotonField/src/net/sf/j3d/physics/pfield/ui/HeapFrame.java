@@ -13,8 +13,6 @@
 
 package net.sf.j3d.physics.pfield.ui;
 
-import javax.swing.JFrame;
-
 public class HeapFrame {
 
 	/**
