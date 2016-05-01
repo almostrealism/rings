@@ -1,4 +1,4 @@
-package com.almostrealism.visualize.renderable;
+package com.almostrealism.geometry;
 
 public interface Oriented {
 	public void setOrientation(float angle, float x, float y, float z);

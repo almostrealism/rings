@@ -4,9 +4,9 @@ import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL2;
 
+import com.almostrealism.geometry.Oriented;
+import com.almostrealism.geometry.Positioned;
 import com.almostrealism.visualize.renderable.Colored;
-import com.almostrealism.visualize.renderable.Oriented;
-import com.almostrealism.visualize.renderable.Positioned;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.almostrealism.visualize.shading.Diffuse;
 import com.almostrealism.visualize.shading.Specular;
