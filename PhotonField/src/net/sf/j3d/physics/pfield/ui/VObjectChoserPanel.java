@@ -15,7 +15,6 @@ package net.sf.j3d.physics.pfield.ui;
 
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
-import javax.swing.JButton;
 
 /**
  * @author Samuel Tepper

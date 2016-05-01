@@ -15,7 +15,6 @@ import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import java.awt.FlowLayout;
 
 import net.sf.j3d.physics.pfield.distribution.OverlayBRDF;
 
