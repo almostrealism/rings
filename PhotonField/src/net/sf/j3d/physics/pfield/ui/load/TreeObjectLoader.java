@@ -13,9 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 import net.sf.j3d.obj.DefaultObjectFactory;
-import net.sf.j3d.physics.pfield.util.VectorMath;
 import net.sf.j3d.ui.ObjectTreeDisplay;
-import net.sf.j3d.ui.ObjectTreeNode;
 
 /**
  * @author  Mike Murray
