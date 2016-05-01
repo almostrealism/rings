@@ -8,7 +8,6 @@
 
 package net.sf.j3d.physics.pfield.xml;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
