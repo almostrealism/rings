@@ -8,12 +8,8 @@
 
 package net.sf.j3d.physics.pfield.util;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sf.j3d.util.graphics.RGB;
 
