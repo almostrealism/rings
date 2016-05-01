@@ -37,8 +37,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 
+import com.almostrealism.photonfield.util.VectorMath;
+
 import net.sf.j3d.obj.ObjectFactory;
-import net.sf.j3d.physics.pfield.util.VectorMath;
 import net.sf.j3d.ui.panels.PercentagePanel;
 
 /**

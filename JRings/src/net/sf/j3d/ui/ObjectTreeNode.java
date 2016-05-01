@@ -18,7 +18,7 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
-import net.sf.j3d.physics.pfield.util.Length;
+import com.almostrealism.photonfield.util.Length;
 
 public class ObjectTreeNode implements TreeNode, Length {
 	private ObjectTreeNode parent;
