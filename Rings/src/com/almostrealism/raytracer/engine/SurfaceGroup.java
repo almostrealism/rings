@@ -22,8 +22,8 @@ import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;
 
 /**
- * A SurfaceGroup object allows Surface objects to be grouped together.
- * The properties of the SurfaceGroup object are applied to each of its children.
+ * A {@link SurfaceGroup} object allows {@link Surface} objects to be grouped together.
+ * The properties of the {@link SurfaceGroup} object are applied to each of its children.
  * 
  * @author Mike Murray
  */
