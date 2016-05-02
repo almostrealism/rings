@@ -28,12 +28,12 @@ import net.sf.j3d.util.graphics.RGB;
 // TODO  Add bounding solid to make intersection calc faster.
 
 /**
- * A Mesh object stores a set of points (Vector objects)
+ * A {@link Mesh} object stores a set of points (Vector objects)
  * and allows triangles to be specified using those points.
  * 
  * @author Mike Murray
  */
-public class Mesh extends SpacePartition {
+public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	private static RGB white = new RGB(1.0, 1.0, 1.0);
 	
 	public static class MeshFile implements SurfaceWrapper, Surface {
@@ -225,9 +225,9 @@ public class Mesh extends SpacePartition {
   	public int addTriangle(int p1, int p2, int p3) {
   		if (p1 == p2 || p2 == p3 || p3 == p1) return -1;
   		
-  		Vertex v1 = (Vertex)this.points.get(p1);
-  		Vertex v2 = (Vertex)this.points.get(p2);
-  		Vertex v3 = (Vertex)this.points.get(p3);
+  		Vertex v1 = (Vertex) this.points.get(p1);
+  		Vertex v2 = (Vertex) this.points.get(p2);
+  		Vertex v3 = (Vertex) this.points.get(p3);
   		
   		Triangle t = new Triangle(v1, v2, v3);
   		
@@ -336,6 +336,10 @@ public class Mesh extends SpacePartition {
 		
 		return t;
   	}
+	
+	public Iterator<Triangle> iterator() {
+		return triangles.iterator();
+	}
 	
 	/**
 	 * Checks triangle cache for the specified face index, and constructs a Triangle
