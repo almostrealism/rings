@@ -14,6 +14,8 @@
 
 package com.almostrealism.raytracer.engine;
 
+import java.util.ArrayList;
+
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
@@ -28,21 +30,21 @@ import net.sf.j3d.util.graphics.RGB;
  * @author Mike Murray
  */
 public class SurfaceGroup extends AbstractSurface {
-  private Surface surfaces[];
+	private ArrayList<Surface> surfaces;
 
 	/**
 	 * Constructs a SurfaceGroup object with no Surface objects.
 	 */
 	public SurfaceGroup() {
-		super.setColor(new RGB(1.0, 1.0, 1.0));
-		this.setSurfaces(new Surface[0]);
+		surfaces = new ArrayList<Surface>();
+		setColor(new RGB(1.0, 1.0, 1.0));
 	}
 	
 	/**
 	 * Constructs a SurfaceGroup object using the Surface objects in the specified array.
 	 */
 	public SurfaceGroup(Surface surfaces[]) {
-		super.setColor(new RGB(1.0, 1.0, 1.0));
+		this();
 		this.setSurfaces(surfaces);
 	}
 	
@@ -50,7 +52,7 @@ public class SurfaceGroup extends AbstractSurface {
 	 * Replaces all of the Surface objects of this SurfaceGroup object with those represented by the specified Surface array.
 	 */
 	public void setSurfaces(Surface surfaces[]) {
-		this.surfaces = new Surface[0];
+		this.surfaces.clear();
 		
 		for (int i = 0; i < surfaces.length; i++)
 			this.addSurface(surfaces[i]);
@@ -61,16 +63,12 @@ public class SurfaceGroup extends AbstractSurface {
 	 * to this SurfaceGroup object (if it is an instance of AbstractSurface).
 	 */
 	public void addSurface(Surface surface) {
-		Surface newSurfaces[] = new Surface[this.surfaces.length + 1];
-		for (int i = 0; i < this.surfaces.length; i++) newSurfaces[i] = this.surfaces[i];
-		newSurfaces[newSurfaces.length - 1] = surface;
-		
 		if (surface instanceof AbstractSurface)
-			((AbstractSurface)surface).setParent(this);
+			((AbstractSurface) surface).setParent(this);
 //		else if (surface instanceof AbstractSurfaceUI)
 //			((AbstractSurfaceUI)surface).setParent(this);
 		
-		this.surfaces = newSurfaces;
+		this.surfaces.add(surface);
 	}
 	
 	/**
@@ -78,28 +76,26 @@ public class SurfaceGroup extends AbstractSurface {
 	 * and sets the parent of the removed Surface object to null (if it is an instance of AbstractSurface).
 	 */
 	public void removeSurface(int index) {
-		if (this.surfaces[index] instanceof AbstractSurface)
-			((AbstractSurface)this.surfaces[index]).setParent(null);
+		if (this.surfaces.get(index) instanceof AbstractSurface)
+			((AbstractSurface) this.surfaces.get(index)).setParent(null);
 		
-		Surface newSurfaces[] = new Surface[this.surfaces.length - 1];
-		for (int i = 0; i < index; i++) newSurfaces[i] = this.surfaces[i];
-		for (int i = index + 1; i < this.surfaces.length - (index + 1); i++) newSurfaces[i] = this.surfaces[i];
-		
-		this.setSurfaces(newSurfaces);
+		this.surfaces.remove(index);
 	}
 	
 	/**
-	 * Returns the Surface objects stored by this SurfaceGroup object as a Surface array.
+	 * Returns the {@link Surface} objects stored by this {@link SurfaceGroup} object as
+	 * a {@link Surface} array.
 	 */
 	public Surface[] getSurfaces() {
-		return this.surfaces;
+		return this.surfaces.toArray(new Surface[0]);
 	}
 	
 	/**
-	 * Returns the Surface object stored by this SurfaceGroup object at the specified index.
+	 * Returns the {@link Surface} object stored by this {@link SurfaceGroup} object at
+	 * the specified index.
 	 */
 	public Surface getSurface(int index) {
-		return this.surfaces[index];
+		return this.surfaces.get(index);
 	}
 	
 	/**
@@ -127,10 +123,10 @@ public class SurfaceGroup extends AbstractSurface {
 	public Mesh triangulate() {
 		Mesh mesh = super.triangulate();
 		
-		i: for (int i = 0; i < this.surfaces.length; i++) {
-			if (this.surfaces[i] instanceof AbstractSurface == false) continue i;
+		i: for (int i = 0; i < this.surfaces.size(); i++) {
+			if (this.surfaces.get(i) instanceof AbstractSurface == false) continue i;
 			
-			Mesh m = ((AbstractSurface)this.surfaces[i]).triangulate();
+			Mesh m = ((AbstractSurface) this.surfaces.get(i)).triangulate();
 			
 			Vector v[] = m.getVectors();
 			Triangle t[] = m.getTriangles();
@@ -161,8 +157,8 @@ public class SurfaceGroup extends AbstractSurface {
 	public boolean intersect(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		for(int i = 0; i < this.surfaces.length; i++) {
-			if (this.surfaces[i].intersect(ray) == true)
+		for(int i = 0; i < this.surfaces.size(); i++) {
+			if (this.surfaces.get(i).intersect(ray) == true)
 				return true;
 		}
 		
@@ -177,6 +173,6 @@ public class SurfaceGroup extends AbstractSurface {
 	public Intersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		return RayTracingEngine.closestIntersection(ray, this.surfaces);
+		return RayTracingEngine.closestIntersection(ray, getSurfaces());
 	}
 }
