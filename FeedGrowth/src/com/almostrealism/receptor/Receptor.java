@@ -24,7 +24,7 @@ import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
 import com.almostrealism.receptor.ui.SamplerPanel;
-import com.almostrealism.visualize.gl.ReceptorCanvas;
+import com.almostrealism.visualize.ui.ReceptorCanvas;
 
 public class Receptor {
 	private static Mixer globalMixer;
@@ -121,8 +121,8 @@ public class Receptor {
 		s.getCellA().setMeter(p);
 		
 		for (long l = 0; l < Long.MAX_VALUE; l++) {
-//			sine.push(0);
-//			s.getCell(0).push(0);
+			sine.push(0);
+			s.getCell(0).push(0);
 			
 			globalMixer.tick();
 			system.tick();

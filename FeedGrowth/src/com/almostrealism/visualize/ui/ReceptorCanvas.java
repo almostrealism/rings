@@ -1,4 +1,4 @@
-package com.almostrealism.visualize.gl;
+package com.almostrealism.visualize.ui;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -17,6 +17,7 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
+import com.almostrealism.visualize.gl.RenderableGLList;
 import com.almostrealism.visualize.models.NurbsMoleHill;
 import com.almostrealism.visualize.nurbs.AnimatedNurbsSurface;
 import com.almostrealism.visualize.renderable.Renderable;
@@ -47,24 +48,6 @@ public class ReceptorCanvas extends GLJPanel implements GLEventListener, MouseLi
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		this.swapInterval = 1;
-		
-//		Gear g1 = new Gear(1.0f, 4.0f, 1.0f, 20, 0.7f);
-//		g1.setPosition(-3.0f, -2.0f, 0.0f);
-//		g1.setOrientation(angle, 0.0f, 0.0f, 1.0f);
-//		g1.setColor(0.8f, 0.1f, 0.0f, 0.7f);
-//		add(g1);
-//
-//		Gear g2 = new Gear(0.5f, 2.0f, 2.0f, 10, 0.7f);
-//		g2.setPosition(3.1f, -2.0f, 0.0f);
-//		g2.setOrientation(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
-//		g2.setColor(0.0f, 0.8f, 0.2f, 0.7f);
-//		add(g2);
-//		
-//		Gear g3 = new Gear(1.3f, 2.0f, 0.5f, 10, 0.7f);
-//		g3.setPosition(-3.1f, 4.2f, 0.0f);
-//		g3.setOrientation(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
-//		g3.setColor(0.2f, 0.2f, 1.0f, 0.7f);
-//		add(g3);
 		
 		NurbsMoleHill m = new NurbsMoleHill();
 		RenderableGLList l = new RenderableGLList(m);
