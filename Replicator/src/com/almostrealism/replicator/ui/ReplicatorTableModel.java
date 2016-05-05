@@ -7,6 +7,8 @@ import javax.swing.table.AbstractTableModel;
 
 import net.sf.j3d.util.Vector;
 
+import com.almostrealism.geometry.BasicGeometry;
+import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 
 public class ReplicatorTableModel extends AbstractTableModel {
@@ -23,6 +25,17 @@ public class ReplicatorTableModel extends AbstractTableModel {
 	public ReplicatorTableModel() {
 		layers = new ArrayList<DefaultReplicant>();
 		modelNames = new ArrayList<String>();
+	}
+	
+	public void addLayer(Surface s) {
+		DefaultReplicant r = new DefaultReplicant(s);
+		r.put(LEFT, new BasicGeometry());
+		r.put(RIGHT, new BasicGeometry());
+		r.put(TOP, new BasicGeometry());
+		r.put(BOTTOM, new BasicGeometry());
+		r.put(FRONT, new BasicGeometry());
+		r.put(BACK, new BasicGeometry());
+		layers.add(r);
 	}
 	
 	@Override

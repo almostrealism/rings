@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.almostrealism.geometry.BasicGeometry;
+import com.almostrealism.raytracer.engine.Surface;
 
 public class DefaultReplicant extends Replicant implements Iterable<BasicGeometry> {
 	private Map<String, BasicGeometry> geo;
 	
-	public DefaultReplicant() {
+	public DefaultReplicant(Surface s) {
 		geo = new HashMap<String, BasicGeometry>();
 		setGeometry(this);
+		setSurface(s);
 	}
 	
 	public BasicGeometry get(String name) { return geo.get(name); }
