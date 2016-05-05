@@ -13,7 +13,15 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
  * @author  Michael Murray
  */
 public class Replicant extends SurfaceGroup {
+	private Iterable<BasicGeometry> geo;
+	
+	protected Replicant() { }
+	
 	public Replicant(Iterable<BasicGeometry> n) {
-		
+		setGeometry(n);
+	}
+	
+	protected void setGeometry(Iterable<BasicGeometry> n) {
+		this.geo = n;
 	}
 }
