@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import com.almostrealism.io.WavefrontObjParser;
+import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.receptor.Receptor;
 import com.almostrealism.receptor.ui.SamplerPanel;
 import com.almostrealism.replicator.ui.ReplicatorCanvas;
@@ -28,7 +30,9 @@ public class Replicator {
 	public Replicator() throws UnsupportedAudioFileException, IOException {
 		canvas = new ReplicatorCanvas();
 		receptor = new Receptor();
-
+		
+		model = new ReplicatorTableModel();
+		
 		controlPanel = new JPanel(new GridLayout(0, 1));
 		
 		JButton layersButton = new JButton("Layers");
@@ -57,6 +61,8 @@ public class Replicator {
 		samplerFrame.getContentPane().add(new SamplerPanel(4, 4), BorderLayout.CENTER);
 		samplerFrame.setSize(400, 400);
 	}
+	
+	public void addLayer(Surface s) { model.addLayer(s); }
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
@@ -88,5 +94,7 @@ public class Replicator {
 		controlFrame.setLocation(canvasFrame.getLocation().x + canvasFrame.getWidth(), canvasFrame.getLocation().y);
 		controlFrame.setSize(90, 140);
 		controlFrame.setVisible(true);
+		
+		r.addLayer(new WavefrontObjParser(Replicator.class.getResourceAsStream("/models/Cube.obj")).getMesh());
 	}
 }
