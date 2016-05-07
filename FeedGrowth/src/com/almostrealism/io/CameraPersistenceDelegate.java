@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004  Mike Murray
+ * Copyright (C) 2004-06  Mike Murray
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License (version 2)
@@ -12,31 +12,23 @@
  *
  */
 
-package net.sf.j3d.io;
-
+package com.almostrealism.io;
 
 import java.beans.*;
 
-import com.almostrealism.raytracer.lighting.*;
-
 /**
-  A LightPersistenceDelegate object adjusts the way the a Light object is encoded into XML
+  A CameraPersistenceDelegate object adjusts the way the a Camera object is encoded into XML
   when using an XMLEncoder.
 */
 
-public class LightPersistenceDelegate extends DefaultPersistenceDelegate {
+public class CameraPersistenceDelegate extends DefaultPersistenceDelegate {
 	/**
-	  Properly encodes a Light object.
+	  Properly encodes a Camera object.
 	*/
 	
 	public void initialize(Class type, Object oldInstance, Object newInstance, Encoder out) {
 		super.initialize(type, oldInstance, newInstance, out);
 		
-		if (oldInstance instanceof PointLight) {
-			double a[] = ((PointLight)oldInstance).getAttenuationCoefficients();
-			
-			out.writeStatement(new Statement(oldInstance, "setAttenuationCoefficients",
-						new Object[] {new Double(a[0]), new Double(a[1]), new Double(a[2])}));
-		}
+		out.writeStatement(new Statement(oldInstance, "updateUVW", new Object[0]));
 	}
 }

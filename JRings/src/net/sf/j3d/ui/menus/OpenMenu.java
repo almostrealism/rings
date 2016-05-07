@@ -17,10 +17,14 @@ package net.sf.j3d.ui.menus;
 
 
 import java.io.*;
+
 import javax.swing.*;
 
 import net.sf.j3d.io.*;
+
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.*;
+
 import net.sf.j3d.ui.event.*;
 
 import java.beans.ExceptionListener;

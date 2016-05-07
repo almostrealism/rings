@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
@@ -20,7 +21,6 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 
-import net.sf.j3d.io.FileDecoder;
 import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;
 

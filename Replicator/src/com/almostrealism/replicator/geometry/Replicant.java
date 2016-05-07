@@ -35,14 +35,15 @@ public class Replicant extends SurfaceGroup implements Renderable {
 	protected void setGeometry(Iterable<BasicGeometry> n) {
 		this.geo = n;
 	}
-
+	
 	@Override
 	public void init(GL2 gl) { if (delegate != null) delegate.init(gl); }
-
+	
 	@Override
 	public void display(GL2 gl) {
 		for (BasicGeometry g : geo) {
 			// TODO  Push matrix
+			// TODO  Inherit surface color, etc?
 			delegate.display(gl);
 			// TODO  Pop matrix
 		}

@@ -3,10 +3,10 @@ package net.sf.j3d.imaging;
 import java.io.File;
 import java.io.IOException;
 
+import com.almostrealism.io.FileEncoder;
 
 import net.sf.j3d.network.Job;
 import net.sf.j3d.network.db.Client;
-import net.sf.j3d.io.FileEncoder;
 import net.sf.j3d.util.graphics.RGB;
 
 public class ArtifactDetectionJob implements Job {

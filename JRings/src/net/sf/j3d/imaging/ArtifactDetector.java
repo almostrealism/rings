@@ -20,7 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
-import net.sf.j3d.io.FileEncoder;
+import com.almostrealism.io.FileEncoder;
+
 import net.sf.j3d.ui.panels.PercentagePanel;
 import net.sf.j3d.util.graphics.GraphicsConverter;
 import net.sf.j3d.util.graphics.RGB;

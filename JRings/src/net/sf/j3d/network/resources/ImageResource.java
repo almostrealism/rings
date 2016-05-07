@@ -22,9 +22,9 @@ import javax.media.jai.util.ImagingException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import com.almostrealism.io.ScpDownloader;
 import com.sun.media.jai.codec.FileCacheSeekableStream;
 
-import net.sf.j3d.io.ScpDownloader;
 import net.sf.j3d.network.Resource;
 import net.sf.j3d.network.Server;
 import net.sf.j3d.network.Server.IOStreams;

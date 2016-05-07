@@ -18,7 +18,8 @@ import java.util.Properties;
 
 import net.sf.j3d.network.Message;
 import net.sf.j3d.network.db.Client;
-import net.sf.j3d.io.FileEncoder;
+
+import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.network.JobProducer;
 

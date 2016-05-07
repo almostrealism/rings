@@ -6,7 +6,7 @@
  * All rights reserved.
  */
 
-package net.sf.j3d.io;
+package com.almostrealism.io;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -32,7 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import net.sf.j3d.physics.shaders.RigidBodyStateShader;
-import net.sf.j3d.io.JTextAreaPrintWriter;
+
+import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
@@ -46,6 +47,7 @@ import com.almostrealism.raytracer.shaders.BlendingShader;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.ReflectionShader;
 import com.almostrealism.raytracer.shaders.Shader;
+
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.panels.DebugOutputPanel;
 import net.sf.j3d.util.Vector;

@@ -38,7 +38,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.text.JTextComponent;
 
-import net.sf.j3d.io.JTextAreaPrintWriter;
+import com.almostrealism.io.JTextAreaPrintWriter;
+
 import net.sf.j3d.run.Settings;
 
 

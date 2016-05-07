@@ -19,10 +19,12 @@ import java.io.IOException;
 
 
 
+
 import javax.swing.*;
 
-import net.sf.j3d.io.FileDecoder;
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.*;
+
 import net.sf.j3d.ui.event.*;
 import net.sf.j3d.ui.menus.ImportMenu.CustomExceptionListener;
 import net.sf.j3d.ui.panels.*;

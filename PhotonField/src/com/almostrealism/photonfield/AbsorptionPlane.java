@@ -15,12 +15,12 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
+import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.geometry.Plane;
 import com.almostrealism.photonfield.util.Fast;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
 
-import net.sf.j3d.io.FileEncoder;
 import net.sf.j3d.util.graphics.GraphicsConverter;
 import net.sf.j3d.util.graphics.RGB;
 

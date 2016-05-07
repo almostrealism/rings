@@ -15,10 +15,14 @@
 package net.sf.j3d.ui.menus;
 
 import java.io.*;
+
 import javax.swing.*;
 
 import net.sf.j3d.io.*;
+
+import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.*;
+
 import net.sf.j3d.ui.event.*;
 import net.sf.j3d.ui.panels.*;
 import net.sf.j3d.util.graphics.RGB;

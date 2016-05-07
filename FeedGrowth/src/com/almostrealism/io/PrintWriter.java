@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.io;
+package com.almostrealism.io;
 
 public interface PrintWriter {
 	/**

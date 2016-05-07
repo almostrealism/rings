@@ -24,7 +24,8 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
-import net.sf.j3d.io.RSSFeed;
+import com.almostrealism.io.RSSFeed;
+
 import net.sf.j3d.network.db.Client;
 import net.sf.j3d.util.Graph;
 

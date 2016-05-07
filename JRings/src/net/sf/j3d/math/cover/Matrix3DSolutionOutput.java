@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import net.sf.j3d.io.FileDecoder;
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
+
 import net.sf.j3d.util.Vector;
 
 public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {

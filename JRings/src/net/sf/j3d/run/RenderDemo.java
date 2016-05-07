@@ -17,8 +17,8 @@ package net.sf.j3d.run;
 import java.io.File;
 import java.io.IOException;
 
-import net.sf.j3d.io.FileDecoder;
-import net.sf.j3d.io.FileEncoder;
+import com.almostrealism.io.FileDecoder;
+import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
@@ -30,6 +30,7 @@ import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.textures.StripeTexture;
+
 import net.sf.j3d.util.TransformMatrix;
 import net.sf.j3d.ui.displays.RenderTestFrame;
 import net.sf.j3d.util.Vector;

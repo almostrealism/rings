@@ -11,11 +11,11 @@ package com.almostrealism.photonfield.util.buffers;
 import java.io.File;
 import java.io.IOException;
 
+import com.almostrealism.io.FileDecoder;
+import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
 
-import net.sf.j3d.io.FileDecoder;
-import net.sf.j3d.io.FileEncoder;
 import net.sf.j3d.util.graphics.AverageColor;
 import net.sf.j3d.util.graphics.RGB;
 

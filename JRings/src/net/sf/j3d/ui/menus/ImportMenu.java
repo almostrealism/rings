@@ -26,10 +26,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import net.sf.j3d.io.FileDecoder;
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
+
 import net.sf.j3d.ui.event.Event;
 import net.sf.j3d.ui.event.EventGenerator;
 import net.sf.j3d.ui.event.EventHandler;

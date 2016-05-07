@@ -11,11 +11,11 @@ package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
+import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.SceneLoader;
 import com.almostrealism.raytracer.engine.Scene;
 
-import net.sf.j3d.io.FileDecoder;
 import net.sf.j3d.network.db.Client;
 
 /**

@@ -23,8 +23,8 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
-import net.sf.j3d.io.JTextAreaPrintWriter;
-import net.sf.j3d.io.PrintWriter;
+import com.almostrealism.io.JTextAreaPrintWriter;
+import com.almostrealism.io.PrintWriter;
 
 
 /**

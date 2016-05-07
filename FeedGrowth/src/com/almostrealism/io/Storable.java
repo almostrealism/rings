@@ -7,7 +7,7 @@
  *
  */
 
-package net.sf.j3d.io;
+package com.almostrealism.io;
 
 import java.io.OutputStream;
 

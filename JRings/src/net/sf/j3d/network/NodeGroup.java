@@ -30,7 +30,8 @@ import java.util.Properties;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.JLabel;
 
-import net.sf.j3d.io.RSSFeed;
+import com.almostrealism.io.RSSFeed;
+
 import net.sf.j3d.network.db.Client;
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.util.Graph;
