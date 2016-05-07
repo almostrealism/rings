@@ -59,6 +59,10 @@ public class Vector implements Cloneable {
 		this(x, y, z, Vector.CARTESIAN_COORDINATES);
 	}
 	
+	public Vector(double v[]) { this(v[0], v[1], v[2]); }
+	
+	public Vector(float v[]) { this(v[0], v[1], v[2]); }
+	
 	/**
 	 * @return  A random vector uniformly distributed on the unit sphere as a Vector object.
 	 */

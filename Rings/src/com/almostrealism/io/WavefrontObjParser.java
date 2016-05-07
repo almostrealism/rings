@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import net.sf.j3d.util.Vector;
+
+import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.ObjPolygon;
 
 /**
@@ -17,13 +20,16 @@ import com.almostrealism.raytracer.primitives.ObjPolygon;
  */
 public class WavefrontObjParser {
 	private BufferedReader reader;
-	private ArrayList vertices, texCoords, faces;
+	private ArrayList<float[]> vertices;
+	private ArrayList faces, texCoords;
+	private ArrayList<int[]> triangles;
 	
 	public WavefrontObjParser(InputStream in) {
 		this.reader = new BufferedReader(new InputStreamReader(in));
 		this.vertices = new ArrayList();
 		this.texCoords = new ArrayList();
 		this.faces = new ArrayList();
+		this.triangles = new ArrayList<int[]>();
 	}
 	
 	public void parse() throws IOException {
@@ -46,12 +52,22 @@ public class WavefrontObjParser {
 				this.texCoords.add(f);
 			} else if (line.startsWith("f ")) {
 				String s[] = line.split(" ");
+				int t[] = new int[3];
+				
 				ArrayList faceVerts = new ArrayList();
 				ArrayList faceTexCoords = new ArrayList();
 				
 				for (int i = 1; i < s.length; i++) {
 					String l[] = s[i].split("/");
-					float vertex[] = (float[]) this.vertices.get(Integer.parseInt(l[0]) - 1);
+					int vertIndex = Integer.parseInt(l[0]) - 1;
+					
+					if (i > 3) {
+						System.out.println("Non triangular vertex encountered");
+					} else {
+						t[i - 1] = vertIndex;
+					}
+					
+					float vertex[] = (float[]) this.vertices.get(vertIndex);
 					faceVerts.add(vertex);
 					
 					if (l.length > 1 && l[1].length() > 0) {
@@ -73,5 +89,15 @@ public class WavefrontObjParser {
 	
 	public ObjPolygon[] getFaces() {
 		return (ObjPolygon[]) this.faces.toArray(new ObjPolygon[0]);
+	}
+	
+	public Mesh getMesh() {
+		Vector v[] = new Vector[vertices.size()];
+		for (int i = 0; i < v.length; i++) {
+			float f[] = vertices.get(i);
+			v[i] = new Vector(f);
+		}
+		
+		return new Mesh(v, triangles.toArray(new int[0][0]));
 	}
 }
