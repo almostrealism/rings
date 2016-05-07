@@ -27,7 +27,7 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		modelNames = new ArrayList<String>();
 	}
 	
-	public void addLayer(Surface s) {
+	public void addLayer(String name, Surface s) {
 		DefaultReplicant r = new DefaultReplicant(s);
 		r.put(LEFT, new BasicGeometry());
 		r.put(RIGHT, new BasicGeometry());
@@ -36,6 +36,7 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		r.put(FRONT, new BasicGeometry());
 		r.put(BACK, new BasicGeometry());
 		layers.add(r);
+		modelNames.add(name);
 	}
 	
 	@Override

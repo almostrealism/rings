@@ -62,7 +62,7 @@ public class Replicator {
 		samplerFrame.setSize(400, 400);
 	}
 	
-	public void addLayer(Surface s) { model.addLayer(s); }
+	public void addLayer(String name, Surface s) { model.addLayer(name, s); }
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
@@ -95,6 +95,6 @@ public class Replicator {
 		controlFrame.setSize(90, 140);
 		controlFrame.setVisible(true);
 		
-		r.addLayer(new WavefrontObjParser(Replicator.class.getResourceAsStream("/models/Cube.obj")).getMesh());
+		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getResourceAsStream("/models/Cube.obj")).getMesh());
 	}
 }
