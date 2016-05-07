@@ -23,40 +23,30 @@ import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
-import com.almostrealism.receptor.ui.SamplerPanel;
 import com.almostrealism.visualize.ui.ReceptorCanvas;
 
 public class Receptor {
 	private static Mixer globalMixer;
 	
+	private JFrame receptorFrame, feedbackFrame;
+	
 	private ReceptorCanvas canvas;
 	private ReceptorPlayerPanel panel;
 	
-	protected void initUI() throws UnsupportedAudioFileException, IOException {
+	public Receptor() throws UnsupportedAudioFileException, IOException {
 		canvas = new ReceptorCanvas();
 		panel = new ReceptorPlayerPanel();
 		
-		JFrame r = new JFrame("Receptor");
-		r.getContentPane().setLayout(new BorderLayout());
-		r.getContentPane().add(canvas, BorderLayout.CENTER);
-		r.setSize(400, 400);
-		r.setLocationRelativeTo(null);
-		r.setLocation(r.getLocation().x, r.getLocation().y - 200);
-		r.setVisible(true);
+		receptorFrame = new JFrame("Receptor");
+		receptorFrame.getContentPane().setLayout(new BorderLayout());
+		receptorFrame.getContentPane().add(canvas, BorderLayout.CENTER);
+		receptorFrame.setSize(400, 400);
+		receptorFrame.setLocationRelativeTo(null);
 		
-		JFrame f = new JFrame("Feedback");
-		f.getContentPane().setLayout(new BorderLayout());
-		f.getContentPane().add(panel, BorderLayout.CENTER);
-		f.setSize(400, 250);
-		f.setLocation(r.getLocation().x, r.getLocation().y + r.getHeight());
-		f.setVisible(true);
-		
-		JFrame s = new JFrame("Sampler");
-		s.getContentPane().setLayout(new BorderLayout());
-		s.getContentPane().add(new SamplerPanel(4, 4), BorderLayout.CENTER);
-		s.setSize(400, 400);
-		s.setLocation(r.getLocation().x + r.getWidth(), r.getLocation().y);
-		s.setVisible(true);
+		feedbackFrame = new JFrame("Feedback");
+		feedbackFrame.getContentPane().setLayout(new BorderLayout());
+		feedbackFrame.getContentPane().add(panel, BorderLayout.CENTER);
+		feedbackFrame.setSize(400, 250);
 		
 		canvas.start();
 	}
@@ -65,11 +55,22 @@ public class Receptor {
 	
 	public ReceptorPlayerPanel getPlayerPanel() { return panel; }
 	
+	public void showReceptorFrame(int x, int y) {
+		receptorFrame.setLocation(x, y);
+		receptorFrame.setVisible(true);
+	}
+	
+	public void showFeedbackFrame(int x, int y) {
+		feedbackFrame.setLocation(x, y);
+		feedbackFrame.setVisible(true);
+	}
+	
 	public static void main(String args[]) throws LineUnavailableException, UnsupportedAudioFileException, IOException {
 		AudioProteinCache cache = new AudioProteinCache();
 		
 		Receptor r = new Receptor();
-		r.initUI();
+		r.showReceptorFrame(0, 0);
+		r.showFeedbackFrame(0, 0);
 		
 		ReceptorPlayer p = new ReceptorPlayer(cache);
 		r.setPlayer(p);
