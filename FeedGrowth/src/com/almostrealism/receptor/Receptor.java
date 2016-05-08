@@ -26,7 +26,7 @@ import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
 import com.almostrealism.visualize.ui.ReceptorCanvas;
 
 public class Receptor {
-	private static Mixer globalMixer;
+	public static Mixer globalMixer;
 	
 	private JFrame receptorFrame, feedbackFrame;
 	
@@ -51,7 +51,7 @@ public class Receptor {
 		canvas.start();
 	}
 	
-	protected void setPlayer(ReceptorPlayer p) { panel.setReceptorPlayer(p); }
+	public void setPlayer(ReceptorPlayer p) { panel.setReceptorPlayer(p); }
 	
 	public ReceptorPlayerPanel getPlayerPanel() { return panel; }
 	

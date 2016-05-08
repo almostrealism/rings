@@ -89,9 +89,7 @@ public class SurfaceGroup extends AbstractSurface {
 		return this.surfaces.get(index);
 	}
 	
-	/**
-	 * @see com.almostrealism.raytracer.engine.Surface#shade(com.almostrealism.raytracer.engine.ShaderParameters)
-	 */
+	/** {@link Surface#shade(ShaderParameters)} */
 	public RGB shade(ShaderParameters p) {
 		RGB color = null;
 		

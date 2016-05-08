@@ -9,6 +9,7 @@ import net.sf.j3d.util.Vector;
 
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 
 public class ReplicatorTableModel extends AbstractTableModel {
@@ -37,6 +38,12 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		r.put(BACK, new BasicGeometry());
 		layers.add(r);
 		modelNames.add(name);
+	}
+	
+	public SurfaceGroup getSurfaces() {
+		SurfaceGroup g = new SurfaceGroup();
+		for (DefaultReplicant r : layers) g.addSurface(r);
+		return g;
 	}
 	
 	@Override
