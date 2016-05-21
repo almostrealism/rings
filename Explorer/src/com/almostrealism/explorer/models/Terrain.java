@@ -23,13 +23,13 @@ public class Terrain extends RenderableGeometry {
 		try {
 			Map connect = new HashMap();
 			connect.put("url", shapeURL);
-
+			
 			DataStore dataStore = DataStoreFinder.getDataStore(connect);
 			String[] typeNames = dataStore.getTypeNames();
 			String typeName = typeNames[0];
-
+			
 			System.out.println("Reading content " + typeName);
-
+			
 			FeatureSource featureSource = dataStore.getFeatureSource(typeName);
 			FeatureCollection collection = featureSource.getFeatures();
 
@@ -41,7 +41,7 @@ public class Terrain extends RenderableGeometry {
 			}
 		} catch (Throwable e) { }
 	}
-
+	
 	@Override
 	public void init(GL2 gl) {
 		// TODO Auto-generated method stub
