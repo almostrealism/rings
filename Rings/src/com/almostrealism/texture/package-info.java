@@ -1,8 +1,6 @@
 /**
+ * Tools for 2D image data.
  * 
- */
-/**
- * @author mike
- *
+ * @author  Michael Murray
  */
 package com.almostrealism.texture;

@@ -3,8 +3,6 @@ package com.almostrealism.explorer.models;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.opengl.GL2;
-
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -12,14 +10,18 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 
-import com.almostrealism.geometry.BasicGeometry;
-import com.almostrealism.visualize.geometry.RenderableGeometry;
+import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.texture.ImageLayers;
+import com.almostrealism.visualize.primitives.RenderableMesh;
 
-public class Terrain extends RenderableGeometry {
+public class Terrain extends RenderableMesh {
+	private ImageLayers textures;
 	
 	public Terrain(String shapeURL) {
-		super(new BasicGeometry());
-
+		super(createMesh());
+		
+		textures = new ImageLayers();
+		
 		try {
 			Map connect = new HashMap();
 			connect.put("url", shapeURL);
@@ -43,16 +45,9 @@ public class Terrain extends RenderableGeometry {
 		} catch (Throwable e) { }
 	}
 	
-	@Override
-	public void init(GL2 gl) {
-		// TODO Auto-generated method stub
-
+	public ImageLayers getTexture() { return textures; }
+	
+	private static Mesh createMesh() {
+		return null;
 	}
-
-	@Override
-	public void render(GL2 gl) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
