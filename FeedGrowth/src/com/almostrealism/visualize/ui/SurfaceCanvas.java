@@ -2,7 +2,6 @@ package com.almostrealism.visualize.ui;
 
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.visualize.primitives.RenderableSurfaceFactory;
-import com.almostrealism.visualize.renderable.Renderable;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
 	public SurfaceCanvas() {
@@ -14,6 +13,6 @@ public class SurfaceCanvas extends DefaultGLCanvas {
 	}
 	
 	public void addSurface(Surface s) {
-		Renderable r = RenderableSurfaceFactory.createRenderableSurface(s);
+		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
 }

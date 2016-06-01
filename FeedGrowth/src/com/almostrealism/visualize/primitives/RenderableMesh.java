@@ -3,7 +3,6 @@ package com.almostrealism.visualize.primitives;
 import javax.media.opengl.GL2;
 
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.visualize.geometry.RenderableGeometry;
 
 public class RenderableMesh extends RenderableGeometry {
@@ -20,10 +19,6 @@ public class RenderableMesh extends RenderableGeometry {
 	public void render(GL2 gl) { list.display(gl); }
 	
 	private static TriangleDisplayList createDisplayList(Mesh m) {
-		for (Triangle t : m) {
-			
-		}
-		
-		return new TriangleDisplayList();
+		return new TriangleDisplayList(m);
 	}
 }

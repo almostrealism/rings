@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -338,7 +339,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
   	}
 	
 	public Iterator<Triangle> iterator() {
-		return triangles.iterator();
+		return Arrays.asList(getTriangles()).iterator();
 	}
 	
 	/**

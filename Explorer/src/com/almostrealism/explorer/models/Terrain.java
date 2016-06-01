@@ -36,6 +36,7 @@ public class Terrain extends RenderableGeometry {
 			try (FeatureIterator iterator = collection.features()) {
 				while (iterator.hasNext()) {
 					Feature feature = iterator.next();
+					System.out.println(feature);
 //					Geometry sourceGeometry = feature.getDefaultGeometryProperty().getDescriptor().;
 				}
 			}

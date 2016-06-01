@@ -79,6 +79,8 @@ public class WavefrontObjParser {
 					}
 				}
 				
+				this.triangles.add(t);
+				
 				ObjPolygon face = new ObjPolygon();
 				face.setVertices((float[][]) faceVerts.toArray(new float[0][0]));
 				face.setTexCoords((float[][]) faceTexCoords.toArray(new float[0][0]));
@@ -99,5 +101,11 @@ public class WavefrontObjParser {
 		}
 		
 		return new Mesh(v, triangles.toArray(new int[0][0]));
+	}
+	
+	public static Mesh parse(InputStream in) throws IOException {
+		WavefrontObjParser p = new WavefrontObjParser(in);
+		p.parse();
+		return p.getMesh();
 	}
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="Rings-New">
+        <wb-resource deploy-path="/" source-path="/FeedGrowth/src"/>
+        <wb-resource deploy-path="/" source-path="/JRings/iptables"/>
+        <wb-resource deploy-path="/" source-path="/JRings/src"/>
+        <wb-resource deploy-path="/" source-path="/Rings/src"/>
+        <wb-resource deploy-path="/" source-path="/PhotonField/src"/>
+        <wb-resource deploy-path="/" source-path="/Replicator/src"/>
+        <wb-resource deploy-path="/" source-path="/Replicator/rsrc"/>
+        <wb-resource deploy-path="/" source-path="/Explorer/src"/>
+    </wb-module>
+</project-modules>
