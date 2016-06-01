@@ -92,8 +92,9 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	}
 	
 	public static class Vertex extends Vector {
-		private double nx, ny, nz;
-		private double r, g, b;
+		private double nx, ny, nz;  // Vertex normals
+		private double r, g, b;  // Vertex color
+		private double tu, tv;  // Texture coordinates
 		
 		public Vertex() { }
 		
@@ -144,6 +145,9 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		public double getX(int index);
 		public double getY(int index);
 		public double getZ(int index);
+		
+		public double getTextureU(int index);
+		public double getTextureV(int index);
 		
 		public int[] getTriangle(int index);
 		public int getTriangleCount();
