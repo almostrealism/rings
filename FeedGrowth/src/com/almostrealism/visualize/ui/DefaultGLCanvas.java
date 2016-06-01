@@ -60,7 +60,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
 		System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
-		float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
+		float pos[] = { 5000.0f, 5000.0f, 10000.0f, 0.0f };
 
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
 		gl.glEnable(GL2.GL_CULL_FACE);
@@ -88,14 +88,14 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		
-		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 24.0f);
+		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 2400.0f);
 
 		gl.glLoadIdentity();
-		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
+		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 6000.0f);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -40.0f);
-		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
+		gl.glTranslatef(0.0f, 0.0f, -600.0f);
+//		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 			gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		}
 
-		// Rotate the entire assembly of gears based on how the user
+		// Rotate the entire assembly based on how the user
 		// dragged the mouse around
 		gl.glPushMatrix();
 		gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
@@ -127,9 +127,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
 
 		for (Renderable r : scene) r.display(gl);
-
-		// Remember that every push needs a pop; this one is paired with
-		// rotating the entire gear assembly
+		
 		gl.glPopMatrix();
 	}
 	

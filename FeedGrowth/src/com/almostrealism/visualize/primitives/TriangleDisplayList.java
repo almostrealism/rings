@@ -16,6 +16,7 @@ public class TriangleDisplayList extends DisplayList {
 		super.init(gl);
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 		gl.glBegin(GL2.GL_TRIANGLES);
+		initMaterial(gl);
 		
 		for (Triangle t : triangles) {
 			Vector v[] = t.getVertices();
