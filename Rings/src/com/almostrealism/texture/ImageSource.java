@@ -1,4 +1,4 @@
-package com.almostrealism.io;
+package com.almostrealism.texture;
 
 public interface ImageSource {
 	public int[] getPixels();

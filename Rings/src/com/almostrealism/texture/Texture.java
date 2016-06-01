@@ -12,7 +12,7 @@
  *
  */
 
-package com.almostrealism.raytracer.engine;
+package com.almostrealism.texture;
 
 import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.ColorProducer;

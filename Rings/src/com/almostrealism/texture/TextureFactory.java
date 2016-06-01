@@ -12,7 +12,7 @@
  *
  */
 
-package com.almostrealism.raytracer.textures;
+package com.almostrealism.texture;
 
 import net.sf.j3d.util.*;
 

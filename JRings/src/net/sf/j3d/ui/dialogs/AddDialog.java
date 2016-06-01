@@ -23,9 +23,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
-import com.almostrealism.raytracer.engine.Texture;
 import com.almostrealism.raytracer.shaders.TextureShader;
-import com.almostrealism.raytracer.textures.TextureFactory;
+import com.almostrealism.texture.Texture;
+import com.almostrealism.texture.TextureFactory;
+
 import net.sf.j3d.util.EditableFactory;
 import net.sf.j3d.ui.panels.DynamicDisplay;
 

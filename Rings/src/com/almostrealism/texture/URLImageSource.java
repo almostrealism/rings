@@ -1,4 +1,4 @@
-package com.almostrealism.io;
+package com.almostrealism.texture;
 
 import java.awt.Image;
 import java.awt.MediaTracker;

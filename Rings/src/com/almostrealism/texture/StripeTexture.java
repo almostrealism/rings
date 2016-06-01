@@ -12,9 +12,8 @@
  *
  */
 
-package com.almostrealism.raytracer.textures;
+package com.almostrealism.texture;
 
-import com.almostrealism.raytracer.engine.Texture;
 import net.sf.j3d.util.Editable;
 import net.sf.j3d.util.Producer;
 import net.sf.j3d.util.Vector;

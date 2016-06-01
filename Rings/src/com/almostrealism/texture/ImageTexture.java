@@ -16,7 +16,7 @@
  * This code was inspired by source written by Sean Wilson (c) 2001.
  */
 
-package com.almostrealism.raytracer.textures;
+package com.almostrealism.texture;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -26,9 +26,6 @@ import java.awt.Toolkit;
 import java.awt.image.PixelGrabber;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import com.almostrealism.io.ImageSource;
-import com.almostrealism.raytracer.engine.Texture;
 
 import net.sf.j3d.util.Editable;
 import net.sf.j3d.util.Producer;
@@ -191,7 +188,7 @@ public class ImageTexture implements Texture, Editable {
   	}
   	
 	/**
-	 * @see com.almostrealism.raytracer.engine.Texture#getColorAt(net.sf.j3d.util.Vector)
+	 * @see com.almostrealism.texture.Texture#getColorAt(net.sf.j3d.util.Vector)
 	 * 
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 */
@@ -222,7 +219,7 @@ public class ImageTexture implements Texture, Editable {
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 * 
-	 * @see com.almostrealism.raytracer.engine.Texture#getColorAt(net.sf.j3d.util.Vector, java.lang.Object[])
+	 * @see com.almostrealism.texture.Texture#getColorAt(net.sf.j3d.util.Vector, java.lang.Object[])
 	 */
 	public RGB getColorAt(Vector point, Object args[]) {
 	    if (args[0] instanceof Double == false) throw new IllegalArgumentException("Illegal argument: " + args[0]);

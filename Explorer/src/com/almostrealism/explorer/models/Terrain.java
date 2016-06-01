@@ -16,7 +16,7 @@ import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.visualize.geometry.RenderableGeometry;
 
 public class Terrain extends RenderableGeometry {
-
+	
 	public Terrain(String shapeURL) {
 		super(new BasicGeometry());
 

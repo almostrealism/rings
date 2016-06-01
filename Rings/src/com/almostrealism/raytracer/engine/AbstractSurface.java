@@ -16,6 +16,7 @@ import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 import com.almostrealism.raytracer.shaders.ShaderSet;
+import com.almostrealism.texture.Texture;
 
 import net.sf.j3d.util.Vector;
 import net.sf.j3d.util.graphics.RGB;

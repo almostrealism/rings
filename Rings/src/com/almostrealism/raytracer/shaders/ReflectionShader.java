@@ -17,8 +17,8 @@ package com.almostrealism.raytracer.shaders;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.raytracer.engine.Texture;
 import com.almostrealism.raytracer.lighting.Light;
+import com.almostrealism.texture.Texture;
 
 import net.sf.j3d.util.Editable;
 import net.sf.j3d.util.Producer;

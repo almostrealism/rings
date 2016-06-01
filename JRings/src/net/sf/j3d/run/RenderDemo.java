@@ -24,12 +24,12 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.raytracer.engine.Texture;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.raytracer.textures.StripeTexture;
+import com.almostrealism.texture.StripeTexture;
+import com.almostrealism.texture.Texture;
 
 import net.sf.j3d.util.TransformMatrix;
 import net.sf.j3d.ui.displays.RenderTestFrame;

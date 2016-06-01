@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 
 
 
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -30,6 +31,8 @@ import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.*;
 import com.almostrealism.raytracer.textures.*;
+import com.almostrealism.texture.TextureFactory;
+
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.dialogs.*;
 import net.sf.j3d.ui.event.*;

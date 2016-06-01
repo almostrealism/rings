@@ -27,7 +27,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import com.almostrealism.raytracer.textures.ImageTexture;
+import com.almostrealism.texture.ImageTexture;
+
 import net.sf.j3d.util.Editable;
 import net.sf.j3d.ui.dialogs.EditRGBDialog;
 import net.sf.j3d.ui.dialogs.EditVectorDialog;
