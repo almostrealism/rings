@@ -6,4 +6,6 @@ public interface ImageSource {
 	public int getWidth();
 	
 	public int getHeight();
+	
+	public boolean isAlpha();
 }

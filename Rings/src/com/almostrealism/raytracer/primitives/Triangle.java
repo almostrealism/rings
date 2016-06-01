@@ -27,13 +27,13 @@ import net.sf.j3d.util.graphics.RGB;
  * A Triangle object represents a triangle in 3d space.
  */
 public class Triangle extends AbstractSurface implements ParticleGroup {
-  private Mesh.VertexData vertexData;
-  private int ind1, ind2, ind3;
-  
-  private Vector p1, p2, p3;
-  private Vector normal;
-  private boolean smooth, intcolor, useT = true;
-  private double a, b, c, d, e, f, j, k, l;
+	private Mesh.VertexData vertexData;
+	private int ind1, ind2, ind3;
+	
+	private Vector p1, p2, p3;
+	private Vector normal;
+	private boolean smooth, intcolor, useT = true;
+	private double a, b, c, d, e, f, j, k, l;
 
 	/**
 	 * Constructs a new Triangle object with all vertices at the origin that is black.
@@ -52,7 +52,8 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 	}
 	
 	/**
-	 * Constructs a new Triangle object with the specified vertices with the color represented by the specified RGB object.
+	 * Constructs a new Triangle object with the specified vertices with the color
+	 * represented by the specified {@link RGB} object.
 	 */
 	public Triangle(Vector p1, Vector p2, Vector p3, RGB color) {
 		super(null, 1.0, color, false);
@@ -144,6 +145,14 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 									this.vertexData.getY(ind3),
 									this.vertexData.getZ(ind3))};
 		}
+	}
+	
+	public float[][] getTextureCoordinates() {
+		if (vertexData == null) return null;
+		
+		return new float[][] { { (float) vertexData.getTextureU(ind1), (float) vertexData.getTextureV(ind1) },
+								{ (float) vertexData.getTextureU(ind2), (float) vertexData.getTextureV(ind2) },
+								{ (float) vertexData.getTextureU(ind3), (float) vertexData.getTextureV(ind3) }};
 	}
 	
 	/**

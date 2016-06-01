@@ -53,4 +53,7 @@ public class URLImageSource implements ImageSource {
 
 	@Override
 	public int getHeight() { return image.getHeight(null); }
+	
+	@Override
+	public boolean isAlpha() { return false; }
 }

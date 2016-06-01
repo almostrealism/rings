@@ -6,12 +6,15 @@ import javax.media.opengl.GL2;
 
 import com.almostrealism.geometry.Oriented;
 import com.almostrealism.geometry.Positioned;
+import com.almostrealism.texture.ImageSource;
 import com.almostrealism.visualize.renderable.Colored;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.almostrealism.visualize.shading.Diffuse;
 import com.almostrealism.visualize.shading.Specular;
 
 public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Diffuse, Specular {
+	protected static final TextureManager textureManager = new TextureManager();
+	
 	private float position[] = { 0.0f, 0.0f, 0.0f };
 	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
@@ -21,6 +24,8 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	private float shininess = 0.0f;
 	
 	private boolean ambient;
+	
+	private ImageSource texture;
 	
 	public RenderableGLAdapter() { }
 	
@@ -38,15 +43,24 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(specular));
 			gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, shininess);
 		}
+		
+		initTexture(gl);
+	}
+	
+	public void initTexture(GL2 gl) {
+		if (texture == null) return;
+		textureManager.addTexture(gl, texture);
 	}
 	
 	public void push(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glTranslatef(position[0], position[1], position[2]);
 		gl.glRotatef(orientation[0], orientation[1], orientation[2], orientation[3]);
+		if (texture != null) textureManager.pushTexture(gl, texture);
 	}
 	
 	public void pop(GL2 gl) {
+		if (texture != null) textureManager.popTexture(gl);
 		gl.glPopMatrix();
 	}
 	
@@ -61,6 +75,8 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 
 	@Override
 	public float[] getOrientation() { return orientation; }
+	
+	public void setTexture(ImageSource tex) { this.texture = tex; }
 	
 	@Override
 	public void setColor(float r, float g, float b, float a) { color = new float[] { r, g, b, a }; }
