@@ -5,6 +5,7 @@ import javax.media.opengl.GL2;
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.visualize.geometry.RenderableGeometry;
 import com.almostrealism.visualize.primitives.RenderableSurfaceFactory;
 import com.almostrealism.visualize.renderable.Renderable;
 
@@ -42,10 +43,11 @@ public class Replicant extends SurfaceGroup implements Renderable {
 	@Override
 	public void display(GL2 gl) {
 		for (BasicGeometry g : geo) {
-			// TODO  Push matrix
+			gl.glPushMatrix();
+			RenderableGeometry.applyTransform(gl, g);
 			// TODO  Inherit surface color, etc?
 			delegate.display(gl);
-			// TODO  Pop matrix
+			gl.glPopMatrix();
 		}
 	}
 }
