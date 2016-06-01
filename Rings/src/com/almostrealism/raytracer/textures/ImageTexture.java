@@ -27,7 +27,9 @@ import java.awt.image.PixelGrabber;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.almostrealism.io.ImageSource;
 import com.almostrealism.raytracer.engine.Texture;
+
 import net.sf.j3d.util.Editable;
 import net.sf.j3d.util.Producer;
 import net.sf.j3d.util.Vector;
@@ -38,7 +40,9 @@ import net.sf.j3d.util.graphics.RGB;
 // TODO  Improve documentation.
 
 /**
- * An ImageTexture object can be used to provide an image as the color data for a surface.
+ * An {@link ImageTexture} object can be used to provide an image as the color data for a surface.
+ * 
+ * TODO  This should accept an {@link ImageSource} rather than a {@link URL}.
  * 
  * @author Mike Murray
  */
