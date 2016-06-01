@@ -4,9 +4,7 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.visualize.primitives.RenderableSurfaceFactory;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	public SurfaceCanvas() {
-		
-	}
+	public SurfaceCanvas() { }
 	
 	public void add(Surface s) {
 		addSurface(s);

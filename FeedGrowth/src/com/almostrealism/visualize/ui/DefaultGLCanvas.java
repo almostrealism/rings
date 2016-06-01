@@ -18,8 +18,6 @@ import javax.media.opengl.glu.gl2.GLUgl2;
 
 import com.almostrealism.visualize.renderable.Renderable;
 import com.jogamp.newt.Window;
-import com.jogamp.newt.event.KeyAdapter;
-import com.jogamp.newt.event.MouseAdapter;
 import com.jogamp.opengl.util.FPSAnimator;
 
 public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
@@ -133,67 +131,6 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		// Remember that every push needs a pop; this one is paired with
 		// rotating the entire gear assembly
 		gl.glPopMatrix();
-	}
-
-	class GearsKeyAdapter extends KeyAdapter {
-		@Override
-		public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
-			int kc = e.getKeyCode();
-			
-			if (KeyEvent.VK_LEFT == kc) {
-				view_roty -= 1;
-			} else if(KeyEvent.VK_RIGHT == kc) {
-				view_roty += 1;
-			} else if(KeyEvent.VK_UP == kc) {
-				view_rotx -= 1;
-			} else if(KeyEvent.VK_DOWN == kc) {
-				view_rotx += 1;
-			}
-		}
-	}
-
-	class GearsMouseAdapter extends MouseAdapter {
-		@Override
-		public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-			prevMouseX = e.getX();
-			prevMouseY = e.getY();
-		}
-
-		@Override
-		public void mouseReleased(com.jogamp.newt.event.MouseEvent e) { }
-
-		@Override
-		public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-			final int x = e.getX();
-			final int y = e.getY();
-			float width = 0, height = 0;
-			Object source = e.getSource();
-			
-			if (source instanceof Window) {
-				Window window = (Window) source;
-				width = window.getWidth();
-				height = window.getHeight();
-			} else if (source instanceof GLAutoDrawable) {
-				GLAutoDrawable glad = (GLAutoDrawable) source;
-				width = glad.getWidth();
-				height = glad.getHeight();
-			} else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
-				Component comp = (Component) source;
-				width = comp.getWidth();
-				height = comp.getHeight();
-			} else {
-				throw new RuntimeException("Event source neither Window nor Component: " + source);
-			}
-			
-			float thetaY = 360.0f * ((x - prevMouseX) / width);
-			float thetaX = 360.0f * ((prevMouseY - y) / height);
-			
-			prevMouseX = x;
-			prevMouseY = y;
-
-			view_rotx += thetaX;
-			view_roty += thetaY;
-		}
 	}
 	
 	@Override
