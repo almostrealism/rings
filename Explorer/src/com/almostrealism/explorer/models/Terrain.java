@@ -17,8 +17,8 @@ import com.almostrealism.visualize.primitives.RenderableMesh;
 public class Terrain extends RenderableMesh {
 	private ImageLayers textures;
 	
-	public Terrain(String shapeURL) {
-		super(createMesh());
+	public Terrain(int width, int height, String shapeURL) {
+		super(createMesh(width, height));
 		
 		textures = new ImageLayers();
 		
@@ -47,7 +47,7 @@ public class Terrain extends RenderableMesh {
 	
 	public ImageLayers getTexture() { return textures; }
 	
-	private static Mesh createMesh() {
-		return null;
+	private static Mesh createMesh(int width, int height) {
+		return new Mesh(new TerrainVertexData(width, height));
 	}
 }

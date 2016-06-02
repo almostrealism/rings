@@ -268,7 +268,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	public void loadTriangles() {
 		this.clearTriangleCache();
 		
-		i: for (int i = 0; i < tcache.length; i++)
+		for (int i = 0; i < tcache.length; i++)
 			this.tcache[i] = this.getTriangle(i);
 	}
 	
@@ -343,7 +343,25 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
   	}
 	
 	public Iterator<Triangle> iterator() {
-		return Arrays.asList(getTriangles()).iterator();
+		if (vertexData == null) {
+			return Arrays.asList(getTriangles()).iterator();
+		} else {
+			return new Iterator<Triangle>() {
+				int i = 0;
+				
+				@Override
+				public boolean hasNext() {
+					return i < vertexData.getTriangleCount();
+				}
+				
+				@Override
+				public Triangle next() {
+					int t[] = vertexData.getTriangle(i);
+					return new Triangle(t[0], t[1], t[2],
+							(RGB) Mesh.white.clone(), vertexData);
+				}
+			};
+		}
 	}
 	
 	/**
