@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
-
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author  Mike Murray

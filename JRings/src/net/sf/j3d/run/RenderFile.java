@@ -30,12 +30,11 @@ import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.graphics.*;
 import com.almostrealism.raytracer.lighting.*;
+import com.almostrealism.util.*;
+import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.util.*;
 import net.sf.j3d.ui.displays.*;
 import net.sf.j3d.ui.panels.*;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
   The RenderFile class provides a method for a user to render a scene stored in a text file.

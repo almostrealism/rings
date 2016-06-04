@@ -12,7 +12,7 @@ package net.sf.j3d.physics.efield;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 
 public class ParticleField {

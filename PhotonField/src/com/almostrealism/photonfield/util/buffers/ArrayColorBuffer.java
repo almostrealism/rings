@@ -15,9 +15,8 @@ import com.almostrealism.io.FileDecoder;
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
-
-import net.sf.j3d.util.graphics.AverageColor;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.AverageColor;
+import com.almostrealism.util.graphics.RGB;
 
 public class ArrayColorBuffer implements ColorBuffer {
 	public Absorber absorber;

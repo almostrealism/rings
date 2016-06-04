@@ -12,8 +12,8 @@ package net.sf.j3d.physics;
 import java.awt.Graphics;
 
 import com.almostrealism.raytracer.camera.Camera;
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 
 /**

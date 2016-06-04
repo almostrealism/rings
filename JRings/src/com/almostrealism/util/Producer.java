@@ -12,13 +12,13 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 /**
  * The Producer interface is implemented by classes that represent a
  * repeatedly evaluated function.
  * 
- * @see net.sf.j3d.util.Editable
+ * @see com.almostrealism.util.Editable
  * 
  * @author Mike Murray
  */

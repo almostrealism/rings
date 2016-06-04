@@ -31,6 +31,9 @@ import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
+
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.dialogs.Dialog;
 import net.sf.j3d.ui.event.Event;
@@ -42,8 +45,6 @@ import net.sf.j3d.ui.event.SceneOpenEvent;
 import net.sf.j3d.ui.event.SurfaceEditEvent;
 import net.sf.j3d.ui.event.SurfaceEvent;
 import net.sf.j3d.ui.event.SurfaceRemoveEvent;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 
 /**

@@ -8,9 +8,8 @@ package com.almostrealism.raytracer.engine;
 
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * The {@link Surface} interface is implemented by any 3d object which may be

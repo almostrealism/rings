@@ -22,10 +22,9 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 
 // TODO Add ParticleGroup implementation.

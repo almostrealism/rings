@@ -14,11 +14,12 @@
 
 package com.almostrealism.raytracer.shaders;
 
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
+
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
  * A DiffuseShader object provides a shading method for diffuse surfaces.

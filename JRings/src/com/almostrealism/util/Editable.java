@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 /**
  * Classes that implement the Editable interface can have editable

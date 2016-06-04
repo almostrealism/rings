@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import com.almostrealism.photonfield.texture.CosineIntensityMap;
 import com.almostrealism.photonfield.texture.IntensityMap;
 import com.almostrealism.photonfield.texture.Turbulence;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.ui.displays.ImageCanvas;
-import net.sf.j3d.util.graphics.RGB;
 
 public class IntensityMapPanel extends JPanel {
 	private IntensityMap map;

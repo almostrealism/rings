@@ -11,8 +11,7 @@ package com.almostrealism.photonfield.util.buffers;
 import java.io.IOException;
 
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
-
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.RGB;
 
 public interface ColorBuffer {
 	public void addColor(double u, double v, boolean front, RGB c);

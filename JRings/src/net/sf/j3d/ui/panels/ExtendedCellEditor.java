@@ -28,13 +28,13 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import com.almostrealism.texture.ImageTexture;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.util.Editable;
 import net.sf.j3d.ui.dialogs.EditRGBDialog;
 import net.sf.j3d.ui.dialogs.EditVectorDialog;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
 
 
 // TODO  Add support for File objects.

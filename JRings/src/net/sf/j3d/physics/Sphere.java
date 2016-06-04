@@ -18,8 +18,8 @@ import com.almostrealism.raytracer.graphics.ParticleGroupRenderer;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 
 /**

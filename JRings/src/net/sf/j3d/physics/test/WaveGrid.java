@@ -11,9 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.almostrealism.io.FileEncoder;
-
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 public class WaveGrid {
 	private double max = 10.0, delta = 1.0;

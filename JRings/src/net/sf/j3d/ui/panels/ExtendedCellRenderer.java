@@ -23,8 +23,8 @@ import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 
 /**

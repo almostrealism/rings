@@ -26,8 +26,8 @@ import javax.swing.JFrame;
 import com.almostrealism.raytracer.shaders.TextureShader;
 import com.almostrealism.texture.Texture;
 import com.almostrealism.texture.TextureFactory;
+import com.almostrealism.util.EditableFactory;
 
-import net.sf.j3d.util.EditableFactory;
 import net.sf.j3d.ui.panels.DynamicDisplay;
 
 

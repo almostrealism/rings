@@ -19,8 +19,7 @@ import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
-
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 

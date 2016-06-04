@@ -19,7 +19,8 @@ package net.sf.j3d.ui.dialogs;
 import javax.swing.*;
 
 import com.almostrealism.raytracer.engine.*;
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
+
 import net.sf.j3d.ui.event.*;
 
 /**

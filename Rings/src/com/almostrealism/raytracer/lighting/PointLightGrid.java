@@ -17,9 +17,8 @@ package com.almostrealism.raytracer.lighting;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
-
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
   A PointLightGrid object stores a grid of PointLight objects.

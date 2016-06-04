@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 import net.sf.j3d.run.Settings;
 

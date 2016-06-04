@@ -14,8 +14,8 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * The Shader interface is implemented by classes that provide a method for shading a surface.

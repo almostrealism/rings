@@ -39,6 +39,8 @@ import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.util.Vector;
+
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.event.CameraEditEvent;
 import net.sf.j3d.ui.event.CameraEvent;
@@ -50,7 +52,6 @@ import net.sf.j3d.ui.event.EventListener;
 import net.sf.j3d.ui.event.SceneCloseEvent;
 import net.sf.j3d.ui.event.SceneOpenEvent;
 import net.sf.j3d.ui.panels.EditVectorPanel;
-import net.sf.j3d.util.Vector;
 
 
 /**

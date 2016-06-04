@@ -1,4 +1,4 @@
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 public interface ValueProducer {
 	public double value();

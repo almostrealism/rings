@@ -14,7 +14,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

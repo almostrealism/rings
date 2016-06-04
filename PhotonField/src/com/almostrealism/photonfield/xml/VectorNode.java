@@ -6,8 +6,9 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.almostrealism.util.Vector;
+
 import net.sf.j3d.ui.panels.EditVectorPanel;
-import net.sf.j3d.util.Vector;
 
 public class VectorNode extends Node {
 	private double[] value;

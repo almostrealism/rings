@@ -7,7 +7,7 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 /**
  * @author  Mike Murray

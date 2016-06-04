@@ -19,9 +19,8 @@ import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * A Triangle object represents a triangle in 3d space.

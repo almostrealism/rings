@@ -19,10 +19,10 @@ import java.util.Hashtable;
 
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 
 /**

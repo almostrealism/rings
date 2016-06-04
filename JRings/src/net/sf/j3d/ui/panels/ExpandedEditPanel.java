@@ -16,13 +16,14 @@ package net.sf.j3d.ui.panels;
 
 
 import java.util.*;
-
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
+
 import net.sf.j3d.ui.dialogs.*;
 
 /**

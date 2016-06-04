@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 /**
   EditableFactory is the parent class for classes that can be used to construct Editable objects

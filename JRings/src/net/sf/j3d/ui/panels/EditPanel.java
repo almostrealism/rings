@@ -17,7 +17,7 @@ package net.sf.j3d.ui.panels;
 
 import javax.swing.*;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
 
 /**
   An EditPanel object can be used to allow a user to set the properties

@@ -12,8 +12,7 @@ import java.lang.reflect.Method;
 
 import com.almostrealism.photonfield.util.Length;
 import com.almostrealism.photonfield.util.VectorMath;
-
-import net.sf.j3d.util.Nameable;
+import com.almostrealism.util.Nameable;
 
 /**
  * An OverlayBRDF simply takes the sum of the samples provided by each

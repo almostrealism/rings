@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.almostrealism.raytracer.camera.Camera;
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 
 /**

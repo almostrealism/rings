@@ -14,7 +14,7 @@
 
 package com.almostrealism.texture;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
 
 /**
   The TextureFactory class provides static methods for constructing Texture objects.

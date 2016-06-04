@@ -27,11 +27,11 @@ import java.awt.image.PixelGrabber;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 
 // TODO  Improve documentation.
@@ -188,7 +188,7 @@ public class ImageTexture implements Texture, Editable {
   	}
   	
 	/**
-	 * @see com.almostrealism.texture.Texture#getColorAt(net.sf.j3d.util.Vector)
+	 * @see com.almostrealism.texture.Texture#getColorAt(com.almostrealism.util.Vector)
 	 * 
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 */
@@ -219,7 +219,7 @@ public class ImageTexture implements Texture, Editable {
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 * 
-	 * @see com.almostrealism.texture.Texture#getColorAt(net.sf.j3d.util.Vector, java.lang.Object[])
+	 * @see com.almostrealism.texture.Texture#getColorAt(com.almostrealism.util.Vector, java.lang.Object[])
 	 */
 	public RGB getColorAt(Vector point, Object args[]) {
 	    if (args[0] instanceof Double == false) throw new IllegalArgumentException("Illegal argument: " + args[0]);
@@ -277,27 +277,27 @@ public class ImageTexture implements Texture, Editable {
 	}
 
     /**
-     * @see net.sf.j3d.util.Editable#getPropertyNames()
+     * @see com.almostrealism.util.Editable#getPropertyNames()
      */
     public String[] getPropertyNames() { return ImageTexture.propNames; }
 
     /**
-     * @see net.sf.j3d.util.Editable#getPropertyDescriptions()
+     * @see com.almostrealism.util.Editable#getPropertyDescriptions()
      */
     public String[] getPropertyDescriptions() { return ImageTexture.propDesc; }
 
     /**
-     * @see net.sf.j3d.util.Editable#getPropertyTypes()
+     * @see com.almostrealism.util.Editable#getPropertyTypes()
      */
     public Class[] getPropertyTypes() { return ImageTexture.propTypes; }
 
     /**
-     * @see net.sf.j3d.util.Editable#getPropertyValues()
+     * @see com.almostrealism.util.Editable#getPropertyValues()
      */
     public Object[] getPropertyValues() { return new Object[] {this.url, new Double(this.xScale), new Double(this.yScale)}; }
 
     /**
-     * @see net.sf.j3d.util.Editable#setPropertyValue(java.lang.Object, int)
+     * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
      */
     public void setPropertyValue(Object value, int index) {
     		if (index >= ImageTexture.propTypes.length) {
@@ -316,7 +316,7 @@ public class ImageTexture implements Texture, Editable {
     }
 
     /**
-     * @see net.sf.j3d.util.Editable#setPropertyValues(java.lang.Object[])
+     * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
      */
     public void setPropertyValues(Object[] values) {
 		for (int i = 0; i < values.length; i++) {

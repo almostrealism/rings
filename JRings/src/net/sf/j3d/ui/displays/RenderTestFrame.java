@@ -27,9 +27,8 @@ import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
-
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 
 /**

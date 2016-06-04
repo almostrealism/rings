@@ -14,10 +14,10 @@
 
 package com.almostrealism.texture;
 
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 // TODO  Add vector direction in place of axis selection.
 

@@ -11,7 +11,7 @@ package com.almostrealism.photonfield.util;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author  Mike Murray

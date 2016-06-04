@@ -15,10 +15,10 @@
 package com.almostrealism.raytracer.camera;
 
 import com.almostrealism.raytracer.engine.Ray;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
 
 /**
  * The OrthographicCamera class provides an orthographic porjection camera.

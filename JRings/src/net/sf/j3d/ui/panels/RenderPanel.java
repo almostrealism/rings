@@ -27,6 +27,9 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
+
 import net.sf.j3d.ui.displays.ProgressDisplay;
 import net.sf.j3d.ui.event.Event;
 import net.sf.j3d.ui.event.EventGenerator;
@@ -35,8 +38,6 @@ import net.sf.j3d.ui.event.EventListener;
 import net.sf.j3d.ui.event.SceneCloseEvent;
 import net.sf.j3d.ui.event.SceneOpenEvent;
 import net.sf.j3d.ui.event.SurfaceEditEvent;
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
 
 
 /**

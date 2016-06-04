@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.RGB;
 
 
 /**

@@ -33,10 +33,10 @@ import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.shaders.Shader;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.network.Resource;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
  * The FileDecoder class provides static methods for decoding scene and surface data

@@ -14,7 +14,7 @@
 
 package com.almostrealism.raytracer.surfaceUI;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
 
 /**
   A TransformMatrixUI object stores extra data about a TransformMatrix object such as its type

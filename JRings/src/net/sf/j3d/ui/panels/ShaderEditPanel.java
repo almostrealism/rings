@@ -32,8 +32,9 @@ import javax.swing.tree.DefaultTreeModel;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.EditableFactory;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.EditableFactory;
+
 import net.sf.j3d.ui.dialogs.AddDialog;
 import net.sf.j3d.ui.displays.ShadedPreviewDisplay;
 import net.sf.j3d.ui.tree.ShaderTreeNode;

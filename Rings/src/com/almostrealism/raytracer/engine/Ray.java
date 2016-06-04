@@ -14,8 +14,8 @@
 
 package com.almostrealism.raytracer.engine;
 
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 /**
  * A Ray object represents a 3d ray. It stores the origin and direction of a 3d ray,

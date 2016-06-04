@@ -14,10 +14,10 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * A SilhouetteShader object can be used to shade a surface with one color value
@@ -51,32 +51,32 @@ public class SilhouetteShader implements Editable, Shader {
 	public RGB shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
-	 * @see net.sf.j3d.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see com.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyNames()
+	 * @see com.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() { return this.names; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyDescriptions()
+	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() { return this.desc; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyTypes()
+	 * @see com.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() { return this.types; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyValues()
+	 * @see com.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() { return new Object[] {this.color}; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
@@ -86,19 +86,19 @@ public class SilhouetteShader implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object values[]) {
 		if (values.length > 0) this.color = (ColorProducer)values[0];
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getInputPropertyValues()
+	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setInputPropertyValue(int, net.sf.j3d.util.Producer)
+	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
 	 */
 	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)

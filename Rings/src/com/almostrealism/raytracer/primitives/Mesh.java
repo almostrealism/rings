@@ -21,9 +21,8 @@ import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 
 // TODO  Add bounding solid to make intersection calc faster.

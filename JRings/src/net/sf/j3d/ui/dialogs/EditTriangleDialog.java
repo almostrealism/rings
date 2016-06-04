@@ -23,6 +23,8 @@ import javax.swing.border.TitledBorder;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.util.Vector;
+
 import net.sf.j3d.ui.event.DialogCloseEvent;
 import net.sf.j3d.ui.event.Event;
 import net.sf.j3d.ui.event.EventGenerator;
@@ -34,7 +36,6 @@ import net.sf.j3d.ui.event.SurfaceEditEvent;
 import net.sf.j3d.ui.event.SurfaceEvent;
 import net.sf.j3d.ui.event.SurfaceRemoveEvent;
 import net.sf.j3d.ui.panels.EditVectorPanel;
-import net.sf.j3d.util.Vector;
 
 
 /**

@@ -17,8 +17,7 @@ package com.almostrealism.raytracer.primitives;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
-
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 /**
   A Polynomial object represents a 3d polynomial surface.

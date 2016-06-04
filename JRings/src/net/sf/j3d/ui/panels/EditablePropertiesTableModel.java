@@ -17,7 +17,7 @@ package net.sf.j3d.ui.panels;
 
 import javax.swing.table.*;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
 
 /**
   An EditablePropertiesTableModel object can be used to manage the data

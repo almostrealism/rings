@@ -20,9 +20,8 @@ import com.almostrealism.photonfield.geometry.Plane;
 import com.almostrealism.photonfield.util.Fast;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
-
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * An AbsorptionPlane object represents a plane in space that absorbs photons

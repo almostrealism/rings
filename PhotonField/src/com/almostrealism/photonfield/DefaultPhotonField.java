@@ -17,8 +17,7 @@ import java.util.Set;
 
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
-
-import net.sf.j3d.util.Graph;
+import com.almostrealism.util.Graph;
 
 
 // TODO  Consider creating a custom list for photon set (tick creates many many double[][]).

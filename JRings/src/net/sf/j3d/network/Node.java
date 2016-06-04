@@ -25,9 +25,9 @@ import java.util.Set;
 import javax.swing.JLabel;
 
 import com.almostrealism.io.RSSFeed;
+import com.almostrealism.util.Graph;
 
 import net.sf.j3d.network.db.Client;
-import net.sf.j3d.util.Graph;
 
 /**
  * A Node object represents a node in the distributed network.

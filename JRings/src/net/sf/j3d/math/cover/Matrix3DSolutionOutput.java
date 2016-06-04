@@ -13,8 +13,7 @@ import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
-
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {
 	private int x, y, z, off;

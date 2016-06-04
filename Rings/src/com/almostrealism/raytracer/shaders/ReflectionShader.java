@@ -19,12 +19,11 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.texture.Texture;
-
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.

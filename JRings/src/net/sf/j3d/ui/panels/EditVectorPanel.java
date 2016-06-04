@@ -28,8 +28,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.almostrealism.util.Vector;
+
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.Vector;
 
 
 /**

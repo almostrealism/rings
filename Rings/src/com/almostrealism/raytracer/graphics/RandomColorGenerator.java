@@ -14,8 +14,8 @@
 
 package com.almostrealism.raytracer.graphics;
 
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray

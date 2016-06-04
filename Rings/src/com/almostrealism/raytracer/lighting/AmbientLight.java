@@ -14,8 +14,8 @@
 
 package com.almostrealism.raytracer.lighting;
 
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.

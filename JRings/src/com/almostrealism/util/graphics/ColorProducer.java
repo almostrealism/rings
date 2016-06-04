@@ -12,9 +12,9 @@
  *
  */
 
-package net.sf.j3d.util.graphics;
+package com.almostrealism.util.graphics;
 
-import net.sf.j3d.util.Producer;
+import com.almostrealism.util.Producer;
 
 /**
  * ColorProducer is implemented by any class that can produce an RGB object

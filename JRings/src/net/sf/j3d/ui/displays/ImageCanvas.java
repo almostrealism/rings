@@ -22,9 +22,8 @@ import java.io.File;
 import javax.swing.JPanel;
 
 import com.almostrealism.io.FileEncoder;
-
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 
 /**

@@ -19,8 +19,7 @@ import java.util.List;
 
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Triangle;
-
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 
 public class SpacePartition extends SurfaceGroup {

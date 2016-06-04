@@ -22,10 +22,10 @@ import net.sf.j3d.io.*;
 
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.ui.event.*;
 import net.sf.j3d.ui.panels.*;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
  * A SaveMenu object extends JMenu and provides menu items for saving scene and surface data to a file.

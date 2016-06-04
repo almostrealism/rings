@@ -10,7 +10,7 @@
 package net.sf.j3d.physics;
 
 import com.almostrealism.raytracer.camera.PinholeCamera;
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

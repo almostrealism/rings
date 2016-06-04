@@ -11,8 +11,7 @@ package com.almostrealism.raytracer;
 
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
-
-import net.sf.j3d.util.Vector;
+import com.almostrealism.util.Vector;
 
 /**
  * The SceneFactory class provides static utility methods for getting commonly

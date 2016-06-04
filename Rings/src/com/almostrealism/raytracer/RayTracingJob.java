@@ -35,6 +35,7 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.network.Job;
 import net.sf.j3d.network.db.Client;
@@ -43,7 +44,6 @@ import net.sf.j3d.network.db.OutputHandler;
 import net.sf.j3d.network.db.Query;
 import net.sf.j3d.network.db.QueryHandler;
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
  * A RayTracingJob object provides an implementation of
@@ -785,25 +785,25 @@ public class RayTracingJob implements Job, SceneLoader {
 			double nfl = ((PinholeCamera)camera).getFocalLength();
 			if (this.fl != -1) nfl = this.fl;
 			
-			net.sf.j3d.util.Vector cd = (net.sf.j3d.util.Vector)
+			com.almostrealism.util.Vector cd = (com.almostrealism.util.Vector)
 								((PinholeCamera)camera).getViewDirection().clone();
 			
 			if (this.cdz != 0 ||
 				this.cdy != 0 ||
 				this.cdz != 0) {
-				cd = new net.sf.j3d.util.Vector(this.cdx, this.cdy, this.cdz);
+				cd = new com.almostrealism.util.Vector(this.cdx, this.cdy, this.cdz);
 			}
 			
-			net.sf.j3d.util.Vector cl = (net.sf.j3d.util.Vector)
+			com.almostrealism.util.Vector cl = (com.almostrealism.util.Vector)
 								((PinholeCamera)camera).getLocation().clone();
 			
 			if (this.clz != 0 ||
 					this.cly != 0 ||
 					this.clz != 0) {
-					cl = new net.sf.j3d.util.Vector(this.clx, this.cly, this.clz);
+					cl = new com.almostrealism.util.Vector(this.clx, this.cly, this.clz);
 				}
 			
-			camera = new PinholeCamera(cl, cd, new net.sf.j3d.util.Vector(0.0, 1.0, 0.0),
+			camera = new PinholeCamera(cl, cd, new com.almostrealism.util.Vector(0.0, 1.0, 0.0),
 										nfl, npw, nph);
 		}
 		

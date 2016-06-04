@@ -34,9 +34,9 @@ import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 
 
 /**

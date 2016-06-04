@@ -16,11 +16,12 @@ import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 
+import com.almostrealism.util.Help;
+
 import net.sf.j3d.network.Job;
 import net.sf.j3d.network.JobFactory;
 import net.sf.j3d.network.Server;
 import net.sf.j3d.network.resources.ConcatenatedResource;
-import net.sf.j3d.util.Help;
 
 /**
  * @author  Mike Murray

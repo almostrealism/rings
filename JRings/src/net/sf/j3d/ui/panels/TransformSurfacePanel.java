@@ -20,7 +20,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import com.almostrealism.raytracer.engine.*;
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
+
 import net.sf.j3d.ui.dialogs.*;
 import net.sf.j3d.ui.event.*;
 

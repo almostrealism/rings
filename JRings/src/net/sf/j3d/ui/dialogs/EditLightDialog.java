@@ -20,18 +20,19 @@ import java.awt.GridLayout;
 
 
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.graphics.*;
 import com.almostrealism.raytracer.lighting.*;
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
+import com.almostrealism.util.graphics.RGB;
+
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.event.*;
 import net.sf.j3d.ui.panels.*;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 // TODO  Add presets for attenuation constants
 

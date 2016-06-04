@@ -17,9 +17,8 @@ import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 import com.almostrealism.raytracer.shaders.ShaderSet;
 import com.almostrealism.texture.Texture;
-
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes

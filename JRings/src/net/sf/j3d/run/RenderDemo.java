@@ -30,11 +30,11 @@ import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.texture.StripeTexture;
 import com.almostrealism.texture.Texture;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.util.TransformMatrix;
 import net.sf.j3d.ui.displays.RenderTestFrame;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
 
 
 /**

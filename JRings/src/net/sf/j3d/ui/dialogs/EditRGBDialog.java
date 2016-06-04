@@ -18,11 +18,13 @@ package net.sf.j3d.ui.dialogs;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import com.almostrealism.raytracer.graphics.*;
+import com.almostrealism.util.graphics.RGB;
+
 import net.sf.j3d.ui.panels.*;
-import net.sf.j3d.util.graphics.RGB;
 
 /**
   An EditRGBDialog object can be used to allow a user to specify

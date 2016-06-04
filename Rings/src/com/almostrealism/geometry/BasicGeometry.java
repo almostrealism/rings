@@ -1,10 +1,10 @@
 package com.almostrealism.geometry;
 
 import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.util.TransformMatrix;
+import com.almostrealism.util.Vector;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.TransformMatrix;
-import net.sf.j3d.util.Vector;
 
 /**
  * Provides a simple mechanism to keep track of tranformation

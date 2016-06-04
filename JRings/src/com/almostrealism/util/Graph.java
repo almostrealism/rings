@@ -7,7 +7,7 @@
  *
  */
 
-package net.sf.j3d.util;
+package com.almostrealism.util;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -15,11 +15,10 @@
 package com.almostrealism.raytracer.shaders;
 
 import com.almostrealism.texture.Texture;
-
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * A TextureShader object uses a Texture object as a filter for shader output.
@@ -86,7 +85,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	public ShaderFactory getFactory() { return this.factory; }
 	
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyNames()
+	 * @see com.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() {
 		if (this.tex instanceof Editable)
@@ -96,7 +95,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyDescriptions()
+	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() {
 		if (this.tex instanceof Editable)
@@ -106,7 +105,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyTypes()
+	 * @see com.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() {
 		if (this.tex instanceof Editable)
@@ -116,7 +115,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyValues()
+	 * @see com.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() {
 		if (this.tex instanceof Editable)
@@ -126,7 +125,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (this.tex instanceof Editable)
@@ -134,7 +133,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object[] values) {
 		if (this.tex instanceof Editable)
@@ -142,12 +141,12 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getInputPropertyValues()
+	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() { return this.props; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setInputPropertyValue(int, net.sf.j3d.util.Producer)
+	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
 	 */
 	public void setInputPropertyValue(int index, Producer p) { this.props[index] = (ColorProducer)p; }
 
@@ -166,7 +165,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see com.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object[] args) { return this.shade((ShaderParameters)args[0]); }
 	

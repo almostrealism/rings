@@ -8,14 +8,15 @@
  *
  */
 
-package net.sf.j3d.util.graphics;
+package com.almostrealism.util.graphics;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import net.sf.j3d.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.ColorProducer;
+
 import net.sf.j3d.run.Settings;
 
 /**

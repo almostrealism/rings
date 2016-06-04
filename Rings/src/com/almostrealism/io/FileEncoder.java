@@ -26,9 +26,6 @@ import java.io.PrintStream;
 import java.util.Date;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.GraphicsConverter;
-import net.sf.j3d.util.graphics.RGB;
 
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
@@ -48,6 +45,9 @@ import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.Triangle;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.GraphicsConverter;
+import com.almostrealism.util.graphics.RGB;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;

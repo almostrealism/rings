@@ -26,8 +26,8 @@ import javax.swing.tree.TreeNode;
 
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
-import net.sf.j3d.util.Editable;
-import net.sf.j3d.util.Producer;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.Producer;
 
 
 /**
@@ -155,7 +155,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyNames()
+	 * @see com.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() {
 		if (this.shader instanceof Editable)
@@ -165,7 +165,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyDescriptions()
+	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() {
 		if (this.shader instanceof Editable)
@@ -175,7 +175,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyTypes()
+	 * @see com.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() {
 		if (this.shader instanceof Editable)
@@ -185,7 +185,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getPropertyValues()
+	 * @see com.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() {
 		if (this.shader instanceof Editable)
@@ -195,7 +195,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (this.shader instanceof Editable)
@@ -203,7 +203,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see net.sf.j3d.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object[] values) {
 		if (this.shader instanceof Editable)
@@ -451,7 +451,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	public List subList(int start, int end) { return null; }
 
 	/**
-	 * @see net.sf.j3d.util.Editable#getInputPropertyValues()
+	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() {
 		if (this.shader instanceof Editable)
@@ -461,7 +461,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see net.sf.j3d.util.Editable#setInputPropertyValue(int, net.sf.j3d.util.Producer)
+	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
 	 */
 	public void setInputPropertyValue(int index, Producer p) {
 		if (this.shader instanceof Editable) ((Editable)this.shader).setInputPropertyValue(index, p);

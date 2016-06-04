@@ -42,10 +42,9 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-
-import net.sf.j3d.util.Nameable;
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Nameable;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * An AbsorberHashSet object is an implementation of AbsorberSet that uses a HashSet

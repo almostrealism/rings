@@ -17,11 +17,12 @@ package net.sf.j3d.ui.dialogs;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
-import net.sf.j3d.util.*;
+import com.almostrealism.util.*;
+
 import net.sf.j3d.ui.panels.*;
-import net.sf.j3d.util.Vector;
 
 /**
   An EditVectorDialog object can be used to allow a user to specify

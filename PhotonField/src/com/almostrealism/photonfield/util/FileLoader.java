@@ -48,11 +48,11 @@ import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
 import com.almostrealism.photonfield.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photonfield.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
+import com.almostrealism.util.Nameable;
+import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.run.Settings;
 import net.sf.j3d.ui.panels.DebugOutputPanel;
-import net.sf.j3d.util.Nameable;
-import net.sf.j3d.util.graphics.RGB;
 
 public class FileLoader extends DefaultHandler {
 	public static double verbose = Math.pow(10.0, -5.0);

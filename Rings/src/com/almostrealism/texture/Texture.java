@@ -14,9 +14,9 @@
 
 package com.almostrealism.texture;
 
-import net.sf.j3d.util.Vector;
-import net.sf.j3d.util.graphics.ColorProducer;
-import net.sf.j3d.util.graphics.RGB;
+import com.almostrealism.util.Vector;
+import com.almostrealism.util.graphics.ColorProducer;
+import com.almostrealism.util.graphics.RGB;
 
 /**
  * The Texture interface is implemented by classes that can be used to texture a surface.
