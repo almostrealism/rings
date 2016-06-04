@@ -1,70 +1,99 @@
 package com.almostrealism.explorer.models;
 
+import java.util.ArrayList;
+
 import com.almostrealism.raytracer.primitives.Mesh.VertexData;
 
 class TerrainVertexData implements VertexData {
-	public TerrainVertexData(int width, int height) {
-		
+	private int resolution;
+	private double width, height;
+
+	private double vertices[][];
+	private int triangles[][];
+	private double textures[][];
+
+	public TerrainVertexData(int resolution, double width, double height) {
+		this.resolution = resolution;
+		this.width = width;
+		this.height = height;
+
+		populateMesh();
 	}
+
+	@Override
+	public double getRed(int index) { return 1.0; }
+
+	@Override
+	public double getGreen(int index) { return 1.0; }
+
+	@Override
+	public double getBlue(int index) { return 1.0; }
+
+	@Override
+	public double getX(int index) { return vertices[index][0]; }
+
+	@Override
+	public double getY(int index) { return vertices[index][1]; }
+
+	@Override
+	public double getZ(int index) { return vertices[index][2]; }
+
+	@Override
+	public double getTextureU(int index) { return textures[index][0]; }
+
+	@Override
+	public double getTextureV(int index) { return textures[index][1]; }
+
+	@Override
+	public int[] getTriangle(int index) { return triangles[index]; }
+
+	@Override
+	public int getTriangleCount() { return triangles.length; }
 	
-	@Override
-	public double getRed(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	protected void populateMesh() {
+		// center x,z on origin
+		double offset = width / 2.0f;
+		double scalex = width / (float) resolution;
+		double scalez = height / (float) resolution;
+		
+		vertices = new double[resolution * resolution][3];
+		textures = new double[resolution * resolution][3];
+		
+		for (int z = 0; z < resolution; z++) {
+			for (int x = 0; x < resolution; x++) {
+				int index = x + (z * resolution);
+				vertices[index][0] = (scalex * x) - offset; 
+				vertices[index][1] = 0.0; // height 
+				vertices[index][2] = (scalez * z) - offset;
+				
+				textures[index][0] = x / (double) resolution;
+				textures[index][1] = z / (double) resolution;
+			}
+		}
+		
+		ArrayList<Integer> triangleFan = new ArrayList<Integer>();
+		
+		for (int z = 0; z < resolution - 1; z++) {
+			// degenerate index on non-first row
+			if (z != 0) triangleFan.add(z * resolution);
+			
+			// main strip
+			for (int x = 0; x < resolution; x++) {
+				triangleFan.add(z * resolution + x);
+				triangleFan.add((z + 1) * resolution + x);
+			}
 
-	@Override
-	public double getGreen(int index) {
-		// TODO Auto-generated method stub
-		return 0;
+			// degenerate index on non-last row
+			if (z != (resolution - 2))
+				triangleFan.add((z + 1) * resolution + (resolution - 1));
+		}
+		
+		triangles = new int[triangleFan.size() - 2][3];
+		
+		for (int i = 0; i < triangles.length; i++) {
+			triangles[i][0] = triangleFan.get(i);
+			triangles[i][1] = triangleFan.get(i + 1);
+			triangles[i][2] = triangleFan.get(i + 2);
+		}
 	}
-
-	@Override
-	public double getBlue(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getX(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getY(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getZ(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getTextureU(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getTextureV(int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int[] getTriangle(int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getTriangleCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
