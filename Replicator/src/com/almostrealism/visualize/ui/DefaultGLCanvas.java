@@ -16,6 +16,7 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
+import com.almostrealism.util.ValueProducer;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -30,6 +31,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	
 	private List<Renderable> scene;
 	
+	private ValueProducer zoom;
 	private int prevMouseX, prevMouseY;
 	
 	public DefaultGLCanvas() {
@@ -46,6 +48,8 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public void add(Renderable r) { scene.add(r); }
 	
 	public void start() { animator.start(); }
+	
+	public void setZoom(ValueProducer p) { zoom = p; }
 	
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -89,12 +93,14 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		
 		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 2400.0f);
-
+		
+		float z = zoom == null ? 600.0f : (float) zoom.value();
+		
 		gl.glLoadIdentity();
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 6000.0f);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -600.0f);
+		gl.glTranslatef(0.0f, 0.0f, -z);
 //		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
 	}
 
