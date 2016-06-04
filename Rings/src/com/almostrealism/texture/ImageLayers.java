@@ -28,4 +28,7 @@ public class ImageLayers implements ImageSource {
 
 	@Override
 	public int getHeight() { return layers.values().iterator().next().getHeight(); }
+
+	@Override
+	public boolean isAlpha() { return layers.values().iterator().next().isAlpha(); }
 }
