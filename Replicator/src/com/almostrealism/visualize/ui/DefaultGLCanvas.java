@@ -69,7 +69,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
 		System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
-		float pos[] = { 5000.0f, 5000.0f, 10000.0f, 0.0f };
+		float pos[] = { 5000.0f, 5000.0f, 5000.0f, 0.0f };
 
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
 		gl.glEnable(GL2.GL_CULL_FACE);

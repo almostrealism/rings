@@ -26,6 +26,8 @@ public class ImageLayers implements ImageSource {
 			layers.put(m.getKey(), m.getValue());
 		}
 	}
+	
+	public void clear() { layers.clear(); }
 
 	@Override
 	public int[] getPixels() { return layers.values().iterator().next().getPixels(); }
