@@ -106,7 +106,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -z);
+		gl.glTranslatef(0.0f, 1000.0f, -z);
 	}
 
 	@Override
