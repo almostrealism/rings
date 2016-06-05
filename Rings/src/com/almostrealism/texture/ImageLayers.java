@@ -1,6 +1,7 @@
 package com.almostrealism.texture;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO  Add support for blending layers
@@ -19,6 +20,12 @@ public class ImageLayers implements ImageSource {
 	}
 	
 	public ImageSource getLayer(String name) { return layers.get(name); }
+	
+	public void addLayers(ImageLayers l) {
+		for (Map.Entry<String, ImageSource> m : l.layers.entrySet()) {
+			layers.put(m.getKey(), m.getValue());
+		}
+	}
 
 	@Override
 	public int[] getPixels() { return layers.values().iterator().next().getPixels(); }

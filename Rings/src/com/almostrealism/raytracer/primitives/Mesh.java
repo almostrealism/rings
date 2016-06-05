@@ -356,6 +356,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 				@Override
 				public Triangle next() {
 					int t[] = vertexData.getTriangle(i);
+					i++;
 					return new Triangle(t[0], t[1], t[2],
 							(RGB) Mesh.white.clone(), vertexData);
 				}

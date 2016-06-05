@@ -17,11 +17,16 @@ import com.almostrealism.visualize.primitives.RenderableMesh;
 public class Terrain extends RenderableMesh {
 	private ImageLayers textures;
 	
-	public Terrain(int width, int height, String shapeURL) {
+	public Terrain(double width, double height) {
 		super(createMesh(width, height));
 		
 		textures = new ImageLayers();
-		
+	}
+	
+	/**
+	 * TODO  This should add a texture layer with the shape file data?
+	 */
+	public void addShapeFile(String shapeURL) {
 		try {
 			Map connect = new HashMap();
 			connect.put("url", shapeURL);
@@ -47,7 +52,7 @@ public class Terrain extends RenderableMesh {
 	
 	public ImageLayers getTexture() { return textures; }
 	
-	private static Mesh createMesh(int width, int height) {
-		return new Mesh(new TerrainVertexData(1, width, height));
+	private static Mesh createMesh(double width, double height) {
+		return new Mesh(new TerrainVertexData(2, width, height));
 	}
 }
