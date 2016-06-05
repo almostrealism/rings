@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="FeedGrowth/src"/>
-	<classpathentry kind="src" path="JRings/iptables"/>
 	<classpathentry kind="src" path="JRings/src"/>
 	<classpathentry kind="src" path="Rings/src"/>
 	<classpathentry kind="src" path="PhotonField/src"/>

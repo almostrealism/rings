@@ -35,8 +35,9 @@ public class BasicGeometry implements Positioned, Oriented, Scaled, Triangulatab
 	}
 	
 	/**
-	 * Sets the location of this BasicGeometry to the specified Vector object.
-	 * This method calls calulateTransform() after it is completed.
+	 * Sets the location of this {@link BasicGeometry} to the specified
+	 * {@link Vector} object. This method calls calulateTransform() after
+	 * it is completed.
 	 */
 	public void setLocation(Vector location) {
 		this.location = location;
