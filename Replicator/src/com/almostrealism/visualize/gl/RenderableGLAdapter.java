@@ -23,7 +23,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	private float specular[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	private float shininess = 0.0f;
 	
-	private boolean ambient;
+	private boolean ambient = true;
 	
 	private ImageSource texture;
 	

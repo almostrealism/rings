@@ -53,6 +53,6 @@ public class Terrain extends RenderableMesh {
 	public ImageLayers getTexture() { return textures; }
 	
 	private static Mesh createMesh(double width, double height) {
-		return new Mesh(new TerrainVertexData(2, width, height));
+		return new Mesh(new TerrainVertexData(10, width, height));
 	}
 }

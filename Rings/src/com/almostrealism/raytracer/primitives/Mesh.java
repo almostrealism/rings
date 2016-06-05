@@ -365,7 +365,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	}
 	
 	/**
-	 * Checks triangle cache for the specified face index, and constructs a Triangle
+	 * Checks triangle cache for the specified face index, and constructs a {@link Triangle}
 	 * object if it is not present.
 	 * 
 	 * @param face  Index of face.

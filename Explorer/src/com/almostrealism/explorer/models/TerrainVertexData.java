@@ -91,9 +91,15 @@ class TerrainVertexData implements VertexData {
 		triangles = new int[triangleFan.size() - 2][3];
 		
 		for (int i = 0; i < triangles.length; i++) {
-			triangles[i][0] = triangleFan.get(i);
-			triangles[i][1] = triangleFan.get(i + 1);
-			triangles[i][2] = triangleFan.get(i + 2);
+			if (i % 2 == 0) {
+				triangles[i][0] = triangleFan.get(i);
+				triangles[i][1] = triangleFan.get(i + 1);
+				triangles[i][2] = triangleFan.get(i + 2);
+			} else {
+				triangles[i][2] = triangleFan.get(i);
+				triangles[i][1] = triangleFan.get(i + 1);
+				triangles[i][0] = triangleFan.get(i + 2);
+			}
 		}
 	}
 }
