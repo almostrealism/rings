@@ -28,6 +28,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	private final float view_rotz = 0.0f;
 	
 	private int swapInterval;
+	private boolean toReset;
 	
 	private List<Renderable> scene;
 	
@@ -48,6 +49,8 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public void add(Renderable r) { scene.add(r); }
 	
 	public void start() { animator.start(); }
+	
+	public void reset() { toReset = true; }
 	
 	public void setZoom(ValueProducer p) { zoom = p; }
 	
@@ -96,17 +99,14 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		
 		gl.glLoadIdentity();
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 6000.0f);
-//		doView(gl);
 	}
 	
 	public void doView(GL2 gl) {
 		float z = zoom == null ? 600.0f : (float) zoom.value();
 		
-		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, 0.0f, -z);
-//		gl.glRotatef(330.0f, 1.0f, 0.0f, 0.0f);
 	}
 
 	@Override
@@ -116,6 +116,11 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public void display(GLAutoDrawable drawable) {
 		// Get the GL corresponding to the drawable we are animating
 		GL2 gl = drawable.getGL().getGL2();
+		
+		if (toReset) {
+			initRenderables(gl);
+			toReset = false;
+		}
 		
 		doView(gl);
 		
