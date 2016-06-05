@@ -21,4 +21,6 @@ public class DefaultReplicant extends Replicant implements Iterable<BasicGeometr
 	public void put(String name, BasicGeometry g) { geo.put(name, g); }
 	
 	public Iterator<BasicGeometry> iterator() { return geo.values().iterator(); }
+	
+	public void clear() { geo.clear(); }
 }

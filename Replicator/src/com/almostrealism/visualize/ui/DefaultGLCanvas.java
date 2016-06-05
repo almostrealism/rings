@@ -38,7 +38,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public DefaultGLCanvas() {
 		scene = new ArrayList<Renderable>();
 		
-		animator = new FPSAnimator(this, 60);
+		animator = new FPSAnimator(this, 20);
 		addGLEventListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
