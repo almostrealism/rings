@@ -41,8 +41,8 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 	}
 	
 	/**
-	 * Constructs a new Triangle object with the specified vertices with the color
-	 * represented by the specified {@link RGB} object.
+	 * Constructs a new {@link Triangle} object with the specified vertices
+	 * with the color represented by the specified {@link RGB} object.
 	 */
 	public Triangle(Vector p1, Vector p2, Vector p3, RGB color) {
 		super(null, 1.0, color, false);

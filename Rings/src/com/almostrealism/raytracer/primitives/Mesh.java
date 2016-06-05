@@ -40,8 +40,8 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		private String name;
 		private int format;
 		private String url;
-		private Mesh mesh = null;
-		private Surface s = null;
+		private Mesh mesh;
+		private Surface s;
 		
 		public void setFile(String f) { this.name = f; }
 		public String getFile() { return this.name; }
@@ -93,7 +93,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	public static class Vertex extends Vector {
 		private double nx, ny, nz;  // Vertex normals
 		private double r, g, b;  // Vertex color
-		private double tu, tv;  // Texture coordinates
+		private double tu, tv;  // TODO  Texture coordinates
 		
 		public Vertex() { }
 		
@@ -331,16 +331,6 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
   			return null;
   	}
   	
-  	/**
-  	 * @return  An array of Triangle objects stored by this Mesh object.
-  	 */
-	public Triangle[] getTriangles() {
-		Triangle t[] = new Triangle[this.triangles.size()];
-		for (int i = 0; i < t.length; i++) t[i] = this.getTriangle(i);
-		
-		return t;
-  	}
-	
 	public Iterator<Triangle> iterator() {
 		if (vertexData == null) {
 			return Arrays.asList(getTriangles()).iterator();
@@ -364,6 +354,14 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		}
 	}
 	
+	/** @return  An array of Triangle objects stored by this {@link Mesh} object. */
+	public Triangle[] getTriangles() {
+		Triangle t[] = new Triangle[this.triangles.size()];
+		for (int i = 0; i < t.length; i++) t[i] = getTriangle(i);
+
+		return t;
+	}
+
 	/**
 	 * Checks triangle cache for the specified face index, and constructs a {@link Triangle}
 	 * object if it is not present.
@@ -392,9 +390,9 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		if (this.vertexData == null) {
 			int v[] = (int[]) this.triangles.get(face);
 			
-			Vertex v1 = (Vertex)this.points.get(v[0]);
-			Vertex v2 = (Vertex)this.points.get(v[1]);
-			Vertex v3 = (Vertex)this.points.get(v[2]);
+			Vertex v1 = (Vertex) this.points.get(v[0]);
+			Vertex v2 = (Vertex) this.points.get(v[1]);
+			Vertex v3 = (Vertex) this.points.get(v[2]);
 			
 			t = new Triangle(v1, v2, v3, (RGB) Mesh.white.clone());
 		} else {
