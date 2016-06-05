@@ -10,7 +10,7 @@ public class ValueSlider extends JSlider implements ValueProducer {
 	private double min, max;
 	
 	public ValueSlider(int orient, double min, double max, double value) {
-		super(orient, 0, scale);
+		super(orient, 0, scale, 0);
 		this.min = min;
 		this.max = max;
 		this.setValue((int) (scale * (value - min) / (max - min)));
