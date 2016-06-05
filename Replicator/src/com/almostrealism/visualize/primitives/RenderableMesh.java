@@ -6,7 +6,7 @@ import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.visualize.geometry.RenderableGeometry;
 
 public class RenderableMesh extends RenderableGeometry {
-	private TriangleDisplayList list;
+	protected TriangleDisplayList list;
 	
 	public RenderableMesh(Mesh m) {
 		super(m);

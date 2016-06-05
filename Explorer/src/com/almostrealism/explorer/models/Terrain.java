@@ -3,6 +3,8 @@ package com.almostrealism.explorer.models;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.media.opengl.GL2;
+
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -51,6 +53,11 @@ public class Terrain extends RenderableMesh {
 	}
 	
 	public ImageLayers getTexture() { return textures; }
+	
+	public void init(GL2 gl) {
+//		list.setTexture(getTexture());
+		super.init(gl);
+	}
 	
 	private static Mesh createMesh(double width, double height) {
 		return new Mesh(new TerrainVertexData(10, width, height));
