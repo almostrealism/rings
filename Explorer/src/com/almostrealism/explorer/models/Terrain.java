@@ -55,7 +55,7 @@ public class Terrain extends RenderableMesh {
 	public ImageLayers getTexture() { return textures; }
 	
 	public void init(GL2 gl) {
-//		list.setTexture(getTexture());
+		list.setTexture(getTexture());
 		super.init(gl);
 	}
 	

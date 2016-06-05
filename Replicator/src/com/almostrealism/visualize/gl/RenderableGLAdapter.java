@@ -30,7 +30,12 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public RenderableGLAdapter() { }
 	
 	@Override
-	public void init(GL2 gl) { }
+	public void init(GL2 gl) { initTexture(gl); }
+
+	public void initTexture(GL2 gl) {
+		if (texture == null) return;
+		textureManager.addTexture(gl, texture);
+	}
 	
 	public void initMaterial(GL2 gl) {
 		if (ambient) {
@@ -43,13 +48,6 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(specular));
 			gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, shininess);
 		}
-		
-		initTexture(gl);
-	}
-	
-	public void initTexture(GL2 gl) {
-		if (texture == null) return;
-		textureManager.addTexture(gl, texture);
 	}
 	
 	public void push(GL2 gl) {

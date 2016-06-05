@@ -18,7 +18,7 @@ public class URLImageSource implements ImageSource {
 	public URLImageSource(URL url) {
 		this.url = url;
 
-		Image image = Toolkit.getDefaultToolkit().getImage(this.url);
+		image = Toolkit.getDefaultToolkit().getImage(this.url);
 		MediaTracker m = new MediaTracker(new Panel());
 		m.addImage(image, 0);
 
