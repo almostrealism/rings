@@ -46,11 +46,13 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		this.swapInterval = 1;
 	}
 	
-	public void add(Renderable r) { scene.add(r); }
+	public void add(Renderable r) { if (r != null) scene.add(r); }
 	
 	public void start() { animator.start(); }
 	
 	public void reset() { toReset = true; }
+	
+	public void removeAll() { scene.clear(); }
 	
 	public void setZoom(ValueProducer p) { zoom = p; }
 	
@@ -106,7 +108,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 1000.0f, -z);
+		gl.glTranslatef(0.0f, -200.0f, -z);
 	}
 
 	@Override
