@@ -7,6 +7,10 @@ import java.awt.Toolkit;
 import java.awt.image.PixelGrabber;
 import java.net.URL;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
 public class URLImageSource implements ImageSource {
 	private URL url;
 	
@@ -56,4 +60,11 @@ public class URLImageSource implements ImageSource {
 	
 	@Override
 	public boolean isAlpha() { return false; }
+	
+	public void showDebugWindow() {
+		JFrame f = new JFrame("Surface");
+		f.setSize(700, 700);
+		f.getContentPane().add(new JLabel(new ImageIcon(url)));
+		f.setVisible(true);
+	}
 }
