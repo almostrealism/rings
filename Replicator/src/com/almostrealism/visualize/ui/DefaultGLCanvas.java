@@ -16,6 +16,7 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
+import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.util.ValueProducer;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.jogamp.newt.Window;
@@ -34,6 +35,8 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	
 	private ValueProducer zoom;
 	private int prevMouseX, prevMouseY;
+	
+	private float camera[] = {0f, 0f, 0f};
 	
 	public DefaultGLCanvas() {
 		scene = new ArrayList<Renderable>();
@@ -55,6 +58,17 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public void removeAll() { scene.clear(); }
 	
 	public void setZoom(ValueProducer p) { zoom = p; }
+	
+	public void setCamera(float x, float y, float z) {
+		camera[0] = x;
+		camera[1] = y;
+		camera[2] = z;
+	}
+	
+	public void lookAt(BasicGeometry g) {
+		float f[] = g.getPosition();
+		setCamera(f[0], f[1], f[2]);
+	}
 	
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -109,6 +123,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, -200.0f, -z);
+		gl.glTranslatef(camera[0], camera[1], camera[2]);
 	}
 
 	@Override
