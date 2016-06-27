@@ -1,4 +1,4 @@
-package net.sf.j3d.math.flow;
+package com.almostrealism.math.flow;
 
 import java.util.HashSet;
 import java.util.Hashtable;

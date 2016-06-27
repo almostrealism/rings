@@ -1,4 +1,4 @@
-package net.sf.j3d.math.cover;
+package com.almostrealism.math.cover;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

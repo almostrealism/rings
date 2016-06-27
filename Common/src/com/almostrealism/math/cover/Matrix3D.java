@@ -1,4 +1,4 @@
-package net.sf.j3d.math.cover;
+package com.almostrealism.math.cover;
 
 public class Matrix3D {
 	protected double matrix[][][];

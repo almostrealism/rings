@@ -103,7 +103,6 @@
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-mbtiles-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-metadata-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-mongodb-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-netcdf-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-bridj-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-core-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-jni-15-RC1.jar"/>
@@ -147,6 +146,7 @@
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-wps-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ysld-15-RC1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/h2-1.1.119.jar"/>
+	<classpathentry kind="lib" path="Common/lib/jep-2.23.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.math;
+package com.almostrealism.math;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

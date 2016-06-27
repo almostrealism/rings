@@ -1,4 +1,4 @@
-package net.sf.j3d.math;
+package com.almostrealism.math;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;

@@ -1,4 +1,4 @@
-package net.sf.j3d.math.flow;
+package com.almostrealism.math.flow;
 
 public class BiGraph {
 	private double w[][];

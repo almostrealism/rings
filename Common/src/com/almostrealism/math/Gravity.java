@@ -1,4 +1,4 @@
-package net.sf.j3d.math;
+package com.almostrealism.math;
 /*
  * Copyright (C) 2005  Mike Murray
  *
