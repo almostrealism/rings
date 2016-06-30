@@ -3,6 +3,16 @@ package com.almostrealism.html;
 import java.util.ArrayList;
 
 public class HTMLFragment extends ArrayList<HTMLContent> implements HTMLContent {
+	public enum Type { HEAD, BODY; }
+	
+	private Type type;
+	
+	public HTMLFragment() { this(Type.BODY); }
+	
+	public HTMLFragment(Type t) { this.type = t; }
+	
+	public Type getType() { return type; }
+	
 	public String toHTML() {
 		StringBuffer buf = new StringBuffer();
 		
