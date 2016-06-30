@@ -11,6 +11,8 @@ public abstract class RenderableGeometry implements Renderable, RenderDelegate {
 	
 	public RenderableGeometry(BasicGeometry geometry) { geo = geometry; }
 	
+	public BasicGeometry getGeometry() { return geo; }
+	
 	@Override
 	public void display(GL2 gl) {
 		gl.glPushMatrix();

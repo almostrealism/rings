@@ -354,6 +354,13 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		}
 	}
 	
+	/**
+	 * Returns the {@link VertexData} which provides the mesh data,
+	 * if this {@link Mesh} was initialized with a {@link VertexData}
+	 * implementation.
+	 */
+	public VertexData getVertexData() { return vertexData; }
+	
 	/** @return  An array of Triangle objects stored by this {@link Mesh} object. */
 	public Triangle[] getTriangles() {
 		Triangle t[] = new Triangle[this.triangles.size()];
