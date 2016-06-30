@@ -3,7 +3,7 @@ package com.almostrealism.html;
 import java.util.ArrayList;
 
 public class HTMLFragment extends ArrayList<HTMLContent> implements HTMLContent {
-	public enum Type { HEAD, BODY; }
+	public enum Type { HEAD, BODY, SCRIPT; }
 	
 	private Type type;
 	
