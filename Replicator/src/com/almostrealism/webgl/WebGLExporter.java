@@ -10,7 +10,7 @@ public class WebGLExporter {
 		this.renderables = renderables;
 	}
 	
-	public String render() {
+	public HTMLPage render() {
 		HTMLPage p = new HTMLPage();
 		
 		// TODO  Camera config, etc
@@ -24,6 +24,6 @@ public class WebGLExporter {
 		
 		p.add(geometry);
 		
-		return p.toHTML();
+		return p;
 	}
 }
