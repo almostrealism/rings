@@ -12,9 +12,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.JobFactory;
-import net.sf.j3d.network.Server;
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.JobFactory;
+import com.almostrealism.flow.Server;
 
 public class ArtifactDetectionTask implements JobFactory {
 	private static int width = 9700;

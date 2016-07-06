@@ -16,17 +16,16 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.JobFactory;
+import com.almostrealism.flow.Resource;
+import com.almostrealism.flow.Server;
+import com.almostrealism.flow.db.Client;
 import com.almostrealism.photonfield.AbsorberSet;
 import com.almostrealism.photonfield.AbsorptionPlane;
 import com.almostrealism.photonfield.Clock;
 import com.almostrealism.photonfield.DefaultPhotonField;
 import com.almostrealism.photonfield.util.FileLoader;
-
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.JobFactory;
-import net.sf.j3d.network.Resource;
-import net.sf.j3d.network.Server;
-import net.sf.j3d.network.db.Client;
 
 public class PhotonFieldJob implements JobFactory, Job {
 	public static double verbose = Math.pow(10.0, -3.0);

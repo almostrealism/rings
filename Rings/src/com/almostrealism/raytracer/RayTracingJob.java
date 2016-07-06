@@ -26,6 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.db.Client;
+import com.almostrealism.flow.db.JobOutput;
+import com.almostrealism.flow.db.OutputHandler;
+import com.almostrealism.flow.db.Query;
+import com.almostrealism.flow.db.QueryHandler;
 import com.almostrealism.io.FileDecoder;
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.io.FilePrintWriter;
@@ -37,12 +43,6 @@ import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.db.Client;
-import net.sf.j3d.network.db.JobOutput;
-import net.sf.j3d.network.db.OutputHandler;
-import net.sf.j3d.network.db.Query;
-import net.sf.j3d.network.db.QueryHandler;
 import net.sf.j3d.run.Settings;
 
 /**
@@ -604,7 +604,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	}
 	
 	/**
-	 * @see net.sf.j3d.network.Job#encode()
+	 * @see com.almostrealism.flow.Job#encode()
 	 */
 	public String encode() {
 		StringBuffer s = new StringBuffer();
@@ -686,7 +686,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	}
 	
 	/**
-	 * @see net.sf.j3d.network.Job#set(java.lang.String, java.lang.String)
+	 * @see com.almostrealism.flow.Job#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri"))
@@ -854,7 +854,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	
 
 	/**
-	 * @see net.sf.j3d.network.Job#getTaskId()
+	 * @see com.almostrealism.flow.Job#getTaskId()
 	 */
 	public long getTaskId() { return this.jobId; }
 	

@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 
+import com.almostrealism.flow.Server;
+import com.almostrealism.flow.ServerBehavior;
 import com.apple.cocoa.application.NSApplication;
 import com.apple.cocoa.foundation.NSNetService;
 import com.apple.cocoa.foundation.NSNetServiceBrowser;
-
-import net.sf.j3d.network.Server;
-import net.sf.j3d.network.ServerBehavior;
 
 public class BonjourBehavior implements ServerBehavior {
 	private Server server;

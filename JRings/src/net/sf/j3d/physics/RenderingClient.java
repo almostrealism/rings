@@ -16,9 +16,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
-import net.sf.j3d.network.Message;
-import net.sf.j3d.network.db.Client;
-
+import com.almostrealism.flow.Message;
+import com.almostrealism.flow.db.Client;
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.network.JobProducer;

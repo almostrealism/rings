@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
+import com.almostrealism.flow.Resource;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
@@ -35,8 +36,6 @@ import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.network.Resource;
 
 /**
  * The FileDecoder class provides static methods for decoding scene and surface data

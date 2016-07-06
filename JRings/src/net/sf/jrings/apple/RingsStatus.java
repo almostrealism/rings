@@ -8,10 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.sf.j3d.network.NetworkClient;
-import net.sf.j3d.network.Server;
-import net.sf.j3d.network.db.Client;
-
+import com.almostrealism.flow.NetworkClient;
+import com.almostrealism.flow.Server;
+import com.almostrealism.flow.db.Client;
 import com.apple.cocoa.application.NSApplication;
 import com.apple.cocoa.application.NSMenuItem;
 import com.apple.cocoa.application.NSTextField;

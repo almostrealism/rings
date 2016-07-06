@@ -14,11 +14,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.JobFactory;
-import net.sf.j3d.network.Server;
-import net.sf.j3d.network.db.Client;
-import net.sf.j3d.network.db.Query;
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.JobFactory;
+import com.almostrealism.flow.Server;
+import com.almostrealism.flow.db.Client;
+import com.almostrealism.flow.db.Query;
 
 /**
  * @author Mike Murray
@@ -92,7 +92,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see net.sf.j3d.network.JobFactory#nextJob()
+	 * @see com.almostrealism.flow.JobFactory#nextJob()
 	 */
 	public Job nextJob() {
 		if (i >= this.totalJobs) {
@@ -170,7 +170,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 
 	/**
-	 * @see net.sf.j3d.network.JobFactory#createJob(java.lang.String)
+	 * @see com.almostrealism.flow.JobFactory#createJob(java.lang.String)
 	 */
 	public Job createJob(String data) {
 		Client c = Client.getCurrentClient();
@@ -258,7 +258,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see net.sf.j3d.network.JobFactory#set(java.lang.String, java.lang.String)
+	 * @see com.almostrealism.flow.JobFactory#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri")) {

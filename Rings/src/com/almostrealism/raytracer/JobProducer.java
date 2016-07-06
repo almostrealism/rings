@@ -9,9 +9,9 @@
 
 package com.almostrealism.raytracer;
 
-import net.sf.j3d.network.NetworkClient;
-import net.sf.j3d.network.Server;
-import net.sf.j3d.network.db.Client;
+import com.almostrealism.flow.NetworkClient;
+import com.almostrealism.flow.Server;
+import com.almostrealism.flow.db.Client;
 
 // TODO  Add constructor that accepts a RayTracingEngine.RenderingProperties object.
 

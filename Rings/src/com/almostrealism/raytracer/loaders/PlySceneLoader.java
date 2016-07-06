@@ -11,12 +11,11 @@ package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
+import com.almostrealism.flow.db.Client;
 import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.SceneLoader;
 import com.almostrealism.raytracer.engine.Scene;
-
-import net.sf.j3d.network.db.Client;
 
 /**
  * The PlySceneLoader loads a PLY model from the distributed database

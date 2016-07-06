@@ -13,9 +13,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.NoSuchElementException;
 
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.db.Client;
-
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
 import org.htmlparser.filters.HasAttributeFilter;
@@ -24,6 +21,9 @@ import org.htmlparser.util.EncodingChangeException;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
+
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.db.Client;
 
 // TODO  Fix problem with 'Buy It Now' cost showing up as shipping cost.
 
@@ -49,7 +49,7 @@ public class EBayParserJob implements Job {
 	}
 	
 	/**
-	 * @see net.sf.j3d.network.Job#encode()
+	 * @see com.almostrealism.flow.Job#encode()
 	 */
 	public String encode() {
 		StringBuffer buf = new StringBuffer();
@@ -68,17 +68,17 @@ public class EBayParserJob implements Job {
 	}
 
 	/**
-	 * @see net.sf.j3d.network.Job#getTaskId()
+	 * @see com.almostrealism.flow.Job#getTaskId()
 	 */
 	public long getTaskId() { return this.taskId; }
 
 	/**
-	 * @see net.sf.j3d.network.Job#getTaskString()
+	 * @see com.almostrealism.flow.Job#getTaskString()
 	 */
 	public String getTaskString() { return this.taskString; }
 
 	/**
-	 * @see net.sf.j3d.network.Job#set(java.lang.String, java.lang.String)
+	 * @see com.almostrealism.flow.Job#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri")) {

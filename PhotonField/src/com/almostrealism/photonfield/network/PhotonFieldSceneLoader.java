@@ -18,10 +18,9 @@ import java.util.Hashtable;
 
 import org.xml.sax.SAXException;
 
-import net.sf.j3d.network.Resource;
-import net.sf.j3d.network.db.Client;
-import net.sf.j3d.network.resources.DistributedResource;
-
+import com.almostrealism.flow.Resource;
+import com.almostrealism.flow.db.Client;
+import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.photonfield.AbsorberHashSet;
 import com.almostrealism.photonfield.AbsorberSet;
 import com.almostrealism.photonfield.raytracer.AbsorberSetRayTracer;

@@ -16,7 +16,7 @@ package com.almostrealism.math;
 
 import java.util.List;
 
-import net.sf.j3d.network.db.DatabaseConnection;
+import com.almostrealism.flow.db.DatabaseConnection;
 
 /**
  * The Functions class provides static methods that perform

@@ -15,8 +15,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.sf.j3d.network.NetworkClient;
-
+import com.almostrealism.flow.NetworkClient;
 import com.google.gdata.util.ServiceException;
 import com.roxstream.google.YouTubeConnection;
 import com.roxstream.google.YouTubeVideo;

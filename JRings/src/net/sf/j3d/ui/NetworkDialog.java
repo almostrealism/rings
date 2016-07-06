@@ -38,9 +38,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import net.sf.j3d.network.NodeProxy;
-import net.sf.j3d.network.db.Client;
-import net.sf.j3d.network.db.LoginDialog;
+import com.almostrealism.flow.NodeProxy;
+import com.almostrealism.flow.db.Client;
+import com.almostrealism.flow.db.LoginDialog;
+
 import net.sf.j3d.run.Settings;
 
 

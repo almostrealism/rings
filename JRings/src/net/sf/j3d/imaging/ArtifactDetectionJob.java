@@ -3,11 +3,10 @@ package net.sf.j3d.imaging;
 import java.io.File;
 import java.io.IOException;
 
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.db.Client;
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.db.Client;
 
 public class ArtifactDetectionJob implements Job {
 	private static int ignoreTop = 1800;

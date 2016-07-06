@@ -14,9 +14,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import net.sf.j3d.network.Resource;
-import net.sf.j3d.network.db.Client;
-
+import com.almostrealism.flow.Resource;
+import com.almostrealism.flow.db.Client;
 import com.roxstream.google.YouTubeVideo;
 
 public class VideoDownloadPanel extends JPanel {

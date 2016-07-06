@@ -34,9 +34,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import net.sf.j3d.network.NetworkClient;
-import net.sf.j3d.network.db.Client;
-
+import com.almostrealism.flow.NetworkClient;
+import com.almostrealism.flow.db.Client;
 import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.AbsorberHashSet;

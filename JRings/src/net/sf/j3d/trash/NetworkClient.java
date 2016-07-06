@@ -20,11 +20,11 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.ietf.jgss.GSSException;
 
-import net.sf.j3d.network.Connection;
-import net.sf.j3d.network.Job;
-import net.sf.j3d.network.Node;
-import net.sf.j3d.network.NodeProxy;
-import net.sf.j3d.network.tests.TestJobFactory;
+import com.almostrealism.flow.Connection;
+import com.almostrealism.flow.Job;
+import com.almostrealism.flow.Node;
+import com.almostrealism.flow.NodeProxy;
+import com.almostrealism.flow.tests.TestJobFactory;
 
 /**
  * A NetworkClient instance can be used to send jobs/messages to a server.

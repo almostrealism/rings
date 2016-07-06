@@ -18,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.almostrealism.flow.db.JobOutput;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.network.db.JobOutput;
 
 /**
  * A RayTracingJobOutput object stores 
