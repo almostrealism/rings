@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.run;
+package com.almostrealism.raytracer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+
+import net.sf.j3d.run.Settings;
 
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.engine.Scene;
