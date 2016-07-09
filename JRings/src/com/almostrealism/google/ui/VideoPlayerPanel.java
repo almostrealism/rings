@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -29,12 +29,12 @@ import javax.swing.JPanel;
 
 import org.jflash.FlashPane;
 
+import com.almostrealism.google.GoogleSettings;
+import com.almostrealism.google.YouTubeVideo;
 import com.jimischopp.jyoutube.JYouTube;
 import com.jpackages.jflashplayer.FlashPanel;
 import com.jpackages.jflashplayer.JFlashInvalidFlashException;
 import com.jpackages.jflashplayer.JFlashLibraryLoadFailedException;
-import com.roxstream.google.GoogleSettings;
-import com.roxstream.google.YouTubeVideo;
 
 public class VideoPlayerPanel extends JPanel implements ActionListener {
 	private YouTubeVideo video;

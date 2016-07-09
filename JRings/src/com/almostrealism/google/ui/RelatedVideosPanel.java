@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
@@ -45,8 +45,8 @@ import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
+import com.almostrealism.google.YouTubeVideo;
 import com.google.gdata.util.ServiceException;
-import com.roxstream.google.YouTubeVideo;
 
 public class RelatedVideosPanel extends JPanel {
 	private VideoListModel videoListModel;

@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -16,9 +16,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.almostrealism.flow.NetworkClient;
+import com.almostrealism.google.YouTubeConnection;
+import com.almostrealism.google.YouTubeVideo;
 import com.google.gdata.util.ServiceException;
-import com.roxstream.google.YouTubeConnection;
-import com.roxstream.google.YouTubeVideo;
 
 public class YouTubePlayer extends JFrame implements Runnable, ListSelectionListener {
 	public static YouTubePlayer player;

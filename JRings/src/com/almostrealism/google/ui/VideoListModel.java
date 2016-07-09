@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,7 +19,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import com.roxstream.google.YouTubeVideo;
+import com.almostrealism.google.YouTubeVideo;
 
 public class VideoListModel implements ListModel, ListCellRenderer {
 	private List listeners, videos;

@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import javax.swing.event.ListDataListener;
 
 import com.almostrealism.flow.Resource;
 import com.almostrealism.flow.db.Client;
-import com.roxstream.google.YouTubeVideo;
+import com.almostrealism.google.YouTubeVideo;
 
 public class VideoDownloadPanel extends JPanel {
 	protected static class VideoDownload implements Runnable {

@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -15,8 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionListener;
 
+import com.almostrealism.google.YouTubeConnection;
 import com.google.gdata.util.ServiceException;
-import com.roxstream.google.YouTubeConnection;
 
 public class VideoSearchPanel extends JPanel implements KeyListener {
 	private YouTubeConnection connection;

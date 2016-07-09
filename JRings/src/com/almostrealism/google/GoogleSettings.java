@@ -1,4 +1,4 @@
-package com.roxstream.google;
+package com.almostrealism.google;
 
 public class GoogleSettings {
 	public static final String myVideosPath = "videos";

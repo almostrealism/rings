@@ -1,4 +1,4 @@
-package com.roxstream.google.ui;
+package com.almostrealism.google.ui;
 
 import java.awt.BorderLayout;
 
@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.roxstream.google.YouTubeVideo;
+import com.almostrealism.google.YouTubeVideo;
 
 public class VideoInfoPanel extends JPanel {
 	private JTextArea textArea;

@@ -10,9 +10,9 @@ import com.almostrealism.flow.Resource;
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.ServerBehavior;
 import com.almostrealism.flow.db.Client;
+import com.almostrealism.google.YouTubeConnection;
+import com.almostrealism.google.YouTubeVideo;
 import com.google.gdata.util.ServiceException;
-import com.roxstream.google.YouTubeConnection;
-import com.roxstream.google.YouTubeVideo;
 
 public class YouTubeScanner implements ServerBehavior {
 	private YouTubeConnection tube;
