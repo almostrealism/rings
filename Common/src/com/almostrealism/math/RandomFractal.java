@@ -29,11 +29,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import net.sf.j3d.ui.displays.ImageCanvas;
-import net.sf.j3d.ui.panels.PercentagePanel;
-
 import org.nfunk.jep.JEP;
 
+import com.almostrealism.ui.displays.ImageCanvas;
+import com.almostrealism.ui.panels.PercentagePanel;
 import com.almostrealism.util.graphics.RGB;
 
 

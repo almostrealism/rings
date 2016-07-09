@@ -12,8 +12,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import net.sf.j3d.ui.ObjectTreeDisplay;
-import net.sf.j3d.ui.ObjectTreeNode;
+import com.almostrealism.ui.ObjectTreeDisplay;
+import com.almostrealism.ui.ObjectTreeNode;
 
 /**
  * @author  Mike Murray

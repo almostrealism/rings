@@ -15,9 +15,8 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
+import com.almostrealism.ui.displays.ProgressDisplay;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.ui.displays.ProgressDisplay;
 
 public class AbsorberSetRayTracer {
 	private Camera camera;

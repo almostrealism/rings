@@ -19,8 +19,7 @@ import com.almostrealism.photonfield.util.OverlayDistribution;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
 import com.almostrealism.photonfield.util.RangeSumDistribution;
 import com.almostrealism.photonfield.xml.ProbabilityDistributionDisplay;
-
-import net.sf.j3d.ui.ObjectTreeDisplay;
+import com.almostrealism.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray

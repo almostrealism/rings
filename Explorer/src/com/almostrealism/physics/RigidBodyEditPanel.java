@@ -20,8 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 
-import net.sf.j3d.ui.panels.ExtendedCellEditor;
-import net.sf.j3d.ui.panels.ExtendedCellRenderer;
+import com.almostrealism.ui.panels.ExtendedCellEditor;
+import com.almostrealism.ui.panels.ExtendedCellRenderer;
 
 /**
  * @author Mike Murray

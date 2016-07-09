@@ -24,8 +24,7 @@ import com.almostrealism.photonfield.distribution.SphericalProbabilityDistributi
 import com.almostrealism.photonfield.distribution.UniformHemisphericalDistribution;
 import com.almostrealism.photonfield.geometry.Sphere;
 import com.almostrealism.photonfield.ui.AbsorberPreviewPanel;
-
-import net.sf.j3d.ui.ObjectTreeDisplay;
+import com.almostrealism.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray

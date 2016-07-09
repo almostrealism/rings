@@ -17,12 +17,12 @@ import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
+import com.almostrealism.ui.displays.ProgressDisplay;
+import com.almostrealism.ui.event.ProgressMonitor;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.ui.displays.ProgressDisplay;
-import net.sf.j3d.ui.event.ProgressMonitor;
 
 
 /**

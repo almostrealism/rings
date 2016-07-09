@@ -21,8 +21,7 @@ import javax.swing.event.ChangeListener;
 
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
 import com.almostrealism.photonfield.xml.ProbabilityDistributionDisplay;
-
-import net.sf.j3d.ui.panels.PercentagePanel;
+import com.almostrealism.ui.panels.PercentagePanel;
 
 /**
  * @author  Mike Murray

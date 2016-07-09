@@ -12,8 +12,9 @@ import java.awt.Container;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
+import com.almostrealism.ui.ObjectTreeDisplay;
+
 import net.sf.j3d.obj.DefaultObjectFactory;
-import net.sf.j3d.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray

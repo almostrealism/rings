@@ -46,12 +46,12 @@ import com.almostrealism.raytracer.shaders.BlendingShader;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.ReflectionShader;
 import com.almostrealism.raytracer.shaders.Shader;
+import com.almostrealism.ui.panels.DebugOutputPanel;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 
 import net.sf.j3d.run.Settings;
-import net.sf.j3d.ui.panels.DebugOutputPanel;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;

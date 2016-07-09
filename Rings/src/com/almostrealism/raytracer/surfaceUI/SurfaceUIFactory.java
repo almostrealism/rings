@@ -28,10 +28,10 @@ import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.Triangle;
-import net.sf.j3d.ui.dialogs.Dialog;
-import net.sf.j3d.ui.dialogs.EditPlaneDialog;
-import net.sf.j3d.ui.dialogs.EditPolynomialDialog;
-import net.sf.j3d.ui.dialogs.EditTriangleDialog;
+import com.almostrealism.ui.dialogs.Dialog;
+import com.almostrealism.ui.dialogs.EditPlaneDialog;
+import com.almostrealism.ui.dialogs.EditPolynomialDialog;
+import com.almostrealism.ui.dialogs.EditTriangleDialog;
 
 
 // TODO  Add Mesh dialog that allows user to configure space partition.

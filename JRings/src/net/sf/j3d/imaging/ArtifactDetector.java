@@ -21,10 +21,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import com.almostrealism.io.FileEncoder;
+import com.almostrealism.ui.panels.PercentagePanel;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.ui.panels.PercentagePanel;
 
 
 public class ArtifactDetector {

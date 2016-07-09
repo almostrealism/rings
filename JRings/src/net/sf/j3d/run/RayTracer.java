@@ -29,17 +29,16 @@ import javax.swing.UIManager;
 
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.engine.Scene;
-
-import net.sf.j3d.ui.event.Event;
-import net.sf.j3d.ui.event.EventGenerator;
-import net.sf.j3d.ui.event.EventHandler;
-import net.sf.j3d.ui.event.EventListener;
-import net.sf.j3d.ui.event.SceneCloseEvent;
-import net.sf.j3d.ui.event.SceneOpenEvent;
-import net.sf.j3d.ui.menus.DefaultToolBar;
-import net.sf.j3d.ui.panels.DebugOutputPanel;
-import net.sf.j3d.ui.panels.RenderPanel;
-import net.sf.j3d.ui.panels.SplashScreen;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.menus.DefaultToolBar;
+import com.almostrealism.ui.panels.DebugOutputPanel;
+import com.almostrealism.ui.panels.RenderPanel;
+import com.almostrealism.ui.panels.SplashScreen;
 
 
 /**

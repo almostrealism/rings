@@ -28,10 +28,9 @@ import com.almostrealism.photonfield.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photonfield.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
+import com.almostrealism.ui.displays.ImageCanvas;
+import com.almostrealism.ui.displays.ProgressDisplay;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.ui.displays.ImageCanvas;
-import net.sf.j3d.ui.displays.ProgressDisplay;
 
 /**
  * @author  Mike Murray

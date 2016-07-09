@@ -16,8 +16,7 @@ import javax.swing.tree.MutableTreeNode;
 import com.almostrealism.flow.Connection;
 import com.almostrealism.flow.Node;
 import com.almostrealism.flow.NodeGroup;
-
-import net.sf.j3d.ui.TreeNode;
+import com.almostrealism.ui.TreeNode;
 
 
 /**
