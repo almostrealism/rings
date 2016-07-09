@@ -12,7 +12,7 @@
  *
  */
 
-package com.almostrealism.ui;
+package com.almostrealism.flow.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
