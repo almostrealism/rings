@@ -7,7 +7,7 @@
  *
  */
 
-package net.sf.j3d.trash;
+package com.almostrealism.flow.ui;
 
 import java.io.IOException;
 import java.net.Socket;
