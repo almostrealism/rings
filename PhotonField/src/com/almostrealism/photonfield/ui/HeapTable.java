@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Almost Realism Software Group
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *  
- */
-
-/**
- *  @author Samuel Tepper
- */
-
 package com.almostrealism.photonfield.ui;
 
 import javax.swing.JTable;
 
+/**
+ *  @author Samuel Tepper
+ */
 public class HeapTable extends JTable{
 	
 	/*
@@ -38,8 +28,5 @@ public class HeapTable extends JTable{
 	 * like Vectors, BRDFs, Spectra, and IntensityMaps.
 	 */
 
-	public HeapTable() {
-		// TODO Auto-generated constructor stub
-	}
-
+	public HeapTable() { }
 }

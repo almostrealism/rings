@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Almost Realism Software Group
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- */
-
 package com.almostrealism.photonfield.ui;
 
 import javax.swing.JComboBox;

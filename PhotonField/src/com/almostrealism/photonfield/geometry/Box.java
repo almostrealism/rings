@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-/* * Copyright (C) 2006  Almost Realism Software Group
-*
-*  All rights reserved.
-*  This document may not be reused without
-*  express written permission from Mike Murray.
-*  
-*  @author Samuel Tepper
-**/
-
-
 package com.almostrealism.photonfield.geometry;
 
 import java.io.IOException;
@@ -42,6 +32,10 @@ import com.almostrealism.photonfield.Volume;
 import com.almostrealism.photonfield.light.PlanarLight;
 import com.almostrealism.photonfield.util.VectorMath;
 
+/**
+ * 
+ * @author Samuel Tepper
+ */
 public class Box extends HashSet implements Volume {
 	public static double verbose = Math.pow(10.0, -3.0);
 	

@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2006  Almost Realism Software Group
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- */
-
 package com.almostrealism.photonfield.texture;
-
 
 public class Noise implements IntensityMap {
 	private double scaleU = 10.0, scaleV = 10.0, scaleW = 10.0;

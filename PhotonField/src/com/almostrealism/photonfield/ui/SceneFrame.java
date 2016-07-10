@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Almost Realism Software Group
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *  
- */
-
-/**
- *  @author Samuel Tepper
- */
-
 package com.almostrealism.photonfield.ui;
 
 import java.awt.BorderLayout;
@@ -39,7 +26,10 @@ import javax.swing.*;
 import com.almostrealism.photonfield.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.photonfield.xml.Node;
 
-public class SceneFrame{
+/**
+ *  @author Samuel Tepper
+ */
+public class SceneFrame {
 
 	/*
 	 * The SceneFrame provides data about the simulation.

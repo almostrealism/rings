@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2006  Almost Realism Software Group
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- */
-
 package com.almostrealism.photonfield;
 
 import java.io.BufferedWriter;
@@ -34,7 +26,6 @@ import java.util.Set;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
 import com.almostrealism.util.Graph;
-
 
 // TODO  Consider creating a custom list for photon set (tick creates many many double[][]).
 public class DefaultPhotonField implements PhotonField {
