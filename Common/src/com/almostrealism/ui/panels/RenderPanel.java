@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
-* Copyright (C) 2004-05  Mike Murray
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License (version 2)
-*  as published by the Free Software Foundation.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*/
-
 package com.almostrealism.ui.panels;
 
 import java.awt.Color;
@@ -53,7 +39,6 @@ import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.event.SurfaceEditEvent;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
-
 
 /**
  * A RenderPanel object allows display of scene previews and rendered images of the Scene object it uses.

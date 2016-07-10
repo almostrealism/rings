@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-05  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 // TODO Add pop-up menu
 // TODO Add support for moving and renaming surfaces
 // TODO Make showPanel method bring window to front if it is open already.
@@ -37,11 +23,6 @@ package com.almostrealism.ui.panels;
 import java.awt.Component;
 import java.awt.Toolkit;
 
-
-
-
-
-
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -49,7 +30,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.*;
-import com.almostrealism.raytracer.textures.*;
 import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.dialogs.*;
 import com.almostrealism.ui.event.*;

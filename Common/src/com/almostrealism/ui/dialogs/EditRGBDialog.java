@@ -14,38 +14,20 @@
  * limitations under the License.
  */
 
-/*
-* Copyright (C) 2004  Mike Murray
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License (version 2)
-*  as published by the Free Software Foundation.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*/
-
 package com.almostrealism.ui.dialogs;
-
-
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
-import com.almostrealism.raytracer.graphics.*;
 import com.almostrealism.ui.panels.*;
 import com.almostrealism.util.graphics.RGB;
 
 /**
-  An EditRGBDialog object can be used to allow a user to specify
-  the data for a RGB object.
-*/
-
+ * An EditRGBDialog object can be used to allow a user to specify
+ * the data for a RGB object.
+ */
 public class EditRGBDialog extends JFrame {
   private RGB color;
   private DynamicDisplay display;

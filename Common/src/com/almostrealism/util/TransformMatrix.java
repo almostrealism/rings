@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 package com.almostrealism.util;
 
 
@@ -37,7 +23,6 @@ package com.almostrealism.util;
   varius types of vectors. The TransformMatrix class also provides some static methods that generate
   certain useful matracies.
 */
-
 public class TransformMatrix {
   public static final int TRANSFORM_AS_LOCATION = 1;
   public static final int TRANSFORM_AS_OFFSET = 2;

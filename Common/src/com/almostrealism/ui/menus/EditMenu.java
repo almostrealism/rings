@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
-* Copyright (C) 2004  Mike Murray
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License (version 2)
-*  as published by the Free Software Foundation.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*/
-
 package com.almostrealism.ui.menus;
 
 
@@ -37,19 +23,16 @@ import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.panels.*;
 
-/**
-  The EditMenu class extends JMenu and provides editing options for the user.
-*/
-
+/** The EditMenu class extends JMenu and provides editing options for the user. */
 public class EditMenu extends JMenu implements EventListener, EventGenerator {
   private EventHandler handler;
   
   private EditSceneMenu editSceneMenu;
 
 	/**
-	  Constructs a new EditMenu object using the specified Scene object and the specified SurfaceInfoPanel and LightInfoPanel objects.
-	*/
-	
+	 * Constructs a new EditMenu object using the specified Scene object and the
+	 * specified {@link SurfaceInfoPanel} and {@link LightInfoPanel} objects.
+	 */
 	public EditMenu(Scene scene, SurfaceInfoPanel surfaceInfoPanel, LightInfoPanel lightInfoPanel) {
 		super("Edit");
 		

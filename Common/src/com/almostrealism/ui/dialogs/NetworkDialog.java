@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2005  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 package com.almostrealism.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

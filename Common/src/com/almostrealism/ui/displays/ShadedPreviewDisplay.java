@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2005  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 package com.almostrealism.ui.displays;
 
 import java.awt.Dimension;
@@ -35,7 +21,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JPanel;

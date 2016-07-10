@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
-* Copyright (C) 2005  Mike Murray
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License (version 2)
-*  as published by the Free Software Foundation.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*/
-
 package com.almostrealism.ui.tree;
 
 import java.util.Collection;
@@ -44,7 +30,6 @@ import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
 import com.almostrealism.util.Editable;
 import com.almostrealism.util.Producer;
-
 
 /**
  * A ShaderTreeNode object wraps a Shader object and allows it to be displayed

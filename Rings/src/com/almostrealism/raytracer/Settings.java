@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-05  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 package com.almostrealism.raytracer;
 
 import java.awt.Color;
@@ -39,9 +25,7 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
-import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.io.PrintWriter;
-
 
 /**
  * The Settings class provides access to settings that change the way the RayTracer and its components run.
@@ -57,45 +41,10 @@ public abstract class Settings {
   public static final String writtenByInfo = "Written by Mike Murray";
   
   /** String containing "ashesfall@users.sf.net". */
-  private static final String adminEmail = "ashesfall@users.sf.net";
+  private static final String adminEmail = "ashesfall@almostrealism.com";
   
   /** String containing "http://j3d.sf.net/". */
-  public static final String websiteUrl = "http://j3d.sf.net/";
-  
-  /** String containing license information for this software. */
-  public static final String licenseInfo =
-  " Copyright (C) 2003-2006  Mike Murray\n\n " +
-  "  This program is free software; you can redistribute it and/or modify\n " +
-  "  it under the terms of the GNU General Public License (version 2)\n " + 
-  "  as published by the Free Software Foundation.\n\n " +
-  "  This program is distributed in the hope that it will be useful,\n " +
-  "  but WITHOUT ANY WARRANTY; without even the implied warranty of\n " +
-  "  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n " +
-  "  GNU General Public License for more details.\n";
-  
-  /** String containing information on how to access the full software license. */
-  public static final String license = "This software is licensed under the GNU public license, version 2.\n" +
-					"A copy of this license should be included with this package in a file labeled gpl.txt";
-  
-  public static final String aboutText =
-  	"Rings Version " + Settings.version + "\n\n" +
-  	"Author: Mike Murray\n\n" +
-	"Inspiration:\n" +
-	"\t Peter Shirley\n" +
-	"\t Sean Wilson\n" +
-	"\n" +
-	"The continued development of this software relies on user input. " +
-	"Please make intelectual contributions (feature requests, bug notices, etc.) by visiting the website at " +
-	Settings.websiteUrl + "or send email to " + Settings.adminEmail + ".\n\n" +
-	" Copyright (C) 2003-2006  Mike Murray\n\n " +
-	"----------------------\n\n" +
-	"This program is free software; you can redistribute it and/or modify " +
-	"it under the terms of the GNU General Public License (version 2) " + 
-	"as published by the Free Software Foundation.\n " +
-	"This program is distributed in the hope that it will be useful, " +
-	"but WITHOUT ANY WARRANTY; without even the implied warranty of " +
-	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
-	"GNU General Public License for more details.";
+  public static final String websiteUrl = "http://almostrealism.com/";
   
   
   /** String used to indicate this warning is given at random. */

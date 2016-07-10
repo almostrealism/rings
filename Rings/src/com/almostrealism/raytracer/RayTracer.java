@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-05  Mike Murray
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License (version 2)
- *  as published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- */
-
 package com.almostrealism.raytracer;
 
 import java.io.File;
@@ -55,7 +41,6 @@ import com.almostrealism.ui.menus.DefaultToolBar;
 import com.almostrealism.ui.panels.DebugOutputPanel;
 import com.almostrealism.ui.panels.RenderPanel;
 import com.almostrealism.ui.panels.SplashScreen;
-
 
 /**
  * The RayTracer class uses standard ui components from the threeD.ui package to provide a user interface
