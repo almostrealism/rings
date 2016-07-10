@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.ui.dialogs.Dialog;
@@ -43,8 +44,6 @@ import com.almostrealism.ui.event.SurfaceEvent;
 import com.almostrealism.ui.event.SurfaceRemoveEvent;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.run.Settings;
 
 
 /**

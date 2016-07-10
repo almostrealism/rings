@@ -43,8 +43,6 @@ import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.run.Settings;
-
 /**
  * A RayTracingJob object provides an implementation of
  * net.sf.j3d.network.Job that renders a section of an image.

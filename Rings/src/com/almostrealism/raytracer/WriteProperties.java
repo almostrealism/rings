@@ -12,7 +12,7 @@
  *
  */
 
-package net.sf.j3d.run;
+package com.almostrealism.raytracer;
 
 import java.io.*;
 

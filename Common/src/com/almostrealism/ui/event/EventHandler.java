@@ -17,6 +17,7 @@ package com.almostrealism.ui.event;
 
 import java.util.*;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.ui.dialogs.*;
 
 import net.sf.j3d.run.*;

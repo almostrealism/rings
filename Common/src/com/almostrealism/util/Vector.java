@@ -14,7 +14,7 @@
 
 package com.almostrealism.util;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 /**
  * A Vector object represents a 3d vector. It stores three coordinates, x, y, z.

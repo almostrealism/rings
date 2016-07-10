@@ -35,6 +35,7 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
@@ -50,8 +51,6 @@ import com.almostrealism.ui.event.SceneCloseEvent;
 import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.panels.EditVectorPanel;
 import com.almostrealism.util.Vector;
-
-import net.sf.j3d.run.Settings;
 
 
 /**

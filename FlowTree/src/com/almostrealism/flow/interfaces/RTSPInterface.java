@@ -15,7 +15,7 @@ import java.util.Properties;
 
 import javax.swing.text.DateFormatter;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 public class RTSPInterface implements Runnable {
 	private int port = 554;

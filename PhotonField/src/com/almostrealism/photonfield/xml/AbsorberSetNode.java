@@ -38,11 +38,10 @@ import com.almostrealism.photonfield.util.VectorMath;
 import com.almostrealism.photonfield.util.buffers.AveragedVectorMap2D;
 import com.almostrealism.photonfield.util.buffers.BufferListener;
 import com.almostrealism.photonfield.util.buffers.ColorBuffer;
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.ui.displays.ImageCanvas;
 import com.almostrealism.util.Nameable;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.run.Settings;
 
 public class AbsorberSetNode extends Node implements BufferListener {
 	public static int bufferDisplayDim = 100;

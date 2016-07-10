@@ -22,9 +22,11 @@ import java.awt.GridLayout;
 
 
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.graphics.*;
 import com.almostrealism.raytracer.lighting.*;
@@ -32,8 +34,6 @@ import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.panels.*;
 import com.almostrealism.util.*;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.run.Settings;
 
 // TODO  Add presets for attenuation constants
 

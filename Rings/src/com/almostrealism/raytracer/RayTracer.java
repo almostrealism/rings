@@ -27,8 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import net.sf.j3d.run.Settings;
-
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.ui.event.Event;

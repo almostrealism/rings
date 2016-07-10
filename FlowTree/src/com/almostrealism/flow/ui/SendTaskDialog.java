@@ -36,8 +36,7 @@ import javax.swing.border.TitledBorder;
 
 import com.almostrealism.flow.Server;
 import com.almostrealism.raytracer.RayTracingJobFactory;
-
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 
 /**

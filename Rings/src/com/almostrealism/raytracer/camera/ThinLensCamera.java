@@ -14,10 +14,9 @@
 
 package com.almostrealism.raytracer.camera;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.util.Vector;
-
-import net.sf.j3d.run.Settings;
 
 /**
  * A ThinLensCamera object provides a camera with viewing rays that originate

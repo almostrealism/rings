@@ -10,6 +10,7 @@
 
 package com.almostrealism.raytracer.engine;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
@@ -21,8 +22,6 @@ import com.almostrealism.ui.displays.ProgressDisplay;
 import com.almostrealism.ui.event.ProgressMonitor;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.run.Settings;
 
 
 /**

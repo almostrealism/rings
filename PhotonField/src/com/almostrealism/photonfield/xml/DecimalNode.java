@@ -13,10 +13,10 @@ import java.util.List;
 
 import javax.swing.JFormattedTextField;
 
-import net.sf.j3d.run.Settings;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.almostrealism.raytracer.Settings;
 
 public class DecimalNode extends Node {
 	private Number value;

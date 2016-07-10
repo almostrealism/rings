@@ -39,8 +39,7 @@ import javax.swing.JViewport;
 import javax.swing.text.JTextComponent;
 
 import com.almostrealism.io.JTextAreaPrintWriter;
-
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 
 /**

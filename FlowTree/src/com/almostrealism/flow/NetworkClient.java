@@ -62,13 +62,13 @@ import com.almostrealism.flow.ui.NetworkDialog;
 import com.almostrealism.io.Storable;
 import com.almostrealism.raytracer.JobProducer;
 import com.almostrealism.raytracer.RayTracingJob;
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.ui.GraphDisplay;
 import com.almostrealism.ui.ScrollingTextDisplay;
 import com.almostrealism.util.Help;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 
-import net.sf.j3d.run.Settings;
 import net.sf.jrings.apple.AppleSettings;
 
 // TODO  Add cd and pwd commands.

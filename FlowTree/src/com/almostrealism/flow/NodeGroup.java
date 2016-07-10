@@ -32,9 +32,8 @@ import javax.swing.JLabel;
 
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.io.RSSFeed;
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.util.Graph;
-
-import net.sf.j3d.run.Settings;
 
 /**
  * A NodeGroup object represents a group of nodes (Node objects).

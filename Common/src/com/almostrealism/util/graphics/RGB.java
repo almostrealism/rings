@@ -15,9 +15,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.util.graphics.ColorProducer;
-
-import net.sf.j3d.run.Settings;
 
 /**
  * An RGB object represents a color defined by three channels: red, green, and blue.

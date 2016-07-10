@@ -28,8 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.j3d.run.Settings;
-
+import com.almostrealism.raytracer.Settings;
 import com.google.gdata.client.Service;
 import com.google.gdata.client.media.MediaService;
 import com.google.gdata.client.youtube.YouTubeQuery;

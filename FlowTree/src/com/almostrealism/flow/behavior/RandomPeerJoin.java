@@ -14,8 +14,7 @@ import java.io.PrintStream;
 
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.ServerBehavior;
-
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 public class RandomPeerJoin implements ServerBehavior {
 	public void behave(Server s, PrintStream out) {

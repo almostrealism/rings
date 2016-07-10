@@ -16,9 +16,10 @@ package com.almostrealism.ui.panels;
 
 
 import java.awt.*;
+
 import javax.swing.*;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 /**
  * The SplashScreen class extends JWindow and can display an image while the main application loads.

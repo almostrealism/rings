@@ -25,9 +25,11 @@ import java.awt.Toolkit;
 
 
 
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.*;
@@ -36,8 +38,6 @@ import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.dialogs.*;
 import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.tree.*;
-
-import net.sf.j3d.run.Settings;
 
 // TODO  Add duplicate surface function.
 

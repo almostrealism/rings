@@ -20,12 +20,11 @@ package com.almostrealism.ui.dialogs;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.surfaceUI.*;
 import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.panels.*;
-
-import net.sf.j3d.run.Settings;
 
 /**
   An EditTransformDialog object allows the user to edit the transformation properties of an AbstractSurface object.

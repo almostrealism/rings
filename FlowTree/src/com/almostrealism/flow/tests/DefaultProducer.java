@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.almostrealism.flow.tests.UrlProfilingTask.Producer;
-
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 public class DefaultProducer implements Producer {
 	private String dir, uri, sufix;

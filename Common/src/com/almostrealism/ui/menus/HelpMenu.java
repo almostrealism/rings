@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 
 /**

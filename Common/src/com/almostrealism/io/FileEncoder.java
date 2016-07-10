@@ -25,8 +25,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 
-import net.sf.j3d.run.Settings;
-
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;

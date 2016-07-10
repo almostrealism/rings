@@ -41,8 +41,7 @@ import javax.swing.JTextField;
 import com.almostrealism.flow.NodeProxy;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.LoginDialog;
-
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 
 /**

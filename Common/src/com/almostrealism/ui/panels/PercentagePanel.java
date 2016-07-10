@@ -27,7 +27,7 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 
 /**

@@ -18,7 +18,7 @@ package com.almostrealism.ui.themes;
 import javax.swing.plaf.*;
 import javax.swing.plaf.metal.*;
 
-import net.sf.j3d.run.Settings;
+import com.almostrealism.raytracer.Settings;
 
 public class DefaultUITheme extends DefaultMetalTheme {
   private final ColorUIResource primary1 = new ColorUIResource(java.awt.Color.yellow);

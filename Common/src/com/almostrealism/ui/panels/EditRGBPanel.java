@@ -21,11 +21,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.graphics.*;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.j3d.run.Settings;
 
 /**
   An EditRGBPanel object can be used to specify an RGB color.
