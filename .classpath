@@ -152,6 +152,7 @@
 	<classpathentry kind="lib" path="PhotonField/lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="PhotonField/lib/j3dutils.jar"/>
 	<classpathentry kind="lib" path="PhotonField/lib/vecmath.jar"/>
+	<classpathentry kind="lib" path="Common/lib/trove-3.0.3.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
