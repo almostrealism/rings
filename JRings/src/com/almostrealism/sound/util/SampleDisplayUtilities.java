@@ -1,4 +1,4 @@
-package net.sf.sound.util;
+package com.almostrealism.sound.util;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -6,9 +6,9 @@ import java.awt.FlowLayout;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
 
-import net.sf.sound.Sample;
-import net.sf.sound.SampleRowColumnDisplay;
-import net.sf.sound.SampleRowDisplay;
+import com.almostrealism.sound.Sample;
+import com.almostrealism.sound.SampleRowColumnDisplay;
+import com.almostrealism.sound.SampleRowDisplay;
 
 public class SampleDisplayUtilities {
 	public static void showSplit(Sample s) {

@@ -1,4 +1,4 @@
-package net.sf.sound;
+package com.almostrealism.sound;
 
 import java.awt.Color;
 import java.awt.Dimension;

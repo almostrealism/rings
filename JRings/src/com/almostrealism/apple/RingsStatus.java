@@ -1,4 +1,4 @@
-package net.sf.jrings.apple;
+package com.almostrealism.apple;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

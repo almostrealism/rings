@@ -1,4 +1,4 @@
-package net.sf.sound;
+package com.almostrealism.sound;
 
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -8,7 +8,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.sf.sound.util.LineUtilities;
+import com.almostrealism.sound.util.LineUtilities;
 
 public class KeyBoardSampleDisplay extends JPanel implements KeyListener {
 	private Sample samples[];

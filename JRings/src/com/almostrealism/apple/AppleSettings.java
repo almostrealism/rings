@@ -1,4 +1,4 @@
-package net.sf.jrings.apple;
+package com.almostrealism.apple;
 
 import com.apple.cocoa.application.NSApplication;
 import com.apple.cocoa.foundation.NSNetService;

@@ -1,4 +1,4 @@
-package net.sf.sound;
+package com.almostrealism.sound;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -14,8 +14,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import net.sf.sound.util.LineUtilities;
-import net.sf.sound.util.SampleDisplayUtilities;
+import com.almostrealism.sound.util.LineUtilities;
+import com.almostrealism.sound.util.SampleDisplayUtilities;
 
 public class SoundExperiment {
 	public static void main(String args[]) throws UnsupportedAudioFileException, IOException {

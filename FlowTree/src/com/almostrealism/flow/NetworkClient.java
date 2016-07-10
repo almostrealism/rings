@@ -49,6 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
@@ -68,8 +69,6 @@ import com.almostrealism.ui.ScrollingTextDisplay;
 import com.almostrealism.util.Help;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.jrings.apple.AppleSettings;
 
 // TODO  Add cd and pwd commands.
 // TODO  mkdir does not update slide

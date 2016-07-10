@@ -1,4 +1,4 @@
-package net.sf.sound.util;
+package com.almostrealism.sound.util;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

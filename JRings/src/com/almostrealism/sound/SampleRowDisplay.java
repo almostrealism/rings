@@ -1,4 +1,4 @@
-package net.sf.sound;
+package com.almostrealism.sound;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -12,8 +12,8 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sf.sound.util.LineUtilities;
-import net.sf.sound.util.SampleDisplayUtilities;
+import com.almostrealism.sound.util.LineUtilities;
+import com.almostrealism.sound.util.SampleDisplayUtilities;
 
 public class SampleRowDisplay extends JPanel implements Runnable, MouseListener, KeyListener {
 	private Sample samples[];

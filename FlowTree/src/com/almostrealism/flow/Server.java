@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
+import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.DatabaseConnection;
 import com.almostrealism.flow.db.Query;
@@ -46,8 +47,6 @@ import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.slide.DistributedContentStore;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
-
-import net.sf.jrings.apple.AppleSettings;
 
 // TODO Consider performing routine tasks (eg Garbage Collector, delete unused db rows, etc.)
 //      during time when activity rating is low.
