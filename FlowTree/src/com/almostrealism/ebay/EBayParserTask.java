@@ -7,7 +7,7 @@
  *
  */
 
-package net.sf.jrings.ebay;
+package com.almostrealism.ebay;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package net.sf.jrings.ebay;
+package com.almostrealism.ebay;
 
 import org.apache.slide.structure.LinkNode;
 import org.htmlparser.Node;

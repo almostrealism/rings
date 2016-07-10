@@ -1,4 +1,4 @@
-package net.sf.jrings.ebay;
+package com.almostrealism.ebay;
 
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;

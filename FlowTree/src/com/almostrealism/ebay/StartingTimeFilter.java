@@ -1,4 +1,4 @@
-package net.sf.jrings.ebay;
+package com.almostrealism.ebay;
 
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
@@ -7,10 +7,8 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 
-public class DurationFilter implements NodeFilter {
+public class StartingTimeFilter implements NodeFilter {
 	public boolean accept(Node n) {
-//		return (n.getText() != null && n.getText().contains("Duration:"));
-		
 		n = n.getFirstChild();
 		if (n == null) return false;
 		n = n.getFirstChild();
@@ -23,7 +21,7 @@ public class DurationFilter implements NodeFilter {
 		try {
 			while (itr.hasMoreNodes()) {
 				Node c = itr.nextNode();
-				if (c.getText() != null && c.getText().contains("Duration:"))
+				if (c.getText() != null && c.getText().contains("Starting time:"))
 					return true;
 			}
 		} catch (ParserException e) {
@@ -33,8 +31,8 @@ public class DurationFilter implements NodeFilter {
 	}
 	
 	public static void main(String args[]) throws ParserException {
-		Parser p = new Parser("http://cgi.ebay.com/NIB-Novation-Xiosynth-Synthesizer-Midi-Keyboard_W0QQitemZ110160541214QQihZ001QQcategoryZ38071QQcmdZViewItem");
-		NodeIterator itr = p.extractAllNodesThatMatch(new DurationFilter()).elements();
+		Parser p = new Parser("http://cgi.ebay.com/Yamaha-Electric-Keyboard-PSS-130-PortaSound_W0QQitemZ130145326532QQihZ003QQcategoryZ38091QQcmdZViewItem");
+		NodeIterator itr = p.extractAllNodesThatMatch(new StartingTimeFilter()).elements();
 		
 		while (itr.hasMoreNodes()) {
 			String s = itr.nextNode().getLastChild().getFirstChild().getText();
