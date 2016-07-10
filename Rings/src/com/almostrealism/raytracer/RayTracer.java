@@ -119,7 +119,7 @@ public class RayTracer implements EventListener, EventGenerator {
 					Settings.produceEventHandlerOutput = true;
 					Settings.eventOut = new JTextAreaPrintWriter(new JTextArea(20, 40));
 				} else if (option.equals("l") == true) {
-					System.out.println(Settings.license);
+					System.out.println("Copyright 2016 Michael Murray");
 					System.exit(0);
 				} else if (option.equals("t") == true) {
 					theme = args[++subOptions];
@@ -135,7 +135,7 @@ public class RayTracer implements EventListener, EventGenerator {
 		}
 		
 		System.out.println("Rings (Version " + Settings.version + ")\n");
-		System.out.println(Settings.licenseInfo);
+		System.out.println("Copyright 2016 Michael Murray");
 		
 		try {
 			if (theme.equals("default")) {
