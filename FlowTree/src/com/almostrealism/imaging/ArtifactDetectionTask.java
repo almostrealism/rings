@@ -1,4 +1,4 @@
-package net.sf.j3d.imaging;
+package com.almostrealism.imaging;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
