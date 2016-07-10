@@ -6,7 +6,7 @@
  *  express written permission from Mike Murray.
  */
 
-package net.sf.j3d.obj;
+package com.almostrealism.obj;
 
 /**
  * @author  Mike Murray

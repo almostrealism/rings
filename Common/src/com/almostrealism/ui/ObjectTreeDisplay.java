@@ -37,10 +37,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 
+import com.almostrealism.obj.ObjectFactory;
 import com.almostrealism.photonfield.util.VectorMath;
 import com.almostrealism.ui.panels.PercentagePanel;
-
-import net.sf.j3d.obj.ObjectFactory;
 
 /**
  * @author Mike Murray
