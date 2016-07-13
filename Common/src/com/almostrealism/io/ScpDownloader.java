@@ -32,12 +32,12 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
-import net.sf.j3d.ext.org.apache.jsch.ScpFromMessage;
+import org.apache.jsch.ScpFromMessage;
 
-import net.sf.j3d.ext.com.jcraft.jsch.JSch;
-import net.sf.j3d.ext.com.jcraft.jsch.JSchException;
-import net.sf.j3d.ext.com.jcraft.jsch.Session;
-import net.sf.j3d.ext.com.jcraft.jsch.UserInfo;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 
 public class ScpDownloader implements UserInfo {
 	private static int maxCache = 5;
