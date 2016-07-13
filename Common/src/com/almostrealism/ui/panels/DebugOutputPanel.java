@@ -98,11 +98,9 @@ public class DebugOutputPanel extends JPanel {
 					
 					final Thread saver = new Thread(new Runnable() {
 						public void run() {
-							try {
-							    PrintWriter out = new PrintWriter(new FileOutputStream(fileChooser.getSelectedFile()));
+							try (PrintWriter out = new PrintWriter(new FileOutputStream(fileChooser.getSelectedFile()))) {
 							    out.write(text);
 							    out.flush();
-							    out.close();
 							} catch (IOException ioe) {
 								JOptionPane.showMessageDialog(null, "An IO error occured while saving.",
 										"IO Error", JOptionPane.ERROR_MESSAGE);
