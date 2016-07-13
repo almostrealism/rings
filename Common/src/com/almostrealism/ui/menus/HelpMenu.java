@@ -25,8 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.almostrealism.raytracer.Settings;
-
 
 /**
  * @author Mike Murray
@@ -40,7 +38,7 @@ public class HelpMenu extends JMenu {
 	public HelpMenu() {
 		super("Help");
 		
-		this.area = new JTextArea(Settings.aboutText);
+		this.area = new JTextArea();
 		this.area.setEditable(false);
 		this.area.setLineWrap(true);
 		this.area.setWrapStyleWord(true);
