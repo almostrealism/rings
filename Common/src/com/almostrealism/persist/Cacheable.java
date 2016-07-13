@@ -16,9 +16,13 @@
 
 package com.almostrealism.persist;
 
+import java.io.Serializable;
+
 /**
  * @author  Michael Murray
  */
-public abstract class CachableQuery<D, K, V> implements Query<D, K, V> {
-
+public interface Cacheable {
+	public Serializable toCache();
+	
+	public void fromCache(Serializable s);
 }
