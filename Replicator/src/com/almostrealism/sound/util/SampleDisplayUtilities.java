@@ -17,7 +17,6 @@
 package com.almostrealism.sound.util;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;

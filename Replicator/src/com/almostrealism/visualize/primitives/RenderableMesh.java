@@ -41,6 +41,11 @@ public class RenderableMesh extends RenderableGeometry implements WebGLRenderabl
 		return new WebGLMeshGeometry(((Mesh) getGeometry()).getVertexData());
 	}
 	
+	@Override
+	public WebGLExportable getWebGLMaterial() {
+		throw new RuntimeException("Not implemented");
+	}
+	
 	private static TriangleDisplayList createDisplayList(Mesh m) {
 		return new TriangleDisplayList(m);
 	}

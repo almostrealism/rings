@@ -23,8 +23,6 @@ import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFileChooser;
@@ -72,7 +70,7 @@ public class SoundExperiment {
 
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_S) {
-					SampleDisplayUtilities.showColumnDisplay(s, ds.getKeyBoardSampleDisplay());
+					SampleDisplayUtilities.showColumnDisplay(s);
 				} else {
 					ds.keyPressed(e);
 				}
