@@ -3,6 +3,19 @@
 These are tools for creating interactive digital art pieces.
 
 
+| Tool | Description | More Info & Help |
+|---|---|---|
+| **Common** |   | Required for all Tools |
+| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. |  |
+| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. |  |
+| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | |
+| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**. |
+| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
+| **Explorer** | Pure Java rigid body physics simulator, particul system generator and terrain generator. | Requires **Rings**. |
+| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
+| **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
+
+
 ```
 #!java
 
@@ -20,18 +33,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-### Tools ###
-
-| Tool | Description | More Info & Help |
-|---|---|---|
-| **Common** |   | Required for all Tools |
-| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. |  |
-| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. |  |
-| **Rings** | Pure Java Raytracer and related graphics libraries. |  |
-| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
-| **Explorer** | Pure Java rigid body physics simulator, particul system generator and terrain generator. | Requires **Rings**. |
-
 
 ### Who do I talk to? ###
 
