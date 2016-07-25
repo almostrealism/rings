@@ -19,18 +19,25 @@ package com.almostrealism.ui.menus;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
-
-
-
-
-import javax.swing.*;
-
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.menus.ImportMenu.CustomExceptionListener;
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.ui.panels.RenderPanel;
 
 /**
   The FileMenu class extends JMenu and provides menu items for opening, closing, and saving files.

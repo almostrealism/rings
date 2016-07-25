@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.ui;
 
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -33,6 +33,7 @@ import com.almostrealism.ui.event.EventListener;
 import com.almostrealism.ui.event.SurfaceEditEvent;
 import com.almostrealism.ui.event.SurfaceEvent;
 import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.ui.panels.DynamicDisplay;
 import com.almostrealism.util.TransformMatrix;
 
 /**

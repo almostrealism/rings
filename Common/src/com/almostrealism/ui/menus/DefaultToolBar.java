@@ -26,6 +26,7 @@ import javax.swing.JToolBar;
 
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
 import com.almostrealism.ui.dialogs.EditCameraDialog;
 import com.almostrealism.ui.dialogs.RenderOptionsDialog;
 import com.almostrealism.ui.event.Event;
@@ -36,7 +37,6 @@ import com.almostrealism.ui.event.SceneCloseEvent;
 import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.panels.LightInfoPanel;
 import com.almostrealism.ui.panels.RenderPanel;
-import com.almostrealism.ui.panels.SurfaceInfoPanel;
 
 /**
  * @author Mike Murray

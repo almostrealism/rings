@@ -16,14 +16,26 @@
 
 package com.almostrealism.ui.menus;
 
-import java.io.*;
+import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.panels.RenderPanel;
 import com.almostrealism.util.graphics.RGB;
 
 /**

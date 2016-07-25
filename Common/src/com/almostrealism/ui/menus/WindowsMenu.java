@@ -16,10 +16,12 @@
 
 package com.almostrealism.ui.menus;
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
-import com.almostrealism.ui.dialogs.*;
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
+import com.almostrealism.ui.dialogs.EditCameraDialog;
+import com.almostrealism.ui.dialogs.EditLightDialog;
 
 /** A WindowsMenu object extends JMenu and provides menu items for opening varius windows. */
 public class WindowsMenu extends JMenu {

@@ -17,11 +17,17 @@
 package com.almostrealism.ui.menus;
 
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.ui.dialogs.*;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.ui.dialogs.NewSurfaceDialog;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
 
 /**
   A NewMenu object extends JMenu and provides menu items for creating new scenes and surfaces.

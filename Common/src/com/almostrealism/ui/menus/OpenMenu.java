@@ -16,15 +16,28 @@
 
 package com.almostrealism.ui.menus;
 
-import java.io.*;
-
-import javax.swing.*;
-
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.ui.event.*;
-
 import java.beans.ExceptionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.event.SurfaceAddEvent;
 
 /**
   An OpenMenu object extends JMenu and provides menu items for open scene data stored in a file.

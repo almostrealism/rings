@@ -18,7 +18,7 @@
 // TODO Add support for moving and renaming surfaces
 // TODO Make showPanel method bring window to front if it is open already.
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -42,9 +42,6 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
-import com.almostrealism.raytracer.ui.EditSurfacePanel;
-import com.almostrealism.raytracer.ui.SceneTreeNode;
-import com.almostrealism.raytracer.ui.SurfaceTreeNode;
 import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.dialogs.NewSurfaceDialog;
 import com.almostrealism.ui.event.Event;
@@ -56,6 +53,8 @@ import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.event.SurfaceAddEvent;
 import com.almostrealism.ui.event.SurfaceEditEvent;
 import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.ui.panels.ExpandedEditPanel;
+import com.almostrealism.ui.panels.ShaderEditPanel;
 
 // TODO  Add duplicate surface function.
 
