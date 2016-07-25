@@ -34,8 +34,8 @@ import java.util.Properties;
 
 import com.almostrealism.flow.Message;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.network.JobProducer;
 
 

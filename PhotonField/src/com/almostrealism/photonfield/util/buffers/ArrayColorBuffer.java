@@ -19,10 +19,10 @@ package com.almostrealism.photonfield.util.buffers;
 import java.io.File;
 import java.io.IOException;
 
-import com.almostrealism.io.FileDecoder;
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
+import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.util.graphics.AverageColor;
 import com.almostrealism.util.graphics.RGB;
 

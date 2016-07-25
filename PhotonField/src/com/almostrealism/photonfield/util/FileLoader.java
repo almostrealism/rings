@@ -44,7 +44,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.almostrealism.flow.NetworkClient;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.AbsorberHashSet;
 import com.almostrealism.photonfield.AbsorberSet;
@@ -55,6 +54,7 @@ import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
 import com.almostrealism.photonfield.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photonfield.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.Settings;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 import com.almostrealism.ui.panels.DebugOutputPanel;
 import com.almostrealism.util.Nameable;

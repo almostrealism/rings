@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.io.FileEncoder;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.util.graphics.RGB;
 
 public class ArtifactDetectionJob implements Job {

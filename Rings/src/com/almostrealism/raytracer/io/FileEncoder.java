@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.io;
+package com.almostrealism.raytracer.io;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

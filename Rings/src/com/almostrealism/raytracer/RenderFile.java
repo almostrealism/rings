@@ -20,11 +20,11 @@ import java.io.*;
 
 import javax.swing.*;
 
-import com.almostrealism.io.FileDecoder;
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.*;
 import com.almostrealism.ui.displays.*;
 import com.almostrealism.ui.panels.*;

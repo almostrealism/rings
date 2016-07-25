@@ -20,8 +20,8 @@ import java.io.*;
 
 import javax.swing.*;
 
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.panels.*;
 import com.almostrealism.util.graphics.RGB;

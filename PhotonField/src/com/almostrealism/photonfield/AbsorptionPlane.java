@@ -31,11 +31,11 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.photonfield.geometry.Plane;
 import com.almostrealism.photonfield.util.Fast;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 

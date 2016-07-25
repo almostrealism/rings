@@ -24,11 +24,11 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.almostrealism.io.FileEncoder;
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 

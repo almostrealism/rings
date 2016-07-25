@@ -28,9 +28,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;

@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import com.almostrealism.io.WavefrontObjParser;
+import com.almostrealism.raytracer.io.WavefrontObjParser;
 import com.almostrealism.replicator.Replicator;
 import com.almostrealism.visualize.ui.SurfaceCanvas;
 

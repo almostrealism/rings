@@ -20,8 +20,8 @@ import java.io.*;
 
 import javax.swing.*;
 
-import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.ui.event.*;
 
 import java.beans.ExceptionListener;

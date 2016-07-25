@@ -23,10 +23,11 @@ import java.io.IOException;
 
 
 
+
 import javax.swing.*;
 
-import com.almostrealism.io.FileDecoder;
 import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.ui.event.*;
 import com.almostrealism.ui.menus.ImportMenu.CustomExceptionListener;
 import com.almostrealism.ui.panels.*;

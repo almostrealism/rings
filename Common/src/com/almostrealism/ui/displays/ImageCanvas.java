@@ -23,7 +23,7 @@ import java.io.File;
 
 import javax.swing.JPanel;
 
-import com.almostrealism.io.FileEncoder;
+import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 
