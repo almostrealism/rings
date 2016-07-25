@@ -11,7 +11,7 @@ These are tools for creating interactive digital art pieces.
 | **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | |
 | **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**. |
 | **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
-| **Explorer** | Pure Java rigid body physics simulator, particul system generator and terrain generator. | Requires **Rings**. |
+| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
 | **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
 | **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
 
