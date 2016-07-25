@@ -129,7 +129,7 @@ public class TestRoom  implements PhysicalConstants  {
 		box1.setSurfaceNormal(new double[] {0.0, 0.0, -1.0});
 		box1.setWallThickness(.05);
 		box1.makeWalls(true);
-		box1.setColorRange(450.0, 50.0);
+//		box1.setColorRange(450.0, 50.0);
 		
 		
 		Box box2 = new Box();
@@ -139,7 +139,7 @@ public class TestRoom  implements PhysicalConstants  {
 		box2.setOrientation(new double[] {Math.sin(40.0), 0.0, Math.cos(40.0)});
 		box2.setSurfaceNormal(new double[] {0.0, 0.0, -1.0});
 		box2.makeWalls(true);		
-		box2.setColorRange(570.0, 50.0);
+//		box2.setColorRange(570.0, 50.0);
 		
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(1000.0);
