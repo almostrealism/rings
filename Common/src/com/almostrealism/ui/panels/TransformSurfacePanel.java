@@ -16,13 +16,24 @@
 
 package com.almostrealism.ui.panels;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.ui.dialogs.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.util.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.ui.dialogs.AddTransformDialog;
+import com.almostrealism.ui.dialogs.EditTransformDialog;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.event.SurfaceEvent;
+import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.util.TransformMatrix;
 
 /**
  * A {@link TransformSurfacePanel} can be used to allow the user to

@@ -16,10 +16,9 @@
 
 package com.almostrealism.ui.panels;
 
+import javax.swing.JTable;
 
-import javax.swing.*;
-
-import com.almostrealism.util.*;
+import com.almostrealism.util.Editable;
 
 /**
   An EditPanel object can be used to allow a user to set the properties

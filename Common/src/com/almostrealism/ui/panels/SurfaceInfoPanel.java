@@ -23,20 +23,39 @@ package com.almostrealism.ui.panels;
 import java.awt.Component;
 import java.awt.Toolkit;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.MutableTreeNode;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
-import com.almostrealism.raytracer.surfaceUI.*;
+import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
+import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.raytracer.ui.EditSurfacePanel;
 import com.almostrealism.raytracer.ui.SceneTreeNode;
 import com.almostrealism.raytracer.ui.SurfaceTreeNode;
 import com.almostrealism.texture.TextureFactory;
-import com.almostrealism.ui.dialogs.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.ui.tree.*;
+import com.almostrealism.ui.dialogs.NewSurfaceDialog;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.event.SurfaceAddEvent;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.event.SurfaceRemoveEvent;
 
 // TODO  Add duplicate surface function.
 

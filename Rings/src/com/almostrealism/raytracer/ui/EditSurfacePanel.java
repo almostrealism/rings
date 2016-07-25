@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -44,6 +44,8 @@ import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.event.SurfaceEditEvent;
 import com.almostrealism.ui.event.SurfaceEvent;
 import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.ui.panels.EditRGBPanel;
+import com.almostrealism.ui.panels.EditVectorPanel;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
 

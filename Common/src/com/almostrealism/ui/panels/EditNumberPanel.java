@@ -16,33 +16,33 @@
 
 package com.almostrealism.ui.panels;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.FlowLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /** An EditNumberPanel object can be used to specify a number. */
 public class EditNumberPanel extends JPanel {
   private JTextField numberField;
 
 	/**
-	  Consturcts an EditNumberPanel object labeled "Value" and initial value set to 0.0.
-	*/
-	
+	 * Consturcts an EditNumberPanel object labeled "Value" and initial value set to 0.0.
+	 */
 	public EditNumberPanel() {
 		this("Value", 0.0);
 	}
 	
 	/**
-	  Constructs an EditNumberPanel object with the specified label and initial value set to 0.0.
-	*/
-	
+	 * Constructs an EditNumberPanel object with the specified label and initial value set to 0.0.
+	 */
 	public EditNumberPanel(String label) {
 		this(label, 0.0);
 	}
 	
 	/**
-	  Constructs an EditNumberPanel object with the specified label and initial value.
-	*/
-	
+	 * Constructs an EditNumberPanel object with the specified label and initial value.
+	 */
 	public EditNumberPanel(String label, double d) {
 		super(new FlowLayout());
 		
@@ -55,9 +55,8 @@ public class EditNumberPanel extends JPanel {
 	}
 	
 	/**
-	  Returns the number selected by this EditNumberPanel object as a double value.
-	*/
-	
+	 * Returns the number selected by this EditNumberPanel object as a double value.
+	 */
 	public double getSelectedNumber() {
 		double d = Double.parseDouble(this.numberField.getText());
 		

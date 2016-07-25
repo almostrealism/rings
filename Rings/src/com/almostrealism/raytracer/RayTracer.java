@@ -31,6 +31,7 @@ import javax.swing.UIManager;
 
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;
@@ -38,7 +39,6 @@ import com.almostrealism.ui.event.EventListener;
 import com.almostrealism.ui.event.SceneCloseEvent;
 import com.almostrealism.ui.event.SceneOpenEvent;
 import com.almostrealism.ui.menus.DefaultToolBar;
-import com.almostrealism.ui.panels.DebugOutputPanel;
 import com.almostrealism.ui.panels.RenderPanel;
 import com.almostrealism.ui.panels.SplashScreen;
 

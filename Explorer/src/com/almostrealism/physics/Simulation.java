@@ -63,7 +63,7 @@ import com.almostrealism.raytracer.shaders.BlendingShader;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.ReflectionShader;
 import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.ui.panels.DebugOutputPanel;
+import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;

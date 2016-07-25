@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.ui;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.event.SurfaceEvent;
 
 /**
   An EditDefaultSurfaceTransformPanel can be used to gather input from the user

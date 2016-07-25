@@ -26,6 +26,7 @@ import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.*;
+import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.ui.displays.*;
 import com.almostrealism.ui.panels.*;
 import com.almostrealism.util.*;

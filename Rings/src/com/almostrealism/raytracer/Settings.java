@@ -19,13 +19,13 @@ package com.almostrealism.raytracer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.Random;
 
 import javax.swing.Icon;
 
 import com.almostrealism.io.PrintWriter;
+import com.almostrealism.ui.Defaults;
 
 /**
  * The Settings class provides access to settings that change the way the RayTracer and its components run.
@@ -33,7 +33,7 @@ import com.almostrealism.io.PrintWriter;
  * 
  * @author Mike Murray
  */
-public abstract class Settings {
+public abstract class Settings extends Defaults {
   /** String containing the version number of this software. */
   public static final String version = "0.4";
   
@@ -109,46 +109,6 @@ public abstract class Settings {
   
   /** A general purpose instance of Random to be used whenever necessary. */
   public static Random random = new Random();
-  
-  private static class DefaultIntegerFormat extends DecimalFormat {
-  	public DefaultIntegerFormat() {
-  		super("#");
-  		
-  		this.setMinimumIntegerDigits(1);
-  		this.setMinimumFractionDigits(0);
-  		this.setMaximumFractionDigits(0);
-  	}
-  }
-  
-  private static class DefaultDecimalFormat extends DecimalFormat {
-	public DefaultDecimalFormat() {
-		super("#");
-		
-		this.setMinimumIntegerDigits(1);
-		this.setMinimumFractionDigits(1);
-		this.setMaximumFractionDigits(340);
-	}
-  }
-  
-  private static class TruncatedDecimalFormat extends DecimalFormat {
-	public TruncatedDecimalFormat() {
-		super("####00.00");
-		
-		this.setMinimumIntegerDigits(1);
-		this.setMaximumIntegerDigits(6);
-		this.setMaximumFractionDigits(2);
-		this.setMinimumFractionDigits(2);
-	}
-  }
-  
-  /** An instance of DecimalFormat that can be used to format integer numbers. */
-  public static final DecimalFormat integerFormat = new DefaultIntegerFormat();
-  
-  /** An instance of DecimalFormat that can be used to format decimal numbers. */
-  public static final DecimalFormat decimalFormat = new DefaultDecimalFormat();
-  
-  /** An instance of DecimalFormat that can be used to format decimal numbers for display. */
-  public static final DecimalFormat displayFormat = new TruncatedDecimalFormat();
   
   /** AWT Color representing the primary 1 color for the default theme. */
   public static Color themePrimary1 = (new Color(0, 108, 175)).darker();

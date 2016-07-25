@@ -16,11 +16,13 @@
 
 package com.almostrealism.ui.panels;
 
-import javax.swing.*;
+import javax.swing.AbstractListModel;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.util.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.util.TransformMatrix;
 
 /**
   The TransformationsListModel class extends AbstractListModel and provides a list model that dynamically displays

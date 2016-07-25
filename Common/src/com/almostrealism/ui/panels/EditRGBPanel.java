@@ -16,12 +16,22 @@
 
 package com.almostrealism.ui.panels;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import com.almostrealism.raytracer.Settings;
+import com.almostrealism.ui.Defaults;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 
@@ -45,9 +55,9 @@ public class EditRGBPanel extends JPanel {
 	public EditRGBPanel(RGB color) {
 		super(new GridLayout(0, 2));
 		
-		this.redField = new JFormattedTextField(Settings.decimalFormat);
-		this.greenField = new JFormattedTextField(Settings.decimalFormat);
-		this.blueField = new JFormattedTextField(Settings.decimalFormat);
+		this.redField = new JFormattedTextField(Defaults.decimalFormat);
+		this.greenField = new JFormattedTextField(Defaults.decimalFormat);
+		this.blueField = new JFormattedTextField(Defaults.decimalFormat);
 		
 		this.redField.setColumns(6);
 		this.greenField.setColumns(6);

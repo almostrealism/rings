@@ -17,15 +17,25 @@
 package com.almostrealism.ui.panels;
 
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Set;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.AbstractListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import com.almostrealism.ui.dialogs.*;
-import com.almostrealism.util.*;
+import com.almostrealism.ui.dialogs.AddDialog;
+import com.almostrealism.util.Editable;
+import com.almostrealism.util.EditableFactory;
 
 /**
  * An ExpandedEditPanel object can be used to allow a user to set the properties of a set of Editable objects.

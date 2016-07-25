@@ -16,9 +16,11 @@
 
 package com.almostrealism.ui.panels;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 
-import javax.swing.*;
+import javax.swing.JWindow;
 
 import com.almostrealism.raytracer.Settings;
 

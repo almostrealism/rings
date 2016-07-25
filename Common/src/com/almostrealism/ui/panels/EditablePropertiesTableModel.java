@@ -17,9 +17,9 @@
 package com.almostrealism.ui.panels;
 
 
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
 
-import com.almostrealism.util.*;
+import com.almostrealism.util.Editable;
 
 /**
   An EditablePropertiesTableModel object can be used to manage the data
@@ -37,7 +37,7 @@ public class EditablePropertiesTableModel extends AbstractTableModel {
 	  Constructs a new EditablePropertiesTableModel object.
 	*/
 	
-	public EditablePropertiesTableModel() {}
+	public EditablePropertiesTableModel() { }
 	
 	/**
 	  Constructs a new EditablePropertiesTableModel object using the specified Editable object.
