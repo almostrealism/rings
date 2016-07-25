@@ -25,8 +25,8 @@ limitations under the License.
 
 | Tool | Description | More Info & Help |
 |---|---|---|
-| #### Common #### |   | Required for all Tools |
-| #### GraphPersist #### | Persistence toolkit for graph data structures using POJOs. |  |
+| **Common** |   | Required for all Tools |
+| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. |  |
 |   |   |   |
 
 
