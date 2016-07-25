@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.tree;
+package com.almostrealism.raytracer.ui;
 
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
@@ -36,10 +36,10 @@ import com.almostrealism.ui.event.SurfaceEditEvent;
  * 
  * @author Mike Murray
  */
-public class SurfaceTreeNode implements TreeNode, EventGenerator {
+public class SurfaceTreeNode implements MutableTreeNode, EventGenerator {
   private SurfaceUI surface;
   
-  private TreeNode parent;
+  private MutableTreeNode parent;
   
   private boolean hasChildren;
   private SurfaceTreeNode children[];
@@ -49,7 +49,7 @@ public class SurfaceTreeNode implements TreeNode, EventGenerator {
 	/**
 	 * Constructs a new SurfaceTreeNode object using the specified SurfaceUI object with the specified parent.
 	 */
-	public SurfaceTreeNode(SurfaceUI surface, TreeNode parent) {
+	public SurfaceTreeNode(SurfaceUI surface, MutableTreeNode parent) {
 		this.surface = surface;
 		this.parent = parent;
 		
@@ -83,7 +83,7 @@ public class SurfaceTreeNode implements TreeNode, EventGenerator {
 			
 			for(int i = 0; i < this.children.length; i++) {
 				if (group.getSurface(i) instanceof SurfaceUI)
-					this.children[i] = new SurfaceTreeNode((SurfaceUI)group.getSurface(i), this);
+					this.children[i] = new SurfaceTreeNode((SurfaceUI) group.getSurface(i), this);
 			}
 		} else {
 			this.hasChildren = false;
@@ -206,7 +206,7 @@ public class SurfaceTreeNode implements TreeNode, EventGenerator {
 	
 	public void removeFromParent() { System.out.println("SurfaceTreeNode.removeFromParent"); }
 	
-	public void setParent(MutableTreeNode node) { this.parent = (TreeNode) node; }
+	public void setParent(MutableTreeNode node) { this.parent = (MutableTreeNode) node; }
 
 	public void setEventHandler(EventHandler handler) {
 		this.handler = handler;

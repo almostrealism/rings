@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.tree;
+package com.almostrealism.raytracer.ui;
 
 import java.util.Collection;
 import java.util.Enumeration;

@@ -25,11 +25,14 @@ import java.awt.Toolkit;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.MutableTreeNode;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.*;
+import com.almostrealism.raytracer.ui.SceneTreeNode;
+import com.almostrealism.raytracer.ui.SurfaceTreeNode;
 import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.dialogs.*;
 import com.almostrealism.ui.event.*;
@@ -200,10 +203,10 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 		
 		this.surfaceList.getModel().addTreeModelListener(new javax.swing.event.TreeModelListener() {
 			public void treeNodesChanged(javax.swing.event.TreeModelEvent event) {
-				TreeNode node = (TreeNode)event.getTreePath().getLastPathComponent();
+				MutableTreeNode node = (MutableTreeNode)event.getTreePath().getLastPathComponent();
 				
 				if (event.getChildIndices() != null)
-					node = (TreeNode)node.getChildAt(event.getChildIndices()[0]);
+					node = (MutableTreeNode)node.getChildAt(event.getChildIndices()[0]);
 			}
 			
 			public void treeNodesInserted(javax.swing.event.TreeModelEvent event) {}
@@ -235,14 +238,14 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 				Surface surface = null;
 				boolean removed = false;
 				
-				TreeNode selectedNode = (TreeNode)surfaceList.getLastSelectedPathComponent();
+				MutableTreeNode selectedNode = (MutableTreeNode)surfaceList.getLastSelectedPathComponent();
 				
 				if (selectedNode == null)
 					return;
 				
 				if (selectedNode instanceof SurfaceTreeNode) {
 					SurfaceTreeNode surfaceNode = (SurfaceTreeNode)selectedNode;
-					TreeNode parentNode = (TreeNode)surfaceNode.getParent();
+					MutableTreeNode parentNode = (MutableTreeNode)surfaceNode.getParent();
 					
 					surface = surfaceNode.getSurface();
 					
@@ -318,7 +321,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 	 * Returns the currently selected Surface object. If nothing is selected, null is returned.
 	 */
 	public Surface getSelectedSurface() {
-		TreeNode node = (TreeNode)this.surfaceList.getLastSelectedPathComponent();
+		MutableTreeNode node = (MutableTreeNode)this.surfaceList.getLastSelectedPathComponent();
 		
 		if (node == null || !(node instanceof SurfaceTreeNode))
 			return null;
@@ -333,7 +336,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 	 * the currently selected Surface object. If nothing is selected, null is returned.
 	 */
 	public SurfaceGroup getSelectedGroup() {
-		TreeNode node = (TreeNode)this.surfaceList.getLastSelectedPathComponent();
+		MutableTreeNode node = (MutableTreeNode)this.surfaceList.getLastSelectedPathComponent();
 		Surface surface = this.getSelectedSurface();
 		
 		if (surface == null) {
@@ -345,7 +348,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 			if (s instanceof SurfaceGroup) return (SurfaceGroup) s;
 		}
 		
-		TreeNode parent = (TreeNode)node.getParent();
+		MutableTreeNode parent = (MutableTreeNode)node.getParent();
 		
 		if (parent == null || !(parent instanceof SurfaceTreeNode))
 			return null;
@@ -370,7 +373,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 		if (structureChanged == true) {
 			//TreeNode node = (TreeNode)this.surfaceList.getLastSelectedPathComponent();
 			
-			((javax.swing.tree.DefaultTreeModel)this.surfaceList.getModel()).nodeStructureChanged((TreeNode)this.surfaceList.getModel().getRoot());
+			((javax.swing.tree.DefaultTreeModel)this.surfaceList.getModel()).nodeStructureChanged((MutableTreeNode)this.surfaceList.getModel().getRoot());
 			
 			//javax.swing.tree.TreeNode path[] = ((javax.swing.tree.DefaultTreeModel)this.surfaceList.getModel()).getPathToRoot(node);
 			//if (path != null && path.length > 0)

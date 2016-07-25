@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.tree;
+package com.almostrealism.raytracer.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +40,7 @@ import com.almostrealism.ui.event.SurfaceRemoveEvent;
  * 
  * @author  Mike Murray
  */
-public class SceneTreeNode implements TreeNode, EventGenerator, EventListener {
+public class SceneTreeNode implements MutableTreeNode, EventGenerator, EventListener {
   private Scene scene;
   private List children;
   
@@ -111,7 +111,7 @@ public class SceneTreeNode implements TreeNode, EventGenerator, EventListener {
 	/**
 	 * @return  The child of this SceneTreeNode object at the specified index.
 	 */
-	public javax.swing.tree.TreeNode getChildAt(int index) { return (TreeNode) this.children.get(index); }
+	public javax.swing.tree.MutableTreeNode getChildAt(int index) { return (MutableTreeNode) this.children.get(index); }
 	
 	/**
 	 * @return  The number of children contained by this SceneTreeNode object.
