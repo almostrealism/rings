@@ -872,11 +872,9 @@ public class Simulation extends Scene implements Runnable {
 	 * @param instance  The instance string for the animation.
 	 */
 	public void writeEncodeScript(String instance) {
-		try {
-			System.out.print("Writing encode script: ");
-			
-			PrintWriter out = new PrintWriter(new FileWriter(new File(this.dir + "encode.sh")));
-			
+		System.out.print("Writing encode script: ");
+		
+		try (PrintWriter out = new PrintWriter(new FileWriter(new File(this.dir + "encode.sh")))) {
 			out.println("#!/bin/sh");
 			out.print("mencoder mf://");
 			
