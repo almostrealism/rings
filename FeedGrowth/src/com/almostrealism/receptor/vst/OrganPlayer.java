@@ -30,6 +30,8 @@ public class OrganPlayer extends VSTPluginAdapter {
 	private PopulationProgramSet programs;
 	private Organ<Long> currentProgram;
 	
+	private float buf[];
+	
 	public OrganPlayer(long wrapper) {
 		super(wrapper);
 		
@@ -116,7 +118,7 @@ public class OrganPlayer extends VSTPluginAdapter {
 		for (int i = 0, n = sampleFrames; i < n; i++) {
 			float exVal = inBuffer[i];
 
-			float out = buf[index];
+			float out = buf[i];
 			outBuffer[i] = out;
 			
 		}
