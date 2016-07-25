@@ -27,7 +27,10 @@ limitations under the License.
 |---|---|---|
 | **Common** |   | Required for all Tools |
 | **GraphPersist** | Persistence toolkit for graph data structures using POJOs. |  |
-|   |   |   |
+| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. |  |
+| **Rings** | Pure Java Raytracer and related graphics libraries. |  |
+| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
+| **Explorer** | Pure Java rigid body physics simulator, particul system generator and terrain generator. | Requires **Rings**. |
 
 
 ### Who do I talk to? ###
