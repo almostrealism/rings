@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import com.almostrealism.texture.ImageTexture;
+import com.almostrealism.ui.DynamicDisplay;
 import com.almostrealism.ui.dialogs.EditRGBDialog;
 import com.almostrealism.ui.dialogs.EditVectorDialog;
 import com.almostrealism.util.Editable;

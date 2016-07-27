@@ -41,14 +41,13 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
+import com.almostrealism.raytracer.surfaceUI.ShaderEditPanel;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.ExpandedEditPanel;
-import com.almostrealism.ui.panels.ShaderEditPanel;
 
 // TODO  Add duplicate surface function.
 

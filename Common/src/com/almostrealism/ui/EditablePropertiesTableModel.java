@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
-
+package com.almostrealism.ui;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -27,7 +26,6 @@ import com.almostrealism.util.Editable;
   The table model also handles applying changes made in the table to the
   stored Editable object.
 */
-
 public class EditablePropertiesTableModel extends AbstractTableModel {
   public static final String columnNames[] = {"Property", "Description", "Type", "Value"};
   

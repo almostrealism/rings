@@ -30,7 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.almostrealism.raytracer.Settings;
+import com.almostrealism.ui.Defaults;
 import com.almostrealism.util.Vector;
 
 /** An EditVectorPanel object can be used to specify a 3D vector. */
@@ -53,9 +53,9 @@ public class EditVectorPanel extends JPanel {
 	public EditVectorPanel(Vector value) {
 		super(new GridLayout(0, 2));
 		
-		this.xField = new JFormattedTextField(Settings.decimalFormat);
-		this.yField = new JFormattedTextField(Settings.decimalFormat);
-		this.zField = new JFormattedTextField(Settings.decimalFormat);
+		this.xField = new JFormattedTextField(Defaults.decimalFormat);
+		this.yField = new JFormattedTextField(Defaults.decimalFormat);
+		this.zField = new JFormattedTextField(Defaults.decimalFormat);
 		
 		this.xField.setColumns(6);
 		this.yField.setColumns(6);

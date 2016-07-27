@@ -28,7 +28,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 
-
 /**
  * An ExtendedCellRenderer object can be used to render values in a table
  * including instances of RGB and Class.

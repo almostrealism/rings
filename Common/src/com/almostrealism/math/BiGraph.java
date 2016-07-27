@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.math.flow;
+package com.almostrealism.math;
 
 public class BiGraph {
 	private double w[][];

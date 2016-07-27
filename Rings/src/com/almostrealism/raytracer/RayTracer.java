@@ -31,6 +31,8 @@ import javax.swing.UIManager;
 
 import com.almostrealism.io.JTextAreaPrintWriter;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.surfaceUI.RenderPanel;
+import com.almostrealism.raytracer.surfaceUI.SplashScreen;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
@@ -39,8 +41,6 @@ import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.RenderPanel;
-import com.almostrealism.ui.panels.SplashScreen;
 
 /**
  * The RayTracer class uses standard ui components from the threeD.ui package to provide a user interface

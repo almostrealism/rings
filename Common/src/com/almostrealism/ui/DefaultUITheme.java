@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.themes;
+package com.almostrealism.ui;
 
-import javax.swing.plaf.*;
-import javax.swing.plaf.metal.*;
-
-import com.almostrealism.raytracer.Settings;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.metal.DefaultMetalTheme;
 
 public class DefaultUITheme extends DefaultMetalTheme {
   private final ColorUIResource primary1 = new ColorUIResource(java.awt.Color.yellow);
@@ -30,13 +28,13 @@ public class DefaultUITheme extends DefaultMetalTheme {
   private final ColorUIResource secondary2 = new ColorUIResource(120, 120, 120);
   private final ColorUIResource secondary3 = new ColorUIResource(171, 171, 171);
 
-	public String getName() { return "Default ThreeD App Theme"; }
+	public String getName() { return "Default App Theme"; }
 	
-	protected ColorUIResource getPrimary1() { return new ColorUIResource(Settings.themePrimary1); }
-	protected ColorUIResource getPrimary2() { return new ColorUIResource(Settings.themePrimary2); }
-	protected ColorUIResource getPrimary3() { return new ColorUIResource(Settings.themePrimary3); }
+	protected ColorUIResource getPrimary1() { return new ColorUIResource(Defaults.themePrimary1); }
+	protected ColorUIResource getPrimary2() { return new ColorUIResource(Defaults.themePrimary2); }
+	protected ColorUIResource getPrimary3() { return new ColorUIResource(Defaults.themePrimary3); }
 	
-	protected ColorUIResource getSecondary1() { return new ColorUIResource(Settings.themeSecondary1); }
-	protected ColorUIResource getSecondary2() { return new ColorUIResource(Settings.themeSecondary2); }
-	protected ColorUIResource getSecondary3() { return new ColorUIResource(Settings.themeSecondary3); }
+	protected ColorUIResource getSecondary1() { return new ColorUIResource(Defaults.themeSecondary1); }
+	protected ColorUIResource getSecondary2() { return new ColorUIResource(Defaults.themeSecondary2); }
+	protected ColorUIResource getSecondary3() { return new ColorUIResource(Defaults.themeSecondary3); }
 }

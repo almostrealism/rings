@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.ui;
 
 /** A DynamicDisplay implementation represents a display that can be updated. */
 public interface DynamicDisplay {

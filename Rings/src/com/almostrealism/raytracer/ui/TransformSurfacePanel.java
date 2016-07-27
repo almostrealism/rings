@@ -24,11 +24,11 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.ui.DynamicDisplay;
 import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.DynamicDisplay;
 import com.almostrealism.util.TransformMatrix;
 
 /**

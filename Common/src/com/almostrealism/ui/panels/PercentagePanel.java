@@ -29,8 +29,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.almostrealism.raytracer.Settings;
-
+import com.almostrealism.ui.Defaults;
 
 /**
  * A PercentagePanel object can be used to display a decimal value
@@ -55,7 +54,7 @@ public class PercentagePanel extends JPanel {
 	public PercentagePanel(LayoutManager layout) {
 		super(layout);
 		
-		this.valueField = new JFormattedTextField(Settings.decimalFormat);
+		this.valueField = new JFormattedTextField(Defaults.decimalFormat);
 		this.valueField.setColumns(6);
 		this.slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 		

@@ -23,6 +23,7 @@ import javax.swing.JMenuItem;
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.ui.EditCameraDialog;
+import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
@@ -30,7 +31,6 @@ import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.LightInfoPanel;
 
 /**
  * The EditSceneMenu class extends JMenu and provides menu items for editing a scene.

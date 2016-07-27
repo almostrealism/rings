@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
-
+package com.almostrealism.raytracer.ui;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -33,7 +32,8 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.almostrealism.raytracer.ui.AddDialog;
+import com.almostrealism.ui.DynamicDisplay;
+import com.almostrealism.ui.panels.EditPanel;
 import com.almostrealism.util.Editable;
 import com.almostrealism.util.EditableFactory;
 

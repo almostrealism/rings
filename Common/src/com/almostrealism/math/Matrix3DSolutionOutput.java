@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.math.cover;
+package com.almostrealism.math;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

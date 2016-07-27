@@ -15,7 +15,10 @@
  */
 package com.almostrealism.ui;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
+
+import com.almostrealism.raytracer.Settings;
 
 /**
  * @author  Michael Murray
@@ -60,4 +63,22 @@ public class Defaults {
 
 	/** An instance of DecimalFormat that can be used to format decimal numbers for display. */
 	public static final DecimalFormat displayFormat = new TruncatedDecimalFormat();
+
+	/** AWT Color representing the primary 1 color for the default theme. */
+	public static Color themePrimary1 = (new Color(0, 108, 175)).darker();
+
+	/** AWT Color representing the primary 2 color for the default theme. */
+	public static Color themePrimary2 = new Color(0, 108, 175);
+
+	/** AWT Color representing the primary 3 color for the default theme. */
+	public static Color themePrimary3 =  Settings.themePrimary2.brighter();
+
+	/** AWT Color representing the secondary 1 color for the default theme. */
+	public static Color themeSecondary1 = new Color(102, 103, 104);
+
+	/** AWT Color representing the secondary 2 color for the default theme. */
+	public static Color themeSecondary2 = new Color(170, 174, 177);
+
+	/** AWT Color representing the secondary 3 color for the default theme. */
+	public static Color themeSecondary3 = new Color(209, 212, 214);
 }

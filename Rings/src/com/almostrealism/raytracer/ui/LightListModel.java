@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.ui;
 
 
 import javax.swing.AbstractListModel;
 
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.raytracer.ui.LightAddEvent;
-import com.almostrealism.raytracer.ui.LightEditEvent;
-import com.almostrealism.raytracer.ui.LightRemoveEvent;
-import com.almostrealism.raytracer.ui.SceneCloseEvent;
-import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventListener;
 

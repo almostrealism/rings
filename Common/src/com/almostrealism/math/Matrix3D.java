@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.math.cover;
+package com.almostrealism.math;
 
 public class Matrix3D {
 	protected double matrix[][][];

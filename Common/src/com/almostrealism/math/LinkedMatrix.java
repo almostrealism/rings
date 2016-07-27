@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.math.cover;
+package com.almostrealism.math;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

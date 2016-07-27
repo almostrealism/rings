@@ -25,7 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.almostrealism.ui.panels.DynamicDisplay;
+import com.almostrealism.ui.DynamicDisplay;
 import com.almostrealism.ui.panels.EditVectorPanel;
 import com.almostrealism.util.Vector;
 

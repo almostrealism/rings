@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.panels;
+package com.almostrealism.raytracer.surfaceUI;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -35,8 +35,10 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
 import com.almostrealism.raytracer.ui.AddDialog;
+import com.almostrealism.raytracer.ui.ExpandedEditPanel;
 import com.almostrealism.raytracer.ui.ShadedPreviewDisplay;
 import com.almostrealism.raytracer.ui.ShaderTreeNode;
+import com.almostrealism.ui.panels.EditPanel;
 import com.almostrealism.util.Editable;
 import com.almostrealism.util.EditableFactory;
 

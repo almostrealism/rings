@@ -24,10 +24,10 @@ import javax.swing.JPanel;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
 import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.DynamicDisplay;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.dialogs.DialogCloseEvent;
-import com.almostrealism.ui.panels.DynamicDisplay;
 
 /**
  * An AddTransformDialog allows the user to select a type of transformation

@@ -20,12 +20,12 @@ package com.almostrealism.raytracer.ui.menus;
 import javax.swing.JMenu;
 
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
 import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.LightInfoPanel;
 
 /** The EditMenu class extends JMenu and provides editing options for the user. */
 public class EditMenu extends JMenu implements EventListener, EventGenerator {

@@ -29,10 +29,10 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
 import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.DynamicDisplay;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.dialogs.DialogCloseEvent;
-import com.almostrealism.ui.panels.DynamicDisplay;
 
 /**
   An EditTransformDialog object allows the user to edit the transformation properties of an AbstractSurface object.

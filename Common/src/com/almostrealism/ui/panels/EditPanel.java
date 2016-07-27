@@ -18,6 +18,7 @@ package com.almostrealism.ui.panels;
 
 import javax.swing.JTable;
 
+import com.almostrealism.ui.EditablePropertiesTableModel;
 import com.almostrealism.util.Editable;
 
 /**

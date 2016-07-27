@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
@@ -37,7 +38,6 @@ import com.almostrealism.ui.Event;
 import com.almostrealism.ui.EventGenerator;
 import com.almostrealism.ui.EventHandler;
 import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.RenderPanel;
 
 /**
   The FileMenu class extends JMenu and provides menu items for opening, closing, and saving files.
