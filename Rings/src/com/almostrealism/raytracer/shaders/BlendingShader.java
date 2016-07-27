@@ -16,11 +16,11 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.Producer;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.ColorProducer;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.ColorProducer;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * A BlendingShader object provides a method for blending values from two
@@ -75,44 +75,44 @@ public class BlendingShader implements Shader, Editable {
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyNames()
+	 * @see org.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() { return BlendingShader.names; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
+	 * @see org.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() { return BlendingShader.desc; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyTypes()
+	 * @see org.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() { return BlendingShader.types; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyValues()
+	 * @see org.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() { return this.getInputPropertyValues(); }
 
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object o, int index) { this.setInputPropertyValue(index, (Producer)o); }
 
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object values[]) {
 		for (int i = 0; i < values.length; i++) this.setPropertyValue(values[i], i);
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
+	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() { return new Producer[] {this.hotColor, this.coldColor}; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
 	 * @throws IndexOutOfBoundsException  If the property index is out of bounds.
 	 */
 	public void setInputPropertyValue(int index, Producer p) {
@@ -125,7 +125,7 @@ public class BlendingShader implements Shader, Editable {
 	}
 
 	/**
-	 * @see com.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters)args[0]); }
 	

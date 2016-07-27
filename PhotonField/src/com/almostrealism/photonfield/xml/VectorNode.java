@@ -19,11 +19,10 @@ package com.almostrealism.photonfield.xml;
 import java.awt.Container;
 import java.util.List;
 
+import org.almostrealism.ui.panels.EditVectorPanel;
+import org.almostrealism.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.almostrealism.ui.panels.EditVectorPanel;
-import com.almostrealism.util.Vector;
 
 public class VectorNode extends Node {
 	private double[] value;

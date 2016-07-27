@@ -40,7 +40,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.text.JTextComponent;
 
-import com.almostrealism.io.JTextAreaPrintWriter;
+import org.almostrealism.io.JTextAreaPrintWriter;
+
 import com.almostrealism.raytracer.Settings;
 
 /**

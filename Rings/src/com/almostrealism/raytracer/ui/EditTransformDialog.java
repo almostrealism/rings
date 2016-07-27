@@ -25,14 +25,15 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.DynamicDisplay;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.DynamicDisplay;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
   An EditTransformDialog object allows the user to edit the transformation properties of an AbstractSurface object.

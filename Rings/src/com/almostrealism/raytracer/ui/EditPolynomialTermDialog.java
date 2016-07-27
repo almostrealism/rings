@@ -22,12 +22,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
  * An EditPolynomialTermDialog object can be used to allow the user to edit a PolynomialTerm object.

@@ -40,10 +40,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.ui.Defaults;
+
 import com.almostrealism.flow.NodeProxy;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.LoginDialog;
-import com.almostrealism.ui.Defaults;
 
 
 /**

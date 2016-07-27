@@ -38,6 +38,8 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.util.Nameable;
+import org.almostrealism.util.graphics.RGB;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -57,8 +59,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
-import com.almostrealism.util.Nameable;
-import com.almostrealism.util.graphics.RGB;
 
 public class FileLoader extends DefaultHandler {
 	public static double verbose = Math.pow(10.0, -5.0);

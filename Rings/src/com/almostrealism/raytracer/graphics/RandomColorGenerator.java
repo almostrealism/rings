@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.graphics;
 
-import com.almostrealism.util.graphics.ColorProducer;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.graphics.ColorProducer;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray

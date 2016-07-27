@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.EditableFactory;
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.EditableFactory;
 
 /**
  * The ShaderFactory class provides static methods for constructing Shader objects.

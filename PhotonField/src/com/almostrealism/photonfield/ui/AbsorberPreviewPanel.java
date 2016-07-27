@@ -21,6 +21,10 @@ import java.awt.Color;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.displays.ImageCanvas;
+import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.AbsorberHashSet;
 import com.almostrealism.photonfield.Clock;
@@ -36,9 +40,6 @@ import com.almostrealism.photonfield.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photonfield.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
-import com.almostrealism.ui.displays.ImageCanvas;
-import com.almostrealism.ui.displays.ProgressDisplay;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author  Mike Murray

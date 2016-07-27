@@ -42,13 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.almostrealism.io.FilePrintWriter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.JobOutput;
 import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
 import com.almostrealism.flow.db.QueryHandler;
-import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
@@ -58,7 +60,6 @@ import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A RayTracingJob object provides an implementation of
@@ -754,25 +755,25 @@ public class RayTracingJob implements Job, SceneLoader {
 			double nfl = ((PinholeCamera)camera).getFocalLength();
 			if (this.fl != -1) nfl = this.fl;
 			
-			com.almostrealism.util.Vector cd = (com.almostrealism.util.Vector)
+			org.almostrealism.util.Vector cd = (org.almostrealism.util.Vector)
 								((PinholeCamera)camera).getViewDirection().clone();
 			
 			if (this.cdz != 0 ||
 				this.cdy != 0 ||
 				this.cdz != 0) {
-				cd = new com.almostrealism.util.Vector(this.cdx, this.cdy, this.cdz);
+				cd = new org.almostrealism.util.Vector(this.cdx, this.cdy, this.cdz);
 			}
 			
-			com.almostrealism.util.Vector cl = (com.almostrealism.util.Vector)
+			org.almostrealism.util.Vector cl = (org.almostrealism.util.Vector)
 								((PinholeCamera)camera).getLocation().clone();
 			
 			if (this.clz != 0 ||
 					this.cly != 0 ||
 					this.clz != 0) {
-					cl = new com.almostrealism.util.Vector(this.clx, this.cly, this.clz);
+					cl = new org.almostrealism.util.Vector(this.clx, this.cly, this.clz);
 				}
 			
-			camera = new PinholeCamera(cl, cd, new com.almostrealism.util.Vector(0.0, 1.0, 0.0),
+			camera = new PinholeCamera(cl, cd, new org.almostrealism.util.Vector(0.0, 1.0, 0.0),
 										nfl, npw, nph);
 		}
 		

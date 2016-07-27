@@ -18,10 +18,11 @@ package com.almostrealism.raytracer.graphics;
 
 import java.awt.Graphics;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

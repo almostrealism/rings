@@ -36,13 +36,14 @@ import java.net.URL;
 import javax.media.jai.JAI;
 import javax.media.jai.util.ImagingException;
 
+import org.almostrealism.io.ScpDownloader;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.almostrealism.flow.Resource;
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.Server.IOStreams;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.io.ScpDownloader;
 import com.sun.media.jai.codec.FileCacheSeekableStream;
 
 public class ImageResource implements Resource {

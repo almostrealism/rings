@@ -19,6 +19,12 @@ package com.almostrealism.raytracer;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.texture.StripeTexture;
+import org.almostrealism.texture.Texture;
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
@@ -31,11 +37,6 @@ import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.ui.RenderTestFrame;
-import com.almostrealism.texture.StripeTexture;
-import com.almostrealism.texture.Texture;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray

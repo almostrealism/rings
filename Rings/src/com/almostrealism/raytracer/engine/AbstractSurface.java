@@ -26,15 +26,16 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.almostrealism.texture.Texture;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
 import com.almostrealism.raytracer.shaders.ShaderSet;
-import com.almostrealism.texture.Texture;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes

@@ -23,9 +23,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.almostrealism.util.Graph;
+
 import com.almostrealism.photonfield.util.PhysicalConstants;
 import com.almostrealism.photonfield.util.VectorMath;
-import com.almostrealism.util.Graph;
 
 // TODO  Consider creating a custom list for photon set (tick creates many many double[][]).
 public class DefaultPhotonField implements PhotonField {

@@ -32,12 +32,12 @@ import javax.swing.tree.TreeCellRenderer;
 
 import org.almostrealism.tree.ui.ObjectTreeDisplay;
 import org.almostrealism.tree.ui.ObjectTreeNode;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.photonfield.distribution.OverlayBRDF;
 import com.almostrealism.photonfield.ui.DefaultProbabilityDistributionEditPanel;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 public class ProbabilityDistributionDisplay extends JPanel
 								implements NodeDisplay, TreeCellRenderer, MouseListener {

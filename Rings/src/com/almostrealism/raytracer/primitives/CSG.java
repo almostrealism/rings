@@ -16,12 +16,13 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.util.Vector;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 

@@ -24,6 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.almostrealism.util.Nameable;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.distribution.BRDF;
 import com.almostrealism.photonfield.distribution.SphericalProbabilityDistribution;
 import com.almostrealism.photonfield.geometry.Elipse;
@@ -50,9 +54,6 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.util.Nameable;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * An AbsorberHashSet object is an implementation of AbsorberSet that uses a HashSet

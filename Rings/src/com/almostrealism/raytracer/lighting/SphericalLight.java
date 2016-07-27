@@ -16,9 +16,10 @@
 
 package com.almostrealism.raytracer.lighting;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 /**
  * A SphericalLight object provides PointLight samples that are randomly distributed

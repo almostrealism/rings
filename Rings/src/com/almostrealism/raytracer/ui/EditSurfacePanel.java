@@ -31,18 +31,19 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.EventListener;
+import org.almostrealism.ui.panels.EditRGBPanel;
+import org.almostrealism.ui.panels.EditVectorPanel;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.panels.EditRGBPanel;
-import com.almostrealism.ui.panels.EditVectorPanel;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 
 /**

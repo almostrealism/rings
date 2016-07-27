@@ -20,9 +20,8 @@ import java.awt.Container;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
+import org.almostrealism.obj.DefaultObjectFactory;
 import org.almostrealism.tree.ui.ObjectTreeDisplay;
-
-import com.almostrealism.obj.DefaultObjectFactory;
 
 /**
  * @author  Mike Murray

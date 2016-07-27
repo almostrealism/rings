@@ -20,8 +20,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author  Mike Murray

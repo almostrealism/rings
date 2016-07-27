@@ -25,11 +25,12 @@
 
 package com.almostrealism.physics.shaders;
 
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.physics.RigidBody;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property

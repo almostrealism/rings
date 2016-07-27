@@ -18,9 +18,10 @@ package com.almostrealism.photonfield.distribution;
 
 import java.lang.reflect.Method;
 
+import org.almostrealism.util.Nameable;
+
 import com.almostrealism.photonfield.util.Length;
 import com.almostrealism.photonfield.util.VectorMath;
-import com.almostrealism.util.Nameable;
 
 /**
  * An OverlayBRDF simply takes the sum of the samples provided by each

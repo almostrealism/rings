@@ -27,6 +27,7 @@ package com.almostrealism.ebay;
 
 import java.io.IOException;
 
+import org.almostrealism.util.Help;
 import org.htmlparser.Parser;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.NodeList;
@@ -36,7 +37,6 @@ import com.almostrealism.flow.Job;
 import com.almostrealism.flow.JobFactory;
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.resources.ConcatenatedResource;
-import com.almostrealism.util.Help;
 
 /**
  * @author  Mike Murray

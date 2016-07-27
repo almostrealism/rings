@@ -25,11 +25,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
+import org.almostrealism.texture.Texture;
+import org.almostrealism.texture.TextureFactory;
+import org.almostrealism.ui.DynamicDisplay;
+import org.almostrealism.util.EditableFactory;
+
 import com.almostrealism.raytracer.shaders.TextureShader;
-import com.almostrealism.texture.Texture;
-import com.almostrealism.texture.TextureFactory;
-import com.almostrealism.ui.DynamicDisplay;
-import com.almostrealism.util.EditableFactory;
 
 /**
  * An AddDialog object can be used to allow a user to add an Editable object to a specified Set object.

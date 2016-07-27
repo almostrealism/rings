@@ -16,8 +16,8 @@
 
 package com.almostrealism.webgl;
 
-import com.almostrealism.html.HTMLFragment;
-import com.almostrealism.html.HTMLPage;
+import org.almostrealism.html.HTMLFragment;
+import org.almostrealism.html.HTMLPage;
 
 public class WebGLExporter {
 	private Iterable<WebGLRenderable> renderables;

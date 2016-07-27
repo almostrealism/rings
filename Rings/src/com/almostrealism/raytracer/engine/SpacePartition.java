@@ -19,9 +19,10 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.util.Vector;
 
 
 public class SpacePartition extends SurfaceGroup {

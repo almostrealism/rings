@@ -23,12 +23,13 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the SurfaceUI interface

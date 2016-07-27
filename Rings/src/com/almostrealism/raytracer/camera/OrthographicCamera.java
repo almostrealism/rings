@@ -16,10 +16,11 @@
 
 package com.almostrealism.raytracer.camera;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Ray;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 /**
  * The OrthographicCamera class provides an orthographic porjection camera.

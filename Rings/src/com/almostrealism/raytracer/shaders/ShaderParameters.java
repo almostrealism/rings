@@ -19,11 +19,12 @@ package com.almostrealism.raytracer.shaders;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 
 /**

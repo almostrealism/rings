@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray

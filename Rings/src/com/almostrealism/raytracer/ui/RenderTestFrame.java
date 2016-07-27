@@ -24,14 +24,15 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.ui.displays.ProgressDisplay;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 
 /**

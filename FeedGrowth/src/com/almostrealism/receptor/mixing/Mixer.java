@@ -19,10 +19,11 @@ package com.almostrealism.receptor.mixing;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.almostrealism.time.Clock;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.cellular.SummationCell;
 import com.almostrealism.receptor.synth.Source;
-import com.almostrealism.time.Clock;
 
 public class Mixer extends ArrayList<Source> implements Clock {
 	private AudioProteinCache cache;

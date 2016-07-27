@@ -24,16 +24,17 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.EventListener;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 
 /**

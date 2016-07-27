@@ -16,6 +16,9 @@
 
 package com.almostrealism.photonfield.raytracer;
 
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.Absorber;
 import com.almostrealism.photonfield.AbsorptionPlane;
 import com.almostrealism.photonfield.Clock;
@@ -25,8 +28,6 @@ import com.almostrealism.photonfield.util.PriorityQueue;
 import com.almostrealism.photonfield.util.VectorMath;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.Ray;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 public class PinholeCameraAbsorber implements Absorber, Camera {
 	private Clock clock;

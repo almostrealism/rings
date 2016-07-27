@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.media.opengl.GL2;
 
+import org.almostrealism.texture.ImageLayers;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -29,7 +30,6 @@ import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.texture.ImageLayers;
 import com.almostrealism.visualize.primitives.RenderableMesh;
 
 public class Terrain extends RenderableMesh {

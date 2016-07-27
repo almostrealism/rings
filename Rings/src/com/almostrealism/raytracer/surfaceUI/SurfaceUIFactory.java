@@ -20,6 +20,8 @@ import java.awt.Graphics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.almostrealism.ui.Dialog;
+
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
@@ -33,7 +35,6 @@ import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.ui.EditPlaneDialog;
 import com.almostrealism.raytracer.ui.EditPolynomialDialog;
 import com.almostrealism.raytracer.ui.EditTriangleDialog;
-import com.almostrealism.ui.Dialog;
 
 
 // TODO  Add Mesh dialog that allows user to configure space partition.

@@ -18,8 +18,8 @@ package com.almostrealism.webgl;
 
 import java.util.ArrayList;
 
-import com.almostrealism.html.HTMLContent;
-import com.almostrealism.html.HTMLFragment;
+import org.almostrealism.html.HTMLContent;
+import org.almostrealism.html.HTMLFragment;
 
 public class WebGLStatementList extends ArrayList<WebGLStatement> implements WebGLExportable {
 	@Override

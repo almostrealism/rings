@@ -18,8 +18,9 @@ package com.almostrealism.visualize.primitives;
 
 import javax.media.opengl.GL2;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.util.Vector;
 import com.almostrealism.visualize.gl.DisplayList;
 
 public class TriangleDisplayList extends DisplayList {

@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.almostrealism.util.Vector;
+import org.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

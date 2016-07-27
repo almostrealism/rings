@@ -16,10 +16,10 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.Producer;
-import com.almostrealism.util.graphics.ColorProducer;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.graphics.ColorProducer;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * A SilhouetteShader object can be used to shade a surface with one color value
@@ -53,32 +53,32 @@ public class SilhouetteShader implements Editable, Shader {
 	public RGB shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
-	 * @see com.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyNames()
+	 * @see org.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() { return this.names; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
+	 * @see org.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() { return this.desc; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyTypes()
+	 * @see org.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() { return this.types; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyValues()
+	 * @see org.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() { return new Object[] {this.color}; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
@@ -88,19 +88,19 @@ public class SilhouetteShader implements Editable, Shader {
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object values[]) {
 		if (values.length > 0) this.color = (ColorProducer)values[0];
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
+	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
 	 */
 	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)

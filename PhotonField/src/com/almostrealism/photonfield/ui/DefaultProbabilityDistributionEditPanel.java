@@ -27,9 +27,10 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.almostrealism.ui.panels.PercentagePanel;
+
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
 import com.almostrealism.photonfield.xml.ProbabilityDistributionDisplay;
-import com.almostrealism.ui.panels.PercentagePanel;
 
 /**
  * @author  Mike Murray

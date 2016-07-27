@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.almostrealism.io.Console;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.breeding.Breeder;
 import com.almostrealism.feedgrow.breeding.FloatingPointAverageBreeder;
@@ -40,7 +42,6 @@ import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulationGenerator;
-import com.almostrealism.io.Console;
 
 public class SimpleOrganOptimizer<T> {
 	public static Console console = new Console();

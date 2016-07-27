@@ -21,12 +21,13 @@ import java.util.NoSuchElementException;
 
 import javax.swing.tree.MutableTreeNode;
 
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
 
 
 /**

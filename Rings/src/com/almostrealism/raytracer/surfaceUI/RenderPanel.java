@@ -24,6 +24,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.EventListener;
+import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Scene;
@@ -31,13 +39,6 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceEditEvent;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.EventListener;
-import com.almostrealism.ui.displays.ProgressDisplay;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A RenderPanel object allows display of scene previews and rendered images of the Scene object it uses.

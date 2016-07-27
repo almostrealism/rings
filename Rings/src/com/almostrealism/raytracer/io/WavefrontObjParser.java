@@ -22,9 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.ObjPolygon;
-import com.almostrealism.util.Vector;
 
 /**
  * The {@link WavefrontObjParser} is used to parse 3d objects stored in

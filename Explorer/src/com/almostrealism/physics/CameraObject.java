@@ -25,8 +25,9 @@
 
 package com.almostrealism.physics;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.camera.PinholeCamera;
-import com.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

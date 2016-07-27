@@ -36,10 +36,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.ui.panels.PercentagePanel;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.ui.panels.PercentagePanel;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 
 public class ArtifactDetector {

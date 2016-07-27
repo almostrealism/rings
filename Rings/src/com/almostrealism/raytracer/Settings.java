@@ -24,8 +24,8 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
-import com.almostrealism.io.PrintWriter;
-import com.almostrealism.ui.Defaults;
+import org.almostrealism.io.PrintWriter;
+import org.almostrealism.ui.Defaults;
 
 /**
  * The Settings class provides access to settings that change the way the RayTracer and its components run.

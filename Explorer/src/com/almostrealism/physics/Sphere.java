@@ -27,6 +27,9 @@ package com.almostrealism.physics;
 
 import java.awt.Graphics;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;
@@ -34,8 +37,6 @@ import com.almostrealism.raytracer.graphics.ParticleGroupRenderer;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 
 /**

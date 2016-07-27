@@ -21,10 +21,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 /**
  * @author Mike Murray

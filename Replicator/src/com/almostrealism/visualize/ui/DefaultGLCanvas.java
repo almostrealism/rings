@@ -32,8 +32,9 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
+import org.almostrealism.util.ValueProducer;
+
 import com.almostrealism.geometry.BasicGeometry;
-import com.almostrealism.util.ValueProducer;
 import com.almostrealism.visualize.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;

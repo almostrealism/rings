@@ -28,7 +28,7 @@ package com.almostrealism.physics.efield;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.almostrealism.util.Vector;
+import org.almostrealism.util.Vector;
 
 
 public class ParticleField {

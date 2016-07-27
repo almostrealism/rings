@@ -16,11 +16,11 @@
 
 package com.almostrealism.raytracer.shaders;
 
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.Producer;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.ColorProducer;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.ColorProducer;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * A HighlightShader object provides a shading method for highlights on surfaces.

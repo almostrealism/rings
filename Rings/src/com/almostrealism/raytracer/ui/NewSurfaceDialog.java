@@ -21,14 +21,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
   A NewSurfaceDialog object can be used to allow the user to add a new Surface object to a Scene object

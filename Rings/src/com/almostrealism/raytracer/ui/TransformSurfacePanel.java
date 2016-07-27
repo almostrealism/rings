@@ -23,13 +23,14 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.ui.DynamicDisplay;
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.EventListener;
+import org.almostrealism.util.TransformMatrix;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.ui.DynamicDisplay;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.EventListener;
-import com.almostrealism.util.TransformMatrix;
 
 /**
  * A {@link TransformSurfacePanel} can be used to allow the user to

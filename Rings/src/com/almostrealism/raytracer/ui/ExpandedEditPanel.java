@@ -32,10 +32,10 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.almostrealism.ui.DynamicDisplay;
-import com.almostrealism.ui.panels.EditPanel;
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.EditableFactory;
+import org.almostrealism.ui.DynamicDisplay;
+import org.almostrealism.ui.panels.EditPanel;
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.EditableFactory;
 
 /**
  * An ExpandedEditPanel object can be used to allow a user to set the properties of a set of Editable objects.

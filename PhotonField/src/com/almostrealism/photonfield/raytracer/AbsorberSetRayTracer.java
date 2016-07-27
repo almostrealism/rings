@@ -18,13 +18,14 @@ package com.almostrealism.photonfield.raytracer;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.ui.displays.ProgressDisplay;
-import com.almostrealism.util.graphics.RGB;
 
 public class AbsorberSetRayTracer {
 	private Camera camera;

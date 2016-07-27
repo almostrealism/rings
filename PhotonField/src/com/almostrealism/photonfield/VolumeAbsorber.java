@@ -16,7 +16,7 @@
 
 package com.almostrealism.photonfield;
 
-import com.almostrealism.util.Nameable;
+import org.almostrealism.util.Nameable;
 
 /**
  * A VolumeAbsorber is a wrapper class for Absorber implementations that restricts

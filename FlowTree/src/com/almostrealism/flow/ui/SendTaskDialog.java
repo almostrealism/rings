@@ -178,7 +178,7 @@ public class SendTaskDialog extends JPanel {
 	}
 	
 	/**
-	 * @see com.almostrealism.ui.Dialog#showDialog()
+	 * @see org.almostrealism.ui.Dialog#showDialog()
 	 */
 	public void showDialog() {
 		if (!this.open) {
@@ -188,7 +188,7 @@ public class SendTaskDialog extends JPanel {
 	}
 
 	/**
-	 * @see com.almostrealism.ui.Dialog#closeDialog()
+	 * @see org.almostrealism.ui.Dialog#closeDialog()
 	 */
 	public void closeDialog() {
 		if (this.open) {

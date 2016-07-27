@@ -21,13 +21,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.DynamicDisplay;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.DynamicDisplay;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
  * An AddTransformDialog allows the user to select a type of transformation

@@ -26,9 +26,10 @@ import java.io.OutputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 public class WaveGrid {
 	private double max = 10.0, delta = 1.0;

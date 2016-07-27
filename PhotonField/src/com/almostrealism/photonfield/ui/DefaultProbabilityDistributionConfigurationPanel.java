@@ -19,7 +19,8 @@ package com.almostrealism.photonfield.ui;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import com.almostrealism.obj.ObjectFactory;
+import org.almostrealism.obj.ObjectFactory;
+
 import com.almostrealism.photonfield.util.OverlayDistribution;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
 

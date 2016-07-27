@@ -16,10 +16,11 @@
 
 package com.almostrealism.raytracer.shaders;
 
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.ColorProducer;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.ColorProducer;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray
@@ -57,7 +58,7 @@ public class CheckerBoardShader implements Shader {
 	}
 
 	/**
-	 * @see com.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters) args[0]); }
 	

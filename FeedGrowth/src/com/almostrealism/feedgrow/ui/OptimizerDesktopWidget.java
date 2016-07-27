@@ -20,8 +20,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.ScrollingTextDisplay;
+
 import com.almostrealism.feedgrow.optimization.SimpleOrganOptimizer;
-import com.almostrealism.ui.ScrollingTextDisplay;
 
 public class OptimizerDesktopWidget<T> extends JPanel {
 	private SimpleOrganOptimizer<T> optimizer;

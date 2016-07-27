@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.engine;
 
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * A RenderParameters object stores parameters for the RayTracingEngine.

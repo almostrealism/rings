@@ -18,8 +18,9 @@ package com.almostrealism.photonfield.util.buffers;
 
 import java.io.IOException;
 
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.network.PhotonFieldSceneLoader;
-import com.almostrealism.util.graphics.RGB;
 
 public interface ColorBuffer {
 	public void addColor(double u, double v, boolean front, RGB c);

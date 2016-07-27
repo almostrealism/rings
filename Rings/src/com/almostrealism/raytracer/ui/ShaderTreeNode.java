@@ -26,10 +26,11 @@ import java.util.Set;
 
 import javax.swing.tree.TreeNode;
 
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.Producer;
+
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.Producer;
 
 /**
  * A ShaderTreeNode object wraps a Shader object and allows it to be displayed
@@ -156,7 +157,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyNames()
+	 * @see org.almostrealism.util.Editable#getPropertyNames()
 	 */
 	public String[] getPropertyNames() {
 		if (this.shader instanceof Editable)
@@ -166,7 +167,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyDescriptions()
+	 * @see org.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
 	public String[] getPropertyDescriptions() {
 		if (this.shader instanceof Editable)
@@ -176,7 +177,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyTypes()
+	 * @see org.almostrealism.util.Editable#getPropertyTypes()
 	 */
 	public Class[] getPropertyTypes() {
 		if (this.shader instanceof Editable)
@@ -186,7 +187,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#getPropertyValues()
+	 * @see org.almostrealism.util.Editable#getPropertyValues()
 	 */
 	public Object[] getPropertyValues() {
 		if (this.shader instanceof Editable)
@@ -196,7 +197,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (this.shader instanceof Editable)
@@ -204,7 +205,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 	
 	/**
-	 * @see com.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
 	public void setPropertyValues(Object[] values) {
 		if (this.shader instanceof Editable)
@@ -452,7 +453,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	public List subList(int start, int end) { return null; }
 
 	/**
-	 * @see com.almostrealism.util.Editable#getInputPropertyValues()
+	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	public Producer[] getInputPropertyValues() {
 		if (this.shader instanceof Editable)
@@ -462,7 +463,7 @@ public class ShaderTreeNode implements Editable, TreeNode, List {
 	}
 
 	/**
-	 * @see com.almostrealism.util.Editable#setInputPropertyValue(int, com.almostrealism.util.Producer)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
 	 */
 	public void setInputPropertyValue(int index, Producer p) {
 		if (this.shader instanceof Editable) ((Editable)this.shader).setInputPropertyValue(index, p);

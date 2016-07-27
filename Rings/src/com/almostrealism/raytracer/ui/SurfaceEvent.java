@@ -16,8 +16,9 @@
 
 package com.almostrealism.raytracer.ui;
 
+import org.almostrealism.ui.Event;
+
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.ui.Event;
 
 /** A SurfaceEvent object represents an event that targets a surface. */
 public interface SurfaceEvent extends Event {

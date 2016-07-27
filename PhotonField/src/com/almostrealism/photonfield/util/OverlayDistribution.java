@@ -19,7 +19,7 @@ package com.almostrealism.photonfield.util;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * @author  Mike Murray

@@ -47,7 +47,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import com.almostrealism.io.JTextAreaPrintWriter;
+import org.almostrealism.io.JTextAreaPrintWriter;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
@@ -64,9 +68,6 @@ import com.almostrealism.raytracer.shaders.DiffuseShader;
 import com.almostrealism.raytracer.shaders.ReflectionShader;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;

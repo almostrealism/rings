@@ -16,10 +16,11 @@
 
 package com.almostrealism.geometry;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
 
 /**
  * Provides a simple mechanism to keep track of tranformation

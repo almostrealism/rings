@@ -16,8 +16,9 @@
 
 package com.almostrealism.raytracer.ui;
 
+import org.almostrealism.ui.Event;
+
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.ui.Event;
 
 /**
   A LightEvent object represents an event that targets a light.

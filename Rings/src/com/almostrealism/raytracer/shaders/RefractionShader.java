@@ -16,16 +16,17 @@
 
 package com.almostrealism.raytracer.shaders;
 
+import org.almostrealism.util.Editable;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.util.Editable;
-import com.almostrealism.util.Producer;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 // TODO  Fix refraction algorithm.
 

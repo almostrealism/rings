@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almostrealism.util.*;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.*;
+import org.almostrealism.util.graphics.RGB;
 
 /**
  * @author Mike Murray and Sam Tepper

@@ -23,11 +23,12 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.ArrayList;
 
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A {@link SurfaceGroup} object allows {@link Surface} objects to be grouped together.

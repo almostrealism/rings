@@ -19,14 +19,15 @@ package com.almostrealism.raytracer.ui.menus;
 
 import javax.swing.JMenuBar;
 
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.EventListener;
+
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.EventListener;
 
 /**
  * The DefaultMenuBar class extends JMenuBar and provides access to all of the standard menus

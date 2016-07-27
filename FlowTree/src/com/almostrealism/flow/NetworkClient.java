@@ -65,6 +65,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.io.Storable;
+import org.almostrealism.ui.GraphDisplay;
+import org.almostrealism.ui.ScrollingTextDisplay;
+import org.almostrealism.util.Help;
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.OutputHandler;
@@ -76,15 +83,9 @@ import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.tests.TestJobFactory;
 import com.almostrealism.flow.ui.NetworkDialog;
-import com.almostrealism.io.Storable;
 import com.almostrealism.raytracer.JobProducer;
 import com.almostrealism.raytracer.RayTracingJob;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.ui.GraphDisplay;
-import com.almostrealism.ui.ScrollingTextDisplay;
-import com.almostrealism.util.Help;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 // TODO  Add cd and pwd commands.
 // TODO  mkdir does not update slide

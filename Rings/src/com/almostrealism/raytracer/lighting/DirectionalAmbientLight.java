@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.lighting;
 
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
 
 /**
   A DirectionAmbientLight object represents an ambient light source that always comes from a particular direction.

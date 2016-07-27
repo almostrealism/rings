@@ -46,10 +46,11 @@ import java.util.Properties;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.JLabel;
 
+import org.almostrealism.io.RSSFeed;
+import org.almostrealism.util.Graph;
+
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.io.RSSFeed;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.util.Graph;
 
 /**
  * A NodeGroup object represents a group of nodes (Node objects).

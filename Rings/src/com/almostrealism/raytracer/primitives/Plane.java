@@ -16,13 +16,14 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 import com.almostrealism.raytracer.engine.Ray;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A Plane object represents an plane in 3d space.

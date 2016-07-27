@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.util.TransformMatrix;
+import org.almostrealism.util.Vector;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.util.TransformMatrix;
-import com.almostrealism.util.Vector;
-import com.almostrealism.util.graphics.RGB;
 
 
 // TODO Add ParticleGroup implementation.

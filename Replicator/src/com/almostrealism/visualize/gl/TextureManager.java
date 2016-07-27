@@ -23,7 +23,7 @@ import java.util.HashMap;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-import com.almostrealism.texture.ImageSource;
+import org.almostrealism.texture.ImageSource;
 
 public class TextureManager {
 	private HashMap<ImageSource, Integer> textures;

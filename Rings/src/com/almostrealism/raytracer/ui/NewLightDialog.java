@@ -21,6 +21,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.ui.Dialog;
+import org.almostrealism.ui.EventGenerator;
+import org.almostrealism.ui.EventHandler;
+import org.almostrealism.ui.dialogs.DialogCloseEvent;
+
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
@@ -28,10 +33,6 @@ import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.lighting.SphericalLight;
-import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.EventGenerator;
-import com.almostrealism.ui.EventHandler;
-import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
  * A NewLightDialog object can be used to allow the user to add a Light object to a Scene object.

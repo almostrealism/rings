@@ -18,8 +18,9 @@ package com.almostrealism.photonfield.texture;
 
 import java.io.IOException;
 
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A SpectrumMap instance combines a ProbabilityDistribution and an IntensityMap.

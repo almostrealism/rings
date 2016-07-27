@@ -52,6 +52,9 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
+import org.almostrealism.util.graphics.GraphicsConverter;
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.DatabaseConnection;
@@ -61,8 +64,6 @@ import com.almostrealism.flow.resources.ImageResource;
 import com.almostrealism.flow.resources.LocalResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.slide.DistributedContentStore;
-import com.almostrealism.util.graphics.GraphicsConverter;
-import com.almostrealism.util.graphics.RGB;
 
 // TODO Consider performing routine tasks (eg Garbage Collector, delete unused db rows, etc.)
 //      during time when activity rating is low.

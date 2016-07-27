@@ -35,6 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.ui.displays.ImageCanvas;
+import org.almostrealism.util.Nameable;
+import org.almostrealism.util.graphics.RGB;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,9 +50,6 @@ import com.almostrealism.photonfield.util.buffers.AveragedVectorMap2D;
 import com.almostrealism.photonfield.util.buffers.BufferListener;
 import com.almostrealism.photonfield.util.buffers.ColorBuffer;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.ui.displays.ImageCanvas;
-import com.almostrealism.util.Nameable;
-import com.almostrealism.util.graphics.RGB;
 
 public class AbsorberSetNode extends Node implements BufferListener {
 	public static int bufferDisplayDim = 100;

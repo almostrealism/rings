@@ -19,10 +19,11 @@ package com.almostrealism.raytracer.ui;
 
 import javax.swing.AbstractListModel;
 
+import org.almostrealism.ui.Event;
+import org.almostrealism.ui.EventListener;
+
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
-import com.almostrealism.ui.Event;
-import com.almostrealism.ui.EventListener;
 
 /**
   The PolynomialTermsListModel class extends AbstractListModel and provides a list model that dynamically displays

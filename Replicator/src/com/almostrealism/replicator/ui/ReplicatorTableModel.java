@@ -21,11 +21,12 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.almostrealism.util.Vector;
+
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
-import com.almostrealism.util.Vector;
 
 public class ReplicatorTableModel extends AbstractTableModel {
 	private static final String LEFT = "Left";

@@ -34,8 +34,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.util.graphics.RGB;
+
 import com.almostrealism.flow.db.JobOutput;
-import com.almostrealism.util.graphics.RGB;
 
 /**
  * A RayTracingJobOutput object stores 
