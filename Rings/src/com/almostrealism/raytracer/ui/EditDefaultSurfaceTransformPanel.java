@@ -25,14 +25,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.SceneCloseEvent;
-import com.almostrealism.ui.event.SceneOpenEvent;
-import com.almostrealism.ui.event.SurfaceEditEvent;
-import com.almostrealism.ui.event.SurfaceEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.EventListener;
 
 /**
   An EditDefaultSurfaceTransformPanel can be used to gather input from the user

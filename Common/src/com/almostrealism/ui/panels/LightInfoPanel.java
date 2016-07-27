@@ -27,16 +27,16 @@ import javax.swing.JScrollPane;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.ui.EditLightDialog;
+import com.almostrealism.raytracer.ui.LightAddEvent;
+import com.almostrealism.raytracer.ui.LightEditEvent;
+import com.almostrealism.raytracer.ui.LightRemoveEvent;
 import com.almostrealism.raytracer.ui.NewLightDialog;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.LightAddEvent;
-import com.almostrealism.ui.event.LightEditEvent;
-import com.almostrealism.ui.event.LightRemoveEvent;
-import com.almostrealism.ui.event.SceneCloseEvent;
-import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.raytracer.ui.SceneCloseEvent;
+import com.almostrealism.raytracer.ui.SceneOpenEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.EventListener;
 
 /**
   A LightInfoPanel object allows access to a list of Light objects contained in the specified Scene object.

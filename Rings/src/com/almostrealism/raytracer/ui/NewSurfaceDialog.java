@@ -26,10 +26,9 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory;
 import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.event.DialogCloseEvent;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.SurfaceAddEvent;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
   A NewSurfaceDialog object can be used to allow the user to add a new Surface object to a Scene object

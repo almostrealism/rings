@@ -19,11 +19,8 @@ package com.almostrealism.raytracer.ui;
 import javax.swing.AbstractListModel;
 
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.LightAddEvent;
-import com.almostrealism.ui.event.LightEditEvent;
-import com.almostrealism.ui.event.LightRemoveEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventListener;
 
 /**
   The SurfaceListModel class extends AbstractListModel and provides a list model that dynamically displays

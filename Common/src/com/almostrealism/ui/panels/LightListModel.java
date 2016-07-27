@@ -20,13 +20,13 @@ package com.almostrealism.ui.panels;
 import javax.swing.AbstractListModel;
 
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.LightAddEvent;
-import com.almostrealism.ui.event.LightEditEvent;
-import com.almostrealism.ui.event.LightRemoveEvent;
-import com.almostrealism.ui.event.SceneCloseEvent;
-import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.raytracer.ui.LightAddEvent;
+import com.almostrealism.raytracer.ui.LightEditEvent;
+import com.almostrealism.raytracer.ui.LightRemoveEvent;
+import com.almostrealism.raytracer.ui.SceneCloseEvent;
+import com.almostrealism.raytracer.ui.SceneOpenEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventListener;
 
 /**
   The LightListModel class extends AbstractListModel and provides a list model that dynamically displays

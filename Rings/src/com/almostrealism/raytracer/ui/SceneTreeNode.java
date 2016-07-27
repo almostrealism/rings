@@ -24,15 +24,10 @@ import javax.swing.tree.MutableTreeNode;
 
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.SceneCloseEvent;
-import com.almostrealism.ui.event.SceneOpenEvent;
-import com.almostrealism.ui.event.SurfaceAddEvent;
-import com.almostrealism.ui.event.SurfaceEditEvent;
-import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.EventListener;
 
 /**
  * A SceneTreeNode object allows a Scene object to be represented by a TreeNode component

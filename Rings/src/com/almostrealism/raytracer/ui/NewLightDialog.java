@@ -29,10 +29,9 @@ import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.event.DialogCloseEvent;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.LightAddEvent;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 /**
  * A NewLightDialog object can be used to allow the user to add a Light object to a Scene object.

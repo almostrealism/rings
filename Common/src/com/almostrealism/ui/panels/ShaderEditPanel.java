@@ -35,8 +35,8 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.shaders.Shader;
 import com.almostrealism.raytracer.shaders.ShaderSet;
 import com.almostrealism.raytracer.ui.AddDialog;
+import com.almostrealism.raytracer.ui.ShadedPreviewDisplay;
 import com.almostrealism.raytracer.ui.ShaderTreeNode;
-import com.almostrealism.ui.displays.ShadedPreviewDisplay;
 import com.almostrealism.util.Editable;
 import com.almostrealism.util.EditableFactory;
 

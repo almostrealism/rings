@@ -29,14 +29,11 @@ import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.event.DialogCloseEvent;
-import com.almostrealism.ui.event.Event;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.EventListener;
-import com.almostrealism.ui.event.SurfaceEditEvent;
-import com.almostrealism.ui.event.SurfaceEvent;
-import com.almostrealism.ui.event.SurfaceRemoveEvent;
+import com.almostrealism.ui.Event;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.EventListener;
+import com.almostrealism.ui.dialogs.DialogCloseEvent;
 
 
 /**

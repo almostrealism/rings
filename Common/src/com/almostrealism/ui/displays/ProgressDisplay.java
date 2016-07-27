@@ -27,7 +27,7 @@ import javax.swing.*;
  * 
  * @author Mike Murray
  */
-public class ProgressDisplay extends JPanel implements com.almostrealism.ui.event.ProgressMonitor {
+public class ProgressDisplay extends JPanel implements com.almostrealism.ui.ProgressMonitor {
   private int incrementSize, totalSize, increment;
   private boolean removeOnCompletion;
   

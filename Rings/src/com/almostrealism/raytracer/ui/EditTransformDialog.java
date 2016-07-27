@@ -29,10 +29,9 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
 import com.almostrealism.ui.Dialog;
-import com.almostrealism.ui.event.DialogCloseEvent;
-import com.almostrealism.ui.event.EventGenerator;
-import com.almostrealism.ui.event.EventHandler;
-import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.EventGenerator;
+import com.almostrealism.ui.EventHandler;
+import com.almostrealism.ui.dialogs.DialogCloseEvent;
 import com.almostrealism.ui.panels.DynamicDisplay;
 
 /**
