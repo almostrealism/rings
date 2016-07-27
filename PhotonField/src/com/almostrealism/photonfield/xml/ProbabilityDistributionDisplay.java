@@ -30,11 +30,12 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
+import org.almostrealism.tree.ui.ObjectTreeDisplay;
+import org.almostrealism.tree.ui.ObjectTreeNode;
+
 import com.almostrealism.photonfield.distribution.OverlayBRDF;
 import com.almostrealism.photonfield.ui.DefaultProbabilityDistributionEditPanel;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
-import com.almostrealism.ui.ObjectTreeDisplay;
-import com.almostrealism.ui.ObjectTreeNode;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;
 

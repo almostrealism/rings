@@ -20,8 +20,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.almostrealism.ui.ObjectTreeDisplay;
-import com.almostrealism.ui.ObjectTreeNode;
+import org.almostrealism.tree.ui.ObjectTreeDisplay;
+import org.almostrealism.tree.ui.ObjectTreeNode;
 
 /**
  * @author  Mike Murray

@@ -21,13 +21,14 @@ import java.util.Hashtable;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.tree.ui.ObjectTreeDisplay;
+
 import com.almostrealism.photonfield.ui.DefaultProbabilityDistributionConfigurationPanel;
 import com.almostrealism.photonfield.ui.DefaultProbabilityDistributionEditPanel;
 import com.almostrealism.photonfield.util.OverlayDistribution;
 import com.almostrealism.photonfield.util.ProbabilityDistribution;
 import com.almostrealism.photonfield.util.RangeSumDistribution;
 import com.almostrealism.photonfield.xml.ProbabilityDistributionDisplay;
-import com.almostrealism.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray

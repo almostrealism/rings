@@ -29,10 +29,11 @@ import java.util.Enumeration;
 
 import javax.swing.tree.MutableTreeNode;
 
+import org.almostrealism.tree.ui.TreeNode;
+
 import com.almostrealism.flow.Connection;
 import com.almostrealism.flow.Node;
 import com.almostrealism.flow.NodeGroup;
-import com.almostrealism.ui.TreeNode;
 
 
 /**

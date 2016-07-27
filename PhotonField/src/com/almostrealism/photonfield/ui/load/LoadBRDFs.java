@@ -24,6 +24,8 @@ import java.util.Hashtable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import org.almostrealism.tree.ui.ObjectTreeDisplay;
+
 import com.almostrealism.photonfield.SpecularAbsorber;
 import com.almostrealism.photonfield.distribution.OverlayBRDF;
 import com.almostrealism.photonfield.distribution.ReflectiveProbabilityDistribution;
@@ -32,7 +34,6 @@ import com.almostrealism.photonfield.distribution.SphericalProbabilityDistributi
 import com.almostrealism.photonfield.distribution.UniformHemisphericalDistribution;
 import com.almostrealism.photonfield.geometry.Sphere;
 import com.almostrealism.photonfield.ui.AbsorberPreviewPanel;
-import com.almostrealism.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray
