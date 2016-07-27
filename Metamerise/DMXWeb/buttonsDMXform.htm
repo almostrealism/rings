@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>DMX Command</title>
+<style>
+input.btn{
+   color:white;
+   font-family:'trebuchet ms',helvetica,sans-serif;
+   font-size:16pt;
+   font-weight:bold;
+   background-color:black;
+   border:1px solid;
+   border-top-color:#696;
+   border-left-color:#696;
+   border-right-color:#363;
+   border-bottom-color:#363;}
+body,td,th {
+	color: #FFFF00;
+}
+body {
+	background-color: #000000;
+}
+</style>
+<script language="JavaScript" type="text/javascript">
+window.setTimeout('document.getElementById("cmdline").focus();',100);
+function upd(Astring)
+{
+	var fld=document.getElementById("cmdline");
+	var tempStr
+	if (Astring=="BS")
+	{
+		if (fld.value.length>0) 
+		{
+		tempStr=fld.value.substr(0,fld.value.length-1);
+		fld.value=tempStr; 
+		}
+	} 
+	else
+	{fld.value=fld.value+Astring;}
+}
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
+<body>
+Type  command & press Enter <a href='help'><strong>Help</strong></a>
+<form action='dmx' method='get'>
+<div bgcolor="#000000">
+<input name="cmd" type="text" id="cmdline" size="60" />
+<div>
+<input type="button" name="key1" value=" 1 " onClick="upd('1')" class="btn"/>
+<input type="button" name="key2" value=" 2 " onClick="upd('2')" class="btn"/>
+<input type="button" name="key3" value=" 3 " onClick="upd('3')" class="btn"/>
+<input type="button" name="keyAt" value=" @ " onClick="upd('@')" class="btn"/>
+</div>
+<div>
+<input type="button" name="key4" value=" 4 "  onclick="upd('4')" class="btn"/>
+<input type="button" name="key5" value=" 5 "  onclick="upd('5')" class="btn"/>
+<input type="button" name="key6" value=" 6 " onClick="upd('6')" class="btn"/>
+<input type="button" name="keyThru" value="Thru"  onclick="upd('/')" class="btn"/>
+</div><div>
+<input type="button" name="key7" value=" 7 " onClick="upd('7')" class="btn"/>
+<input type="button" name="key8" value=" 8 " onClick="upd('8')" class="btn"/>
+<input type="button" name="key9" value=" 9 " onClick="upd('9')" class="btn"/>
+<input type="button" name="keyExcept" value="Except"  onclick="upd('-')" class="btn"/>
+</div><div>
+<input type="button" name="keyAnd" value=" + " onClick="upd('+')" class="btn"/>
+<input type="button" name="key0" value=" 0 " onClick="upd('0')" class="btn"/>
+<input type="button" name="keyFull" value="Full"  onclick="upd('F')" class="btn"/>
+<input type="button" name="keyDMX" value="DMX" onclick="upd('D')" class="btn"/>
+</div><div>
+
+<input type="button" name="keyBS" value="Bkspc" onclick="upd('BS')" class="btn"/>
+<input type="submit" name="keyEnter" value="Enter" class="btn"/>
+</div>
+</form>
+</body>
+</html>
