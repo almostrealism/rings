@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,6 @@ import com.almostrealism.texture.Texture;
 import com.almostrealism.texture.TextureFactory;
 import com.almostrealism.ui.panels.DynamicDisplay;
 import com.almostrealism.util.EditableFactory;
-
 
 /**
  * An AddDialog object can be used to allow a user to add an Editable object to a specified Set object.

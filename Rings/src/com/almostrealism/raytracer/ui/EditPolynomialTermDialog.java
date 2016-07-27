@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import com.almostrealism.raytracer.primitives.*;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.primitives.Polynomial;
+import com.almostrealism.raytracer.primitives.PolynomialTerm;
+import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.event.DialogCloseEvent;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.SurfaceEditEvent;
 
 /**
  * An EditPolynomialTermDialog object can be used to allow the user to edit a PolynomialTerm object.

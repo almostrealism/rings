@@ -26,8 +26,8 @@ import javax.swing.JScrollPane;
 
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.ui.dialogs.EditLightDialog;
-import com.almostrealism.ui.dialogs.NewLightDialog;
+import com.almostrealism.raytracer.ui.EditLightDialog;
+import com.almostrealism.raytracer.ui.NewLightDialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

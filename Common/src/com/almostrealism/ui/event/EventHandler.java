@@ -20,6 +20,7 @@ package com.almostrealism.ui.event;
 import java.util.*;
 
 import com.almostrealism.raytracer.Settings;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.dialogs.*;
 
 /**

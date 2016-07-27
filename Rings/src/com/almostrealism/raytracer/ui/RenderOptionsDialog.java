@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,6 +34,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.panels.RenderPanel;
 
 /**

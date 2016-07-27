@@ -25,7 +25,7 @@ import javax.swing.ImageIcon;
 
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.ui.dialogs.Dialog;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.GraphicsConverter;
 import com.almostrealism.util.graphics.RGB;

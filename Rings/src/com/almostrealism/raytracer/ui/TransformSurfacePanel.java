@@ -24,8 +24,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.ui.dialogs.AddTransformDialog;
-import com.almostrealism.ui.dialogs.EditTransformDialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

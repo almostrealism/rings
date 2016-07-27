@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import com.almostrealism.ui.dialogs.RenderOptionsDialog;
+import com.almostrealism.raytracer.ui.RenderOptionsDialog;
 import com.almostrealism.ui.panels.RenderPanel;
 
 

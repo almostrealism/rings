@@ -16,12 +16,17 @@
 
 package com.almostrealism.ui.dialogs;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.ui.panels.DynamicDisplay;
+import com.almostrealism.ui.panels.EditRGBPanel;
 import com.almostrealism.util.graphics.RGB;
 
 /**

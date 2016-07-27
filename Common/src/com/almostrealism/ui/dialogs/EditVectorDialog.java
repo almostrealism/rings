@@ -16,13 +16,18 @@
 
 package com.almostrealism.ui.dialogs;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import com.almostrealism.ui.panels.*;
-import com.almostrealism.util.*;
+import com.almostrealism.ui.panels.DynamicDisplay;
+import com.almostrealism.ui.panels.EditVectorPanel;
+import com.almostrealism.util.Vector;
 
 /**
   An EditVectorDialog object can be used to allow a user to specify

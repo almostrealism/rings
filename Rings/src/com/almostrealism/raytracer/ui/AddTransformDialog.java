@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.surfaceUI.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
+import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.event.DialogCloseEvent;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.panels.DynamicDisplay;
 
 /**
  * An AddTransformDialog allows the user to select a type of transformation

@@ -33,7 +33,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.almostrealism.ui.dialogs.AddDialog;
+import com.almostrealism.raytracer.ui.AddDialog;
 import com.almostrealism.util.Editable;
 import com.almostrealism.util.EditableFactory;
 

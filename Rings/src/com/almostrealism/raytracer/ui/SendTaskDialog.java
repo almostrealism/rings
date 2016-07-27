@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 import com.almostrealism.flow.Server;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
+import com.almostrealism.ui.Dialog;
 
 /**
  * A SendTaskDialog object provides a dialog for collecting input required
@@ -177,7 +178,7 @@ public class SendTaskDialog extends JPanel implements Dialog {
 	}
 	
 	/**
-	 * @see com.almostrealism.ui.dialogs.Dialog#showDialog()
+	 * @see com.almostrealism.ui.Dialog#showDialog()
 	 */
 	public void showDialog() {
 		if (!this.open) {
@@ -187,7 +188,7 @@ public class SendTaskDialog extends JPanel implements Dialog {
 	}
 
 	/**
-	 * @see com.almostrealism.ui.dialogs.Dialog#closeDialog()
+	 * @see com.almostrealism.ui.Dialog#closeDialog()
 	 */
 	public void closeDialog() {
 		if (this.open) {

@@ -16,6 +16,7 @@
 
 package com.almostrealism.ui.event;
 
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.dialogs.*;
 
 /**

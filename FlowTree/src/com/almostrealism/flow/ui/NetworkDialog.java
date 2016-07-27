@@ -43,7 +43,7 @@ import javax.swing.JTextField;
 import com.almostrealism.flow.NodeProxy;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.LoginDialog;
-import com.almostrealism.raytracer.Settings;
+import com.almostrealism.ui.Defaults;
 
 
 /**
@@ -179,11 +179,11 @@ public class NetworkDialog extends JPanel {
 		
 		// Set up node panel
 		
-		this.portField = new JFormattedTextField(Settings.integerFormat);
-		this.nodesField = new JFormattedTextField(Settings.integerFormat);
-		this.peersField = new JFormattedTextField(Settings.integerFormat);
-		this.jobsField = new JFormattedTextField(Settings.integerFormat);
-		this.outputPortField = new JFormattedTextField(Settings.integerFormat);
+		this.portField = new JFormattedTextField(Defaults.integerFormat);
+		this.nodesField = new JFormattedTextField(Defaults.integerFormat);
+		this.peersField = new JFormattedTextField(Defaults.integerFormat);
+		this.jobsField = new JFormattedTextField(Defaults.integerFormat);
+		this.outputPortField = new JFormattedTextField(Defaults.integerFormat);
 		
 		this.portField.setValue(Integer.valueOf(NetworkDialog.defaultPort));
 		this.nodesField.setValue(Integer.valueOf(NetworkDialog.defaultTotalNodes));

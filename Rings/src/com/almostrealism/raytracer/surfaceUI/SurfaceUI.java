@@ -23,7 +23,7 @@ import javax.swing.Icon;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.ui.dialogs.Dialog;
+import com.almostrealism.ui.Dialog;
 
 /**
  * The SurfaceUI interface is implemented by classes that represent a Surface object that can be used

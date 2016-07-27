@@ -43,7 +43,6 @@ import com.almostrealism.raytracer.shaders.ShaderFactory;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.texture.TextureFactory;
-import com.almostrealism.ui.dialogs.NewSurfaceDialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

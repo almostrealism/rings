@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -30,10 +30,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -42,6 +42,7 @@ import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.event.CameraEditEvent;
 import com.almostrealism.ui.event.CameraEvent;
 import com.almostrealism.ui.event.DialogCloseEvent;

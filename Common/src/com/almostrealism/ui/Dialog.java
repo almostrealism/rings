@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.ui;
 
 /**
  * The Dialog interface is implemented by classes that represent dialogs that can be displayed for a user.

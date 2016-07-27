@@ -21,7 +21,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.ui.dialogs.NewSurfaceDialog;
+import com.almostrealism.raytracer.ui.NewSurfaceDialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

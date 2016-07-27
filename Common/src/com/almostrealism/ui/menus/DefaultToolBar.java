@@ -26,9 +26,9 @@ import javax.swing.JToolBar;
 
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.ui.EditCameraDialog;
+import com.almostrealism.raytracer.ui.RenderOptionsDialog;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
-import com.almostrealism.ui.dialogs.EditCameraDialog;
-import com.almostrealism.ui.dialogs.RenderOptionsDialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

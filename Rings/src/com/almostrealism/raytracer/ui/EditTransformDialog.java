@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.surfaceUI.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.ui.panels.*;
+import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
+import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.event.DialogCloseEvent;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.SurfaceEditEvent;
+import com.almostrealism.ui.panels.DynamicDisplay;
 
 /**
   An EditTransformDialog object allows the user to edit the transformation properties of an AbstractSurface object.

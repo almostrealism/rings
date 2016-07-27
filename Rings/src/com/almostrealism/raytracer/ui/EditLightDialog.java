@@ -14,20 +14,42 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.lighting.*;
-import com.almostrealism.ui.event.*;
-import com.almostrealism.ui.panels.*;
-import com.almostrealism.util.*;
+import com.almostrealism.raytracer.lighting.AmbientLight;
+import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
+import com.almostrealism.raytracer.lighting.Light;
+import com.almostrealism.raytracer.lighting.PointLight;
+import com.almostrealism.raytracer.lighting.RectangularLight;
+import com.almostrealism.raytracer.lighting.SphericalLight;
+import com.almostrealism.raytracer.lighting.SurfaceLight;
+import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.event.DialogCloseEvent;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.LightEditEvent;
+import com.almostrealism.ui.event.LightEvent;
+import com.almostrealism.ui.event.SceneCloseEvent;
+import com.almostrealism.ui.event.SceneOpenEvent;
+import com.almostrealism.ui.panels.EditRGBPanel;
+import com.almostrealism.ui.panels.EditVectorPanel;
+import com.almostrealism.ui.panels.PercentagePanel;
+import com.almostrealism.util.Vector;
 import com.almostrealism.util.graphics.RGB;
 
 // TODO  Add presets for attenuation constants

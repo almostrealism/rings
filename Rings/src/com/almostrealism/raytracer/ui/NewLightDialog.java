@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.lighting.*;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.engine.Scene;
+import com.almostrealism.raytracer.lighting.AmbientLight;
+import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
+import com.almostrealism.raytracer.lighting.Light;
+import com.almostrealism.raytracer.lighting.PointLight;
+import com.almostrealism.raytracer.lighting.RectangularLight;
+import com.almostrealism.raytracer.lighting.SphericalLight;
+import com.almostrealism.ui.Dialog;
+import com.almostrealism.ui.event.DialogCloseEvent;
+import com.almostrealism.ui.event.EventGenerator;
+import com.almostrealism.ui.event.EventHandler;
+import com.almostrealism.ui.event.LightAddEvent;
 
 /**
  * A NewLightDialog object can be used to allow the user to add a Light object to a Scene object.

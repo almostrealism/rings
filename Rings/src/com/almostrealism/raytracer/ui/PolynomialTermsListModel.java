@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 
-import javax.swing.*;
+import javax.swing.AbstractListModel;
 
-import com.almostrealism.raytracer.primitives.*;
-import com.almostrealism.ui.event.*;
+import com.almostrealism.raytracer.primitives.Polynomial;
+import com.almostrealism.raytracer.primitives.PolynomialTerm;
+import com.almostrealism.ui.event.Event;
+import com.almostrealism.ui.event.EventListener;
+import com.almostrealism.ui.event.SurfaceEditEvent;
 
 /**
   The PolynomialTermsListModel class extends AbstractListModel and provides a list model that dynamically displays

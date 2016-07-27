@@ -34,7 +34,7 @@ import javax.swing.border.TitledBorder;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
-import com.almostrealism.ui.dialogs.Dialog;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
 import com.almostrealism.ui.event.EventHandler;

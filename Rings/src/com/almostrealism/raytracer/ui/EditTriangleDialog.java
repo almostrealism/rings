@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui.dialogs;
+package com.almostrealism.raytracer.ui;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,6 +25,7 @@ import javax.swing.border.TitledBorder;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.ui.Dialog;
 import com.almostrealism.ui.event.DialogCloseEvent;
 import com.almostrealism.ui.event.Event;
 import com.almostrealism.ui.event.EventGenerator;
