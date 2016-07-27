@@ -1,0 +1,28 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                StartConversion = id; 
+                StopProcessing = id; 
+                chooseOutputType = id; 
+                logSwitch = id; 
+                openFile = id; 
+            }; 
+            CLASS = AppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                filenameField = NSTextField; 
+                popup = NSPopUpButton; 
+                progress = NSTextView; 
+                progressbar = id; 
+                startenable = id; 
+                stopenable = NSButton; 
+                verbose = id; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
