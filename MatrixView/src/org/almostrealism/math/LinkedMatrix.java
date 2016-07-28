@@ -16,6 +16,8 @@
 
 package org.almostrealism.math;
 
+import io.almostrealism.matrix.Tensor;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,6 +25,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 
+ * @deprecated  It is a better idea to use {@link Tensor}.
+ * 
+ * @author  Michael Murray
+ */
 public class LinkedMatrix {
 	public static boolean verbose = false, showSol = true;
 	public static double logLevel = 0.001;
