@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.math;
+package io.almostrealism.math;
 
 import java.util.HashSet;
 import java.util.Hashtable;

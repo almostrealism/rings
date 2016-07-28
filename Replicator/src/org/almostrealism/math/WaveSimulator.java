@@ -15,6 +15,7 @@
  */
 
 package org.almostrealism.math;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -27,7 +28,6 @@ import javax.swing.SwingUtilities;
 
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
-
 
 public class WaveSimulator {
 	private static int sleep = 1000;

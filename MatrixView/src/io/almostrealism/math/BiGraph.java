@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.math;
+package io.almostrealism.math;
 
 public class BiGraph {
 	private double w[][];

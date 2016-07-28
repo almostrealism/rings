@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.math;
+package io.almostrealism.math;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;

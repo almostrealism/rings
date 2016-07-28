@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.matrix;
-
-import java.util.LinkedHashMap;
-
 /**
- * An arbitrary dimension tensor implemented as a recursive {@link LinkedHashMap}.
- * 
  * @author  Michael Murray
  */
-public class Tensor {
-	public Tensor() {
-		
-	}
-}
+package io.almostrealism.math;
