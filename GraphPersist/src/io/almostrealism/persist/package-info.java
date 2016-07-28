@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package com.almostrealism.persist;
-
-import java.util.Collection;
-
 /**
- * A Query produces an object from any structured data in any database.
+ * Persistence tools for both SQL and NoSQL databases.
  * 
  * @author  Michael Murray
  */
-public interface Query<D, K, V> {
-	public Collection<V> execute(D database, K key);
-}
+package io.almostrealism.persist;

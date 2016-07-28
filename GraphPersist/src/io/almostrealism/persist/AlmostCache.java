@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.almostrealism.persist;
-
-import java.io.Serializable;
+package io.almostrealism.persist;
 
 /**
  * @author  Michael Murray
  */
-public interface Cacheable {
-	public Serializable toCache();
+public class AlmostCache<D, K> extends QueryLibrary<D, K> {
+	public AlmostCache(D data) {
+		
+	}
 	
-	public void fromCache(Serializable s);
+	public <V extends Cacheable> V get(Class<V> type, K key) { throw new RuntimeException("Not implemented"); }
 }

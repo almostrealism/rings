@@ -1,4 +1,4 @@
-package com.almostrealism.persist;
+package io.almostrealism.persist;
 
 public interface EntityUpdate<T> extends Runnable {
 }

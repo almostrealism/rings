@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.persist;
+package io.almostrealism.persist;
 
 /**
  * @author  Michael Murray

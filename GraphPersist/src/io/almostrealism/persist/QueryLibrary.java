@@ -1,5 +1,6 @@
 /*
  * Copyright 2016 Michael Murray
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +15,13 @@
  * limitations under the License.
  */
 
+package io.almostrealism.persist;
+
 /**
- * Persistence tools for both SQL and NoSQL databases.
- * 
  * @author  Michael Murray
  */
-package com.almostrealism.persist;
+public class QueryLibrary<D, K> {
+	public <V> void addQuery(Class<V> type, Query<D, K, V> q) {
+		
+	}
+}

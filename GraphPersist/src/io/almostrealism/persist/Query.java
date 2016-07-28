@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.almostrealism.persist;
+package io.almostrealism.persist;
+
+import java.util.Collection;
 
 /**
+ * A Query produces an object from any structured data in any database.
+ * 
  * @author  Michael Murray
  */
-public class AlmostCache<D, K> extends QueryLibrary<D, K> {
-	public AlmostCache(D data) {
-		
-	}
-	
-	public <V extends Cacheable> V get(Class<V> type, K key) { throw new RuntimeException("Not implemented"); }
+public interface Query<D, K, V> {
+	public Collection<V> execute(D database, K key);
 }

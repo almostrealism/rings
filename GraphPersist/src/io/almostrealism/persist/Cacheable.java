@@ -1,6 +1,5 @@
 /*
  * Copyright 2016 Michael Murray
-
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.almostrealism.persist;
+package io.almostrealism.persist;
+
+import java.io.Serializable;
 
 /**
  * @author  Michael Murray
  */
-public class QueryLibrary<D, K> {
-	public <V> void addQuery(Class<V> type, Query<D, K, V> q) {
-		
-	}
+public interface Cacheable {
+	public Serializable toCache();
+	
+	public void fromCache(Serializable s);
 }
