@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.tree.ui;
+package io.almostrealism.tree.ui;
 
 import javax.swing.tree.TreeNode;
 

@@ -16,12 +16,12 @@
 
 package org.almostrealism.obj;
 
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
+import io.almostrealism.tree.ui.ObjectTreeNode;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.almostrealism.tree.ui.ObjectTreeDisplay;
-import org.almostrealism.tree.ui.ObjectTreeNode;
 
 /**
  * @author  Mike Murray

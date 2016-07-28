@@ -25,11 +25,11 @@
 
 package com.almostrealism.flow.tree;
 
+import io.almostrealism.tree.ui.TreeNode;
+
 import java.util.Enumeration;
 
 import javax.swing.tree.MutableTreeNode;
-
-import org.almostrealism.tree.ui.TreeNode;
 
 import com.almostrealism.flow.Connection;
 import com.almostrealism.flow.Node;

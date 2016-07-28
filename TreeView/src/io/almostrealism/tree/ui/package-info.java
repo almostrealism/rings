@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.almostrealism.tree.ui;
-
-/** The TreeNode interface extends the normal swing TreeNode interface. */
-public interface TreeNode extends javax.swing.tree.MutableTreeNode {
-}
+/**
+ * @author  Michael Murray
+ */
+package io.almostrealism.tree.ui;

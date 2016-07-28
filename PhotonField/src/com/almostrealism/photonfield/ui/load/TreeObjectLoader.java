@@ -16,12 +16,13 @@
 
 package com.almostrealism.photonfield.ui.load;
 
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
+
 import java.awt.Container;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 import org.almostrealism.obj.DefaultObjectFactory;
-import org.almostrealism.tree.ui.ObjectTreeDisplay;
 
 /**
  * @author  Mike Murray

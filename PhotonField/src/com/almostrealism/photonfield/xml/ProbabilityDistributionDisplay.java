@@ -16,6 +16,9 @@
 
 package com.almostrealism.photonfield.xml;
 
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
+import io.almostrealism.tree.ui.ObjectTreeNode;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -30,8 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
-import org.almostrealism.tree.ui.ObjectTreeDisplay;
-import org.almostrealism.tree.ui.ObjectTreeNode;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

@@ -16,6 +16,8 @@
 
 package com.almostrealism.photonfield.ui.load;
 
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +25,6 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-
-import org.almostrealism.tree.ui.ObjectTreeDisplay;
 
 import com.almostrealism.photonfield.SpecularAbsorber;
 import com.almostrealism.photonfield.distribution.OverlayBRDF;
