@@ -8,6 +8,7 @@ These are tools for creating interactive digital art pieces.
 | **Common** |   | Required for all Tools |
 | **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
 | **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
+| **MatrixView** | Service for displaying tabular and tensor data in the browser. | Requires **Common**. |
 | **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
 | **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
 | **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
