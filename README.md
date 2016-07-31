@@ -35,6 +35,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-### Who do I talk to? ###
-
-* If you want to use the tools provided here, please contact ashesfall@almostrealism.com for help.
+If you want to use the tools provided here, please contact ashesfall@almostrealism.com for help.
