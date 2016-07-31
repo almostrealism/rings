@@ -1,6 +1,5 @@
 /*
  * Copyright 2016 Michael Murray
-
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.persist;
-
 /**
  * @author  Michael Murray
  */
-public class QueryLibrary<D, K> {
-	public <V> void addQuery(Class<V> type, Query<D, K, V> q) {
-		
-	}
-	
-	public <V> void addEnrichment() {
-		
-	}
-}
+package com.almostrealism.ui;

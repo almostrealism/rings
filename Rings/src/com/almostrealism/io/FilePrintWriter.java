@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.almostrealism.io;
+package com.almostrealism.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
+import org.almostrealism.io.PrintWriter;
 
 
 public class FilePrintWriter implements PrintWriter {

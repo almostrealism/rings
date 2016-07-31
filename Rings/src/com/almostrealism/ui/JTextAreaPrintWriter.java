@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.almostrealism.io;
+package com.almostrealism.ui;
 
-import javax.swing.*;
+import javax.swing.JTextArea;
+
+import org.almostrealism.io.PrintWriter;
 
 
 /**
- * A JTextAreaPrintWriter object can be used as an interface for printing text into a JTextArea object.
+ * A {@link JTextAreaPrintWriter} object can be used as an interface for printing
+ * text into a {@link JTextArea} object.
  */
 public class JTextAreaPrintWriter implements PrintWriter {
   private StringBuffer indent;

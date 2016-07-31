@@ -20,7 +20,6 @@ import java.io.*;
 
 import javax.swing.*;
 
-import org.almostrealism.io.JTextAreaPrintWriter;
 import org.almostrealism.ui.displays.*;
 import org.almostrealism.ui.panels.*;
 import org.almostrealism.util.*;
@@ -32,6 +31,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.*;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
+import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
   The RenderFile class provides a method for a user to render a scene stored in a text file.

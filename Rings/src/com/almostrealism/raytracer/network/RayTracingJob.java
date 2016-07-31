@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.almostrealism.io.FilePrintWriter;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.flow.Job;
@@ -51,6 +50,7 @@ import com.almostrealism.flow.db.JobOutput;
 import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
 import com.almostrealism.flow.db.QueryHandler;
+import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
