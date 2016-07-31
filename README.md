@@ -4,11 +4,11 @@
 | Supported | Tool | Description | More Info & Help |
 |---|---|---|---|
 |🔵| **Common** | General logging, error handling, IO and multimedia tools. | Required for all Tools |
-|(&#x1F535;)| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
-|(&#x1F535;)| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
+|🔵| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
+|🔵| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
 |(&#x1F535;)| **MatrixView** | Service for displaying tabular and tensor data in the browser. | Requires **Common**. |
-|| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
-|| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
+|🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
+|🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
 || **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 || **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
 || **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
