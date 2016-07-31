@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="FeedGrowth/src"/>
+	<classpathentry kind="src" path="ForkedProjects/iptables"/>
+	<classpathentry kind="src" path="ForkedProjects/src"/>
 	<classpathentry kind="src" path="Rings/src"/>
 	<classpathentry kind="src" path="PhotonField/src"/>
 	<classpathentry kind="src" path="Replicator/src"/>
@@ -8,8 +10,6 @@
 	<classpathentry kind="src" path="Explorer/src"/>
 	<classpathentry kind="src" path="Common/src"/>
 	<classpathentry kind="src" path="FlowTree/src"/>
-	<classpathentry kind="src" path="ThirdParty/src"/>
-	<classpathentry kind="src" path="ThirdParty/iptables"/>
 	<classpathentry kind="src" path="TreeView/src"/>
 	<classpathentry kind="src" path="GraphPersist/src"/>
 	<classpathentry kind="src" path="Metamerise/src"/>

@@ -8,13 +8,13 @@
         <wb-resource deploy-path="/" source-path="/Explorer/src"/>
         <wb-resource deploy-path="/" source-path="/Common/src"/>
         <wb-resource deploy-path="/" source-path="/FlowTree/src"/>
-        <wb-resource deploy-path="/" source-path="/ThirdParty/src"/>
-        <wb-resource deploy-path="/" source-path="/ThirdParty/iptables"/>
         <wb-resource deploy-path="/" source-path="/TreeView/src"/>
         <wb-resource deploy-path="/" source-path="/GraphPersist/src"/>
         <wb-resource deploy-path="/" source-path="/Metamerise/src"/>
         <wb-resource deploy-path="/" source-path="/GlitchFarm/src"/>
         <wb-resource deploy-path="/" source-path="/MatrixView/src"/>
         <wb-resource deploy-path="/" source-path="/Swing/src"/>
+        <wb-resource deploy-path="/" source-path="/ForkedProjects/iptables"/>
+        <wb-resource deploy-path="/" source-path="/ForkedProjects/src"/>
     </wb-module>
 </project-modules>
