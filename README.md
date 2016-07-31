@@ -5,8 +5,8 @@
 |---|---|---|---|
 |🔵 Active| **Common** | General logging, error handling, IO and multimedia tools. | Required for all Tools |
 |🔵 Active| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
-|🔵 Active| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
-|🔵 Active| **MatrixView** | Service for displaying tabular and tensor data in the browser. | Requires **Common**. |
+|🔵 Active| **TreeView** | Service for displaying server-side tree data in the browser. | Requires **Common**. |
+|🔵 Active| **MatrixView** | Service for displaying tabular. | Requires **Common**. |
 |🔶 Paused| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
 |🔶 Paused| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
 |🔶 Paused| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
