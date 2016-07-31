@@ -5,7 +5,7 @@ These are tools for creating interactive digital art pieces.
 
 | Tool | Description | More Info & Help |
 |---|---|---|
-| **Common** |   | Required for all Tools |
+| **Common** | General logging, error handling, IO and multimedia tools. | Required for all Tools |
 | **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
 | **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
 | **MatrixView** | Service for displaying tabular and tensor data in the browser. | Requires **Common**. |
