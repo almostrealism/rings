@@ -7,14 +7,14 @@
 |🔵 Active| **GraphPersist** | Persistence toolkit for graph data structures using POJOs. | Requires **Common**. |
 |🔵 Active| **TreeView** | Service for displaying server-side tree data in the browser with D3JS. | Requires **Common**. |
 |🔵 Active| **MatrixView** | Service for displaying tabular and tensor data in the browser. | Requires **Common**. |
-|🔶 Paused | **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
+|🔶 Paused| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
 |🔶 Paused| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
-|| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
-|| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
-|| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
-|| **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
-|| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
-|| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
+|🔶 Paused| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
+|🍏 New| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
+|🍏 New| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
+|🔵 Active| **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
+|🔶 Paused| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
+|💜 Planned| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 
 
 ```
