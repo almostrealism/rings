@@ -17,6 +17,8 @@
 |💜 Planned| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 
 
+If you want to use the tools provided here, please contact ashesfall@almostrealism.com for help.
+
 ```
 #!java
 
@@ -34,5 +36,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-If you want to use the tools provided here, please contact ashesfall@almostrealism.com for help.
