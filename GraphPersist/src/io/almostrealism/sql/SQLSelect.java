@@ -38,16 +38,16 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 		List<V> data = new ArrayList<V>();
 
 		try (Connection c = p.borrowConnection(); Statement s = c.createStatement()) {
-			ResultSet rs = s.executeQuery();
+			ResultSet rs = s.executeQuery(query);
 
 			while (rs.next()) {
-
+				// TODO
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
-		return shift;
+		return data;
 	}
 
 	public static SQLSelect prepare(String query, Properties columns) {
