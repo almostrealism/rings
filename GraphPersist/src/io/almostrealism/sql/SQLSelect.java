@@ -28,16 +28,20 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 	private SQLSelect(String query, Properties columns) {
 		super(query);
 		for (String n : columns.stringPropertyNames()) put(n, columns.getProperty(n));
-		for (int i = 0; i < tables.length; i++) {
-			tableString = tableString + tables[i];
-			if (i < (tables.length - 1)) tableString += ",";
-		}
 	}
 
+	/**
+	 * Execute the query against the database using a {@link Connection} from the
+	 * specified pooled data source.
+	 *
+	 * @param database
+	 * @param key
+	 * @return
+	 */
 	public Collection<V> execute(ComboPooledDataSource database, String key) {
 		List<V> data = new ArrayList<V>();
 
-		try (Connection c = p.borrowConnection(); Statement s = c.createStatement()) {
+		try (Connection c = database.getConnection(); Statement s = c.createStatement()) {
 			ResultSet rs = s.executeQuery(query);
 
 			while (rs.next()) {
