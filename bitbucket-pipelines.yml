@@ -8,5 +8,6 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
+          - cd Common
           - mvn --version
           - mvn clean install
