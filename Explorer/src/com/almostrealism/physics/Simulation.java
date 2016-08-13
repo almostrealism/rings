@@ -451,7 +451,7 @@ public class Simulation extends Scene implements Runnable {
 			try {
 				if (this.sleep && i * this.dt % this.fdt == 0) Thread.sleep((int)(this.fdt * 1000));
 			} catch (InterruptedException ie) {
-				System.err.println(ie);
+				ie.printStackTrace();
 			}
 			
 			for (int j = 0; j < this.bodies.length; j++) this.bodies[j].update(this.dt);

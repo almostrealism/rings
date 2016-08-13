@@ -81,7 +81,7 @@ public class RenderTestFrame extends JPanel {
 		try {
 			this.frame.setVisible(true);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		
 		RGB rgb[][] = RayTracingEngine.render(this.scene, this.par, this.prog);
@@ -94,7 +94,7 @@ public class RenderTestFrame extends JPanel {
 			FileEncoder.encodeImageFile(rgb, new File(s + ".jpg"), FileEncoder.JPEGEncoding);
 			System.out.println("Done");
 		} catch (IOException ioe) {
-			System.out.println(ioe);
+			ioe.printStackTrace();
 		}
 		
 		super.repaint();

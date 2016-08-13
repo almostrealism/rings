@@ -31,7 +31,7 @@ public class WriteProperties {
 		try {
 			Settings.getProperties().store(new FileOutputStream(new File(args[0])), "Properties file for Rings (Version " + Settings.version + ")");
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 }

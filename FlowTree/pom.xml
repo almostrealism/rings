@@ -4,14 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.almostrealism</groupId>
-    <artifactId>RingsDesktop</artifactId>
-    <version>0.1-rc</version>
+    <groupId>org.almostrealism</groupId>
+    <artifactId>FlowTree</artifactId>
+    <version>0.2</version>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.almostrealism</groupId>
-            <artifactId>Rings</artifactId>
-        </dependency>
-    </dependencies>
+    <dependency>
+        <groupId>org.almostrealism</groupId>
+        <artifactId>Common</artifactId>
+    </dependency>
 </project>

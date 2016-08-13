@@ -274,11 +274,8 @@ public class JobProducer {
         System.out.print("\tStarting network client: ");
         try {
         	this.nc = new NetworkClient(this.host, this.port);
-        	System.out.println("Done");
-        } catch (IOException ioe) {
-        	System.out.println(ioe);
         } catch (Exception e) {
-        	System.out.println(e);
+			e.printStackTrace();
         }
 	}
 }

@@ -8,5 +8,8 @@
     <artifactId>GraphPersist</artifactId>
     <version>0.2</version>
 
-
+    <dependency>
+        <groupId>org.almostrealism</groupId>
+        <artifactId>Common</artifactId>
+    </dependency>
 </project>

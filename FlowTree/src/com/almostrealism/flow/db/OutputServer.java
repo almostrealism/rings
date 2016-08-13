@@ -57,7 +57,7 @@ public class OutputServer implements Runnable {
 			
 			System.out.println("\nDB Server started");
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 	
