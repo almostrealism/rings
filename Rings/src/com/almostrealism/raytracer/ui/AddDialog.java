@@ -45,7 +45,6 @@ public class AddDialog extends JFrame {
   private EditableFactory factory;
   
   private JComboBox typesList;
-  private JButton addButton;
 
 	/**
 	 * Constructs a new AddDialog object that can be used to add to the specified Set object.
@@ -64,9 +63,9 @@ public class AddDialog extends JFrame {
 		if (this.display != null) AddDialog.lastDisplay = this.display;
 		
 		this.typesList = new JComboBox(this.factory.getTypeNames());
-		this.addButton = new JButton("Add");
+		JButton addButton = new JButton("Add");
 		
-		this.addButton.addActionListener(new ActionListener() {
+		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				add();
 				setVisible(false);

@@ -35,7 +35,7 @@ import com.almostrealism.raytracer.surfaceUI.TransformMatrixUI;
  * to apply to an AbstractSurface object.
  */
 public class AddTransformDialog extends JPanel implements Dialog, EventGenerator {
-  private String transforms[] = {"Translate", "Scale", "Rotate-X", "Rotate-Y", "Rotate-Z"};
+  private static String transforms[] = {"Translate", "Scale", "Rotate-X", "Rotate-Y", "Rotate-Z"};
   
   private AbstractSurface surface;
   private DynamicDisplay display;
@@ -47,7 +47,6 @@ public class AddTransformDialog extends JPanel implements Dialog, EventGenerator
   private JFrame frame;
   
   private JComboBox transformationsBox;
-  private JButton addButton;
 
 	/**
 	  Constructs a new AddTransformDialog object using the specified AbstractSurface object.
@@ -62,7 +61,7 @@ public class AddTransformDialog extends JPanel implements Dialog, EventGenerator
 		this.display = display;
 		
 		this.transformationsBox = new JComboBox(this.transforms);
-		this.addButton = new JButton("Add");
+		JButton addButton = new JButton("Add");
 		
 		this.add(this.transformationsBox);
 		this.add(this.addButton);
