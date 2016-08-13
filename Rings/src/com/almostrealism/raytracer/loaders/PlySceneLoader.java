@@ -29,7 +29,6 @@ import java.io.IOException;
 
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.raytracer.SceneFactory;
-import com.almostrealism.raytracer.SceneLoader;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 
