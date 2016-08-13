@@ -9,7 +9,6 @@ import java.util.Properties;
  */
 public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> {
 	private SQLSelect(String query, Properties columns) {
-
 	}
 
 	public static SQLSelect prepare(String query, Properties columns) {

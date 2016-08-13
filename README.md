@@ -4,7 +4,7 @@
 | Supported | Tool | Description | More Info & Help |
 |---|---|---|---|
 |🔶 Paused| **Common** | General logging, error handling, IO and multimedia tools. | Requires **Trove** and **JEP**. Required for all Tools. |
-|🔵 Active| **GraphPersist** | Persistence for graph data POJOs. | Requires **Common** and commons pool. |
+|🔵 Active| **GraphPersist** | Persistence for graph data POJOs. | Requires **Common** and C3PO. |
 |🔵 Active| **TreeView** | Service for displaying tree data in the browser. | Requires **Common**. |
 |🔶 Paused| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
 |🔶 Paused| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
