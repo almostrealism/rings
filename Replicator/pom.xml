@@ -9,8 +9,7 @@
     <version>0.1-rc</version>
 
     <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.6</version>
+        <groupId>com.almostrealism</groupId>
+        <artifactId>Replicator</artifactId>
     </dependency>
 </project>
