@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jgraph">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgraph.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

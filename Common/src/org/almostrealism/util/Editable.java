@@ -26,7 +26,7 @@ public interface Editable {
     /**
      * An Editable.Selection object stores a set of options and a selection.
      */
-    public class Selection {
+    class Selection {
         private String options[];
         private int selected;
         
@@ -46,45 +46,45 @@ public interface Editable {
 	 * Returns an array of String objects with names for each editable property
 	 * of this Editable object.
 	 */
-	public String[] getPropertyNames();
+	String[] getPropertyNames();
 	
 	/**
 	 * Returns an array of String objects with descriptions for each editable property
 	 * of this Editable object.
 	 */
-	public String[] getPropertyDescriptions();
+	String[] getPropertyDescriptions();
 	
 	/**
 	 * Returns an array of Class objects representing the class types of each editable
 	 * property of this Editable object.
 	 */
-	public Class[] getPropertyTypes();
+	Class[] getPropertyTypes();
 	
 	/**
 	 * Returns the values of the properties of this Editable object as an Object array.
 	 */
-	public Object[] getPropertyValues();
+	Object[] getPropertyValues();
 	
 	/**
 	 * Sets the value of the property of this Editable object at the specified index
 	 * to the specified value.
 	 */
-	public void setPropertyValue(Object value, int index);
+	void setPropertyValue(Object value, int index);
 	
 	/**
 	 * Sets the values of properties of this Editable object to those specified.
 	 */
-	public void setPropertyValues(Object values[]);
+	void setPropertyValues(Object values[]);
 	
 	/**
 	 * @return  An array of Producer objects containing the property values of those
 	 *          properties that are repeatedly evaluated.
 	 */
-	public Producer[] getInputPropertyValues();
+	Producer[] getInputPropertyValues();
 	
 	/**
 	 * @param index  Index of input property (array index from this.getInputPropertyValue).
 	 * @param p  Producer object to use for input property.
 	 */
-	public void setInputPropertyValue(int index, Producer p);
+	void setInputPropertyValue(int index, Producer p);
 }

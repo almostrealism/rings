@@ -17,28 +17,18 @@
 package org.almostrealism.io;
 
 public interface PrintWriter {
-	/**
-	 * Increases the indent.
-	 */
-	public void moreIndent();
+	/** Increases the indent. */
+	void moreIndent();
 	
-	/**
-	 * Reduces the indent.
-	 */
-	public void lessIndent();
+	/** Reduces the indent. */
+	void lessIndent();
 	
-	/**
-	 * Appends the specified String.
-	 */
-	public void print(String s);
+	/** Appends the specified String. */
+	void print(String s);
 	
-	/**
-	 * Appends the specified String, followed by a new line character.
-	 */
-	public void println(String s);
+	/** Appends the specified String, followed by a new line character. */
+	void println(String s);
 	
-	/**
-	 * Appends a new line character.
-	 */
-	public void println();
+	/** Appends a new line character. */
+	void println();
 }

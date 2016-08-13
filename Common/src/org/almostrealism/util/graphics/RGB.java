@@ -31,15 +31,15 @@ import com.almostrealism.raytracer.Settings;
  * 1.0 (strongest color).
  */
 public class RGB implements Externalizable, Cloneable, ColorProducer {
-	private static interface Data {
-		public void set(int i, double r);
-		public void add(int i, double r);
-		public void scale(int i, double r);
+	private interface Data {
+		void set(int i, double r);
+		void add(int i, double r);
+		void scale(int i, double r);
 		
-		public double get(int i);
-		public double length();
-		public void write(ObjectOutput out) throws IOException;
-		public void read(ObjectInput in) throws IOException;
+		double get(int i);
+		double length();
+		void write(ObjectOutput out) throws IOException;
+		void read(ObjectInput in) throws IOException;
 	}
 	
 	private static class Data192 implements Data {

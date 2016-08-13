@@ -6,7 +6,7 @@
 	<classpathentry kind="src" path="Rings/src"/>
 	<classpathentry kind="src" path="PhotonField/src"/>
 	<classpathentry kind="src" path="Replicator/src"/>
-	<classpathentry kind="src" path="Replicator/rsrc"/>
+	<classpathentry kind="src" path="Replicator/resources"/>
 	<classpathentry kind="src" path="Explorer/src"/>
 	<classpathentry kind="src" path="Common/src"/>
 	<classpathentry kind="src" path="FlowTree/src"/>
@@ -160,5 +160,7 @@
 	<classpathentry kind="lib" path="PhotonField/lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="Common/lib/trove-3.0.3.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraph"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgrapht-jdk1.5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

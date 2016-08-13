@@ -17,11 +17,11 @@
 package org.almostrealism.texture;
 
 public interface ImageSource {
-	public int[] getPixels();
+	int[] getPixels();
 	
-	public int getWidth();
+	int getWidth();
 	
-	public int getHeight();
+	int getHeight();
 	
-	public boolean isAlpha();
+	boolean isAlpha();
 }

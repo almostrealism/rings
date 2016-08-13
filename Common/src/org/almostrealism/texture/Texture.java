@@ -30,11 +30,11 @@ public interface Texture extends ColorProducer {
 	 * Returns the color of the texture represented by this Texture object at the specified point as an RGB object
 	 * using the arguments stored by this Texture object.
 	 */
-	public RGB getColorAt(Vector point);
+	RGB getColorAt(Vector point);
 	
 	/**
 	 * Returns the color of the texture represented by this Texture object at the specified point as an RGB object
 	 * using the specified arguments.
 	 */
-	public RGB getColorAt(Vector point, Object args[]);
+	RGB getColorAt(Vector point, Object args[]);
 }

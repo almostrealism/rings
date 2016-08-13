@@ -23,5 +23,5 @@ package org.almostrealism.time;
  * @author  Michael Murray
  */
 public interface Clock {
-	public void tick();
+	void tick();
 }

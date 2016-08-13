@@ -70,13 +70,13 @@ public class FileDecoder {
 	 * @throws IOException  If an IO error occurs.
 	 * @throws FileNotFoundException  If the file is not found.
 	 */
-	public static Scene decodeSceneFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException, FileNotFoundException {
+	public static Scene decodeSceneFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException {
 		return FileDecoder.decodeScene(new FileInputStream(file), encoding, ui, listener, s);
 	}
 	
 	public static Scene decodeSceneFile(File file, int encoding, boolean ui,
 									ExceptionListener listener)
-									throws IOException, FileNotFoundException {
+									throws IOException {
 		return FileDecoder.decodeScene(new FileInputStream(file), encoding, ui, listener, null);
 	}
 	
@@ -468,7 +468,7 @@ public class FileDecoder {
 	
 	public static Surface decodeSurfaceFile(File file, int encoding,
 								boolean ui, ExceptionListener listener)
-								throws IOException, FileNotFoundException {
+								throws IOException {
 		return FileDecoder.decodeSurfaceFile(file, encoding, ui, listener, null);
 	}
 	
@@ -482,7 +482,7 @@ public class FileDecoder {
 	 * @throws IOException  If an IO error occurs.
 	 * @throws FileNotFoundException  If the file is not found.
 	 */
-	public static Surface decodeSurfaceFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException, FileNotFoundException {
+	public static Surface decodeSurfaceFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException {
 		FileInputStream fileIn = new FileInputStream(file);
 		
 		if (encoding == FileDecoder.XMLEncoding) {

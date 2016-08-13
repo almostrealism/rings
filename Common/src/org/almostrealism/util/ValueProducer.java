@@ -17,5 +17,5 @@
 package org.almostrealism.util;
 
 public interface ValueProducer {
-	public double value();
+	double value();
 }

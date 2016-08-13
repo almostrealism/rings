@@ -20,5 +20,5 @@ package org.almostrealism.bean;
  * @author  Michael Murray
  */
 public interface Validity {
-	public boolean isValid();
+	boolean isValid();
 }

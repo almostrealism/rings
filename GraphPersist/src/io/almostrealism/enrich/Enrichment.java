@@ -19,5 +19,5 @@ package io.almostrealism.enrich;
  * @author  Michael Murray
  */
 public interface Enrichment<T, V> {
-	public void encrich(T data);
+	void encrich(T data);
 }

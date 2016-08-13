@@ -155,7 +155,7 @@ public class RelatedVideosPanel extends JPanel {
 		super.add(tabs, BorderLayout.CENTER);
 	}
 
-	public void setVideo(final YouTubeVideo video) throws MalformedURLException, IOException, ServiceException {
+	public void setVideo(final YouTubeVideo video) throws IOException, ServiceException {
 		List l = video.getRelatedVideos();
 		this.videoListModel.setVideos(l);
 		
@@ -180,11 +180,11 @@ public class RelatedVideosPanel extends JPanel {
 		});
 	}
 
-	private void doRelated(YouTubeVideo video, int i) throws MalformedURLException, IOException, ServiceException {
+	private void doRelated(YouTubeVideo video, int i) throws IOException, ServiceException {
 		doRelated(video, -1, -1, i);
 	}
 
-	private void doRelated(YouTubeVideo video, int x, int y, int i) throws MalformedURLException, IOException, ServiceException {
+	private void doRelated(YouTubeVideo video, int x, int y, int i) throws IOException, ServiceException {
 		List l = video.getRelatedVideos();
 		
 		if (this.graph.vertexSet().isEmpty()) {

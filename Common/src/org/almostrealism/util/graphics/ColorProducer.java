@@ -31,5 +31,5 @@ public interface ColorProducer extends Producer {
      * @param args  Arguments.
      * @return  The RGB color produced.
      */
-    public RGB evaluate(Object args[]);
+    RGB evaluate(Object args[]);
 }

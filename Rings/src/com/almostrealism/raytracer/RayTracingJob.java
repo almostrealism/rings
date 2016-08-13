@@ -589,7 +589,7 @@ public class RayTracingJob implements Job, SceneLoader {
 		return s;
 	}
 	
-	public Scene loadScene(String uri) throws MalformedURLException, IOException {
+	public Scene loadScene(String uri) throws IOException {
 		if (this.local) {
 			try (InputStream in = (new URL(uri)).openStream()) {
 				return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);

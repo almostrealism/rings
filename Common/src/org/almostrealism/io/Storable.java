@@ -42,5 +42,5 @@ public interface Storable {
 	 * @param out  Stream to write contents to.
 	 * @return  True if succesfully stored, false otherwise.
 	 */
-	public boolean store(OutputStream out);
+	boolean store(OutputStream out);
 }

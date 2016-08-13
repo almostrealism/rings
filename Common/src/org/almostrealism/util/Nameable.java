@@ -17,6 +17,6 @@
 package org.almostrealism.util;
 
 public interface Nameable {
-	public void setName(String name);
-	public String getName();
+	void setName(String name);
+	String getName();
 }

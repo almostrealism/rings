@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="jgrapht-jdk1.5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgrapht-jdk1.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgraph-latest-lgpl-src.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgraph-latest-lgpl-src.jar!/doc/api" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgraph-latest-lgpl-src.jar!/examples" />
+      <root url="jar://$PROJECT_DIR$/FlowTree/lib/jgraph-latest-lgpl-src.jar!/src" />
+    </SOURCES>
+  </library>
+</component>

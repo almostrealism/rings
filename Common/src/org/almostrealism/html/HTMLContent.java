@@ -17,5 +17,5 @@
 package org.almostrealism.html;
 
 public interface HTMLContent {
-	public String toHTML();
+	String toHTML();
 }

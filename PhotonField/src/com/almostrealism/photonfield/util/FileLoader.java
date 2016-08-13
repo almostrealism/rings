@@ -92,8 +92,7 @@ public class FileLoader extends DefaultHandler {
 	
 	private boolean abs;
 	
-	public static void main(String args[]) throws FileNotFoundException,
-											SAXException, IOException {
+	public static void main(String args[]) throws SAXException, IOException {
 //		Settings.init();
 //		Settings.produceOutput = true;
 //		Settings.produceRayTracingEngineOutput = true;

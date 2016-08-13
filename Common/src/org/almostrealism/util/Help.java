@@ -29,5 +29,5 @@ package org.almostrealism.util;
  * @author  Mike Murray
  */
 public interface Help {
-	public String getHelpInfo();
+	String getHelpInfo();
 }
