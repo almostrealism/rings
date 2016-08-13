@@ -16,6 +16,8 @@
 
 package io.almostrealism.persist;
 
+import io.almostrealism.query.QueryLibrary;
+
 /**
  * @author  Michael Murray
  */

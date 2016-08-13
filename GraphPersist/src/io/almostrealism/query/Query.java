@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.persist;
+package io.almostrealism.query;
 
 import java.util.Collection;
 
@@ -24,5 +24,5 @@ import java.util.Collection;
  * @author  Michael Murray
  */
 public interface Query<D, K, V> {
-	public Collection<V> execute(D database, K key);
+	Collection<V> execute(D database, K key);
 }
