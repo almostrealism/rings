@@ -16,7 +16,8 @@
 
 package com.almostrealism.photon.distribution;
 
-import com.almostrealism.photon.util.Length;
+import org.almostrealism.space.Length;
+
 import com.almostrealism.photon.util.VectorMath;
 
 public class UniformHemisphericalDistribution implements SphericalProbabilityDistribution, Length {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.photon.util;
+package org.almostrealism.space;
 
 /**
  * @author Mike Murray
