@@ -7,45 +7,25 @@ image: maven:3.3.3
 pipelines:
   default:
     - step:
-        script: # Modify the commands below to build your repository.
-          - mvn --version
-    - step:
         script:
+          - mvn --version
           - cd Common
           - mvn clean install
-    - step:
-        script:
-          - cd GraphPersist
+          - cd ../GraphPersist
           - mvn clean install
-    - step:
-        script:
-          - cd TreeView
+          - cd ../TreeView
           - mvn clean install
-    - step:
-        script:
-          - cd MatrixView
+          - cd ../MatrixView
           - mvn clean install
-    - step:
-        script:
-          - cd FlowTree
+          - cd ../FlowTree
           - mvn clean install
-    - step:
-        script:
-          - cd Rings
+          - cd ../Rings
           - mvn clean install
-    - step:
-        script:
-          - cd PhotonField
+          - cd ../PhotonField
           - mvn clean install
-    - step:
-        script:
-          - cd Explorer
+          - cd ../Explorer
           - mvn clean install
-    - step:
-        script:
-          - cd Replicator
+          - cd ../Replicator
           - mvn clean install
-      - step:
-        script:
-          - cd FeedGrowth
+          - cd ../FeedGrowth
           - mvn clean install
