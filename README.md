@@ -17,7 +17,8 @@
 |💜 Planned| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 
 
-If you want to use the tools provided here, please contact ashesfall@almostrealism.com for help.
+If you want to use the tools provided here, or you are interested in the concept of open source
+art pieces and want to contribute please contact ashesfall@almostrealism.com for help.
 
 ```
 #!java
