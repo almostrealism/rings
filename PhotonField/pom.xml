@@ -12,6 +12,7 @@
         <dependency>
             <groupId>com.almostrealism</groupId>
             <artifactId>Rings</artifactId>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 </project>
