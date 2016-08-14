@@ -72,8 +72,8 @@ public class SurfaceUIFactory {
 		
 		public Dialog getDialog() {
 		    try {
-		        Constructor c = this.dialog.getConstructor(new Class[] {SurfaceUI.class});
-		        return (Dialog)c.newInstance(new Object[] {this});
+		        Constructor c = this.dialog.getConstructor(SurfaceUI.class);
+		        return (Dialog)c.newInstance(this);
 		    } catch (IllegalArgumentException iae) {
 		        System.out.println("SurfaceUIImpl.getDialog: " + iae);
             } catch (InvocationTargetException ite) {

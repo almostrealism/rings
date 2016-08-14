@@ -231,16 +231,15 @@ public class ObjectTreeDisplay extends JPanel implements ActionListener,
 				Class cl = (Class) this.panelTypes.get(o.getClass());
 				if (cl == null) break c;
 				
-				Constructor con = cl.getConstructor(new Class[] {o.getClass()});
+				Constructor con = cl.getConstructor(o.getClass());
 				
 				if (con == null)
 					c = cl.newInstance();
 				else
-					c = con.newInstance(new Object[] {o});
+					c = con.newInstance(o);
 				
-				Method m = cl.getMethod("setChangeListener",
-								new Class[] { ChangeListener.class });
-				if (m != null) m.invoke(c, new Object[] { this });
+				Method m = cl.getMethod("setChangeListener", ChangeListener.class);
+				if (m != null) m.invoke(c, this);
 				this.panels.put(n, c);
 			}
 		} catch (Exception ex) {
@@ -259,7 +258,7 @@ public class ObjectTreeDisplay extends JPanel implements ActionListener,
 	
 	public static void main(String args[]) throws SecurityException, NoSuchMethodException {
 		Method m =
-			VectorMath.class.getMethod("add", new Class[] {double[].class, double[].class});
+			VectorMath.class.getMethod("add", double[].class, double[].class);
 		
 		ObjectTreeDisplay d = new ObjectTreeDisplay(new ObjectTreeNode(null, m));
 		d.addMethodType(m);

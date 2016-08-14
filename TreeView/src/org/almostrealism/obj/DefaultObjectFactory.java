@@ -37,7 +37,7 @@ public class DefaultObjectFactory implements ObjectFactory {
 		this.type = c;
 		try {
 			this.localOverlayMethod = 
-				this.getClass().getMethod("overlay", new Class[] {Object[].class});
+				this.getClass().getMethod("overlay", Object[].class);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
