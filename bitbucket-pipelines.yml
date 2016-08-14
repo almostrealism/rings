@@ -10,43 +10,42 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - mvn --version
     - step:
-            script:
-              - cd Common
-              - mvn --version
-              - mvn clean install
+        script:
+          - cd Common
+          - mvn clean install
     - step:
-            script:
-              - cd GraphPersist
-              - mvn clean install
+        script:
+          - cd GraphPersist
+          - mvn clean install
     - step:
-            script:
-              - cd TreeView
-              - mvn clean install
+        script:
+          - cd TreeView
+          - mvn clean install
     - step:
-            script:
-              - cd MatrixView
-              - mvn clean install
+        script:
+          - cd MatrixView
+          - mvn clean install
     - step:
-            script:
-              - cd FlowTree
-              - mvn clean install
+        script:
+          - cd FlowTree
+          - mvn clean install
     - step:
-            script:
-              - cd Rings
-              - mvn clean install
+        script:
+          - cd Rings
+          - mvn clean install
     - step:
-            script:
-              - cd PhotonField
-              - mvn clean install
+        script:
+          - cd PhotonField
+          - mvn clean install
     - step:
-            script:
-              - cd Explorer
-              - mvn clean install
+        script:
+          - cd Explorer
+          - mvn clean install
     - step:
-            script:
-              - cd Replicator
-              - mvn clean install
+        script:
+          - cd Replicator
+          - mvn clean install
       - step:
-              script:
-                - cd FeedGrowth
-                - mvn clean install
+        script:
+          - cd FeedGrowth
+          - mvn clean install
