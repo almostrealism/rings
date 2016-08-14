@@ -44,6 +44,7 @@ public class AddDialog extends JFrame {
   private DynamicDisplay display;
   private EditableFactory factory;
   
+  private JButton addButton;
   private JComboBox typesList;
 
 	/**
@@ -63,9 +64,9 @@ public class AddDialog extends JFrame {
 		if (this.display != null) AddDialog.lastDisplay = this.display;
 		
 		this.typesList = new JComboBox(this.factory.getTypeNames());
-		JButton addButton = new JButton("Add");
+		this.addButton = new JButton("Add");
 		
-		addButton.addActionListener(new ActionListener() {
+		this.addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				add();
 				setVisible(false);

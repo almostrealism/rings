@@ -46,6 +46,7 @@ public class AddTransformDialog extends JPanel implements Dialog, EventGenerator
   
   private JFrame frame;
   
+  private JButton addButton;
   private JComboBox transformationsBox;
 
 	/**
@@ -61,7 +62,7 @@ public class AddTransformDialog extends JPanel implements Dialog, EventGenerator
 		this.display = display;
 		
 		this.transformationsBox = new JComboBox(this.transforms);
-		JButton addButton = new JButton("Add");
+		this.addButton = new JButton("Add");
 		
 		this.add(this.transformationsBox);
 		this.add(this.addButton);
