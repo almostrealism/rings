@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.physics.particles;
+package com.almostrealism.particles;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.GeometryArray;

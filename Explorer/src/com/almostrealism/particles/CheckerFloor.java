@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.physics.particles;
+package com.almostrealism.particles;
 
 
 // CheckerFloor.java
