@@ -24,8 +24,6 @@ import javax.media.j3d.PointAttributes;
 import javax.media.j3d.Shape3D;
 import javax.vecmath.Color3f;
 
-import com.almostrealism.physics.particles.conf.SampleSetConfiguration;
-
 public class ParticleSystem extends Shape3D {
 	private final static int POINTSIZE = 2;
 	

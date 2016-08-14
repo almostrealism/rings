@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.physics.particles.conf;
+package com.almostrealism.physics.particles;
 
-import com.almostrealism.physics.particles.InputFunction;
 
 public class SampleSetConfiguration {
 	public float samples[], mult[];
