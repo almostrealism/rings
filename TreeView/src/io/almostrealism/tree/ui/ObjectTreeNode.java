@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
-import com.almostrealism.photonfield.util.Length;
+import com.almostrealism.photon.util.Length;
 
 public class ObjectTreeNode implements TreeNode, Length {
 	private ObjectTreeNode parent;

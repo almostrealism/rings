@@ -48,7 +48,7 @@ import javax.swing.tree.TreeCellRenderer;
 import org.almostrealism.obj.ObjectFactory;
 import org.almostrealism.ui.panels.PercentagePanel;
 
-import com.almostrealism.photonfield.util.VectorMath;
+import com.almostrealism.photon.util.VectorMath;
 
 /**
  * @author Mike Murray
