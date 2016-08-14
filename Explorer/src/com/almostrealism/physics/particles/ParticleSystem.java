@@ -40,7 +40,7 @@ public class ParticleSystem extends Shape3D {
 
 	public ParticleSystem(int tot, int delay, SampleSetConfiguration conf) {
 		this.tot = tot;
-		this.control = new SampleSet(this, delay, conf.samples, conf.add, conf.multi, conf.input);
+		this.control = new SampleSet(this, delay, conf.samples, conf.add, null /* conf.multi */, conf.input); // TODO
 		this.points = new ParticleGeometry(tot);
 
 		// pointParts.setCapability(PointArray.ALLOW_COORDINATE_WRITE);

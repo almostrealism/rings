@@ -31,6 +31,7 @@ import com.almostrealism.flow.db.Client;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.network.SceneLoader;
 
 /**
  * The PlySceneLoader loads a PLY model from the distributed database

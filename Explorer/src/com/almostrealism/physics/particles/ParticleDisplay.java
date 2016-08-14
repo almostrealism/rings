@@ -17,10 +17,7 @@
 package com.almostrealism.physics.particles;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 
 import javax.media.j3d.AmbientLight;
@@ -30,8 +27,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.PointArray;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
@@ -42,7 +37,6 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
-import com.sun.j3d.utils.geometry.ColorCube;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
@@ -109,7 +103,7 @@ public class ParticleDisplay extends JPanel {
 //		addBackground();
 //		this.scene.addChild(new CheckerFloor().getBG());
 		
-		ParticleSystem particles = new ParticleSystem(tot, 20);
+		ParticleSystem particles = new ParticleSystem(tot, 20, null); // TODO
 		
 		TransformGroup pos = new TransformGroup();
 		Transform3D trans = new Transform3D();
@@ -118,7 +112,7 @@ public class ParticleDisplay extends JPanel {
 		pos.addChild(particles); 
 		this.scene.addChild(pos);
 		
-		Behavior behavior = particles.getParticleControl();
+		Behavior behavior = particles.getControl();
 		behavior.setSchedulingBounds(bounds);
 		this.scene.addChild(behavior);
 		

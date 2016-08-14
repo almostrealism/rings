@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.Geometry;
 import javax.media.j3d.GeometryUpdater;
-import javax.media.j3d.PointArray;
 import javax.media.j3d.WakeupCondition;
 import javax.media.j3d.WakeupOnElapsedTime;
 
@@ -88,6 +87,7 @@ public class SampleSet extends Behavior implements GeometryUpdater {
 	public float[] force(float x, float y, float z, int k) {
 		float f[] = new float[3];
 		
+		/*
 		i: for (int i = 0; i < tot; i = i + 3) {
 			if (i == k) continue i;
 			double dx = x - cs[i];
@@ -101,6 +101,7 @@ public class SampleSet extends Behavior implements GeometryUpdater {
 			f[1] += dy / rr;
 			f[2] += dz / rr;
 		}
+		*/
 		
 		if (Float.isNaN(f[0])) f[0] = 0f;
 		if (Float.isNaN(f[1])) f[1] = 0f;
@@ -113,10 +114,10 @@ public class SampleSet extends Behavior implements GeometryUpdater {
 		float r = f[0] * f[0] + f[1] * f[1] + f[2] * f[2];
 		r = 10 * r / FORCE;
 		
-		color[i + 1] = 1 - r;
-		if (color[i + 1] < 0.0f) color[i + 1] = 0.0f;
-		
-		color[i + 2] = 1 - r;
-		if (color[i + 2] < 0.0f) color[i + 2] = 0.0f;
+//		color[i + 1] = 1 - r;
+//		if (color[i + 1] < 0.0f) color[i + 1] = 0.0f;
+//		
+//		color[i + 2] = 1 - r;
+//		if (color[i + 2] < 0.0f) color[i + 2] = 0.0f;
 	}
 }

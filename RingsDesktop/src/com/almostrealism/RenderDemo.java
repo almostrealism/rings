@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer;
+package com.almostrealism;
 
 import java.io.File;
 import java.io.IOException;

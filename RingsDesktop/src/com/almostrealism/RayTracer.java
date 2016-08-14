@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui;
+package com.almostrealism;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +34,7 @@ import org.almostrealism.ui.EventGenerator;
 import org.almostrealism.ui.EventHandler;
 import org.almostrealism.ui.EventListener;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.surfaceUI.SplashScreen;
@@ -41,6 +42,7 @@ import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.menus.DefaultToolBar;
+import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
  * The RayTracer class uses standard ui components from the threeD.ui package to provide a user interface

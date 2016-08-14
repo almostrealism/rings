@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer;
+package com.almostrealism;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
 
-import org.almostrealism.ui.displays.*;
-import org.almostrealism.ui.panels.*;
-import org.almostrealism.util.*;
+import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
+import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.raytracer.lighting.*;
+import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
+import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.ui.JTextAreaPrintWriter;
 
