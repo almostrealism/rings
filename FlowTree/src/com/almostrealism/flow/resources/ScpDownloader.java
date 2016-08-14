@@ -22,7 +22,7 @@
  * All rights reserved.
  */
 
-package org.almostrealism.io;
+package com.almostrealism.flow.resources;
 
 import java.io.File;
 import java.io.FileOutputStream;
