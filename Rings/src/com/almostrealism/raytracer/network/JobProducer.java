@@ -48,7 +48,7 @@ public class JobProducer {
 											"\t port = The port to connect to on the host";
   
   private String sceneURI;
-  private int w, h, ssw, ssh, dx, dy;
+  private int w, h, ssw, ssh;
   private int totalJobs;
   private int jobSize;
   private int i;
@@ -189,12 +189,6 @@ public class JobProducer {
 		this.jobId = jobId;
 		
 		this.jobSize = jobSize;
-		int l = (int)Math.ceil(Math.sqrt(jobSize));
-		
-		this.dx = l;
-		this.dy = l;
-		
-		this.totalJobs = ((w * h) / (this.dx * this.dy));
 	}
 	
 	public String getHost() {
