@@ -31,7 +31,7 @@ public class QueryLibrary<D, K> {
 
 	private HashMap<Class, Query<? extends D, ? extends K, ?>>  queries;
 
-	private QueryLibrary() { queries = new HashMap<>(); }
+	protected QueryLibrary() { queries = new HashMap<>(); }
 
 	public synchronized <V> void addQuery(Class<V> type, Query<? extends D, ? extends K, V> q) {
 		queries.put(type, q);

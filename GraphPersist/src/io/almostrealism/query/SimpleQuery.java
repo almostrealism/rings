@@ -1,6 +1,5 @@
 package io.almostrealism.query;
 
-import java.util.Collection;
 import java.util.Hashtable;
 
 /**
