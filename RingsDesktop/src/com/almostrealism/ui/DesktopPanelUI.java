@@ -16,17 +16,31 @@
 package com.almostrealism.ui;
 
 import javax.swing.JPanel;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
 
 /**
  * @author  Michael Murray
  */
 public class DesktopPanelUI extends JPanel {
+	private final JPanel panel = new JPanel();
+	
+	protected JButton btnX;
+	protected JToolBar toolBar;
 
 	/**
 	 * Create the panel.
 	 */
 	public DesktopPanelUI() {
-
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		add(panel);
+		
+		btnX = new JButton("X");
+		panel.add(btnX);
+		
+		toolBar = new JToolBar();
+		panel.add(toolBar);
 	}
 
 }

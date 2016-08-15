@@ -41,7 +41,6 @@ import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.raytracer.io.WavefrontObjParser;
 import com.almostrealism.receptor.Receptor;
 import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
@@ -173,25 +172,5 @@ public class Replicator {
 	public void showSamplerFrame(int x, int y) {
 		samplerFrame.setLocation(x, y);
 		samplerFrame.setVisible(true);
-	}
-	
-	public static void main(String args[]) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		Replicator r = new Replicator();
-		
-		JFrame canvasFrame = new JFrame("Replicant");
-		canvasFrame.setLayout(new BorderLayout());
-		canvasFrame.getContentPane().add(r.getCanvas());
-		canvasFrame.setSize(400, 400);
-		canvasFrame.setLocationRelativeTo(null);
-		canvasFrame.setVisible(true);
-		
-		JFrame controlFrame = new JFrame("");
-		controlFrame.setLayout(new BorderLayout());
-		controlFrame.getContentPane().add(r.getControlPanel());
-		controlFrame.setLocation(canvasFrame.getLocation().x + canvasFrame.getWidth(), canvasFrame.getLocation().y);
-		controlFrame.setSize(90, 140);
-		controlFrame.setVisible(true);
-		
-		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getResourceAsStream("/models/Cube.obj")).getMesh());
 	}
 }

@@ -20,25 +20,29 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsDevice.WindowTranslucency;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 
-import javax.swing.JButton;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.almostrealism.ui.DesktopPanel;
 
 /**
  * @author  Michael Murray
  */
 public class Desktop extends JFrame {
-	public Desktop() {
+	public Desktop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		super("Rings");
 		setLayout(new GridBagLayout());
 		
 		setUndecorated(true);
-		setSize(300, 200);
+		setSize(200, 100);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		add(new JButton("I am a Button"));
+		
+		add(new DesktopPanel());
 	}
 
 	public static void main(String[] args) {
@@ -46,18 +50,19 @@ public class Desktop extends JFrame {
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 		final boolean isTranslucencySupported = gd.isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT);
 		
-		if (!gd.isWindowTranslucencySupported(WindowTranslucency.PERPIXEL_TRANSPARENT)) {
-			// Rings Desktop requires shaped windows
-			System.err.println("Shaped windows are not supported");
-			System.exit(0);
-		}
-		
 		if (!isTranslucencySupported) {
 			System.out.println("Translucency is not supported");
 		}
 		
 		SwingUtilities.invokeLater(() -> {
-			Desktop d = new Desktop();
+			Desktop d = null;
+			
+			try {
+				d = new Desktop();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 			
 			if (isTranslucencySupported) d.setOpacity(0.7f);
 			
