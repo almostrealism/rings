@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.models;
+package com.almostrealism.gl.models;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
-import com.almostrealism.visualize.nurbs.NurbsSurface;
+import com.almostrealism.gl.nurbs.NurbsSurface;
 import com.almostrealism.visualize.renderable.RenderableList;
 
 public class NurbsMoleHill extends RenderableList {

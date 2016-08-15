@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.ui;
+package com.almostrealism.gl;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;

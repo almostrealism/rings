@@ -16,7 +16,7 @@
 
 package com.almostrealism.replicator.ui;
 
-import com.almostrealism.visualize.ui.SurfaceCanvas;
+import com.almostrealism.gl.SurfaceCanvas;
 
 public class ReplicatorCanvas extends SurfaceCanvas {
 	public ReplicatorCanvas() {

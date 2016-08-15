@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.nurbs;
+package com.almostrealism.gl.nurbs;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLUnurbs;

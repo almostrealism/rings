@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.gl;
+package com.almostrealism.gl;
 
 import javax.media.opengl.GL2;
 

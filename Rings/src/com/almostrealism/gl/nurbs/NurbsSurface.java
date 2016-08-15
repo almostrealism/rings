@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.nurbs;
+package com.almostrealism.gl.nurbs;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
-import com.almostrealism.visualize.gl.DisplayList;
+import com.almostrealism.gl.DisplayList;
 
 public class NurbsSurface extends DisplayList {
 	private float knots[];

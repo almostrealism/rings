@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.primitives;
+package com.almostrealism.renderable;
 
 import javax.media.opengl.GL2;
 
 import org.almostrealism.util.Vector;
 
+import com.almostrealism.gl.DisplayList;
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.visualize.gl.DisplayList;
 
 public class TriangleDisplayList extends DisplayList {
 	private Iterable<Triangle> triangles;

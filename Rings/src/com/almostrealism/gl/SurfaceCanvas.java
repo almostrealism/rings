@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.gl;
+package com.almostrealism.gl;
 
-import javax.media.opengl.GL2;
+import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.renderable.RenderableSurfaceFactory;
 
-public class DisplayList extends RenderableGLAdapter {
-	protected int displayListIndex;
+public class SurfaceCanvas extends DefaultGLCanvas {
+	public SurfaceCanvas() { }
 	
-	protected DisplayList() { }
-	
-	public DisplayList(int displayListIndex) {
-		this.displayListIndex = displayListIndex;
+	public void add(Surface s) {
+		addSurface(s);
 	}
 	
-	public void init(GL2 gl) {
-		super.init(gl);
-		displayListIndex = gl.glGenLists(1);
-	}
-	
-	@Override
-	public void display(GL2 gl) {
-		push(gl);
-		gl.glCallList(displayListIndex);
-		pop(gl);
+	public void addSurface(Surface s) {
+		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
 }

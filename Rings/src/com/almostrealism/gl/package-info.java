@@ -15,8 +15,8 @@
  */
 
 /**
- * Visualization tools for non-uniform rational Bezier spline curves.
+ * JOGL tools.
  * 
- * @author Michael Murray
+ * @author  Michael Murray
  */
-package com.almostrealism.visualize.nurbs;
+package com.almostrealism.gl;

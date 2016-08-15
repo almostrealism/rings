@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.models;
+package com.almostrealism.gl.models;
 
 import javax.media.opengl.GL2;
 
-import com.almostrealism.visualize.gl.DisplayList;
+import com.almostrealism.gl.DisplayList;
 
 public class Gear extends DisplayList {
 	private float innerRadius, outerRadius;

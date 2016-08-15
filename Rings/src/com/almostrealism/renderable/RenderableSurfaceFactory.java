@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.ui;
+package com.almostrealism.renderable;
 
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.visualize.primitives.RenderableSurfaceFactory;
+import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.visualize.renderable.Renderable;
 
-public class SurfaceCanvas extends DefaultGLCanvas {
-	public SurfaceCanvas() { }
-	
-	public void add(Surface s) {
-		addSurface(s);
-	}
-	
-	public void addSurface(Surface s) {
-		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
+public class RenderableSurfaceFactory {
+	public static Renderable createRenderableSurface(Surface s) {
+		if (s instanceof Renderable) {
+			return (Renderable) s;
+		} else if (s instanceof Mesh) {
+			return new RenderableMesh((Mesh) s);
+		}
+		
+		return null;
 	}
 }

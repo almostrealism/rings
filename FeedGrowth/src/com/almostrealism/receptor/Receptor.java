@@ -39,7 +39,7 @@ import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
-import com.almostrealism.visualize.ui.ReceptorCanvas;
+import com.almostrealism.replicator.ui.ReceptorCanvas;
 
 public class Receptor {
 	public static Mixer globalMixer;

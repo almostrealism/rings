@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.ui;
+package com.almostrealism.replicator.ui;
 
 import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
-import com.almostrealism.visualize.gl.RenderableGLList;
-import com.almostrealism.visualize.models.NurbsMoleHill;
-import com.almostrealism.visualize.nurbs.AnimatedNurbsSurface;
+import com.almostrealism.gl.DefaultGLCanvas;
+import com.almostrealism.gl.RenderableGLList;
+import com.almostrealism.gl.models.NurbsMoleHill;
+import com.almostrealism.gl.nurbs.AnimatedNurbsSurface;
 
 public class ReceptorCanvas extends DefaultGLCanvas {
 	public ReceptorCanvas() {

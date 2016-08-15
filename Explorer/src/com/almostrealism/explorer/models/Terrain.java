@@ -30,7 +30,7 @@ import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.visualize.primitives.RenderableMesh;
+import com.almostrealism.renderable.RenderableMesh;
 
 public class Terrain extends RenderableMesh {
 	private ImageLayers textures;

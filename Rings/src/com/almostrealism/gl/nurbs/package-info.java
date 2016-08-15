@@ -15,8 +15,8 @@
  */
 
 /**
- * User interface components for visualizer.
+ * Visualization tools for non-uniform rational Bezier spline curves.
  * 
- * @author  Michael Murray
+ * @author Michael Murray
  */
-package com.almostrealism.visualize.ui;
+package com.almostrealism.gl.nurbs;
