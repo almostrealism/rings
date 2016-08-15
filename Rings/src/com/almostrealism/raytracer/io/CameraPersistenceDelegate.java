@@ -16,7 +16,9 @@
 
 package com.almostrealism.raytracer.io;
 
-import java.beans.*;
+import java.beans.DefaultPersistenceDelegate;
+import java.beans.Encoder;
+import java.beans.Statement;
 
 /**
   A CameraPersistenceDelegate object adjusts the way the a Camera object is encoded into XML

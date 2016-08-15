@@ -16,7 +16,8 @@
 
 package com.almostrealism.raytracer;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
   The WriteProperties class provides a main method that writes out a default properties file specified by the string argument.

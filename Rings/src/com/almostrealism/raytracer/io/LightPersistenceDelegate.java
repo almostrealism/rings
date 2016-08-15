@@ -17,9 +17,11 @@
 package com.almostrealism.raytracer.io;
 
 
-import java.beans.*;
+import java.beans.DefaultPersistenceDelegate;
+import java.beans.Encoder;
+import java.beans.Statement;
 
-import com.almostrealism.raytracer.lighting.*;
+import com.almostrealism.raytracer.lighting.PointLight;
 
 /**
   A LightPersistenceDelegate object adjusts the way the a Light object is encoded into XML
