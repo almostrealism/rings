@@ -19,8 +19,6 @@ package com.almostrealism.renderable;
 import javax.media.opengl.GL2;
 
 import com.almostrealism.geometry.BasicGeometry;
-import com.almostrealism.visualize.renderable.RenderDelegate;
-import com.almostrealism.visualize.renderable.Renderable;
 
 public abstract class RenderableGeometry implements Renderable, RenderDelegate {
 	private BasicGeometry geo;

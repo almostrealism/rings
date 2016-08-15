@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * 
- * @author  Michael Murray
- */
-package com.almostrealism.visualize.renderable;
+package com.almostrealism.renderable;
+
+public interface Colored {
+	void setColor(float r, float g, float b, float a);
+	
+	float[] getColor();
+}

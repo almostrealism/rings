@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import javax.media.opengl.GL2;
 
-import com.almostrealism.visualize.renderable.RenderableList;
+import com.almostrealism.renderable.RenderableList;
 
 public class RenderableGLList extends RenderableGLAdapter {
 	private RenderableList renderables;

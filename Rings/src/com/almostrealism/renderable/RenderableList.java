@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.renderable;
+package com.almostrealism.renderable;
 
-public interface Colored {
-	void setColor(float r, float g, float b, float a);
+import java.util.ArrayList;
+
+import javax.media.opengl.GL2;
+
+public class RenderableList extends ArrayList<Renderable> implements Renderable {
+	@Override
+	public void init(GL2 gl) {
+		for (Renderable r : this) r.init(gl);
+	}
 	
-	float[] getColor();
+	@Override
+	public void display(GL2 gl) {
+		for (Renderable r : this) r.display(gl);
+	}
 }

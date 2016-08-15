@@ -21,7 +21,7 @@ import javax.media.opengl.glu.GLUnurbs;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
 import com.almostrealism.gl.nurbs.NurbsSurface;
-import com.almostrealism.visualize.renderable.RenderableList;
+import com.almostrealism.renderable.RenderableList;
 
 public class NurbsMoleHill extends RenderableList {
 	private GLUgl2 glu;

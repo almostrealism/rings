@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.renderable;
+package com.almostrealism.renderable;
 
 import javax.media.opengl.GL2;
 
-public interface RenderDelegate {
-	void render(GL2 gl);
+public interface Renderable {
+	void init(GL2 gl);
+	
+	void display(GL2 gl);
 }

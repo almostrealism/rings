@@ -21,9 +21,9 @@ import javax.media.opengl.GL2;
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableGeometry;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
-import com.almostrealism.visualize.renderable.Renderable;
 
 /**
  * A {@link Replicant} combines a set of {@link BasicGeometry}s

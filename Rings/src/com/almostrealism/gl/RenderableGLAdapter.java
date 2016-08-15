@@ -24,8 +24,8 @@ import org.almostrealism.texture.ImageSource;
 
 import com.almostrealism.geometry.Oriented;
 import com.almostrealism.geometry.Positioned;
-import com.almostrealism.visualize.renderable.Colored;
-import com.almostrealism.visualize.renderable.Renderable;
+import com.almostrealism.renderable.Colored;
+import com.almostrealism.renderable.Renderable;
 import com.almostrealism.visualize.shading.Diffuse;
 import com.almostrealism.visualize.shading.Specular;
 
