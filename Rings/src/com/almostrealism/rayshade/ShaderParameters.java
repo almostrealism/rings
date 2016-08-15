@@ -28,7 +28,7 @@ import com.almostrealism.raytracer.lighting.Light;
 
 
 /**
- * A ShaderParameters object stores parameters needed by most Shader implementations.
+ * A {@link ShaderParameters} object stores parameters needed by most {@link Shader} implementations.
  * 
  * @author Mike Murray
  */
