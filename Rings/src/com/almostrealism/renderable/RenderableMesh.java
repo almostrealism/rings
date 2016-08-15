@@ -19,7 +19,6 @@ package com.almostrealism.renderable;
 import javax.media.opengl.GL2;
 
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.visualize.geometry.RenderableGeometry;
 import com.almostrealism.webgl.WebGLExportable;
 import com.almostrealism.webgl.WebGLMeshGeometry;
 import com.almostrealism.webgl.WebGLRenderable;
