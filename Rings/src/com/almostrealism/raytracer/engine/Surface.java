@@ -25,8 +25,8 @@ package com.almostrealism.raytracer.engine;
 import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
-import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderParameters;
 
 /**
  * The {@link Surface} interface is implemented by any 3d object which may be

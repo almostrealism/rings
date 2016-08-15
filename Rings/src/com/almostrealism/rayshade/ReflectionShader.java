@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;

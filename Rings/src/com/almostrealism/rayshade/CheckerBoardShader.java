@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.ColorProducer;
@@ -29,7 +29,7 @@ public class CheckerBoardShader implements Shader {
   private ColorProducer hotColor, coldColor;
 
 	/**
-	 * @see com.almostrealism.raytracer.shaders.Shader#shade(com.almostrealism.raytracer.shaders.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) {
 		double intensity = 0.0;

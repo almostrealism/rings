@@ -19,8 +19,8 @@ package com.almostrealism.raytracer.lighting;
 import org.almostrealism.util.TransformMatrix;
 import org.almostrealism.util.Vector;
 
+import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.primitives.Plane;
-import com.almostrealism.raytracer.shaders.Shader;
 
 /**
  * A RectangularLight object provides PointLight samples that are randomly distributed

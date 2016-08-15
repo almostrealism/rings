@@ -50,6 +50,7 @@ import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
 import com.almostrealism.flow.db.QueryHandler;
 import com.almostrealism.io.FilePrintWriter;
+import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
@@ -58,7 +59,6 @@ import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.raytracer.shaders.DiffuseShader;
 
 /**
  * A RayTracingJob object provides an implementation of

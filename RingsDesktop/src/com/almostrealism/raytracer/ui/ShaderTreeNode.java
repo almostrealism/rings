@@ -29,8 +29,8 @@ import javax.swing.tree.TreeNode;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
-import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.raytracer.shaders.ShaderSet;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderSet;
 
 /**
  * A ShaderTreeNode object wraps a Shader object and allows it to be displayed

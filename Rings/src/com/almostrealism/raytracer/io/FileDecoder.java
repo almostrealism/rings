@@ -31,6 +31,7 @@ import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.flow.Resource;
+import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
@@ -38,7 +39,6 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.raytracer.shaders.Shader;
 
 /**
  * The FileDecoder class provides static methods for decoding scene and surface data

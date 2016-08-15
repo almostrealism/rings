@@ -47,13 +47,13 @@ import com.almostrealism.photon.util.buffers.BufferListener;
 import com.almostrealism.photon.util.buffers.ColorBuffer;
 import com.almostrealism.photon.util.buffers.TriangularMeshColorBuffer;
 import com.almostrealism.photon.util.color.Spectrum;
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 /**
  * An AbsorberHashSet object is an implementation of AbsorberSet that uses a HashSet

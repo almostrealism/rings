@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -57,7 +57,7 @@ public class BlendingShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.shaders.Shader#shade(com.almostrealism.raytracer.shaders.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) {
 		Vector n = p.getSurface().getNormalAt(p.getPoint());

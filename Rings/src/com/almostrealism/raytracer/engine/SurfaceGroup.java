@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 /**
  * A {@link SurfaceGroup} object allows {@link Surface} objects to be grouped together.

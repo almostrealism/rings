@@ -31,11 +31,11 @@ import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.geometry.BasicGeometry;
+import com.almostrealism.rayshade.DiffuseShader;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.shaders.DiffuseShader;
-import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
-import com.almostrealism.raytracer.shaders.ShaderSet;
 
 /**
  * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes

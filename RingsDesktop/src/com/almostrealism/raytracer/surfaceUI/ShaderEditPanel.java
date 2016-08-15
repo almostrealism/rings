@@ -35,9 +35,9 @@ import org.almostrealism.ui.panels.EditPanel;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.EditableFactory;
 
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.raytracer.shaders.ShaderSet;
 import com.almostrealism.raytracer.ui.AddDialog;
 import com.almostrealism.raytracer.ui.ExpandedEditPanel;
 import com.almostrealism.raytracer.ui.ShadedPreviewDisplay;

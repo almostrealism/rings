@@ -28,8 +28,8 @@ import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the SurfaceUI interface

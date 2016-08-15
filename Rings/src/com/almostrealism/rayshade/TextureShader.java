@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
@@ -153,7 +153,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	public void setInputPropertyValue(int index, Producer p) { this.props[index] = (ColorProducer)p; }
 
 	/**
-	 * @see com.almostrealism.raytracer.shaders.Shader#shade(com.almostrealism.raytracer.engine.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.raytracer.engine.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) {
 		if (this.tex instanceof Editable) {

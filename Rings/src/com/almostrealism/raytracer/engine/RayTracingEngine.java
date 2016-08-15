@@ -31,6 +31,7 @@ import org.almostrealism.ui.displays.ProgressDisplay;
 import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.lighting.AmbientLight;
@@ -38,7 +39,6 @@ import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 
 /**

@@ -30,7 +30,7 @@ import org.almostrealism.texture.TextureFactory;
 import org.almostrealism.ui.DynamicDisplay;
 import org.almostrealism.util.EditableFactory;
 
-import com.almostrealism.raytracer.shaders.TextureShader;
+import com.almostrealism.rayshade.TextureShader;
 
 /**
  * An AddDialog object can be used to allow a user to add an Editable object to a specified Set object.

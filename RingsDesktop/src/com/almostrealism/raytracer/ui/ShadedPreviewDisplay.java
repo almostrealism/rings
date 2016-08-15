@@ -30,6 +30,7 @@ import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
@@ -38,7 +39,6 @@ import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
 
 
 /**

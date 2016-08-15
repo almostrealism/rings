@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.util.graphics.ColorProducer;
 import org.almostrealism.util.graphics.RGB;

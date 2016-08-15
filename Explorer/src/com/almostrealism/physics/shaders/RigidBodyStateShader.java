@@ -29,8 +29,8 @@ import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.physics.RigidBody;
-import com.almostrealism.raytracer.shaders.Shader;
-import com.almostrealism.raytracer.shaders.ShaderParameters;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderParameters;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property
@@ -78,7 +78,7 @@ public class RigidBodyStateShader implements Shader {
 	public Shader getShader() { return this.shader; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.shaders.Shader#shade(com.almostrealism.raytracer.shaders.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) {
 		if (p.getSurface() instanceof RigidBody == false) return new RGB(1.0, 1.0, 1.0);

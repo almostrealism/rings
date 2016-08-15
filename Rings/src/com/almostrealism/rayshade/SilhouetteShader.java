@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.shaders;
+package com.almostrealism.rayshade;
 
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -48,7 +48,7 @@ public class SilhouetteShader implements Editable, Shader {
 	public SilhouetteShader(ColorProducer color) { this.color = color; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.shaders.Shader#shade(com.almostrealism.raytracer.shaders.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
 	public RGB shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
 
