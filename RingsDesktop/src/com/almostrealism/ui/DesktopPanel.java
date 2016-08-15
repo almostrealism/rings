@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.almostrealism.raytracer.io.WavefrontObjParser;
@@ -61,12 +62,20 @@ public class DesktopPanel extends DesktopPanelUI {
 	private static class CanvasAction extends AbstractAction {
 		static JFrame canvasFrame;
 		
+		public CanvasAction() {
+			super("Viewer", new ImageIcon(CanvasAction.class.getResource("/icons/v.png")));
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) { canvasFrame.setVisible(true); }
 	}
 	
 	private static class ControlAction extends AbstractAction {
 		static JFrame controlFrame;
+		
+		public ControlAction() {
+			super("Control", new ImageIcon(CanvasAction.class.getResource("/icons/e.png")));
+		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) { controlFrame.setVisible(true); }

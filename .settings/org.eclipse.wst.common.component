@@ -17,5 +17,6 @@
         <wb-resource deploy-path="/" source-path="/ForkedProjects/iptables"/>
         <wb-resource deploy-path="/" source-path="/ForkedProjects/src"/>
         <wb-resource deploy-path="/" source-path="/RingsDesktop/src"/>
+        <wb-resource deploy-path="/" source-path="/RingsDesktop/resources"/>
     </wb-module>
 </project-modules>
