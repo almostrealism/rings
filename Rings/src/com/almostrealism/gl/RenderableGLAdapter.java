@@ -26,8 +26,8 @@ import com.almostrealism.geometry.Oriented;
 import com.almostrealism.geometry.Positioned;
 import com.almostrealism.renderable.Colored;
 import com.almostrealism.renderable.Renderable;
-import com.almostrealism.visualize.shading.Diffuse;
-import com.almostrealism.visualize.shading.Specular;
+import com.almostrealism.shade.Diffuse;
+import com.almostrealism.shade.Specular;
 
 public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Diffuse, Specular {
 	protected static final TextureManager textureManager = new TextureManager();

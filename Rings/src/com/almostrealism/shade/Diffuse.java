@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.visualize.shading;
+package com.almostrealism.shade;
 
-public interface Specular {
-	void setSpecular(float r, float g, float b, float a);
+public interface Diffuse {
+	void setDiffuse(float r, float g, float b, float a);
 	
-	float[] getSpecular();
-	
-	void setShininess(float s);
-	
-	float getShininess();
+	float[] getDiffuse();
 }

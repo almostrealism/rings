@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/**
- * Shading for renderable data structures. These types are intended to
- * describe shading properties in broad terms, but can be interpreted
- * differently by different rendering algorithms.
- * 
- * @author  Michael Murray
- */
-package com.almostrealism.visualize.shading;
+package com.almostrealism.shade;
+
+public interface Specular {
+	void setSpecular(float r, float g, float b, float a);
+	
+	float[] getSpecular();
+	
+	void setShininess(float s);
+	
+	float getShininess();
+}
