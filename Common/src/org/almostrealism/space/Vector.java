@@ -16,7 +16,7 @@
 
 package org.almostrealism.space;
 
-import com.almostrealism.raytracer.Settings;
+import org.almostrealism.swing.Defaults;
 
 /**
  * A Vector object represents a 3d vector. It stores three coordinates, x, y, z.
@@ -267,11 +267,11 @@ public class Vector implements Cloneable {
 		StringBuffer value = new StringBuffer();
 		
 		value.append("[");
-		value.append(Settings.displayFormat.format(this.x));
+		value.append(Defaults.displayFormat.format(this.x));
 		value.append(", ");
-		value.append(Settings.displayFormat.format(this.y));
+		value.append(Defaults.displayFormat.format(this.y));
 		value.append(", ");
-		value.append(Settings.displayFormat.format(this.z));
+		value.append(Defaults.displayFormat.format(this.z));
 		value.append("]");
 
 		
