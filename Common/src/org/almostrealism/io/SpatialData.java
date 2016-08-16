@@ -25,13 +25,14 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 
 import org.almostrealism.space.Scene;
+import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.engine.SurfaceWrapper;
+import com.almostrealism.raytracer.engine.ShadableSurfaceWrapper;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
@@ -65,10 +66,10 @@ public class SpatialData {
 			Scene scene = (Scene)decoder.readObject();
 
 			if (!ui) {
-				ShadableSurface sr[] = scene.getSurfaces();
+				Surface sr[] = scene.getSurfaces();
 				for (int i = 0; i < sr.length; i++)
-					if (sr[i] instanceof SurfaceWrapper)
-						sr[i] = ((SurfaceWrapper)sr[i]).getSurface();
+					if (sr[i] instanceof ShadableSurfaceWrapper)
+						sr[i] = ((ShadableSurfaceWrapper) sr[i]).getSurface();
 			}
 
 			return scene;

@@ -22,10 +22,10 @@
 package com.almostrealism.raytracer.engine;
 
 /**
- * A {@link SurfaceWrapper} implementation stores/wraps a Surface.
+ * A {@link ShadableSurfaceWrapper} implementation stores/wraps a Surface.
  * 
  * @author Mike Murray
  */
-public interface SurfaceWrapper {
+public interface ShadableSurfaceWrapper {
 	public ShadableSurface getSurface();
 }

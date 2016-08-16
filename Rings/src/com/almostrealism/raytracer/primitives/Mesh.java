@@ -39,7 +39,7 @@ import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.engine.SurfaceWrapper;
+import com.almostrealism.raytracer.engine.ShadableSurfaceWrapper;
 import com.almostrealism.raytracer.io.FileDecoder;
 
 
@@ -54,7 +54,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
 public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	private static RGB white = new RGB(1.0, 1.0, 1.0);
 	
-	public static class MeshFile implements SurfaceWrapper, ShadableSurface {
+	public static class MeshFile implements ShadableSurfaceWrapper, ShadableSurface {
 		private String name;
 		private int format;
 		private String url;
