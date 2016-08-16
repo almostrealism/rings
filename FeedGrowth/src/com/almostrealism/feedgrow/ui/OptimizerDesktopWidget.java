@@ -20,7 +20,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-import org.almostrealism.ui.ScrollingTextDisplay;
+import org.almostrealism.swing.ScrollingTextDisplay;
 
 import com.almostrealism.feedgrow.optimization.SimpleOrganOptimizer;
 

@@ -31,7 +31,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.almostrealism.ui.panels.EditPanel;
+import org.almostrealism.swing.panels.EditPanel;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.EditableFactory;
 

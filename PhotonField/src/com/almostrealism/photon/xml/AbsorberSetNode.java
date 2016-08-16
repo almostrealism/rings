@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import org.almostrealism.ui.displays.ImageCanvas;
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.util.Nameable;
 import org.almostrealism.util.graphics.RGB;
 import org.w3c.dom.Document;

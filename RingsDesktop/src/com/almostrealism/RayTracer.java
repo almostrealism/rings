@@ -29,10 +29,10 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Scene;

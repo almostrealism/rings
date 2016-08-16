@@ -21,8 +21,8 @@ import java.awt.Color;
 
 import javax.swing.JPanel;
 
-import org.almostrealism.ui.displays.ImageCanvas;
-import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.swing.displays.ImageCanvas;
+import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.photon.Absorber;

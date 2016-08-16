@@ -21,10 +21,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.almostrealism.ui.Dialog;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.dialogs.DialogCloseEvent;
+import org.almostrealism.swing.Dialog;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.SurfaceGroup;

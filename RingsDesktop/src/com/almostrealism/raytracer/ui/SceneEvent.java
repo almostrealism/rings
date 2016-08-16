@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
-import org.almostrealism.ui.Event;
+import org.almostrealism.swing.Event;
 
 /**
   A SceneEvent object represents an event that has taken place within the current scene.

@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
-import org.almostrealism.ui.Event;
+import org.almostrealism.swing.Event;
 
 import com.almostrealism.raytracer.engine.Surface;
 

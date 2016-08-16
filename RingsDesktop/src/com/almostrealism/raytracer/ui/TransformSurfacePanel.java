@@ -23,11 +23,11 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.almostrealism.ui.DynamicDisplay;
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
+import org.almostrealism.swing.DynamicDisplay;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
 import org.almostrealism.util.TransformMatrix;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;

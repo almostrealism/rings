@@ -31,8 +31,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import org.almostrealism.ui.displays.ImageCanvas;
-import org.almostrealism.ui.panels.PercentagePanel;
+import org.almostrealism.swing.displays.ImageCanvas;
+import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.util.graphics.RGB;
 import org.nfunk.jep.JEP;
 

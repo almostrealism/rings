@@ -32,8 +32,8 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.almostrealism.ui.DynamicDisplay;
-import org.almostrealism.ui.panels.EditPanel;
+import org.almostrealism.swing.DynamicDisplay;
+import org.almostrealism.swing.panels.EditPanel;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.EditableFactory;
 

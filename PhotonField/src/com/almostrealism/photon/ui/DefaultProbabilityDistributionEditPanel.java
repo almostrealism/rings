@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.almostrealism.ui.panels.PercentagePanel;
+import org.almostrealism.swing.panels.PercentagePanel;
 
 import com.almostrealism.photon.util.ProbabilityDistribution;
 import com.almostrealism.photon.xml.ProbabilityDistributionDisplay;

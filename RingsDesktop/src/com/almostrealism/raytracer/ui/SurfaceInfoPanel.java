@@ -34,11 +34,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.MutableTreeNode;
 
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.TextureFactory;
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
 
 import com.almostrealism.rayshade.ShaderFactory;
 import com.almostrealism.raytracer.Settings;

@@ -19,7 +19,7 @@ package com.almostrealism.photon.xml;
 import java.awt.Container;
 import java.util.List;
 
-import org.almostrealism.ui.panels.EditVectorPanel;
+import org.almostrealism.swing.panels.EditVectorPanel;
 import org.almostrealism.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

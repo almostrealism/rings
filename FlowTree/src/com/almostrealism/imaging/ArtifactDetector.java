@@ -36,7 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
-import org.almostrealism.ui.panels.PercentagePanel;
+import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

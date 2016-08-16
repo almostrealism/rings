@@ -22,13 +22,13 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.almostrealism.ui.Dialog;
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
-import org.almostrealism.ui.dialogs.DialogCloseEvent;
-import org.almostrealism.ui.panels.EditVectorPanel;
+import org.almostrealism.swing.Dialog;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
+import org.almostrealism.swing.dialogs.DialogCloseEvent;
+import org.almostrealism.swing.panels.EditVectorPanel;
 import org.almostrealism.util.Vector;
 
 import com.almostrealism.raytracer.engine.Surface;

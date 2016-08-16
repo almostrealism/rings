@@ -24,7 +24,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

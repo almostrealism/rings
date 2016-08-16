@@ -36,8 +36,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 
-import org.almostrealism.ui.panels.ExtendedCellEditor;
-import org.almostrealism.ui.panels.ExtendedCellRenderer;
+import org.almostrealism.swing.panels.ExtendedCellEditor;
+import org.almostrealism.swing.panels.ExtendedCellRenderer;
 
 /**
  * @author Mike Murray

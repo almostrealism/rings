@@ -66,8 +66,8 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import org.almostrealism.io.Storable;
-import org.almostrealism.ui.GraphDisplay;
-import org.almostrealism.ui.ScrollingTextDisplay;
+import org.almostrealism.swing.GraphDisplay;
+import org.almostrealism.swing.ScrollingTextDisplay;
 import org.almostrealism.util.Help;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;

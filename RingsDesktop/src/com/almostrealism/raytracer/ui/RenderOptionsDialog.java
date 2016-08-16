@@ -33,7 +33,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.almostrealism.ui.Dialog;
+import org.almostrealism.swing.Dialog;
 
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;

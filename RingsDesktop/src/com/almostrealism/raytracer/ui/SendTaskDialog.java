@@ -36,7 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.almostrealism.ui.Dialog;
+import org.almostrealism.swing.Dialog;
 
 import com.almostrealism.flow.Server;
 import com.almostrealism.raytracer.Settings;
@@ -179,7 +179,7 @@ public class SendTaskDialog extends JPanel implements Dialog {
 	}
 	
 	/**
-	 * @see org.almostrealism.ui.Dialog#showDialog()
+	 * @see org.almostrealism.swing.Dialog#showDialog()
 	 */
 	public void showDialog() {
 		if (!this.open) {
@@ -189,7 +189,7 @@ public class SendTaskDialog extends JPanel implements Dialog {
 	}
 
 	/**
-	 * @see org.almostrealism.ui.Dialog#closeDialog()
+	 * @see org.almostrealism.swing.Dialog#closeDialog()
 	 */
 	public void closeDialog() {
 		if (this.open) {

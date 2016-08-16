@@ -24,10 +24,10 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.Scene;

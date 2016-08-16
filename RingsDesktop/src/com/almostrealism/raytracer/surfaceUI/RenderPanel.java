@@ -24,11 +24,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.almostrealism.ui.Event;
-import org.almostrealism.ui.EventGenerator;
-import org.almostrealism.ui.EventHandler;
-import org.almostrealism.ui.EventListener;
-import org.almostrealism.ui.displays.ProgressDisplay;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventGenerator;
+import org.almostrealism.swing.EventHandler;
+import org.almostrealism.swing.EventListener;
+import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 
