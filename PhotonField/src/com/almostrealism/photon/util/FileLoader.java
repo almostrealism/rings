@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.space.VectorMath;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;

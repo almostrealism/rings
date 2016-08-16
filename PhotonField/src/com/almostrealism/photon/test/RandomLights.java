@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorptionPlane;
 import com.almostrealism.photon.Clock;
@@ -28,7 +30,6 @@ import com.almostrealism.photon.PhotonField;
 import com.almostrealism.photon.VolumeAbsorber;
 import com.almostrealism.photon.geometry.Sphere;
 import com.almostrealism.photon.light.LightBulb;
-import com.almostrealism.photon.util.VectorMath;
 
 public class RandomLights {
 	public static double verbose = 0.01;

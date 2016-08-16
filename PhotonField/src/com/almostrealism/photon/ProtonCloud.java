@@ -24,7 +24,7 @@
 
 package com.almostrealism.photon;
 
-import com.almostrealism.photon.util.VectorMath;
+import org.almostrealism.space.VectorMath;
 
 /**
  * A ProtonCloud is an absorber that provides a potential map that uses coulombs

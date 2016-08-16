@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.distribution;
 
-import com.almostrealism.photon.util.VectorMath;
+import org.almostrealism.space.VectorMath;
 
 public class RefractiveProbabilityDistribution implements SphericalProbabilityDistribution {
 	private double rIndex = 1.0, n2 = 1.0, m = 1.0;

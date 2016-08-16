@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.space.VectorMath;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
@@ -45,7 +46,6 @@ import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorberSet;
 import com.almostrealism.photon.Volume;
-import com.almostrealism.photon.util.VectorMath;
 import com.almostrealism.photon.util.buffers.AveragedVectorMap2D;
 import com.almostrealism.photon.util.buffers.BufferListener;
 import com.almostrealism.photon.util.buffers.ColorBuffer;

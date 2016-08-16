@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 
@@ -39,7 +40,6 @@ import com.almostrealism.photon.util.Fast;
 import com.almostrealism.photon.util.Locatable;
 import com.almostrealism.photon.util.PhysicalConstants;
 import com.almostrealism.photon.util.Transparent;
-import com.almostrealism.photon.util.VectorMath;
 import com.almostrealism.photon.util.buffers.ArrayColorBuffer;
 import com.almostrealism.photon.util.buffers.AveragedVectorMap2D;
 import com.almostrealism.photon.util.buffers.AveragedVectorMap2D96Bit;

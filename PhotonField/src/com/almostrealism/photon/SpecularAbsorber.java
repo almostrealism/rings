@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.distribution.BRDF;
 import com.almostrealism.photon.distribution.SphericalProbabilityDistribution;
 import com.almostrealism.photon.distribution.UniformHemisphericalDistribution;
@@ -32,7 +34,6 @@ import com.almostrealism.photon.util.Fast;
 import com.almostrealism.photon.util.PhysicalConstants;
 import com.almostrealism.photon.util.PriorityQueue;
 import com.almostrealism.photon.util.ProbabilityDistribution;
-import com.almostrealism.photon.util.VectorMath;
 import com.almostrealism.photon.util.color.Spectrum;
 
 import java.lang.Math;

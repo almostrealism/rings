@@ -27,8 +27,9 @@ package com.almostrealism.photon;
 import java.lang.Math;
 import java.util.ArrayList;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.Absorber;
-import com.almostrealism.photon.util.VectorMath;
 
 /**
  * A SnellAbsorber is an Absorber implementation that absorbs and emits photons

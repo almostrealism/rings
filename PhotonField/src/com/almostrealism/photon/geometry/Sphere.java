@@ -16,8 +16,9 @@
 
 package com.almostrealism.photon.geometry;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.Volume;
-import com.almostrealism.photon.util.VectorMath;
 
 /**
  * A Sphere object represents a spherical volume in 3D space.

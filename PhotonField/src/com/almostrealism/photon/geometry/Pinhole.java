@@ -16,10 +16,11 @@
 
 package com.almostrealism.photon.geometry;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.Clock;
 import com.almostrealism.photon.util.Fast;
-import com.almostrealism.photon.util.VectorMath;
 
 /**
  * A Pinhole is similar to an AbsorptionPlane except a hole with a specified radius

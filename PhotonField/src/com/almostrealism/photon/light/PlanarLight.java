@@ -17,10 +17,10 @@
 package com.almostrealism.photon.light;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.util.Locatable;
-import com.almostrealism.photon.util.VectorMath;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;

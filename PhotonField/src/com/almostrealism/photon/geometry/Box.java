@@ -22,6 +22,8 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorptionPlane;
 import com.almostrealism.photon.Clock;
@@ -30,7 +32,6 @@ import com.almostrealism.photon.PhotonField;
 import com.almostrealism.photon.SpecularAbsorber;
 import com.almostrealism.photon.Volume;
 import com.almostrealism.photon.light.PlanarLight;
-import com.almostrealism.photon.util.VectorMath;
 
 /**
  * 

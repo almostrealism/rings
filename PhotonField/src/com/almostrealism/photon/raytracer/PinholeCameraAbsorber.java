@@ -17,6 +17,7 @@
 package com.almostrealism.photon.raytracer;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
@@ -25,7 +26,6 @@ import com.almostrealism.photon.Clock;
 import com.almostrealism.photon.geometry.Pinhole;
 import com.almostrealism.photon.util.Colorable;
 import com.almostrealism.photon.util.PriorityQueue;
-import com.almostrealism.photon.util.VectorMath;
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.Ray;
 

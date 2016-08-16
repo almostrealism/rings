@@ -20,9 +20,10 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.light.LightBulb;
 import com.almostrealism.photon.test.BlackBody;
-import com.almostrealism.photon.util.VectorMath;
 
 /**
  * A HarmonicAbsorber object represents a spherical absorber that stores

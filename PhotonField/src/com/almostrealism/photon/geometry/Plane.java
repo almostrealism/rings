@@ -16,8 +16,9 @@
 
 package com.almostrealism.photon.geometry;
 
+import org.almostrealism.space.VectorMath;
+
 import com.almostrealism.photon.Volume;
-import com.almostrealism.photon.util.VectorMath;
 
 public class Plane implements Volume {
 	public static double d = 0.0;
