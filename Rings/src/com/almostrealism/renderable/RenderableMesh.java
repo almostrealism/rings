@@ -16,7 +16,7 @@
 
 package com.almostrealism.renderable;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.webgl.WebGLExportable;

@@ -19,7 +19,7 @@ package com.almostrealism.explorer.models;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 import org.almostrealism.texture.ImageLayers;
 import org.geotools.data.DataStore;

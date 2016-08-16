@@ -16,7 +16,7 @@
 
 package com.almostrealism.renderable;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 public interface RenderDelegate {
 	void render(GL2 gl);

@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 import org.almostrealism.texture.ImageSource;
 

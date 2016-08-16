@@ -16,8 +16,8 @@
 
 package com.almostrealism.replicator.ui;
 
-import javax.media.opengl.glu.GLUnurbs;
-import javax.media.opengl.glu.gl2.GLUgl2;
+import com.jogamp.opengl.glu.GLUnurbs;
+import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.gl.RenderableGLList;

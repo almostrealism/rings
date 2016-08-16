@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 import com.almostrealism.renderable.RenderableList;
 

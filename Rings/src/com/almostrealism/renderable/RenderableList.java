@@ -18,7 +18,7 @@ package com.almostrealism.renderable;
 
 import java.util.ArrayList;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 public class RenderableList extends ArrayList<Renderable> implements Renderable {
 	@Override
