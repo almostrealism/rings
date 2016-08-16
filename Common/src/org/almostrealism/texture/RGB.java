@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import com.almostrealism.raytracer.Settings;
+import org.almostrealism.swing.Defaults;
 
 /**
  * An RGB object represents a color defined by three channels: red, green, and blue.
@@ -454,9 +454,9 @@ public class RGB implements Externalizable, Cloneable, ColorProducer {
 	 * @return  A String representation of this RGB object.
 	 */
 	public String toString() {
-		String value = "[" + Settings.displayFormat.format(this.getRed())  +
-						", " + Settings.displayFormat.format(this.getGreen()) +
-						", " + Settings.displayFormat.format(this.getBlue()) + "]";
+		String value = "[" + Defaults.displayFormat.format(this.getRed())  +
+						", " + Defaults.displayFormat.format(this.getGreen()) +
+						", " + Defaults.displayFormat.format(this.getBlue()) + "]";
 		
 		return value;
 	}
