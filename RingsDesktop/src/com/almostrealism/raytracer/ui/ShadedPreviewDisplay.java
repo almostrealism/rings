@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

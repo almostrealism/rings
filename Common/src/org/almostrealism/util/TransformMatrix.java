@@ -16,6 +16,8 @@
 
 package org.almostrealism.util;
 
+import org.almostrealism.space.Vector;
+
 
 /**
   A TransformMatrix object represents a 4 X 4 matrix used for transforming vectors.

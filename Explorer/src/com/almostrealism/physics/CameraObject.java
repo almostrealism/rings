@@ -25,7 +25,7 @@
 
 package com.almostrealism.physics;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.camera.PinholeCamera;
 

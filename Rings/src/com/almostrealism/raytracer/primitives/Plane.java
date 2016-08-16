@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.TransformMatrix;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;

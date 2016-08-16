@@ -18,7 +18,7 @@ package com.almostrealism.renderable;
 
 import javax.media.opengl.GL2;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 
 import com.almostrealism.gl.DisplayList;
 import com.almostrealism.raytracer.primitives.Triangle;

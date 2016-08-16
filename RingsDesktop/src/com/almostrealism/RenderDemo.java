@@ -19,10 +19,10 @@ package com.almostrealism;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.TransformMatrix;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.camera.ThinLensCamera;

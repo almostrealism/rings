@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.Nameable;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.photon.distribution.BRDF;

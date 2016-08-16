@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util;
+package org.almostrealism.space;
 
 import com.almostrealism.raytracer.Settings;
 

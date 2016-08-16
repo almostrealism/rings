@@ -19,7 +19,7 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Triangle;

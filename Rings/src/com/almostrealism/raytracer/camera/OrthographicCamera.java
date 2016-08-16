@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.camera;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.TransformMatrix;
-import org.almostrealism.util.Vector;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.Ray;

@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.lighting;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 /**

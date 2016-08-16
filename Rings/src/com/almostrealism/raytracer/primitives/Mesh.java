@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.rayshade.ShaderParameters;

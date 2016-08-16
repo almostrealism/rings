@@ -23,8 +23,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

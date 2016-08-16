@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.TransformMatrix;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;

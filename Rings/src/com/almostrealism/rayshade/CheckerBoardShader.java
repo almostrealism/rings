@@ -16,7 +16,7 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.graphics.ColorProducer;
 import org.almostrealism.util.graphics.RGB;
 

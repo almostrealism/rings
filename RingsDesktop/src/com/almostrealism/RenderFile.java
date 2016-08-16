@@ -23,8 +23,8 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.swing.displays.ProgressDisplay;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.Settings;

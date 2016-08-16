@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 

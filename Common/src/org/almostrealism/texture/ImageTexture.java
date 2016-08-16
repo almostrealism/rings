@@ -25,9 +25,9 @@ import java.awt.image.PixelGrabber;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.GraphicsConverter;
 import org.almostrealism.util.graphics.RGB;
 
@@ -186,7 +186,7 @@ public class ImageTexture implements Texture, Editable {
   	}
   	
 	/**
-	 * @see org.almostrealism.texture.Texture#getColorAt(org.almostrealism.util.Vector)
+	 * @see org.almostrealism.texture.Texture#getColorAt(org.almostrealism.space.Vector)
 	 * 
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 */
@@ -217,7 +217,7 @@ public class ImageTexture implements Texture, Editable {
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * @throws NullPointerException  If pixel data is not loaded.
 	 * 
-	 * @see org.almostrealism.texture.Texture#getColorAt(org.almostrealism.util.Vector, java.lang.Object[])
+	 * @see org.almostrealism.texture.Texture#getColorAt(org.almostrealism.space.Vector, java.lang.Object[])
 	 */
 	public RGB getColorAt(Vector point, Object args[]) {
 	    if (args[0] instanceof Double == false) throw new IllegalArgumentException("Illegal argument: " + args[0]);

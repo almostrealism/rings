@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.geometry.BasicGeometry;

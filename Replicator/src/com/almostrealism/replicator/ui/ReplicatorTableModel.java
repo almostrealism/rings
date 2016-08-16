@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 
 import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.raytracer.engine.Surface;

@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.util;
 
-import org.almostrealism.util.Vector;
+import org.almostrealism.space.Vector;
 
 public interface Locatable {
 	public void setLocation(Vector location);

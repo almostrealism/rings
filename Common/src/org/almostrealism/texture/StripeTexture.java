@@ -16,9 +16,9 @@
 
 package org.almostrealism.texture;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 // TODO  Add vector direction in place of axis selection.

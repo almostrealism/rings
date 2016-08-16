@@ -16,9 +16,9 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.Vector;
 import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
