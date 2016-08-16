@@ -16,7 +16,7 @@
 
 package org.almostrealism.log;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author  Michael Murray
