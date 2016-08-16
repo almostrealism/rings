@@ -15,5 +15,12 @@
             <artifactId>jackson-databind</artifactId>
             <version>RELEASE</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 </project>
