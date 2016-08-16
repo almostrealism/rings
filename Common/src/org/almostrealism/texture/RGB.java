@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util.graphics;
+package org.almostrealism.texture;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-
-import org.almostrealism.util.graphics.ColorProducer;
 
 import com.almostrealism.raytracer.Settings;
 

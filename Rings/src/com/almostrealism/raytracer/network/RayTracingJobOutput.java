@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.db.JobOutput;
 

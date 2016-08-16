@@ -48,8 +48,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
 import com.almostrealism.rayshade.BlendingShader;

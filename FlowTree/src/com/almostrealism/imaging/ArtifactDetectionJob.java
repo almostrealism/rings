@@ -19,7 +19,7 @@ package com.almostrealism.imaging;
 import java.io.File;
 import java.io.IOException;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;

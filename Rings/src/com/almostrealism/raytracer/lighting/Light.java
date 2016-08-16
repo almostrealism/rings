@@ -17,7 +17,7 @@
 package com.almostrealism.raytracer.lighting;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 /**
  * A Light implmentation provides lighting information used for rendering.

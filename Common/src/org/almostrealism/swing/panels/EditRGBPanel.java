@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.almostrealism.swing.Defaults;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 /** An EditRGBPanel object can be used to specify an RGB color. */
 public class EditRGBPanel extends JPanel {

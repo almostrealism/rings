@@ -17,7 +17,7 @@
 package com.almostrealism.raytracer.lighting;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 /**
   An PointLight object represents a light which has its source at a point in the scene.

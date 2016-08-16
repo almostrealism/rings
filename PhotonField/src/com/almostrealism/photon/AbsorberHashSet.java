@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
-import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.photon.distribution.BRDF;
 import com.almostrealism.photon.distribution.SphericalProbabilityDistribution;

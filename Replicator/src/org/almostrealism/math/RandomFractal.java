@@ -33,7 +33,7 @@ import javax.swing.JSlider;
 
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.panels.PercentagePanel;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 import org.nfunk.jep.JEP;
 
 

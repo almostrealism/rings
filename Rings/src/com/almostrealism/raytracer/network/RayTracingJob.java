@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;

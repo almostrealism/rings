@@ -39,7 +39,7 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.panels.EditRGBPanel;
 import org.almostrealism.swing.panels.EditVectorPanel;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;

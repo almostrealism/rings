@@ -19,7 +19,7 @@ package com.almostrealism.photon.raytracer;
 import javax.swing.JPanel;
 
 import org.almostrealism.swing.displays.ProgressDisplay;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;

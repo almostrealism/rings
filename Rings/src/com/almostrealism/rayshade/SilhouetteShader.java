@@ -16,10 +16,10 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
 
 /**
  * A SilhouetteShader object can be used to shade a surface with one color value
@@ -53,7 +53,7 @@ public class SilhouetteShader implements Editable, Shader {
 	public RGB shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
-	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
 

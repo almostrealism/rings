@@ -28,8 +28,6 @@ import java.net.URL;
 import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
 
 
 // TODO  Improve documentation.
@@ -258,7 +256,7 @@ public class ImageTexture implements Texture, Editable {
 	 * @param args[] {Vector, Double, Double, Double, Double}  Point, X scale factor, Y scale factor, X offset, Y offset.
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * 
-	 * @see com.almostrealism.raytracer.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) {
 	    if (!(args[0] instanceof Vector)) throw new IllegalArgumentException("Illegal argument: " + args[0]);

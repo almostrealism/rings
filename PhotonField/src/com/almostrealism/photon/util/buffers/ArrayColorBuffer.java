@@ -19,8 +19,8 @@ package com.almostrealism.photon.util.buffers;
 import java.io.File;
 import java.io.IOException;
 
-import org.almostrealism.util.graphics.AverageColor;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.AverageColor;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;

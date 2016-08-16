@@ -19,7 +19,6 @@ package org.almostrealism.texture;
 import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.graphics.RGB;
 
 // TODO  Add vector direction in place of axis selection.
 
@@ -119,7 +118,7 @@ public class StripeTexture implements Texture, Editable {
 	 * @param args[] {point, arg0, arg1, ...}
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * 
-	 * @see com.almostrealism.raytracer.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) {
 	    if (!(args[0] instanceof Vector)) throw new IllegalArgumentException("Illegal argument: " + args[0]);

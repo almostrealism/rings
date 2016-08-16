@@ -23,7 +23,7 @@
 package com.almostrealism.raytracer.engine;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.rayshade.ShaderParameters;

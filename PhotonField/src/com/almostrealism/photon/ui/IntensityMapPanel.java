@@ -24,7 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.almostrealism.swing.displays.ImageCanvas;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.texture.CosineIntensityMap;
 import com.almostrealism.photon.texture.IntensityMap;

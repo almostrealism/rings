@@ -37,8 +37,8 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
-import org.almostrealism.util.graphics.RGB;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

@@ -17,8 +17,8 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
@@ -58,7 +58,7 @@ public class CheckerBoardShader implements Shader {
 	}
 
 	/**
-	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters) args[0]); }
 	

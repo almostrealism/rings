@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util.graphics;
+package org.almostrealism.texture;
 
 import java.util.ArrayList;
 import java.util.Iterator;

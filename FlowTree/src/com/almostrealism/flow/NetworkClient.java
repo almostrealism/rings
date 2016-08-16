@@ -68,9 +68,9 @@ import javax.swing.SwingUtilities;
 import org.almostrealism.io.Storable;
 import org.almostrealism.swing.GraphDisplay;
 import org.almostrealism.swing.ScrollingTextDisplay;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Help;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;

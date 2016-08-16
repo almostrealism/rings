@@ -17,7 +17,7 @@
 package com.almostrealism.raytracer.lighting;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.

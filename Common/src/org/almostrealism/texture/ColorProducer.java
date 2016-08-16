@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util.graphics;
+package org.almostrealism.texture;
 
 import org.almostrealism.util.Producer;
 

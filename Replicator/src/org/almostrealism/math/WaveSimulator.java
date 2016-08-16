@@ -26,8 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 public class WaveSimulator {
 	private static int sleep = 1000;

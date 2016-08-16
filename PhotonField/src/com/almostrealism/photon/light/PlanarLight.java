@@ -17,7 +17,7 @@
 package com.almostrealism.photon.light;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.util.Locatable;
 import com.almostrealism.photon.util.VectorMath;

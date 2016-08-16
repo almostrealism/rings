@@ -18,7 +18,7 @@ package com.almostrealism.photon.util.buffers;
 
 import java.io.IOException;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;
 

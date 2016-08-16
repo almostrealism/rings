@@ -37,8 +37,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import org.almostrealism.swing.panels.PercentagePanel;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.io.FileEncoder;
 

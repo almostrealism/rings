@@ -28,8 +28,8 @@ import java.io.PrintStream;
 import java.util.Date;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;

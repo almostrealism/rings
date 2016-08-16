@@ -19,7 +19,7 @@ package com.almostrealism.photon.util;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 /**
  * @author  Mike Murray

@@ -37,7 +37,7 @@ import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import org.almostrealism.swing.panels.EditRGBPanel;
 import org.almostrealism.swing.panels.EditVectorPanel;
 import org.almostrealism.swing.panels.PercentagePanel;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;

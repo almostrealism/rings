@@ -33,8 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.distribution.OverlayBRDF;
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;

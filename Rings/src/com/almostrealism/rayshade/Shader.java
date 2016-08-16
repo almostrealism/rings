@@ -16,8 +16,8 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.RGB;
 
 /**
  * The Shader interface is implemented by classes that provide a method for shading a surface.

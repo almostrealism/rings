@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.graphics;
 
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.RGB;
 
 /**
  * @author Mike Murray
@@ -41,7 +41,7 @@ public class RandomColorGenerator implements ColorProducer {
 	public ColorProducer getOffsetRGB() { return this.offsetRGB; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) {
 		RGB base = this.baseRGB.evaluate(args);

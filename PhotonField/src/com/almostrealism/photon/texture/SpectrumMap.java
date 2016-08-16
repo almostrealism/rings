@@ -18,7 +18,7 @@ package com.almostrealism.photon.texture;
 
 import java.io.IOException;
 
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.util.ProbabilityDistribution;
 

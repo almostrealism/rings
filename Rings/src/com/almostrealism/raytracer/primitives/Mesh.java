@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.Intersection;

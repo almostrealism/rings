@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Resource;
 import com.almostrealism.rayshade.Shader;

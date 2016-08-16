@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util.graphics;
+package org.almostrealism.texture;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.RenderedImage;
+
 import javax.swing.ImageIcon;
 
 /**

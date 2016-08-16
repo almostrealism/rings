@@ -17,8 +17,6 @@
 package org.almostrealism.texture;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
 
 /**
  * The Texture interface is implemented by classes that can be used to texture a surface.

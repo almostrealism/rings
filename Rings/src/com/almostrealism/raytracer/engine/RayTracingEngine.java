@@ -29,7 +29,7 @@ package com.almostrealism.raytracer.engine;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Settings;

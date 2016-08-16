@@ -17,10 +17,10 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.graphics.ColorProducer;
-import org.almostrealism.util.graphics.RGB;
 
 /**
  * A BlendingShader object provides a method for blending values from two
@@ -125,7 +125,7 @@ public class BlendingShader implements Shader, Editable {
 	}
 
 	/**
-	 * @see org.almostrealism.util.graphics.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters)args[0]); }
 	

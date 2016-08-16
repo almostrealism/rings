@@ -19,7 +19,7 @@ package org.almostrealism.math;
 import javax.swing.JFrame;
 
 import org.almostrealism.swing.displays.ImageCanvas;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 
 /**

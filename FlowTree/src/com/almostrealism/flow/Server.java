@@ -52,8 +52,8 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
-import org.almostrealism.util.graphics.GraphicsConverter;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;

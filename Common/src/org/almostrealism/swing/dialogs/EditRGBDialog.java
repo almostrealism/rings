@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.panels.EditRGBPanel;
-import org.almostrealism.util.graphics.RGB;
+import org.almostrealism.texture.RGB;
 
 /**
  * An EditRGBDialog object can be used to allow a user to specify

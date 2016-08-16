@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.RGB;
 import org.almostrealism.util.TransformMatrix;
-import org.almostrealism.util.graphics.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
