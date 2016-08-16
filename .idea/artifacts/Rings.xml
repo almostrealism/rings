@@ -1,0 +1,31 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Rings">
+    <output-path>$PROJECT_DIR$/out/artifacts/</output-path>
+    <root id="archive" name="Rings.war">
+      <element id="javaee-facet-resources" facet="Rings-New/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Common" />
+          <element id="module-output" name="Explorer" />
+          <element id="module-output" name="FeedGrowth" />
+          <element id="module-output" name="FlowTree" />
+          <element id="module-output" name="GraphPersist" />
+          <element id="module-output" name="MatrixView" />
+          <element id="module-output" name="PhotonField" />
+          <element id="module-output" name="Replicator" />
+          <element id="module-output" name="Rings" />
+          <element id="module-output" name="RingsDesktop" />
+          <element id="module-output" name="TreeView" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="jackson-annotations-2.7.3" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.1" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.1" />
+          <element id="library" level="project" name="c3p0-0.9.5.2" />
+          <element id="file-copy" path="$PROJECT_DIR$/GraphPersist/lib/commons-pool2-2.3.jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
