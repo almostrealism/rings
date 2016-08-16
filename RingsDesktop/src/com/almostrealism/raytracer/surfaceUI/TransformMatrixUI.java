@@ -16,6 +16,7 @@
 
 package com.almostrealism.raytracer.surfaceUI;
 
+import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.util.*;
 
 /**

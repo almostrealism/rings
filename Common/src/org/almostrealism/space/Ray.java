@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.engine;
+package org.almostrealism.space;
 
-import org.almostrealism.space.Vector;
-import org.almostrealism.util.TransformMatrix;
 
 /**
  * A Ray object represents a 3d ray. It stores the origin and direction of a 3d ray,

@@ -16,12 +16,12 @@
 
 package com.almostrealism.raytracer.lighting;
 
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
-import com.almostrealism.raytracer.engine.Ray;
 
 /**
   A PointLightGrid object stores a grid of PointLight objects.

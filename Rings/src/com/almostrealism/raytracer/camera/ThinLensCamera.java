@@ -16,10 +16,10 @@
 
 package com.almostrealism.raytracer.camera;
 
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.Ray;
 
 /**
  * A ThinLensCamera object provides a camera with viewing rays that originate

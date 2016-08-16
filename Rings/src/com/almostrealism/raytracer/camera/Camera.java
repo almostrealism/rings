@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.camera;
 
-import com.almostrealism.raytracer.engine.Ray;
+import org.almostrealism.space.Ray;
 
 /**
  * Implementations of the Camera interface provide a method for calculating viewing rays.

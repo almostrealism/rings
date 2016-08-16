@@ -29,8 +29,8 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.TransformMatrix;
 
 import com.almostrealism.raytracer.camera.Camera;
 

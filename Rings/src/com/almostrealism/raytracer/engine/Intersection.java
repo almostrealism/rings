@@ -16,6 +16,8 @@
 
 package com.almostrealism.raytracer.engine;
 
+import org.almostrealism.space.Ray;
+
 /**
  * An Intersection object stores data for the intersections between a ray and a surface.
  */

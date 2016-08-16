@@ -16,6 +16,7 @@
 
 package com.almostrealism.photon.raytracer;
 
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
@@ -27,7 +28,6 @@ import com.almostrealism.photon.geometry.Pinhole;
 import com.almostrealism.photon.util.Colorable;
 import com.almostrealism.photon.util.PriorityQueue;
 import com.almostrealism.raytracer.camera.Camera;
-import com.almostrealism.raytracer.engine.Ray;
 
 public class PinholeCameraAbsorber implements Absorber, Camera {
 	private Clock clock;

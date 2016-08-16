@@ -30,12 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.Intersection;
-import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -604,7 +604,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	public Mesh triangulate() { return this; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(com.almostrealism.raytracer.engine.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.space.Ray)
 	 */
 	public synchronized boolean intersect(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersect(ray);
@@ -631,7 +631,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	}
 
 	/**
-	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(com.almostrealism.raytracer.engine.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.space.Ray)
 	 */
 	public synchronized Intersection intersectAt(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersectAt(ray);

@@ -16,11 +16,11 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
-import com.almostrealism.raytracer.engine.Ray;
 
 /**
   A Polynomial object represents a 3d polynomial surface.

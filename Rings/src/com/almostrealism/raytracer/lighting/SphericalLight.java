@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.lighting;
 
+import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
-import org.almostrealism.util.TransformMatrix;
 
 import com.almostrealism.raytracer.primitives.Sphere;
 

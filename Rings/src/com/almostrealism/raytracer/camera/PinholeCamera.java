@@ -16,10 +16,10 @@
 
 package com.almostrealism.raytracer.camera;
 
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.Ray;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the location, viewing direction,

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util;
+package org.almostrealism.space;
 
-import org.almostrealism.space.Vector;
 
 
 /**
