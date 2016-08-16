@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="35e94da0-3756-479b-88c3-87f9c8c09a95" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FlowTree/FlowTree.iml" afterPath="$PROJECT_DIR$/FlowTree/FlowTree.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/Rings.iml" afterPath="$PROJECT_DIR$/Rings/Rings.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Common/src/org/almostrealism/io/SpatialData.java" afterPath="$PROJECT_DIR$/Common/src/org/almostrealism/io/SpatialData.java" />
     </list>
     <ignored path="Rings-New.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,11 +41,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Matrix3DSolutionOutput.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/MatrixView/src/io/almostrealism/math/Matrix3DSolutionOutput.java">
+      <file leaf-file-name="SpatialData.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Common/src/org/almostrealism/io/SpatialData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="27" column="58" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="58" />
+            <state relative-caret-position="201">
+              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -67,8 +66,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/GraphPersist/src/io/almostrealism/enrich/Enrichment.java" />
-        <option value="$PROJECT_DIR$/Common/src/org/almostrealism/util/Help.java" />
         <option value="$PROJECT_DIR$/Common/src/org/almostrealism/html/HTMLContent.java" />
         <option value="$PROJECT_DIR$/Common/src/org/almostrealism/texture/ImageSource.java" />
         <option value="$PROJECT_DIR$/Common/src/org/almostrealism/util/Nameable.java" />
@@ -118,6 +115,8 @@
         <option value="$PROJECT_DIR$/Rings/src/com/almostrealism/gl/DisplayList.java" />
         <option value="$PROJECT_DIR$/Rings/pom.xml" />
         <option value="$PROJECT_DIR$/FlowTree/FlowTree.iml" />
+        <option value="$PROJECT_DIR$/MatrixView/src/io/almostrealism/math/Matrix3DSolutionOutput.java" />
+        <option value="$PROJECT_DIR$/Common/src/org/almostrealism/io/SpatialData.java" />
       </list>
     </option>
   </component>
@@ -768,7 +767,7 @@
       <workItem from="1471319120849" duration="528000" />
       <workItem from="1471319917941" duration="1349000" />
       <workItem from="1471321724588" duration="1709000" />
-      <workItem from="1471375789993" duration="1499000" />
+      <workItem from="1471375789993" duration="1834000" />
     </task>
     <task id="LOCAL-00001" summary="Working towards using maven.">
       <created>1471048852286</created>
@@ -1054,7 +1053,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35460000" />
+    <option name="totallyTimeSpent" value="35795000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1066,7 +1065,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.49722221" order="6" side_tool="false" content_ui="tabs" />
@@ -1174,13 +1173,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/WriteProperties.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="33" column="32" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Explorer/src/com/almostrealism/physics/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
@@ -1558,8 +1550,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MatrixView/src/io/almostrealism/math/Matrix3DSolutionOutput.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="27" column="58" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="58" />
+        <state relative-caret-position="120">
+          <caret line="26" column="38" selection-start-line="26" selection-start-column="38" selection-end-line="26" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Common/src/org/almostrealism/io/SpatialData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>

@@ -32,9 +32,9 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
+import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.util.ValueProducer;
 
-import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;

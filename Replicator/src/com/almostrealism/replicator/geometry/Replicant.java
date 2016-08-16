@@ -16,9 +16,9 @@
 
 package com.almostrealism.replicator.geometry;
 
-import com.jogamp.opengl.GL2;
+import org.almostrealism.space.BasicGeometry;
 
-import com.almostrealism.geometry.BasicGeometry;
+import com.jogamp.opengl.GL2;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.renderable.Renderable;

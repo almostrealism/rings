@@ -18,7 +18,7 @@ package com.almostrealism.replicator.transform;
 
 import java.util.Iterator;
 
-import com.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.space.BasicGeometry;
 
 public class TransformTreeNode implements Iterable<BasicGeometry> {
 	@Override

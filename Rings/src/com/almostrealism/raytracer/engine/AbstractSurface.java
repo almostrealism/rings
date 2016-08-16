@@ -26,11 +26,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 
-import com.almostrealism.geometry.BasicGeometry;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.rayshade.ShaderParameters;

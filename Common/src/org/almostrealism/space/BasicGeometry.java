@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
+package org.almostrealism.space;
 
-import org.almostrealism.space.Vector;
 import org.almostrealism.util.TransformMatrix;
 
+import com.almostrealism.geometry.Oriented;
+import com.almostrealism.geometry.Positioned;
+import com.almostrealism.geometry.Scaled;
+import com.almostrealism.geometry.Triangulatable;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.primitives.Mesh;
 

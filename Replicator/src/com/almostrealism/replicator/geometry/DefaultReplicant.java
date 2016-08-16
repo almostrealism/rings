@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.space.BasicGeometry;
+
 import com.almostrealism.raytracer.engine.Surface;
 
 public class DefaultReplicant extends Replicant implements Iterable<BasicGeometry> {
