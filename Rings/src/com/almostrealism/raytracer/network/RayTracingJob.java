@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.almostrealism.io.SpatialData;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
@@ -545,12 +546,12 @@ public class RayTracingJob implements Job, SceneLoader {
 	public Scene loadScene(String uri) throws IOException {
 		if (this.local) {
 			try (InputStream in = (new URL(uri)).openStream()) {
-				return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);
+				return SpatialData.decodeScene(in, FileDecoder.XMLEncoding, false, null);
 			}
 		} else {
 			try (InputStream in =
 					Client.getCurrentClient().getServer().loadResource(uri).getInputStream()) {
-				return FileDecoder.decodeScene(in, FileDecoder.XMLEncoding, false, null);
+				return SpatialData.decodeScene(in, FileDecoder.XMLEncoding, false, null);
 			}
 		}
 	}

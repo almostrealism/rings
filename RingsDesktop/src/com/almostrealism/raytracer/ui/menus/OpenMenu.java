@@ -28,6 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import org.almostrealism.io.SpatialData;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
@@ -109,7 +110,7 @@ public class OpenMenu extends JMenu implements EventListener, EventGenerator {
 		
 		this.openGTSSurfaceItem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {
-				openSurface(FileDecoder.GTSEncoding);
+				openSurface(SpatialData.GTSEncoding);
 			}
 		});
 	}

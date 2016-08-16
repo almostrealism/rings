@@ -27,6 +27,8 @@ package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
+import org.almostrealism.io.SpatialData;
+
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.engine.Scene;
@@ -48,7 +50,7 @@ public class PlySceneLoader implements SceneLoader {
 	 */
 	public Scene loadScene(String uri) throws IOException {
 		Scene scene = FileDecoder.decodeScene(Client.getCurrentClient().getServer().loadResource(uri),
-												FileDecoder.PLYEncoding, null);
+												SpatialData.PLYEncoding, null);
 		scene.setLights(SceneFactory.getStandard3PointLightRig(scale));
 		return scene;
 	}

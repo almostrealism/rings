@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
@@ -75,7 +76,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 					if (this.url != null) {
 						URL url = new URL(this.url + this.name);
 						
-						this.mesh = (Mesh) FileDecoder.decodeScene(url.openStream(),
+						this.mesh = (Mesh) SpatialData.decodeScene(url.openStream(),
 								this.format, false, null, this.s).getSurfaces()[0];
 					} else {
 						this.mesh = (Mesh) FileDecoder.decodeSurfaceFile(

@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
-import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 
@@ -116,7 +116,7 @@ public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {
 	}
 	
 	public void loadPieceFromGTS(int p, InputStream in) throws IOException {
-		Scene scene = FileDecoder.decodeScene(in, FileDecoder.GTSEncoding, false, null);
+		Scene scene = SpatialData.decodeScene(in, SpatialData.GTSEncoding, false, null);
 		Surface s[] = scene.getSurfaces();
 		
 		boolean piece[][][] = new boolean[this.x][this.y][this.z];
