@@ -33,7 +33,7 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
@@ -173,7 +173,7 @@ public class SaveMenu extends JMenu implements EventListener, EventGenerator {
 		if (this.scene == null)
 			return;
 		
-		final Surface surface = this.surfacePanel.getSelectedSurface();
+		final ShadableSurface surface = this.surfacePanel.getSelectedSurface();
 		
 		if (surface == null)
 			return;

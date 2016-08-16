@@ -31,26 +31,26 @@ import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 
 /**
- * A {@link SurfaceGroup} object allows {@link Surface} objects to be grouped together.
+ * A {@link SurfaceGroup} object allows {@link ShadableSurface} objects to be grouped together.
  * The properties of the {@link SurfaceGroup} object are applied to each of its children.
  * 
  * @author Mike Murray
  */
 public class SurfaceGroup extends AbstractSurface {
-	private ArrayList<Surface> surfaces;
+	private ArrayList<ShadableSurface> surfaces;
 
 	/**
 	 * Constructs a SurfaceGroup object with no Surface objects.
 	 */
 	public SurfaceGroup() {
-		surfaces = new ArrayList<Surface>();
+		surfaces = new ArrayList<ShadableSurface>();
 		setColor(new RGB(1.0, 1.0, 1.0));
 	}
 	
 	/**
 	 * Constructs a SurfaceGroup object using the Surface objects in the specified array.
 	 */
-	public SurfaceGroup(Surface surfaces[]) {
+	public SurfaceGroup(ShadableSurface surfaces[]) {
 		this();
 		this.setSurfaces(surfaces);
 	}
@@ -58,7 +58,7 @@ public class SurfaceGroup extends AbstractSurface {
 	/**
 	 * Replaces all of the Surface objects of this SurfaceGroup object with those represented by the specified Surface array.
 	 */
-	public void setSurfaces(Surface surfaces[]) {
+	public void setSurfaces(ShadableSurface surfaces[]) {
 		this.surfaces.clear();
 		
 		for (int i = 0; i < surfaces.length; i++)
@@ -69,7 +69,7 @@ public class SurfaceGroup extends AbstractSurface {
 	 * Adds the specified Surface object to this SurfaceGroup object and sets its parent
 	 * to this SurfaceGroup object (if it is an instance of AbstractSurface).
 	 */
-	public void addSurface(Surface surface) {
+	public void addSurface(ShadableSurface surface) {
 		if (surface instanceof AbstractSurface)
 			((AbstractSurface) surface).setParent(this);
 //		else if (surface instanceof AbstractSurfaceUI)
@@ -90,22 +90,22 @@ public class SurfaceGroup extends AbstractSurface {
 	}
 	
 	/**
-	 * Returns the {@link Surface} objects stored by this {@link SurfaceGroup} object as
-	 * a {@link Surface} array.
+	 * Returns the {@link ShadableSurface} objects stored by this {@link SurfaceGroup} object as
+	 * a {@link ShadableSurface} array.
 	 */
-	public Surface[] getSurfaces() {
-		return this.surfaces.toArray(new Surface[0]);
+	public ShadableSurface[] getSurfaces() {
+		return this.surfaces.toArray(new ShadableSurface[0]);
 	}
 	
 	/**
-	 * Returns the {@link Surface} object stored by this {@link SurfaceGroup} object at
+	 * Returns the {@link ShadableSurface} object stored by this {@link SurfaceGroup} object at
 	 * the specified index.
 	 */
-	public Surface getSurface(int index) {
+	public ShadableSurface getSurface(int index) {
 		return this.surfaces.get(index);
 	}
 	
-	/** {@link Surface#shade(ShaderParameters)} */
+	/** {@link ShadableSurface#shade(ShaderParameters)} */
 	public RGB shade(ShaderParameters p) {
 		RGB color = null;
 		

@@ -22,12 +22,12 @@ import java.util.Map;
 
 import org.almostrealism.space.BasicGeometry;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 public class DefaultReplicant extends Replicant implements Iterable<BasicGeometry> {
 	private Map<String, BasicGeometry> geo;
 	
-	public DefaultReplicant(Surface s) {
+	public DefaultReplicant(ShadableSurface s) {
 		geo = new HashMap<String, BasicGeometry>();
 		setGeometry(this);
 		setSurface(s);

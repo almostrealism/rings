@@ -138,7 +138,7 @@ public class RayTracingEngine {
 	 * @param monitor  ProgressMonitor instance to use.
 	 * @return  Image data.
 	 */
-	public static RGB[][] render(Surface surfaces[], Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
+	public static RGB[][] render(ShadableSurface surfaces[], Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.length + " Surfaces");
 			Settings.rayEngineOut.println("Camera: " + camera.toString());
@@ -243,28 +243,28 @@ public class RayTracingEngine {
 	 * and Lights. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public static RGB lightingCalculation(Ray r, Surface allSurfaces[], Light allLights[],
+	public static RGB lightingCalculation(Ray r, ShadableSurface allSurfaces[], Light allLights[],
 										RGB fog, double fd, double fr, ShaderParameters p) {
 		Intersection intersect = RayTracingEngine.closestIntersection(r, allSurfaces);
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		
 		// TODO  Figure out what this is for.
-		Surface surface = null;
+		ShadableSurface surface = null;
 		
 		if (intersect != null) {
 			double intersection = intersect.getClosestIntersection();
 			// r = intersect.getRay();
 			Vector point = r.pointAt(intersection);
 			
-			Surface surf = intersect.getSurface();
-			Surface otherSurf[] = allSurfaces;
+			ShadableSurface surf = intersect.getSurface();
+			ShadableSurface otherSurf[] = allSurfaces;
 			
 			for(int i = 0; i < allSurfaces.length; i++) {
 				if (surface == allSurfaces[i]) {
 					// See separateSurfaces method.
 					
-					otherSurf = new Surface[allSurfaces.length - 1];
+					otherSurf = new ShadableSurface[allSurfaces.length - 1];
 					
 					for (int j = 0; j < i; j++) 
 						otherSurf[j] = allSurfaces[j];
@@ -438,8 +438,8 @@ public class RayTracingEngine {
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static RGB lightingCalculation(Vector point, Vector rayDirection, Surface surface,
-										Surface otherSurfaces[], Light lights[], ShaderParameters p) {
+	public static RGB lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
+										ShadableSurface otherSurfaces[], Light lights[], ShaderParameters p) {
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		
 		for(int i = 0; i < lights.length; i++) {
@@ -466,10 +466,10 @@ public class RayTracingEngine {
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static RGB lightingCalculation(Vector point, Vector rayDirection, Surface surface,
-										Surface otherSurfaces[], Light light, Light otherLights[],
+	public static RGB lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
+										ShadableSurface otherSurfaces[], Light light, Light otherLights[],
 										ShaderParameters p) {
-		Surface allSurfaces[] = new Surface[otherSurfaces.length + 1];
+		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
 		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
 		allSurfaces[allSurfaces.length - 1] = surface;
 		
@@ -507,14 +507,14 @@ public class RayTracingEngine {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static RGB ambientLightingCalculation(Vector point, Vector rayDirection, Surface surface, Surface otherSurfaces[], AmbientLight light) {
+	public static RGB ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, ShadableSurface otherSurfaces[], AmbientLight light) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.print(" AmbientLight {");
 		}
 		
 		RGB color = null;
 		
-		Surface allSurfaces[] = new Surface[otherSurfaces.length + 1];
+		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
 		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
 		allSurfaces[allSurfaces.length - 1] = surface;
 		
@@ -546,7 +546,7 @@ public class RayTracingEngine {
 	 *           (null accepted).
 	 */
 	public static RGB directionalAmbientLightingCalculation(Vector point, Vector rayDirection,
-														Surface surface, Surface otherSurfaces[],
+														ShadableSurface surface, ShadableSurface otherSurfaces[],
 														DirectionalAmbientLight light, Light otherLights[],
 														ShaderParameters p) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
@@ -555,7 +555,7 @@ public class RayTracingEngine {
 		
 		RGB color = null;
 		
-		Surface allSurfaces[] = new Surface[otherSurfaces.length + 1];
+		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
 		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
 		allSurfaces[allSurfaces.length - 1] = surface;
 		
@@ -603,7 +603,7 @@ public class RayTracingEngine {
 	 * based on intensity.
 	 */
 	public static RGB pointLightingCalculation(Vector point, Vector rayDirection,
-											Surface surface, Surface otherSurfaces[],
+											ShadableSurface surface, ShadableSurface otherSurfaces[],
 											PointLight light, Light otherLights[],
 											ShaderParameters p) {
 		Vector direction = point.subtract(light.getLocation());
@@ -629,7 +629,7 @@ public class RayTracingEngine {
 	  Returns true if the point has a shadow cast on it.
 	*/
 	
-	public static boolean shadowCalculation(Vector point, Surface surfaces[], Light light) {
+	public static boolean shadowCalculation(Vector point, ShadableSurface surfaces[], Light light) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.print(" Shadow {");
 		}
@@ -781,7 +781,7 @@ public class RayTracingEngine {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, Surface surfaces[]) {
+	public static Intersection closestIntersection(Ray ray, ShadableSurface surfaces[]) {
 		Intersection intersections[] = new Intersection[surfaces.length];
 		
 		for(int i = 0; i < surfaces.length; i++) {
@@ -849,8 +849,8 @@ public class RayTracingEngine {
 	  Removes the Surface object at the specified index from the specified Surface object array and returns the new array.
 	*/
 	
-	public static Surface[] separateSurfaces(int index, Surface allSurfaces[]) {
-		Surface otherSurfaces[] = new Surface[allSurfaces.length - 1];
+	public static ShadableSurface[] separateSurfaces(int index, ShadableSurface allSurfaces[]) {
+		ShadableSurface otherSurfaces[] = new ShadableSurface[allSurfaces.length - 1];
 		
 		for (int i = 0; i < index; i++) { otherSurfaces[i] = allSurfaces[i]; }
 		for (int i = index + 1; i < allSurfaces.length; i++) { otherSurfaces[i - 1] = allSurfaces[i]; }
@@ -863,12 +863,12 @@ public class RayTracingEngine {
 	  If the specified Surface object is not matched, the whole array is returned.
 	*/
 	
-	public static Surface[] separateSurfaces(Surface surface, Surface allSurfaces[]) {
+	public static ShadableSurface[] separateSurfaces(ShadableSurface surface, ShadableSurface allSurfaces[]) {
 		for(int i = 0; i < allSurfaces.length; i++) {
 			if (surface == allSurfaces[i]) {
 				// See separateSurfaces method.
 				
-				Surface otherSurfaces[] = new Surface[allSurfaces.length - 1];
+				ShadableSurface otherSurfaces[] = new ShadableSurface[allSurfaces.length - 1];
 				
 				for (int j = 0; j < i; j++) { otherSurfaces[j] = allSurfaces[j]; }
 				for (int j = i + 1; j < allSurfaces.length; j++) { otherSurfaces[j - 1] = allSurfaces[j]; }

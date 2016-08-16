@@ -25,7 +25,7 @@ import org.almostrealism.util.Producer;
 
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**
@@ -79,7 +79,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		
 		p.addReflection();
 		
-		Surface allSurfaces[] = new Surface[p.getOtherSurfaces().length + 1];
+		ShadableSurface allSurfaces[] = new ShadableSurface[p.getOtherSurfaces().length + 1];
 		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces[i] = p.getOtherSurfaces()[i]; }
 		allSurfaces[allSurfaces.length - 1] = p.getSurface();
 		

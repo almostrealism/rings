@@ -28,7 +28,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 
@@ -117,7 +117,7 @@ public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {
 	
 	public void loadPieceFromGTS(int p, InputStream in) throws IOException {
 		Scene scene = SpatialData.decodeScene(in, SpatialData.GTSEncoding, false, null);
-		Surface s[] = scene.getSurfaces();
+		ShadableSurface s[] = scene.getSurfaces();
 		
 		boolean piece[][][] = new boolean[this.x][this.y][this.z];
 		this.models[p] = null;

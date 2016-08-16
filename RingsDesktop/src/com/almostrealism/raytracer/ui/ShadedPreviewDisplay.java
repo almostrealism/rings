@@ -35,7 +35,7 @@ import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.primitives.Sphere;
@@ -46,9 +46,9 @@ import com.almostrealism.raytracer.primitives.Sphere;
  */
 public class ShadedPreviewDisplay extends JPanel implements Runnable {
 	private class SampleSurface extends Sphere {
-		private Surface surface = new Sphere();
+		private ShadableSurface surface = new Sphere();
 		
-		public void setSurface(Surface s) {
+		public void setSurface(ShadableSurface s) {
 			this.surface = s;
 			if (this.surface == null) this.surface = new Sphere();
 		}
@@ -89,7 +89,7 @@ public class ShadedPreviewDisplay extends JPanel implements Runnable {
 		});
 	}
 	
-	public void setSurface(Surface s) { this.sample.setSurface(s); }
+	public void setSurface(ShadableSurface s) { this.sample.setSurface(s); }
 	
 	public void refresh() {
 		Thread t = new Thread(this);
@@ -100,7 +100,7 @@ public class ShadedPreviewDisplay extends JPanel implements Runnable {
 		if (this.sample != null) {
 			RenderParameters p = new RenderParameters(0, 0, w, h, w, h, 1, 1);
 			
-			RGB rgb[][] = RayTracingEngine.render(new Surface[] { this.sample },
+			RGB rgb[][] = RayTracingEngine.render(new ShadableSurface[] { this.sample },
 												this.camera, this.lights,
 												p, null);
 			this.image = GraphicsConverter.convertToAWTImage(rgb);

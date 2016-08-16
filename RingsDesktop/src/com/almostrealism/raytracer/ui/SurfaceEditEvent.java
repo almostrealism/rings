@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
   A SurfaceEditEvent object represents the event of editing a surface in the current scene.
@@ -52,13 +52,13 @@ public class SurfaceEditEvent extends SceneEditEvent implements SurfaceEvent {
   public static final int dataChangeEvent = 1 << 11;
   
   private int code = 0;
-  private Surface target;
+  private ShadableSurface target;
 	
 	/**
 	  Constructs a new SurfaceEditEvent object with the specified integer code.
 	*/
 	
-	public SurfaceEditEvent(int code, Surface target) {
+	public SurfaceEditEvent(int code, ShadableSurface target) {
 		this.code = code;
 		this.target = target;
 	}
@@ -75,7 +75,7 @@ public class SurfaceEditEvent extends SceneEditEvent implements SurfaceEvent {
 	  Returns the target of this SurfaceEditEvent.
 	*/
 	
-	public Surface getTarget() {
+	public ShadableSurface getTarget() {
 		return this.target;
 	}
 	

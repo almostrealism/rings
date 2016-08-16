@@ -24,18 +24,18 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 public class AbsorberSetRayTracer {
 	private Camera camera;
-	private Surface surfaces[];
+	private ShadableSurface surfaces[];
 	private Light lights[];
 	private int w, h;
 	
 	private ProgressDisplay display;
 	
-	public AbsorberSetRayTracer(Camera camera, Surface surfaces[], Light lights[],
+	public AbsorberSetRayTracer(Camera camera, ShadableSurface surfaces[], Light lights[],
 								int w, int h) {
 		this.camera = camera;
 		this.surfaces = surfaces;

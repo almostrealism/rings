@@ -16,20 +16,20 @@
 
 package com.almostrealism.raytracer.ui;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
   A SurfaceRemoveEvent object represents the event of removing a Surface object from the current Scene object.
 */
 
 public class SurfaceRemoveEvent extends SceneEditEvent implements SurfaceEvent {
-  private Surface target;
+  private ShadableSurface target;
 
 	/**
 	  Constructs a new SurfaceRemoveEvent object using the specified target.
 	*/
 	
-	public SurfaceRemoveEvent(Surface target) {
+	public SurfaceRemoveEvent(ShadableSurface target) {
 		this.target = target;
 	}
 	
@@ -37,7 +37,7 @@ public class SurfaceRemoveEvent extends SceneEditEvent implements SurfaceEvent {
 	  Returns the target of this SurfaceRemoveEvent object.
 	*/
 	
-	public Surface getTarget() {
+	public ShadableSurface getTarget() {
 		return this.target;
 	}
 	

@@ -31,7 +31,7 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
@@ -62,7 +62,7 @@ public class EditPolynomialDialog extends JPanel implements Dialog, EventListene
 	 * @throws IllegalArgumentException  If the specified SurfaceUI object does not wrap a Polynomial object.
 	 */
 	public EditPolynomialDialog(SurfaceUI polynomial) {
-		Surface s = polynomial.getSurface();
+		ShadableSurface s = polynomial.getSurface();
 		
 		if (s instanceof Polynomial)
 			this.poly = (Polynomial)s;

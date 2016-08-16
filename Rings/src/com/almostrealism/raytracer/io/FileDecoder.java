@@ -31,7 +31,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Resource;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 
 /**
@@ -58,7 +58,7 @@ public class FileDecoder extends SpatialData {
 	 * @throws IOException  If an IO error occurs.
 	 * @throws FileNotFoundException  If the file is not found.
 	 */
-	public static Scene decodeSceneFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException {
+	public static Scene decodeSceneFile(File file, int encoding, boolean ui, ExceptionListener listener, ShadableSurface s) throws IOException {
 		return SpatialData.decodeScene(new FileInputStream(file), encoding, ui, listener, s);
 	}
 	
@@ -73,7 +73,7 @@ public class FileDecoder extends SpatialData {
 		return SpatialData.decodeScene(res.getInputStream(), encoding, false, listener, null);
 	}
 	
-	public static Surface decodeSurfaceFile(File file, int encoding,
+	public static ShadableSurface decodeSurfaceFile(File file, int encoding,
 								boolean ui, ExceptionListener listener)
 								throws IOException {
 		return FileDecoder.decodeSurfaceFile(file, encoding, ui, listener, null);
@@ -89,18 +89,18 @@ public class FileDecoder extends SpatialData {
 	 * @throws IOException  If an IO error occurs.
 	 * @throws FileNotFoundException  If the file is not found.
 	 */
-	public static Surface decodeSurfaceFile(File file, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException {
+	public static ShadableSurface decodeSurfaceFile(File file, int encoding, boolean ui, ExceptionListener listener, ShadableSurface s) throws IOException {
 		FileInputStream fileIn = new FileInputStream(file);
 		
 		if (encoding == FileDecoder.XMLEncoding) {
 			XMLDecoder decoder = new XMLDecoder(fileIn);
 			decoder.setExceptionListener(listener);
 			
-			return ((Surface)decoder.readObject());
+			return ((ShadableSurface)decoder.readObject());
 		} else if (encoding == FileDecoder.RAWEncoding) {
 			Scene scene = FileDecoder.decodeSceneFile(file, FileDecoder.RAWEncoding, ui, listener, s);
 			
-			Surface group = new SurfaceGroup(scene.getSurfaces());
+			ShadableSurface group = new SurfaceGroup(scene.getSurfaces());
 			
 			if (ui == true) {
 				System.out.println("FileDecoder: UI mode no longer supported.");

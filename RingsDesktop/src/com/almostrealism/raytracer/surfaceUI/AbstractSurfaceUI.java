@@ -162,7 +162,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	/**
 	 * Returns the underlying AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
-	public Surface getSurface() {
+	public ShadableSurface getSurface() {
 		return this.surface;
 	}
 	

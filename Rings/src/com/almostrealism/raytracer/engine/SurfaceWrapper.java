@@ -27,5 +27,5 @@ package com.almostrealism.raytracer.engine;
  * @author Mike Murray
  */
 public interface SurfaceWrapper {
-	public Surface getSurface();
+	public ShadableSurface getSurface();
 }

@@ -38,15 +38,15 @@ import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.primitives.Mesh;
 
 /**
- * {@link AbstractSurface} is an abstract implementation of {@link Surface} that takes
- * care of all of the standard methods of {@link Surface} that are shared by most
- * {@link Surface} implementations in the same way. By default the location is at the
+ * {@link AbstractSurface} is an abstract implementation of {@link ShadableSurface} that takes
+ * care of all of the standard methods of {@link ShadableSurface} that are shared by most
+ * {@link ShadableSurface} implementations in the same way. By default the location is at the
  * origin, the size is 1.0, and the color is black. Also, an {@link AbstractSurface}
  * uses a {@link DiffuseShader} by default.
  * 
  * @author  Mike Murray
  */
-public abstract class AbstractSurface extends BasicGeometry implements Surface {
+public abstract class AbstractSurface extends BasicGeometry implements ShadableSurface {
 	private boolean shadeFront, shadeBack;
 
 	private RGB color;

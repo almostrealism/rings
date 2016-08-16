@@ -30,7 +30,7 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.primitives.Mesh;
@@ -57,7 +57,7 @@ public class SpatialData {
 	 * The specified ExceptionListener is notified if an exception occurs when using an XMLDecoder.
 	 * This method returns null if the encoding is not supported.
 	 */
-	public static Scene decodeScene(InputStream fileIn, int encoding, boolean ui, ExceptionListener listener, Surface s) throws IOException {
+	public static Scene decodeScene(InputStream fileIn, int encoding, boolean ui, ExceptionListener listener, ShadableSurface s) throws IOException {
 		if (encoding == FileDecoder.XMLEncoding) {
 			XMLDecoder decoder = new XMLDecoder(fileIn);
 			decoder.setExceptionListener(listener);
@@ -65,7 +65,7 @@ public class SpatialData {
 			Scene scene = (Scene)decoder.readObject();
 
 			if (!ui) {
-				Surface sr[] = scene.getSurfaces();
+				ShadableSurface sr[] = scene.getSurfaces();
 				for (int i = 0; i < sr.length; i++)
 					if (sr[i] instanceof SurfaceWrapper)
 						sr[i] = ((SurfaceWrapper)sr[i]).getSurface();
@@ -194,7 +194,7 @@ public class SpatialData {
 					}
 
 					if (broken == false) {
-						Surface newSurface = null;
+						ShadableSurface newSurface = null;
 
 						newSurface = new Triangle(points[data[0]], points[data[1]], points[data[2]]);
 						((AbstractSurface)newSurface).setColor(new RGB(1.0, 1.0, 1.0));
@@ -246,7 +246,7 @@ public class SpatialData {
 							Vector p2 = new Vector(data[3], data[4], data[5]);
 							Vector p3 = new Vector(data[6], data[7], data[8]);
 
-							Surface newSurface = null;
+							ShadableSurface newSurface = null;
 
 							newSurface = new Triangle(p1, p2, p3);
 							((AbstractSurface)newSurface).setColor(new RGB(1.0, 1.0, 1.0));
@@ -359,7 +359,7 @@ public class SpatialData {
 				//				return new Scene(sr);
 			}
 
-			return new Scene(new Surface[] {m});
+			return new Scene(new ShadableSurface[] {m});
 		} else if (encoding == PLYEncoding) {
 			Mesh m = new Mesh();
 			if (s != null && s instanceof Mesh) {
@@ -421,7 +421,7 @@ public class SpatialData {
 				//				return new Scene(sr);
 			}
 
-			return new Scene(new Surface[] {m});
+			return new Scene(new ShadableSurface[] {m});
 		} else {
 			return null;
 		}

@@ -19,7 +19,7 @@ package com.almostrealism.replicator.geometry;
 import org.almostrealism.space.BasicGeometry;
 
 import com.jogamp.opengl.GL2;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableGeometry;
@@ -27,14 +27,14 @@ import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 /**
  * A {@link Replicant} combines a set of {@link BasicGeometry}s
- * with a {@link Surface}. The resulting {@link SurfaceGroup} is
- * a collection of {@link Surface}s for each {@link BasicGeometry},
+ * with a {@link ShadableSurface}. The resulting {@link SurfaceGroup} is
+ * a collection of {@link ShadableSurface}s for each {@link BasicGeometry},
  * with the transformations of the {@link BasicGeometry} applied.
  * 
  * @author  Michael Murray
  */
 public class Replicant extends SurfaceGroup implements Renderable {
-	private Surface surface;
+	private ShadableSurface surface;
 	private Renderable delegate;
 	private Iterable<BasicGeometry> geo;
 	
@@ -44,7 +44,7 @@ public class Replicant extends SurfaceGroup implements Renderable {
 		setGeometry(n);
 	}
 	
-	public void setSurface(Surface s) {
+	public void setSurface(ShadableSurface s) {
 		this.surface = s;
 		this.delegate = RenderableSurfaceFactory.createRenderableSurface(s);
 	}

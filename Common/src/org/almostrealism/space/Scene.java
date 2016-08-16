@@ -18,7 +18,7 @@ package org.almostrealism.space;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**
@@ -29,7 +29,7 @@ public class Scene implements Cloneable {
   private Camera camera;
   
   private Light lights[];
-  private Surface surfaces[];
+  private ShadableSurface surfaces[];
 
 	/**
 	 * Constructs a Scene object with a default Camera object and no Light or Surface objects.
@@ -38,14 +38,14 @@ public class Scene implements Cloneable {
 		this.setCamera(new PinholeCamera());
 		
 		this.setLights(new Light[0]);
-		this.setSurfaces(new Surface[0]);
+		this.setSurfaces(new ShadableSurface[0]);
 	}
 	
 	/**
 	 * Constructs a Scene object with a default Camera object, no Light objects,
 	 * and the surfaces represented by the specified Surface array.
 	 */
-	public Scene(Surface surfaces[]) {
+	public Scene(ShadableSurface surfaces[]) {
 		this.setCamera(new PinholeCamera());
 		
 		this.setLights(new Light[0]);
@@ -55,7 +55,7 @@ public class Scene implements Cloneable {
 	/**
 	 * Constructs a Scene object with the specified Camera object, Light array, and Surface array.
 	 */
-	public Scene(Camera camera, Light lights[], Surface surfaces[]) {
+	public Scene(Camera camera, Light lights[], ShadableSurface surfaces[]) {
 		this.setCamera(camera);
 		
 		this.setLights(lights);
@@ -102,13 +102,13 @@ public class Scene implements Cloneable {
 	 * Replaces all of the Surface objects of this Scene object with those represented
 	 * by the specified Surface array.
 	 */
-	public void setSurfaces(Surface surfaces[]) { this.surfaces = surfaces; }
+	public void setSurfaces(ShadableSurface surfaces[]) { this.surfaces = surfaces; }
 	
 	/**
 	 * Adds the specified Surface object to this Scene object.
 	 */
-	public void addSurface(Surface surface) {
-		Surface newSurfaces[] = new Surface[this.surfaces.length + 1];
+	public void addSurface(ShadableSurface surface) {
+		ShadableSurface newSurfaces[] = new ShadableSurface[this.surfaces.length + 1];
 		
 		System.arraycopy(this.surfaces, 0, newSurfaces, 0, this.surfaces.length);
 		newSurfaces[newSurfaces.length - 1] = surface;
@@ -120,7 +120,7 @@ public class Scene implements Cloneable {
 	 * Removes the Surface object stored at the specified index from this Scene object.
 	 */
 	public void removeSurface(int index) {
-		Surface newSurfaces[] = new Surface[this.surfaces.length - 1];
+		ShadableSurface newSurfaces[] = new ShadableSurface[this.surfaces.length - 1];
 		
 		System.arraycopy(this.surfaces, 0, newSurfaces, 0, index);
 		if (index != this.surfaces.length - 1) {
@@ -148,12 +148,12 @@ public class Scene implements Cloneable {
 	/**
 	 * Returns the Surface objects stored by this Scene object as a Surface array.
 	 */
-	public Surface[] getSurfaces() { return this.surfaces; }
+	public ShadableSurface[] getSurfaces() { return this.surfaces; }
 	
 	/**
 	 * Returns the Surface object stored by this Scene object at the specified index.
 	 */
-	public Surface getSurface(int index) { return this.surfaces[index]; }
+	public ShadableSurface getSurface(int index) { return this.surfaces[index]; }
 	
 	/**
 	 * @return  A Scene object that stores the same Camera, Lights, and Surfaces as this Scene object.

@@ -35,7 +35,7 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceEditEvent;
@@ -277,7 +277,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
 			
 			if (this.scene != null) {
 				for(int i = 0; i < this.scene.getSurfaces().length; i++) {
-					Surface surface = this.scene.getSurface(i);
+					ShadableSurface surface = this.scene.getSurface(i);
 					
 					if (surface instanceof SurfaceUI) {
 						((SurfaceUI)surface).draw(g, this.scene.getCamera());

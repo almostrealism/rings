@@ -38,7 +38,7 @@ public class SpacePartition extends SurfaceGroup {
 		private double offset;
 		private Node left, right;
 		private int surfaces[];
-		private Surface scache[];
+		private ShadableSurface scache[];
 		private int depth;
 		private double orient;
 		
@@ -68,7 +68,7 @@ public class SpacePartition extends SurfaceGroup {
 		public int[] getSurfaces() { return this.surfaces; }
 		
 		public void add(int s) {
-			Surface sr = SpacePartition.this.getSurface(s);
+			ShadableSurface sr = SpacePartition.this.getSurface(s);
 			
 			if (this.depth >= this.maxDepth || sr instanceof Triangle == false) {
 				this.addSurface(s);
@@ -132,7 +132,7 @@ public class SpacePartition extends SurfaceGroup {
 				this.surfaces = newSurfaces;
 			}
 			
-			this.scache = new Surface[this.surfaces.length];
+			this.scache = new ShadableSurface[this.surfaces.length];
 		}
 		
 		public Node nextNode() {

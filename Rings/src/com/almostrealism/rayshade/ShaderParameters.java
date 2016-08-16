@@ -23,7 +23,7 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 
@@ -38,8 +38,8 @@ public class ShaderParameters extends Hashtable {
   private Vector lightDirection;
   private Light light;
   private Light otherLights[];
-  private Surface surface;
-  private Surface otherSurfaces[];
+  private ShadableSurface surface;
+  private ShadableSurface otherSurfaces[];
   
   public RGB fogColor;
   public double fogRatio, fogDensity;
@@ -59,7 +59,7 @@ public class ShaderParameters extends Hashtable {
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
 	public ShaderParameters(Vector point, Vector viewerDirection, Vector lightDirection,
-			Light light, Light otherLights[], Surface surface, Surface otherSurfaces[]) {
+			Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
 		this.point = point;
 		this.viewerDirection = viewerDirection;
 		this.lightDirection = lightDirection;
@@ -72,7 +72,7 @@ public class ShaderParameters extends Hashtable {
 	}
 	
 	public ShaderParameters(Vector point, Vector viewerDirection, Vector lightDirection,
-			Light light, Light otherLights[], Surface otherSurfaces[]) {
+			Light light, Light otherLights[], ShadableSurface otherSurfaces[]) {
 		this(point, viewerDirection, lightDirection, light, otherLights, null, otherSurfaces);
 	}
 	
@@ -140,24 +140,24 @@ public class ShaderParameters extends Hashtable {
 	/**
 	 * @param surface  The new Surface object.
 	 */
-	public void setSurface(Surface surface) { this.surface = surface; }
+	public void setSurface(ShadableSurface surface) { this.surface = surface; }
 	
 	/**
 	 * @return  The Surface object to be shaded.
 	 */
-	public Surface getSurface() { return this.surface; }
+	public ShadableSurface getSurface() { return this.surface; }
 	
 	/**
 	 * Sets the other Surfaces to those stored in the specified array.
 	 * 
 	 * @param s  Array of Surface objects to use.
 	 */
-	public void setOtherSurfaces(Surface s[]) { this.otherSurfaces = s; }
+	public void setOtherSurfaces(ShadableSurface s[]) { this.otherSurfaces = s; }
 	
 	/**
 	 * @return  An array of other Surface objects in the scene.
 	 */
-	public Surface[] getOtherSurfaces() { return this.otherSurfaces; }
+	public ShadableSurface[] getOtherSurfaces() { return this.otherSurfaces; }
 	
 	public Light[] getAllLights() {
 		Light l[] = new Light[this.otherLights.length + 1];

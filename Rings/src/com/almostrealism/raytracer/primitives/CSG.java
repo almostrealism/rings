@@ -22,7 +22,7 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 
@@ -74,7 +74,7 @@ public class CSG extends AbstractSurface {
     /**
      * This method calls intersectAt to determine the value to return.
      * 
-     * @see com.almostrealism.raytracer.engine.Surface#intersect(com.almostrealism.raytracer.engine.Ray)
+     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(com.almostrealism.raytracer.engine.Ray)
      */
     public boolean intersect(Ray ray) {
 		if (this.intersectAt(ray).getIntersections().length <= 0)
@@ -84,13 +84,13 @@ public class CSG extends AbstractSurface {
     }
 
     /**
-     * @see com.almostrealism.raytracer.engine.Surface#intersectAt(com.almostrealism.raytracer.engine.Ray)
+     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(com.almostrealism.raytracer.engine.Ray)
      */
     public Intersection intersectAt(Ray ray) {
     		ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
-            return RayTracingEngine.closestIntersection(ray, new Surface[] {this.sa, this.sb});
+            return RayTracingEngine.closestIntersection(ray, new ShadableSurface[] {this.sa, this.sb});
         } else if (this.type == CSG.DIFFERENCE) {
             if (this.inverted) {
                 double scale[] = this.sb.getScaleCoefficients();
@@ -170,7 +170,7 @@ public class CSG extends AbstractSurface {
             if (a.length < 0) return new Intersection(ray, this, new double[0]);
             double b[] = this.sb.intersectAt((Ray)ray.clone()).getIntersections();
             
-            Surface s;
+            ShadableSurface s;
             
             double ia[] = this.interval(a);
             double ib[] = this.interval(b);

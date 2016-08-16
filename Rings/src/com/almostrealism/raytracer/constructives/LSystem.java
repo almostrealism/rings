@@ -25,7 +25,7 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.util.TransformMatrix;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * @author Mike Murray
@@ -97,7 +97,7 @@ public class LSystem {
 		return this.generate(l, --itr);
 	}
 	
-	public Surface[] generate(Object data[], Vector d) {
+	public ShadableSurface[] generate(Object data[], Vector d) {
 		List s = new ArrayList();
 		
 		double dl = d.length();
@@ -176,7 +176,7 @@ public class LSystem {
 			base = next;
 		}
 		
-		return (Surface[]) s.toArray(new Surface[0]);
+		return (ShadableSurface[]) s.toArray(new ShadableSurface[0]);
 	}
 	
 	public static String print(Object data[]) {

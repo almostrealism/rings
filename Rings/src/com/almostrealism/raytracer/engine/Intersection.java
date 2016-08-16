@@ -20,7 +20,7 @@ package com.almostrealism.raytracer.engine;
  * An Intersection object stores data for the intersections between a ray and a surface.
  */
 public class Intersection {
-  private Surface surface;
+  private ShadableSurface surface;
   private Ray ray;
   
   private int closest = -1;
@@ -30,7 +30,7 @@ public class Intersection {
 	 * Constructs a new Intersection object that represents an intersection between the specified
 	 * Ray and Surface objects at the specified points along the ray represented by the Ray object.
 	 */
-	public Intersection(Ray ray, Surface surface, double intersections[]) {
+	public Intersection(Ray ray, ShadableSurface surface, double intersections[]) {
 		this.ray = ray;
 		this.surface = surface;
 		
@@ -45,7 +45,7 @@ public class Intersection {
 	/**
 	 * @return  The Surface object stored by this Intersection object.
 	 */
-	public Surface getSurface() { return this.surface; }
+	public ShadableSurface getSurface() { return this.surface; }
 	
 	/**
 	 * @return  The intersections stored by this Intersection object.

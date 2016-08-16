@@ -40,7 +40,7 @@ import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.Receptor;
 import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
@@ -162,7 +162,7 @@ public class Replicator {
 		}
 	}
 	
-	public void addLayer(String name, Surface s) { model.addLayer(name, s); }
+	public void addLayer(String name, ShadableSurface s) { model.addLayer(name, s); }
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	

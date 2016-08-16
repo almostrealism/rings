@@ -18,10 +18,10 @@ package com.almostrealism.raytracer.ui;
 
 import org.almostrealism.swing.Event;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /** A SurfaceEvent object represents an event that targets a surface. */
 public interface SurfaceEvent extends Event {
 	/** Returns the target of this SurfaceEvent object. */
-	public Surface getTarget();
+	public ShadableSurface getTarget();
 }

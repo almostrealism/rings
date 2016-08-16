@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.almostrealism.space;
 
-package com.almostrealism.gl;
+import com.almostrealism.raytracer.engine.Intersection;
+import com.almostrealism.raytracer.engine.Ray;
 
-import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.renderable.RenderableSurfaceFactory;
-
-public class SurfaceCanvas extends DefaultGLCanvas {
-	public SurfaceCanvas() { }
+/**
+ * @author  Michael Murray
+ */
+public interface Intersectable {
+	/** Returns true if the ray intersects the 3d surface in real space. */
+	public boolean intersect(Ray ray);
 	
-	public void add(ShadableSurface s) {
-		addSurface(s);
-	}
-	
-	public void addSurface(ShadableSurface s) {
-		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
-	}
+	/**
+	 * Returns an Intersection object that represents the values for t that solve
+	 * the vector equation p = o + t * d where p is a point of intersection of
+	 * the specified ray and the surface.
+	 */
+	public Intersection intersectAt(Ray ray);
 }

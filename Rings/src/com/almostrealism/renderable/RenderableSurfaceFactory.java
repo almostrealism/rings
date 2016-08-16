@@ -16,11 +16,11 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Mesh;
 
 public class RenderableSurfaceFactory {
-	public static Renderable createRenderableSurface(Surface s) {
+	public static Renderable createRenderableSurface(ShadableSurface s) {
 		if (s instanceof Renderable) {
 			return (Renderable) s;
 		} else if (s instanceof Mesh) {

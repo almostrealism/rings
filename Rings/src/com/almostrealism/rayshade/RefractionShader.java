@@ -25,7 +25,7 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 // TODO  Fix refraction algorithm.
@@ -93,7 +93,7 @@ public class RefractionShader implements Shader, Editable {
 	}
 	
 	public RGB shade(Vector point, Vector viewerDirection, Vector lightDirection,
-				Light light, Light otherLights[], Surface surface, Surface otherSurfaces[], Vector n,
+				Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[], Vector n,
 				ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
@@ -143,7 +143,7 @@ public class RefractionShader implements Shader, Editable {
 		// if (entering) d.multiplyBy(-1.0);
 		Ray r = new Ray(point, d);
 		
-		Surface allSurfaces[] = new Surface[p.getOtherSurfaces().length + 1];
+		ShadableSurface allSurfaces[] = new ShadableSurface[p.getOtherSurfaces().length + 1];
 		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces[i] = otherSurfaces[i]; }
 		allSurfaces[allSurfaces.length - 1] = surface;
 		

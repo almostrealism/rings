@@ -16,20 +16,20 @@
 
 package com.almostrealism.raytracer.ui;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
   A SurfaceAddEvent object represents the event of adding a new surface to the current scene.
 */
 
 public class SurfaceAddEvent extends SceneEditEvent implements SurfaceEvent {
-  private Surface target;
+  private ShadableSurface target;
 
 	/**
 	  Constructs a new SurfaceAddEvent object with the specified target.
 	*/
 	
-	public SurfaceAddEvent(Surface target) {
+	public SurfaceAddEvent(ShadableSurface target) {
 		this.target = target;
 	}
 	
@@ -37,7 +37,7 @@ public class SurfaceAddEvent extends SceneEditEvent implements SurfaceEvent {
 	  Returns the target of this SurfaceAddEvent object.
 	*/
 	
-	public Surface getTarget() {
+	public ShadableSurface getTarget() {
 		return this.target;
 	}
 	

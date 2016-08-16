@@ -34,7 +34,7 @@ import java.util.Properties;
 
 import com.almostrealism.flow.Message;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.network.JobProducer;
 
@@ -134,7 +134,7 @@ public class RenderingClient implements Runnable {
 				
 				if (time > this.lastTime) {
 					while (b.hasNext()) {
-						Surface sr = (Surface)b.next();
+						ShadableSurface sr = (ShadableSurface)b.next();
 						s.addSurface(sr);
 					}
 					

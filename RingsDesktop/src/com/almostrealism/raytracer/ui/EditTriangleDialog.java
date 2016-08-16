@@ -31,7 +31,7 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import org.almostrealism.swing.panels.EditVectorPanel;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 
@@ -60,7 +60,7 @@ public class EditTriangleDialog extends JPanel implements Dialog, EventListener,
   	 * @throws IllegalArgumentException  If the specified SurfaceUI object does not wrap a Triangle object.
   	 */
 	public EditTriangleDialog(SurfaceUI triangle) {
-		Surface s = triangle.getSurface();
+		ShadableSurface s = triangle.getSurface();
 		
 		if (s instanceof Triangle)
 			this.tri = (Triangle)s;

@@ -35,7 +35,7 @@ import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
@@ -192,7 +192,7 @@ public class OpenMenu extends JMenu implements EventListener, EventGenerator {
 					CustomExceptionListener listener = new CustomExceptionListener();
 					
 					try {
-						Surface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
+						ShadableSurface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
 						scene.addSurface(newSurface);
 						
 						if (handler != null) handler.fireEvent(new SurfaceAddEvent(newSurface));

@@ -29,7 +29,7 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 
@@ -58,7 +58,7 @@ public class EditPlaneDialog extends JPanel implements Dialog, EventListener, Ev
 	public EditPlaneDialog(SurfaceUI plane) {
 		super(new java.awt.BorderLayout());
 		
-		Surface s = plane.getSurface();
+		ShadableSurface s = plane.getSurface();
 		
 		if (s instanceof Plane)
 			this.plane = (Plane)plane.getSurface();

@@ -30,7 +30,7 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
@@ -88,7 +88,7 @@ public class FileEncoder {
 	 * and saves the encoded data in the file represented by the specified File object.
 	 * If the encoding code is not recognized, the method returns.
 	 */
-	public static void encodeSurfaceFile(Surface surface, File file, int encoding) throws IOException {
+	public static void encodeSurfaceFile(ShadableSurface surface, File file, int encoding) throws IOException {
 		if (file.exists() != true) {
 			file.createNewFile();
 		}

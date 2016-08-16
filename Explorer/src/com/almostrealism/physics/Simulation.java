@@ -62,7 +62,7 @@ import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
@@ -151,7 +151,7 @@ public class Simulation extends Scene implements Runnable {
 			s.setSleepEachFrame(false);
 			
 			Iterator b = s.loadProperties(p).iterator();
-			while (b.hasNext()) s.addSurface((Surface)b.next());
+			while (b.hasNext()) s.addSurface((ShadableSurface)b.next());
 		} else {
 			System.out.println("Invalid argument: " + command);
 			System.exit(1);
@@ -230,7 +230,7 @@ public class Simulation extends Scene implements Runnable {
 		
 		for (int i = 0; i < bodies.length; i++) {
 			this.bodies[i] = bodies[i].getState();
-			if (bodies[i] instanceof Surface) super.addSurface((Surface)bodies[i]);
+			if (bodies[i] instanceof ShadableSurface) super.addSurface((ShadableSurface)bodies[i]);
 		}
 		
 		this.sleep = true;
@@ -341,7 +341,7 @@ public class Simulation extends Scene implements Runnable {
 	 * @throws IllegalArgumentException  If any of the Surface objects in the specified array
 	 *                                   are not instances of RigidBody.
 	 */
-	public void setSurfaces(Surface s[]) {
+	public void setSurfaces(ShadableSurface s[]) {
 		RigidBody.State newBodies[] = new RigidBody.State[s.length];
 		
 		for (int i = 0; i < s.length; i++) {
@@ -359,7 +359,7 @@ public class Simulation extends Scene implements Runnable {
 	 * 
 	 * @throws IllegalArgumentException  If the Surface object specified is not an instance of RigidBody.
 	 */
-	public void addSurface(Surface s) {
+	public void addSurface(ShadableSurface s) {
 		if (s instanceof RigidBody == false) throw new IllegalArgumentException("Illegal argument: " + s);
 		
 		RigidBody.State newBodies[] = new RigidBody.State[this.bodies.length + 1];

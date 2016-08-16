@@ -38,7 +38,7 @@ import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.SpacePartition;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceWrapper;
 import com.almostrealism.raytracer.io.FileDecoder;
 
@@ -54,12 +54,12 @@ import com.almostrealism.raytracer.io.FileDecoder;
 public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	private static RGB white = new RGB(1.0, 1.0, 1.0);
 	
-	public static class MeshFile implements SurfaceWrapper, Surface {
+	public static class MeshFile implements SurfaceWrapper, ShadableSurface {
 		private String name;
 		private int format;
 		private String url;
 		private Mesh mesh;
-		private Surface s;
+		private ShadableSurface s;
 		
 		public void setFile(String f) { this.name = f; }
 		public String getFile() { return this.name; }
@@ -68,9 +68,9 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 		public void setURL(String url) { this.url = url; }
 		public String getURL() { return this.url; }
 		
-		public void setSurface(Surface s) { this.s = s; }
+		public void setSurface(ShadableSurface s) { this.s = s; }
 		
-		public Surface getSurface() {
+		public ShadableSurface getSurface() {
 			if (this.mesh == null) {
 				try {
 					if (this.url != null) {
@@ -604,7 +604,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	public Mesh triangulate() { return this; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.engine.Surface#intersect(com.almostrealism.raytracer.engine.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(com.almostrealism.raytracer.engine.Ray)
 	 */
 	public synchronized boolean intersect(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersect(ray);
@@ -631,7 +631,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	}
 
 	/**
-	 * @see com.almostrealism.raytracer.engine.Surface#intersectAt(com.almostrealism.raytracer.engine.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(com.almostrealism.raytracer.engine.Ray)
 	 */
 	public synchronized Intersection intersectAt(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersectAt(ray);
@@ -700,7 +700,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	/**
 	 * Does nothing.
 	 */
-	public void setSurfaces(Surface surfaces[]) {}
+	public void setSurfaces(ShadableSurface surfaces[]) {}
 	
 //	/**
 //	 * Adds the specified Surface object to the list of triangles stored by this Mesh object.
@@ -709,7 +709,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 //	 * 
 //	 * @throws IllegalArgumentException  If the specified Surface object is not a Triangle object.
 //	 */
-	public void addSurface(Surface s) {
+	public void addSurface(ShadableSurface s) {
 //		if (s instanceof Triangle) {
 //			this.triangles.add((Triangle)s);
 //			((Triangle)s).setParent(this);
@@ -740,7 +740,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 //	/**
 //	 * @return  An array of Surface objects containing the Triangle objects stored by this Mesh object.
 //	 */
-	public Surface[] getSurfaces() {
+	public ShadableSurface[] getSurfaces() {
 		return null;
 //		Triangle t[] = this.getTriangles();
 //		
@@ -752,7 +752,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 	/**
 	 * @return  The Triangle object stored by this Mesh object with the specified index.
 	 */
-	public Surface getSurface(int index) { return this.getTriangle(index, false); }
+	public ShadableSurface getSurface(int index) { return this.getTriangle(index, false); }
 	
 	public Object encode() {
 		if (this.file != null) {

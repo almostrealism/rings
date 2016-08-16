@@ -35,7 +35,7 @@ import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
@@ -134,7 +134,7 @@ public class ImportMenu extends JMenu implements EventListener, EventGenerator {
 					try {
 						Scene newScene = FileDecoder.decodeSceneFile(fileChooser.getSelectedFile(), encoding, true, listener);
 						Light l[] = newScene.getLights();
-						Surface s[] = newScene.getSurfaces();
+						ShadableSurface s[] = newScene.getSurfaces();
 						
 						if (ImportMenu.this.scene != null) {
 							for (int i = 0; i < l.length; i++) ImportMenu.this.scene.addLight(l[i]);
@@ -193,7 +193,7 @@ public class ImportMenu extends JMenu implements EventListener, EventGenerator {
 					CustomExceptionListener listener = new CustomExceptionListener();
 					
 					try {
-						Surface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
+						ShadableSurface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
 						scene.addSurface(newSurface);
 						
 						if (handler != null) handler.fireEvent(new SurfaceAddEvent(newSurface));

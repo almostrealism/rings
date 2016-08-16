@@ -30,7 +30,7 @@ import com.almostrealism.raytracer.engine.*;
  * The SurfaceUI interface is implemented by classes that represent a Surface object that can be used
  * in an application with a user interface.
  */
-public interface SurfaceUI extends Surface, SurfaceWrapper {
+public interface SurfaceUI extends ShadableSurface, SurfaceWrapper {
 	/**
 	 * Sets the name of this SurfaceUI object to the name specified.
 	 */

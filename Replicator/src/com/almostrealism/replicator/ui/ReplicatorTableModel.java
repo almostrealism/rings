@@ -24,7 +24,7 @@ import javax.swing.table.AbstractTableModel;
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 
@@ -44,7 +44,7 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		modelNames = new ArrayList<String>();
 	}
 	
-	public void addLayer(String name, Surface s) {
+	public void addLayer(String name, ShadableSurface s) {
 		DefaultReplicant r = new DefaultReplicant(s);
 		r.put(LEFT, new BasicGeometry());
 		r.put(RIGHT, new BasicGeometry());

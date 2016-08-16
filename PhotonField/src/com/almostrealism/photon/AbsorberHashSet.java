@@ -52,7 +52,7 @@ import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.Ray;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**
@@ -61,7 +61,7 @@ import com.almostrealism.raytracer.lighting.Light;
  * 
  * @author Mike Murray
  */
-public class AbsorberHashSet extends HashSet implements AbsorberSet, Surface, Colorable {
+public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSurface, Colorable {
 	private interface SetListener { public void noteUpdate(); }
 	
 	public static class StoredItem {
@@ -823,7 +823,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, Surface, Co
 		RayTracingEngine.premultiplyIntensity = false;
 		
 		AbsorberSetRayTracer tracer =
-				new AbsorberSetRayTracer(camera, new Surface[] {this},
+				new AbsorberSetRayTracer(camera, new ShadableSurface[] {this},
 										(Light[]) lights.toArray(new Light[0]),
 										w, h);
 		

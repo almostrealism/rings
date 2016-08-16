@@ -44,7 +44,7 @@ import org.almostrealism.texture.TextureFactory;
 import com.almostrealism.rayshade.ShaderFactory;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.ShaderEditPanel;
@@ -146,7 +146,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 		
 		this.surfaceList.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
 			public void valueChanged(javax.swing.event.TreeSelectionEvent event) {
-				Surface surface = getSelectedSurface();
+				ShadableSurface surface = getSelectedSurface();
 				
 				if (surface == null) {
 					((java.awt.CardLayout)editPanel.getLayout()).show(editPanel, "blank");
@@ -247,7 +247,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 		
 		this.removeButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {
-				Surface surface = null;
+				ShadableSurface surface = null;
 				boolean removed = false;
 				
 				MutableTreeNode selectedNode = (MutableTreeNode)surfaceList.getLastSelectedPathComponent();
@@ -332,13 +332,13 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 	/**
 	 * Returns the currently selected Surface object. If nothing is selected, null is returned.
 	 */
-	public Surface getSelectedSurface() {
+	public ShadableSurface getSelectedSurface() {
 		MutableTreeNode node = (MutableTreeNode)this.surfaceList.getLastSelectedPathComponent();
 		
 		if (node == null || !(node instanceof SurfaceTreeNode))
 			return null;
 		
-		Surface surface = ((SurfaceTreeNode)node).getSurface();
+		ShadableSurface surface = ((SurfaceTreeNode)node).getSurface();
 		
 		return surface;
 	}
@@ -349,14 +349,14 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 	 */
 	public SurfaceGroup getSelectedGroup() {
 		MutableTreeNode node = (MutableTreeNode)this.surfaceList.getLastSelectedPathComponent();
-		Surface surface = this.getSelectedSurface();
+		ShadableSurface surface = this.getSelectedSurface();
 		
 		if (surface == null) {
 			return null;
 		} else if (surface instanceof SurfaceGroup) {
 			return (SurfaceGroup)surface;
 		} else if (surface instanceof SurfaceUI) {
-			Surface s = ((SurfaceUI)surface).getSurface();
+			ShadableSurface s = ((SurfaceUI)surface).getSurface();
 			if (s instanceof SurfaceGroup) return (SurfaceGroup) s;
 		}
 		
@@ -365,7 +365,7 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 		if (parent == null || !(parent instanceof SurfaceTreeNode))
 			return null;
 		
-		Surface parentSurface = ((SurfaceTreeNode)parent).getSurface();
+		ShadableSurface parentSurface = ((SurfaceTreeNode)parent).getSurface();
 		
 		if (parentSurface instanceof SurfaceGroup)
 			return (SurfaceGroup)parentSurface;

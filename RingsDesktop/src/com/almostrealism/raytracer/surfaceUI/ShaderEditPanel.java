@@ -37,7 +37,7 @@ import org.almostrealism.util.EditableFactory;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.rayshade.ShaderSet;
-import com.almostrealism.raytracer.engine.Surface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.ui.AddDialog;
 import com.almostrealism.raytracer.ui.ExpandedEditPanel;
 import com.almostrealism.raytracer.ui.ShadedPreviewDisplay;
@@ -138,7 +138,7 @@ public class ShaderEditPanel extends ExpandedEditPanel {
 		this.updateDisplay();
 	}
 	
-	public void setSurface(Surface s) { this.previewPanel.setSurface(s); }
+	public void setSurface(ShadableSurface s) { this.previewPanel.setSurface(s); }
 	
 	/**
 	 * Updates the tree of Editable objects displayed by this panel.

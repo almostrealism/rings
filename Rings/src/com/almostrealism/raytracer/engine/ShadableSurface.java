@@ -22,17 +22,18 @@
 
 package com.almostrealism.raytracer.engine;
 
+import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shadable;
 
 /**
- * The {@link Surface} interface is implemented by any 3d object which may be
+ * The {@link ShadableSurface} interface is implemented by any 3d object which may be
  * intersected by a 3d ray. These objects must supply methods for calculating
  * ray-surface intersections.
  */
-public interface Surface extends Shadable {
+public interface ShadableSurface extends Intersectable, Shadable {
 	/**
 	 * Returns true if the front side of this Surface object should be shaded.
 	 * The "front side" is the side that the Vector object returned by the
@@ -58,16 +59,4 @@ public interface Surface extends Shadable {
 	 * represented by the specified Vector object. 
 	 */
 	public Vector getNormalAt(Vector point);
-	
-	/**
-	 * Returns true if the ray intersects the 3d surface in real space.
-	 */
-	public boolean intersect(Ray ray);
-	
-	/**
-	 * Returns an Intersection object that represents the values for t that solve the vector
-	 * equation p = o + t * d where p is a point of intersection of the specified ray and
-	 * the surface.
-	 */
-	public Intersection intersectAt(Ray ray);
 }
