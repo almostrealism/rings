@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.swing.Event;
@@ -50,7 +51,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
-import com.almostrealism.raytracer.engine.Scene;
 
 
 /**

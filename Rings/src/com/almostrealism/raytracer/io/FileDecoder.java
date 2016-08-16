@@ -27,10 +27,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Resource;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 
@@ -38,7 +38,7 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
  * The FileDecoder class provides static methods for decoding scene and surface data
  * that has been stored in a file.
  */
-public class FileDecoder {
+public class FileDecoder extends SpatialData {
   /** The integer code for an XML encoding. */
   public static final int XMLEncoding = 2;
   

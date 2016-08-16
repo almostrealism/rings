@@ -29,12 +29,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;

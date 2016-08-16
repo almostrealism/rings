@@ -22,12 +22,12 @@ import java.util.List;
 
 import javax.swing.tree.MutableTreeNode;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 
 /**

@@ -21,12 +21,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;

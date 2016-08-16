@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
@@ -58,7 +59,6 @@ import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 
 /**

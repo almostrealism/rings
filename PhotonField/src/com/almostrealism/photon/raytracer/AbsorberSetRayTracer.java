@@ -18,12 +18,12 @@ package com.almostrealism.photon.raytracer;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
 

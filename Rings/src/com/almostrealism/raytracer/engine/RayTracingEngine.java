@@ -26,6 +26,7 @@
 
 package com.almostrealism.raytracer.engine;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;

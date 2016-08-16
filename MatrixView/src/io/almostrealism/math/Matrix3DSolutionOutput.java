@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;

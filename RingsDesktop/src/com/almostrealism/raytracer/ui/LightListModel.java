@@ -19,10 +19,9 @@ package com.almostrealism.raytracer.ui;
 
 import javax.swing.AbstractListModel;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
-
-import com.almostrealism.raytracer.engine.Scene;
 
 /**
   The LightListModel class extends AbstractListModel and provides a list model that dynamically displays

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.engine;
+package org.almostrealism.space;
 
 import com.almostrealism.raytracer.camera.Camera;
 import com.almostrealism.raytracer.camera.PinholeCamera;
+import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**

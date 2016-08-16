@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.engine.Surface;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;

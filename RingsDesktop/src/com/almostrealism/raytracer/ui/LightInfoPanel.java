@@ -24,12 +24,12 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**

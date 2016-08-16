@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
-import com.almostrealism.raytracer.engine.Scene;
+import org.almostrealism.space.Scene;
 
 /**
   A SceneOpenEvent object represents the event of opening of a new scene.

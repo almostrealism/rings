@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
@@ -31,7 +32,6 @@ import org.almostrealism.texture.RGB;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.PointLight;
