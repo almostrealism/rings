@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
@@ -32,7 +33,6 @@ import com.almostrealism.raytracer.camera.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
-import com.almostrealism.raytracer.io.FileEncoder;
 
 
 /**
@@ -91,7 +91,7 @@ public class RenderTestFrame extends JPanel {
 		
 		try {
 			System.out.print("Writing image file: ");
-			FileEncoder.encodeImageFile(rgb, new File(s + ".jpg"), FileEncoder.JPEGEncoding);
+			ImageCanvas.encodeImageFile(rgb, new File(s + ".jpg"), ImageCanvas.JPEGEncoding);
 			System.out.println("Done");
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

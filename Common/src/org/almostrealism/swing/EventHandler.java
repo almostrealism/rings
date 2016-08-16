@@ -22,8 +22,6 @@ import java.util.Vector;
 
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
-import com.almostrealism.raytracer.Settings;
-
 /**
   An EventHandler object provides an interface for comunication between EventGenerators and EventListeners.
 */
@@ -72,11 +70,6 @@ public class EventHandler {
 	 * only the first instance will be removed.
 	 */
 	public void fireEvent(Event event) {
-		if (Settings.produceOutput && Settings.produceEventHandlerOutput) {
-			Settings.eventOut.println("EventHandler (" + this.toString() + "): Event Fired (" + event.toString() + "); " +
-						"Notifying listeners (" + this.getTotalListeners() + ")");
-		}
-		
 		if (event instanceof DialogCloseEvent) {
 			Dialog dialog = ((DialogCloseEvent)event).getDialog();
 			

@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 import org.xml.sax.Attributes;
@@ -55,7 +56,6 @@ import com.almostrealism.photon.network.PhotonFieldSceneLoader;
 import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
 
@@ -244,9 +244,9 @@ public class FileLoader extends DefaultHandler {
 		fr.setLocation(Settings.screenWidth / 3, 40);
 		fr.setVisible(true);
 		RGB rgb[][] = tracer.generateImage(2, 2);
-		FileEncoder.encodeImageFile(rgb,
+		ImageCanvas.encodeImageFile(rgb,
 									new File("photon-field-traced.ppm"),
-									FileEncoder.PPMEncoding);
+									ImageCanvas.PPMEncoding);
 		fr.setVisible(false);
 		fr.dispose();
 	}

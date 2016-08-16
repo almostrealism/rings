@@ -26,10 +26,9 @@ import java.io.OutputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
-
-import com.almostrealism.raytracer.io.FileEncoder;
 
 public class WaveGrid {
 	private double max = 10.0, delta = 1.0;
@@ -114,16 +113,16 @@ public class WaveGrid {
 	}
 	
 	public void writeImage(OutputStream out) throws IOException {
-		FileEncoder.writeImage(this.getImage(), out, FileEncoder.PPMEncoding);
+		ImageCanvas.writeImage(this.getImage(), out, ImageCanvas.PPMEncoding);
 	}
 	
 	public void saveImage(String file) throws IOException {
 		if (file.endsWith("ppm"))
-			FileEncoder.encodeImageFile(this.getImage(), new File(file),
-										FileEncoder.PPMEncoding);
+			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
+										ImageCanvas.PPMEncoding);
 		else
-			FileEncoder.encodeImageFile(this.getImage(), new File(file),
-										FileEncoder.JPEGEncoding);
+			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
+										ImageCanvas.JPEGEncoding);
 	}
 	
 	public boolean imageAvailable() { return this.available; }

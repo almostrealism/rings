@@ -29,6 +29,7 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.Scene;
@@ -111,19 +112,19 @@ public class SaveMenu extends JMenu implements EventListener, EventGenerator {
 		
 		this.saveJPEGEncodedImageItem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {
-				saveImage(FileEncoder.JPEGEncoding);
+				saveImage(ImageCanvas.JPEGEncoding);
 			}
 		});
 		
 		this.savePPMEncodedImageItem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {
-				saveImage(FileEncoder.PPMEncoding);
+				saveImage(ImageCanvas.PPMEncoding);
 			}
 		});
 		
 		this.savePIXEncodedImageItem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {
-				saveImage(FileEncoder.PIXEncoding);
+				saveImage(ImageCanvas.PIXEncoding);
 			}
 		});
 	}
@@ -229,7 +230,7 @@ public class SaveMenu extends JMenu implements EventListener, EventGenerator {
 			final Thread saver = new Thread(new Runnable() {
 				public void run() {
 					try {
-						FileEncoder.encodeImageFile(image, fileChooser.getSelectedFile(), encoding);
+						ImageCanvas.encodeImageFile(image, fileChooser.getSelectedFile(), encoding);
 					} catch (IOException ioe) {
 						JOptionPane.showMessageDialog(null, "An IO error occured while saving.",
 								"IO Error", JOptionPane.ERROR_MESSAGE);

@@ -31,6 +31,7 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
@@ -38,7 +39,6 @@ import com.almostrealism.photon.geometry.Plane;
 import com.almostrealism.photon.util.Fast;
 import com.almostrealism.photon.util.PhysicalConstants;
 import com.almostrealism.photon.util.VectorMath;
-import com.almostrealism.raytracer.io.FileEncoder;
 
 /**
  * An AbsorptionPlane object represents a plane in space that absorbs photons
@@ -203,18 +203,18 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	
 	public void writeImage(OutputStream out) throws IOException {
 		if (this.energy == null) return;
-		FileEncoder.writeImage(this.getImage(), out, FileEncoder.PPMEncoding);
+		ImageCanvas.writeImage(this.getImage(), out, ImageCanvas.PPMEncoding);
 	}
 	
 	public void saveImage(String file) throws IOException {
 		if (this.energy == null) return;
 		
 		if (file.endsWith("ppm"))
-			FileEncoder.encodeImageFile(this.getImage(), new File(file),
-										FileEncoder.PPMEncoding);
+			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
+										ImageCanvas.PPMEncoding);
 		else
-			FileEncoder.encodeImageFile(this.getImage(), new File(file),
-										FileEncoder.JPEGEncoding);
+			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
+										ImageCanvas.JPEGEncoding);
 	}
 	
 	public void enableDisplay() { this.noDisplay = false; }

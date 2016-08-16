@@ -19,13 +19,13 @@ package com.almostrealism.photon.util.buffers;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.AverageColor;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.io.FileEncoder;
 
 public class ArrayColorBuffer implements ColorBuffer {
 	public Absorber absorber;
@@ -59,10 +59,10 @@ public class ArrayColorBuffer implements ColorBuffer {
 	}
 	
 	public void store(PhotonFieldSceneLoader loader, String name) throws IOException {
-		FileEncoder.writeImage(this.front, loader.getOutputStream("-" + name + "-front.rgb"),
-								FileEncoder.RGBListEncoding);
-		FileEncoder.writeImage(this.back, loader.getOutputStream("-" + name + "-back.rgb"),
-								FileEncoder.RGBListEncoding);
+		ImageCanvas.writeImage(this.front, loader.getOutputStream("-" + name + "-front.rgb"),
+								ImageCanvas.RGBListEncoding);
+		ImageCanvas.writeImage(this.back, loader.getOutputStream("-" + name + "-back.rgb"),
+								ImageCanvas.RGBListEncoding);
 	}
 	
 	public void load(PhotonFieldSceneLoader loader, String name) throws IOException {
@@ -155,12 +155,12 @@ public class ArrayColorBuffer implements ColorBuffer {
 			try {
 				String f = this.absorber + "-front.ppm";
 				System.out.println("AbsorberHashSet: Writing Surface Color Map to " + f);
-				FileEncoder.encodeImageFile(this.front, new File(f),
-											FileEncoder.PPMEncoding);
+				ImageCanvas.encodeImageFile(this.front, new File(f),
+											ImageCanvas.PPMEncoding);
 				f = this.absorber + "-back.ppm";
 				System.out.println("AbsorberHashSet: Writing Surface Color Map to " + f);
-				FileEncoder.encodeImageFile(this.back, new File(f),
-											FileEncoder.PPMEncoding);
+				ImageCanvas.encodeImageFile(this.back, new File(f),
+											ImageCanvas.PPMEncoding);
 			} catch (IOException e) {
 				System.out.println("AbsorberHashSet: " + e.getMessage());
 									

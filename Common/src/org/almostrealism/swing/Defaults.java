@@ -18,8 +18,6 @@ package org.almostrealism.swing;
 import java.awt.Color;
 import java.text.DecimalFormat;
 
-import com.almostrealism.raytracer.Settings;
-
 /**
  * @author  Michael Murray
  */
@@ -71,7 +69,7 @@ public class Defaults {
 	public static Color themePrimary2 = new Color(0, 108, 175);
 
 	/** AWT Color representing the primary 3 color for the default theme. */
-	public static Color themePrimary3 =  Settings.themePrimary2.brighter();
+	public static Color themePrimary3 =  themePrimary2.brighter();
 
 	/** AWT Color representing the secondary 1 color for the default theme. */
 	public static Color themeSecondary1 = new Color(102, 103, 104);

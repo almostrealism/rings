@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
@@ -32,7 +33,6 @@ import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
@@ -164,9 +164,9 @@ public class RenderFile {
 		int imageEncoding = -1;
 		
 		if (RenderFile.outputFormat.equals("ppm") == true) {
-			imageEncoding = FileEncoder.PPMEncoding;
+			imageEncoding = ImageCanvas.PPMEncoding;
 		} else if (RenderFile.inputFormat.equals("pix") == true) {
-			imageEncoding = FileEncoder.PIXEncoding;
+			imageEncoding = ImageCanvas.PIXEncoding;
 		} else {
 			System.out.println("Unknown output format: " + RenderFile.outputFormat);
 			System.exit(2);
@@ -186,7 +186,7 @@ public class RenderFile {
 		RGB image[][] = RayTracingEngine.render(scene, RenderFile.imageWidth, RenderFile.imageHeight, RenderFile.superSampleWidth, RenderFile.superSampleHeight, monitor);
 		
 		try {
-			FileEncoder.encodeImageFile(image, new File(RenderFile.outputFile), imageEncoding);
+			ImageCanvas.encodeImageFile(image, new File(RenderFile.outputFile), imageEncoding);
 		} catch (FileNotFoundException fnf) {
 			System.out.println("ERROR: Output file not found");
 		} catch (IOException ioe) {

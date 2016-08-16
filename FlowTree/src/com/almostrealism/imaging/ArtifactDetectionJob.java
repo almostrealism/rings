@@ -19,11 +19,11 @@ package com.almostrealism.imaging;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.raytracer.io.FileEncoder;
 
 public class ArtifactDetectionJob implements Job {
 	private static int ignoreTop = 1800;
@@ -124,9 +124,9 @@ public class ArtifactDetectionJob implements Job {
 				output = output + "-" + x + "-err.jpeg";
 				
 				System.out.print("Writing " + output + ": ");
-				FileEncoder.encodeImageFile(detector.getImage(),
+				ImageCanvas.encodeImageFile(detector.getImage(),
 											new File(output),
-											FileEncoder.JPEGEncoding);
+											ImageCanvas.JPEGEncoding);
 				System.out.println("Done");
 			} catch (IOException ioe) {
 				ioe.printStackTrace();

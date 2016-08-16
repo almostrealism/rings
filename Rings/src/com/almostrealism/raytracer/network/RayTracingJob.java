@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
@@ -58,7 +59,6 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.Scene;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.io.FileEncoder;
 
 /**
  * A RayTracingJob object provides an implementation of
@@ -133,9 +133,9 @@ public class RayTracingJob implements Job, SceneLoader {
 									}
 								}
 								
-								FileEncoder.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
 										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-										FileEncoder.JPEGEncoding);
+										ImageCanvas.JPEGEncoding);
 							} catch (InterruptedException ie) {
 								System.out.println("RayTracingOutputHandler: " + ie);
 							} catch (IOException ioe) {
@@ -176,9 +176,9 @@ public class RayTracingJob implements Job, SceneLoader {
 					}
 				}
 				
-				FileEncoder.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+				ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
 						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-						FileEncoder.JPEGEncoding);
+						ImageCanvas.JPEGEncoding);
 			} catch (IOException ioe) {
 				System.out.println("RayTracingJobOutputHandler: " + ioe);
 			}
@@ -812,7 +812,7 @@ public class RayTracingJob implements Job, SceneLoader {
 								this.w + "-" + this.h + "-" +
 								this.ssw + "-" + this.ssh + ".jpg");
 			try {
-				FileEncoder.encodeImageFile(rgb, file, FileEncoder.JPEGEncoding);
+				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
 			} catch (IOException e) {
 				System.out.println("RayTracingJob: IO Error");
 			}

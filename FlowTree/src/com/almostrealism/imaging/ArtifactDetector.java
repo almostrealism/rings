@@ -36,11 +36,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
-
-import com.almostrealism.raytracer.io.FileEncoder;
 
 
 public class ArtifactDetector {
@@ -166,9 +165,9 @@ public class ArtifactDetector {
 						output = output + "-" + k + "-err.jpeg";
 						
 						System.out.print("Writing " + output + ": ");
-						FileEncoder.encodeImageFile(detector.getImage(),
+						ImageCanvas.encodeImageFile(detector.getImage(),
 													new File(output),
-													FileEncoder.JPEGEncoding);
+													ImageCanvas.JPEGEncoding);
 						System.out.println("Done");
 					} catch (IOException ioe) {
 						ioe.printStackTrace();
@@ -236,8 +235,8 @@ public class ArtifactDetector {
 			sbutton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						FileEncoder.encodeImageFile(lastImg, new File("output.jpeg"),
-													FileEncoder.JPEGEncoding);
+						ImageCanvas.encodeImageFile(lastImg, new File("output.jpeg"),
+													ImageCanvas.JPEGEncoding);
 					} catch (IOException ioe) {
 						ioe.printStackTrace();
 					}
