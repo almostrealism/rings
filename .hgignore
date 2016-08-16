@@ -1,0 +1,7 @@
+
+syntax: regexp
+^Explorer/target$
+syntax: regexp
+^Replicator/target$
+syntax: regexp
+^RingsDesktop/target$
