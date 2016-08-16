@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Common/Common.iml" filepath="$PROJECT_DIR$/Common/Common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Explorer/Explorer.iml" filepath="$PROJECT_DIR$/Explorer/Explorer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FeedGrowth/FeedGrowth.iml" filepath="$PROJECT_DIR$/FeedGrowth/FeedGrowth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FlowTree/FlowTree.iml" filepath="$PROJECT_DIR$/FlowTree/FlowTree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GraphPersist/GraphPersist.iml" filepath="$PROJECT_DIR$/GraphPersist/GraphPersist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MatrixView/MatrixView.iml" filepath="$PROJECT_DIR$/MatrixView/MatrixView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PhotonField/PhotonField.iml" filepath="$PROJECT_DIR$/PhotonField/PhotonField.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Replicator/Replicator.iml" filepath="$PROJECT_DIR$/Replicator/Replicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rings/Rings.iml" filepath="$PROJECT_DIR$/Rings/Rings.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rings-New.iml" filepath="$PROJECT_DIR$/Rings-New.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RingsDesktop/RingsDesktop.iml" filepath="$PROJECT_DIR$/RingsDesktop/RingsDesktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TreeView/TreeView.iml" filepath="$PROJECT_DIR$/TreeView/TreeView.iml" />
+    </modules>
+  </component>
+</project>
