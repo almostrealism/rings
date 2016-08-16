@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="FeedGrowth/src"/>
-	<classpathentry kind="src" path="ForkedProjects/iptables"/>
-	<classpathentry kind="src" path="ForkedProjects/src"/>
-	<classpathentry kind="src" path="Rings/src"/>
-	<classpathentry kind="src" path="PhotonField/src"/>
-	<classpathentry kind="src" path="Replicator/src"/>
-	<classpathentry kind="src" path="Replicator/resources"/>
-	<classpathentry kind="src" path="Explorer/src"/>
-	<classpathentry kind="src" path="Common/src"/>
-	<classpathentry kind="src" path="FlowTree/src"/>
-	<classpathentry kind="src" path="TreeView/src"/>
-	<classpathentry kind="src" path="GraphPersist/src"/>
-	<classpathentry kind="src" path="Metamerise/src"/>
-	<classpathentry kind="src" path="GlitchFarm/src"/>
-	<classpathentry kind="src" path="MatrixView/src"/>
-	<classpathentry kind="src" path="RingsDesktop/src"/>
-	<classpathentry kind="src" path="RingsDesktop/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
