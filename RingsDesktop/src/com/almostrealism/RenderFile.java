@@ -29,8 +29,8 @@ import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;

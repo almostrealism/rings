@@ -27,7 +27,7 @@ import com.almostrealism.photon.Clock;
 import com.almostrealism.photon.geometry.Pinhole;
 import com.almostrealism.photon.util.Colorable;
 import com.almostrealism.photon.util.PriorityQueue;
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 
 public class PinholeCameraAbsorber implements Absorber, Camera {
 	private Clock clock;

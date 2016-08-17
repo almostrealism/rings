@@ -26,7 +26,7 @@ import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
-import com.almostrealism.raytracer.camera.OrthographicCamera;
+import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.ui.EditCameraDialog;
 import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;

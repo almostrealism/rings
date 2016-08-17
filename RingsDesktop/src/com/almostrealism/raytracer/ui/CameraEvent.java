@@ -18,7 +18,7 @@ package com.almostrealism.raytracer.ui;
 
 import org.almostrealism.swing.Event;
 
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 
 /**
  * A {@link CameraEvent} object represents an event that targets a camera.

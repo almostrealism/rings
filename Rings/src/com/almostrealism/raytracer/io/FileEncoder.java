@@ -26,9 +26,9 @@ import java.util.Date;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.camera.PinholeCamera;
-import com.almostrealism.raytracer.camera.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.AmbientLight;

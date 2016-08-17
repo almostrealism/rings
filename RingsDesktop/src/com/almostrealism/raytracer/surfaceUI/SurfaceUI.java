@@ -23,7 +23,7 @@ import javax.swing.Icon;
 
 import org.almostrealism.swing.Dialog;
 
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 import com.almostrealism.raytracer.engine.*;
 
 /**

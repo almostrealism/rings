@@ -27,7 +27,7 @@ import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 
-import com.almostrealism.raytracer.camera.ThinLensCamera;
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.io.FileDecoder;

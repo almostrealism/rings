@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.camera;
+package com.almostrealism.projection;
 
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.TransformMatrix;
@@ -204,7 +204,7 @@ public class OrthographicCamera implements Camera {
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.camera.Camera#rayAt(double, double, int, int)
+	 * @see com.almostrealism.projection.Camera#rayAt(double, double, int, int)
 	 */
 	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
 		double x = this.projectionX * ((i / screenWidth) - 0.5);

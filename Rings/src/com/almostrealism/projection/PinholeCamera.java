@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.camera;
+package com.almostrealism.projection;
 
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;

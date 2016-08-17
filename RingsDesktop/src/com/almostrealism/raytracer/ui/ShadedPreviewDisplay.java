@@ -30,9 +30,9 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.camera.Camera;
-import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.ShadableSurface;

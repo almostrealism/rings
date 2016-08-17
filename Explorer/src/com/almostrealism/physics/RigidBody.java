@@ -32,7 +32,7 @@ import java.util.Iterator;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 
 
 /**

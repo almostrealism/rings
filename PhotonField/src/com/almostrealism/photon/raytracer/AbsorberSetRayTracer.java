@@ -22,7 +22,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;

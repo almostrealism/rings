@@ -16,8 +16,8 @@
 
 package org.almostrealism.space;
 
-import com.almostrealism.raytracer.camera.Camera;
-import com.almostrealism.raytracer.camera.PinholeCamera;
+import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**

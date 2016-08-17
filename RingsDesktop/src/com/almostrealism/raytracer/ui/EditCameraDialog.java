@@ -47,10 +47,10 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import org.almostrealism.swing.panels.EditVectorPanel;
 
+import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.camera.OrthographicCamera;
-import com.almostrealism.raytracer.camera.PinholeCamera;
-import com.almostrealism.raytracer.camera.ThinLensCamera;
 
 
 /**

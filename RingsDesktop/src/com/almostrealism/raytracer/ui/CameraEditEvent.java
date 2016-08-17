@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
-import com.almostrealism.raytracer.camera.Camera;
+import com.almostrealism.projection.Camera;
 
 /**
  * A CameraEditEvent object represents the event of editing the camera in the current scene.

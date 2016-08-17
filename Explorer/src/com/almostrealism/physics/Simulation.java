@@ -53,13 +53,13 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
+import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.camera.Camera;
-import com.almostrealism.raytracer.camera.PinholeCamera;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;

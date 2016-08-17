@@ -21,7 +21,7 @@ import java.awt.Graphics;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 
-import com.almostrealism.raytracer.camera.PinholeCamera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 
 /**

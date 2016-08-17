@@ -30,7 +30,7 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
-import com.almostrealism.raytracer.camera.OrthographicCamera;
+import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 
