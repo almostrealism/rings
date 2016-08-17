@@ -1,8 +1,9 @@
 package io.almostrealism.sql;
 
-
 import io.almostrealism.query.SimpleQuery;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+
+import org.almostrealism.util.Factory;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -25,8 +28,8 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 	 * @param query  The SQL query to execute.
 	 * @param columns  The mapping between columns in the database and field names.
 	 */
-	private SQLSelect(String query, Properties columns) {
-		super(query);
+	private SQLSelect(String query, Properties columns, Factory<V> factory) {
+		super(query, factory);
 		for (String n : columns.stringPropertyNames()) put(n, columns.getProperty(n));
 	}
 
@@ -40,12 +43,12 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 	 */
 	public Collection<V> execute(ComboPooledDataSource database, String key) {
 		List<V> data = new ArrayList<V>();
-
+		
 		try (Connection c = database.getConnection(); Statement s = c.createStatement()) {
 			ResultSet rs = s.executeQuery(query);
-
+			
 			while (rs.next()) {
-				// TODO
+//	TODO		BeanUtils.setProperty(customer, "firstName", "Paul Young");
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -54,7 +57,18 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 		return data;
 	}
 
-	public static SQLSelect prepare(String query, Properties columns) {
-		return new SQLSelect(query, columns);
+	public static <V> SQLSelect<V> prepare(String query, Properties columns, Factory<V> factory) {
+		return new SQLSelect(query, columns, factory);
+	}
+	
+	public static <V> SQLSelect<V> prepare(String query, InputStream columnMap, Factory<V> factory) throws IOException {
+		Properties fieldMap = new Properties();
+		fieldMap.load(columnMap);
+		return prepare(query, fieldMap, factory);
+	}
+	
+	/** Select all. */
+	public static <V> SQLSelect<V> prepare(InputStream columnMap, Factory<V> factory) throws IOException {
+		return prepare("select *", columnMap, factory);
 	}
 }

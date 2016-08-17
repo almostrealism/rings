@@ -20,6 +20,7 @@ package org.almostrealism.util;
  * EditableFactory is the parent class for classes that can be used to construct
  * Editable objects of some type.
  */
+@Deprecated
 public abstract class EditableFactory {
 	/**
 	  Returns an array of String objects containing names for each type of Editable object
