@@ -15,7 +15,6 @@
  */
 package org.almostrealism.space;
 
-import com.almostrealism.raytracer.engine.Intersection;
 
 /**
  * @author  Michael Murray

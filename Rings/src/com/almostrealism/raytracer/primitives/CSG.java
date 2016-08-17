@@ -16,12 +16,12 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 

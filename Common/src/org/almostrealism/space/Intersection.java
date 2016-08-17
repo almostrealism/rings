@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.engine;
+package org.almostrealism.space;
 
-import org.almostrealism.space.Ray;
+import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * An Intersection object stores data for the intersections between a ray and a surface.

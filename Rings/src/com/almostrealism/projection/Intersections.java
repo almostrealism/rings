@@ -16,9 +16,9 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 
-import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 

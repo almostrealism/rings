@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
@@ -50,7 +51,6 @@ import com.almostrealism.photon.util.buffers.TriangularMeshColorBuffer;
 import com.almostrealism.photon.util.color.Spectrum;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;

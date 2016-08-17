@@ -19,6 +19,7 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 

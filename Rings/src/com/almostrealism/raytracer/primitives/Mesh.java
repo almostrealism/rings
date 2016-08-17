@@ -29,13 +29,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.SpatialData;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;

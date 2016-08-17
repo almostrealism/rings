@@ -19,6 +19,7 @@ package com.almostrealism;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
@@ -29,7 +30,6 @@ import org.almostrealism.texture.Texture;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.PointLight;
