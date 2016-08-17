@@ -44,7 +44,7 @@ The simplicity of these libraries will hopefully make up for the fact that I hav
 
 #### GraphPersist ####
 
-All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code.
+All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code which specify the mapping of columns to bean properties and a factory lambda to construct the object which will contain the results.
 
 ```
 #!java
