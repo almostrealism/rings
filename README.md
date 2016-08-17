@@ -37,3 +37,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+### More Details ###
+
+The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
+
+#### GraphPersist ####
+
+All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code.
+
+```
+#!java
+		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
+		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
+									() -> { return new TestEntity(); }));
+```
