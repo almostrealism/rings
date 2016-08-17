@@ -19,6 +19,7 @@ package com.almostrealism.raytracer.primitives;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.projection.Intersections;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.Intersection;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
@@ -90,7 +91,7 @@ public class CSG extends AbstractSurface {
     		ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
-            return RayTracingEngine.closestIntersection(ray, new ShadableSurface[] {this.sa, this.sb});
+            return Intersections.closestIntersection(ray, new ShadableSurface[] {this.sa, this.sb});
         } else if (this.type == CSG.DIFFERENCE) {
             if (this.inverted) {
                 double scale[] = this.sb.getScaleCoefficients();

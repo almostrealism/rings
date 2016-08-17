@@ -27,6 +27,7 @@ import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
@@ -179,6 +180,6 @@ public class SurfaceGroup extends AbstractSurface {
 	public Intersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		return RayTracingEngine.closestIntersection(ray, getSurfaces());
+		return Intersections.closestIntersection(ray, getSurfaces());
 	}
 }

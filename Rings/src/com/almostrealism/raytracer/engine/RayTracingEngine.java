@@ -34,6 +34,7 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.lighting.AmbientLight;
@@ -246,7 +247,7 @@ public class RayTracingEngine {
 	 */
 	public static RGB lightingCalculation(Ray r, ShadableSurface allSurfaces[], Light allLights[],
 										RGB fog, double fd, double fr, ShaderParameters p) {
-		Intersection intersect = RayTracingEngine.closestIntersection(r, allSurfaces);
+		Intersection intersect = Intersections.closestIntersection(r, allSurfaces);
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		
@@ -654,7 +655,7 @@ public class RayTracingEngine {
 		
 		Ray shadowRay = new Ray(point, direction);
 		
-		Intersection closestIntersectedSurface = RayTracingEngine.closestIntersection(shadowRay, surfaces);
+		Intersection closestIntersectedSurface = Intersections.closestIntersection(shadowRay, surfaces);
 		double intersect = 0.0;
 		if (closestIntersectedSurface != null)
 			intersect = closestIntersectedSurface.getClosestIntersection();
@@ -775,63 +776,6 @@ public class RayTracingEngine {
 //		
 //		return value;
 //	}
-	
-	/**
-	 * Returns an Intersection object that represents the closest intersection
-	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface
-	 * objects and the ray represented by the specified Ray object. If there are
-	 * no intersections >= RayTracingEngine.e then null is returned.
-	 */
-	public static Intersection closestIntersection(Ray ray, ShadableSurface surfaces[]) {
-		Intersection intersections[] = new Intersection[surfaces.length];
-		
-		for(int i = 0; i < surfaces.length; i++) {
-			intersections[i] = surfaces[i].intersectAt((Ray)ray.clone());
-		}
-		
-		double closestIntersection = -1.0;
-		int closestIntersectionIndex = -1;
-		
-		i: for(int i = 0; i < intersections.length; i++) {
-			if (intersections[i] == null)
-				continue i;
-			
-			for(int j = 0; j < intersections[i].getIntersections().length; j++) {
-				if (intersections[i].getIntersections()[j] >= RayTracingEngine.e) {
-					if (closestIntersectionIndex == -1 || intersections[i].getIntersections()[j] < closestIntersection) {
-						closestIntersection = intersections[i].getIntersections()[j];
-						closestIntersectionIndex = i;
-					}
-				}
-			}
-		}
-		
-		if (closestIntersectionIndex < 0)
-			return null;
-		else
-			return intersections[closestIntersectionIndex];
-	}
-	
-	/**
-	  Returns the value (>= RayTracingEngine.e) of the closest intersection point of the specified Intersection object
-	  If there are no positive intersections, -1.0 is returned.
-	*/
-	
-	public static double closestIntersectionAt(Intersection intersect) {
-		double intersections[] = intersect.getIntersections();
-		
-		double closestIntersection = -1.0;
-		
-		for(int i = 0; i < intersections.length; i++) {
-			if (intersections[i] >= RayTracingEngine.e) {
-				if (closestIntersection == -1.0 || intersections[i] < closestIntersection) {
-					closestIntersection = intersections[i];
-				}
-			}
-		}
-		
-		return closestIntersection;
-	}
 	
 	/**
 	  Removes the Light object at the specified index from the specified Light object array and returns the new array.

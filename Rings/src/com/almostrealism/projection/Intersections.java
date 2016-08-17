@@ -1,0 +1,87 @@
+/*
+ * Copyright 2016 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.almostrealism.projection;
+
+import org.almostrealism.space.Ray;
+
+import com.almostrealism.raytracer.engine.Intersection;
+import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.ShadableSurface;
+
+/**
+ * Tools for computing ray intersections.
+ * 
+ * @author  Michael Murray
+ */
+public class Intersections {
+
+	/**
+	 * Returns an Intersection object that represents the closest intersection
+	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface
+	 * objects and the ray represented by the specified Ray object. If there are
+	 * no intersections >= RayTracingEngine.e then null is returned.
+	 */
+	public static Intersection closestIntersection(Ray ray, ShadableSurface surfaces[]) {
+		Intersection intersections[] = new Intersection[surfaces.length];
+		
+		for(int i = 0; i < surfaces.length; i++) {
+			intersections[i] = surfaces[i].intersectAt((Ray)ray.clone());
+		}
+		
+		double closestIntersection = -1.0;
+		int closestIntersectionIndex = -1;
+		
+		i: for(int i = 0; i < intersections.length; i++) {
+			if (intersections[i] == null)
+				continue i;
+			
+			for(int j = 0; j < intersections[i].getIntersections().length; j++) {
+				if (intersections[i].getIntersections()[j] >= RayTracingEngine.e) {
+					if (closestIntersectionIndex == -1 || intersections[i].getIntersections()[j] < closestIntersection) {
+						closestIntersection = intersections[i].getIntersections()[j];
+						closestIntersectionIndex = i;
+					}
+				}
+			}
+		}
+		
+		if (closestIntersectionIndex < 0)
+			return null;
+		else
+			return intersections[closestIntersectionIndex];
+	}
+
+	/**
+	  Returns the value (>= RayTracingEngine.e) of the closest intersection point of the specified Intersection object
+	  If there are no positive intersections, -1.0 is returned.
+	*/
+	public static double closestIntersectionAt(Intersection intersect) {
+		double intersections[] = intersect.getIntersections();
+		
+		double closestIntersection = -1.0;
+		
+		for(int i = 0; i < intersections.length; i++) {
+			if (intersections[i] >= RayTracingEngine.e) {
+				if (closestIntersection == -1.0 || intersections[i] < closestIntersection) {
+					closestIntersection = intersections[i];
+				}
+			}
+		}
+		
+		return closestIntersection;
+	}
+
+}
