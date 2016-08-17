@@ -36,7 +36,6 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.SpatialData;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.ShadableSurfaceWrapper;
@@ -680,7 +679,7 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
 			double intersect[] = this.inter[i].getIntersections();
 			
 			for (int j = 0; j < intersect.length; j++) {
-				if (intersect[j] >= RayTracingEngine.e) {
+				if (intersect[j] >= Intersection.e) {
 					if (closestIntersectionIndex == -1 || intersect[j] < closestIntersection) {
 						closestIntersection = intersect[j];
 						closestIntersectionIndex = i;

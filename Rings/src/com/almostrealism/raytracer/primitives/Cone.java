@@ -27,7 +27,6 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
 
 
 // TODO Add ParticleGroup implementation.
@@ -86,12 +85,12 @@ public class Cone extends AbstractSurface {
 		double c1 = ry * oy - Cone.nsq * od;
 		double c0 = oy * oy - Cone.nsq * oo;
 		
-		if (Math.abs(c2) >= RayTracingEngine.e) {
+		if (Math.abs(c2) >= Intersection.e) {
 			double discr = c1*c1 - c0*c2;
 			
 			if (discr < 0.0) {
 				return false;
-			} else if (discr > RayTracingEngine.e) {
+			} else if (discr > Intersection.e) {
 				double root = Math.sqrt(discr);
 				double invC2 = 1.0 / c2;
 				
@@ -108,11 +107,11 @@ public class Cone extends AbstractSurface {
 				
 				if (p.getY() > 0.0 && p.getY() < 1.0) return true;
 			}
-		} else if (Math.abs(c1) >= RayTracingEngine.e) {
+		} else if (Math.abs(c1) >= Intersection.e) {
 			double t = -0.5 * c0 / c1;
 			Vector p = ray.pointAt(t);
 			if (p.getY() > 0.0 && p.getY() < 1.0) return true;
-		} else if (Math.abs(c0) < RayTracingEngine.e) {
+		} else if (Math.abs(c0) < Intersection.e) {
 			return true;
 		}
 		
@@ -140,12 +139,12 @@ public class Cone extends AbstractSurface {
 		
 		List inter = new ArrayList();
 		
-		if (Math.abs(c2) >= RayTracingEngine.e) {
+		if (Math.abs(c2) >= Intersection.e) {
 			double discr = c1*c1 - c0*c2;
 			
 			if (discr < 0.0) {
 				return new Intersection(ray, this, new double[0]);
-			} else if (discr > RayTracingEngine.e) {
+			} else if (discr > Intersection.e) {
 				double root = Math.sqrt(discr);
 				double invC2 = 1.0 / c2;
 				
@@ -162,11 +161,11 @@ public class Cone extends AbstractSurface {
 				
 				if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 			}
-		} else if (Math.abs(c1) >= RayTracingEngine.e) {
+		} else if (Math.abs(c1) >= Intersection.e) {
 			double t = -0.5 * c0 / c1;
 			Vector p = ray.pointAt(t);
 			if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
-		} else if (Math.abs(c0) < RayTracingEngine.e) {
+		} else if (Math.abs(c0) < Intersection.e) {
 			inter.add(new Double(0.0));
 			inter.add(new Double(1.0));
 		}

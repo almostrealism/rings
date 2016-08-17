@@ -22,7 +22,6 @@ import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 // TODO  Add bounding solid to make intersection calculations faster.
@@ -135,8 +134,8 @@ public class CSG extends AbstractSurface {
             AbstractSurface s = null;
             double intersect[];
             
-            if (i[0][1] - i[0][0] > RayTracingEngine.e) {
-                if (i[1][1] - i[1][0] > RayTracingEngine.e) {
+            if (i[0][1] - i[0][0] > Intersection.e) {
+                if (i[1][1] - i[1][0] > Intersection.e) {
                     intersect = new double[] {i[0][0], i[0][1], i[1][0], i[1][0]};
                 } else {
                     intersect = i[0];
@@ -150,7 +149,7 @@ public class CSG extends AbstractSurface {
                     this.inverted = false;
                 }
             } else {
-                if (i[1][1] - i[1][0] > RayTracingEngine.e) {
+                if (i[1][1] - i[1][0] > Intersection.e) {
                     intersect = i[1];
                 } else {
                     intersect = new double[0];
@@ -183,7 +182,7 @@ public class CSG extends AbstractSurface {
             
             double i[] = this.intervalIntersection(ia, ib);
             
-            if (i[1] - i[0] > RayTracingEngine.e)
+            if (i[1] - i[0] > Intersection.e)
                 return new Intersection(ray, s, i);
             else
                 return new Intersection(ray, s, new double[0]);

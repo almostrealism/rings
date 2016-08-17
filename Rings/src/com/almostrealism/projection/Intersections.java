@@ -16,11 +16,9 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
-
-import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * Tools for computing ray intersections.
@@ -35,7 +33,7 @@ public class Intersections {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, ShadableSurface surfaces[]) {
+	public static Intersection closestIntersection(Ray ray, Intersectable surfaces[]) {
 		Intersection intersections[] = new Intersection[surfaces.length];
 		
 		for(int i = 0; i < surfaces.length; i++) {
@@ -50,7 +48,7 @@ public class Intersections {
 				continue i;
 			
 			for(int j = 0; j < intersections[i].getIntersections().length; j++) {
-				if (intersections[i].getIntersections()[j] >= RayTracingEngine.e) {
+				if (intersections[i].getIntersections()[j] >= Intersection.e) {
 					if (closestIntersectionIndex == -1 || intersections[i].getIntersections()[j] < closestIntersection) {
 						closestIntersection = intersections[i].getIntersections()[j];
 						closestIntersectionIndex = i;
@@ -75,7 +73,7 @@ public class Intersections {
 		double closestIntersection = -1.0;
 		
 		for(int i = 0; i < intersections.length; i++) {
-			if (intersections[i] >= RayTracingEngine.e) {
+			if (intersections[i] >= Intersection.e) {
 				if (closestIntersection == -1.0 || intersections[i] < closestIntersection) {
 					closestIntersection = intersections[i];
 				}

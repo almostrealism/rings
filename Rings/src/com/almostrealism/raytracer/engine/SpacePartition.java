@@ -194,11 +194,11 @@ public class SpacePartition extends SurfaceGroup {
 		
 		public boolean isRight(Vector v, double off) {
 			if (this.plane == Plane.XY) {
-				return (v.getZ() > (off + RayTracingEngine.e));
+				return (v.getZ() > (off + Intersection.e));
 			} else if (this.plane == Plane.YZ) {
-				return (v.getX() > (off + RayTracingEngine.e));
+				return (v.getX() > (off + Intersection.e));
 			} else if (this.plane == Plane.XZ) {
-				return (v.getY() > (off + RayTracingEngine.e));
+				return (v.getY() > (off + Intersection.e));
 			} else {
 				return false;
 			}
@@ -206,11 +206,11 @@ public class SpacePartition extends SurfaceGroup {
 		
 		public boolean isLeft(Vector v, double off) {
 			if (this.plane == Plane.XY) {
-				return (v.getZ() < (off - RayTracingEngine.e));
+				return (v.getZ() < (off - Intersection.e));
 			} else if (this.plane == Plane.YZ) {
-				return (v.getX() < (off - RayTracingEngine.e));
+				return (v.getX() < (off - Intersection.e));
 			} else if (this.plane == Plane.XZ) {
-				return (v.getY() < (off - RayTracingEngine.e));
+				return (v.getY() < (off - Intersection.e));
 			} else {
 				return false;
 			}
@@ -320,7 +320,7 @@ public class SpacePartition extends SurfaceGroup {
 				double intersect[] = ((Intersection)l.get(i)).getIntersections();
 				
 				for (int j = 0; j < intersect.length; j++) {
-					if (intersect[j] >= RayTracingEngine.e) {
+					if (intersect[j] >= Intersection.e) {
 						if (closestIntersectionIndex == -1 || intersect[j] < closestIntersection) {
 							closestIntersection = intersect[j];
 							closestIntersectionIndex = i;

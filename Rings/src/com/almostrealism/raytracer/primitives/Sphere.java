@@ -22,7 +22,6 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
 
 //TODO Add ParticleGroup implementation.
 
@@ -78,7 +77,7 @@ public class Sphere extends AbstractSurface {
 	public double getIndexOfRefraction(Vector p) {
 		double s = this.getSize();
 		
-		if (p.subtract(this.getLocation()).lengthSq() <= s * s + RayTracingEngine.e) {
+		if (p.subtract(this.getLocation()).lengthSq() <= s * s + Intersection.e) {
 			return super.getIndexOfRefraction();
 		} else {
 			return 1.0;

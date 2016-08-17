@@ -70,6 +70,8 @@ public class Scene extends SurfaceList {
 		addAll(Arrays.asList(surfaces));
 	}
 	
+	public Surface[] getSurfaces() { return toArray(new Surface[0]); }
+	
 	/**
 	 * Sets the camera of this Scene object to the camera represented by the specified Camera object.
 	 */

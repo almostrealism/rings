@@ -27,7 +27,6 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ParticleGroup;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
 
 /**
  * A Triangle object represents a triangle in 3d space.
@@ -267,7 +266,7 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 	
 	public RGB getColorAt(Vector p) {
 		RGB dc = super.getColorAt(p, this.useT);
-		if (dc.length() < (RayTracingEngine.e * 100)) return new RGB(0.0, 0.0, 0.0);
+		if (dc.length() < (Intersection.e * 100)) return new RGB(0.0, 0.0, 0.0);
 		
 		if (this.intcolor) {
 			double g = p.getX();

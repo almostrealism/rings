@@ -28,6 +28,7 @@ package com.almostrealism.raytracer.engine;
 
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
@@ -84,10 +85,7 @@ public class RayTracingEngine {
   
   public static RGB black = new RGB(0.0, 0.0, 0.0);
   
-  /** A very small value (0.00000001) that is used in '>=' and '<=' operations to account for computational errors. */
-  public static final double e = 0.00000001;
-
-	/**
+  /**
 	 * Computes all intersection and lighting calculations required to produce an image of the specified width and height
 	 * that is a rendering of the specified Scene object and returns the image as an array of RGB objects.
 	 * The image is anti-aliased using the specified supersampling width (ssWidth) and height (ssHeight).
@@ -141,7 +139,7 @@ public class RayTracingEngine {
 	 * @param monitor  ProgressMonitor instance to use.
 	 * @return  Image data.
 	 */
-	public static RGB[][] render(ShadableSurface surfaces[], Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
+	public static RGB[][] render(Surface surfaces[], Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.length + " Surfaces");
 			Settings.rayEngineOut.println("Camera: " + camera.toString());
@@ -246,7 +244,7 @@ public class RayTracingEngine {
 	 * and Lights. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public static RGB lightingCalculation(Ray r, ShadableSurface allSurfaces[], Light allLights[],
+	public static RGB lightingCalculation(Ray r, Surface allSurfaces[], Light allLights[],
 										RGB fog, double fd, double fr, ShaderParameters p) {
 		Intersection intersect = Intersections.closestIntersection(r, allSurfaces);
 		
@@ -661,7 +659,7 @@ public class RayTracingEngine {
 		if (closestIntersectedSurface != null)
 			intersect = closestIntersectedSurface.getClosestIntersection();
 		
-		if (closestIntersectedSurface == null || intersect <= RayTracingEngine.e || (maxDistance >= 0.0 && intersect > maxDistance)) {
+		if (closestIntersectedSurface == null || intersect <= Intersection.e || (maxDistance >= 0.0 && intersect > maxDistance)) {
 			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 				Settings.rayEngineOut.print(" False }");
 			}
