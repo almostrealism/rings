@@ -4,7 +4,7 @@
 | Supported | Tool | Description | More Info & Help |
 |---|---|---|---|
 |🔶 Paused| **Common** | General logging, error handling, IO and multimedia tools. | Requires **Jackson Databind**, **Trove**, **JEP**, and **Log4J**. Required for all Tools. |
-|🔵 Active| **GraphPersist** | Expands on Javas built in BeanUtils to provide simple persistence for POJOs with no annotations required. When used with lambdas in Java 1.8, the resulting code is clean and usually maintainable by the data science team rather than the software engineers, allowing developers to get back to the fun stuff and forget talking to DBAs all the time. | Requires **Common** and **C3PO**. |
+|🔵 Active| **GraphPersist** | Expands on Apache's BeanUtils to provide simple persistence for POJOs with no annotations required. When used with lambdas in Java 1.8, the resulting code is clean and usually maintainable by the data science team rather than the software engineers, allowing developers to get back to the fun stuff and forget talking to DBAs all the time. | Requires **Common** and **C3PO**. |
 |🔵 Active| **TreeView** | Service for displaying tree data in the browser. | Requires **Common**. |
 |🔶 Paused| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
 |🔶 Paused| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. | Requires **Common**. |
