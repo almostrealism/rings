@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
@@ -53,6 +52,7 @@ import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
 import com.almostrealism.flow.db.QueryHandler;
 import com.almostrealism.io.FilePrintWriter;
+import com.almostrealism.io.SpatialData;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.almostrealism.io.Matrix3DSolutionOutput;
+
 /**
  * 
  * @deprecated  It is a better idea to use {@link Tensor}.

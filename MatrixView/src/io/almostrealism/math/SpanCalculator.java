@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.almostrealism.io.Matrix3DSolutionOutput;
+
 public class SpanCalculator {
 	public static boolean verbose = true;
 	
