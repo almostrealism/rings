@@ -24,7 +24,7 @@ art pieces and want to contribute please contact ashesfall@almostrealism.com for
 ```
 #!java
 
-Copyright 2016 Michael Murray
+Copyright 2004-2016 Michael Murray
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
