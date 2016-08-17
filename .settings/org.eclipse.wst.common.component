@@ -18,5 +18,6 @@
         <wb-resource deploy-path="/" source-path="/RingsDesktop/src"/>
         <wb-resource deploy-path="/" source-path="/RingsDesktop/resources"/>
         <wb-resource deploy-path="/" source-path="/PromotionManager/src"/>
+        <wb-resource deploy-path="/" source-path="/GraphPersist/test"/>
     </wb-module>
 </project-modules>
