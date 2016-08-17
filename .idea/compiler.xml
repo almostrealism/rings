@@ -34,17 +34,6 @@
         <module name="TreeView" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8">
-      <module name="Common" target="1.5" />
-      <module name="Explorer" target="1.5" />
-      <module name="FeedGrowth" target="1.5" />
-      <module name="GraphPersist" target="1.5" />
-      <module name="MatrixView" target="1.5" />
-      <module name="PhotonField" target="1.5" />
-      <module name="Replicator" target="1.5" />
-      <module name="Rings" target="1.5" />
-      <module name="RingsDesktop" target="1.5" />
-      <module name="TreeView" target="1.5" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8" />
   </component>
 </project>
