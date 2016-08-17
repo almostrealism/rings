@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2006  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
+package org.almostrealism.space;
+
+import java.util.ArrayList;
+
+/**
+ * @author  Michael Murray
  */
+public class SurfaceList extends ArrayList<Surface> implements Cloneable {
 
-package com.almostrealism.raytracer.network;
-
-import java.io.IOException;
-
-import com.almostrealism.raytracer.Scene;
-
-public interface SceneLoader {
-	public Scene loadScene(String uri) throws IOException;
 }

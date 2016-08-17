@@ -34,7 +34,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.MutableTreeNode;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
@@ -42,6 +41,7 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.TextureFactory;
 
 import com.almostrealism.rayshade.ShaderFactory;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;

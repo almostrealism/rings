@@ -24,13 +24,13 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 

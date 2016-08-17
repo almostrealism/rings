@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;

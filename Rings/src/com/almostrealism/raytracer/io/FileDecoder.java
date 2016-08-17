@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Resource;
 import com.almostrealism.io.SpatialData;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 

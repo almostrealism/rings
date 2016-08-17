@@ -16,8 +16,6 @@
 
 package com.almostrealism.raytracer;
 
-import org.almostrealism.space.Scene;
-
 import com.almostrealism.raytracer.engine.RenderParameters;
 
 /**

@@ -25,7 +25,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
@@ -33,6 +32,7 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;

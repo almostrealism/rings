@@ -29,12 +29,12 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.surfaceUI.SplashScreen;

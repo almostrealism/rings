@@ -47,7 +47,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
@@ -59,6 +58,7 @@ import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.Shader;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;

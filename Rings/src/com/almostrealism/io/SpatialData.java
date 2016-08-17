@@ -24,12 +24,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shader;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.ShadableSurfaceWrapper;

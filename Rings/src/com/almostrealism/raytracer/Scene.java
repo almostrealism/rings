@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.space;
+package com.almostrealism.raytracer;
+
+import java.util.Arrays;
+
+import org.almostrealism.space.Surface;
+import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
@@ -24,11 +29,10 @@ import com.almostrealism.raytracer.lighting.Light;
  * A Scene object represents a scene in 3d. It stores a Camera object, an array of Light objects,
  * and an array of Surface objects.
  */
-public class Scene implements Cloneable {
+public class Scene extends SurfaceList {
   private Camera camera;
   
   private Light lights[];
-  private Surface surfaces[];
 
 	/**
 	 * Constructs a Scene object with a default Camera object and no Light or Surface objects.
@@ -61,6 +65,11 @@ public class Scene implements Cloneable {
 		this.setSurfaces(surfaces);
 	}
 	
+	public void setSurfaces(Surface surfaces[]) {
+		clear();
+		addAll(Arrays.asList(surfaces));
+	}
+	
 	/**
 	 * Sets the camera of this Scene object to the camera represented by the specified Camera object.
 	 */
@@ -71,9 +80,7 @@ public class Scene implements Cloneable {
 	 */
 	public void setLights(Light lights[]) { this.lights = lights; }
 	
-	/**
-	 * Adds the specified Light object to this Scene object.
-	 */
+	/** Adds the specified Light object to this Scene object. */
 	public void addLight(Light light) {
 		Light newLights[] = new Light[this.lights.length + 1];
 		
@@ -97,65 +104,23 @@ public class Scene implements Cloneable {
 		this.setLights(newLights);
 	}
 	
-	/**
-	 * Replaces all of the Surface objects of this Scene object with those represented
-	 * by the specified Surface array.
-	 */
-	public void setSurfaces(Surface surfaces[]) { this.surfaces = surfaces; }
-	
-	/**
-	 * Adds the specified Surface object to this Scene object.
-	 */
-	public void addSurface(Surface surface) {
-		Surface newSurfaces[] = new Surface[this.surfaces.length + 1];
-		
-		System.arraycopy(this.surfaces, 0, newSurfaces, 0, this.surfaces.length);
-		newSurfaces[newSurfaces.length - 1] = surface;
-		
-		this.setSurfaces(newSurfaces);
-	}
-	
-	/**
-	 * Removes the Surface object stored at the specified index from this Scene object.
-	 */
-	public void removeSurface(int index) {
-		Surface newSurfaces[] = new Surface[this.surfaces.length - 1];
-		
-		System.arraycopy(this.surfaces, 0, newSurfaces, 0, index);
-		if (index != this.surfaces.length - 1) {
-			System.arraycopy(this.surfaces, index + 1, newSurfaces, index, this.surfaces.length - (index + 1));
-		}
-		
-		this.setSurfaces(newSurfaces);
-	}
-	
-	/**
-	 * Returns the Camera object stored by this Scene object.
-	 */
+	/** Returns the Camera object stored by this Scene object. */
 	public Camera getCamera() { return this.camera; }
 	
-	/**
-	 * Returns the Light objects stored by this Scene object as a Light array.
-	 */
+	/** Returns the Light objects stored by this Scene object as a Light array. */
 	public Light[] getLights() { return this.lights; }
 	
-	/**
-	 * Returns the Surface object stored by this Scene object at the specified index.
-	 */
+	/** Returns the Surface object stored by this Scene object at the specified index. */
 	public Light getLight(int index) { return this.lights[index]; }
-	
-	/**
-	 * Returns the Surface objects stored by this Scene object as a Surface array.
-	 */
-	public Surface[] getSurfaces() { return this.surfaces; }
-	
-	/**
-	 * Returns the Surface object stored by this Scene object at the specified index.
-	 */
-	public Surface getSurface(int index) { return this.surfaces[index]; }
 	
 	/**
 	 * @return  A Scene object that stores the same Camera, Lights, and Surfaces as this Scene object.
 	 */
-	public Object clone() { return new Scene(this.camera, this.lights, this.surfaces); }
+	public Object clone() {
+		Scene l = (Scene) super.clone();
+		l.setCamera(this.camera);
+		l.setLights(this.lights);
+		l.addAll(this);
+		return l;
+	}
 }

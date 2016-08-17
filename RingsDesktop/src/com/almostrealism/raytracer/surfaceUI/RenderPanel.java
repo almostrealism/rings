@@ -24,7 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
@@ -34,6 +33,7 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;

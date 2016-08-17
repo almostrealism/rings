@@ -20,13 +20,13 @@ package com.almostrealism.raytracer.ui.menus;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.almostrealism.space.Scene;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.ui.EditCameraDialog;
 import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;

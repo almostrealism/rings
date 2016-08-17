@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="35e94da0-3756-479b-88c3-87f9c8c09a95" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FlowTree/FlowTree.iml" afterPath="$PROJECT_DIR$/FlowTree/FlowTree.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GraphPersist/GraphPersist.iml" afterPath="$PROJECT_DIR$/GraphPersist/GraphPersist.iml" />
     </list>
     <ignored path="Rings-New.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,64 +39,7 @@
     <favorites_list name="Rings-New" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="QueryLibrary.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/QueryLibrary.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="33" column="57" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
-              <folding>
-                <element signature="e#0#1375#0" expanded="false" />
-                <element signature="e#1239#1240#0" expanded="false" />
-                <element signature="e#1266#1267#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SimpleQuery.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/SimpleQuery.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="12" column="62" selection-start-line="12" selection-start-column="62" selection-end-line="12" selection-end-column="62" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SQLSelect.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/sql/SQLSelect.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GraphPersist/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Scene.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Common/src/org/almostrealism/space/Scene.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -798,7 +738,7 @@
       <workItem from="1471375789993" duration="1834000" />
       <workItem from="1471390770923" duration="242000" />
       <workItem from="1471392557011" duration="251000" />
-      <workItem from="1471411530206" duration="921000" />
+      <workItem from="1471411530206" duration="1101000" />
     </task>
     <task id="LOCAL-00001" summary="Working towards using maven.">
       <created>1471048852286</created>
@@ -1080,11 +1020,18 @@
       <option name="project" value="LOCAL" />
       <updated>1471382741463</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="More dependency restructuring.">
+      <created>1471445733981</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1471445733981</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37209000" />
+    <option name="totallyTimeSpent" value="37389000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1166,7 +1113,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <MESSAGE value="Expanding on SQLSelect, the most basic/common query type." />
     <MESSAGE value="Introduced C3PO, for pooled data source." />
     <MESSAGE value="Minor fix." />
     <MESSAGE value="pom.xml for replicator." />
@@ -1191,7 +1137,8 @@
     <MESSAGE value="WAR export configuration for IntelliJ." />
     <MESSAGE value="Common depends on Log4J." />
     <MESSAGE value="Rings depends on Common." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rings depends on Common." />
+    <MESSAGE value="More dependency restructuring." />
+    <option name="LAST_COMMIT_MESSAGE" value="More dependency restructuring." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1538,33 +1485,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/QueryLibrary.java">
+    <entry file="file://$PROJECT_DIR$/Common/src/org/almostrealism/space/Scene.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="33" column="57" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
+        <state relative-caret-position="210">
+          <caret line="28" column="2" selection-start-line="28" selection-start-column="2" selection-end-line="28" selection-end-column="2" />
           <folding>
-            <element signature="e#0#1375#0" expanded="false" />
-            <element signature="e#1239#1240#0" expanded="false" />
-            <element signature="e#1266#1267#0" expanded="false" />
+            <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/SimpleQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="12" column="62" selection-start-line="12" selection-start-column="62" selection-end-line="12" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/sql/SQLSelect.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1576,10 +1503,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Common/src/org/almostrealism/space/Scene.java">
+    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/sql/SQLSelect.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+        <state relative-caret-position="201">
+          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/SimpleQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="62" selection-start-line="12" selection-start-column="62" selection-end-line="12" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GraphPersist/src/io/almostrealism/query/QueryLibrary.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="33" column="57" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
           <folding />
         </state>
       </provider>
