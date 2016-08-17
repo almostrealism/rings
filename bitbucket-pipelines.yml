@@ -8,24 +8,46 @@ pipelines:
   default:
     - step:
         script:
+          # Common
           - mvn --version
-          - cd Common
+          - cd Common/src
+          - find -name "*.java" > sources.txt
+          - javac @sources.txt
+          - cd ../
           - mvn clean install
+          
+          # GraphPersist
           - cd ../GraphPersist
           - mvn clean install
+          
+          # TreeView
           - cd ../TreeView
           - mvn clean install
+          
+          # MatrixView
           - cd ../MatrixView
           - mvn clean install
+          
+          # FlowTree
           - cd ../FlowTree
           - mvn clean install
+          
+          # Rings
           - cd ../Rings
           - mvn clean install
+          
+          # PhotonField
           - cd ../PhotonField
           - mvn clean install
+          
+          # Explorer
           - cd ../Explorer
           - mvn clean install
+          
+          # Replicator
           - cd ../Replicator
           - mvn clean install
+          
+          # FeedGrowth
           - cd ../FeedGrowth
           - mvn clean install
