@@ -4,19 +4,7 @@
     <option name="SCOPE_TYPE" value="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35e94da0-3756-479b-88c3-87f9c8c09a95" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Common/src/org/almostrealism/space/Intersection.java" afterPath="$PROJECT_DIR$/Common/src/org/almostrealism/space/Intersection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/projection/Intersections.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/projection/Intersections.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/Scene.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/Scene.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/engine/RayTracingEngine.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/engine/RayTracingEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/engine/SpacePartition.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/engine/SpacePartition.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/CSG.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/CSG.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Cone.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Cone.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Mesh.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Mesh.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Sphere.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Sphere.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Triangle.java" afterPath="$PROJECT_DIR$/Rings/src/com/almostrealism/raytracer/primitives/Triangle.java" />
-    </list>
+    <list default="true" id="35e94da0-3756-479b-88c3-87f9c8c09a95" name="Default" comment="" />
     <ignored path="Rings-New.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -734,7 +722,7 @@
       <workItem from="1471375789993" duration="1834000" />
       <workItem from="1471390770923" duration="242000" />
       <workItem from="1471392557011" duration="251000" />
-      <workItem from="1471411530206" duration="1373000" />
+      <workItem from="1471411530206" duration="1602000" />
     </task>
     <task id="LOCAL-00001" summary="Working towards using maven.">
       <created>1471048852286</created>
@@ -1027,7 +1015,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37661000" />
+    <option name="totallyTimeSpent" value="37890000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">

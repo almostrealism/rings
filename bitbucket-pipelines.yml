@@ -8,6 +8,8 @@ pipelines:
           # Common
           - mvn --version
           - cd Common/src
+          - mvn dependency:copy-dependencies
+          - cd src
           - find -name "*.java" > sources.txt
           - javac @sources.txt
           - cd ../
