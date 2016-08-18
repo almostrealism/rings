@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
+package org.almostrealism.geometry;
 
-public interface Oriented {
-	public void setOrientation(float angle, float x, float y, float z);
-	
-	public float[] getOrientation();
+import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.texture.RGB;
+
+public class ColoredGeometry extends BasicGeometry {
+	private RGB color;
+
+	public RGB getColor() {
+		return color;
+	}
+
+	public void setColor(RGB color) {
+		this.color = color;
+	}
 }

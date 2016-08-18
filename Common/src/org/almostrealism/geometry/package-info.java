@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
-
-public interface Positioned {
-	public void setPosition(float x, float y, float z);
-	
-	public float[] getPosition();
-}
+/**
+ * Common functionality for working with spatial geometry.
+ * 
+ * @author  Michael Murray
+ */
+package org.almostrealism.geometry;

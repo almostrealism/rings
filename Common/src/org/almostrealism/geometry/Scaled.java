@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
+package org.almostrealism.geometry;
 
-import org.almostrealism.space.BasicGeometry;
-import org.almostrealism.texture.RGB;
-
-public class ColoredGeometry extends BasicGeometry {
-	private RGB color;
-
-	public RGB getColor() {
-		return color;
-	}
-
-	public void setColor(RGB color) {
-		this.color = color;
-	}
+public interface Scaled {
+	public void setScale(float x, float y, float z);
+	
+	public float[] getScale();
 }

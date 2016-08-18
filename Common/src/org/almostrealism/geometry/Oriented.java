@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
+package org.almostrealism.geometry;
 
-public interface Scaled {
-	public void setScale(float x, float y, float z);
+public interface Oriented {
+	public void setOrientation(float angle, float x, float y, float z);
 	
-	public float[] getScale();
+	public float[] getOrientation();
 }

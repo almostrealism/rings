@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * Common functionality for working with spatial geometry.
- * 
- * @author  Michael Murray
- */
-package com.almostrealism.geometry;
+package org.almostrealism.geometry;
+
+public interface Positioned {
+	public void setPosition(float x, float y, float z);
+	
+	public float[] getPosition();
+}

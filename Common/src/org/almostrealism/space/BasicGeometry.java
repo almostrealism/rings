@@ -16,10 +16,11 @@
 
 package org.almostrealism.space;
 
-import com.almostrealism.geometry.Oriented;
-import com.almostrealism.geometry.Positioned;
-import com.almostrealism.geometry.Scaled;
-import com.almostrealism.geometry.Triangulatable;
+import org.almostrealism.geometry.Oriented;
+import org.almostrealism.geometry.Positioned;
+import org.almostrealism.geometry.Scaled;
+import org.almostrealism.geometry.Triangulatable;
+
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.primitives.Mesh;
 

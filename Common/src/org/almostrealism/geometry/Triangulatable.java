@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.geometry;
+package org.almostrealism.geometry;
 
 import com.almostrealism.raytracer.primitives.Mesh;
 

@@ -20,10 +20,10 @@ import java.nio.FloatBuffer;
 
 import com.jogamp.opengl.GL2;
 
+import org.almostrealism.geometry.Oriented;
+import org.almostrealism.geometry.Positioned;
 import org.almostrealism.texture.ImageSource;
 
-import com.almostrealism.geometry.Oriented;
-import com.almostrealism.geometry.Positioned;
 import com.almostrealism.renderable.Colored;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.shade.Diffuse;
