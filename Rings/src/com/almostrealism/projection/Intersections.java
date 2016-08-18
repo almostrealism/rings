@@ -64,9 +64,10 @@ public class Intersections {
 	}
 
 	/**
-	  Returns the value (>= RayTracingEngine.e) of the closest intersection point of the specified Intersection object
-	  If there are no positive intersections, -1.0 is returned.
-	*/
+	 * Returns the value (>= RayTracingEngine.e) of the closest intersection point
+	 * of the specified Intersection object If there are no positive intersections,
+	 * -1.0 is returned.
+	 */
 	public static double closestIntersectionAt(Intersection intersect) {
 		double intersections[] = intersect.getIntersections();
 		

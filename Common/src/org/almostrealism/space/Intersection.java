@@ -16,10 +16,14 @@
 
 package org.almostrealism.space;
 
+import java.util.ArrayList;
+
+import org.almostrealism.graph.PathElement;
+
 /**
  * An Intersection object stores data for the intersections between a ray and a surface.
  */
-public class Intersection {
+public class Intersection implements PathElement<Intersection> {
 	/** A very small value (0.00000001) that is used in '>=' and '<=' operations to account for computational errors. */
 	public static final double e = 0.00000001;
 
@@ -28,6 +32,8 @@ public class Intersection {
 
 	private int closest = -1;
 	private double intersections[];
+	
+	private ArrayList<PathElement<Intersection>> children;
 
 	/**
 	 * Constructs a new Intersection object that represents an intersection between the specified
@@ -78,6 +84,14 @@ public class Intersection {
 			return closestIntersection;
 		}
 	}
+	
+	public void add(Intersection inter) {
+		if (children == null) children = new ArrayList<PathElement<Intersection>>();
+		children.add(inter);
+	}
+	
+	@Override
+	public Iterable<PathElement<Intersection>> next() { return children; }
 
 	/**
 	 * @return  A String representation of this Intersection object.
