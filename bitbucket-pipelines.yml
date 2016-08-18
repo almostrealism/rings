@@ -5,14 +5,16 @@ pipelines:
   default:
     - step:
         script:
-          # Common
+          # Common Dependencies
           - mvn --version
           - cd Common
           - mvn dependency:copy-dependencies
-          - ls target
+          
+          # Common Compile
+          - mkdir target/classes
           - cd src
           - find -name "*.java" > sources.txt
-          - javac @sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
           - cd ../
           - mvn clean install
           
