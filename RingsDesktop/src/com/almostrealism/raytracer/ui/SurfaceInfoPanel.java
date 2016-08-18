@@ -38,7 +38,6 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
-import org.almostrealism.texture.TextureFactory;
 
 import com.almostrealism.rayshade.ShaderFactory;
 import com.almostrealism.raytracer.Scene;
@@ -46,6 +45,7 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.raytracer.primitives.TextureFactory;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.ShaderEditPanel;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUI;

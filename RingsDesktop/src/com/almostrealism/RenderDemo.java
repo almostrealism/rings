@@ -24,7 +24,6 @@ import org.almostrealism.space.Ray;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.projection.ThinLensCamera;
@@ -36,6 +35,7 @@ import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.RectangularLight;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.raytracer.primitives.StripeTexture;
 import com.almostrealism.raytracer.ui.RenderTestFrame;
 
 /**
