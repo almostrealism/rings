@@ -50,13 +50,14 @@ public class ImageCanvas extends JPanel {
   private RGB image[][];
   private RGB color;
   private int next;
-/** The integer code for an RGB list image encoding. */
+  
+  /** The integer code for an RGB list image encoding. */
   public static final int RGBListEncoding = 7;
-/** The integer code for a PIX image encoding. */
+  /** The integer code for a PIX image encoding. */
   public static final int PIXEncoding = 5;
-/** The integer code for a PPM image encoding. */
+  /** The integer code for a PPM image encoding. */
   public static final int PPMEncoding = 4;
-/** The integer code for a JPEG image encoding. */
+  /** The integer code for a JPEG image encoding. */
   public static final int JPEGEncoding = 6;
 
   	

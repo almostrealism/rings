@@ -7,7 +7,7 @@
     <groupId>com.almostrealism</groupId>
     <artifactId>RingsDesktop</artifactId>
     <version>0.1-rc</version>
-
+	
     <dependencies>
         <dependency>
             <groupId>com.almostrealism</groupId>
