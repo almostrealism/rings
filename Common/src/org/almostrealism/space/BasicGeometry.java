@@ -20,10 +20,6 @@ import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Scaled;
 
-import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.primitives.Triangulatable;
-
 /**
  * Provides a simple mechanism to keep track of tranformation
  * parameters that are used with most types of geometry. This
@@ -31,12 +27,12 @@ import com.almostrealism.raytracer.primitives.Triangulatable;
  * 
  * @author  Michael Murray
  */
-public class BasicGeometry implements Positioned, Oriented, Scaled, Triangulatable {
+public class BasicGeometry implements Positioned, Oriented, Scaled {
 	private Vector location;
 	private double size;
 	
-	private double scaleX, scaleY, scaleZ;
-	private double rotateX, rotateY, rotateZ;
+	protected double scaleX, scaleY, scaleZ;
+	protected double rotateX, rotateY, rotateZ;
 
 	private TransformMatrix transforms[];
 	private TransformMatrix transform, completeTransform;
@@ -251,11 +247,6 @@ public class BasicGeometry implements Positioned, Oriented, Scaled, Triangulatab
 	public void calculateTransform() {
 		if (this.transformCurrent) return;
 		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Calculating transform...");
-		}
-		
-		
 		this.transform = new TransformMatrix();
 		
 		for(int i = 0; i < this.transforms.length; i++) {
@@ -284,37 +275,10 @@ public class BasicGeometry implements Positioned, Oriented, Scaled, Triangulatab
 			this.completeTransform = this.completeTransform.multiply(TransformMatrix.createRotateZMatrix(this.rotateZ));
 		}
 		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Basic transform:");
-			Settings.surfaceOut.println(this.completeTransform.toString());
-		}
-		
 		if (this.transform != null) {
 			this.completeTransform = this.completeTransform.multiply(this.transform);
 		}
 		
 		this.transformCurrent = true;
-		
-		if (Settings.produceOutput && Settings.produceSurfaceOutput) {
-			Settings.surfaceOut.println(this.toString() + ": Complete transform:");
-			Settings.surfaceOut.println(this.completeTransform.toString());
-		}
-	}
-	
-	/**
-	 * @return  A Mesh object with location, size, scale coefficients,
-	 *          rotation coefficients, and transformations as this
-	 *          {@link BasicGeometry}.
-	 */
-	public Mesh triangulate() {
-		Mesh m = new Mesh();
-		
-		m.setLocation(this.getLocation());
-		m.setSize(this.getSize());
-		m.setScaleCoefficients(this.scaleX, this.scaleY, this.scaleZ);
-		m.setRotationCoefficients(this.rotateX, this.rotateY, this.rotateZ);
-		m.setTransforms(this.getTransforms());
-		
-		return m;
 	}
 }
