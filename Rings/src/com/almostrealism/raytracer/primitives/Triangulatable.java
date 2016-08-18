@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.almostrealism.geometry;
+package com.almostrealism.raytracer.primitives;
 
-import com.almostrealism.raytracer.primitives.Mesh;
 
 public interface Triangulatable {
 	public Mesh triangulate();

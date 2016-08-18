@@ -19,10 +19,10 @@ package org.almostrealism.space;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Scaled;
-import org.almostrealism.geometry.Triangulatable;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.raytracer.primitives.Triangulatable;
 
 /**
  * Provides a simple mechanism to keep track of tranformation
