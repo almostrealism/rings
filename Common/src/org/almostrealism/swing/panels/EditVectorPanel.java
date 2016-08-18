@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.swing.Defaults;
+import org.almostrealism.util.Defaults;
 
 /** An EditVectorPanel object can be used to specify a 3D vector. */
 public class EditVectorPanel extends JPanel {

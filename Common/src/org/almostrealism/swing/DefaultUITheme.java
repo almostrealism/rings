@@ -19,6 +19,8 @@ package org.almostrealism.swing;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 
+import org.almostrealism.util.Defaults;
+
 public class DefaultUITheme extends DefaultMetalTheme {
   private final ColorUIResource primary1 = new ColorUIResource(java.awt.Color.yellow);
   private final ColorUIResource primary2 = new ColorUIResource(java.awt.Color.blue.darker());

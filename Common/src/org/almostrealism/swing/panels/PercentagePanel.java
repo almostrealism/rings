@@ -29,7 +29,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.almostrealism.swing.Defaults;
+import org.almostrealism.util.Defaults;
 
 /**
  * A PercentagePanel object can be used to display a decimal value

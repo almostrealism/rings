@@ -16,7 +16,7 @@
 
 package org.almostrealism.space;
 
-import org.almostrealism.swing.Defaults;
+import org.almostrealism.util.Defaults;
 
 /**
  * A Vector object represents a 3d vector. It stores three coordinates, x, y, z.

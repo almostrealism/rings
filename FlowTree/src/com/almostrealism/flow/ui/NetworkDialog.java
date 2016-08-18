@@ -40,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.almostrealism.swing.Defaults;
+import org.almostrealism.util.Defaults;
 
 import com.almostrealism.flow.NodeProxy;
 import com.almostrealism.flow.db.Client;
