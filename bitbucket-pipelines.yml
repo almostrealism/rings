@@ -23,6 +23,7 @@ pipelines:
           - mvn --version
           - cd ../GraphPersist
           - mvn dependency:copy-dependencies
+          - ls target/dependency
           
           # GraphPersist Compile
           - mkdir target/classes
