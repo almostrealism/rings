@@ -30,37 +30,37 @@ pipelines:
           - find -name "*.java" > sources.txt
           - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
           - cd ../
-          - mvn clean install
+          - mvn install
           
           
           # TreeView
           - cd ../TreeView
-          - mvn clean install
+          - mvn install
           
           # MatrixView
           - cd ../MatrixView
-          - mvn clean install
+          - mvn install
           
           # FlowTree
           - cd ../FlowTree
-          - mvn clean install
+          - mvn install
           
           # Rings
           - cd ../Rings
-          - mvn clean install
+          - mvn install
           
           # PhotonField
           - cd ../PhotonField
-          - mvn clean install
+          - mvn install
           
           # Explorer
           - cd ../Explorer
-          - mvn clean install
+          - mvn install
           
           # Replicator
           - cd ../Replicator
-          - mvn clean install
+          - mvn install
           
           # FeedGrowth
           - cd ../FeedGrowth
-          - mvn clean install
+          - mvn install
