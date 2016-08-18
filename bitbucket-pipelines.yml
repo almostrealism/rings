@@ -7,7 +7,7 @@ pipelines:
         script:
           # Common
           - mvn --version
-          - cd Common/src
+          - cd Common
           - mvn dependency:copy-dependencies
           - cd src
           - find -name "*.java" > sources.txt
