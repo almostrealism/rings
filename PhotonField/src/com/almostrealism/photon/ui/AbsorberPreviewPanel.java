@@ -21,7 +21,6 @@ import java.awt.Color;
 
 import javax.swing.JPanel;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
@@ -40,6 +39,7 @@ import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.photon.util.PhysicalConstants;
 import com.almostrealism.photon.util.ProbabilityDistribution;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 /**
  * @author  Mike Murray

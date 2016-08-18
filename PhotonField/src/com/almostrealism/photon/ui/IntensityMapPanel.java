@@ -23,12 +23,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.texture.CosineIntensityMap;
 import com.almostrealism.photon.texture.IntensityMap;
 import com.almostrealism.photon.texture.Turbulence;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class IntensityMapPanel extends JPanel {
 	private IntensityMap map;

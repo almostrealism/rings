@@ -32,13 +32,13 @@ import java.io.OutputStream;
 import javax.swing.JPanel;
 
 import org.almostrealism.space.VectorMath;
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.geometry.Plane;
 import com.almostrealism.photon.util.Fast;
 import com.almostrealism.photon.util.PhysicalConstants;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 /**
  * An AbsorptionPlane object represents a plane in space that absorbs photons

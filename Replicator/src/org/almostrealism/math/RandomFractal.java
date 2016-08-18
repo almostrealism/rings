@@ -31,10 +31,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.RGB;
 import org.nfunk.jep.JEP;
+
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 
 /**

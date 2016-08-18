@@ -19,13 +19,13 @@ package com.almostrealism.photon.util.buffers;
 import java.io.File;
 import java.io.IOException;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.AverageColor;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;
 import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class ArrayColorBuffer implements ColorBuffer {
 	public Absorber absorber;

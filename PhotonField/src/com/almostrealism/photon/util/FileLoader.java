@@ -38,7 +38,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.almostrealism.space.VectorMath;
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 import org.xml.sax.Attributes;
@@ -59,6 +58,7 @@ import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class FileLoader extends DefaultHandler {
 	public static double verbose = Math.pow(10.0, -5.0);

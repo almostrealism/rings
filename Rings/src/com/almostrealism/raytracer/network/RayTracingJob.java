@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
@@ -60,6 +59,7 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 /**
  * A RayTracingJob object provides an implementation of

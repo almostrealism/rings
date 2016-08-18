@@ -24,7 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
 import org.almostrealism.space.Vector;
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
@@ -36,6 +35,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**

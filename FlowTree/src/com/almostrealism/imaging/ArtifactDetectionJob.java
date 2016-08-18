@@ -19,11 +19,11 @@ package com.almostrealism.imaging;
 import java.io.File;
 import java.io.IOException;
 
-import org.almostrealism.swing.displays.ImageCanvas;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;
+import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class ArtifactDetectionJob implements Job {
 	private static int ignoreTop = 1800;
