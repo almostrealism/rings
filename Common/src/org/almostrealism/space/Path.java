@@ -21,6 +21,6 @@ import java.util.ArrayList;
 /**
  * @author  Michael Murray
  */
-public class Path extends ArrayList<Ray> {
+public class Path extends ArrayList<Intersection> {
 
 }
