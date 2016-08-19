@@ -172,14 +172,14 @@ public class ArtifactDetectionTask implements JobFactory {
 		String files[] = f.list();
 		
 		File listf = new File(f, "files.txt");
-		BufferedWriter out = new BufferedWriter(new FileWriter(listf));
 		
-		for (int i = 0; i < files.length; i++) {
-			out.write(files[i] + "\n");
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(listf))) {
+			for (int i = 0; i < files.length; i++) {
+				out.write(files[i] + "\n");
+			}
+			
+			out.flush();
 		}
-		
-		out.flush();
-		out.close();
 		
 		System.out.println("Wrote " + listf.getName());
 	}
