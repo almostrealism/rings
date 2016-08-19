@@ -1,6 +1,6 @@
 # Almost Realism Digital Artist Libraries #
 
-🔶 Paused  🔵 Active  🍏 New  💜 Planned
+|🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
 
 | | Tool | Description | More Info & Help |
 |---|---|---|---|
@@ -10,12 +10,12 @@
 |🔶| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
 |🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. *This project requires a retired apache project (**Slide**) and will be upgraded to use a different WebDav library in the future.* | Requires **Common**, **TreeView** and **Apache Slide**. |
 |🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
-|🔶| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
+|🍎| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
 |🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
 |🍏| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
 |🔵| **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
-|🔶| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
+|🍎| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
 |💜| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 
 
