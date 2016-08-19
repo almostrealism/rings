@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Properties;
-import java.util.Random;
 
 import javax.swing.Icon;
 
@@ -43,8 +42,8 @@ public abstract class Settings extends Defaults {
   /** String containing "ashesfall@users.sf.net". */
   private static final String adminEmail = "ashesfall@almostrealism.com";
   
-  /** String containing "http://j3d.sf.net/". */
-  public static final String websiteUrl = "http://almostrealism.com/";
+  /** String containing "http://almostrealism.org/". */
+  public static final String websiteUrl = "http://almostrealism.org/";
   
   
   /** String used to indicate this warning is given at random. */
@@ -107,12 +106,7 @@ public abstract class Settings extends Defaults {
   /** Icon to use for top level of surface tree. */
   public static Icon sceneIcon;
   
-  /** A general purpose instance of Random to be used whenever necessary. */
-  public static Random random = new Random();
-
-  
-  	
-	public static void init() {
+  public static void init() {
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		Settings.screenWidth = screenDim.width;
 		Settings.screenHeight = screenDim.height;

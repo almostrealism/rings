@@ -17,6 +17,7 @@ package org.almostrealism.util;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.util.Random;
 
 /**
  * @author  Michael Murray
@@ -79,4 +80,7 @@ public class Defaults {
 
 	/** AWT Color representing the secondary 3 color for the default theme. */
 	public static Color themeSecondary3 = new Color(209, 212, 214);
+
+	/** A general purpose instance of Random to be used whenever necessary. */
+	  public static Random random = new Random();
 }

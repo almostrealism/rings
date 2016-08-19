@@ -28,8 +28,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.util.Defaults;
+
 import com.almostrealism.flow.tests.UrlProfilingTask.Producer;
-import com.almostrealism.raytracer.Settings;
 
 public class DefaultProducer implements Producer {
 	private String dir, uri, sufix;
@@ -72,7 +73,7 @@ public class DefaultProducer implements Producer {
 		StringBuffer b = new StringBuffer();
 		
 		if (this.uri != null) b.append(this.uri);
-		b.append(this.files.get(Settings.random.nextInt(this.files.size())));
+		b.append(this.files.get(Defaults.random.nextInt(this.files.size())));
 		if (this.sufix != null) b.append(this.sufix);
 		
 		return b.toString();

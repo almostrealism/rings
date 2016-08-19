@@ -28,20 +28,21 @@ package com.almostrealism.flow.behavior;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.almostrealism.util.Defaults;
+
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.ServerBehavior;
-import com.almostrealism.raytracer.Settings;
 
 public class RandomPeerJoin implements ServerBehavior {
 	public void behave(Server s, PrintStream out) {
 		try {
-			int i = Settings.random.nextInt(s.getPeers().length);
+			int i = Defaults.random.nextInt(s.getPeers().length);
 			String peers[] = s.getPeerList(i);
 			out.println("RandomPeerJoin: Got peer list for server " + i +
 						" (" + peers.length + " peers).");
 			if (peers.length <= 0) return;
 			
-			int j = Settings.random.nextInt(s.getPeers().length);
+			int j = Defaults.random.nextInt(s.getPeers().length);
 			out.println("RandomPeerJoin: Attempting to open " + peers[j]);
 			
 			if (!s.open(peers[j])) {

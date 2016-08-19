@@ -47,14 +47,14 @@ import javax.crypto.NoSuchPaddingException;
 import javax.swing.JLabel;
 
 import org.almostrealism.io.RSSFeed;
+import org.almostrealism.util.Defaults;
 import org.almostrealism.util.Graph;
 
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.raytracer.Settings;
 
 /**
- * A NodeGroup object represents a group of nodes (Node objects).
- * The NodeGroup object is responsible for moderating communication
+ * A {@link NodeGroup} object represents a group of nodes (Node objects).
+ * The {@link NodeGroup} object is responsible for moderating communication
  * with each of its children.
  * 
  * @author Mike Murray
@@ -419,7 +419,7 @@ public class NodeGroup extends Node implements Runnable, NodeProxy.EventListener
 		}
 		
 		if (l.size() > 0)
-			return (Node) l.get(Settings.random.nextInt(l.size()));
+			return (Node) l.get(Defaults.random.nextInt(l.size()));
 		else
 			return null;
 	}
