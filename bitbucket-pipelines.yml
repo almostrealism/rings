@@ -24,7 +24,6 @@ pipelines:
           # GraphPersist Dependencies
           - cd ../GraphPersist
           - mvn dependency:copy-dependencies
-          - jar -tvf target/dependency/Common-0.2.jar
           
           # GraphPersist Compile
           - mkdir target/classes
@@ -35,9 +34,18 @@ pipelines:
           - mvn install
           
           
-          # TreeView
+          # TreeView Dependencies
           - cd ../TreeView
+          - mvn dependency:copy-dependencies
+          
+          # TreeView Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
+          
           
           # MatrixView
           - cd ../MatrixView
