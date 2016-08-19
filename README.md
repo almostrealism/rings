@@ -1,5 +1,6 @@
 # Almost Realism Digital Artist Libraries #
 
+|---|---|---|---|---|
 |🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
 
 | | Tool | Description | More Info & Help |
