@@ -70,8 +70,7 @@ public class HttpCommandServer implements Runnable {
 	
 	public void run() {
 		while (true) {
-			try {
-				Socket connection = this.socket.accept();
+			try (Socket connection = this.socket.accept()) {
 				System.out.println("HttpCommandServer: Accepted connection...");
 				
 				this.in = connection.getInputStream();
