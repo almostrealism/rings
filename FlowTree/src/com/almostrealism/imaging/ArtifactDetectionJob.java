@@ -16,14 +16,10 @@
 
 package com.almostrealism.imaging;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.flow.Job;
 import com.almostrealism.flow.db.Client;
-import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class ArtifactDetectionJob implements Job {
 	private static int ignoreTop = 1800;
@@ -118,19 +114,16 @@ public class ArtifactDetectionJob implements Job {
 		}
 		
 		if (err) {
-			try {
-				String output = uri.substring(uri.lastIndexOf("/") + 1);
-				output = output.substring(0, output.lastIndexOf("."));
-				output = output + "-" + x + "-err.jpeg";
-				
-				System.out.print("Writing " + output + ": ");
-				ImageCanvas.encodeImageFile(detector.getImage(),
-											new File(output),
-											ImageCanvas.JPEGEncoding);
-				System.out.println("Done");
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
+			String output = uri.substring(uri.lastIndexOf("/") + 1);
+			output = output.substring(0, output.lastIndexOf("."));
+			output = output + "-" + x + "-err.jpeg";
+
+			System.out.print("Writing " + output + ": ");
+			//				TODO  Need to write image data
+			//				ImageCanvas.encodeImageFile(detector.getImage(),
+			//											new File(output),
+			//											ImageCanvas.JPEGEncoding);
+			System.out.println("Done");
 		}
 	}
 }
