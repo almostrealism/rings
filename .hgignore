@@ -5,3 +5,5 @@ syntax: regexp
 ^Replicator/target$
 syntax: regexp
 ^RingsDesktop/target$
+syntax: regexp
+^GraphPersist/target$
