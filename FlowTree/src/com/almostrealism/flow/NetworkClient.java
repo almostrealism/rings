@@ -72,7 +72,6 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Help;
 
-import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
@@ -83,9 +82,9 @@ import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.tests.TestJobFactory;
 import com.almostrealism.flow.ui.NetworkDialog;
-import com.almostrealism.raytracer.JobProducer;
-import com.almostrealism.raytracer.RayTracingJob;
 import com.almostrealism.raytracer.Settings;
+import com.almostrealism.raytracer.network.JobProducer;
+import com.almostrealism.raytracer.network.RayTracingJob;
 
 // TODO  Add cd and pwd commands.
 // TODO  mkdir does not update slide
@@ -263,11 +262,6 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		
 		if ("on".equals(p.getProperty("server.slide"))) {
 			System.out.println("NetworkClient: Tried to start slide server...");
-		}
-		
-		if ("on".equals(p.getProperty("apple.bonjour._rings._tcp", "off"))) {
-			System.out.println("NetworkClient: Initializing Bounjour service _rings._tcp");
-			AppleSettings.initNetService();
 		}
 		
 		Client.getCurrentClient().getServer().setParam(p);
@@ -482,8 +476,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	
 	public void run() {
 		while (true) {
-			try {
-				Socket connection = this.socket.accept();
+			try (Socket connection = this.socket.accept()) {
 				System.out.println("NetworkClient: Accepted connection...");
 				
 				this.in = connection.getInputStream();
@@ -761,7 +754,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 						String.valueOf(id), pri};
 				
 				final JobProducer p = new JobProducer(args);
-				p.setSceneLoader(NetworkClient.plySceneLoaderClass);
+//				p.setSceneLoader(NetworkClient.plySceneLoaderClass);
 				String host = p.getHost();
 				
 				Client cl = Client.getCurrentClient();
@@ -811,7 +804,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 						String.valueOf(id), pri};
 				
 				final JobProducer p = new JobProducer(args);
-				p.setSceneLoader(NetworkClient.gtsSceneLoaderClass);
+//				p.setSceneLoader(NetworkClient.gtsSceneLoaderClass);
 				String host = p.getHost();
 				
 				Client cl = Client.getCurrentClient();
@@ -960,18 +953,17 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				s = s.substring(s.indexOf(" ") + 1);
 				
 				Resource r = DistributedResource.createDistributedResource(s);
-				InputStream ins = Client.getCurrentClient().getServer().loadResource(r).getInputStream();
-				FileOutputStream fout = new FileOutputStream("~" + s);
-				
-				w: while (true) {
-					int i = ins.read();
-					if (i < 0) break w;
-					fout.write(i);
+				try (InputStream ins =
+						Client.getCurrentClient().getServer().loadResource(r).getInputStream();
+						FileOutputStream fout = new FileOutputStream("~" + s)) {
+					w: while (true) {
+						int i = ins.read();
+						if (i < 0) break w;
+						fout.write(i);
+					}
+					
+					fout.flush();
 				}
-				
-				ins.close();
-				fout.flush();
-				fout.close();
 				
 				return "Wrote ~" + s;
 			} else if (c.startsWith("status")) {
@@ -1206,13 +1198,14 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					return s[0] + " is not storable.";
 				
 				
-				OutputStream out = server.getOutputStream(s[1]);
-				if (out == null) return "Could not get out stream to " + s[1];
-				
-				if (((Storable)o).store(out))
-					return o + " stored to " + s[1];
-				else
-					return "Failed to store " + o;
+				try (OutputStream out = server.getOutputStream(s[1])) {
+					if (out == null) return "Could not get out stream to " + s[1];
+					
+					if (((Storable)o).store(out))
+						return o + " stored to " + s[1];
+					else
+						return "Failed to store " + o;
+				}
 			} else if (c.startsWith("peers")) {
 				String s[] = Client.getCurrentClient().getServer().getPeers();
 				StringBuffer b = new StringBuffer();
