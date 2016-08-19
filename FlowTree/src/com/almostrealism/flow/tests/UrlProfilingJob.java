@@ -110,10 +110,8 @@ public class UrlProfilingJob implements Job {
 			for (int j = 0; j < d.length; j++) b.append(d[j]);
 			uri = b.toString();
 			
-			try {
-				InputStream in = new URL(this.uri).openStream();
+			try (InputStream in = new URL(this.uri).openStream()) {
 				while (in.available() > 0) { in.read(); bs++; }
-				in.close();
 			} catch (MalformedURLException murl) {
 				throw new RuntimeException("UrlProfilingJob -- " + murl.getMessage());
 			} catch (IOException e) { }

@@ -62,7 +62,6 @@ import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.flow.resources.ImageResource;
 import com.almostrealism.flow.resources.LocalResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
-import com.almostrealism.flow.slide.DistributedContentStore;
 
 // TODO Consider performing routine tasks (eg Garbage Collector, delete unused db rows, etc.)
 //      during time when activity rating is low.
@@ -385,8 +384,6 @@ public class Server implements JobFactory, Runnable {
 			boolean b = Boolean.parseBoolean(value);
 			ResourceDistributionTask.verbose = b;
 			DistributedResource.verbose = b;
-			DistributedContentStore.verbose = b;
-			DistributedContentStore.superLog = b;
 			Server.resourceVerbose = b;
 		} else if (name.equals("server.resource.io.verbose")) {
 			// TODO  Add to documentation.

@@ -32,8 +32,6 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.jsch.ScpFromMessage;
-
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -120,8 +118,9 @@ public class ScpDownloader implements UserInfo {
 			boolean done = false;
 			
 			try {
-				ScpFromMessage scp = new ScpFromMessage(this.session, orig, fout, true);
-				scp.execute();
+//				TODO  This class is missing
+//				ScpFromMessage scp = new ScpFromMessage(this.session, orig, fout, true);
+//				scp.execute();
 				
 				done = true;
 				System.out.println("ScpDownloader: Done");
@@ -130,8 +129,8 @@ public class ScpDownloader implements UserInfo {
 			} catch (IOException e) {
 				System.out.println("ScpDownloader: " + e.getMessage());
 				if (done) break i;
-			} catch (JSchException jsch) {
-				System.out.println("ScpDownloader: " + jsch.getMessage());
+//			} catch (JSchException jsch) {
+//				System.out.println("ScpDownloader: " + jsch.getMessage());
 			}
 			
 			ScpDownloader.this.dispose();
