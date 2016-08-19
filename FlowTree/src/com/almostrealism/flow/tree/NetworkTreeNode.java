@@ -37,17 +37,16 @@ import com.almostrealism.flow.NodeGroup;
 
 
 /**
- * A NetworkTreeNode object wraps a network Node object and can be used
+ * A {@link NetworkTreeNode} object wraps a network Node object and can be used
  * to display the connections between the node and other nodes.
  * 
  * @author Mike Murray
  */
 public class NetworkTreeNode implements TreeNode {
-  private String label;
-  private Node node;
-  private NetworkTreeNode parent;
-
-  
+	private String label;
+	private Node node;
+	private NetworkTreeNode parent;
+	
 	/**
 	 * Constructs a new NetworkTreeNode object that will act as a leaf node and display
 	 * the specified label.
