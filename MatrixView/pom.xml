@@ -8,5 +8,11 @@
     <artifactId>MatrixView</artifactId>
     <version>0.1-rc</version>
 
-
+	<dependencies>
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>Common</artifactId>
+			<version>LATEST</version>
+		</dependency>
+	</dependencies>
 </project>
