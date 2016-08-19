@@ -70,15 +70,15 @@ public class LocalResource implements Resource {
 
 	public void saveLocal(String file) throws IOException {
 		InputStream in = this.getInputStream();
-		OutputStream out = new FileOutputStream(file);
 		
-		byte b[] = new byte[1];
-		in.read(b);
-		
-		while (in.read(b) >= 0) { out.write(b); }
-		
-		out.flush();
-		out.close();
+		try (OutputStream out = new FileOutputStream(file)) {
+			byte b[] = new byte[1];
+			in.read(b);
+			
+			while (in.read(b) >= 0) { out.write(b); }
+			
+			out.flush();
+		}
 	}
 
 	public void send(IOStreams io) throws IOException {
