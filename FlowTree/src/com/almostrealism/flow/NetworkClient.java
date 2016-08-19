@@ -76,8 +76,6 @@ import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.OutputHandler;
 import com.almostrealism.flow.db.Query;
 import com.almostrealism.flow.db.QueryHandler;
-import com.almostrealism.flow.interfaces.JabberInterface;
-import com.almostrealism.flow.interfaces.RTSPInterface;
 import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.tests.TestJobFactory;
@@ -229,28 +227,6 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 			} catch (IOException ioe) {
 				System.out.println("RingsClient: Unable to start HTTP server (" +
 									ioe.getMessage() + ")");
-			}
-		}
-		
-		if ("on".equals(p.getProperty("server.jabber", "off"))) {
-			String user = p.getProperty("server.jabber.user", "rings");
-			String passwd = p.getProperty("server.jabber.passwd", "rings");
-			String host = p.getProperty("server.jabber.host", "localhost");
-			String jport = p.getProperty("server.jabber.port");
-			
-			if (jport == null)
-				JabberInterface.main(new String[] {user, passwd, host});
-			else
-				JabberInterface.main(new String[] {user, passwd, host, jport});
-		}
-		
-		if ("on".equals(p.getProperty("server.rtsp", "off"))) {
-			RTSPInterface rtsp;
-			try {
-				rtsp = new RTSPInterface(p);
-				new Thread(rtsp).start();
-			} catch (IOException e) {
-				System.out.println("NetworkClient: Unable to start RTSP server due to IO error (" + e.getMessage() + ")");
 			}
 		}
 		
