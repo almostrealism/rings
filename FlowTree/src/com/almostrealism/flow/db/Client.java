@@ -217,13 +217,9 @@ public class Client {
 	 * @return  The Hashtable resulting from the query or null if an error occurs.
 	 */
 	public Hashtable sendQuery(Query q) {
-		Socket s = null;
-		
-		try {
-			s = new Socket(this.outputHost, this.outputPort);
-			
+		try (Socket s = new Socket(this.outputHost, this.outputPort);
 			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+			ObjectInputStream in = new ObjectInputStream(s.getInputStream())) {
 			
 			out.writeUTF(q.getClass().getName());
 			q.writeExternal(out);
@@ -231,11 +227,6 @@ public class Client {
 			out.flush();
 			
 			Hashtable h = (Hashtable) in.readObject();
-			
-			in.close();
-			out.close();
-			s.close();
-			
 			return h;
 		} catch (ClassNotFoundException cnf) {
 			System.out.println("Client: " + cnf);
@@ -256,20 +247,16 @@ public class Client {
 	 * @return  True if send is successful, false otherwise.
 	 */
 	public boolean writeOutput(JobOutput o) {
-		Socket s = null;
-		
 		boolean done = false;
 		int sleep = 3;
 		
 		for (int i = 0; !done; i++) {
-			try {
-				s = new Socket(this.outputHost, this.outputPort);
+			try (Socket s = new Socket(this.outputHost, this.outputPort);
+				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(s.getInputStream())) {
 				
 				if (Message.verbose)
 					System.out.println("Client: Opened socket " + s);
-				
-				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 				
 				if (Message.verbose)
 					System.out.println("Client: Writing " + o + "...");
@@ -279,10 +266,6 @@ public class Client {
 //				out.writeObject(o);
 				
 				done = true;
-				
-				in.close();
-				out.close();
-				s.close();
 				
 				return true;
 			} catch (ConnectException ce) {
