@@ -5,8 +5,10 @@ pipelines:
   default:
     - step:
         script:
-          # Common Dependencies
+          # Maven details
           - mvn --version
+        
+          # Common Dependencies
           - cd Common
           - mvn dependency:copy-dependencies
           
@@ -16,11 +18,10 @@ pipelines:
           - find -name "*.java" > sources.txt
           - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
           - cd ../
-          - mvn clean install
+          - mvn install
           
           
           # GraphPersist Dependencies
-          - mvn --version
           - cd ../GraphPersist
           - mvn dependency:copy-dependencies
           - jar -tvf target/dependency/Common-0.2.jar
