@@ -1,9 +1,5 @@
 # Almost Realism Digital Artist Libraries #
 
-|   |   |   |   |   |
-|---|---|---|---|---|
-|🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
-
 | | Tool | Description | More Info & Help |
 |---|---|---|---|
 |🔶| **Common** | General logging, error handling, IO and multimedia tools. Notably, this contains a lot of conveniences for dealing with common frames of reference in the real world such as spatial relations, temporal relations, image and texture data, etc. | Requires **Jackson Databind**, **Trove**, **JEP**, and **Log4J**. Required for all Tools. |
@@ -20,6 +16,11 @@
 |🍎| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
 |💜| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 
+#####Key#####
+
+|   |   |   |   |   |
+|---|---|---|---|---|
+|🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
 
 If you want to use the tools provided here, or you are interested in the concept of open source
 art pieces and want to contribute please contact ashesfall@almostrealism.com for help.
