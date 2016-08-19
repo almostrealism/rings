@@ -55,7 +55,6 @@ import javax.swing.JLabel;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
-import com.almostrealism.apple.AppleSettings;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.DatabaseConnection;
 import com.almostrealism.flow.db.Query;
@@ -405,9 +404,6 @@ public class Server implements JobFactory, Runnable {
 			name = name.substring(11);
 			this.cIndex.put(name, value);
 			System.out.println("Server: Added resource link " + name + " --> " + value);
-		} else if (name.startsWith("apple.bonjour._rings._tcp.port")) {
-			name = name.substring(name.indexOf("=") + 1);
-			AppleSettings.netServicePort = Integer.parseInt(name);
 		} else {
 			return false;
 		}

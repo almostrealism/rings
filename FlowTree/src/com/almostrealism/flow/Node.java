@@ -875,13 +875,10 @@ public class Node implements Runnable {
 	public void writeLogFile(int ttl) {
 		if (this.rssfile == null || this.log == null) return;
 		
-		try {
-			PrintStream p = new PrintStream(new FileOutputStream(this.rssfile));
-			
+		try (PrintStream p = new PrintStream(new FileOutputStream(this.rssfile))) {
 			this.log.write(p, ttl);
 			
 			p.flush();
-			p.close();
 		} catch (FileNotFoundException fnf) {
 			fnf.printStackTrace(System.out);
 		}
