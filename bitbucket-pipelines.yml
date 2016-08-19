@@ -86,13 +86,21 @@ pipelines:
           - mvn install
           
           
-          # PhotonField
+          # PhotonField Dependencies
           - cd ../PhotonField
+          - mvn dependency:copy-dependencies
+          
+          # PhotonField Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
           
           
           # ArtifactDetector Dependencies
-          - cd ../FlowTree
+          - cd ../ArtifactDetector
           - mvn dependency:copy-dependencies
           
           # ArtifactDetector Compile
@@ -104,14 +112,40 @@ pipelines:
           - mvn install
           
           
-          # Explorer
+          # Explorer Dependencies
           - cd ../Explorer
+          - mvn dependency:copy-dependencies
+          
+          # Explorer Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
           
-          # Replicator
+          
+          # Replicator Dependencies
           - cd ../Replicator
+          - mvn dependency:copy-dependencies
+          
+          # Replicator Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
           
-          # FeedGrowth
+          
+          # FeedGrowth Dependencies
           - cd ../FeedGrowth
+          - mvn dependency:copy-dependencies
+          
+          # FeedGrowth Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
