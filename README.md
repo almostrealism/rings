@@ -1,6 +1,6 @@
 # Almost Realism Digital Artist Libraries #
 
-| | Tool | Description | More Info & Help |
+|   | Tool | Description | More Info & Help |
 |---|---|---|---|
 |🔶| **Common** | General logging, error handling, IO and multimedia tools. Notably, this contains a lot of conveniences for dealing with common frames of reference in the real world such as spatial relations, temporal relations, image and texture data, etc. | Requires **Jackson Databind**, **Trove**, **JEP**, and **Log4J**. Required for all Tools. |
 |🔵| **GraphPersist** | Expands on Apache's BeanUtils to provide simple persistence for POJOs with no annotations required. When used with lambdas in Java 1.8, the resulting code is clean and usually maintainable by the data science team rather than the software engineers, allowing developers to get back to the fun stuff and forget talking to DBAs all the time. | Requires **Common** and **C3PO**. |
@@ -18,9 +18,9 @@
 
 #####Key#####
 
-|   |   |   |   |   |
-|---|---|---|---|---|
-|🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
+|   |   |   |   |   |   |
+|---|---|---|---|---|---|
+| #####Key##### |🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
 
 If you want to use the tools provided here, or you are interested in the concept of open source
 art pieces and want to contribute please contact ashesfall@almostrealism.com for help.
