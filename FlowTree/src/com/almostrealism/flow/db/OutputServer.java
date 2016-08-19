@@ -167,13 +167,9 @@ public class OutputServer implements Runnable {
 		while (true) {
 			boolean done = false;
 			
-			try {
-				Socket s = this.socket.accept();
-				
-				// System.out.println("DBS: Accepted connection " + s);
-				
+			try (Socket s = this.socket.accept();
 				ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+				ObjectInputStream in = new ObjectInputStream(s.getInputStream())) {
 				
 				String type = in.readUTF();
 				
@@ -197,10 +193,6 @@ public class OutputServer implements Runnable {
 				}
 				
 				done = true;
-				
-				in.close();
-				out.close();
-				s.close();
 			} catch (EOFException eof) {
 				if (!done) System.out.println("DB Server: EOF Error (" + eof.getMessage() + ")");
 			} catch (ClassNotFoundException cnf) {
