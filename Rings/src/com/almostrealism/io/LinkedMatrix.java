@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.math;
+package com.almostrealism.io;
 
 import io.almostrealism.matrix.Tensor;
 
@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.almostrealism.io.Matrix3DSolutionOutput;
 
 /**
  * 

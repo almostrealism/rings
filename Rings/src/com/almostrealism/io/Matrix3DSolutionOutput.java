@@ -16,7 +16,6 @@
 
 package com.almostrealism.io;
 
-import io.almostrealism.math.LinkedMatrix;
 import io.almostrealism.math.Matrix3D;
 
 import java.io.FileInputStream;
