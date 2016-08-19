@@ -8,7 +8,7 @@
 |🔵| **GraphPersist** | Expands on Apache's BeanUtils to provide simple persistence for POJOs with no annotations required. When used with lambdas in Java 1.8, the resulting code is clean and usually maintainable by the data science team rather than the software engineers, allowing developers to get back to the fun stuff and forget talking to DBAs all the time. | Requires **Common** and **C3PO**. |
 |🔵| **TreeView** | Service for displaying tree data in the browser. | Requires **Common**. |
 |🔶| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
-|🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. *This project requires a retired apache project (**Slide**) and will be upgraded to use a different WebDav library in the future.* | Requires **Common** and **Apache Slide**. |
+|🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. *This project requires a retired apache project (**Slide**) and will be upgraded to use a different WebDav library in the future.* | Requires **Common**, **TreeView** and **Apache Slide**. |
 |🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **TreeView**. |
 |🔶| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
