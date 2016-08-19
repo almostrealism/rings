@@ -377,23 +377,23 @@ public class DatabaseConnection {
 	public boolean removeQueryHandler(QueryHandler h) { return this.queryHandlers.remove(h); }
 	
 	public boolean createOutputTable() throws SQLException {
-		Statement s = this.db.createStatement();
-		s.executeUpdate("CREATE TABLE " + this.outputTable +
-						" (" + DatabaseConnection.toaColumn +
-						" numeric(15,0), " +
-						DatabaseConnection.uidColumn +
-						" numeric(8,0), " +
-						DatabaseConnection.dataColumn +
-						" " + bytea + ", " +
-						DatabaseConnection.uriColumn +
-						" varchar(10000), " +
-						DatabaseConnection.indexColumn +
-						" numeric(8,0), " +
-						DatabaseConnection.refColumn +
-						" numeric(8,0), " +
-						DatabaseConnection.dupColumn +
-						" numeric(8,0))");
-		s.close();
+		try (Statement s = this.db.createStatement()) {
+			s.executeUpdate("CREATE TABLE " + this.outputTable +
+							" (" + DatabaseConnection.toaColumn +
+							" numeric(15,0), " +
+							DatabaseConnection.uidColumn +
+							" numeric(8,0), " +
+							DatabaseConnection.dataColumn +
+							" " + bytea + ", " +
+							DatabaseConnection.uriColumn +
+							" varchar(10000), " +
+							DatabaseConnection.indexColumn +
+							" numeric(8,0), " +
+							DatabaseConnection.refColumn +
+							" numeric(8,0), " +
+							DatabaseConnection.dupColumn +
+							" numeric(8,0))");
+		}
 		
 		return true;
 	}
