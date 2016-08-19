@@ -73,9 +73,18 @@ pipelines:
           - mvn install
           
           
-          # Rings
+          # Rings Dependencies
           - cd ../Rings
+          - mvn dependency:copy-dependencies
+          
+          # Rings Compile
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
           - mvn install
+          
           
           # PhotonField
           - cd ../PhotonField
