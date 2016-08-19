@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.io;
+package com.almostrealism.math;
 
 import io.almostrealism.math.Matrix3D;
 
@@ -28,6 +28,8 @@ import java.io.PrintStream;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.io.LinkedMatrix;
+import com.almostrealism.io.SpatialData;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.primitives.Mesh;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.math;
+package com.almostrealism.math;
 
 import java.util.List;
 

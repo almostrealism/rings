@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.almostrealism.math;
+package com.almostrealism.math;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import com.almostrealism.io.Matrix3DSolutionOutput;
 
 public class SpanCalculator {
 	public static boolean verbose = true;
