@@ -115,11 +115,9 @@ public class ConcatenatedResource extends DistributedResource {
 	
 	public long getTotalBytes() {
 		ResourceDistributionTask t = ResourceDistributionTask.getCurrentTask();
-		BufferedReader buf = new BufferedReader(new InputStreamReader(super.getInputStream()));
 		
-		try {
+		try (BufferedReader buf = new BufferedReader(new InputStreamReader(super.getInputStream()))) {
 			String l = buf.readLine();
-			buf.close();
 			l = l.substring(header.length());
 			String c[] = t.getChildren(l);
 			long tot = c.length * 2;
@@ -144,10 +142,10 @@ public class ConcatenatedResource extends DistributedResource {
 	 * @param dir  Directory containing files to use for the resource.
 	 */
 	public static void createConcatenatedResource(String uri, String dir) throws IOException {
-		PrintStream out = new PrintStream(ResourceDistributionTask.
-									getCurrentTask().getOutputStream(uri));
-		out.println(header + dir);
-		out.flush();
-		out.close();
+		try (PrintStream out = new PrintStream(ResourceDistributionTask.
+									getCurrentTask().getOutputStream(uri))) {
+			out.println(header + dir);
+			out.flush();
+		}
 	}
 }
