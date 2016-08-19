@@ -1,4 +1,4 @@
-### Almost Realism Digital Artist Libraries ###
+# Almost Realism Digital Artist Libraries #
 
 🔶 Paused  🔵 Active  🍏 New  💜 Planned
 
@@ -40,11 +40,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-### Show Your Support ###
+## Show Your Support ##
 
 If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
 
-### More Details ###
+## More Details ##
 
 The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
 
