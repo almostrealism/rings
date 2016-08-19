@@ -79,7 +79,7 @@ import com.almostrealism.flow.db.QueryHandler;
 import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.flow.resources.ResourceDistributionTask;
 import com.almostrealism.flow.tests.TestJobFactory;
-import com.almostrealism.flow.ui.NetworkDialog;
+import com.almostrealism.raytracer.NetworkDialog;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.JobProducer;
 import com.almostrealism.raytracer.network.RayTracingJob;

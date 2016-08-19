@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import com.almostrealism.flow.ui.NetworkDialog;
+import com.almostrealism.raytracer.NetworkDialog;
 
 
 // TODO  Add new menu items: send task and connect to server

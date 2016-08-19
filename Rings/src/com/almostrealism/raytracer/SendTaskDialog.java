@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.flow.ui;
+package com.almostrealism.raytracer;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -37,7 +37,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import com.almostrealism.flow.Server;
-import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
 
 /**

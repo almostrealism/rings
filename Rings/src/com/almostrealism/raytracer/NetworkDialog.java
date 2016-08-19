@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.flow.ui;
+package com.almostrealism.raytracer;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
