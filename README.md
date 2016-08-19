@@ -42,7 +42,7 @@ limitations under the License.
 
 ### Show Your Support ###
 
-If you are interested in helping me continue this work, donations can be submitted via [PayPal](paypal.me/discomike) and are **appreciated**.
+If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
 
 ### More Details ###
 
