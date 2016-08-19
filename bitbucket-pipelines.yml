@@ -61,16 +61,16 @@ pipelines:
           
           
           # FlowTree Dependencies
-          # - cd ../FlowTree
-          # - mvn dependency:copy-dependencies
+          - cd ../FlowTree
+          - mvn dependency:copy-dependencies
           
           # FlowTree Compile
-          # - mkdir target/classes
-          # - cd src
-          # - find -name "*.java" > sources.txt
-          # - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          # - cd ../
-          # - mvn install
+          - mkdir target/classes
+          - cd src
+          - find -name "*.java" > sources.txt
+          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
+          - cd ../
+          - mvn install
           
           
           # Rings Dependencies
