@@ -90,7 +90,7 @@ public class CSG extends AbstractSurface {
     		ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
-            return Intersections.closestIntersection(ray, new ShadableSurface[] {this.sa, this.sb});
+            return Intersections.closestIntersection(ray, this.sa, this.sb);
         } else if (this.type == CSG.DIFFERENCE) {
             if (this.inverted) {
                 double scale[] = this.sb.getScaleCoefficients();
