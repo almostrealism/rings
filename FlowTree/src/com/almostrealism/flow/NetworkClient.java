@@ -88,6 +88,8 @@ import com.almostrealism.raytracer.network.RayTracingJob;
 // TODO  mkdir does not update slide
 
 /**
+ * TODO  This should be split into a parent and child where the parent does not
+ *       depend on the raytracer.
  * @author Mike Murray
  */
 public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.ActivityListener {
