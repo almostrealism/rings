@@ -182,8 +182,6 @@ public class ImageResource implements Resource {
 			}
 			
 			System.out.println("ImageResource: Loaded " + this.data[0] + " x " + this.data[1]);
-		} catch (com.sun.media.jai.codecimpl.util.ImagingException cie) {
-			System.out.println("Server: Imaging exception caused by " + cie.getRootCause());
 		} catch (IndexOutOfBoundsException oob) {
 			System.out.println("Server: Index out of bounds while loading image.");
 			oob.printStackTrace(System.out);
