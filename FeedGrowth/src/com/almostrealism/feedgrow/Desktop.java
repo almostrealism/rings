@@ -27,6 +27,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.almostrealism.NetworkClient;
+
 /**
  * @author  Michael Murray
  */
@@ -67,5 +69,7 @@ public class Desktop extends JFrame {
 			// Display the window.
 			d.setVisible(true);
 		});
+		
+		NetworkClient.main(new String[0]);
 	}
 }
