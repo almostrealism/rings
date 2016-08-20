@@ -190,7 +190,7 @@
 	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-windows-i586.jar"/>
 	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2.jar"/>
 	<classpathentry kind="lib" path="Rings/lib/jogl-all-main-2.3.2.jar"/>
-	<classpathentry kind="lib" path="FlowTree/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="FlowTree/lib/hsqldb-j5-2.2.4.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraph"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgrapht-jdk1.5"/>
