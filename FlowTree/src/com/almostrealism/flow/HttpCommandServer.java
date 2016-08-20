@@ -36,6 +36,7 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.almostrealism.NetworkClient;
 import com.almostrealism.flow.db.Client;
 
 

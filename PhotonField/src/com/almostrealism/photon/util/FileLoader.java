@@ -44,7 +44,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.almostrealism.flow.NetworkClient;
+import com.almostrealism.NetworkClient;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.AbsorberHashSet;

@@ -20,8 +20,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.almostrealism.NetworkClient;
 import com.almostrealism.flow.Message;
-import com.almostrealism.flow.NetworkClient;
 import com.almostrealism.flow.db.Client;
 import com.almostrealism.flow.db.OutputServer;
 
