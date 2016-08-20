@@ -33,7 +33,7 @@ public class Intersections {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, Intersectable surfaces[]) {
+	public static Intersection closestIntersection(Ray ray, Intersectable... surfaces) {
 		Intersection intersections[] = new Intersection[surfaces.length];
 		
 		for(int i = 0; i < surfaces.length; i++) {
