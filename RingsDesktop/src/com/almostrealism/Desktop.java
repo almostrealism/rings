@@ -27,7 +27,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.almostrealism.ui.DesktopPanel;
+import com.almostrealism.feedgrow.DesktopPanel;
 
 /**
  * @author  Michael Murray

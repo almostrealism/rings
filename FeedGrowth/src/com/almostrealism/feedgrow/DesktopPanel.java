@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.ui;
+package com.almostrealism.feedgrow;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
