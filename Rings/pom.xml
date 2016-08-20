@@ -9,11 +9,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.almostrealism</groupId>
-			<artifactId>TreeView</artifactId>
+			<groupId>com.almostrealism</groupId>
+			<artifactId>FlowTree</artifactId>
 			<version>LATEST</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>MatrixView</artifactId>
