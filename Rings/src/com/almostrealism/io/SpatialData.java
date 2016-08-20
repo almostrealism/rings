@@ -207,7 +207,7 @@ public class SpatialData {
 							//								((AbstractSurfaceUI)newSurface).setName("Triangle " + p);
 						}
 
-						scene.addSurface(newSurface);
+						scene.add(newSurface);
 					}
 
 					line = in.readLine();
@@ -259,7 +259,7 @@ public class SpatialData {
 								//								((AbstractSurfaceUI)newSurface).setName("Triangle " + tCount);
 							}
 
-							scene.addSurface(newSurface);
+							scene.add(newSurface);
 							tCount++;
 						}
 					} catch (NumberFormatException nfe) {
