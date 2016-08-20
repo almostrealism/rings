@@ -181,6 +181,6 @@ public class SurfaceGroup extends AbstractSurface {
 	public Intersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		return Intersections.closestIntersection(ray, getSurfaces());
+		return Intersections.closestIntersection(ray, surfaces);
 	}
 }
