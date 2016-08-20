@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
@@ -36,6 +35,7 @@ import com.almostrealism.rayshade.Shader;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
 
 /**
  * {@link AbstractSurface} is an abstract implementation of {@link ShadableSurface} that takes
@@ -46,7 +46,7 @@ import com.almostrealism.raytracer.primitives.Mesh;
  * 
  * @author  Mike Murray
  */
-public abstract class AbstractSurface extends BasicGeometry implements ShadableSurface {
+public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface {
 	private boolean shadeFront, shadeBack;
 
 	private RGB color;
