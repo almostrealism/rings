@@ -23,7 +23,7 @@
  *
  */
 
-package com.almostrealism.flow;
+package com.almostrealism;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,10 +36,14 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.almostrealism.NetworkClient;
+import com.almostrealism.flow.Message;
 import com.almostrealism.flow.db.Client;
 
-
+/**
+ * TODO  Rewrite as a Jersey service.
+ * 
+ * @author  Michael Murray
+ */
 public class HttpCommandServer implements Runnable {
 	private static SimpleDateFormat format =
 		new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
