@@ -512,7 +512,7 @@ public class RayTracingEngine {
 		
 		RGB color = null;
 		
-		List<ShadableSurface> allSurfaces = combineSurfaces(surface, otherSurfaces);
+		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
 		
 		color = light.getColor().multiply(light.getIntensity());
 		color.multiplyBy(surface.getColorAt(point));
@@ -552,7 +552,7 @@ public class RayTracingEngine {
 		
 		RGB color = null;
 		
-		List<ShadableSurface> allSurfaces = combineSurfaces(surface, otherSurfaces);
+		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
 		
 		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
@@ -795,34 +795,5 @@ public class RayTracingEngine {
 		for (int i = index + 1; i < allSurfaces.length; i++) { otherSurfaces[i - 1] = allSurfaces[i]; }
 		
 		return otherSurfaces;
-	}
-	
-	/**
-	  Removes the specified Surface object from the specified Surface object array and returns the new array.
-	  If the specified Surface object is not matched, the whole array is returned.
-	*/
-	
-	public static ShadableSurface[] separateSurfaces(ShadableSurface surface, ShadableSurface allSurfaces[]) {
-		for(int i = 0; i < allSurfaces.length; i++) {
-			if (surface == allSurfaces[i]) {
-				// See separateSurfaces method.
-				
-				ShadableSurface otherSurfaces[] = new ShadableSurface[allSurfaces.length - 1];
-				
-				for (int j = 0; j < i; j++) { otherSurfaces[j] = allSurfaces[j]; }
-				for (int j = i + 1; j < allSurfaces.length; j++) { otherSurfaces[j - 1] = allSurfaces[j]; }
-				
-				return otherSurfaces;
-			}
-		}
-		
-		return allSurfaces;
-	}
-	
-	private static List<ShadableSurface> combineSurfaces(ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces) {
-		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
-		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
-		allSurfaces.add(surface);
-		return allSurfaces;
 	}
 }

@@ -16,6 +16,8 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.List;
+
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
@@ -23,6 +25,7 @@ import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -143,9 +146,7 @@ public class RefractionShader implements Shader, Editable {
 		// if (entering) d.multiplyBy(-1.0);
 		Ray r = new Ray(point, d);
 		
-		ShadableSurface allSurfaces[] = new ShadableSurface[p.getOtherSurfaces().length + 1];
-		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces[i] = otherSurfaces[i]; }
-		allSurfaces[allSurfaces.length - 1] = surface;
+		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
 		
 		Light allLights[] = new Light[p.getOtherLights().length + 1];
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
@@ -155,7 +156,7 @@ public class RefractionShader implements Shader, Editable {
 		RefractionShader.lastRay = r.getDirection();
 		
 		RGB color = RayTracingEngine.lightingCalculation(r, allSurfaces, allLights,
-				p.fogColor, p.fogDensity, p.fogRatio, p);
+											p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));
 		

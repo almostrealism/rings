@@ -16,7 +16,9 @@
 
 package com.almostrealism.raytracer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.SurfaceList;
@@ -125,5 +127,40 @@ public class Scene extends SurfaceList<ShadableSurface> {
 		l.setLights(this.lights);
 		l.addAll(this);
 		return l;
+	}
+
+	/**
+	 * Removes the specified Surface object from the specified Surface object array and returns the new array.
+	 * If the specified Surface object is not matched, the whole array is returned.
+	 */
+	public static ShadableSurface[] separateSurfaces(ShadableSurface surface, ShadableSurface allSurfaces[]) {
+		for(int i = 0; i < allSurfaces.length; i++) {
+			if (surface == allSurfaces[i]) {
+				// See separateSurfaces method.
+				
+				ShadableSurface otherSurfaces[] = new ShadableSurface[allSurfaces.length - 1];
+				
+				for (int j = 0; j < i; j++) { otherSurfaces[j] = allSurfaces[j]; }
+				for (int j = i + 1; j < allSurfaces.length; j++) { otherSurfaces[j - 1] = allSurfaces[j]; }
+				
+				return otherSurfaces;
+			}
+		}
+		
+		return allSurfaces;
+	}
+	
+	public static List<ShadableSurface> combineSurfaces(ShadableSurface surface, ShadableSurface otherSurfaces[]) {
+		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
+		allSurfaces.add(surface);
+		return allSurfaces;
+	}
+	
+	public static List<ShadableSurface> combineSurfaces(ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces) {
+		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
+		allSurfaces.add(surface);
+		return allSurfaces;
 	}
 }
