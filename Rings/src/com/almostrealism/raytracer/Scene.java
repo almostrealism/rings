@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.almostrealism.space.Surface;
 import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.projection.Camera;
@@ -73,7 +72,7 @@ public class Scene extends SurfaceList<ShadableSurface> {
 		addAll(Arrays.asList(surfaces));
 	}
 	
-	public Surface[] getSurfaces() { return toArray(new Surface[0]); }
+	public ShadableSurface[] getSurfaces() { return toArray(new ShadableSurface[0]); }
 	
 	/**
 	 * Sets the camera of this Scene object to the camera represented by the specified Camera object.
