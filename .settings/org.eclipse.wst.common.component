@@ -16,11 +16,11 @@
         <wb-resource deploy-path="/" source-path="/ForkedProjects/iptables"/>
         <wb-resource deploy-path="/" source-path="/ForkedProjects/src"/>
         <wb-resource deploy-path="/" source-path="/RingsDesktop/src"/>
-        <wb-resource deploy-path="/" source-path="/RingsDesktop/resources"/>
         <wb-resource deploy-path="/" source-path="/PromotionManager/src"/>
         <wb-resource deploy-path="/" source-path="/GraphPersist/test"/>
         <wb-resource deploy-path="/" source-path="/ArtifactDetector/src"/>
         <wb-resource deploy-path="/" source-path="/FlowTree/resources"/>
         <wb-resource deploy-path="/" source-path="/Replicator/resources"/>
+        <wb-resource deploy-path="/" source-path="/FeedGrowth/resources"/>
     </wb-module>
 </project-modules>

@@ -52,7 +52,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		ControlAction.controlFrame.setSize(90, 140);
 		ControlAction.controlFrame.setVisible(false);
 		
-		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getResourceAsStream("models/Cube.obj")).getMesh());
+		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
 		
 		btnX.addActionListener((e) -> { System.exit(0); });
 		
@@ -64,7 +64,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		static JFrame canvasFrame;
 		
 		public CanvasAction() {
-			super("Viewer", new ImageIcon(CanvasAction.class.getResource("/icons/v.png")));
+			super("Viewer", new ImageIcon(CanvasAction.class.getClassLoader().getResource("icons/v.png")));
 		}
 		
 		@Override
