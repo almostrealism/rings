@@ -105,7 +105,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		public String run(String command, PrintStream out);
 	}
 	
-	private static final String internalConfig = "config/node.conf";
+	private static final String internalConfig = "/node.conf";
 	private static final String plySceneLoaderClass = "com.almostrealism.raytracer.loaders.PlySceneLoader";
 	private static final String gtsSceneLoaderClass = "com.almostrealism.raytracer.loaders.GtsSceneLoader";
 	
@@ -154,7 +154,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 			}
 			
 			URL r = (NetworkClient.class).getClassLoader().getResource(internalConfig);
-			configFile = "config/node.conf (internal)";
+			configFile = "/node.conf (internal)";
 			if (r != null) {
 				in = r.openStream();
 				System.out.println("NetworkClient: Loaded config from internal resource.");
