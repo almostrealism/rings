@@ -7,3 +7,5 @@ syntax: regexp
 ^RingsDesktop/target$
 syntax: regexp
 ^GraphPersist/target$
+syntax: regexp
+^TreeView/target$
