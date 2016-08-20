@@ -7,7 +7,7 @@
 |🔵| **TreeView** | Service for displaying tree data in the browser. | Requires **Common**. |
 |🔶| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
 |🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. *This project requires a retired apache project (**Slide**) and will be upgraded to use a different WebDav library in the future. Also, this project uses HSQLDB optionally (by default), but can be configured to use any SQL relational database.* | Requires **TreeView**, **HSQLDB** and **Apache Slide**. |
-|🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree** and **MatrixView**. |
+|🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**, **MatrixView** and **JOGL**. |
 |🍎| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
 |🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
