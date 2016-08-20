@@ -31,12 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.URL;
-
-import javax.media.jai.JAI;
-import javax.media.jai.util.ImagingException;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.almostrealism.flow.Resource;
 import com.almostrealism.flow.Server;
@@ -144,7 +138,8 @@ public class ImageResource implements Resource {
 					}
 				};
 				dt.start();
-				im = JAI.create("stream", seekableInput);
+//				TODO  Must load image without JAI
+//				im = JAI.create("stream", seekableInput);
 			} else if (uri.startsWith("resource://")) {
 				IOStreams io = Client.getCurrentClient().getServer().parseResourceUri(uri);
 				
@@ -157,7 +152,8 @@ public class ImageResource implements Resource {
 				io.close();
 			} else {
 				System.out.println("ImageResource: Loading image from " + uri);
-				im = JAI.create("url", new URL(uri));
+//				TODO  Must load image without JAI
+//				im = JAI.create("url", new URL(uri));
 			}
 			
 			if (im == null && this.data == null) throw new IOException();
@@ -188,8 +184,6 @@ public class ImageResource implements Resource {
 			}
 			
 			System.out.println("ImageResource: Loaded " + this.data[0] + " x " + this.data[1]);
-		} catch (ImagingException ie) {
-			System.out.println("Server: Imaging exception caused by " + ie.getRootCause());
 		} catch (com.sun.media.jai.codecimpl.util.ImagingException cie) {
 			System.out.println("Server: Imaging exception caused by " + cie.getRootCause());
 		} catch (IndexOutOfBoundsException oob) {
@@ -309,7 +303,7 @@ public class ImageResource implements Resource {
 	public int hashCode() { return this.uri.hashCode(); }
 
 	public InputStream getInputStream() {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented");
 //		return null;
 	}
 }
