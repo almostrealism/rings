@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism;
+package com.almostrealism.feedgrow;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsDevice.WindowTranslucency;
@@ -26,8 +26,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import com.almostrealism.feedgrow.DesktopPanel;
 
 /**
  * @author  Michael Murray
