@@ -9,7 +9,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>FlowTree</artifactId>
 			<version>LATEST</version>
 		</dependency>
