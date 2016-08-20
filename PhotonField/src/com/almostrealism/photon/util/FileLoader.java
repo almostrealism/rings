@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.flow.db.Client;
 import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
@@ -45,7 +46,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.almostrealism.NetworkClient;
-import com.almostrealism.flow.db.Client;
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorberSet;

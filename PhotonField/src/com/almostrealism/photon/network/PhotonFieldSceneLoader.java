@@ -24,11 +24,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
 
+import org.almostrealism.flow.Resource;
+import org.almostrealism.flow.db.Client;
+import org.almostrealism.flow.resources.DistributedResource;
 import org.xml.sax.SAXException;
 
-import com.almostrealism.flow.Resource;
-import com.almostrealism.flow.db.Client;
-import com.almostrealism.flow.resources.DistributedResource;
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorberSet;
 import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;

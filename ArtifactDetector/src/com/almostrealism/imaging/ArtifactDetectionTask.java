@@ -28,9 +28,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almostrealism.flow.Job;
-import com.almostrealism.flow.JobFactory;
-import com.almostrealism.flow.Server;
+import org.almostrealism.flow.Job;
+import org.almostrealism.flow.JobFactory;
+import org.almostrealism.flow.Server;
 
 public class ArtifactDetectionTask implements JobFactory {
 	private static int width = 9700;

@@ -36,8 +36,8 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.almostrealism.flow.Message;
-import com.almostrealism.flow.db.Client;
+import org.almostrealism.flow.Message;
+import org.almostrealism.flow.db.Client;
 
 /**
  * TODO  Rewrite as a Jersey service.

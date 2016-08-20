@@ -30,11 +30,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import com.almostrealism.flow.Job;
-import com.almostrealism.flow.JobFactory;
-import com.almostrealism.flow.Server;
-import com.almostrealism.flow.db.Client;
-import com.almostrealism.flow.db.Query;
+import org.almostrealism.flow.Job;
+import org.almostrealism.flow.JobFactory;
+import org.almostrealism.flow.Server;
+import org.almostrealism.flow.db.Client;
+import org.almostrealism.flow.db.Query;
 
 /**
  * @author Mike Murray
@@ -108,7 +108,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see com.almostrealism.flow.JobFactory#nextJob()
+	 * @see org.almostrealism.flow.JobFactory#nextJob()
 	 */
 	public Job nextJob() {
 		if (i >= this.totalJobs) {
@@ -186,7 +186,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 
 	/**
-	 * @see com.almostrealism.flow.JobFactory#createJob(java.lang.String)
+	 * @see org.almostrealism.flow.JobFactory#createJob(java.lang.String)
 	 */
 	public Job createJob(String data) {
 		Client c = Client.getCurrentClient();
@@ -274,7 +274,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see com.almostrealism.flow.JobFactory#set(java.lang.String, java.lang.String)
+	 * @see org.almostrealism.flow.JobFactory#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri")) {

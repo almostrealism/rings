@@ -65,6 +65,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.flow.JobFactory;
+import org.almostrealism.flow.Message;
+import org.almostrealism.flow.Node;
+import org.almostrealism.flow.NodeGroup;
+import org.almostrealism.flow.NodeProxy;
+import org.almostrealism.flow.Resource;
+import org.almostrealism.flow.Server;
+import org.almostrealism.flow.ServerBehavior;
+import org.almostrealism.flow.Node.ActivityListener;
+import org.almostrealism.flow.NodeProxy.EventListener;
+import org.almostrealism.flow.db.Client;
+import org.almostrealism.flow.db.OutputHandler;
+import org.almostrealism.flow.db.Query;
+import org.almostrealism.flow.db.QueryHandler;
+import org.almostrealism.flow.resources.DistributedResource;
+import org.almostrealism.flow.resources.ResourceDistributionTask;
+import org.almostrealism.flow.tests.TestJobFactory;
 import org.almostrealism.io.Storable;
 import org.almostrealism.swing.GraphDisplay;
 import org.almostrealism.swing.ScrollingTextDisplay;
@@ -72,23 +89,6 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Help;
 
-import com.almostrealism.flow.JobFactory;
-import com.almostrealism.flow.Message;
-import com.almostrealism.flow.Node;
-import com.almostrealism.flow.NodeGroup;
-import com.almostrealism.flow.NodeProxy;
-import com.almostrealism.flow.Resource;
-import com.almostrealism.flow.Server;
-import com.almostrealism.flow.ServerBehavior;
-import com.almostrealism.flow.Node.ActivityListener;
-import com.almostrealism.flow.NodeProxy.EventListener;
-import com.almostrealism.flow.db.Client;
-import com.almostrealism.flow.db.OutputHandler;
-import com.almostrealism.flow.db.Query;
-import com.almostrealism.flow.db.QueryHandler;
-import com.almostrealism.flow.resources.DistributedResource;
-import com.almostrealism.flow.resources.ResourceDistributionTask;
-import com.almostrealism.flow.tests.TestJobFactory;
 import com.almostrealism.raytracer.NetworkDialog;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.JobProducer;
@@ -190,7 +190,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		
 		if ("true".equals(p.getProperty("db.start", "true"))) {
 			try {
-				com.almostrealism.flow.db.OutputServer s = new com.almostrealism.flow.db.OutputServer(p);
+				org.almostrealism.flow.db.OutputServer s = new org.almostrealism.flow.db.OutputServer(p);
 				System.out.println("DB Server started");
 			} catch (IOException ioe) {
 				System.out.println("IO error starting DBS: " + ioe.getMessage());
@@ -1360,13 +1360,13 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					Properties p = new Properties();
 					p.setProperty("db.test", "true");
 					
-					com.almostrealism.flow.db.OutputServer server =
-						new com.almostrealism.flow.db.OutputServer(p);
+					org.almostrealism.flow.db.OutputServer server =
+						new org.almostrealism.flow.db.OutputServer(p);
 					
 					return "Started DBS.";
 				} else if (s[0].equals("create")) {
-					com.almostrealism.flow.db.OutputServer server = 
-						com.almostrealism.flow.db.OutputServer.getCurrentServer();
+					org.almostrealism.flow.db.OutputServer server = 
+						org.almostrealism.flow.db.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					if (server.getDatabaseConnection().createOutputTable())
@@ -1374,8 +1374,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					else
 						return "Could not create DB tables.";
 				} else if (s[0].equals("add")) {
-					com.almostrealism.flow.db.OutputServer server = 
-						com.almostrealism.flow.db.OutputServer.getCurrentServer();
+					org.almostrealism.flow.db.OutputServer server = 
+						org.almostrealism.flow.db.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					Object o = Class.forName(s[1]).newInstance();
@@ -1407,8 +1407,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					return "Unknown DBS command: " + s[0] + "\nTry start, create, or add.";
 				}
 			} else if (c.startsWith("dbnotify")) {
-				com.almostrealism.flow.db.OutputServer server = 
-					com.almostrealism.flow.db.OutputServer.getCurrentServer();
+				org.almostrealism.flow.db.OutputServer server = 
+					org.almostrealism.flow.db.OutputServer.getCurrentServer();
 				if (server == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1416,8 +1416,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				
 				return "Output from " + s[0] + " passed to output handlers.";
 			} else if (c.startsWith("dbupdate")) {
-				com.almostrealism.flow.db.OutputServer dbs = 
-					com.almostrealism.flow.db.OutputServer.getCurrentServer();
+				org.almostrealism.flow.db.OutputServer dbs = 
+					org.almostrealism.flow.db.OutputServer.getCurrentServer();
 				if (dbs == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1487,12 +1487,12 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 
 	/**
-	 * @see com.almostrealism.flow.NodeProxy.EventListener#connect(com.almostrealism.flow.NodeProxy)
+	 * @see org.almostrealism.flow.NodeProxy.EventListener#connect(org.almostrealism.flow.NodeProxy)
 	 */
 	public void connect(NodeProxy p) { this.button.setIcon(this.activeIcon); }
 
 	/**
-	 * @see com.almostrealism.flow.NodeProxy.EventListener#disconnect(com.almostrealism.flow.NodeProxy)
+	 * @see org.almostrealism.flow.NodeProxy.EventListener#disconnect(org.almostrealism.flow.NodeProxy)
 	 */
 	public int disconnect(NodeProxy p) {
 		if (Client.getCurrentClient().getServer().getNodeGroup().getServers().length == 0)
@@ -1502,13 +1502,13 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 	
 	/**
-	 * @see com.almostrealism.flow.NodeProxy.EventListener#recievedMessage(com.almostrealism.flow.Message, int)
+	 * @see org.almostrealism.flow.NodeProxy.EventListener#recievedMessage(org.almostrealism.flow.Message, int)
 	 * @return  false.
 	 */
 	public boolean recievedMessage(Message m, int reciever) { return false; }
 	
 	/**
-	 * @see com.almostrealism.flow.Node.ActivityListener#startedWorking()
+	 * @see org.almostrealism.flow.Node.ActivityListener#startedWorking()
 	 */
 	public void startedWorking() {
 		if (this.button == null) return;
@@ -1523,7 +1523,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 
 	/**
-	 * @see com.almostrealism.flow.Node.ActivityListener#stoppedWorking()
+	 * @see org.almostrealism.flow.Node.ActivityListener#stoppedWorking()
 	 */
 	public void stoppedWorking() {
 		if (Client.getCurrentClient().getServer().getNodeGroup().isWorking()) return;
@@ -1531,7 +1531,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 	
 	/**
-	 * @see com.almostrealism.flow.Node.ActivityListener#becameIsolated()
+	 * @see org.almostrealism.flow.Node.ActivityListener#becameIsolated()
 	 */
 	public void becameIsolated() {
 		if (this.display != null) {

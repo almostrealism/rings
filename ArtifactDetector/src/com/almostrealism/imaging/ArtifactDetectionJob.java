@@ -16,10 +16,9 @@
 
 package com.almostrealism.imaging;
 
+import org.almostrealism.flow.Job;
+import org.almostrealism.flow.db.Client;
 import org.almostrealism.texture.RGB;
-
-import com.almostrealism.flow.Job;
-import com.almostrealism.flow.db.Client;
 
 public class ArtifactDetectionJob implements Job {
 	private static int ignoreTop = 1800;
