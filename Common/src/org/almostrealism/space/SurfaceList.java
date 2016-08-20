@@ -21,6 +21,6 @@ import java.util.ArrayList;
 /**
  * @author  Michael Murray
  */
-public class SurfaceList extends ArrayList<Surface> implements Cloneable {
+public class SurfaceList<T extends Surface> extends ArrayList<T> implements Cloneable {
 
 }

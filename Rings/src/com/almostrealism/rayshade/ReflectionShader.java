@@ -16,6 +16,9 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.ColorProducer;
@@ -79,9 +82,9 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		
 		p.addReflection();
 		
-		ShadableSurface allSurfaces[] = new ShadableSurface[p.getOtherSurfaces().length + 1];
-		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces[i] = p.getOtherSurfaces()[i]; }
-		allSurfaces[allSurfaces.length - 1] = p.getSurface();
+		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces.add(p.getOtherSurfaces()[i]); }
+		allSurfaces.add(p.getSurface());
 		
 		Light allLights[] = new Light[p.getOtherLights().length + 1];
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }

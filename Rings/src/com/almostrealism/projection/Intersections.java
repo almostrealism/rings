@@ -16,6 +16,9 @@
 
 package com.almostrealism.projection;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
@@ -33,24 +36,24 @@ public class Intersections {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, Intersectable... surfaces) {
-		Intersection intersections[] = new Intersection[surfaces.length];
+	public static Intersection closestIntersection(Ray ray, Iterable<? extends Intersectable> surfaces) {
+		List<Intersection> intersections = new ArrayList<Intersection>();
 		
-		for(int i = 0; i < surfaces.length; i++) {
-			intersections[i] = surfaces[i].intersectAt((Ray)ray.clone());
+		for (Intersectable s : surfaces) {
+			intersections.add(s.intersectAt((Ray) ray.clone()));
 		}
 		
 		double closestIntersection = -1.0;
 		int closestIntersectionIndex = -1;
 		
-		i: for(int i = 0; i < intersections.length; i++) {
-			if (intersections[i] == null)
+		i: for (int i = 0; i < intersections.size(); i++) {
+			if (intersections.get(i) == null)
 				continue i;
 			
-			for(int j = 0; j < intersections[i].getIntersections().length; j++) {
-				if (intersections[i].getIntersections()[j] >= Intersection.e) {
-					if (closestIntersectionIndex == -1 || intersections[i].getIntersections()[j] < closestIntersection) {
-						closestIntersection = intersections[i].getIntersections()[j];
+			for (int j = 0; j < intersections.get(i).getIntersections().length; j++) {
+				if (intersections.get(i).getIntersections()[j] >= Intersection.e) {
+					if (closestIntersectionIndex == -1 || intersections.get(i).getIntersections()[j] < closestIntersection) {
+						closestIntersection = intersections.get(i).getIntersections()[j];
 						closestIntersectionIndex = i;
 					}
 				}
@@ -60,7 +63,7 @@ public class Intersections {
 		if (closestIntersectionIndex < 0)
 			return null;
 		else
-			return intersections[closestIntersectionIndex];
+			return intersections.get(closestIntersectionIndex);
 	}
 
 	/**

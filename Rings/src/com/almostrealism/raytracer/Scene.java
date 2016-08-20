@@ -23,13 +23,14 @@ import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**
  * A Scene object represents a scene in 3d. It stores a Camera object, an array of Light objects,
  * and an array of Surface objects.
  */
-public class Scene extends SurfaceList {
+public class Scene extends SurfaceList<ShadableSurface> {
   private Camera camera;
   
   private Light lights[];
@@ -41,14 +42,14 @@ public class Scene extends SurfaceList {
 		this.setCamera(new PinholeCamera());
 		
 		this.setLights(new Light[0]);
-		this.setSurfaces(new Surface[0]);
+		this.setSurfaces(new ShadableSurface[0]);
 	}
 	
 	/**
 	 * Constructs a Scene object with a default Camera object, no Light objects,
 	 * and the surfaces represented by the specified Surface array.
 	 */
-	public Scene(Surface surfaces[]) {
+	public Scene(ShadableSurface surfaces[]) {
 		this.setCamera(new PinholeCamera());
 		
 		this.setLights(new Light[0]);
@@ -58,14 +59,14 @@ public class Scene extends SurfaceList {
 	/**
 	 * Constructs a Scene object with the specified Camera object, Light array, and Surface array.
 	 */
-	public Scene(Camera camera, Light lights[], Surface surfaces[]) {
+	public Scene(Camera camera, Light lights[], ShadableSurface surfaces[]) {
 		this.setCamera(camera);
 		
 		this.setLights(lights);
 		this.setSurfaces(surfaces);
 	}
 	
-	public void setSurfaces(Surface surfaces[]) {
+	public void setSurfaces(ShadableSurface surfaces[]) {
 		clear();
 		addAll(Arrays.asList(surfaces));
 	}

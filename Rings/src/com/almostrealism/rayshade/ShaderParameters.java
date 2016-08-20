@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import org.almostrealism.space.Vector;
@@ -33,20 +34,38 @@ import com.almostrealism.raytracer.lighting.Light;
  * @author Mike Murray
  */
 public class ShaderParameters extends Hashtable {
-  private Vector point;
-  private Vector viewerDirection;
-  private Vector lightDirection;
-  private Light light;
-  private Light otherLights[];
-  private ShadableSurface surface;
-  private ShadableSurface otherSurfaces[];
-  
-  public RGB fogColor;
-  public double fogRatio, fogDensity;
-  
-  private int refCount;
-  private int exit, enter;
+	private Vector point;
+	private Vector viewerDirection;
+	private Vector lightDirection;
+	private Light light;
+	private Light otherLights[];
+	private ShadableSurface surface;
+	private ShadableSurface otherSurfaces[];
 
+	public RGB fogColor;
+	public double fogRatio, fogDensity;
+
+	private int refCount;
+	private int exit, enter;
+	
+	/**
+	 * Constructs a new ShaderParameters object using the specified arguments.
+	 * 
+	 * @param point  Vector object representing the point to be shaded.
+	 * @param viewerDirection  Vector object representing the direction toward the viewer (should be unit length).
+	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
+	 * @param light  Light object representing the light.
+	 * @param otherLights  Array of Light objects representing other lights in the scene.
+	 * @param surface  Surface object to be shaded.
+	 * @param otherSurfaces  Collection of other Surface objects in the scene.
+	 */
+	public ShaderParameters(Vector point, Vector viewerDirection, Vector lightDirection,
+			Light light, Light otherLights[],
+			Collection<ShadableSurface> otherSurfaces) {
+		this(point, viewerDirection, lightDirection, light, otherLights,
+				otherSurfaces.toArray(new ShadableSurface[0]));
+	}
+	
 	/**
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * 
@@ -152,7 +171,16 @@ public class ShaderParameters extends Hashtable {
 	 * 
 	 * @param s  Array of Surface objects to use.
 	 */
-	public void setOtherSurfaces(ShadableSurface s[]) { this.otherSurfaces = s; }
+	public void setOtherSurfaces(ShadableSurface... s) { this.otherSurfaces = s; }
+	
+	/**
+	 * Sets the other Surfaces to those stored in the specified array.
+	 * 
+	 * @param s  Array of Surface objects to use.
+	 */
+	public void setOtherSurfaces(Collection<ShadableSurface> s) {
+		this.otherSurfaces = s.toArray(new ShadableSurface[0]);
+	}
 	
 	/**
 	 * @return  An array of other Surface objects in the scene.

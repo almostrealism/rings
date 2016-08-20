@@ -26,6 +26,11 @@
 
 package com.almostrealism.raytracer.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Surface;
@@ -44,7 +49,6 @@ import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
-
 
 /**
  * The RayTracingEngine class provides static methods for rendering scenes.
@@ -95,14 +99,14 @@ public class RayTracingEngine {
 								int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(0, 0, width, height, width, height, ssWidth, ssHeight);
-		return RayTracingEngine.render(scene.getSurfaces(), scene.getCamera(), scene.getLights(), p, monitor);
+		return RayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, monitor);
 	}
 	
 	public static RGB[][] render (Scene scene, int x, int y, int dx, int dy,
 								int width, int height, int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(x, y, dx, dy, width, height, ssWidth, ssHeight);
-		return RayTracingEngine.render(scene.getSurfaces(), scene.getCamera(), scene.getLights(), p, monitor);
+		return RayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, monitor);
 	}
 	
 	/**
@@ -114,8 +118,7 @@ public class RayTracingEngine {
 	 * @return  Rendered image data.
 	 */
 	public static RGB[][] render(Scene scene, RenderParameters p, ProgressDisplay prog) {
-		return RayTracingEngine.render(scene.getSurfaces(), scene.getCamera(), scene.getLights(),
-									p, prog);
+		return RayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, prog);
 	}
 	
 	/**
@@ -139,9 +142,9 @@ public class RayTracingEngine {
 	 * @param monitor  ProgressMonitor instance to use.
 	 * @return  Image data.
 	 */
-	public static RGB[][] render(Surface surfaces[], Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
+	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.length + " Surfaces");
+			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.size() + " Surfaces");
 			Settings.rayEngineOut.println("Camera: " + camera.toString());
 		}
 		
@@ -244,8 +247,8 @@ public class RayTracingEngine {
 	 * and Lights. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public static RGB lightingCalculation(Ray r, Surface allSurfaces[], Light allLights[],
-										RGB fog, double fd, double fr, ShaderParameters p) {
+	public static RGB lightingCalculation(Ray r, Iterable<? extends ShadableSurface> allSurfaces, Light allLights[],
+											RGB fog, double fd, double fr, ShaderParameters p) {
 		Intersection intersect = Intersections.closestIntersection(r, allSurfaces);
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);
@@ -258,19 +261,12 @@ public class RayTracingEngine {
 			// r = intersect.getRay();
 			Vector point = r.pointAt(intersection);
 			
-			ShadableSurface surf = intersect.getSurface();
-			ShadableSurface otherSurf[] = allSurfaces;
+			ShadableSurface surf = (ShadableSurface) intersect.getSurface();
+			List<ShadableSurface> otherSurf = new ArrayList<ShadableSurface>();
 			
-			for(int i = 0; i < allSurfaces.length; i++) {
-				if (surface == allSurfaces[i]) {
-					// See separateSurfaces method.
-					
-					otherSurf = new ShadableSurface[allSurfaces.length - 1];
-					
-					for (int j = 0; j < i; j++) 
-						otherSurf[j] = allSurfaces[j];
-					for (int j = i + 1; j < allSurfaces.length; j++)
-						otherSurf[j - 1] = allSurfaces[j];
+			for (Surface s : allSurfaces) {
+				if (surface != s) {
+					otherSurf.add(surface);
 				}
 			}
 			
@@ -440,7 +436,8 @@ public class RayTracingEngine {
 	 * calculations are to be done.
 	 */
 	public static RGB lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
-										ShadableSurface otherSurfaces[], Light lights[], ShaderParameters p) {
+											Collection<ShadableSurface> otherSurfaces, Light lights[],
+											ShaderParameters p) {
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		
 		for(int i = 0; i < lights.length; i++) {
@@ -468,11 +465,11 @@ public class RayTracingEngine {
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static RGB lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
-										ShadableSurface otherSurfaces[], Light light, Light otherLights[],
+										Collection<ShadableSurface> otherSurfaces, Light light, Light otherLights[],
 										ShaderParameters p) {
-		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
-		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
-		allSurfaces[allSurfaces.length - 1] = surface;
+		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		for (ShadableSurface s : otherSurfaces) allSurfaces.add(s);
+		allSurfaces.add(surface);
 		
 		if (RayTracingEngine.castShadows && light.castShadows &&
 				RayTracingEngine.shadowCalculation(point, allSurfaces, light))
@@ -508,16 +505,14 @@ public class RayTracingEngine {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static RGB ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, ShadableSurface otherSurfaces[], AmbientLight light) {
+	public static RGB ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces, AmbientLight light) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.print(" AmbientLight {");
 		}
 		
 		RGB color = null;
 		
-		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
-		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
-		allSurfaces[allSurfaces.length - 1] = surface;
+		List<ShadableSurface> allSurfaces = combineSurfaces(surface, otherSurfaces);
 		
 		color = light.getColor().multiply(light.getIntensity());
 		color.multiplyBy(surface.getColorAt(point));
@@ -547,7 +542,8 @@ public class RayTracingEngine {
 	 *           (null accepted).
 	 */
 	public static RGB directionalAmbientLightingCalculation(Vector point, Vector rayDirection,
-														ShadableSurface surface, ShadableSurface otherSurfaces[],
+														ShadableSurface surface,
+														Collection<ShadableSurface> otherSurfaces,
 														DirectionalAmbientLight light, Light otherLights[],
 														ShaderParameters p) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
@@ -556,9 +552,7 @@ public class RayTracingEngine {
 		
 		RGB color = null;
 		
-		ShadableSurface allSurfaces[] = new ShadableSurface[otherSurfaces.length + 1];
-		for (int i = 0; i < otherSurfaces.length; i++) { allSurfaces[i] = otherSurfaces[i]; }
-		allSurfaces[allSurfaces.length - 1] = surface;
+		List<ShadableSurface> allSurfaces = combineSurfaces(surface, otherSurfaces);
 		
 		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
@@ -604,7 +598,8 @@ public class RayTracingEngine {
 	 * based on intensity.
 	 */
 	public static RGB pointLightingCalculation(Vector point, Vector rayDirection,
-											ShadableSurface surface, ShadableSurface otherSurfaces[],
+											ShadableSurface surface,
+											Collection<ShadableSurface> otherSurfaces,
 											PointLight light, Light otherLights[],
 											ShaderParameters p) {
 		Vector direction = point.subtract(light.getLocation());
@@ -630,7 +625,7 @@ public class RayTracingEngine {
 	  Returns true if the point has a shadow cast on it.
 	*/
 	
-	public static boolean shadowCalculation(Vector point, ShadableSurface surfaces[], Light light) {
+	public static boolean shadowCalculation(Vector point, Iterable<? extends Intersectable> surfaces, Light light) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.print(" Shadow {");
 		}
@@ -821,6 +816,13 @@ public class RayTracingEngine {
 			}
 		}
 		
+		return allSurfaces;
+	}
+	
+	private static List<ShadableSurface> combineSurfaces(ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces) {
+		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
+		allSurfaces.add(surface);
 		return allSurfaces;
 	}
 }
