@@ -25,10 +25,6 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/jvst_system"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/jvst_wrapper"/>
-	<classpathentry exported="true" kind="lib" path="FeedGrowth/lib/jogl-all.jar"/>
-	<classpathentry exported="true" kind="lib" path="FeedGrowth/lib/gluegen-rt-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="FeedGrowth/lib/gluegen-rt.jar"/>
-	<classpathentry exported="true" kind="lib" path="FeedGrowth/lib/jogl-all-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/ant-1.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/batik-transcoder-1.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/bridj-0.6-c-only.jar"/>
