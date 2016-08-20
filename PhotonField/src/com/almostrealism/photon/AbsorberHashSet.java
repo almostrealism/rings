@@ -18,6 +18,7 @@ package com.almostrealism.photon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -933,7 +934,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 			Vector vpo = new Vector(po[0], po[1], po[2]);
 			Vector vs = new Vector(s[0], s[1], s[2]);
 			c = RayTracingEngine.lightingCalculation(vpo, vs, this,
-													p.getOtherSurfaces(),
+													Arrays.asList(p.getOtherSurfaces()),
 													p.getAllLights(), p);
 			if (c != null)
 				c.multiplyBy(p.getLight().getIntensity() * d);
