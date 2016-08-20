@@ -21,12 +21,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 
-import javax.media.jai.JAI;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -39,9 +36,6 @@ import javax.swing.JTextField;
 import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
-
-import com.almostrealism.raytracer.ui.ImageCanvas;
-
 
 public class ArtifactDetector {
 	public static boolean verbose = false;
@@ -90,13 +84,13 @@ public class ArtifactDetector {
 			System.exit(0);
 		} else {
 			System.out.print("Loading image: ");
-			// JAI.disableDefaultTileCache();
-			RenderedImage rim = JAI.create("fileload", args[0]);
-			im = new BufferedImage(rim.getWidth(),
-									rim.getHeight(),
-									BufferedImage.TYPE_INT_RGB);
-			im.setData(rim.getData());
-			rim = null;
+//			TODO  Replace with non JAI image loading
+//			RenderedImage rim = JAI.create("fileload", args[0]);
+//			im = new BufferedImage(rim.getWidth(),
+//									rim.getHeight(),
+//									BufferedImage.TYPE_INT_RGB);
+//			im.setData(rim.getData());
+//			rim = null;
 			System.out.println("Done");
 			
 			if (ui) {
@@ -160,6 +154,8 @@ public class ArtifactDetector {
 				}
 				
 				if (err) {
+//					TODO  Need to write image data
+					/*
 					try {
 						String output = args[0].substring(args[0].lastIndexOf("/") + 1);
 						output = output.substring(0, output.lastIndexOf("."));
@@ -173,6 +169,7 @@ public class ArtifactDetector {
 					} catch (IOException ioe) {
 						ioe.printStackTrace();
 					}
+					*/
 				}
 			}
 		}
@@ -235,12 +232,15 @@ public class ArtifactDetector {
 			JButton sbutton = new JButton("Save");
 			sbutton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					// TODO  Need to write image data
+					/*
 					try {
 						ImageCanvas.encodeImageFile(lastImg, new File("output.jpeg"),
 													ImageCanvas.JPEGEncoding);
 					} catch (IOException ioe) {
 						ioe.printStackTrace();
 					}
+					*/
 				}
 			});
 			
