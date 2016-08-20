@@ -59,7 +59,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.ui.ImageCanvas;
 
 /**
  * A RayTracingJob object provides an implementation of
@@ -134,9 +133,10 @@ public class RayTracingJob implements Job, SceneLoader {
 									}
 								}
 								
-								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
-										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-										ImageCanvas.JPEGEncoding);
+//								TODO  Need to write image
+//								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+//										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
+//										ImageCanvas.JPEGEncoding);
 							} catch (InterruptedException ie) {
 								System.out.println("RayTracingOutputHandler: " + ie);
 							} catch (IOException ioe) {
@@ -177,9 +177,10 @@ public class RayTracingJob implements Job, SceneLoader {
 					}
 				}
 				
-				ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
-						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-						ImageCanvas.JPEGEncoding);
+//				TODO  Need to write image data
+//				ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+//						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
+//						ImageCanvas.JPEGEncoding);
 			} catch (IOException ioe) {
 				System.out.println("RayTracingJobOutputHandler: " + ioe);
 			}
@@ -812,11 +813,12 @@ public class RayTracingJob implements Job, SceneLoader {
 								this.x + "-" + this.y + "-" +
 								this.w + "-" + this.h + "-" +
 								this.ssw + "-" + this.ssh + ".jpg");
-			try {
-				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
-			} catch (IOException e) {
-				System.out.println("RayTracingJob: IO Error");
-			}
+//			TODO  Need to write image data
+//			try {
+//				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
+//			} catch (IOException e) {
+//				System.out.println("RayTracingJob: IO Error");
+//			}
 		}
 		
 		if (c != null) c.writeOutput(jo);
