@@ -58,7 +58,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	public DefaultGLCanvas() {
 		scene = new ArrayList<Renderable>();
 		
-		animator = new FPSAnimator(this, 20);
+		animator = new FPSAnimator(20);
 		addGLEventListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -205,8 +205,8 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 			height = window.getHeight();
 		} else if (source instanceof GLAutoDrawable) {
 			GLAutoDrawable glad = (GLAutoDrawable) source;
-			width = glad.getWidth();
-			height = glad.getHeight();
+			width = glad.getSurfaceWidth();
+			height = glad.getSurfaceHeight();
 		} else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
 			Component comp = (Component) source;
 			width = comp.getWidth();
