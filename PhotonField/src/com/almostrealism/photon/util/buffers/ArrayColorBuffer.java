@@ -16,7 +16,6 @@
 
 package com.almostrealism.photon.util.buffers;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.almostrealism.texture.AverageColor;
@@ -25,7 +24,6 @@ import org.almostrealism.texture.RGB;
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class ArrayColorBuffer implements ColorBuffer {
 	public Absorber absorber;
@@ -59,10 +57,11 @@ public class ArrayColorBuffer implements ColorBuffer {
 	}
 	
 	public void store(PhotonFieldSceneLoader loader, String name) throws IOException {
-		ImageCanvas.writeImage(this.front, loader.getOutputStream("-" + name + "-front.rgb"),
-								ImageCanvas.RGBListEncoding);
-		ImageCanvas.writeImage(this.back, loader.getOutputStream("-" + name + "-back.rgb"),
-								ImageCanvas.RGBListEncoding);
+//		TODO  Need to store images
+//		ImageCanvas.writeImage(this.front, loader.getOutputStream("-" + name + "-front.rgb"),
+//								ImageCanvas.RGBListEncoding);
+//		ImageCanvas.writeImage(this.back, loader.getOutputStream("-" + name + "-back.rgb"),
+//								ImageCanvas.RGBListEncoding);
 	}
 	
 	public void load(PhotonFieldSceneLoader loader, String name) throws IOException {
@@ -152,6 +151,9 @@ public class ArrayColorBuffer implements ColorBuffer {
 		}
 		
 		if (this.first) {
+
+//			TODO  Need to store images
+			/*
 			try {
 				String f = this.absorber + "-front.ppm";
 				System.out.println("AbsorberHashSet: Writing Surface Color Map to " + f);
@@ -165,6 +167,7 @@ public class ArrayColorBuffer implements ColorBuffer {
 				System.out.println("AbsorberHashSet: " + e.getMessage());
 									
 			}
+			*/
 			
 			this.first = false;
 		}

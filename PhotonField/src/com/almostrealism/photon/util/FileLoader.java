@@ -19,7 +19,6 @@ package com.almostrealism.photon.util;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,8 +56,6 @@ import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
-import com.almostrealism.raytracer.ui.DebugOutputPanel;
-import com.almostrealism.raytracer.ui.ImageCanvas;
 
 public class FileLoader extends DefaultHandler {
 	public static double verbose = Math.pow(10.0, -5.0);
@@ -101,11 +98,6 @@ public class FileLoader extends DefaultHandler {
 		System.out.print("Setting default color depth: ");
 		RGB.defaultDepth = FileLoader.colorDepth;
 		System.out.println(RGB.defaultDepth + " bits.");
-		
-		if (Settings.produceOutput == true) {
-			DebugOutputPanel outputPanel = new DebugOutputPanel();
-			outputPanel.showPanel();
-		}
 		
 		AbsorberSet a = FileLoader.loadSet(new FileInputStream(args[0]));
 		
@@ -245,9 +237,10 @@ public class FileLoader extends DefaultHandler {
 		fr.setLocation(Settings.screenWidth / 3, 40);
 		fr.setVisible(true);
 		RGB rgb[][] = tracer.generateImage(2, 2);
-		ImageCanvas.encodeImageFile(rgb,
-									new File("photon-field-traced.ppm"),
-									ImageCanvas.PPMEncoding);
+//		TODO  Need to write image file
+//		ImageCanvas.encodeImageFile(rgb,
+//									new File("photon-field-traced.ppm"),
+//									ImageCanvas.PPMEncoding);
 		fr.setVisible(false);
 		fr.dispose();
 	}

@@ -25,7 +25,6 @@
 package com.almostrealism.photon;
 
 import java.awt.Graphics;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -38,7 +37,6 @@ import org.almostrealism.texture.RGB;
 import com.almostrealism.photon.geometry.Plane;
 import com.almostrealism.photon.util.Fast;
 import com.almostrealism.photon.util.PhysicalConstants;
-import com.almostrealism.raytracer.ui.ImageCanvas;
 
 /**
  * An AbsorptionPlane object represents a plane in space that absorbs photons
@@ -203,18 +201,22 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	
 	public void writeImage(OutputStream out) throws IOException {
 		if (this.energy == null) return;
-		ImageCanvas.writeImage(this.getImage(), out, ImageCanvas.PPMEncoding);
+//		TODO  Need to write image
+//		ImageCanvas.writeImage(this.getImage(), out, ImageCanvas.PPMEncoding);
 	}
 	
 	public void saveImage(String file) throws IOException {
 		if (this.energy == null) return;
 		
+//		TODO  Need to write image
+		/*
 		if (file.endsWith("ppm"))
 			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
 										ImageCanvas.PPMEncoding);
 		else
 			ImageCanvas.encodeImageFile(this.getImage(), new File(file),
 										ImageCanvas.JPEGEncoding);
+		*/
 	}
 	
 	public void enableDisplay() { this.noDisplay = false; }
