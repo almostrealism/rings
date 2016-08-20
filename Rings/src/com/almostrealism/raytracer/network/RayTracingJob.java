@@ -781,7 +781,7 @@ public class RayTracingJob implements Job, SceneLoader {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RGB rgb[][] = RayTracingEngine.render(s.getSurfaces(), camera, s.getLights(), p, null);
+		RGB rgb[][] = RayTracingEngine.render(s, camera, s.getLights(), p, null);
 		
 		long time = System.currentTimeMillis() - start;
 		
