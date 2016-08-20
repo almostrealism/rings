@@ -36,7 +36,6 @@ import com.almostrealism.flow.Resource;
 import com.almostrealism.flow.Server;
 import com.almostrealism.flow.Server.IOStreams;
 import com.almostrealism.flow.db.Client;
-import com.sun.media.jai.codec.FileCacheSeekableStream;
 
 public class ImageResource implements Resource {
 	private String uri;
@@ -121,7 +120,6 @@ public class ImageResource implements Resource {
 				
 				PipedInputStream in = new PipedInputStream();
 				final PipedOutputStream out = new PipedOutputStream(in);
-				FileCacheSeekableStream seekableInput = new FileCacheSeekableStream(in);
 				
 				final ScpDownloader scpd = ScpDownloader.getDownloader(host, user, passwd);
 				
