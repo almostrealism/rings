@@ -18,6 +18,7 @@
 	<classpathentry kind="src" path="GraphPersist/test"/>
 	<classpathentry kind="src" path="ArtifactDetector/src"/>
 	<classpathentry kind="src" path="FlowTree/resources"/>
+	<classpathentry kind="src" path="Replicator/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
