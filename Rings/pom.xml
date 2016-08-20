@@ -9,13 +9,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.almostrealism</groupId>
+			<groupId>io.almostrealism</groupId>
 			<artifactId>TreeView</artifactId>
 			<version>LATEST</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.almostrealism</groupId>
+			<groupId>io.almostrealism</groupId>
 			<artifactId>MatrixView</artifactId>
 			<version>LATEST</version>
 		</dependency>
