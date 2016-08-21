@@ -68,7 +68,9 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String[], V
 									rs.getString((String) ent.getValue()));
 				}
 				
-				data.add(entity);
+				if (!data.contains(entity)) {
+					data.add(entity);
+				}
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
