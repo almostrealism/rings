@@ -112,11 +112,11 @@ pipelines:
           - mvn install
           
           
-          # Explorer Dependencies
-          - cd ../Explorer
+          # Replicator Dependencies
+          - cd ../Replicator
           - mvn dependency:copy-dependencies
           
-          # Explorer Compile
+          # Replicator Compile
           - mkdir target/classes
           - cd src
           - find -name "*.java" > sources.txt
@@ -125,11 +125,11 @@ pipelines:
           - mvn install
           
           
-          # Replicator Dependencies
-          - cd ../Replicator
+          # Explorer Dependencies
+          - cd ../Explorer
           - mvn dependency:copy-dependencies
           
-          # Replicator Compile
+          # Explorer Compile
           - mkdir target/classes
           - cd src
           - find -name "*.java" > sources.txt
