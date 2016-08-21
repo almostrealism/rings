@@ -35,7 +35,7 @@ import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.RGB;
 import org.nfunk.jep.JEP;
 
-import com.almostrealism.raytracer.ui.ImageCanvas;
+import com.almostrealism.ui.ImageCanvas;
 
 
 /**

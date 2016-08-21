@@ -32,6 +32,7 @@ import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
+import com.almostrealism.ui.ImageCanvas;
 
 
 /**

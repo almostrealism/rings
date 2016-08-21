@@ -39,7 +39,7 @@ import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.photon.util.PhysicalConstants;
 import com.almostrealism.photon.util.ProbabilityDistribution;
-import com.almostrealism.raytracer.ui.ImageCanvas;
+import com.almostrealism.ui.ImageCanvas;
 
 /**
  * @author  Mike Murray

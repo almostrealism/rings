@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 
 import org.almostrealism.texture.RGB;
 
-import com.almostrealism.raytracer.ui.ImageCanvas;
+import com.almostrealism.ui.ImageCanvas;
 
 
 /**

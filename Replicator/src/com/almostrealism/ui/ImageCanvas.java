@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;

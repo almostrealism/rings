@@ -28,7 +28,7 @@ import org.almostrealism.texture.RGB;
 import com.almostrealism.photon.texture.CosineIntensityMap;
 import com.almostrealism.photon.texture.IntensityMap;
 import com.almostrealism.photon.texture.Turbulence;
-import com.almostrealism.raytracer.ui.ImageCanvas;
+import com.almostrealism.ui.ImageCanvas;
 
 public class IntensityMapPanel extends JPanel {
 	private IntensityMap map;

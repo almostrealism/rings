@@ -35,7 +35,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.PointLight;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
-import com.almostrealism.raytracer.ui.ImageCanvas;
+import com.almostrealism.ui.ImageCanvas;
 import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
