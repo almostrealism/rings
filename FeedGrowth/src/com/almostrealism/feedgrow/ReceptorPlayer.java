@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.player;
+package com.almostrealism.feedgrow;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
