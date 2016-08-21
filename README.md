@@ -18,7 +18,7 @@
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-| **Key** |🔶 Paused | 🔵 Active | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
+| **Key** |🔶 Paused | 🔵 Active & Releasable Soon | 🍏 New | 🍎 Neglected & In Need of Collaborators | 💜 Planned |
 
 If you want to use the tools provided here, or you are interested in the concept of open source
 art pieces and want to contribute please contact ashesfall@almostrealism.com for help.
