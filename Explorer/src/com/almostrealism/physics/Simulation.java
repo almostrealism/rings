@@ -68,9 +68,6 @@ import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.raytracer.ui.DebugOutputPanel;
 import com.almostrealism.ui.JTextAreaPrintWriter;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * @author Mike Murray
@@ -854,16 +851,17 @@ public class Simulation extends Scene implements Runnable {
 			g.setColor(Color.black);
 			g.setFont(new Font("Monospaced", Font.PLAIN, 16));
 			// g.drawString(this.bodies[0].toString(), 10, this.imageHeight - 30);
-			
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(new FileOutputStream(f));
-			JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(buff);
-			param.setQuality(1.0f, true);
-			encoder.encode(buff, param);
+
+//			TODO  Write image
+//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(new FileOutputStream(f));
+//			JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(buff);
+//			param.setQuality(1.0f, true);
+//			encoder.encode(buff, param);
 			
 			this.inputFiles.addElement(f);
 			System.out.println(fn);
-		} catch (IOException ioe) {
-			System.err.println("IO error writing image file for frame " + i + " : " + ioe.toString());
+		} catch (Exception ioe) {
+			System.err.println("Error writing image file for frame " + i + " : " + ioe.toString());
 		}
 	}
 	
