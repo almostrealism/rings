@@ -66,7 +66,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
-import com.almostrealism.raytracer.ui.DebugOutputPanel;
+import com.almostrealism.ui.DebugOutputPanel;
 import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**

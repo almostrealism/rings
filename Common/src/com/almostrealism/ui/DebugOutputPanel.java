@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -41,7 +41,6 @@ import javax.swing.JViewport;
 import javax.swing.text.JTextComponent;
 
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
  * A DebugOutputPanel object provides a display for the debug output of the ray tracing application.
