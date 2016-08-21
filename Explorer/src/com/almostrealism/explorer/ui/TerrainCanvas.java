@@ -21,9 +21,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import com.almostrealism.feedgrow.Replicator;
 import com.almostrealism.gl.SurfaceCanvas;
-import com.almostrealism.raytracer.io.WavefrontObjParser;
 
 public class TerrainCanvas extends SurfaceCanvas {
 	public TerrainCanvas() {
@@ -32,8 +30,6 @@ public class TerrainCanvas extends SurfaceCanvas {
 	public static void main(String args[]) throws IOException {
 		TerrainCanvas c = new TerrainCanvas();
 //		c.add(new Terrain(new File("Explorer/ne_110m_land/ne_110m_land.shp").toURI().toString()));
-		c.addSurface(WavefrontObjParser.parse(Replicator.class.getResourceAsStream("/models/Cube.obj")));
-//		c.add(new Gear(1.3f, 2.0f, 0.5f, 10, 0.7f));
 		
 		c.start();
 		
