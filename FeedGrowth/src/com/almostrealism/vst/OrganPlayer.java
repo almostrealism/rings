@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.vst;
+package com.almostrealism.vst;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.cellular.CellAdapter;

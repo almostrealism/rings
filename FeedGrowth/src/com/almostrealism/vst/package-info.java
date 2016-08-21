@@ -21,4 +21,4 @@
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.receptor.vst;
+package com.almostrealism.vst;

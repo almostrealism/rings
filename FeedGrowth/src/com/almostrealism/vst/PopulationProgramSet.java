@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.vst;
+package com.almostrealism.vst;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
