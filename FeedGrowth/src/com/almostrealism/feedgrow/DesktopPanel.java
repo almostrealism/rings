@@ -27,7 +27,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.almostrealism.raytracer.io.WavefrontObjParser;
-import com.almostrealism.replicator.Replicator;
 
 /**
  * @author  Michael Murray

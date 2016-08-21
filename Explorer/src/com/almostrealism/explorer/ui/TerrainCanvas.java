@@ -21,9 +21,9 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import com.almostrealism.feedgrow.Replicator;
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.raytracer.io.WavefrontObjParser;
-import com.almostrealism.replicator.Replicator;
 
 public class TerrainCanvas extends SurfaceCanvas {
 	public TerrainCanvas() {
