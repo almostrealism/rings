@@ -4,31 +4,34 @@ import static org.junit.Assert.*;
 
 import java.io.InputStream;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 import io.almostrealism.query.QueryLibrary;
 import io.almostrealism.sql.SQLSelect;
+import io.almostrealism.test.DatabaseTest;
 
 /**
  */
-public class QueryLibraryTest {
+public class QueryLibraryTest extends DatabaseTest {
 	@org.junit.Test
-	public void main() throws Exception {
-		// Set up the database
-		ComboPooledDataSource pool = new ComboPooledDataSource();
-		pool.setDriverClass("com.mysql.jdbc.Driver"); 
-		pool.setJdbcUrl("jdbc:mysql://127.0.0.1/test");
-		pool.setUser("root");
-		pool.setPassword("root");
-		
-		// Add a query that maps the columns from the database
+	public void selectAll() throws Exception {
 		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
 		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
-									"select * from testdata where id > 1;",
+									"select * from testdata where id > 1",
 									fieldMap, () -> { return new TestEntity(); }));
 		
-		int resultCount = QueryLibrary.root().get(pool, TestEntity.class).size();
+		int resultCount = QueryLibrary.root().get(getDB(), TestEntity.class).size();
 		
 		assertTrue("Result Count", resultCount == 2);
+	}
+	
+	@org.junit.Test
+	public void selectStyles() throws Exception {
+		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
+		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
+									"select * from testdata,testlinked where testdata.id > 1",
+									fieldMap, () -> { return new TestEntity(); }));
+		
+		int resultCount = QueryLibrary.root().get(getDB(), TestEntity.class).size();
+		
+		assertTrue("Result Count was " + resultCount, resultCount == 2);
 	}
 }
