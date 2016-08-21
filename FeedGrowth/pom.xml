@@ -14,5 +14,10 @@
             <artifactId>Replicator</artifactId>
             <version>LATEST</version>
         </dependency>
+        <dependency>
+            <groupId>com.almostrealism</groupId>
+            <artifactId>PhotonField</artifactId>
+            <version>LATEST</version>
+        </dependency>
     </dependencies>
 </project>
