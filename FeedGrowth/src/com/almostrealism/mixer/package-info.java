@@ -15,8 +15,8 @@
  */
 
 /**
- * User interface for the receptor player.
+ * Tools for mixing audio.
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.receptor.ui;
+package com.almostrealism.mixer;

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.synth;
-
-public interface Source {
-	public long next();
-	
-	public boolean isDone();
-}
+/**
+ * Tools for generating and sampling audio.
+ * 
+ * @author  Michael Murray
+ */
+package com.almostrealism.synth;

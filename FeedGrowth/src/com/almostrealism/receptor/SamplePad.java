@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.ui;
+package com.almostrealism.receptor;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import com.almostrealism.feedgrow.Receptor;
-import com.almostrealism.receptor.synth.Sample;
+import com.almostrealism.synth.Sample;
 
 public class SamplePad extends JPanel implements ActionListener {
 	private JFormattedTextField durationField;

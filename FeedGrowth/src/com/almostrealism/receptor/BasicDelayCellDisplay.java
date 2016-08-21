@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.ui;
+package com.almostrealism.receptor;
 
 import java.awt.Color;
 import java.awt.Dimension;

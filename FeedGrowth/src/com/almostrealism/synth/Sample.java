@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.synth;
+package com.almostrealism.synth;
 
 public class Sample implements Source {
 	private int i;

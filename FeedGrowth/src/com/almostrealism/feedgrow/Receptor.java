@@ -36,8 +36,8 @@ import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
-import com.almostrealism.receptor.mixing.Mixer;
-import com.almostrealism.receptor.ui.ReceptorPlayerPanel;
+import com.almostrealism.mixer.Mixer;
+import com.almostrealism.receptor.ReceptorPlayerPanel;
 import com.almostrealism.replicator.ui.ReceptorCanvas;
 
 public class Receptor {

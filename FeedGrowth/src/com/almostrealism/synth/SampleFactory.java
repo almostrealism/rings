@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.synth;
+package com.almostrealism.synth;
 
 import java.io.File;
 import java.io.IOException;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.ui;
+package com.almostrealism.receptor;
 
 import java.awt.GridLayout;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 
-import com.almostrealism.receptor.synth.SampleFactory;
+import com.almostrealism.synth.SampleFactory;
 
 public class SamplerPanel extends JPanel {
 	public SamplerPanel(int w, int h) throws UnsupportedAudioFileException, IOException {

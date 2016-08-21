@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * Tools for mixing audio.
- * 
- * @author  Michael Murray
- */
-package com.almostrealism.receptor.mixing;
+package com.almostrealism.synth;
+
+public interface Source {
+	public long next();
+	
+	public boolean isDone();
+}

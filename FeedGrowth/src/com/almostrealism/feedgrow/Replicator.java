@@ -40,9 +40,9 @@ import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
+import com.almostrealism.mixer.Mixer;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.receptor.mixing.Mixer;
-import com.almostrealism.receptor.ui.SamplerPanel;
+import com.almostrealism.receptor.SamplerPanel;
 import com.almostrealism.replicator.ui.ReplicatorCanvas;
 import com.almostrealism.replicator.ui.ReplicatorTableModel;
 

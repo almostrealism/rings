@@ -15,8 +15,8 @@
  */
 
 /**
- * Tools for generating and sampling audio.
+ * User interface for the receptor player.
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.receptor.synth;
+package com.almostrealism.receptor;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.mixing;
+package com.almostrealism.mixer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ import org.almostrealism.time.Clock;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.cellular.SummationCell;
-import com.almostrealism.receptor.synth.Source;
+import com.almostrealism.synth.Source;
 
 public class Mixer extends ArrayList<Source> implements Clock {
 	private AudioProteinCache cache;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor.ui;
+package com.almostrealism.receptor;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
