@@ -230,7 +230,7 @@ public class Simulation extends Scene implements Runnable {
 		
 		for (int i = 0; i < bodies.length; i++) {
 			this.bodies[i] = bodies[i].getState();
-			if (bodies[i] instanceof ShadableSurface) super.addSurface((ShadableSurface)bodies[i]);
+			if (bodies[i] instanceof ShadableSurface) super.add((ShadableSurface)bodies[i]);
 		}
 		
 		this.sleep = true;
@@ -370,7 +370,7 @@ public class Simulation extends Scene implements Runnable {
 		
 		newBodies[newBodies.length - 1] = ((RigidBody)s).getState();
 		
-		super.addSurface(s);
+		super.add(s);
 		this.bodies = newBodies;
 	}
 	
@@ -378,7 +378,7 @@ public class Simulation extends Scene implements Runnable {
 	 * Removes the Surface object stored at the specified index from this Simulation object.
 	 */
 	public void removeSurface(int index) {
-		super.removeSurface(index);
+		super.remove(index);
 		
 		RigidBody.State newBodies[] = new RigidBody.State[this.bodies.length - 1];
 		
@@ -403,7 +403,7 @@ public class Simulation extends Scene implements Runnable {
 			double z = l.getZ() + t * (2 * Math.random() - 1.0);
 			
 			this.bodies[i].setLocation(new Vector(x, y, z));
-			((RigidBody)super.getSurface(i)).updateModel();
+			((RigidBody) super.get(i)).updateModel();
 		}
 	}
 	
@@ -472,7 +472,7 @@ public class Simulation extends Scene implements Runnable {
 					if (k == j) continue k;
 					if (intersected[j][k]) continue k;
 					
-					Vector intersect[] = ((RigidBody)super.getSurface(j)).intersect((RigidBody)super.getSurface(k));
+					Vector intersect[] = ((RigidBody) super.get(j)).intersect((RigidBody) super.get(k));
 					
 					if (intersect.length >= 2) {
 						intersected[j][k] = true;
@@ -585,7 +585,7 @@ public class Simulation extends Scene implements Runnable {
 		
 		for (int i = 0; i < this.bodies.length; i++) {
 			AbstractSurface surface = null;
-			if (super.getSurface(i) instanceof AbstractSurface) surface = (AbstractSurface)super.getSurface(i);
+			if (super.get(i) instanceof AbstractSurface) surface = (AbstractSurface) super.get(i);
 			
 			if (surface instanceof Sphere) {
 				Sphere s = (Sphere)surface;
