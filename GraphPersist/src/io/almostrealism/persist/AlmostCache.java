@@ -26,5 +26,5 @@ public class AlmostCache<D, K> extends QueryLibrary<D, K> {
 		
 	}
 	
-	public <V extends Cacheable> V get(Class<V> type, K key) { throw new RuntimeException("Not implemented"); }
+	public <V extends Cacheable> V get(Class<V> type, K arguemnts) { throw new RuntimeException("Not implemented"); }
 }

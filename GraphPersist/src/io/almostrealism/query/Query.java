@@ -24,5 +24,6 @@ import java.util.Collection;
  * @author  Michael Murray
  */
 public interface Query<D, K, V> {
-	Collection<V> execute(D database, K key);
+	/** This method may be called by multiple threads simultaneously. */
+	Collection<V> execute(D database, K arguments);
 }

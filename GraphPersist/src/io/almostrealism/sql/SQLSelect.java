@@ -5,6 +5,7 @@ import io.almostrealism.query.SimpleQuery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,7 +21,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 /**
  * @author  Michael Murray
  */
-public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> {
+public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String[], V> {
 
 	/**
 	 * Construct a new SQLSelect. Used by the static method {@link #prepare(String, Properties)}.
@@ -38,14 +39,20 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String, V> 
 	 * specified pooled data source.
 	 *
 	 * @param database
-	 * @param key
+	 * @param arguments
 	 * @return
 	 */
-	public Collection<V> execute(ComboPooledDataSource database, String key) {
+	public Collection<V> execute(ComboPooledDataSource database, String arguments[]) {
 		List<V> data = new ArrayList<V>();
 		
-		try (Connection c = database.getConnection(); Statement s = c.createStatement()) {
-			ResultSet rs = s.executeQuery(query);
+		try (Connection c = database.getConnection()) {
+			PreparedStatement s = arguments == null ? c.prepareStatement(query) : c.prepareStatement(query + " " + arguments);
+			
+			for (int i = 0; i < arguments.length; i++) {
+				s.setString(i + 1, arguments[i]);
+			}
+			
+			ResultSet rs = s.executeQuery();
 			
 			while (rs.next()) {
 //	TODO		BeanUtils.setProperty(customer, "firstName", "Paul Young");

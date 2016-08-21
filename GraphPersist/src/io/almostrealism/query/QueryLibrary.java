@@ -17,6 +17,7 @@
 
 package io.almostrealism.query;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -38,6 +39,18 @@ public class QueryLibrary<D, K> {
 	}
 	
 	public synchronized <V> void addEnrichment() { }
-
+	
+	public <V> Collection<V> get(D database, Class type) {
+		return get(database, type, null);
+	}
+	
+	public <V> Collection<V> get(D database, Class type, K arguments) {
+		Query q = null;
+		
+		synchronized (this) { q = queries.get(type); }
+		
+		return q.execute(database, arguments);
+	}
+	
 	public static QueryLibrary root() { return root; }
 }
