@@ -10,8 +10,8 @@
 |🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**, **MatrixView** and **JOGL**. |
 |🍎| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
-|🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Rings**. |
 |🍏| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
+|🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Replicator**. |
 |🔵| **FeedGrowth** | Feedback audio generator. | Requires **Replicator**. |
 |🍎| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
 |💜| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
