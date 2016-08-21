@@ -23,11 +23,12 @@ public class QueryLibraryTest {
 		
 		// Add a query that maps the columns from the database
 		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
-		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
-									() -> { return new TestEntity(); }));
+		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
+									"select * from testdata where id > 1;",
+									fieldMap, () -> { return new TestEntity(); }));
 		
-		QueryLibrary.root().get(pool, TestEntity.class);
+		int resultCount = QueryLibrary.root().get(pool, TestEntity.class).size();
 		
-		assertTrue("Failed", false);
+		assertTrue("Result Count", resultCount == 2);
 	}
 }

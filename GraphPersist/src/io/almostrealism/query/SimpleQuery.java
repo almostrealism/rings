@@ -1,6 +1,8 @@
 package io.almostrealism.query;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.almostrealism.util.Factory;
 
@@ -9,8 +11,8 @@ import org.almostrealism.util.Factory;
  *
  * @author  Michael Murray
  */
-public abstract class SimpleQuery<D, K, V> implements Query<D, K, V> {
-	private Hashtable<String, String> map = new Hashtable<>();
+public abstract class SimpleQuery<D, K, V> implements Query<D, K, V>, Iterable<Map.Entry> {
+	private Hashtable map = new Hashtable<>();
 
 	protected String query;
 	
@@ -20,5 +22,9 @@ public abstract class SimpleQuery<D, K, V> implements Query<D, K, V> {
 
 	public void put(String column, String fieldName) { map.put(column, fieldName); }
 
-	public String get(String name) { return map.get(name); }
+	public String get(String name) { return (String) map.get(name); }
+	
+	protected V createEntity() { return factory.construct(); }
+	
+	public Iterator<Map.Entry> iterator() { return map.entrySet().iterator(); }
 }

@@ -4,17 +4,19 @@ import io.almostrealism.query.SimpleQuery;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.almostrealism.util.Factory;
+import org.apache.commons.beanutils.BeanUtils;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -41,21 +43,30 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String[], V
 	 * @param database
 	 * @param arguments
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public Collection<V> execute(ComboPooledDataSource database, String arguments[]) {
+	public Collection<V> execute(ComboPooledDataSource database, String arguments[]) throws IllegalAccessException, InvocationTargetException {
 		List<V> data = new ArrayList<V>();
 		
-		try (Connection c = database.getConnection()) {
-			PreparedStatement s = arguments == null ? c.prepareStatement(query) : c.prepareStatement(query + " " + arguments);
+		try (Connection c = database.getConnection();
+				PreparedStatement s = c.prepareStatement(query)) {
 			
-			for (int i = 0; i < arguments.length; i++) {
-				s.setString(i + 1, arguments[i]);
+			if (arguments != null) {
+				for (int i = 0; i < arguments.length; i++) {
+					s.setString(i + 1, arguments[i]);
+				}
 			}
 			
 			ResultSet rs = s.executeQuery();
 			
 			while (rs.next()) {
-//	TODO		BeanUtils.setProperty(customer, "firstName", "Paul Young");
+				V entity = createEntity();
+				
+				for (Map.Entry ent : this) {
+					BeanUtils.setProperty(entity, (String) ent.getKey(),
+									rs.getString((String) ent.getValue()));
+				}
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

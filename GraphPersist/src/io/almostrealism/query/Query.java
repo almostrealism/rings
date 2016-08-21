@@ -16,6 +16,7 @@
 
 package io.almostrealism.query;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -24,6 +25,11 @@ import java.util.Collection;
  * @author  Michael Murray
  */
 public interface Query<D, K, V> {
-	/** This method may be called by multiple threads simultaneously. */
-	Collection<V> execute(D database, K arguments);
+	/**
+	 * This method may be called by multiple threads simultaneously.
+	 * 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException
+	 */
+	Collection<V> execute(D database, K arguments) throws IllegalAccessException, InvocationTargetException;
 }
