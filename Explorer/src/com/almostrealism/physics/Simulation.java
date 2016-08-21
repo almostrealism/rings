@@ -50,6 +50,8 @@ import javax.swing.JTextArea;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
+import org.almostrealism.ui.DebugOutputPanel;
+import org.almostrealism.ui.JTextAreaPrintWriter;
 
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
 import com.almostrealism.projection.Camera;
@@ -66,8 +68,6 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
-import com.almostrealism.ui.DebugOutputPanel;
-import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
  * @author Mike Murray

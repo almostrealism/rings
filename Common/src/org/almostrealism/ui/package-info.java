@@ -17,4 +17,4 @@
 /**
  * @author  Michael Murray
  */
-package com.almostrealism.ui;
+package org.almostrealism.ui;

@@ -26,6 +26,9 @@ import javax.swing.JTextArea;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
+import org.almostrealism.ui.DebugOutputPanel;
+import org.almostrealism.ui.ImageCanvas;
+import org.almostrealism.ui.JTextAreaPrintWriter;
 
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
@@ -34,9 +37,6 @@ import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.ui.DebugOutputPanel;
-import com.almostrealism.ui.ImageCanvas;
-import com.almostrealism.ui.JTextAreaPrintWriter;
 
 /**
   The RenderFile class provides a method for a user to render a scene stored in a text file.
