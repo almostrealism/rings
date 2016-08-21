@@ -26,11 +26,11 @@ import javax.swing.JTextArea;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.DebugOutputPanel;
 import org.almostrealism.ui.ImageCanvas;
 import org.almostrealism.ui.JTextAreaPrintWriter;
 
 import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.raytracer.DebugOutputPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.RayTracingEngine;

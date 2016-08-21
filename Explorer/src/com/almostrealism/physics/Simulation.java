@@ -50,7 +50,6 @@ import javax.swing.JTextArea;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.DebugOutputPanel;
 import org.almostrealism.ui.JTextAreaPrintWriter;
 
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
@@ -60,6 +59,7 @@ import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.Shader;
+import com.almostrealism.raytracer.DebugOutputPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;

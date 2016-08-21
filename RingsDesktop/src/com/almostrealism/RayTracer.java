@@ -33,9 +33,9 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
-import org.almostrealism.ui.DebugOutputPanel;
 import org.almostrealism.ui.JTextAreaPrintWriter;
 
+import com.almostrealism.raytracer.DebugOutputPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.surfaceUI.RenderPanel;
