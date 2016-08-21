@@ -31,14 +31,10 @@ import javax.swing.JPanel;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
 
 /**
- * An ImageCanvas object stores image data and paints its parent class (JPanel)
- * using the image.
+ * An {@link ImageCanvas} object stores image data and paints the parent
+ * {@link JPanel} using the image.
  * 
  * @author Mike Murray
  */
@@ -253,10 +249,13 @@ public class ImageCanvas extends JPanel {
 		    
 		    g.drawImage(GraphicsConverter.convertToAWTImage(image), 0, 0, null);
 		    
-		    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(o);
-		    JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bimg);
-		    param.setQuality(1.0f, true);
-		    encoder.encode(bimg, param);
+		    // TODO  Need to implement JPEG encoding
+		    throw new RuntimeException("Not implemented");
+		    
+//		    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(o);
+//		    JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bimg);
+//		    param.setQuality(1.0f, true);
+//		    encoder.encode(bimg, param);
 		}
 	}
 
