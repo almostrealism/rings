@@ -7,6 +7,13 @@
 	<artifactId>Explorer</artifactId>
 	<version>0.1-rc</version>
 
+	<repositories>
+		<repository>
+			<id>osgeo</id>
+			<name>Open Source Geospatial Foundation Repository</name>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -14,18 +21,18 @@
 			<artifactId>Replicator</artifactId>
 			<version>LATEST</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/jep/jep -->
 		<dependency>
 			<groupId>jep</groupId>
 			<artifactId>jep</artifactId>
 			<version>2.24</version>
 		</dependency>
-		
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-shapefile</artifactId>
-            <version>RELEASE</version>
-        </dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 	</dependencies>
 </project>
