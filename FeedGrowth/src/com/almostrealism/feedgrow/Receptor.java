@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor;
+package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
 import java.io.IOException;

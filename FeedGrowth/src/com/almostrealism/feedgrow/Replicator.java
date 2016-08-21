@@ -41,7 +41,6 @@ import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.receptor.Receptor;
 import com.almostrealism.receptor.mixing.Mixer;
 import com.almostrealism.receptor.player.ReceptorPlayer;
 import com.almostrealism.receptor.ui.SamplerPanel;
