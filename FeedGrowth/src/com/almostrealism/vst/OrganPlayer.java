@@ -16,15 +16,9 @@
 
 package com.almostrealism.vst;
 
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.cellular.CellAdapter;
-import com.almostrealism.feedgrow.metering.AudioMeter;
-import com.almostrealism.feedgrow.organ.Organ;
-import com.almostrealism.feedgrow.organ.SimpleOrgan;
-
-import jvst.wrapper.VSTPluginAdapter;
-
-public class OrganPlayer extends VSTPluginAdapter {
+//public class OrganPlayer extends VSTPluginAdapter {
+public class OrganPlayer {
+	/*
 	private AudioMeter audio;
 	
 	private PopulationProgramSet programs;
@@ -52,9 +46,6 @@ public class OrganPlayer extends VSTPluginAdapter {
 		setProgram(0);
 	}
 	
-	/**
-	 * Notifies the {@link AudioProteinCache} of the new sample rate.
-	 */
 	public void setSampleRate(float sampleRate) { AudioProteinCache.sampleRate = (int) sampleRate; }
 	
 	public int canDo(String feature) {
@@ -123,4 +114,5 @@ public class OrganPlayer extends VSTPluginAdapter {
 			
 		}
 	}
+	*/
 }
