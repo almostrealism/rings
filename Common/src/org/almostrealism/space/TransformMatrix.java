@@ -19,8 +19,9 @@ package org.almostrealism.space;
 
 
 /**
-  A TransformMatrix object represents a 4 X 4 matrix used for transforming vectors.
-  A TransformMatrix object stores 16 double values for the matrix data and provides methods for transforming
+  A {@link TransformMatrix} object represents a 4 X 4 matrix used for transforming vectors.
+  A {@link TransformMatrix} object stores 16 double values for the matrix data and provides
+  methods for transforming
   varius types of vectors. The TransformMatrix class also provides some static methods that generate
   certain useful matracies.
 */
