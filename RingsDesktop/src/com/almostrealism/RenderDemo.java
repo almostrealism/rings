@@ -110,8 +110,8 @@ public class RenderDemo {
 		stripes.setSecondColor(new RGB(0.0, 0.0, 1.0));
 		thing.addTexture(stripes);
 		
-		scene.addSurface(s);
-		scene.addSurface(thing);
+		scene.add(s);
+		scene.add(thing);
 		
 		RectangularLight rl = new RectangularLight(2.0, 2.0);
 		rl.setColor(new RGB(1.0, 1.0, 1.0));
