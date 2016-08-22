@@ -41,6 +41,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
+## Maintainence Schedule ##
+
+Below is a table that indicates how quickly I can release updated version for each tool if reported issues require it or the community requests it.
+|   |   |
+|---|---|
+| **Common** | 2 Weeks |
+| **GraphPersist** | 2 Weeks |
+| **TreeView** | 4 Weeks |
+| **MatrixView** | 10 Weeks |
+| **FlowTree** | 12 Weeks |
+| **Rings** | 12 Weeks |
+| **PhotonField** | 12 Weeks |
+| **ArtifactDetector** | 15 Weeks |
+| **Replicator** | 15 Weeks |
+| **Explorer** | 15 Weeks |
+| **FeedGrowth** | 18 Weeks |
+| **GlitchFarm** | 18 Weeks |
+| **Metamerise** | 18 Weeks |
+
 ## Show Your Support ##
 
 If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
