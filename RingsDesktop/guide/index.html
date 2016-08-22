@@ -1,0 +1,451 @@
+<html>
+  <head>
+    <LINK REL="stylesheet" TYPE="text/css" HREF="style.css" TITLE="Style">
+    <title>Rings User Documentation</title>
+  </head>
+  <body>
+    <h1>Rings User Documentation</h1>
+    <div class="section">
+      <b>Intro</b> <br>
+      <div class="indented">
+        - <a href="index.html#1">Terminology</a> <br>
+      </div>
+      <b>Tutorials</b> <br>
+      <div class="indented">
+        - <a href="index.html#2">Adding surfaces to a scene</a> <br>
+        - <a href="index.html#3">Moving, Resizing, Coloring, and Transforming surfaces</a> <br>
+        - <a href="index.html#4">Adding textures to a surface</a> <br>
+        - <a href="index.html#5">Adding shaders to a surface</a> <br>
+        - <a href="index.html#6">Adding lights to a scene</a> <br>
+        - <a href="index.html#7">Setting up the camera</a> <br>
+        - <a href="index.html#8">Rendering a scene</a> <br>
+      </div>
+      <b>Development</b> <br>
+      <div class="indented">
+        - <a href="index.html#9">Writing new surfaces</a> <br>
+        - <a href="index.html#10">Writing new textures</a> <br>
+        - <a href="index.html#11">Writing new shaders</a> <br>
+        - <a href="index.html#12">Running Test Renders on Custom Surface, Textures, and Shaders</a> <br>
+      </div>
+    </div>
+    
+    <hr><br>
+    
+    <h2>Introduction</h2>
+    
+    <div class="section">
+    <a name="1"><h3>Terminology</h3></a>
+    <div class="indented">
+      <b>Scene</b> - The camera and the collection of all surfaces and lights that are rendered. <br>
+      <b>Surface</b> - Any object that can be rendered in the scene. <br>
+      <b>Light</b> - Any object that light in a scene can be traced to. <br>
+      <b>Texture</b> - A way of describing the way a surface should be colored. <br>
+      <b>Shader</b> - A method for shading a surface realistically. <br>
+      
+      <b>Double</b> - A 64-bit java floating point decimal value. <br>
+      <b>RGB</b> - A color value described by 3 <b>double</b> values (red, green, and blue components) between 0.0 and 1.0 (192-bit). <br>
+    </div>
+    </div>
+    
+    <hr><br>
+    
+    <h2>Tutorials</h2>
+    
+    <div class="section">
+    <a name="2"><h3>Adding Surfaces to a Scene</h3></a>
+    <p>
+      To create a scene using rings, surfaces must be added. This is done through the <b>Surface Info Panel</b>,
+      which is opened by selecting <b>Edit > Open Surface Info Panel</b>. Once the <b>Surface Info Panel</b> is open
+      a new surface can be created by clicking the <b>Create New Surface</b> button. This causes a dialog to
+      appear allowing a type of surface to be selected. In this example we construct a sphere and a plane.
+    </p>
+    <a href="images/screen.2.1.jpg"><img src="images/diagram.2.1.jpg" border="0" alt="Creating new surfaces"></a> <br> <font size="-1">Creating new surfaces</font>
+    <p>
+      After being created, surfaces can be named to make it easy to distinguish them. Here we name the sphere "Sphere" and the plane "Plane".
+    </p>
+    <a href="images/screen.2.2.jpg"><img src="images/diagram.2.2.jpg" border="0" alt="Naming surfaces"></a> <br> <font size="-1">Naming surfaces</font>
+    </div>
+    
+    <div class="section">
+    <a name="3"><h3>Moving, Resizing, Coloring, and Transforming Surfaces</h3></a>
+    <p>
+      Properties of surfaces including location, size, and color can be configured with the <b>Settings</b> tab of the <b>Surface Info Panel</b>.
+      Here we color the sphere a shade of blue.
+    </p>
+    <a href="images/screen.3.1.jpg"><img src="images/diagram.3.1.jpg" border="0" alt="Setting up the sphere"></a> <br> <font size="-1">Setting up the sphere</font>
+    <p>
+      Transformations, such as rotation, can be applied to a surface from the <b>Transform</b> tab. Here we rotate the plane (which is by default an XY plane)
+      -90 degrees so it can act as a floor for our example image. After this is done, we move it to (0.0, -1.0, 0.0) so it is below the sphere, which is at the origin.
+    </p>
+    <a href="images/screen.3.2.jpg"><img src="images/diagram.3.2.jpg" border="0" alt="Rotating the plane"></a> <br> <font size="-1">Rotating the plane</font>
+    </div>
+    
+    <div class="section">
+    <a name="4"><h3>Adding Textures to a Surface</h3></a>
+    <p>
+      Textures may be added to surfaces to add more interesting surface coloring. All textures are overlaid and blended with the base color of the surface
+      (set in the <b>Settings</b> tab). To add a texture, select the <b>Textures</b> tab and press the "+". In this example we add a blue and white stripe texture
+      to the plane (the base color of the plane is set to white, (1.0, 1.0, 1.0), so the texture will not appear tinted)
+    </p>
+    <a href="images/screen.4.1.jpg"><img src="images/diagram.4.1.jpg" border="0" alt="Texturing the plane"></a> <br> <font size="-1">Texturing the plane</font>
+    </div>
+    
+    <div class="section">
+    <a name="5"><h3>Adding Shaders to a Surface</h3></a>
+    <p>
+      To control the way surfaces are shaded, different shaders can be added. Shaders work in the same way as textures: all applied shaders are overlaid.
+      By default, all surfaces use a diffuse shader (though this can be removed, if needed) which shades a flat. To add a shader, select the <b>Shaders</b> tab
+      and press "+". In this example we add a reflection shader to the sphere, giving it a metal appearance.
+    </p>
+    <a href="images/screen.5.1.jpg"><img src="images/diagram.5.1.jpg" border="0" alt="Setting up shaders for the sphere"></a> <br> <font size="-1">Setting up shaders for the sphere</font>
+    </div>
+    
+    <div class="section">
+    <a name="6"><h3>Adding Lights</h3></a>
+    <p>
+      For surfaces to be seen, lights must be added to the scene. To add lights to the scene, the <b>Light Info Panel</b>
+      will need to be opened. This can be opened by selecting <b>Edit > Open Light Info Panel</b>. This panel works in the
+      same way as the <b>Surface Info Panel</b>. To add a light, click on <b>Create New Light</b>. After this, a type of light can be selected.
+      There are three main types of lights, as shown below:
+    </p>
+    <p>
+      - <b>Ambient Lights</b> - Increase brightness of shading on all surfaces evenly. <br>
+      - <b>Directional Ambient Lights</b> - Simulate lighting from infinity, in the opposite of the specified direction. <br>
+      - <b>Point Lights</b> - Simulate light the comes from a single point, the location of which may be specified.
+    </p>
+    <p>
+      After creating a light the <b>Edit Light</b> dialog will appear, allowing the user to specify any information that is
+      required by that type of light. The color of the light is specified in the same way as a surface, with 3 values between
+      0.0 and 1.0. All lights also have an intensity, which is a real value between 0.0 and 1.0, that indicates how intense
+      the light from the source will be. The direction of a directional ambient light is specified by the 3 components of a 3d vector.
+      A 3d vector specifies a direction as shown below:
+    </p>
+    <img src="images/vector.gif"> <br> <font size="-1">Specifying direction with a vector.</font>
+    <p>
+      The direction of the vector that is specified for a directional ambient light is the direction in which it produces light.
+      This means, for example, that a direction of (1.0, 0.0, 0.0) indicates light that will come from the left side, assuming
+      the scene is viewed down the -z axis.
+    </p>
+    <p>
+      In this example we create an ambient light 2 point lights at (3.0, 3.0, 3.0) and (0.0, 3.0, 2.0).
+    </p>
+    <a href="images/screen.6.1.jpg"><img src="images/diagram.6.1.jpg" border="0" alt="Adding lights"></a> <br> <font size="-1">Adding lights</font>
+    </div>
+    
+    <div class="section">
+    <a name="7"><h3>Setting up the Camera</h3></a>
+    <p>
+      For a scene to be viewed properly, the camera needs to be configured correctly. The camera is specified
+      by 5 different types of values, as shown below:
+    </p>
+    <p>
+      -<b>Location</b>: The point in 3d space from which all viewing rays originate (Type: point) <br>
+      -<b>Viewing Direction</b>: The direction in which the camera is viewing (Type: vector) <br>
+      -<b>Up Direction</b>: The direction in which the "top" of the camera is pointing (i.e. which way is up) (Type: vector) <br>
+      -<b>Focal Length</b>: The distance from the camera location to the viewing plane (Type: Real Value) <br>
+      -<b>Projection Dimensions</b>: The width and height of the area that will be viewed by the camera (Type: Real Values) <br>
+    </p>
+    <img src="images/viewing.gif"> <br> <font size="-1">Specifications of a Camera (this camera has a projection width and height of 1.0)</font>
+    <p>
+      One important thing to notice about focal length and projection dimensions are that the field of view depends on them.
+      The field of view is the angle between the 2 viewing rays at the either edge of the viewing plane (it is labeled above).
+      The tangent of half of that angle is equal to the ratio of the focal length to half the projection width or height. So,
+      for example, a focal length of 1.0 and a projection width and height of 2.0 results in a field of view of 90 degrees.
+      Humans have a field of view of 90 to 120 degrees, so make sure the focal length and projection width and height are
+      not out of proportion, or the perspective will look weird.
+    </p>
+    <p>
+       In this example we set up the camera looking at the origin from (1.0, 0.5, 2.0).
+    </p>
+    <a href="images/screen.7.1.jpg"><img src="images/diagram.7.1.jpg" border="0" alt="Configuring the camera"></a> <br> <font size="-1">Configuring the camera</font>
+    </div>
+    
+    <div class="section">
+    <a name="8"><h3>Rendering the Scene</h3></a>
+    <p>
+      Now that the scene is set up it can be rendered. Rendering options can be edited from the <b>Render Options</b> dialog. To open the <b>Render Options</b>
+      dialog select <b>Render > Options...</b> In this example we render a 400 by 400 pixel image.
+    </p>
+    <a href="images/screen.8.1.jpg"><img src="images/diagram.8.1.jpg" border="0" alt="Render options"></a> <br> <font size="-1">Render options</font>
+    <p><img src="tutorial.jpg"></p>
+    </div>
+    
+    <hr><br>
+    
+    <div class="section">
+    <h2>Development</h2>
+    <p>
+      Rings is written in 100% <a href="http://java.sun.com/">Java</a>. Developing new components for rings is a relatively simple process,
+      but requires some knowledge of the Java programming language. The following guides explain how to easily create new surfaces, textures,
+      and shaders for rings using pure Java code. However, it does not explain how to use these new classes with the rings engine.
+      At this point in the development of rings, using new surfaces, textures, or shaders in the user interface requires modification to
+      existing code (which I invite you to do, it being an open source project and all. For source code email me at <a href="mailto:ashesfall@flashmail.com">ashesfall@flashmail.com</a>).
+      On the bright side, though, rendering of custom surfaces, textures, and shaders can be done directly from source code, which I will
+      provide an explanation of at the end of these guides.
+    </p>
+    <p>
+      The <a href="index.html#1">terminology</a> above is important to remember when reading these guides. Two class types,
+      <a HREF="../../../threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">threeD.raytracer.util.Vector</a> and
+      <a HREF="../../../threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">threeD.raytracer.graphics.RGB</a>, are used
+      almost everywhere in source code to represent 3d points (or directions) and rgb colors. Also, the <a href="../javadoc/index.html">javadoc</a>
+      documentation is referenced frequently.
+    </p>
+    </div>
+    
+    <div class="section">
+    <a name="9"><h3>Writing new Surfaces</h3></a>
+    <p>
+      All surfaces in rings are implementations of the <a href="../javadoc/threeD/raytracer/engine/Surface.html" title="class in threeD.raytracer.engine">Surface</a> interface.
+      This interface has five methods which must be implemented:
+      
+      <br>
+      <div class="indented">
+        - <i>public <a HREF="../javadoc/threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">RGB</a> <b>getColorAt</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point)</pre></i> -
+          Returns an RGB object representing the color of the surface at the location represented by the specified Vector object.
+        <br>
+        - <i>public <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a> <b>getNormalAt</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point)</pre></i> -
+          Returns a Vector object representing the normal vector to the surface at the location represented by the specified Vector object.
+        <br>
+        - <i>public boolean <b>intersect</b>(<a HREF="../javadoc/threeD/raytracer/engine/Ray.html" title="class in threeD.raytracer.engine">Ray</a>&nbsp;ray)</pre></i> -
+          Returns true if the ray represented by the specified Ray object intersects the surface.
+        <br>
+        - <i>public <a HREF="../javadoc/threeD/raytracer/engine/Intersection.html" title="class in threeD.raytracer.engine">Intersection</a> <b>intersectAt</b>(<a HREF="../javadoc/threeD/raytracer/engine/Ray.html" title="class in threeD.raytracer.engine">Ray</a>&nbsp;ray)</pre></i>
+          Returns an Intersection object representing the intersections of the specified Ray and the surface.
+        <br>
+        - <i>public <a HREF="../javadoc/threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">RGB</a> <b>shade</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point,
+                 <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;viewerDirection,
+                 <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;lightDirection,
+                 <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="interface in threeD.raytracer.lighting">Light</a>&nbsp;light,
+                 <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="interface in threeD.raytracer.lighting">Light</a>[]&nbsp;otherLights,
+                 <a HREF="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a>[]&nbsp;otherSurfaces)</pre></i> -
+          Returns an RGB object that represents the shaded color of this surface based on shading calculations involving the specified values.
+      </div>
+    </p>
+      
+    <p>
+      Any class that implements the <a href="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a> interface
+      can be added to a <a href="../javadoc/threeD/raytracer/engine/Scene.html" title="class in threeD.raytracer.engine">Scene</a> and passed to the rendering engine
+      to be rendered, but object oriented programming provides an even better option for writing a custom surface. First of all, almost all surfaces share
+      the implementation for the <i>getColorAt</i> method (return some surface color or the value for a texture). Also, it would be better to delegate the
+      shading operation performed by the <i>shade</i> method to some other set of classes that could be used with any surfaces because shading is a general process
+      that can be used with any surface. These operations are handled by the <a href="../javadoc/threeD/raytracer/engine/AbstractSurface.html" title="class in threeD.raytracer.engine">AbstractSurface</a>
+      class. This class can be extended to create new surfaces and leaves only the <i>getNormalAt</i>, <i>intersect</i>, and <i>intersectAt</i> methods
+      of the <a href="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a> interface unimplemented.
+      This allows all surfaces to have <a href="../javadoc/threeD/raytracer/engine/Texture.html" title="interface in threeD.raytracer.engine">Texture</a>s and
+      <a href="../javadoc/threeD/raytracer/engine/Shader.html" title="interface in threeD.raytracer.engine">Shader</a>s applied to them without any extra
+      programming.
+    </p>
+    <p>
+      As an example, here is the source code for the <a href="../javadoc/threeD/raytracer/primitives/Sphere.html" title="class in threeD.raytracer.primitives">Sphere</a> class:
+      
+      <pre style="font-size: 8pt">
+	public class Sphere extends AbstractSurface {
+		public Sphere(Vector location, double radius) {
+			super(location, radius);
+		}
+		
+		public Sphere(Vector location, double radius, RGB color) {
+			super(location, radius, color);
+		}
+		
+		public Vector getNormalAt(Vector point) {
+			Vector normal = point.subtract(super.getLocation());
+			normal = super.getTransform(true).transformAsNormal(normal);
+			
+			return normal;
+		}
+		
+		public boolean intersect(Ray ray) {
+			Ray newRay = new Ray(super.getTransform(true).getInverse().transformAsLocation(ray.getOrigin()),
+						super.getTransform(true).getInverse().transformAsOffset(ray.getDirection()));
+			
+			Vector a = newRay.getOrigin();
+			Vector d = newRay.getDirection();
+			double b = d.dotProduct(a);
+			double c = a.dotProduct(a);
+			
+			double discriminant = (b * b) - (d.dotProduct(d)) * (c - 1);
+			
+			if (discriminant < 0)
+				return false;
+			else
+				return true;
+		}
+		
+		public Intersection intersectAt(Ray ray) {
+			Ray newRay = new Ray(super.getTransform(true).getInverse().transformAsLocation(ray.getOrigin()),
+						super.getTransform(true).getInverse().transformAsOffset(ray.getDirection()));
+			
+			Vector a = newRay.getOrigin();
+			Vector d = newRay.getDirection();
+			double b = d.dotProduct(a);
+			double c = a.dotProduct(a);
+			
+			double discriminant = (b * b) - (d.dotProduct(d)) * (c - 1);
+			double discriminantSqrt = Math.sqrt(discriminant);
+			
+			double t[] = new double[2];
+			
+			t[0] = (-b + discriminantSqrt) / (d.dotProduct(d));
+			t[1] = (-b - discriminantSqrt) / (d.dotProduct(d));
+			
+			return new Intersection(ray, this, t);
+		}
+	}
+      </pre>
+    </p>
+    <p>
+      You may notice that intersection calculations are done with a ray that is transformed by the inverse of the transformation specified
+      by the parent <a href="../javadoc/threeD/raytracer/engine/AbstractSurface.html" title="class in threeD.raytracer.engine">AbstractSurface</a>.
+      Adding this allows the surface to be transformed (rotated, scaled, etc.) through methods provided by
+      <a href="../javadoc/threeD/raytracer/engine/AbstractSurface.html" title="class in threeD.raytracer.engine">AbstractSurface</a>.
+    </p>
+    </div>
+    
+    <div class="section">
+    <a name="10"><h3>Writing new Textures</h3></a>
+    <p>
+      Subclasses of <a href="../javadoc/threeD/raytracer/engine/AbstractSurface.html" title="class in threeD.raytracer.engine">AbstractSurface</a> can be textured
+      using implementations of the <a href="../javadoc/threeD/raytracer/engine/Texture.html" title="interface in threeD.raytracer.engine">Texture</a> interface.
+      Textures that implement this interface are configured through an array of arguments which can be any java objects. The interface has two methods which must be implemented:
+      
+      <br>
+      <div class="indented">
+        - <i>public <a HREF="../javadoc/threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">RGB</a> <b>getColorAt</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point)</pre></i> -
+          Returns the color of the texture at the location represented by the specified Vector object. The arguments used by this method may be some default values or may be set up with
+          configuration methods or the constructor.
+        <br>
+        - <i>public <a HREF="../javadoc/threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">RGB</a> <b>getColorAt</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point, <a HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</a>[]&nbsp;args)</pre></i> -
+          Returns the color of the texture at the location represented by the specified Vector object using the specified arguments.
+      </div>
+    </p>
+    <p>
+      As an example, here is some source code from the <a HREF="../javadoc/threeD/raytracer/textures/StripeTexture.html" title="class in threeD.raytracer.textures">StripeTexture</a> class:
+      
+      <pre style="font-size: 8pt">
+	public RGB getColorAt(Vector point) {
+		if (this.props == null)
+			return null;
+		else
+			return this.getColorAt(point, this.props);
+	}
+	
+	public RGB getColorAt(Vector point, Object props[]) {
+		for (int i = 0; i < StripeTexture.propTypes.length; i++) {
+			if (StripeTexture.propTypes[i].isInstance(props[i]) == false)
+				throw new IllegalArgumentException("Illegal argument: " + props[i].toString());
+		}
+		
+		double width = ((Double)props[0]).doubleValue();
+		boolean smooth = ((Boolean)props[1]).booleanValue();
+		String axis = (String)props[2];
+		
+		double value;
+		if (axis.equalsIgnoreCase("x"))
+			value = point.getX();
+		else if (axis.equalsIgnoreCase("y"))
+			value = point.getY();
+		else if (axis.equalsIgnoreCase("z"))
+			value = point.getZ();
+		else
+			return null;
+		
+		RGB c1 = (RGB)props[3];
+		RGB c2 = (RGB)props[4];
+		
+		if (smooth == true) {
+			double t = (1 + Math.sin(Math.PI * (value / width))) / 2.0;
+			
+			return (c1.multiply(1.0 - t)).add(c2.multiply(t));
+		} else {
+			if (Math.sin(Math.PI * (value / width)) > 0)
+				return c1;
+			else
+				return c2;
+		}
+	}
+      </pre>
+    </p>
+    </div>
+    
+    <div class="section">
+    <a name="11"><h3>Writing new Shaders</h3></a>
+    <p>
+      Subclasses of <a href="../javadoc/threeD/raytracer/engine/AbstractSurface.html" title="class in threeD.raytracer.engine">AbstractSurface</a> can be shaded
+      with implementations of the <a href="../javadoc/threeD/raytracer/engine/Shader.html" title="interface in threeD.raytracer.engine">Shader</a> interface.
+      This interface only has one method which must be implemented:
+      
+      <br>
+      <div class="indented">
+        public <a HREF="../javadoc/threeD/raytracer/graphics/RGB.html" title="class in threeD.raytracer.graphics">RGB</a> <b>shade</b>(<a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point,
+               <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;viewerDirection,
+               <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;lightDirection,
+               <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="interface in threeD.raytracer.lighting">Light</a>&nbsp;light,
+               <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="interface in threeD.raytracer.lighting">Light</a>[]&nbsp;otherLights,
+               <a HREF="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a>&nbsp;surface,
+               <a HREF="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a>[]&nbsp;otherSurfaces)</pre></i> -
+       Returns an RGB object that represents the shaded color of the specified Surface object at the specified point.
+      </div>
+    </p>
+    <p>
+      The <i>shade</i> method takes seven arguments:
+      <div class="indented">
+        - <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;point - The point on the surface that is to be shaded. <br>
+        - <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;viewerDirection - A unit vector in the direction of the viewer. <br>
+        - <a HREF="../javadoc/threeD/raytracer/util/Vector.html" title="class in threeD.raytracer.util">Vector</a>&nbsp;lightDirection - A unit vector in the direction of the light. <br>
+        - <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="class in threeD.raytracer.lighting">Light</a>&nbsp;light - The light (stores color, intensity, etc.). <br>
+        - <a HREF="../javadoc/threeD/raytracer/lighting/Light.html" title="class in threeD.raytracer.lighting">Light</a>&nbsp;otherLights[] - An array of other lights in the scene. <br>
+        - <a HREF="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a>&nbsp;surface - A reference to the surface to be shaded. <br>
+        - <a HREF="../javadoc/threeD/raytracer/engine/Surface.html" title="interface in threeD.raytracer.engine">Surface</a>&nbsp;otherSurfaces[] - An array of other surfaces in the scene.
+      </div>
+    </p>
+    <p>
+      As an example, here is some source code from the <a HREF="../javadoc/threeD/raytracer/engine/HighlightShader.html" title="class in threeD.raytracer.engine">HighlightShader</a> class:
+      
+      <pre style="font-size: 8pt">
+	public RGB shade(Vector point, Vector viewerDirection, Vector lightDirection,
+				Light light, Light otherLights[], Surface surface, Surface otherSurfaces[]) {
+		RGB lightColor = light.getColorAt(point);
+		
+		Vector n = surface.getNormalAt(point);
+		Vector h = viewerDirection.add(lightDirection);
+		h = h.divide(h.length());
+		
+		double c = h.dotProduct(n);
+		c = Math.pow(c, this.getHighlightExponent());
+		
+		return (lightColor.multiply(this.getHighlightColor())).multiply(c);
+	}
+      </pre>
+    </p>
+    </div>
+    
+    <div class="section">
+    <a name="12"><h3>Running Test Renders on Custom Surface, Textures, and Shaders</h3></a>
+    <p>
+      The following code can be used to run the rings rendering engine with a scene:
+      
+      <pre style="font-size: 8pt">
+	public static void main(String args[]) {
+		int width = 400;  // The image width
+		int height = 400; // The image height
+		int ssWidth = 1;  // The supersample width
+		int ssHeight = 1; // The supersample height
+		
+		Surface surfaces[] = {new CustomSurface()};
+		Light lights[] = {new DirectionalAmbientLight()};
+		Camera camera = new Camera();
+		
+		Scene scene = new Scene(camera, lights, surfaces);
+		
+		RGB image[][] = RayTracingEngine.render(scene, width, height, ssWidth, ssHeight, null);
+		FileEncoder.encodeImageFile(image, new File("test.ppm"), FileEncoder.PPMEncoding);
+	}
+      </pre>
+    </p>
+    <p>
+      This code would output a ppm encoded image file with 400 by 400 pixels.
+    </p>
+    </div>
+  </body>
+</html>

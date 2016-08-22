@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.4.2_07" class="java.beans.XMLDecoder"> 
+ <object class="threeD.raytracer.engine.Scene"> 
+  <void property="camera"> 
+   <void property="focalLength"> 
+    <double>0.1</double> 
+   </void> 
+   <void property="location"> 
+    <void property="z"> 
+     <double>2.0</double> 
+    </void> 
+   </void> 
+   <void property="projectionHeight"> 
+    <double>0.21826170021385433</double> 
+   </void> 
+   <void property="projectionWidth"> 
+    <double>0.2856296013484229</double> 
+   </void> 
+   <void property="viewDirection"> 
+    <void property="z"> 
+     <double>-1.0</double> 
+    </void> 
+   </void> 
+   <void method="updateUVW"/> 
+  </void> 
+  <void property="surfaces"> 
+   <array class="threeD.raytracer.engine.Surface" length="5"> 
+    <void index="0"> 
+     <object class="threeD.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+      <void property="surface"> 
+       <object id="Plane0" class="threeD.raytracer.primitives.Plane"> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object id="DiffuseShader0" class="threeD.raytracer.shaders.DiffuseShader"> 
+            <void id="ObjectArray0" property="propertyValues"/> 
+            <void property="propertyValues"> 
+             <object idref="ObjectArray0"/> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="color"> 
+         <void property="green"> 
+          <double>0.4</double> 
+         </void> 
+         <void property="red"> 
+          <double>0.8</double> 
+         </void> 
+        </void> 
+        <void property="location"> 
+         <void property="y"> 
+          <double>-3.0</double> 
+         </void> 
+        </void> 
+        <void property="type"> 
+         <int>4</int> 
+        </void> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object idref="DiffuseShader0"/> 
+          </void> 
+         </array> 
+        </void> 
+       </object> 
+      </void> 
+      <void property="dialogClass"> 
+       <class>threeD.ui.dialogs.EditPlaneDialog</class> 
+      </void> 
+      <void property="name"> 
+       <string>Floor</string> 
+      </void> 
+      <void property="type"> 
+       <string>Primitive Plane</string> 
+      </void> 
+      <void property="surface"> 
+       <object idref="Plane0"/> 
+      </void> 
+     </object> 
+    </void> 
+    <void index="1"> 
+     <object class="threeD.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+      <void property="surface"> 
+       <object id="Plane1" class="threeD.raytracer.primitives.Plane"> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object id="DiffuseShader1" class="threeD.raytracer.shaders.DiffuseShader"> 
+            <void id="ObjectArray1" property="propertyValues"/> 
+            <void property="propertyValues"> 
+             <object idref="ObjectArray1"/> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="color"> 
+         <void property="green"> 
+          <double>0.6</double> 
+         </void> 
+        </void> 
+        <void property="location"> 
+         <void property="x"> 
+          <double>2.0</double> 
+         </void> 
+        </void> 
+        <void property="shadeBack"> 
+         <boolean>true</boolean> 
+        </void> 
+        <void property="shadeFront"> 
+         <boolean>false</boolean> 
+        </void> 
+        <void property="type"> 
+         <int>8</int> 
+        </void> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object idref="DiffuseShader1"/> 
+          </void> 
+         </array> 
+        </void> 
+       </object> 
+      </void> 
+      <void property="dialogClass"> 
+       <class>threeD.ui.dialogs.EditPlaneDialog</class> 
+      </void> 
+      <void property="name"> 
+       <string>Right Wall</string> 
+      </void> 
+      <void property="type"> 
+       <string>Primitive Plane</string> 
+      </void> 
+      <void property="surface"> 
+       <object idref="Plane1"/> 
+      </void> 
+     </object> 
+    </void> 
+    <void index="2"> 
+     <object class="threeD.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+      <void property="surface"> 
+       <object id="Plane2" class="threeD.raytracer.primitives.Plane"> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object id="DiffuseShader2" class="threeD.raytracer.shaders.DiffuseShader"> 
+            <void id="ObjectArray2" property="propertyValues"/> 
+            <void property="propertyValues"> 
+             <object idref="ObjectArray2"/> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="color"> 
+         <void property="red"> 
+          <double>0.8</double> 
+         </void> 
+        </void> 
+        <void property="location"> 
+         <void property="x"> 
+          <double>-2.0</double> 
+         </void> 
+        </void> 
+        <void property="type"> 
+         <int>8</int> 
+        </void> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object idref="DiffuseShader2"/> 
+          </void> 
+         </array> 
+        </void> 
+       </object> 
+      </void> 
+      <void property="dialogClass"> 
+       <class>threeD.ui.dialogs.EditPlaneDialog</class> 
+      </void> 
+      <void property="name"> 
+       <string>Left Wall</string> 
+      </void> 
+      <void property="type"> 
+       <string>Primitive Plane</string> 
+      </void> 
+      <void property="surface"> 
+       <object idref="Plane2"/> 
+      </void> 
+     </object> 
+    </void> 
+    <void index="3"> 
+     <object class="threeD.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+      <void property="surface"> 
+       <object id="Plane3" class="threeD.raytracer.primitives.Plane"> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object id="DiffuseShader3" class="threeD.raytracer.shaders.DiffuseShader"> 
+            <void id="ObjectArray3" property="propertyValues"/> 
+            <void property="propertyValues"> 
+             <object idref="ObjectArray3"/> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="color"> 
+         <void property="green"> 
+          <double>0.4</double> 
+         </void> 
+         <void property="red"> 
+          <double>0.8</double> 
+         </void> 
+        </void> 
+        <void property="location"> 
+         <void property="z"> 
+          <double>-2.0</double> 
+         </void> 
+        </void> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object idref="DiffuseShader3"/> 
+          </void> 
+         </array> 
+        </void> 
+       </object> 
+      </void> 
+      <void property="dialogClass"> 
+       <class>threeD.ui.dialogs.EditPlaneDialog</class> 
+      </void> 
+      <void property="name"> 
+       <string>Back Wall</string> 
+      </void> 
+      <void property="type"> 
+       <string>Primitive Plane</string> 
+      </void> 
+      <void property="surface"> 
+       <object idref="Plane3"/> 
+      </void> 
+     </object> 
+    </void> 
+    <void index="4"> 
+     <object class="threeD.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+      <void property="surface"> 
+       <object id="Plane4" class="threeD.raytracer.primitives.Plane"> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object id="DiffuseShader4" class="threeD.raytracer.shaders.DiffuseShader"> 
+            <void id="ObjectArray4" property="propertyValues"/> 
+            <void property="propertyValues"> 
+             <object idref="ObjectArray4"/> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="color"> 
+         <void property="green"> 
+          <double>0.4</double> 
+         </void> 
+         <void property="red"> 
+          <double>0.8</double> 
+         </void> 
+        </void> 
+        <void property="transforms"> 
+         <array class="threeD.raytracer.util.TransformMatrix" length="2"> 
+          <void index="0"> 
+           <object class="threeD.raytracer.surfaceUI.TransformMatrixUI"> 
+            <void property="matrix"> 
+             <void index="1"> 
+              <void index="1"> 
+               <double>-1.0</double> 
+              </void> 
+              <void index="2"> 
+               <double>-1.2246467991473532E-16</double> 
+              </void> 
+             </void> 
+             <void index="2"> 
+              <void index="1"> 
+               <double>1.2246467991473532E-16</double> 
+              </void> 
+              <void index="2"> 
+               <double>-1.0</double> 
+              </void> 
+             </void> 
+            </void> 
+            <void property="type"> 
+             <int>4</int> 
+            </void> 
+            <void property="x"> 
+             <double>3.141592653589793</double> 
+            </void> 
+           </object> 
+          </void> 
+          <void index="1"> 
+           <object class="threeD.raytracer.surfaceUI.TransformMatrixUI"> 
+            <void property="matrix"> 
+             <void index="1"> 
+              <void index="3"> 
+               <double>-6.0</double> 
+              </void> 
+             </void> 
+            </void> 
+            <void property="type"> 
+             <int>1</int> 
+            </void> 
+            <void property="y"> 
+             <double>-6.0</double> 
+            </void> 
+           </object> 
+          </void> 
+         </array> 
+        </void> 
+        <void property="type"> 
+         <int>4</int> 
+        </void> 
+        <void method="calculateTransform"/> 
+        <void property="shaders"> 
+         <array class="threeD.raytracer.shaders.Shader" length="1"> 
+          <void index="0"> 
+           <object idref="DiffuseShader4"/> 
+          </void> 
+         </array> 
+        </void> 
+       </object> 
+      </void> 
+      <void property="dialogClass"> 
+       <class>threeD.ui.dialogs.EditPlaneDialog</class> 
+      </void> 
+      <void property="name"> 
+       <string>Cieling</string> 
+      </void> 
+      <void property="type"> 
+       <string>Primitive Plane</string> 
+      </void> 
+      <void property="surface"> 
+       <object idref="Plane4"/> 
+      </void> 
+     </object> 
+    </void> 
+   </array> 
+  </void> 
+ </object> 
+</java> 

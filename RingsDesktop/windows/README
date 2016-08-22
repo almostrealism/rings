@@ -1,0 +1,31 @@
+	*** Welcome to the Rings Ray Tracing Engine ***
+
+* To run this package you will need to perform a few simple steps:
+
+1. Download and install JRE 1.4 or higher from www.java.com.
+
+IMPORTANT: The steps below may not be necesary with new jvm instalation packages,
+           so first test steps 6 - 7. If it fails, then do steps 2 - 5.
+
+2. Now find the directory you installed the jre to and find a directory inside it that is called "bin".
+3. Copy the full path of this directory.
+4. Open a file on your local drive (C:) that should be called autoexec.bat
+5. At the end of the file add this:
+     set PATH = %PATH%;<path to the 'bin' directory>
+     Where <path to the 'bin' directory> is the path you copied in step 3 and 4
+6. Download the latest Rings jar file from j3d.sf.net and put it in
+   the rings/bin directory.
+7. Now you are ready to run the application by executing "rings/bin/rings.bat".
+
+-----------------------------------------------------------------------------------
+
+    Copyright (C) 2003-05  Mike Murray
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License (version 2)
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
