@@ -44,6 +44,7 @@ limitations under the License.
 ## Maintainence Schedule ##
 
 Below is a table that indicates how quickly I can release updated version for each tool if reported issues require it or the community requests it.
+
 |   |   |
 |---|---|
 | **Common** | 2 Weeks |
