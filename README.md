@@ -41,6 +41,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
+## More Details ##
+
+The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
+
+#### GraphPersist ####
+
+All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code which specify the mapping of columns to bean properties and a factory lambda to construct the object which will contain the results.
+
+```
+#!java
+InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
+QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
+									() -> { return new TestEntity(); }));
+```
+
+## Show Your Support ##
+
+If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
+
 ## Maintainence Schedule ##
 
 Below is a table that indicates how quickly I can release updated version for each tool if reported issues require it or the community requests it.
@@ -60,22 +79,3 @@ Below is a table that indicates how quickly I can release updated version for ea
 | **FeedGrowth** | 18 Weeks |
 | **GlitchFarm** | 18 Weeks |
 | **Metamerise** | 18 Weeks |
-
-## Show Your Support ##
-
-If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
-
-## More Details ##
-
-The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
-
-#### GraphPersist ####
-
-All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code which specify the mapping of columns to bean properties and a factory lambda to construct the object which will contain the results.
-
-```
-#!java
-InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
-QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
-									() -> { return new TestEntity(); }));
-```
