@@ -33,7 +33,6 @@ import java.util.List;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
-import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
@@ -264,9 +263,9 @@ public class RayTracingEngine {
 			ShadableSurface surf = (ShadableSurface) intersect.getSurface();
 			List<ShadableSurface> otherSurf = new ArrayList<ShadableSurface>();
 			
-			for (Surface s : allSurfaces) {
+			for (ShadableSurface s : allSurfaces) {
 				if (surface != s) {
-					otherSurf.add(surface);
+					otherSurf.add(s);
 				}
 			}
 			
