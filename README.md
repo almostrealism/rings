@@ -51,9 +51,11 @@ All GraphPersist queries for the running JVM are stored in a root QueryLibrary. 
 
 ```
 #!java
-InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
-QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
-									() -> { return new TestEntity(); }));
+		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
+		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
+									"select * from testdata where id > 1",
+									fieldMap, () -> { return new TestEntity(); }));	
+		System.out.println("There are " + QueryLibrary.root().get(getDB(), TestEntity.class).size() + " results";
 ```
 
 ## Show Your Support ##
