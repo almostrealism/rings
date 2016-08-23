@@ -255,10 +255,20 @@ public class Vector implements Cloneable {
 			return false;
 	}
 	
-	/**
-	 * @see java.lang.Object.clone()
-	 */
-	public Object clone() { return new Vector(this.x, this.y, this.z); }
+	/** @see java.lang.Object.clone() */
+	public Object clone() {
+		Vector v;
+		
+		try {
+			v = (Vector) super.clone();
+			v.x = this.x;
+			v.y = this.y;
+			v.z = this.z;
+			return v;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	/**
 	 * @return  A String representation of this Vector object.
