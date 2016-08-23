@@ -29,6 +29,7 @@ import org.almostrealism.texture.Texture;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.lighting.PointLight;
@@ -42,14 +43,20 @@ import com.almostrealism.raytracer.ui.RenderTestFrame;
  * @author Mike Murray
  */
 public class RenderDemo {
+	public static final boolean enableCornellBox = false;
+	
 	public static void main(String[] args) {
-		Scene scene = null;
+		Scene<ShadableSurface> scene = null;
 		
-		try {
-			scene = FileDecoder.decodeSceneFile(new File("CornellBox.xml"), FileDecoder.XMLEncoding, false, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+		if (enableCornellBox) {
+			try {
+				scene = FileDecoder.decodeSceneFile(new File("CornellBox.xml"), FileDecoder.XMLEncoding, false, null);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		} else {
+			scene = new Scene<ShadableSurface>();
 		}
 		
 		Sphere s = new Sphere();
