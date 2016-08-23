@@ -5,6 +5,11 @@ import java.util.Iterator;
 
 import com.almostrealism.glitchfarm.line.OutputLine;
 
+/**
+ * TODO  Merge with {@link com.almostrealism.mixer.Mixer}
+ * 
+ * @author  Michael Murray
+ */
 public class Mixer {
 	protected static Mixer currentMixer;
 	
