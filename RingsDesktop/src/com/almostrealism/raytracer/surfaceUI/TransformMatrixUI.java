@@ -17,13 +17,12 @@
 package com.almostrealism.raytracer.surfaceUI;
 
 import org.almostrealism.space.TransformMatrix;
-import org.almostrealism.util.*;
 
 /**
-  A TransformMatrixUI object stores extra data about a TransformMatrix object such as its type
-  for use in an application with a user interface.
-*/
-
+ * A {@link TransformMatrixUI} object stores extra data about
+ * a {@link TransformMatrix} object such as its type for use
+ * in an application with a user interface.
+ */
 public class TransformMatrixUI extends TransformMatrix {
   /** Code for a translation transformation. */
   public static final int translationTransformation = 1;
