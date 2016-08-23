@@ -36,7 +36,7 @@ import org.almostrealism.texture.RGB;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceEditEvent;

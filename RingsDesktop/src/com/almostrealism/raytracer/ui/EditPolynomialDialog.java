@@ -34,7 +34,7 @@ import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 
 
 /**

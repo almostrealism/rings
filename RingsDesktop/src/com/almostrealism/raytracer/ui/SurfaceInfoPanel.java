@@ -45,10 +45,10 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.primitives.TextureFactory;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.ShaderEditPanel;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 
 // TODO  Add duplicate surface function.
 

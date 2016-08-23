@@ -32,8 +32,8 @@ import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import org.almostrealism.swing.panels.EditVectorPanel;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.primitives.Triangle;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 
 
 /**

@@ -28,7 +28,7 @@ import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory;
 
 /**

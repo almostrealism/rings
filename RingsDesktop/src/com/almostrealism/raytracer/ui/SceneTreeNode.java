@@ -28,7 +28,7 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 
 /**
  * A SceneTreeNode object allows a Scene object to be represented by a TreeNode component

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.surfaceUI;
+package com.almostrealism.raytracer.primitives;
 
 
 import java.awt.Graphics;

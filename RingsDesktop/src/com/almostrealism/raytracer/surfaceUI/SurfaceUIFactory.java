@@ -31,6 +31,7 @@ import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.ui.EditPlaneDialog;
 import com.almostrealism.raytracer.ui.EditPolynomialDialog;
@@ -66,7 +67,7 @@ public class SurfaceUIFactory {
 		public Class getDialogClass() { return this.dialog; }
 		
 		/**
-		 * @see com.almostrealism.raytracer.surfaceUI.SurfaceUI#hasDialog()
+		 * @see com.almostrealism.raytracer.primitives.SurfaceUI#hasDialog()
 		 */
 		public boolean hasDialog() { return (this.dialog != null); }
 		
@@ -88,7 +89,7 @@ public class SurfaceUIFactory {
 		}
 		
 		/**
-		 * @see com.almostrealism.raytracer.surfaceUI.SurfaceUI#getType()
+		 * @see com.almostrealism.raytracer.primitives.SurfaceUI#getType()
 		 */
 		public String getType() { return this.type; }
 		
@@ -96,7 +97,7 @@ public class SurfaceUIFactory {
 		 * Does nothing.
 		 * Perhaps someday this will be a useful method...
 		 * 
-		 * @see com.almostrealism.raytracer.surfaceUI.SurfaceUI#draw(java.awt.Graphics, com.almostrealism.raytracer.engine.Camera)
+		 * @see com.almostrealism.raytracer.primitives.SurfaceUI#draw(java.awt.Graphics, com.almostrealism.raytracer.engine.Camera)
 		 */
 		public void draw(Graphics g, Camera camera) {}
 	}
