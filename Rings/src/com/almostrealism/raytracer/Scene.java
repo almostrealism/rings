@@ -31,7 +31,7 @@ import com.almostrealism.raytracer.lighting.Light;
  * A Scene object represents a scene in 3d. It stores a Camera object, an array of Light objects,
  * and an array of Surface objects.
  */
-public class Scene extends SurfaceList<ShadableSurface> {
+public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
   private Camera camera;
   
   private Light lights[];
@@ -41,16 +41,14 @@ public class Scene extends SurfaceList<ShadableSurface> {
 	 */
 	public Scene() {
 		this.setCamera(new PinholeCamera());
-		
 		this.setLights(new Light[0]);
-		this.setSurfaces(new ShadableSurface[0]);
 	}
 	
 	/**
 	 * Constructs a Scene object with a default Camera object, no Light objects,
 	 * and the surfaces represented by the specified Surface array.
 	 */
-	public Scene(ShadableSurface surfaces[]) {
+	public Scene(T surfaces[]) {
 		this.setCamera(new PinholeCamera());
 		
 		this.setLights(new Light[0]);
@@ -60,14 +58,14 @@ public class Scene extends SurfaceList<ShadableSurface> {
 	/**
 	 * Constructs a Scene object with the specified Camera object, Light array, and Surface array.
 	 */
-	public Scene(Camera camera, Light lights[], ShadableSurface surfaces[]) {
+	public Scene(Camera camera, Light lights[], T surfaces[]) {
 		this.setCamera(camera);
 		
 		this.setLights(lights);
 		this.setSurfaces(surfaces);
 	}
 	
-	public void setSurfaces(ShadableSurface surfaces[]) {
+	public void setSurfaces(T surfaces[]) {
 		clear();
 		addAll(Arrays.asList(surfaces));
 	}
