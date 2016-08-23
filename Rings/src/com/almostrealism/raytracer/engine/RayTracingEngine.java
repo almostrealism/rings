@@ -294,8 +294,6 @@ public class RayTracingEngine {
 					return new RGB(0.0, 0.0, 0.0);
 				
 				if (allLights[i] instanceof SurfaceLight) {
-					Light l[] = ((SurfaceLight)allLights[i]).getSamples();
-					
 					c = RayTracingEngine.lightingCalculation(point, r.getDirection(),
 							surf, otherSurf, ((SurfaceLight)allLights[i]).getSamples(), p);
 				} else if (allLights[i] instanceof PointLight) {
