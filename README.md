@@ -58,7 +58,7 @@ QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(fieldMap,
 
 ## Show Your Support ##
 
-If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**.
+If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**. I also create music with some of the tools here, and if you are interested in supporting that you can join my [Patreon](https://www.patreon.com/user?u=3646756) page.
 
 ## Maintainence Schedule ##
 
