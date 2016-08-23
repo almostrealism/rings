@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class Graph extends ArrayList {
 	private static final String header = "[--------]:";
-	private static DateFormat format = new SimpleDateFormat("hh:mm a");
+	private DateFormat format = new SimpleDateFormat("hh:mm a");
 	private static NumberFormat dformat = new DecimalFormat("#.000");
 	
 	private int max = 100;
@@ -66,7 +66,7 @@ public class Graph extends ArrayList {
 		
 		StringBuffer b = new StringBuffer();
 		b.append("[");
-		b.append(Graph.format.format(now));
+		b.append(format.format(now));
 		b.append("]:");
 		
 		for (int i = 0; i < this.div; i++) if (a > i * this.scale) b.append("#");
@@ -108,7 +108,7 @@ public class Graph extends ArrayList {
 		
 		StringBuffer b = new StringBuffer();
 		b.append("[");
-		b.append(Graph.format.format(now));
+		b.append(format.format(now));
 		b.append("]: ");
 		b.append(msg);
 		
