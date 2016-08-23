@@ -257,10 +257,8 @@ public class Vector implements Cloneable {
 	
 	/** @see java.lang.Object.clone() */
 	public Object clone() {
-		Vector v;
-		
 		try {
-			v = (Vector) super.clone();
+			Vector v = (Vector) super.clone();
 			v.x = this.x;
 			v.y = this.y;
 			v.z = this.z;
