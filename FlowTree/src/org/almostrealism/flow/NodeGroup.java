@@ -1066,13 +1066,15 @@ public class NodeGroup extends Node implements Runnable, NodeProxy.EventListener
 			this.sleepGraph.addEntry(sl);
 		}
 		
-		buf.append("<b>Activity Rating</b>" + nl);
-		buf.append("Running Total Average = ");
-		buf.append(this.totalActivitySum / this.totalActivityDiv);
-		buf.append(nl);
-		buf.append("<pre><font size=\"-2\">" + nl);
-		this.activityGraph.print(buf);
-		buf.append("</font></pre>" + nl);
+		if (this.activityGraph != null) {
+			buf.append("<b>Activity Rating</b>" + nl);
+			buf.append("Running Total Average = ");
+			buf.append(this.totalActivitySum / this.totalActivityDiv);
+			buf.append(nl);
+			buf.append("<pre><font size=\"-2\">" + nl);
+			this.activityGraph.print(buf);
+			buf.append("</font></pre>" + nl);
+		}
 		
 		if (Message.verbose) System.out.println("NodeGroup: Getting dbs info...");
 		
