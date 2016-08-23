@@ -46,7 +46,7 @@ import com.almostrealism.raytracer.ui.SurfaceEditEvent;
  * @author Mike Murray
  */
 public class RenderPanel extends JPanel implements EventListener, EventGenerator {
-  private Scene scene;
+  private Scene<ShadableSurface> scene;
   private EventHandler handler;
   
   private boolean showProgressWindow;
@@ -277,7 +277,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
 			
 			if (this.scene != null) {
 				for(int i = 0; i < this.scene.getSurfaces().length; i++) {
-					ShadableSurface surface = this.scene.getSurface(i);
+					ShadableSurface surface = this.scene.get(i);
 					
 					if (surface instanceof SurfaceUI) {
 						((SurfaceUI)surface).draw(g, this.scene.getCamera());
