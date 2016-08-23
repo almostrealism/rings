@@ -1,9 +1,7 @@
 package com.almostrealism.glitchfarm.util;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
 
 import com.almostrealism.glitchfarm.gui.KeyBoardSampleDisplay;

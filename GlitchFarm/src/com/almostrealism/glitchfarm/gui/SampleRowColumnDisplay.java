@@ -1,7 +1,6 @@
 package com.almostrealism.glitchfarm.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 

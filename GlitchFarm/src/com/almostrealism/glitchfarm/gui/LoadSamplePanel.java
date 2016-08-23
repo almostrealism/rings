@@ -19,7 +19,6 @@ import javax.swing.JScrollPane;
 
 import com.almostrealism.glitchfarm.obj.Sample;
 import com.almostrealism.glitchfarm.util.LineUtilities;
-import com.almostrealism.glitchfarm.util.SampleIOUtilities;
 
 public class LoadSamplePanel extends JPanel implements ActionListener {
 	private JButton loadButton;
