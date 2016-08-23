@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
 public interface ChromosomeFactory<T> {
 	public void setChromosomeSize(int genes, int factors);

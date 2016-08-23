@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
-import java.util.ArrayList;
-
-public class ArrayListGene<T> extends ArrayList<Factor<T>> implements Gene<T> {
-	public Factor<T> getFactor(int index) { return get(index); }
-	public int length() { return size(); }
+public class LongScaleFactor implements Factor<Long> {
+	private double scale;
+	
+	public LongScaleFactor() { }
+	
+	public LongScaleFactor(double scale) { this.scale = scale; }
+	
+	public Long getResultant(Long value) { return (long) (value * scale); }
+	
+	public void setScale(double s) { this.scale = s; }
+	
+	public double getScale() { return scale; }
 }

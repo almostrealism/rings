@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
-public class LongScaleFactor implements Factor<Long> {
+public class DoubleScaleFactor implements Factor<Double> {
 	private double scale;
 	
-	public LongScaleFactor() { }
+	public DoubleScaleFactor() { }
 	
-	public LongScaleFactor(double scale) { this.scale = scale; }
+	public DoubleScaleFactor(double scale) { this.scale = scale; }
 	
-	public Long getResultant(Long value) { return (long) (value * scale); }
+	public Double getResultant(Double value) {
+		return value * scale;
+	}
 	
 	public void setScale(double s) { this.scale = s; }
 	

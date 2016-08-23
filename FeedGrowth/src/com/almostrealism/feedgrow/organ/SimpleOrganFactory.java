@@ -23,8 +23,8 @@ import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellFactory;
 import com.almostrealism.feedgrow.cellular.ProbabilityDensityCellFactory;
 import com.almostrealism.feedgrow.delay.DelayCellFactory;
-import com.almostrealism.feedgrow.heredity.Chromosome;
-import com.almostrealism.feedgrow.heredity.Gene;
+import com.almostrealism.heredity.Chromosome;
+import com.almostrealism.heredity.Gene;
 
 public class SimpleOrganFactory<T> {
 	public static int minDelay = 40;

@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.cellular;
 
-import com.almostrealism.feedgrow.heredity.Factor;
+import com.almostrealism.heredity.Factor;
 
 public class FilteredCell<T> extends CellAdapter<T> {
 	private Factor<T> filter;

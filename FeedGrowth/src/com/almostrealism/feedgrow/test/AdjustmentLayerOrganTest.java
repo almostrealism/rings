@@ -19,14 +19,14 @@ package com.almostrealism.feedgrow.test;
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.cellular.CellAdjustment;
 import com.almostrealism.feedgrow.content.FloatingPointProteinCache;
-import com.almostrealism.feedgrow.heredity.ArrayListChromosome;
-import com.almostrealism.feedgrow.heredity.ArrayListGene;
-import com.almostrealism.feedgrow.heredity.DoubleScaleFactor;
 import com.almostrealism.feedgrow.optimization.SimpleOrganOptimizer;
 import com.almostrealism.feedgrow.optimization.StableDurationHealthComputation;
 import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;
 import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
+import com.almostrealism.heredity.ArrayListChromosome;
+import com.almostrealism.heredity.ArrayListGene;
+import com.almostrealism.heredity.DoubleScaleFactor;
 
 public class AdjustmentLayerOrganTest {
 	private static AudioProteinCache cache = new AudioProteinCache();

@@ -21,8 +21,8 @@ import java.util.List;
 
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellAdapter;
-import com.almostrealism.feedgrow.heredity.Factor;
-import com.almostrealism.feedgrow.heredity.Gene;
+import com.almostrealism.heredity.Factor;
+import com.almostrealism.heredity.Gene;
 
 public class MultiCell<T> extends CellAdapter<T> {
 	public static int pushWait = 0;

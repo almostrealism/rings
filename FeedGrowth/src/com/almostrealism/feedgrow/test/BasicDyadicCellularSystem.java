@@ -22,8 +22,8 @@ import java.util.List;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.delay.BasicDelayCell;
-import com.almostrealism.feedgrow.heredity.Chromosome;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
+import com.almostrealism.heredity.Chromosome;
 
 public class BasicDyadicCellularSystem extends SimpleOrgan<Long> {
 	private BasicDelayCell cellA, cellB;

@@ -23,8 +23,8 @@ import java.util.List;
 import com.almostrealism.feedgrow.cellular.AdjustmentCell;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellAdjustment;
-import com.almostrealism.feedgrow.heredity.Chromosome;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
+import com.almostrealism.heredity.Chromosome;
 
 public class AdjustmentLayer<T, R> extends SimpleOrgan<R> {
 

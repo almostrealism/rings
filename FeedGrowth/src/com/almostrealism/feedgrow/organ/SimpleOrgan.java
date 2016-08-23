@@ -24,9 +24,9 @@ import com.almostrealism.feedgrow.cellular.CachedStateCell;
 import com.almostrealism.feedgrow.cellular.CachedStateCellGroup;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.content.ProteinCache;
-import com.almostrealism.feedgrow.heredity.Chromosome;
-import com.almostrealism.feedgrow.heredity.Gene;
-import com.almostrealism.feedgrow.heredity.IdentityFactor;
+import com.almostrealism.heredity.Chromosome;
+import com.almostrealism.heredity.Gene;
+import com.almostrealism.heredity.IdentityFactor;
 
 public class SimpleOrgan<T> implements Organ<T> {
 	private List<Cell<T>> cells;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
 public class DefaultRandomChromosomeFactory implements ChromosomeFactory<Long> {
 	private double min, max;

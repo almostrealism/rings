@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
 public class FloatingPointRandomChromosomeFactory implements ChromosomeFactory<Double> {
 	private int genes, factors;

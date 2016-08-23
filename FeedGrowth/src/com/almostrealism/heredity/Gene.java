@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
-public class DoubleScaleFactor implements Factor<Double> {
-	private double scale;
+public interface Gene<T> {
+	public Factor<T> getFactor(int index);
 	
-	public DoubleScaleFactor() { }
-	
-	public DoubleScaleFactor(double scale) { this.scale = scale; }
-	
-	public Double getResultant(Double value) {
-		return value * scale;
-	}
-	
-	public void setScale(double s) { this.scale = s; }
-	
-	public double getScale() { return scale; }
+	public int length();
 }

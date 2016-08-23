@@ -16,11 +16,11 @@
 
 package com.almostrealism.feedgrow.breeding;
 
-import com.almostrealism.feedgrow.heredity.ArrayListChromosome;
-import com.almostrealism.feedgrow.heredity.ArrayListGene;
-import com.almostrealism.feedgrow.heredity.Chromosome;
-import com.almostrealism.feedgrow.heredity.Gene;
-import com.almostrealism.feedgrow.heredity.LongScaleFactor;
+import com.almostrealism.heredity.ArrayListChromosome;
+import com.almostrealism.heredity.ArrayListGene;
+import com.almostrealism.heredity.Chromosome;
+import com.almostrealism.heredity.Gene;
+import com.almostrealism.heredity.LongScaleFactor;
 
 public class LongFactorAverageBreeder implements Breeder<Long> {
 	private double mutation = 0.0;

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
-
-public interface Factor<T> {
-	public T getResultant(T value);
-}
+/**
+ * 
+ */
+/**
+ * @author mike
+ *
+ */
+package com.almostrealism.heredity;

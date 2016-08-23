@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
-public interface Gene<T> {
-	public Factor<T> getFactor(int index);
-	
-	public int length();
+public interface Factor<T> {
+	public T getResultant(T value);
 }

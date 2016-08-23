@@ -20,10 +20,10 @@ import java.util.List;
 
 import com.almostrealism.feedgrow.breeding.Breedable;
 import com.almostrealism.feedgrow.breeding.Breeder;
-import com.almostrealism.feedgrow.heredity.Chromosome;
-import com.almostrealism.feedgrow.heredity.Factor;
-import com.almostrealism.feedgrow.heredity.Gene;
-import com.almostrealism.feedgrow.heredity.LongScaleFactor;
+import com.almostrealism.heredity.Chromosome;
+import com.almostrealism.heredity.Factor;
+import com.almostrealism.heredity.Gene;
+import com.almostrealism.heredity.LongScaleFactor;
 
 public class BasicDyadicChromosome implements Chromosome<Long> {
 	private Factor<Long> factorA, factorB;

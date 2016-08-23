@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.heredity;
+package com.almostrealism.heredity;
 
 public class IdentityFactor<T> implements Factor<T> {
 	public T getResultant(T value) { return value; }

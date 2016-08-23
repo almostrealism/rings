@@ -19,7 +19,7 @@ package com.almostrealism.feedgrow.organ;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.Receptor;
 import com.almostrealism.feedgrow.content.ProteinCache;
-import com.almostrealism.feedgrow.heredity.Factor;
+import com.almostrealism.heredity.Factor;
 
 public class CellPair<T> implements Receptor<T> {
 	private ProteinCache<T> cache;
