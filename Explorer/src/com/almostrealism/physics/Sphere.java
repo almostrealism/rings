@@ -178,8 +178,8 @@ public class Sphere extends com.almostrealism.raytracer.primitives.Sphere implem
 			} else {
 				return new Vector[0];
 			}
-		} else if (b instanceof Plane) {
-			State p = ((Plane)b).getState();
+		} else if (b instanceof RigidPlane) {
+			State p = ((RigidPlane)b).getState();
 			double d = this.state.x.getY() - p.x.getY();
 			
 			if (Math.abs(d) <= r) {

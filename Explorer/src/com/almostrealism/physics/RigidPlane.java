@@ -31,12 +31,13 @@ import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.Camera;
+import com.almostrealism.raytracer.primitives.Plane;
 
 
 /**
  * @author Mike Murray
  */
-public class Plane extends com.almostrealism.raytracer.primitives.Plane implements RigidBody {
+public class RigidPlane extends Plane implements RigidBody {
 	private State state;
 	
 	private TransformMatrix rotateXMatrix, rotateYMatrix, rotateZMatrix;
@@ -53,8 +54,8 @@ public class Plane extends com.almostrealism.raytracer.primitives.Plane implemen
 	 * @param mass  mass
 	 * @param e  coefficient of restitution
 	 */
-	public Plane(Vector x, Vector r, Vector v, Vector w, Vector f, Vector t, double mass, double e) {
-		super(com.almostrealism.raytracer.primitives.Plane.XZ);
+	public RigidPlane(Vector x, Vector r, Vector v, Vector w, Vector f, Vector t, double mass, double e) {
+		super(Plane.XZ);
 		
 		this.state = new State();
 		this.state.init(x, r, v, w, f, t, mass, new TransformMatrix(new double[][] {{1.0, 0.0, 0.0, 0.0},
