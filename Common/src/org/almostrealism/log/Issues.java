@@ -19,6 +19,8 @@ package org.almostrealism.log;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * TODO  Add slack integration
+ * 
  * @author  Michael Murray
  */
 public final class Issues {
