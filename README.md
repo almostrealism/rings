@@ -4,12 +4,13 @@
 |---|---|---|---|
 |💜| **Metamerise** | Embedded device operations for interactive art installations. | Requires **FeedGrowth**. |
 |🍎| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
-|🔵| **FeedGrowth** | Feedback audio generator with included OpenGL visualizer. | Requires **Replicator** and **PhotonField**. |
+|🔵| **FeedGrowth** | Feedback audio generator with included OpenGL visualizer. | Requires **OptimalZoo**, **Replicator** and **PhotonField**. |
 |🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Replicator**, **OSGEO** and **JEP**. |
 |🍏| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
 |🍎| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**, **MatrixView** and **JOGL**. |
+|🍎| **OptimalZoo** | A system for optimizing the parameters of a health function using a genetic algorithm. | Requires **FlowTree**. |
 |🔶| **FlowTree** | Distributed parallel processing system for computer graphics, physics and more. *This project requires a retired apache project (**Slide**) and will be upgraded to use a different WebDav library in the future. Also, this project uses HSQLDB optionally (by default), but can be configured to use any SQL relational database.* | Requires **TreeView**, **HSQLDB** and **Apache Slide**. |
 |🔶| **MatrixView** | Service for displaying tabular data in the browser. | Requires **Common**. |
 |🔵| **TreeView** | Service for displaying tree data in the browser. | Requires **Common**. |
@@ -72,7 +73,8 @@ Below is a table that indicates how quickly I can release updated version for ea
 | **GraphPersist** | 2 Weeks |
 | **TreeView** | 4 Weeks |
 | **MatrixView** | 10 Weeks |
-| **FlowTree** | 12 Weeks |
+| **FlowTree** | 10 Weeks |
+| **OptimalZoo** | 10 Weeks |
 | **Rings** | 12 Weeks |
 | **PhotonField** | 12 Weeks |
 | **ArtifactDetector** | 15 Weeks |
