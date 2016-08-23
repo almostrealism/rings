@@ -18,6 +18,7 @@ package com.almostrealism.raytracer.surfaceUI;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -41,7 +42,8 @@ import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceEditEvent;
 
 /**
- * A RenderPanel object allows display of scene previews and rendered images of the Scene object it uses.
+ * A {@link RenderPanel} object allows display of scene previews and
+ * rendered images of the {@link Scene} object it uses.
  * 
  * @author Mike Murray
  */
@@ -54,7 +56,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
   private int width, height, ssWidth, ssHeight;
   
   private RGB renderedImageData[][];
-  private java.awt.Image renderedImage;
+  private Image renderedImage;
 
 	/**
 	 * Constructs a new RenderPanel object that can be used to render the specified Scene object.

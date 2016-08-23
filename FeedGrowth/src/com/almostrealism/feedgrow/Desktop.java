@@ -38,7 +38,7 @@ public class Desktop extends JFrame {
 		setLayout(new GridBagLayout());
 		
 		setUndecorated(true);
-		setSize(200, 100);
+		setSize(200, 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

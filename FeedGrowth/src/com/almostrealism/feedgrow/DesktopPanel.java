@@ -53,17 +53,25 @@ public class DesktopPanel extends DesktopPanelUI {
 		
 		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
 		
-		btnX.addActionListener((e) -> { System.exit(0); });
-		
+		toolBar.add(new QuitAction());
 		toolBar.add(new CanvasAction());
 		toolBar.add(new ControlAction());
+	}
+	
+	private static class QuitAction extends AbstractAction {
+		public QuitAction() {
+			super("Quit", new ImageIcon(CanvasAction.class.getResource("/icons/x.png")));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) { System.exit(0); }
 	}
 	
 	private static class CanvasAction extends AbstractAction {
 		static JFrame canvasFrame;
 		
 		public CanvasAction() {
-			super("Viewer", new ImageIcon(CanvasAction.class.getClassLoader().getResource("icons/v.png")));
+			super("Viewer", new ImageIcon(CanvasAction.class.getResource("/icons/v.png")));
 		}
 		
 		@Override
