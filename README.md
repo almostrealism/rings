@@ -6,7 +6,7 @@
 |🍎| **GlitchFarm** | Granular audio synthesizer. | Requires **FeedGrowth**. |
 |🔵| **FeedGrowth** | Feedback audio generator with included OpenGL visualizer. | Requires **OptimalZoo**, **Replicator** and **PhotonField**. |
 |🍏| **Explorer** | Pure Java rigid body physics simulator, particle system generator and terrain generator. | Requires **Replicator**, **OSGEO** and **JEP**. |
-|🍏| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **Rings**. |
+|🍏| **Replicator** | 3D object generator for recursive, generative, and fractal structures. | Requires **OptimalZoo** and **Rings**. |
 |🔶| **ArtifactDetector** | A tool for automatically detecting artifacts in scanned manuscript images. | Requires **Rings**. |
 |🍎| **PhotonField** | Pure Java Pathtracer. | Requires **Rings**. |
 |🔶| **Rings** | Pure Java Raytracer and related graphics libraries. | Requires **FlowTree**, **MatrixView** and **JOGL**. |
