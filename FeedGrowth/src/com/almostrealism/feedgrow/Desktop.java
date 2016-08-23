@@ -38,7 +38,7 @@ public class Desktop extends JFrame {
 		setLayout(new GridBagLayout());
 		
 		setUndecorated(true);
-		setSize(200, 400);
+		setSize(200, 300);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -64,7 +64,7 @@ public class Desktop extends JFrame {
 				System.exit(1);
 			}
 			
-			if (isTranslucencySupported) d.setOpacity(0.7f);
+			if (isTranslucencySupported) d.setOpacity(0.8f);
 			
 			// Display the window.
 			d.setVisible(true);

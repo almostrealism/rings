@@ -19,6 +19,7 @@ package com.almostrealism.feedgrow;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.JToolBar;
+import java.awt.BorderLayout;
 
 /**
  * @author  Michael Murray
@@ -33,9 +34,13 @@ public class DesktopPanelUI extends JPanel {
 	public DesktopPanelUI() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(panel);
+		panel.setLayout(new BorderLayout(0, 0));
+		
+		JPanel renderPanel = new JPanel();
+		panel.add(renderPanel, BorderLayout.CENTER);
 		
 		toolBar = new JToolBar();
-		panel.add(toolBar);
+		panel.add(toolBar, BorderLayout.SOUTH);
 	}
 
 }

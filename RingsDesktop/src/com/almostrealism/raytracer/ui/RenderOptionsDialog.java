@@ -35,8 +35,8 @@ import javax.swing.event.ChangeListener;
 
 import org.almostrealism.swing.Dialog;
 
+import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
-import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 
 /**
  * A RenderOptionsDialog can be used to allow the user to modify a RenderPanel object.

@@ -30,8 +30,8 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.ui.EditCameraDialog;
 import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.RenderOptionsDialog;

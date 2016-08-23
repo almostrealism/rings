@@ -32,10 +32,10 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.ui.ImageCanvas;
 
+import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.raytracer.surfaceUI.RenderPanel;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;

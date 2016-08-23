@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.surfaceUI;
+package com.almostrealism.raytracer;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,9 +34,9 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.surfaceUI.SurfaceUI;
 import com.almostrealism.raytracer.ui.SceneCloseEvent;
 import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceEditEvent;

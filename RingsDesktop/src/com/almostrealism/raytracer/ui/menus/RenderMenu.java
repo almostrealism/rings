@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import com.almostrealism.raytracer.surfaceUI.RenderPanel;
+import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.ui.RenderOptionsDialog;
 
 
