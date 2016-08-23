@@ -57,15 +57,13 @@ public class RSSFeed {
 	private String title, desc, link;
 	private List items;
 	
-	private static SimpleDateFormat format;
+	private SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 	
 	public RSSFeed(String title, String desc) {
 		this.title = title;
 		this.desc = desc;
 		
 		this.items = new ArrayList();
-		
-		if (RSSFeed.format == null) RSSFeed.format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 	}
 	
 	public void setLink(String url) { this.link = url; }
@@ -78,7 +76,7 @@ public class RSSFeed {
 		p.println("<title>" + this.title + "</title>");
 		if (this.link != null) p.println("<link>" + this.link + "</link>");
 		p.println("<description>" + this.desc + "</description>");
-		p.println("<lastBuildDate>" + RSSFeed.format.format(new Date()) + "</lastBuildDate>");
+		p.println("<lastBuildDate>" + format.format(new Date()) + "</lastBuildDate>");
 		p.println("<ttl>" + ttl + "</ttl>");
 		p.println("<language>en-us</language>");
 		
@@ -94,7 +92,7 @@ public class RSSFeed {
 		b.append("<item><title>");
 		b.append(title);
 		b.append("</title><pubDate>");
-		b.append(RSSFeed.format.format(d));
+		b.append(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z").format(d));
 		b.append("</pubDate><description>");
 		b.append(text);
 		
