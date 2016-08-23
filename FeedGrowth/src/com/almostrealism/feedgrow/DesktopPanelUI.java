@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
  */
 public class DesktopPanelUI extends JPanel {
 	private final JPanel panel = new JPanel();
+	protected JPanel renderPanel;
 	protected JToolBar toolBar;
 
 	/**
@@ -36,7 +37,7 @@ public class DesktopPanelUI extends JPanel {
 		add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel renderPanel = new JPanel();
+		renderPanel = new JPanel();
 		panel.add(renderPanel, BorderLayout.CENTER);
 		
 		toolBar = new JToolBar();

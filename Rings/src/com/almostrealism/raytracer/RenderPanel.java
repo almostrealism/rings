@@ -58,9 +58,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
   private RGB renderedImageData[][];
   private Image renderedImage;
 
-	/**
-	 * Constructs a new RenderPanel object that can be used to render the specified Scene object.
-	 */
+	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
 	public RenderPanel(Scene scene) {
 		super(new java.awt.FlowLayout());
 		
