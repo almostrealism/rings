@@ -61,7 +61,7 @@ All GraphPersist queries for the running JVM are stored in a root QueryLibrary. 
 
 ## Show Your Support ##
 
-If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**. I also create music with some of the tools here, and if you are interested in supporting that you can join my [Patreon](https://www.patreon.com/user?u=3646756) page.
+If you are interested in helping me continue this work, donations can be submitted via [PayPal](https://paypal.me/discomike) and are **appreciated**. I also create music with some of the tools here, and if you are interested in supporting that you can join my [Patreon](https://www.patreon.com/user?u=3646756) page. I am also looking for a full time software job so please make sure to check out my [LinkedIn](https://www.linkedin.com/in/ashesfall) page.
 
 ## Maintainence Schedule ##
 
