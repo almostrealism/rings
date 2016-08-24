@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.raytracer.event;
 
 import org.almostrealism.swing.Event;
 

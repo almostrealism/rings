@@ -16,6 +16,8 @@
 
 package com.almostrealism.raytracer.ui;
 
+import com.almostrealism.raytracer.event.SceneEvent;
+
 /**
   A SceneEditEvent object represents the event of editing an element of the current scene.
 */
