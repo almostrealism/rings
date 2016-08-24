@@ -9,7 +9,7 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>OptimalZoo</artifactId>
 			<version>LATEST</version>
 		</dependency>
