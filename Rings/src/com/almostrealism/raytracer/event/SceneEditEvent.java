@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.raytracer.event;
 
-import com.almostrealism.raytracer.event.SceneEvent;
 
 /**
   A SceneEditEvent object represents the event of editing an element of the current scene.

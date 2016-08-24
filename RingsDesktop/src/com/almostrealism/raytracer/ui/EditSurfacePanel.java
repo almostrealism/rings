@@ -46,6 +46,7 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.event.SurfaceEditEvent;
+import com.almostrealism.raytracer.event.SurfaceEvent;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;
 
 

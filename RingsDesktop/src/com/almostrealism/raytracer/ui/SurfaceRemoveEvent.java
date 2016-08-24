@@ -17,6 +17,8 @@
 package com.almostrealism.raytracer.ui;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.event.SceneEditEvent;
+import com.almostrealism.raytracer.event.SurfaceEvent;
 
 /**
   A SurfaceRemoveEvent object represents the event of removing a Surface object from the current Scene object.

@@ -17,6 +17,8 @@
 package com.almostrealism.raytracer.ui;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.event.SceneEditEvent;
+import com.almostrealism.raytracer.event.SurfaceEvent;
 
 /**
   A SurfaceAddEvent object represents the event of adding a new surface to the current scene.

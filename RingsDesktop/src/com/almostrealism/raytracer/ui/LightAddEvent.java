@@ -16,6 +16,7 @@
 
 package com.almostrealism.raytracer.ui;
 
+import com.almostrealism.raytracer.event.SceneEditEvent;
 import com.almostrealism.raytracer.lighting.Light;
 
 /**

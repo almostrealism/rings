@@ -32,6 +32,7 @@ import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.event.SurfaceEditEvent;
+import com.almostrealism.raytracer.event.SurfaceEvent;
 
 /**
  * A {@link TransformSurfacePanel} can be used to allow the user to
