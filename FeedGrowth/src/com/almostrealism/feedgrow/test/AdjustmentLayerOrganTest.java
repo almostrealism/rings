@@ -16,6 +16,7 @@
 
 package com.almostrealism.feedgrow.test;
 
+import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.DoubleScaleFactor;
@@ -23,7 +24,6 @@ import org.almostrealism.optimize.SimpleOrganOptimizer;
 import org.almostrealism.optimize.StableDurationHealthComputation;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.cellular.CellAdjustment;
 import com.almostrealism.feedgrow.content.FloatingPointProteinCache;
 import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;
 import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;

@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-public interface Cell<T> extends Transmitter<T>, Receptor<T> {
+public class FloatingPointSummationCell extends CachedStateCell<Double> {
+	public void push(long index) {
+		if (getCachedValue() == null) {
+			setCachedValue(getProtein(index));
+		} else {
+			setCachedValue(getCachedValue() + getProtein(index));
+		}
+	}
 }

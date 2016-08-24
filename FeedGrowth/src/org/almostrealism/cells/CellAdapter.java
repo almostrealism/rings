@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
 import com.almostrealism.feedgrow.content.ProteinCache;
 

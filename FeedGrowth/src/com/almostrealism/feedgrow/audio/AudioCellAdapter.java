@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.audio;
 
-import com.almostrealism.feedgrow.cellular.CellAdapter;
+import org.almostrealism.cells.CellAdapter;
 
 public abstract class AudioCellAdapter extends CellAdapter<Long> {
 	public static int depth = Byte.MAX_VALUE; // AudioProteinCache.depth / 100;

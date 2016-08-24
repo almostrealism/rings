@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.systems;
 
-import com.almostrealism.feedgrow.cellular.CellAdjustment;
+import org.almostrealism.cells.CellAdjustment;
 
 public class TieredCellAdjustmentFactory<T, R> implements CellAdjustmentFactory<T, R> {
 	private CellAdjustmentFactory<T, R> tier;

@@ -19,12 +19,12 @@ package com.almostrealism.feedgrow.organ;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.CellFactory;
+import org.almostrealism.cells.ProbabilityDensityCellFactory;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
-import com.almostrealism.feedgrow.cellular.Cell;
-import com.almostrealism.feedgrow.cellular.CellFactory;
-import com.almostrealism.feedgrow.cellular.ProbabilityDensityCellFactory;
 import com.almostrealism.feedgrow.delay.DelayCellFactory;
 
 public class SimpleOrganFactory<T> {

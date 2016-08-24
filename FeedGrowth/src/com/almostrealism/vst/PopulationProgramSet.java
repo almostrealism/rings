@@ -20,13 +20,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 
+import org.almostrealism.cells.Cell;
 import org.almostrealism.heredity.DoubleScaleFactor;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.LongScaleFactor;
 import org.almostrealism.io.Console;
 
-import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.delay.Delay;
 import com.almostrealism.feedgrow.organ.Organ;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;

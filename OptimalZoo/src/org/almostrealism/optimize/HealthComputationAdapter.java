@@ -19,11 +19,12 @@ package org.almostrealism.optimize;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import org.almostrealism.cells.Receptor;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.Envelope;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.audio.WaveOutput;
-import com.almostrealism.feedgrow.cellular.Receptor;
 import com.almostrealism.feedgrow.metering.AudioMeter;
 
 public abstract class HealthComputationAdapter implements HealthComputation<Long> {

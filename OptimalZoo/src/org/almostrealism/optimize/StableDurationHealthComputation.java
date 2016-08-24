@@ -16,8 +16,9 @@
 
 package org.almostrealism.optimize;
 
+import org.almostrealism.cells.CellAdapter;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.cellular.CellAdapter;
 import com.almostrealism.feedgrow.metering.AudioMeter;
 import com.almostrealism.feedgrow.organ.Organ;
 

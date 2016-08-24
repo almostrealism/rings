@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-import com.almostrealism.feedgrow.content.ProteinReceivable;
+import org.almostrealism.heredity.Factor;
 
-public interface Receptor<T> extends ProteinReceivable<T> {
-	public void push(long proteinIndex);
+public class FilteredCell<T> extends CellAdapter<T> {
+	private Factor<T> filter;
+	
+	public FilteredCell(Factor<T> filter) { this.filter = filter; }
+	
+	protected void setFilter(Factor<T> filter) { this.filter = filter; }
+	
+	public void push(long index) {
+		long filtered = addProtein(filter.getResultant(getProtein(index)));
+		super.push(filtered);
+	}
 }

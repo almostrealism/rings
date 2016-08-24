@@ -22,8 +22,9 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import org.almostrealism.cells.Receptor;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.cellular.Receptor;
 import com.almostrealism.feedgrow.content.ProteinCache;
 
 public class ReceptorPlayer implements Receptor<Long> {

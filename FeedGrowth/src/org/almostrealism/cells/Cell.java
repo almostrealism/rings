@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-import com.almostrealism.feedgrow.content.ProteinReceivable;
-
-public interface Transmitter<T> extends ProteinReceivable<T> {
-	public void setReceptor(Receptor<T> r);
+public interface Cell<T> extends Transmitter<T>, Receptor<T> {
 }

@@ -16,8 +16,8 @@
 
 package com.almostrealism.feedgrow.delay;
 
-import com.almostrealism.feedgrow.cellular.Cell;
-import com.almostrealism.feedgrow.cellular.CellFactory;
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.CellFactory;
 
 public class DelayCellFactory implements CellFactory<Long> {
 	private int min, delta;

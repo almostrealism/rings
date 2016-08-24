@@ -19,9 +19,9 @@ package com.almostrealism.feedgrow.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.cells.Cell;
 import org.almostrealism.heredity.Chromosome;
 
-import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.delay.BasicDelayCell;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;

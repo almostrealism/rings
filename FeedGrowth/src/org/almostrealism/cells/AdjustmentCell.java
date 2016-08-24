@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-import org.almostrealism.heredity.Factor;
-
-public class FilteredCell<T> extends CellAdapter<T> {
-	private Factor<T> filter;
+/**
+ * TODO  Why does this extend CachedStateCell? It does not use the cached value.
+ */
+public class AdjustmentCell<T, R> extends CachedStateCell<R> {
+	private Cell<T> cell;
+	private CellAdjustment<T, R> adjust;
 	
-	public FilteredCell(Factor<T> filter) { this.filter = filter; }
+	public AdjustmentCell(Cell<T> cell, CellAdjustment<T, R> adjustment) {
+		this.cell = cell;
+		this.adjust = adjustment;
+	}
 	
-	protected void setFilter(Factor<T> filter) { this.filter = filter; }
-	
-	public void push(long index) {
-		long filtered = addProtein(filter.getResultant(getProtein(index)));
-		super.push(filtered);
+	public void push(long i) {
+		adjust.adjust(cell, getProtein(i));
+//		super.push(i);
 	}
 }

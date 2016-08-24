@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="com.almostrealism.feedgrow.cellular.AdjustmentCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/AdjustmentCell.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="org.almostrealism.cells.AdjustmentCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/AdjustmentCell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1553" y="1258"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -21,9 +20,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.almostrealism.feedgrow.cellular.CachedStateCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/CachedStateCell.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="org.almostrealism.cells.CachedStateCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/CachedStateCell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1058" y="1260"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -31,9 +29,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="com.almostrealism.feedgrow.cellular.FloatingPointSummationCell" 
-    project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/FloatingPointSummationCell.java" binary="false" 
+  <class id="4" language="java" name="org.almostrealism.cells.FloatingPointSummationCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/FloatingPointSummationCell.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="775" y="1408"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -60,9 +57,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="7" language="java" name="com.almostrealism.feedgrow.cellular.CellAdapter" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/CellAdapter.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="org.almostrealism.cells.CellAdapter" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/CellAdapter.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="986" y="921"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -70,9 +66,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="8" language="java" name="com.almostrealism.feedgrow.cellular.CellFactory" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/CellFactory.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="8" language="java" name="org.almostrealism.cells.CellFactory" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/CellFactory.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1697" y="304"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -90,8 +85,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="com.almostrealism.feedgrow.cellular.CachedStateCellGroup" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/CachedStateCellGroup.java" binary="false" 
+  <class id="10" language="java" name="org.almostrealism.cells.CachedStateCellGroup" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/CachedStateCellGroup.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="689" y="665"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -100,8 +95,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="com.almostrealism.feedgrow.cellular.RunningAverageCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/RunningAverageCell.java" binary="false" 
+  <class id="11" language="java" name="org.almostrealism.cells.RunningAverageCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/RunningAverageCell.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1007" y="1426"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -110,9 +105,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="com.almostrealism.feedgrow.cellular.SummationCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/SummationCell.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="12" language="java" name="org.almostrealism.cells.SummationCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/SummationCell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1193" y="1408"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -120,10 +114,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="com.almostrealism.feedgrow.cellular.ProbabilityDensityCellFactory" 
-    project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/ProbabilityDensityCellFactory.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+  <class id="13" language="java" name="org.almostrealism.cells.ProbabilityDensityCellFactory" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/ProbabilityDensityCellFactory.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1759" y="474"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -141,9 +134,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="com.almostrealism.feedgrow.cellular.FilteredCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/FilteredCell.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="15" language="java" name="org.almostrealism.cells.FilteredCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/FilteredCell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="985" y="1055"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -151,9 +143,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="16" language="java" name="com.almostrealism.feedgrow.cellular.CellAdjustment" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/CellAdjustment.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="16" language="java" name="org.almostrealism.cells.CellAdjustment" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/CellAdjustment.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1781" y="1257"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -161,9 +152,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <interface id="17" language="java" name="com.almostrealism.feedgrow.cellular.Transmitter" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/Transmitter.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="17" language="java" name="org.almostrealism.cells.Transmitter" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/Transmitter.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1130" y="512"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -171,9 +161,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <interface id="18" language="java" name="com.almostrealism.feedgrow.cellular.Receptor" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/cellular/Receptor.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="18" language="java" name="org.almostrealism.cells.Receptor" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/cells/Receptor.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="948" y="512"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      

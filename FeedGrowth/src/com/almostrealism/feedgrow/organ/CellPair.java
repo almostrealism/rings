@@ -16,10 +16,10 @@
 
 package com.almostrealism.feedgrow.organ;
 
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.Receptor;
 import org.almostrealism.heredity.Factor;
 
-import com.almostrealism.feedgrow.cellular.Cell;
-import com.almostrealism.feedgrow.cellular.Receptor;
 import com.almostrealism.feedgrow.content.ProteinCache;
 
 public class CellPair<T> implements Receptor<T> {

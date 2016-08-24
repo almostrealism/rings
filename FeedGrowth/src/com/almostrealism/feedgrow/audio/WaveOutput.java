@@ -19,7 +19,8 @@ package com.almostrealism.feedgrow.audio;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.almostrealism.feedgrow.cellular.Receptor;
+import org.almostrealism.cells.Receptor;
+
 import com.almostrealism.feedgrow.content.ProteinCache;
 
 public class WaveOutput implements Receptor<Long> {

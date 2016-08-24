@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-public interface CellAdjustment<T, R> {
-	public void adjust(Cell<T> toAdjust, R arg);
+import com.almostrealism.feedgrow.content.ProteinReceivable;
+
+public interface Receptor<T> extends ProteinReceivable<T> {
+	public void push(long proteinIndex);
 }

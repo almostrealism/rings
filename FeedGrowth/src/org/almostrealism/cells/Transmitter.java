@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.cellular;
+package org.almostrealism.cells;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.almostrealism.feedgrow.content.ProteinReceivable;
 
-public class CachedStateCellGroup<T> extends ArrayList<CachedStateCell<T>> {
-	public void tick() {
-		Iterator<CachedStateCell<T>> itr = iterator();
-		while (itr.hasNext()) itr.next().tick();
-	}
+public interface Transmitter<T> extends ProteinReceivable<T> {
+	public void setReceptor(Receptor<T> r);
 }

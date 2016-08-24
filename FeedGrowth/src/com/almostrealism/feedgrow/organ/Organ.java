@@ -16,10 +16,9 @@
 
 package com.almostrealism.feedgrow.organ;
 
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.Receptor;
 import org.almostrealism.time.Clock;
-
-import com.almostrealism.feedgrow.cellular.Cell;
-import com.almostrealism.feedgrow.cellular.Receptor;
 
 public interface Organ<T> extends Receptor<T>, Clock {
 	public Cell<T> getCell(int index);

@@ -19,10 +19,10 @@ package com.almostrealism.feedgrow.systems;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.Chromosome;
 
-import com.almostrealism.feedgrow.cellular.Cell;
-import com.almostrealism.feedgrow.cellular.CellAdjustment;
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.Organ;
 
