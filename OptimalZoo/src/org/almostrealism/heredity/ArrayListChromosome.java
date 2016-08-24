@@ -19,8 +19,8 @@ package org.almostrealism.heredity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almostrealism.feedgrow.breeding.Breedable;
-import com.almostrealism.feedgrow.breeding.Breeder;
+import org.almostrealism.breeding.Breedable;
+import org.almostrealism.breeding.Breeder;
 
 public class ArrayListChromosome<T> extends ArrayList<Gene<T>> implements Chromosome<T>, Breedable {
 	public Gene<T> getGene(int index) { return get(index); }

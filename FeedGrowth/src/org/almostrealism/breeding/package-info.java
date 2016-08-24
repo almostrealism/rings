@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.breeding;
-
-import java.util.List;
-
-public interface Breedable {
-	public Breedable breed(Breedable b, List<Breeder> l);
-}
+/**
+ * @author  Michael Murray
+ */
+package org.almostrealism.breeding;

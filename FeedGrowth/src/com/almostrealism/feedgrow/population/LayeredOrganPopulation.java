@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.almostrealism.feedgrow.breeding.Genome;
+import org.almostrealism.breeding.Genome;
+
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.Organ;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;

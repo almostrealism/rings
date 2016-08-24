@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * @author  Michael Murray
- */
-package com.almostrealism.feedgrow.breeding;
+package org.almostrealism.breeding;
+
+import org.almostrealism.heredity.Chromosome;
+
+public interface Breeder<T> {
+	public Chromosome<T> combine(Chromosome<T> c1, Chromosome<T> c2);
+}

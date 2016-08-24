@@ -28,15 +28,15 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.almostrealism.breeding.Breeder;
+import org.almostrealism.breeding.FloatingPointAverageBreeder;
+import org.almostrealism.breeding.LongFactorAverageBreeder;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.DefaultRandomChromosomeFactory;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.io.Console;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.breeding.Breeder;
-import com.almostrealism.feedgrow.breeding.FloatingPointAverageBreeder;
-import com.almostrealism.feedgrow.breeding.LongFactorAverageBreeder;
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;

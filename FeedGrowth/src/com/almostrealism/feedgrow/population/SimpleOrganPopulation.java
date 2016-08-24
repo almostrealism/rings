@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.breeding.Genome;
 import org.almostrealism.heredity.Chromosome;
 
-import com.almostrealism.feedgrow.breeding.Genome;
 import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;

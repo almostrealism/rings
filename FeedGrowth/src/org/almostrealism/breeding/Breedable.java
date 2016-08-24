@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.breeding;
+package org.almostrealism.breeding;
 
-import org.almostrealism.heredity.Chromosome;
+import java.util.List;
 
-public interface Breeder<T> {
-	public Chromosome<T> combine(Chromosome<T> c1, Chromosome<T> c2);
+public interface Breedable {
+	public Breedable breed(Breedable b, List<Breeder> l);
 }

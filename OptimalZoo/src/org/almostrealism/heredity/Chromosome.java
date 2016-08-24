@@ -16,7 +16,7 @@
 
 package org.almostrealism.heredity;
 
-import com.almostrealism.feedgrow.breeding.Breedable;
+import org.almostrealism.breeding.Breedable;
 
 public interface Chromosome<T> extends Breedable {
 	public Gene<T> getGene(int index);
