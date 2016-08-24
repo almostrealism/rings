@@ -18,48 +18,36 @@ package com.almostrealism.raytracer.ui;
 
 import javax.swing.AbstractListModel;
 
+import org.almostrealism.space.Surface;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.Scene;
 
 /**
-  The SurfaceListModel class extends AbstractListModel and provides a list model that dynamically displays
-  the Surface objects of a Scene object.
-*/
-
+ * The {@link SurfaceListModel} extends {@link AbstractListModel} to provide a list model
+ * that dynamically displays the {@link Surface}s of a {@link Scene} in a list.
+ */
 public class SurfaceListModel extends AbstractListModel implements EventListener {
- private Scene scene;
-
-	/**
-	  Constructs a new SurfaceListModel object using the specified Scene object.
-	*/
+	private Scene scene;
 	
+	/** Constructs a new {@link SurfaceListModel} object using the specified Scene object. */
 	public SurfaceListModel(Scene scene) {
 		this.scene = scene;
 	}
 	
 	/**
-	  Returns the number of Surface objects that are contained in the Scene object
-	  used by this SurfaceListModel object.
-	*/
+	 * Returns the number of Surface objects that are contained in the Scene object
+	 * used by this SurfaceListModel object.
+	 */
+	public int getSize() { return this.scene.getSurfaces().length; }
 	
-	public int getSize() {
-		return this.scene.getSurfaces().length;
-	}
-	
-	/**
-	  Returns the Surface object at the specified index.
-	*/
-	
+	/** Returns the Surface object at the specified index. */
 	public Object getElementAt(int index) {
 		return this.scene.get(index);
 	}
 	
-	/**
-	  Method called when an event has been fired.
-	*/
-	
+	/** Method called when an event has been fired. */
 	public void eventFired(Event event) {
 		if (event instanceof LightAddEvent) {
 			this.fireContentsChanged(this, 0, this.getSize());
