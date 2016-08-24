@@ -51,6 +51,8 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
 
 
 /**

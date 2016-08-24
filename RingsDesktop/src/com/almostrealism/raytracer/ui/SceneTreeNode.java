@@ -28,6 +28,9 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 
 /**

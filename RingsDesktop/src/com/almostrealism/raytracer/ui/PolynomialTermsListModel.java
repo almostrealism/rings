@@ -22,6 +22,7 @@ import javax.swing.AbstractListModel;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.PolynomialTerm;
 

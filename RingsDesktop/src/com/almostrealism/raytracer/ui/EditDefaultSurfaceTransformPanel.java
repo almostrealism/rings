@@ -30,6 +30,9 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 
 /**
   An EditDefaultSurfaceTransformPanel can be used to gather input from the user

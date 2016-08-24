@@ -34,9 +34,9 @@ import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.ui.SceneCloseEvent;
-import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
 import com.almostrealism.raytracer.ui.menus.ImportMenu.CustomExceptionListener;
 

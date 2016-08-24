@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.raytracer.event;
+
+import com.almostrealism.raytracer.ui.SceneEvent;
 
 /**
  * A SceneCloseEvent object represents the event of closing the current scene.

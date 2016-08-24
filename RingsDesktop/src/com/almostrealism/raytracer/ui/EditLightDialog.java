@@ -41,6 +41,8 @@ import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.lighting.AmbientLight;
 import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
 import com.almostrealism.raytracer.lighting.Light;

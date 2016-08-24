@@ -30,6 +30,9 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 

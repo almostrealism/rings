@@ -26,9 +26,9 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.NewSurfaceDialog;
-import com.almostrealism.raytracer.ui.SceneCloseEvent;
-import com.almostrealism.raytracer.ui.SceneOpenEvent;
 
 /**
   A NewMenu object extends JMenu and provides menu items for creating new scenes and surfaces.

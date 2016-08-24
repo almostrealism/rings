@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.ui;
+package com.almostrealism.raytracer.event;
 
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.ui.SceneEvent;
 
 /**
   A SceneOpenEvent object represents the event of opening of a new scene.

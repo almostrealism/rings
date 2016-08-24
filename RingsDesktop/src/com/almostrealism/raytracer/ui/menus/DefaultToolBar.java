@@ -32,11 +32,11 @@ import org.almostrealism.swing.EventListener;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.event.SceneCloseEvent;
+import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.EditCameraDialog;
 import com.almostrealism.raytracer.ui.LightInfoPanel;
 import com.almostrealism.raytracer.ui.RenderOptionsDialog;
-import com.almostrealism.raytracer.ui.SceneCloseEvent;
-import com.almostrealism.raytracer.ui.SceneOpenEvent;
 import com.almostrealism.raytracer.ui.SurfaceInfoPanel;
 
 /**

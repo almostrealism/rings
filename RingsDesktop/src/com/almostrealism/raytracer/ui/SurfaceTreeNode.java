@@ -25,6 +25,7 @@ import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 import com.almostrealism.raytracer.surfaceUI.AbstractSurfaceUI;

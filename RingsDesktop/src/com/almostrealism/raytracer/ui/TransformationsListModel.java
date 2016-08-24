@@ -23,6 +23,7 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
+import com.almostrealism.raytracer.event.SurfaceEditEvent;
 
 /**
   The TransformationsListModel class extends AbstractListModel and provides a list model that dynamically displays
