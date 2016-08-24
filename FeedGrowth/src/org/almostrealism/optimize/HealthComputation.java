@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * @author  Michael Murray
- *
- */
-package com.almostrealism.feedgrow.optimization;
+package org.almostrealism.optimize;
+
+import com.almostrealism.feedgrow.organ.Organ;
+
+public interface HealthComputation<T> {
+	public double computeHealth(Organ<T> organ);
+}

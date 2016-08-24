@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.optimization;
+package org.almostrealism.optimize;
 
 import java.io.File;
 import java.io.FileInputStream;
