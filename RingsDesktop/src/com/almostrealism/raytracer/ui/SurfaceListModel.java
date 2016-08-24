@@ -53,7 +53,7 @@ public class SurfaceListModel extends AbstractListModel implements EventListener
 	*/
 	
 	public Object getElementAt(int index) {
-		return this.scene.getSurface(index);
+		return this.scene.get(index);
 	}
 	
 	/**
