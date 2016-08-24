@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
 
-public interface ChromosomeFactory<T> {
-	public void setChromosomeSize(int genes, int factors);
-	
-	public Chromosome<T> generateChromosome(double arg);
+public class IdentityFactor<T> implements Factor<T> {
+	public T getResultant(T value) { return value; }
 }

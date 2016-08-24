@@ -19,10 +19,11 @@ package com.almostrealism.feedgrow.organ;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.heredity.Factor;
+import org.almostrealism.heredity.Gene;
+
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellAdapter;
-import com.almostrealism.heredity.Factor;
-import com.almostrealism.heredity.Gene;
 
 public class MultiCell<T> extends CellAdapter<T> {
 	public static int pushWait = 0;

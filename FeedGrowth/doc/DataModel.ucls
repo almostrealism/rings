@@ -211,8 +211,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="com.almostrealism.heredity.DefaultRandomChromosomeFactory" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/DefaultRandomChromosomeFactory.java" binary="false" 
+  <class id="22" language="java" name="org.almostrealism.heredity.DefaultRandomChromosomeFactory" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/DefaultRandomChromosomeFactory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="445" y="430"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -221,8 +221,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="23" language="java" name="com.almostrealism.heredity.Gene" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/Gene.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="23" language="java" name="org.almostrealism.heredity.Gene" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/Gene.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1435" y="1049"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -230,8 +230,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <interface id="24" language="java" name="com.almostrealism.heredity.Chromosome" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/Chromosome.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="24" language="java" name="org.almostrealism.heredity.Chromosome" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/Chromosome.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="139" y="855"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -239,8 +239,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="25" language="java" name="com.almostrealism.heredity.ArrayListChromosome" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/ArrayListChromosome.java" binary="false" 
+  <class id="25" language="java" name="org.almostrealism.heredity.ArrayListChromosome" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/ArrayListChromosome.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="126" y="948"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -249,8 +249,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="26" language="java" name="com.almostrealism.heredity.LongScaleFactor" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/LongScaleFactor.java" binary="false" 
+  <class id="26" language="java" name="org.almostrealism.heredity.LongScaleFactor" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/LongScaleFactor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="422" y="1303"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -259,8 +259,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="27" language="java" name="com.almostrealism.heredity.ArrayListGene" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/ArrayListGene.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="27" language="java" name="org.almostrealism.heredity.ArrayListGene" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/ArrayListGene.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1432" y="1144"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -268,8 +268,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="28" language="java" name="com.almostrealism.heredity.ChromosomeFactory" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/ChromosomeFactory.java" binary="false" 
+  <interface id="28" language="java" name="org.almostrealism.heredity.ChromosomeFactory" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/ChromosomeFactory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="698" y="339"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -278,9 +278,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="29" language="java" name="com.almostrealism.heredity.FloatingPointRandomChromosomeFactory" 
+  <class id="29" language="java" name="org.almostrealism.heredity.FloatingPointRandomChromosomeFactory" 
     project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/FloatingPointRandomChromosomeFactory.java" binary="false" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/FloatingPointRandomChromosomeFactory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="866" y="422"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -289,8 +289,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="30" language="java" name="com.almostrealism.heredity.Factor" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/Factor.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="30" language="java" name="org.almostrealism.heredity.Factor" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/Factor.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="687" y="1187"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -298,8 +298,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="31" language="java" name="com.almostrealism.heredity.DoubleScaleFactor" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/DoubleScaleFactor.java" binary="false" 
+  <class id="31" language="java" name="org.almostrealism.heredity.DoubleScaleFactor" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/DoubleScaleFactor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="610" y="1295"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -308,8 +308,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="32" language="java" name="com.almostrealism.heredity.IdentityFactor" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/heredity/IdentityFactor.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="32" language="java" name="org.almostrealism.heredity.IdentityFactor" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/heredity/IdentityFactor.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="777" y="1302"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -501,279 +501,279 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <generalization id="51">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <generalization id="52">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="18"/>  
-  </generalization>  
-  <association id="53">    
-    <end type="SOURCE" refId="41" navigable="false">      
-      <attribute id="54" name="ySomes">        
+  <association id="51">    
+    <end type="SOURCE" refId="47" navigable="false">      
+      <attribute id="52" name="env">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="55" minimum="0" maximum="2147483647">        
+      <multiplicity id="53" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
+    <end type="TARGET" refId="48" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="56">    
-    <end type="SOURCE" refId="33"/>    
-    <end type="TARGET" refId="18"/>  
+  <realization id="54">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="28"/>  
   </realization>  
-  <generalization id="57">    
-    <end type="SOURCE" refId="45"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <realization id="58">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="30"/>  
+  <realization id="55">    
+    <end type="SOURCE" refId="27"/>    
+    <end type="TARGET" refId="23"/>  
   </realization>  
+  <association id="56">    
+    <bendpoint x="2318" y="22"/>    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="57" name="health">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="58" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="59">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="60" name="factory">        
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="60" name="gene">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="61" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="62">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="63">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="64" name="meter">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="65" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="66">    
-    <end type="SOURCE" refId="37" navigable="false">      
-      <attribute id="67" name="cache">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="50" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="69">    
-    <bendpoint x="1408" y="24"/>    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="70" name="factory">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="72">    
-    <end type="SOURCE" refId="31"/>    
-    <end type="TARGET" refId="30"/>  
-  </realization>  
-  <generalization id="73">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="74">    
-    <end type="SOURCE" refId="49"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <realization id="75">    
-    <end type="SOURCE" refId="46"/>    
-    <end type="TARGET" refId="16"/>  
-  </realization>  
-  <association id="76">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="77" name="adjust">        
-        <position height="0" width="0" x="1160" y="-158"/>      
-      </attribute>      
-      <multiplicity id="78" minimum="0" maximum="1">        
-        <position height="0" width="0" x="1160" y="-158"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="79">    
-    <end type="SOURCE" refId="44"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <realization id="80">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="8"/>  
-  </realization>  
-  <realization id="81">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="24"/>  
-  </realization>  
-  <generalization id="82">    
-    <end type="SOURCE" refId="43"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <association id="83">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="84" name="cacheGroup">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="85" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="86">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="87" name="gene">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="88" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
     <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="89">    
-    <end type="SOURCE" refId="41" navigable="false">      
-      <attribute id="90" name="organs">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="91" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="92">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="93" name="choices">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="94" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="95">    
+  <generalization id="62">    
     <end type="SOURCE" refId="37"/>    
     <end type="TARGET" refId="36"/>  
   </generalization>  
-  <association id="96">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="97" name="factorB">        
-        <position height="19" width="46" x="716" y="1120"/>      
-      </attribute>      
-      <multiplicity id="98" minimum="0" maximum="1">        
-        <position height="17" width="25" x="638" y="1180"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="30" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="99">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="15"/>  
+  <generalization id="63">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="7"/>  
   </generalization>  
-  <association id="100">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="101" name="r">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="102" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="103">    
-    <end type="SOURCE" refId="26"/>    
-    <end type="TARGET" refId="30"/>  
-  </realization>  
-  <association id="104">    
-    <bendpoint x="656" y="1092"/>    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="105" name="factorA">        
-        <position height="19" width="46" x="617" y="1127"/>      
-      </attribute>      
-      <multiplicity id="106" minimum="0" maximum="1">        
-        <position height="17" width="25" x="658" y="1145"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="30" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="107">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="8"/>  
-  </realization>  
-  <realization id="108">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="16"/>  
-  </realization>  
-  <realization id="109">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="40"/>  
-  </realization>  
-  <realization id="110">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <association id="111">    
+  <association id="64">    
     <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="112" name="yFactory">        
+      <attribute id="65" name="yFactory">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="113" minimum="0" maximum="1">        
+      <multiplicity id="66" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="28" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="114">    
-    <bendpoint x="692" y="22"/>    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="115" name="generator">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="116" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="42" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="117">    
+  <realization id="67">    
+    <end type="SOURCE" refId="41"/>    
+    <end type="TARGET" refId="40"/>  
+  </realization>  
+  <generalization id="68">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="69">    
     <end type="SOURCE" refId="21"/>    
     <end type="TARGET" refId="12"/>  
   </generalization>  
+  <realization id="70">    
+    <end type="SOURCE" refId="26"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <realization id="71">    
+    <end type="SOURCE" refId="36"/>    
+    <end type="TARGET" refId="35"/>  
+  </realization>  
+  <association id="72">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="73" name="r">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="74" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="75">    
+    <bendpoint x="126" y="22"/>    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="76" name="population">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="77" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="41" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="78">    
+    <end type="SOURCE" refId="42" navigable="false">      
+      <attribute id="79" name="xFactory">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="80" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="81">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="82" name="pairs">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="83" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="84">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="18"/>  
+  </realization>  
+  <generalization id="85">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <association id="86">    
+    <end type="SOURCE" refId="36" navigable="false">      
+      <attribute id="87" name="generator">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="88" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="47" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="89">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="90" name="cacheGroup">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="91" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="92">    
+    <bendpoint x="656" y="1092"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="93" name="factorA">        
+        <position height="19" width="46" x="617" y="1127"/>      
+      </attribute>      
+      <multiplicity id="94" minimum="0" maximum="1">        
+        <position height="17" width="25" x="658" y="1145"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="30" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="95">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <generalization id="96">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <association id="97">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="98" name="xSomes">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="99" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="100">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="101" name="generator">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="102" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="47" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="103">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="104" name="choices">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="105" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="106">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="107" name="filter">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="108" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="30" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="109">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="110" name="adjust">        
+        <position height="0" width="0" x="1160" y="-158"/>      
+      </attribute>      
+      <multiplicity id="111" minimum="0" maximum="1">        
+        <position height="0" width="0" x="1160" y="-158"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="112">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="113" name="ySomes">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="114" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="115">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="116" name="cache">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="117" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="50" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="118">    
-    <end type="SOURCE" refId="38" navigable="false">      
+    <end type="SOURCE" refId="37" navigable="false">      
       <attribute id="119" name="cache">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -784,212 +784,212 @@
     <end type="TARGET" refId="50" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="121">    
-    <end type="SOURCE" refId="34"/>    
-    <end type="TARGET" refId="35"/>  
-  </realization>  
-  <realization id="122">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="18"/>  
-  </realization>  
-  <association id="123">    
-    <end type="SOURCE" refId="47" navigable="false">      
-      <attribute id="124" name="env">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="125" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="48" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="126">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="35"/>  
-  </realization>  
-  <association id="127">    
-    <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="128" name="xFactory">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="129" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="28" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="130">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="28"/>  
-  </realization>  
-  <association id="131">    
-    <end type="SOURCE" refId="46" navigable="false">      
-      <attribute id="132" name="cache">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="133" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="50" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="134">    
+  <generalization id="121">    
     <end type="SOURCE" refId="11"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <association id="135">    
-    <bendpoint x="126" y="22"/>    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="136" name="population">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="137" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="41" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="138">    
+  <generalization id="122">    
+    <end type="SOURCE" refId="47"/>    
+    <end type="TARGET" refId="49"/>  
+  </generalization>  
+  <association id="123">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="139" name="defaultFactory">        
+      <attribute id="124" name="defaultFactory">        
         <position height="19" width="88" x="1415" y="353"/>      
       </attribute>      
-      <multiplicity id="140" minimum="0" maximum="1">        
+      <multiplicity id="125" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="141">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="142" name="pairs">        
+  <association id="126">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="127" name="organs">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="143" minimum="0" maximum="2147483647">        
+      <multiplicity id="128" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="144">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="145" name="chrom">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="146" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="147">    
-    <end type="SOURCE" refId="27"/>    
-    <end type="TARGET" refId="23"/>  
-  </realization>  
-  <realization id="148">    
-    <end type="SOURCE" refId="29"/>    
+  <realization id="129">    
+    <end type="SOURCE" refId="22"/>    
     <end type="TARGET" refId="28"/>  
   </realization>  
-  <realization id="149">    
+  <generalization id="130">    
+    <end type="SOURCE" refId="45"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="131">    
+    <end type="SOURCE" refId="49"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="132">    
+    <end type="SOURCE" refId="43"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="133">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <association id="134">    
+    <end type="SOURCE" refId="38" navigable="false">      
+      <attribute id="135" name="cache">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="136" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="50" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="137">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="138" name="factory">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="139" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="140">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
+  <generalization id="141">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="142">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="143">    
+    <bendpoint x="692" y="22"/>    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="144" name="generator">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="145" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="42" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="146">    
+    <end type="SOURCE" refId="44"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <realization id="147">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="16"/>  
+  </realization>  
+  <realization id="148">    
     <end type="SOURCE" refId="32"/>    
     <end type="TARGET" refId="30"/>  
   </realization>  
-  <association id="150">    
-    <bendpoint x="2318" y="22"/>    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="151" name="health">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="152" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="35" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="153">    
-    <end type="SOURCE" refId="47"/>    
-    <end type="TARGET" refId="49"/>  
-  </generalization>  
-  <association id="154">    
-    <end type="SOURCE" refId="41" navigable="false">      
-      <attribute id="155" name="xSomes">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="156" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="157">    
+  <realization id="149">    
+    <end type="SOURCE" refId="25"/>    
+    <end type="TARGET" refId="24"/>  
+  </realization>  
+  <generalization id="150">    
     <end type="SOURCE" refId="38"/>    
     <end type="TARGET" refId="36"/>  
   </generalization>  
-  <generalization id="158">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="159">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="160" name="generator">        
+  <association id="151">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="152" name="meter">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="161" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="47" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="162">    
-    <end type="SOURCE" refId="33" navigable="false">      
-      <attribute id="163" name="forwarding">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="164" minimum="0" maximum="1">        
+      <multiplicity id="153" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="165">    
-    <end type="SOURCE" refId="46" navigable="false">      
-      <attribute id="166" name="generator">        
+  <association id="154">    
+    <end type="SOURCE" refId="33" navigable="false">      
+      <attribute id="155" name="forwarding">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="167" minimum="0" maximum="1">        
+      <multiplicity id="156" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="47" navigable="true"/>    
+    <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="168">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="169">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="170" name="filter">        
-        <position height="0" width="0" x="0" y="0"/>      
+  <association id="157">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="158" name="factorB">        
+        <position height="19" width="46" x="716" y="1120"/>      
       </attribute>      
-      <multiplicity id="171" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="159" minimum="0" maximum="1">        
+        <position height="17" width="25" x="638" y="1180"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="30" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <realization id="160">    
+    <end type="SOURCE" refId="33"/>    
+    <end type="TARGET" refId="18"/>  
+  </realization>  
+  <association id="161">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="162" name="chrom">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="163" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="164">    
+    <end type="SOURCE" refId="46"/>    
+    <end type="TARGET" refId="16"/>  
+  </realization>  
+  <realization id="165">    
+    <end type="SOURCE" refId="34"/>    
+    <end type="TARGET" refId="35"/>  
+  </realization>  
+  <generalization id="166">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <realization id="167">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <association id="168">    
+    <bendpoint x="1408" y="24"/>    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="169" name="factory">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="170" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="171">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
   <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

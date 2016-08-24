@@ -18,12 +18,13 @@ package com.almostrealism.feedgrow.test;
 
 import java.util.List;
 
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Factor;
+import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.LongScaleFactor;
+
 import com.almostrealism.feedgrow.breeding.Breedable;
 import com.almostrealism.feedgrow.breeding.Breeder;
-import com.almostrealism.heredity.Chromosome;
-import com.almostrealism.heredity.Factor;
-import com.almostrealism.heredity.Gene;
-import com.almostrealism.heredity.LongScaleFactor;
 
 public class BasicDyadicChromosome implements Chromosome<Long> {
 	private Factor<Long> factorA, factorB;

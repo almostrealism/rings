@@ -27,6 +27,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import org.almostrealism.heredity.ArrayListChromosome;
+import org.almostrealism.heredity.ArrayListGene;
+import org.almostrealism.heredity.DoubleScaleFactor;
+
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.Envelope;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
@@ -37,9 +41,6 @@ import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
-import com.almostrealism.heredity.ArrayListChromosome;
-import com.almostrealism.heredity.ArrayListGene;
-import com.almostrealism.heredity.DoubleScaleFactor;
 import com.almostrealism.mixer.Mixer;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;

@@ -19,12 +19,13 @@ package com.almostrealism.feedgrow.organ;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Gene;
+
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellFactory;
 import com.almostrealism.feedgrow.cellular.ProbabilityDensityCellFactory;
 import com.almostrealism.feedgrow.delay.DelayCellFactory;
-import com.almostrealism.heredity.Chromosome;
-import com.almostrealism.heredity.Gene;
 
 public class SimpleOrganFactory<T> {
 	public static int minDelay = 40;

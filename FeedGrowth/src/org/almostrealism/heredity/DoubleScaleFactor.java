@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
 
 public class DoubleScaleFactor implements Factor<Double> {
 	private double scale;

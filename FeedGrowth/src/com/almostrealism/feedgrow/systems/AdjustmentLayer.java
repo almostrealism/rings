@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.heredity.Chromosome;
+
 import com.almostrealism.feedgrow.cellular.AdjustmentCell;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.CellAdjustment;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
-import com.almostrealism.heredity.Chromosome;
 
 public class AdjustmentLayer<T, R> extends SimpleOrgan<R> {
 

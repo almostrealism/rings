@@ -19,8 +19,8 @@ package com.almostrealism.feedgrow.population;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almostrealism.heredity.Chromosome;
-import com.almostrealism.heredity.ChromosomeFactory;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.ChromosomeFactory;
 
 public class SimpleOrganPopulationGenerator<T> {
 	private ChromosomeFactory<Double> xFactory;

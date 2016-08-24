@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
 
-public interface Gene<T> {
-	public Factor<T> getFactor(int index);
+import com.almostrealism.feedgrow.breeding.Breedable;
+
+public interface Chromosome<T> extends Breedable {
+	public Gene<T> getGene(int index);
 	
 	public int length();
 }

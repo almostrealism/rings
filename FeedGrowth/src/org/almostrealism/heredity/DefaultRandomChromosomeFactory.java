@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
 
 public class DefaultRandomChromosomeFactory implements ChromosomeFactory<Long> {
 	private double min, max;

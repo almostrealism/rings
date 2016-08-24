@@ -16,10 +16,11 @@
 
 package com.almostrealism.feedgrow.organ;
 
+import org.almostrealism.heredity.Factor;
+
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.cellular.Receptor;
 import com.almostrealism.feedgrow.content.ProteinCache;
-import com.almostrealism.heredity.Factor;
 
 public class CellPair<T> implements Receptor<T> {
 	private ProteinCache<T> cache;

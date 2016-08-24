@@ -16,11 +16,11 @@
 
 package com.almostrealism.feedgrow.breeding;
 
-import com.almostrealism.heredity.ArrayListChromosome;
-import com.almostrealism.heredity.ArrayListGene;
-import com.almostrealism.heredity.Chromosome;
-import com.almostrealism.heredity.DoubleScaleFactor;
-import com.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.ArrayListChromosome;
+import org.almostrealism.heredity.ArrayListGene;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.DoubleScaleFactor;
+import org.almostrealism.heredity.Gene;
 
 public class FloatingPointAverageBreeder implements Breeder<Double> {
 	private double mutation = 0.0;

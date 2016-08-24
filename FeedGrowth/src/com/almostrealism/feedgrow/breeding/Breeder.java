@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.breeding;
 
-import com.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Chromosome;
 
 public interface Breeder<T> {
 	public Chromosome<T> combine(Chromosome<T> c1, Chromosome<T> c2);

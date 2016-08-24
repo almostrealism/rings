@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
 
-public class IdentityFactor<T> implements Factor<T> {
-	public T getResultant(T value) { return value; }
+public class LongScaleFactor implements Factor<Long> {
+	private double scale;
+	
+	public LongScaleFactor() { }
+	
+	public LongScaleFactor(double scale) { this.scale = scale; }
+	
+	public Long getResultant(Long value) { return (long) (value * scale); }
+	
+	public void setScale(double s) { this.scale = s; }
+	
+	public double getScale() { return scale; }
 }

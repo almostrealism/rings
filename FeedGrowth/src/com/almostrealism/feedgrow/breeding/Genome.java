@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Chromosome;
 
 public class Genome extends ArrayList<Chromosome<?>> implements Breedable {
 	public Genome() { this(new ArrayList<Chromosome<?>>()); }

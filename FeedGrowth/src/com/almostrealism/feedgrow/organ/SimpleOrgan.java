@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.IdentityFactor;
+
 import com.almostrealism.feedgrow.cellular.CachedStateCell;
 import com.almostrealism.feedgrow.cellular.CachedStateCellGroup;
 import com.almostrealism.feedgrow.cellular.Cell;
 import com.almostrealism.feedgrow.content.ProteinCache;
-import com.almostrealism.heredity.Chromosome;
-import com.almostrealism.heredity.Gene;
-import com.almostrealism.heredity.IdentityFactor;
 
 public class SimpleOrgan<T> implements Organ<T> {
 	private List<Cell<T>> cells;

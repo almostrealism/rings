@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
-/**
- * @author mike
- *
- */
-package com.almostrealism.heredity;
+package org.almostrealism.heredity;
+
+public interface ChromosomeFactory<T> {
+	public void setChromosomeSize(int genes, int factors);
+	
+	public Chromosome<T> generateChromosome(double arg);
+}
