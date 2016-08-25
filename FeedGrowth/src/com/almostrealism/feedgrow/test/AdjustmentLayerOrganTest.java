@@ -22,9 +22,9 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.DoubleScaleFactor;
 import org.almostrealism.optimize.SimpleOrganOptimizer;
 import org.almostrealism.optimize.StableDurationHealthComputation;
+import org.almostrealism.protein.FloatingPointProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.content.FloatingPointProteinCache;
 import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;
 import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;

@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
-/**
- * @author mike
- *
- */
-package com.almostrealism.feedgrow.content;
+package org.almostrealism.protein;
+
+public interface ProteinReceivable<T> {
+	public void setProteinCache(ProteinCache<T> p);
+}

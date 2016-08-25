@@ -16,7 +16,7 @@
 
 package org.almostrealism.cells;
 
-import com.almostrealism.feedgrow.content.ProteinReceivable;
+import org.almostrealism.protein.ProteinReceivable;
 
 public interface Transmitter<T> extends ProteinReceivable<T> {
 	public void setReceptor(Receptor<T> r);

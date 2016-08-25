@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.audio;
 
-import com.almostrealism.feedgrow.content.ProteinCache;
+import org.almostrealism.protein.ProteinCache;
 
 public class AudioProteinCache implements ProteinCache<Long> {
 	public static int addWait = 0;

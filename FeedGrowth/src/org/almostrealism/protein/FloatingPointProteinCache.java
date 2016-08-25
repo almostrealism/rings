@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.content;
+package org.almostrealism.protein;
 
 public class FloatingPointProteinCache implements ProteinCache<Double> {
 	public static int addWait = 0;

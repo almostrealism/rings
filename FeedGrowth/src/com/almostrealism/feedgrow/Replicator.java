@@ -31,11 +31,11 @@ import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.DoubleScaleFactor;
+import org.almostrealism.protein.FloatingPointProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.Envelope;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
-import com.almostrealism.feedgrow.content.FloatingPointProteinCache;
 import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;
 import com.almostrealism.feedgrow.systems.CellAdjustmentFactory;
 import com.almostrealism.feedgrow.systems.PeriodicCellAdjustment;

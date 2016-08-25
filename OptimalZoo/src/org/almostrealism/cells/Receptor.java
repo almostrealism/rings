@@ -16,7 +16,7 @@
 
 package org.almostrealism.cells;
 
-import com.almostrealism.feedgrow.content.ProteinReceivable;
+import org.almostrealism.protein.ProteinReceivable;
 
 public interface Receptor<T> extends ProteinReceivable<T> {
 	public void push(long proteinIndex);

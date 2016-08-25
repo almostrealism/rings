@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.content;
+package org.almostrealism.protein;
 
-public interface ProteinReceivable<T> {
-	public void setProteinCache(ProteinCache<T> p);
+public interface ProteinCache<T> {
+	public long addProtein(T p);
+	
+	public T getProtein(long index);
 }

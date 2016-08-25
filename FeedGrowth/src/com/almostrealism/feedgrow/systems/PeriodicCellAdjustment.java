@@ -19,10 +19,10 @@ package com.almostrealism.feedgrow.systems;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.cells.Receptor;
+import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.SineWaveCell;
-import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.delay.BasicDelayCell;
 
 

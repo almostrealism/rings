@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.almostrealism.cells.Receptor;
-
-import com.almostrealism.feedgrow.content.ProteinCache;
+import org.almostrealism.protein.ProteinCache;
 
 public class WaveOutput implements Receptor<Long> {
 	public static double scale = 0.00001;

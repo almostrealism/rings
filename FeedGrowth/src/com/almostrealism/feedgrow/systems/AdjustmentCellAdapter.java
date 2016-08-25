@@ -20,8 +20,7 @@ import org.almostrealism.cells.AdjustmentCell;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.cells.Receptor;
-
-import com.almostrealism.feedgrow.content.ProteinCache;
+import org.almostrealism.protein.ProteinCache;
 
 public class AdjustmentCellAdapter<T> extends AdjustmentCell<T, Double> {
 	private Cell<Double> adjuster;

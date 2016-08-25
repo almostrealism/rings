@@ -16,7 +16,7 @@
 
 package org.almostrealism.cells;
 
-import com.almostrealism.feedgrow.content.ProteinCache;
+import org.almostrealism.protein.ProteinCache;
 
 public abstract class CellAdapter<T> implements Cell<T> {
 	private ProteinCache<T> o;

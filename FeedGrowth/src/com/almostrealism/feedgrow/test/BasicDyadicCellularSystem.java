@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.almostrealism.cells.Cell;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.delay.BasicDelayCell;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 

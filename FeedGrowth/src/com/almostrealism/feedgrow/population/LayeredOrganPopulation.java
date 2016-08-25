@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.breeding.Genome;
+import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.Organ;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;

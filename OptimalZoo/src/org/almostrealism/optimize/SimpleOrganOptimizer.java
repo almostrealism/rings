@@ -35,9 +35,9 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.DefaultRandomChromosomeFactory;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.io.Console;
+import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.content.ProteinCache;
 import com.almostrealism.feedgrow.organ.SimpleOrgan;
 import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;

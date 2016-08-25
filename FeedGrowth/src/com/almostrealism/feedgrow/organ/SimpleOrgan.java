@@ -26,8 +26,7 @@ import org.almostrealism.cells.Cell;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
-
-import com.almostrealism.feedgrow.content.ProteinCache;
+import org.almostrealism.protein.ProteinCache;
 
 public class SimpleOrgan<T> implements Organ<T> {
 	private List<Cell<T>> cells;
