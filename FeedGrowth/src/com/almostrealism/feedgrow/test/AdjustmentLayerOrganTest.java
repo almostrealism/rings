@@ -22,11 +22,11 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.DoubleScaleFactor;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.CellAdjustmentFactory;
-import org.almostrealism.organs.PeriodicCellAdjustment;
 import org.almostrealism.protein.FloatingPointProteinCache;
 
 import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.SimpleOrganOptimizer;
+import com.almostrealism.audio.filter.PeriodicCellAdjustment;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 
 public class AdjustmentLayerOrganTest {

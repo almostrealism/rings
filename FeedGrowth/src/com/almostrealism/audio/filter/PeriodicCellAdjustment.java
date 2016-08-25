@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.organs;
+package com.almostrealism.audio.filter;
 
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
@@ -22,7 +22,6 @@ import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.audio.AudioProteinCache;
-import com.almostrealism.audio.filter.BasicDelayCell;
 import com.almostrealism.synth.SineWaveCell;
 
 

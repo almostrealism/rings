@@ -432,8 +432,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="46" language="java" name="org.almostrealism.organs.PeriodicCellAdjustment" project="Rings-New" 
-    file="/Rings-New/OptimalZoo/src/org/almostrealism/organs/PeriodicCellAdjustment.java" binary="false" 
+  <class id="46" language="java" name="com.almostrealism.audio.filter.PeriodicCellAdjustment" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/filter/PeriodicCellAdjustment.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1980" y="1386"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
