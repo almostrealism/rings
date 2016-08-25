@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.receptor;
+package org.almostrealism.time;
 
 public interface Updatable {
 	public void update();

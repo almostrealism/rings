@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 import org.almostrealism.cells.delay.BasicDelayCell;
+import org.almostrealism.time.Updatable;
 
 import com.almostrealism.feedgrow.ReceptorPlayer;
 

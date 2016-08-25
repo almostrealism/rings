@@ -17,9 +17,9 @@
 package org.almostrealism.cells.delay;
 
 import org.almostrealism.cells.SummationCell;
+import org.almostrealism.time.Updatable;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.receptor.Updatable;
 
 public class BasicDelayCell extends SummationCell implements Delay {
 	public static int bufferDuration = 10;

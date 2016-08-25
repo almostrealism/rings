@@ -26,6 +26,7 @@ import javax.swing.Timer;
 
 import org.almostrealism.cells.delay.BasicDelayCell;
 import org.almostrealism.cells.delay.BasicDelayCell.Position;
+import org.almostrealism.time.Updatable;
 
 public class BasicDelayCellDisplay extends JPanel implements Updatable {
 	private Timer timer;
