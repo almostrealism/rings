@@ -42,8 +42,8 @@ import org.almostrealism.population.SimpleOrganPopulation;
 import org.almostrealism.population.SimpleOrganPopulationGenerator;
 import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
-import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
+import com.almostrealism.audio.health.SilenceDurationHealthComputation;
+import com.almostrealism.audio.health.StableDurationHealthComputation;
 
 public class SimpleOrganOptimizer<T> {
 	public static Console console = new Console();

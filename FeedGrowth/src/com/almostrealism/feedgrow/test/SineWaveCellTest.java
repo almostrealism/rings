@@ -24,8 +24,8 @@ import javax.sound.sampled.LineUnavailableException;
 import com.almostrealism.audio.AudioMeter;
 import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.filter.Envelope;
+import com.almostrealism.audio.health.WaveOutput;
 import com.almostrealism.feedgrow.ReceptorPlayer;
-import com.almostrealism.feedgrow.audio.WaveOutput;
 import com.almostrealism.synth.SineWaveCell;
 
 public class SineWaveCellTest {

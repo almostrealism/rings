@@ -24,8 +24,8 @@ import org.almostrealism.population.SimpleOrganPopulation;
 import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.SimpleOrganFactory;
 import com.almostrealism.audio.SimpleOrganOptimizer;
-import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
-import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
+import com.almostrealism.audio.health.SilenceDurationHealthComputation;
+import com.almostrealism.audio.health.StableDurationHealthComputation;
 
 public class HealthTestTool {
 	public static boolean enableSilenceDurationCalculation = false;

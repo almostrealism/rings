@@ -22,8 +22,8 @@ import javax.sound.sampled.LineUnavailableException;
 
 import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.filter.Envelope;
+import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.feedgrow.ReceptorPlayer;
-import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 import com.almostrealism.synth.SineWaveCell;
 
 public class DyadicOrganismTest {
