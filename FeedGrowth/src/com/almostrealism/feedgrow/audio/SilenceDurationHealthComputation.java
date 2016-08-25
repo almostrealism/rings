@@ -19,8 +19,8 @@ package com.almostrealism.feedgrow.audio;
 import org.almostrealism.cells.CellAdapter;
 import org.almostrealism.organs.Organ;
 
+import com.almostrealism.audio.AudioMeter;
 import com.almostrealism.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.metering.AudioMeter;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;

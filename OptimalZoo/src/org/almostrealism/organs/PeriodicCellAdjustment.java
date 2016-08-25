@@ -21,8 +21,8 @@ import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
+import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.filter.BasicDelayCell;
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.synth.SineWaveCell;
 
 

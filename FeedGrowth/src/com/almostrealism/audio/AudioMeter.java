@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.metering;
+package com.almostrealism.audio;
 
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.audio.AudioProteinCache;
 
 public class AudioMeter implements Receptor<Long> {
 	private ProteinCache<Long> cache;
