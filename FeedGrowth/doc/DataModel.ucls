@@ -405,8 +405,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="43" language="java" name="com.almostrealism.feedgrow.systems.AdjustmentCellAdapter" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/systems/AdjustmentCellAdapter.java" binary="false" 
+  <class id="43" language="java" name="org.almostrealism.organs.AdjustmentCellAdapter" project="Rings-New" 
+    file="/Rings-New/OptimalZoo/src/org/almostrealism/organs/AdjustmentCellAdapter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1548" y="1388"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -415,9 +415,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="44" language="java" name="com.almostrealism.feedgrow.systems.AdjustmentLayer" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/systems/AdjustmentLayer.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="44" language="java" name="org.almostrealism.organs.AdjustmentLayer" project="Rings-New" 
+    file="/Rings-New/OptimalZoo/src/org/almostrealism/organs/AdjustmentLayer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="440" y="780"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -425,9 +424,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="45" language="java" name="com.almostrealism.feedgrow.systems.OrganSystem" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/systems/OrganSystem.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="45" language="java" name="org.almostrealism.organs.OrganSystem" project="Rings-New" 
+    file="/Rings-New/OptimalZoo/src/org/almostrealism/organs/OrganSystem.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="534" y="606"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -435,8 +433,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="46" language="java" name="com.almostrealism.feedgrow.systems.PeriodicCellAdjustment" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/systems/PeriodicCellAdjustment.java" binary="false" 
+  <class id="46" language="java" name="org.almostrealism.organs.PeriodicCellAdjustment" project="Rings-New" 
+    file="/Rings-New/OptimalZoo/src/org/almostrealism/organs/PeriodicCellAdjustment.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1980" y="1386"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.systems;
+package org.almostrealism.organs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.organs.Organ;
 import org.almostrealism.protein.ProteinCache;
 
 public class AdjustmentLayerOrganSystem<T, R> implements OrganSystem<T> {

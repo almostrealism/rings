@@ -21,12 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.breeding.Genome;
+import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.Organ;
 import org.almostrealism.organs.SimpleOrganFactory;
+import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.feedgrow.systems.AdjustmentLayerOrganSystem;
-import com.almostrealism.feedgrow.systems.TieredCellAdjustmentFactory;
 
 public class LayeredOrganPopulation<T> implements Population<T> {
 	private List<Genome> pop;

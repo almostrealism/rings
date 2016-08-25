@@ -15,10 +15,8 @@
  */
 
 /**
+ * Tools for linking {@link org.almostrealism.cells.Cell}s together.
  * 
- */
-/**
- * @author mike
- *
+ * @author  Michael Murray
  */
 package org.almostrealism.organs;

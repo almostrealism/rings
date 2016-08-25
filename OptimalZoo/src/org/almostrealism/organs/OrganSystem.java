@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.systems;
+package org.almostrealism.organs;
 
-import org.almostrealism.organs.Organ;
 
 public interface OrganSystem<T> extends Organ<T> {
 	public Organ<T> getOrgan(int index);
