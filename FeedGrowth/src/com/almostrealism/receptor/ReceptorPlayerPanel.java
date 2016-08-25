@@ -22,7 +22,8 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import com.almostrealism.audio.delay.BasicDelayCell;
+import org.almostrealism.cells.delay.BasicDelayCell;
+
 import com.almostrealism.feedgrow.ReceptorPlayer;
 
 public class ReceptorPlayerPanel extends JPanel {

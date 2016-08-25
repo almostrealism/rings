@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.audio.delay;
+package org.almostrealism.cells.delay;
 
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellFactory;

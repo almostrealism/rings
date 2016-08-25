@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
-/**
- * @author mike
- *
- */
-package com.almostrealism.audio.delay;
+package org.almostrealism.cells.delay;
+
+import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.CellAdjustment;
+
+public class DelayAdjustment<T> implements CellAdjustment<T, Double> {
+	public void adjust(Cell<T> toAdjust, Double arg) {
+		Delay delay = (Delay) toAdjust;
+		long frames = (long) (delay.getDelayInFrames() * arg);
+		delay.setDelayInFrames(frames);
+	}
+}

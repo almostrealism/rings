@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.audio.delay;
+package org.almostrealism.cells.delay;
 
 public interface Delay {
 	public void setDelay(int msec);

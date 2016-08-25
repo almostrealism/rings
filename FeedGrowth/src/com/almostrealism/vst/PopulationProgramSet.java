@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.delay.Delay;
 import org.almostrealism.heredity.DoubleScaleFactor;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
@@ -30,8 +31,6 @@ import org.almostrealism.organs.Organ;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.population.SimpleOrganPopulation;
-
-import com.almostrealism.audio.delay.Delay;
 
 public class PopulationProgramSet extends SimpleOrganPopulation<Long> {
 	public static Console console = new Console();

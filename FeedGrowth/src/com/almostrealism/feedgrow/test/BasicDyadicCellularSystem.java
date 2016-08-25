@@ -20,11 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.almostrealism.cells.Cell;
+import org.almostrealism.cells.delay.BasicDelayCell;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.audio.delay.BasicDelayCell;
 
 public class BasicDyadicCellularSystem extends SimpleOrgan<Long> {
 	private BasicDelayCell cellA, cellB;

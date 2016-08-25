@@ -24,8 +24,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import com.almostrealism.audio.delay.BasicDelayCell;
-import com.almostrealism.audio.delay.BasicDelayCell.Position;
+import org.almostrealism.cells.delay.BasicDelayCell;
+import org.almostrealism.cells.delay.BasicDelayCell.Position;
 
 public class BasicDelayCellDisplay extends JPanel implements Updatable {
 	private Timer timer;
