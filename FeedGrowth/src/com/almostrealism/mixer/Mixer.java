@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.almostrealism.cells.SummationCell;
 import org.almostrealism.time.Clock;
 
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.synth.Source;
 
 public class Mixer extends ArrayList<Source> implements Clock {

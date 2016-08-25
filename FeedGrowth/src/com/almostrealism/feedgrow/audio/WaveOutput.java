@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
+import com.almostrealism.audio.AudioProteinCache;
+
 public class WaveOutput implements Receptor<Long> {
 	public static double scale = 0.00001;
 	

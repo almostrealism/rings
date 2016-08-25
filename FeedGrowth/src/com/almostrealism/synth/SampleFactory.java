@@ -23,8 +23,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import com.almostrealism.feedgrow.audio.AudioCellAdapter;
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.audio.AudioProteinCache;
+import com.almostrealism.audio.filter.AudioCellAdapter;
 
 public class SampleFactory {
 	public static Sample createSample(String file) throws UnsupportedAudioFileException, IOException {

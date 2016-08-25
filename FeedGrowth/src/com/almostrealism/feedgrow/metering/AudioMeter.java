@@ -19,7 +19,7 @@ package com.almostrealism.feedgrow.metering;
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.audio.AudioProteinCache;
 
 public class AudioMeter implements Receptor<Long> {
 	private ProteinCache<Long> cache;

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.audio;
+package com.almostrealism.audio.filter;
 
 import org.almostrealism.cells.CellAdapter;
+
+import com.almostrealism.audio.AudioProteinCache;
 
 public abstract class AudioCellAdapter extends CellAdapter<Long> {
 	public static int depth = Byte.MAX_VALUE; // AudioProteinCache.depth / 100;

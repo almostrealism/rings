@@ -20,9 +20,9 @@ import java.io.FileNotFoundException;
 
 import javax.sound.sampled.LineUnavailableException;
 
+import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.feedgrow.ReceptorPlayer;
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 import com.almostrealism.synth.SineWaveCell;
 

@@ -25,7 +25,7 @@ import javax.sound.sampled.SourceDataLine;
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.audio.AudioProteinCache;
 
 public class ReceptorPlayer implements Receptor<Long> {
 	private static AudioFormat format;
