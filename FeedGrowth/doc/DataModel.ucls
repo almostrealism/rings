@@ -168,8 +168,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="19" language="java" name="com.almostrealism.feedgrow.delay.DelayAdjustment" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/delay/DelayAdjustment.java" binary="false" 
+  <class id="19" language="java" name="com.almostrealism.audio.delay.DelayAdjustment" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/delay/DelayAdjustment.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="31" width="166" x="1701" y="1366"/>    
     <display autosize="false" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -178,8 +178,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="com.almostrealism.feedgrow.delay.DelayCellFactory" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/delay/DelayCellFactory.java" binary="false" 
+  <class id="20" language="java" name="com.almostrealism.audio.delay.DelayCellFactory" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/delay/DelayCellFactory.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1517" y="478"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -188,8 +188,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="com.almostrealism.feedgrow.delay.BasicDelayCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/delay/BasicDelayCell.java" binary="false" 
+  <class id="21" language="java" name="com.almostrealism.audio.delay.BasicDelayCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/delay/BasicDelayCell.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1196" y="1512"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 

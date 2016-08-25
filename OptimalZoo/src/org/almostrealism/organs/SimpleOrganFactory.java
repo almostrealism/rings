@@ -25,7 +25,7 @@ import org.almostrealism.cells.ProbabilityDensityCellFactory;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
-import com.almostrealism.feedgrow.delay.DelayCellFactory;
+import com.almostrealism.audio.delay.DelayCellFactory;
 
 public class SimpleOrganFactory<T> {
 	public static int minDelay = 40;

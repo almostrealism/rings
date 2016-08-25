@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.delay;
+package com.almostrealism.audio.delay;
 
 public interface Delay {
 	public void setDelay(int msec);

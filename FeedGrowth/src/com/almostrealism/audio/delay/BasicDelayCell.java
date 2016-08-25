@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.delay;
+package com.almostrealism.audio.delay;
 
 import org.almostrealism.cells.SummationCell;
 

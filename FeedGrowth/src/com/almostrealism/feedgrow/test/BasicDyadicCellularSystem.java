@@ -24,7 +24,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.feedgrow.delay.BasicDelayCell;
+import com.almostrealism.audio.delay.BasicDelayCell;
 
 public class BasicDyadicCellularSystem extends SimpleOrgan<Long> {
 	private BasicDelayCell cellA, cellB;
