@@ -27,6 +27,7 @@ import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.audio.SimpleOrganFactory;
+import com.almostrealism.audio.SimpleOrganPopulation;
 
 public class LayeredOrganPopulation<T> implements Population<T> {
 	private List<Genome> pop;

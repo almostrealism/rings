@@ -38,8 +38,6 @@ import org.almostrealism.io.Console;
 import org.almostrealism.optimize.AverageHealthComputationSet;
 import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.organs.SimpleOrgan;
-import org.almostrealism.population.SimpleOrganPopulation;
-import org.almostrealism.population.SimpleOrganPopulationGenerator;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.audio.health.SilenceDurationHealthComputation;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.population;
+package com.almostrealism.audio;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -27,9 +27,8 @@ import java.util.List;
 import org.almostrealism.breeding.Genome;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.organs.SimpleOrgan;
+import org.almostrealism.population.Population;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.audio.SimpleOrganFactory;
 
 public class SimpleOrganPopulation<T> implements Population<T> {
 	private List<Chromosome<Double>> xSomes;
