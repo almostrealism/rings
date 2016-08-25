@@ -19,10 +19,10 @@ package com.almostrealism.feedgrow.tools;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.population.SimpleOrganPopulation;
 
 import com.almostrealism.audio.AudioProteinCache;
+import com.almostrealism.audio.SimpleOrganFactory;
 import com.almostrealism.audio.optimize.SimpleOrganOptimizer;
 import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;

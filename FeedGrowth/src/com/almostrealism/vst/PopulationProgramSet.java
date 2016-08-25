@@ -29,8 +29,9 @@ import org.almostrealism.heredity.LongScaleFactor;
 import org.almostrealism.io.Console;
 import org.almostrealism.organs.Organ;
 import org.almostrealism.organs.SimpleOrgan;
-import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.population.SimpleOrganPopulation;
+
+import com.almostrealism.audio.SimpleOrganFactory;
 
 public class PopulationProgramSet extends SimpleOrganPopulation<Long> {
 	public static Console console = new Console();
