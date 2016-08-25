@@ -20,12 +20,12 @@ import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.DoubleScaleFactor;
-import org.almostrealism.optimize.SimpleOrganOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.CellAdjustmentFactory;
 import org.almostrealism.organs.PeriodicCellAdjustment;
 import org.almostrealism.protein.FloatingPointProteinCache;
 
+import com.almostrealism.audio.optimize.SimpleOrganOptimizer;
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 

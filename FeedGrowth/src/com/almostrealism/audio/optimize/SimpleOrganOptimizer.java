@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.optimize;
+package com.almostrealism.audio.optimize;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +35,8 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.DefaultRandomChromosomeFactory;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.io.Console;
+import org.almostrealism.optimize.AverageHealthComputationSet;
+import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.population.SimpleOrganPopulation;
