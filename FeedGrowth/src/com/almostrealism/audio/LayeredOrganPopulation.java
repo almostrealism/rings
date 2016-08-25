@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.population;
+package com.almostrealism.audio;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,10 +24,8 @@ import org.almostrealism.breeding.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.Organ;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
+import org.almostrealism.population.Population;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.audio.SimpleOrganFactory;
-import com.almostrealism.audio.SimpleOrganPopulation;
 
 public class LayeredOrganPopulation<T> implements Population<T> {
 	private List<Genome> pop;
