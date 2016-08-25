@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.ui;
+package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
 
