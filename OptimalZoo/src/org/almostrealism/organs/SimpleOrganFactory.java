@@ -22,9 +22,10 @@ import java.util.List;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellFactory;
 import org.almostrealism.cells.ProbabilityDensityCellFactory;
-import org.almostrealism.cells.delay.DelayCellFactory;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
+
+import com.almostrealism.audio.filter.DelayCellFactory;
 
 public class SimpleOrganFactory<T> {
 	public static int minDelay = 40;

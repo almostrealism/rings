@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.almostrealism.cells.delay;
+package com.almostrealism.audio.filter;
 
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellFactory;
-
-import com.almostrealism.audio.filter.BasicDelayCell;
 
 public class DelayCellFactory implements CellFactory<Long> {
 	private int min, delta;
