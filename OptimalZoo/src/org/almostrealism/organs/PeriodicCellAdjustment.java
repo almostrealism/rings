@@ -22,8 +22,8 @@ import org.almostrealism.cells.Receptor;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.delay.BasicDelayCell;
+import com.almostrealism.synth.SineWaveCell;
 
 
 public class PeriodicCellAdjustment implements CellAdjustment<Long, Double>, Receptor<Long> {

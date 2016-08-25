@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.audio;
-
-public interface Envelope {
-	public double getScale(double time);
-}
+/**
+ * Tools for audio synthesis and the design and optimization
+ * of signal generators and filters.
+ * 
+ * @author  Michael Murray
+ */
+package com.almostrealism.audio;

@@ -36,9 +36,8 @@ import org.almostrealism.organs.CellAdjustmentFactory;
 import org.almostrealism.organs.PeriodicCellAdjustment;
 import org.almostrealism.protein.FloatingPointProteinCache;
 
+import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.audio.Envelope;
-import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.mixer.Mixer;
@@ -46,6 +45,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;
 import com.almostrealism.replicator.ui.ReplicatorCanvas;
 import com.almostrealism.replicator.ui.ReplicatorTableModel;
+import com.almostrealism.synth.SineWaveCell;
 
 public class Replicator {
 	public static final boolean enableAudio = false;

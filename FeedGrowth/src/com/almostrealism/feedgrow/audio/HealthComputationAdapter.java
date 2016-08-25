@@ -22,7 +22,9 @@ import java.io.FileOutputStream;
 import org.almostrealism.cells.Receptor;
 import org.almostrealism.optimize.HealthComputation;
 
+import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.feedgrow.metering.AudioMeter;
+import com.almostrealism.synth.SineWaveCell;
 
 public abstract class HealthComputationAdapter implements HealthComputation<Long> {
 	protected int standardDuration = (int) (100 * AudioProteinCache.sampleRate);

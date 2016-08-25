@@ -20,11 +20,11 @@ import java.io.FileNotFoundException;
 
 import javax.sound.sampled.LineUnavailableException;
 
+import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.feedgrow.ReceptorPlayer;
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
-import com.almostrealism.feedgrow.audio.Envelope;
-import com.almostrealism.feedgrow.audio.SineWaveCell;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
+import com.almostrealism.synth.SineWaveCell;
 
 public class DyadicOrganismTest {
 	public static void main(String args[]) throws FileNotFoundException, LineUnavailableException {

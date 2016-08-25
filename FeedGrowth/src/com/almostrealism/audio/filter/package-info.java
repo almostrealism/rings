@@ -15,10 +15,8 @@
  */
 
 /**
+ * Audio filters.
  * 
+ * @author  Michael Murray
  */
-/**
- * @author mike
- *
- */
-package com.almostrealism.feedgrow.systems;
+package com.almostrealism.audio.filter;

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.audio;
+package com.almostrealism.synth;
+
+import com.almostrealism.audio.filter.Envelope;
+import com.almostrealism.feedgrow.audio.AudioCellAdapter;
+import com.almostrealism.feedgrow.audio.AudioProteinCache;
 
 public class SineWaveCell extends AudioCellAdapter {
 	private Envelope env;

@@ -443,9 +443,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="47" language="java" name="com.almostrealism.feedgrow.audio.SineWaveCell" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/SineWaveCell.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="47" language="java" name="com.almostrealism.synth.SineWaveCell" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/synth/SineWaveCell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1982" y="1038"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -453,8 +452,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="48" language="java" name="com.almostrealism.feedgrow.audio.Envelope" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/Envelope.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="48" language="java" name="com.almostrealism.audio.filter.Envelope" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/filter/Envelope.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1780" y="1032"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
