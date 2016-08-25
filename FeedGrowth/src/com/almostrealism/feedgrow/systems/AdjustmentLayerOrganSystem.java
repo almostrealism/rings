@@ -22,9 +22,8 @@ import java.util.List;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.organs.Organ;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.feedgrow.organ.Organ;
 
 public class AdjustmentLayerOrganSystem<T, R> implements OrganSystem<T> {
 	private ProteinCache<T> cache;

@@ -26,11 +26,11 @@ import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.LongScaleFactor;
 import org.almostrealism.io.Console;
+import org.almostrealism.organs.Organ;
+import org.almostrealism.organs.SimpleOrgan;
+import org.almostrealism.organs.SimpleOrganFactory;
 
 import com.almostrealism.feedgrow.delay.Delay;
-import com.almostrealism.feedgrow.organ.Organ;
-import com.almostrealism.feedgrow.organ.SimpleOrgan;
-import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
 
 public class PopulationProgramSet extends SimpleOrganPopulation<Long> {

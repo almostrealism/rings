@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.organ;
+package org.almostrealism.organs;
 
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.Receptor;

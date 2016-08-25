@@ -16,7 +16,7 @@
 
 package com.almostrealism.feedgrow.population;
 
-import com.almostrealism.feedgrow.organ.Organ;
+import org.almostrealism.organs.Organ;
 
 public interface Population<T> {
 	public Organ<T> getOrgan(int index);

@@ -24,8 +24,7 @@ import org.almostrealism.cells.AdjustmentCell;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.heredity.Chromosome;
-
-import com.almostrealism.feedgrow.organ.SimpleOrgan;
+import org.almostrealism.organs.SimpleOrgan;
 
 public class AdjustmentLayer<T, R> extends SimpleOrgan<R> {
 

@@ -26,10 +26,9 @@ import java.util.List;
 
 import org.almostrealism.breeding.Genome;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.organs.SimpleOrgan;
+import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.protein.ProteinCache;
-
-import com.almostrealism.feedgrow.organ.SimpleOrgan;
-import com.almostrealism.feedgrow.organ.SimpleOrganFactory;
 
 public class SimpleOrganPopulation<T> implements Population<T> {
 	private List<Chromosome<Double>> xSomes;

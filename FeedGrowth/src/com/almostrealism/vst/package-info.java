@@ -15,7 +15,7 @@
  */
 
 /**
- * Tools for using {@link com.almostrealism.feedgrow.organ.Organ}s which
+ * Tools for using {@link org.almostrealism.organs.Organ}s which
  * are produced with FeedGrow within a digital audio workstation via the
  * VST wrapper framework from JVST.
  * 

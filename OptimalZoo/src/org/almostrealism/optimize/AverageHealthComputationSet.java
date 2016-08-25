@@ -19,7 +19,7 @@ package org.almostrealism.optimize;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import com.almostrealism.feedgrow.organ.Organ;
+import org.almostrealism.organs.Organ;
 
 public class AverageHealthComputationSet<T> extends HashSet<HealthComputation<T>> implements HealthComputation<T> {
 	public double computeHealth(Organ<T> organ) {
