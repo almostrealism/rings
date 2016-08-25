@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.population;
+package org.almostrealism.population;
 
 import java.util.ArrayList;
 import java.util.Iterator;

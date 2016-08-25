@@ -37,13 +37,13 @@ import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.io.Console;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.SimpleOrganFactory;
+import org.almostrealism.population.SimpleOrganPopulation;
+import org.almostrealism.population.SimpleOrganPopulationGenerator;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
-import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
-import com.almostrealism.feedgrow.population.SimpleOrganPopulationGenerator;
 
 public class SimpleOrganOptimizer<T> {
 	public static Console console = new Console();

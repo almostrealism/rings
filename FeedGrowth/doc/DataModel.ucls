@@ -376,9 +376,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="40" language="java" name="com.almostrealism.feedgrow.population.Population" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/population/Population.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="40" language="java" name="org.almostrealism.population.Population" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/population/Population.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="224" y="537"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -386,8 +385,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="41" language="java" name="com.almostrealism.feedgrow.population.SimpleOrganPopulation" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/population/SimpleOrganPopulation.java" binary="false" 
+  <class id="41" language="java" name="org.almostrealism.population.SimpleOrganPopulation" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/population/SimpleOrganPopulation.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="124" y="670"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -396,10 +395,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="42" language="java" name="com.almostrealism.feedgrow.population.SimpleOrganPopulationGenerator" 
-    project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/population/SimpleOrganPopulationGenerator.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+  <class id="42" language="java" name="org.almostrealism.population.SimpleOrganPopulationGenerator" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/org/almostrealism/population/SimpleOrganPopulationGenerator.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="693" y="276"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      

@@ -21,11 +21,11 @@ import java.io.FileNotFoundException;
 
 import org.almostrealism.optimize.SimpleOrganOptimizer;
 import org.almostrealism.organs.SimpleOrganFactory;
+import org.almostrealism.population.SimpleOrganPopulation;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
-import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
 
 public class HealthTestTool {
 	public static boolean enableSilenceDurationCalculation = false;

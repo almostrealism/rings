@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-/**
- * @author  Michael Murray
- *
- */
-package com.almostrealism.feedgrow.population;
+package org.almostrealism.population;
+
+import org.almostrealism.organs.Organ;
+
+public interface Population<T> {
+	public Organ<T> getOrgan(int index);
+	
+	public int size();
+}
