@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow.tools;
+package com.almostrealism.feedgrow;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

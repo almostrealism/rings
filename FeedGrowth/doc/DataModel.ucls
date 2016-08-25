@@ -333,8 +333,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="36" language="java" name="com.almostrealism.feedgrow.audio.HealthComputationAdapter" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/HealthComputationAdapter.java" binary="false" 
+  <class id="36" language="java" name="com.almostrealism.audio.health.HealthComputationAdapter" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/health/HealthComputationAdapter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2182" y="490"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -343,10 +343,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="37" language="java" name="com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation" 
+  <class id="37" language="java" name="com.almostrealism.audio.health.SilenceDurationHealthComputation" 
     project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/SilenceDurationHealthComputation.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/health/SilenceDurationHealthComputation.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2462" y="636"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -354,10 +354,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="38" language="java" name="com.almostrealism.feedgrow.audio.StableDurationHealthComputation" 
+  <class id="38" language="java" name="com.almostrealism.audio.health.StableDurationHealthComputation" 
     project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/StableDurationHealthComputation.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/health/StableDurationHealthComputation.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2272" y="810"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
