@@ -365,8 +365,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="39" language="java" name="com.almostrealism.audio.optimize.SimpleOrganOptimizer" project="Rings-New" 
-    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/optimize/SimpleOrganOptimizer.java" binary="false" 
+  <class id="39" language="java" name="com.almostrealism.audio.SimpleOrganOptimizer" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/audio/SimpleOrganOptimizer.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1092" y="22"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 

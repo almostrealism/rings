@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.audio.optimize;
+package com.almostrealism.audio;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +42,6 @@ import org.almostrealism.population.SimpleOrganPopulation;
 import org.almostrealism.population.SimpleOrganPopulationGenerator;
 import org.almostrealism.protein.ProteinCache;
 
-import com.almostrealism.audio.AudioProteinCache;
-import com.almostrealism.audio.SimpleOrganFactory;
 import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 

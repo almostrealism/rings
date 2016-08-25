@@ -26,7 +26,7 @@ import org.almostrealism.organs.PeriodicCellAdjustment;
 import org.almostrealism.protein.FloatingPointProteinCache;
 
 import com.almostrealism.audio.AudioProteinCache;
-import com.almostrealism.audio.optimize.SimpleOrganOptimizer;
+import com.almostrealism.audio.SimpleOrganOptimizer;
 import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 
 public class AdjustmentLayerOrganTest {

@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 
 import org.almostrealism.swing.ScrollingTextDisplay;
 
-import com.almostrealism.audio.optimize.SimpleOrganOptimizer;
+import com.almostrealism.audio.SimpleOrganOptimizer;
 
 public class OptimizerDesktopWidget<T> extends JPanel {
 	private SimpleOrganOptimizer<T> optimizer;
