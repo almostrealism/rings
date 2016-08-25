@@ -40,6 +40,8 @@ import org.almostrealism.organs.SimpleOrganFactory;
 import org.almostrealism.protein.ProteinCache;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
+import com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation;
+import com.almostrealism.feedgrow.audio.StableDurationHealthComputation;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulation;
 import com.almostrealism.feedgrow.population.SimpleOrganPopulationGenerator;
 

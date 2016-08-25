@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.almostrealism.optimize;
+package com.almostrealism.feedgrow.audio;
 
 import org.almostrealism.cells.CellAdapter;
 import org.almostrealism.organs.Organ;
 
-import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.feedgrow.metering.AudioMeter;
 
 /**

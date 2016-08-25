@@ -334,8 +334,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </interface>  
-  <class id="36" language="java" name="org.almostrealism.optimize.HealthComputationAdapter" project="Rings-New" 
-    file="/Rings-New/OptimalZoo/src/org/almostrealism/optimize/HealthComputationAdapter.java" binary="false" 
+  <class id="36" language="java" name="com.almostrealism.feedgrow.audio.HealthComputationAdapter" project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/HealthComputationAdapter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2182" y="490"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
@@ -344,9 +344,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="37" language="java" name="org.almostrealism.optimize.SilenceDurationHealthComputation" project="Rings-New" 
-    file="/Rings-New/OptimalZoo/src/org/almostrealism/optimize/SilenceDurationHealthComputation.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="37" language="java" name="com.almostrealism.feedgrow.audio.SilenceDurationHealthComputation" 
+    project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/SilenceDurationHealthComputation.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2462" y="636"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
@@ -354,9 +355,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="38" language="java" name="org.almostrealism.optimize.StableDurationHealthComputation" project="Rings-New" 
-    file="/Rings-New/OptimalZoo/src/org/almostrealism/optimize/StableDurationHealthComputation.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="38" language="java" name="com.almostrealism.feedgrow.audio.StableDurationHealthComputation" 
+    project="Rings-New" 
+    file="/Rings-New/FeedGrowth/src/com/almostrealism/feedgrow/audio/StableDurationHealthComputation.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2272" y="810"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
