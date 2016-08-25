@@ -20,7 +20,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.almostrealism.cells.delay.BasicDelayCell;
+import com.almostrealism.audio.filter.BasicDelayCell;
 
 public class DelaySlider extends JSlider implements ChangeListener {
 	private BasicDelayCell delay;

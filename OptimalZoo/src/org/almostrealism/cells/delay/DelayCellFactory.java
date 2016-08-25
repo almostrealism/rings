@@ -19,6 +19,8 @@ package org.almostrealism.cells.delay;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellFactory;
 
+import com.almostrealism.audio.filter.BasicDelayCell;
+
 public class DelayCellFactory implements CellFactory<Long> {
 	private int min, delta;
 	

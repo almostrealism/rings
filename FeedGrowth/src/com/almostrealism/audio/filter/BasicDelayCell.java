@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.almostrealism.cells.delay;
+package com.almostrealism.audio.filter;
 
 import org.almostrealism.cells.SummationCell;
+import org.almostrealism.cells.delay.Delay;
 import org.almostrealism.time.Updatable;
 
 import com.almostrealism.feedgrow.audio.AudioProteinCache;

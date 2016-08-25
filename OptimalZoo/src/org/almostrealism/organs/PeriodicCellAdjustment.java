@@ -19,9 +19,9 @@ package org.almostrealism.organs;
 import org.almostrealism.cells.Cell;
 import org.almostrealism.cells.CellAdjustment;
 import org.almostrealism.cells.Receptor;
-import org.almostrealism.cells.delay.BasicDelayCell;
 import org.almostrealism.protein.ProteinCache;
 
+import com.almostrealism.audio.filter.BasicDelayCell;
 import com.almostrealism.feedgrow.audio.AudioProteinCache;
 import com.almostrealism.synth.SineWaveCell;
 
