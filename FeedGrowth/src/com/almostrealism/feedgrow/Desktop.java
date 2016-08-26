@@ -18,8 +18,8 @@ package com.almostrealism.feedgrow;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsDevice.WindowTranslucency;
+import java.awt.BorderLayout;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagLayout;
 import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -35,14 +35,14 @@ import com.almostrealism.NetworkClient;
 public class Desktop extends JFrame {
 	public Desktop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		super("Rings");
-		setLayout(new GridBagLayout());
+		setLayout(new BorderLayout());
 		
 		setUndecorated(true);
 		setSize(200, 300);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		add(new DesktopPanel());
+		add(new DesktopPanel(this), BorderLayout.CENTER);
 	}
 
 	public static void main(String[] args) {

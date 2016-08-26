@@ -17,7 +17,11 @@
 package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -32,8 +36,39 @@ import com.almostrealism.raytracer.io.WavefrontObjParser;
  * @author  Michael Murray
  */
 public class DesktopPanel extends DesktopPanelUI {
-	public DesktopPanel() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    private Point initialClick;
+    private JFrame frame;
+	
+	public DesktopPanel(JFrame parent) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		Replicator r = new Replicator();
+		
+	    this.frame = parent;
+
+	    addMouseListener(new MouseAdapter() {
+	        public void mousePressed(MouseEvent e) {
+	            initialClick = e.getPoint();
+	            getComponentAt(initialClick);
+	        }
+	    });
+	    
+	    addMouseMotionListener(new MouseMotionAdapter() {
+	        @Override
+	        public void mouseDragged(MouseEvent e) {
+
+	            // get location of Window
+	            int thisX = frame.getLocation().x;
+	            int thisY = frame.getLocation().y;
+
+	            // Determine how much the mouse moved since the initial click
+	            int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+	            int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+
+	            // Move window to this position
+	            int X = thisX + xMoved;
+	            int Y = thisY + yMoved;
+	            frame.setLocation(X, Y);
+	        }
+	    });
 		
 		CanvasAction.canvasFrame = new JFrame("Replicant");
 		CanvasAction.canvasFrame.setLayout(new BorderLayout());
