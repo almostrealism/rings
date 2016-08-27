@@ -92,7 +92,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		toolBar.add(new ControlAction());
 		
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
-		add(raytracer, BorderLayout.CENTER);
+		renderPanel.add(raytracer, BorderLayout.CENTER);
 		raytracer.render();
 	}
 	

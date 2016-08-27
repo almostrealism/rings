@@ -33,12 +33,14 @@ import com.almostrealism.NetworkClient;
  * @author  Michael Murray
  */
 public class Desktop extends JFrame {
+	public static final boolean enableTranslucency = false;
+	
 	public Desktop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		super("Rings");
 		setLayout(new BorderLayout());
 		
 		setUndecorated(true);
-		setSize(200, 300);
+		setSize(200, 90);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -64,7 +66,7 @@ public class Desktop extends JFrame {
 				System.exit(1);
 			}
 			
-			if (isTranslucencySupported) d.setOpacity(0.8f);
+			if (enableTranslucency && isTranslucencySupported) d.setOpacity(0.8f);
 			
 			// Display the window.
 			d.setVisible(true);

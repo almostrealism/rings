@@ -48,16 +48,16 @@ import com.almostrealism.raytracer.primitives.SurfaceUI;
  * @author Mike Murray
  */
 public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
-  private T scene;
-  private EventHandler handler;
-  
-  private boolean showProgressWindow;
-  
-  private int width, height, ssWidth, ssHeight;
-  
-  private RGB renderedImageData[][];
-  private Image renderedImage;
+	private T scene;
+	private EventHandler handler;
 
+	private boolean showProgressWindow;
+
+	private int width, height, ssWidth, ssHeight;
+
+	private RGB renderedImageData[][];
+	private Image renderedImage;
+	
 	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
 	public RenderPanel(T scene) {
 		super(new java.awt.FlowLayout());
