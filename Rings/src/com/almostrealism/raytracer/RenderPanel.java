@@ -47,8 +47,8 @@ import com.almostrealism.raytracer.primitives.SurfaceUI;
  * 
  * @author Mike Murray
  */
-public class RenderPanel extends JPanel implements EventListener, EventGenerator {
-  private Scene<ShadableSurface> scene;
+public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
+  private T scene;
   private EventHandler handler;
   
   private boolean showProgressWindow;
@@ -59,7 +59,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
   private Image renderedImage;
 
 	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
-	public RenderPanel(Scene scene) {
+	public RenderPanel(T scene) {
 		super(new java.awt.FlowLayout());
 		
 		this.scene = scene;
@@ -160,7 +160,7 @@ public class RenderPanel extends JPanel implements EventListener, EventGenerator
 	 */
 	public void eventFired(Event event) {
 		if (event instanceof SceneOpenEvent) {
-			this.scene = ((SceneOpenEvent)event).getScene();
+			this.scene = (T) ((SceneOpenEvent) event).getScene();
 			this.clearRenderedImage();
 		} else if (event instanceof SceneCloseEvent) {
 			this.scene = null;
