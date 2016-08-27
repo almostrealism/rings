@@ -22,9 +22,11 @@
 package com.almostrealism.raytracer.engine;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
@@ -39,29 +41,30 @@ import com.almostrealism.raytracer.primitives.Triangle;
  * 
  * @author Mike Murray
  */
-public class SurfaceGroup extends AbstractSurface {
-	private ArrayList<ShadableSurface> surfaces;
+public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface implements Iterable<T> {
+	private ArrayList<T> surfaces;
 
 	/**
-	 * Constructs a SurfaceGroup object with no Surface objects.
+	 * Constructs a {@link SurfaceGroup} object with no {@link Surface} objects.
 	 */
 	public SurfaceGroup() {
-		surfaces = new ArrayList<ShadableSurface>();
+		surfaces = new ArrayList<T>();
 		setColor(new RGB(1.0, 1.0, 1.0));
 	}
 	
 	/**
-	 * Constructs a SurfaceGroup object using the Surface objects in the specified array.
+	 * Constructs a {@link SurfaceGroup} using the {@link Surface}s in the specified array.
 	 */
-	public SurfaceGroup(ShadableSurface surfaces[]) {
+	public SurfaceGroup(T surfaces[]) {
 		this();
 		this.setSurfaces(surfaces);
 	}
 	
 	/**
-	 * Replaces all of the Surface objects of this SurfaceGroup object with those represented by the specified Surface array.
+	 * Replaces all of the {@link Surface} objects of this {@link SurfaceGroup} object with
+	 * those represented by the specified {@link Surface} array.
 	 */
-	public void setSurfaces(ShadableSurface surfaces[]) {
+	public void setSurfaces(T surfaces[]) {
 		this.surfaces.clear();
 		
 		for (int i = 0; i < surfaces.length; i++)
@@ -72,7 +75,7 @@ public class SurfaceGroup extends AbstractSurface {
 	 * Adds the specified Surface object to this SurfaceGroup object and sets its parent
 	 * to this SurfaceGroup object (if it is an instance of AbstractSurface).
 	 */
-	public void addSurface(ShadableSurface surface) {
+	public void addSurface(T surface) {
 		if (surface instanceof AbstractSurface)
 			((AbstractSurface) surface).setParent(this);
 //		else if (surface instanceof AbstractSurfaceUI)
@@ -107,6 +110,8 @@ public class SurfaceGroup extends AbstractSurface {
 	public ShadableSurface getSurface(int index) {
 		return this.surfaces.get(index);
 	}
+	
+	public Iterator<T> iterator() { return surfaces.iterator(); }
 	
 	/** {@link ShadableSurface#shade(ShaderParameters)} */
 	public RGB shade(ShaderParameters p) {

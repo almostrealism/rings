@@ -24,7 +24,5 @@ import com.almostrealism.replicator.geometry.ReplicantScene;
  * @author  Michael Murray
  */
 public class ReceptorRenderPanel extends RenderPanel<ReplicantScene> {
-	public ReceptorRenderPanel() {
-		super(new ReplicantScene());
-	}
+	public ReceptorRenderPanel(ReplicantScene s) { super(s); }
 }

@@ -31,6 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.almostrealism.raytracer.io.WavefrontObjParser;
+import com.almostrealism.receptor.ReceptorRenderPanel;
 
 /**
  * @author  Michael Murray
@@ -91,6 +92,10 @@ public class DesktopPanel extends DesktopPanelUI {
 		toolBar.add(new QuitAction());
 		toolBar.add(new CanvasAction());
 		toolBar.add(new ControlAction());
+		
+		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
+		
+		add(raytracer, BorderLayout.CENTER);
 	}
 	
 	private static class QuitAction extends AbstractAction {

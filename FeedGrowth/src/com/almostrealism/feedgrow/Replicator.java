@@ -43,6 +43,7 @@ import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.mixer.Mixer;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;
+import com.almostrealism.replicator.geometry.ReplicantScene;
 import com.almostrealism.replicator.ui.ReplicatorCanvas;
 import com.almostrealism.replicator.ui.ReplicatorTableModel;
 import com.almostrealism.synth.SineWaveCell;
@@ -166,6 +167,10 @@ public class Replicator {
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
 	public JPanel getControlPanel() { return controlPanel; }
+	
+	public ReplicantScene getScene() {
+		return new ReplicantScene(model.getSurfaces());
+	}
 	
 	public void showLayersFrame(int x, int y) {
 		layersFrame.setLocation(x, y);

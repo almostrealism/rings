@@ -16,10 +16,20 @@
 
 package com.almostrealism.replicator.geometry;
 
+import org.almostrealism.space.Surface;
+
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.engine.SurfaceGroup;
 
 /**
+ * {@link ReplicantScene} stores for rendering all the {@link Replicant}s in a
+ * {@link SurfaceGroup}
+ * 
  * @author  Michael Murray
  */
 public class ReplicantScene extends Scene<Replicant> {
+	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
+		for (Surface s : g) if (s instanceof Replicant) add((Replicant) s);
+	}
 }
