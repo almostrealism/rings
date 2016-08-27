@@ -6,7 +6,7 @@ import java.util.Iterator;
 import com.almostrealism.glitchfarm.line.OutputLine;
 
 /**
- * TODO  Merge with {@link com.almostrealism.mixer.Mixer}
+ * TODO  Merge with {@link com.almostrealism.audio.Mixer}
  * 
  * @author  Michael Murray
  */

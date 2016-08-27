@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.mixer;
+package com.almostrealism.audio;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +22,6 @@ import java.util.Iterator;
 import org.almostrealism.cells.SummationCell;
 import org.almostrealism.time.Clock;
 
-import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.synth.Source;
 
 public class Mixer extends ArrayList<Source> implements Clock {

@@ -36,11 +36,11 @@ import org.almostrealism.organs.CellAdjustmentFactory;
 import org.almostrealism.protein.FloatingPointProteinCache;
 
 import com.almostrealism.audio.AudioProteinCache;
+import com.almostrealism.audio.Mixer;
 import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.audio.filter.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
-import com.almostrealism.mixer.Mixer;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;
 import com.almostrealism.replicator.geometry.ReplicantScene;
