@@ -50,7 +50,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
  * 
  * @author Mike Murray
  */
-public class Mesh extends SpacePartition implements Iterable<Triangle> {
+public class Mesh extends SpacePartition {
 	private static RGB white = new RGB(1.0, 1.0, 1.0);
 	
 	public static class MeshFile implements ShadableSurfaceWrapper, ShadableSurface {
@@ -348,27 +348,29 @@ public class Mesh extends SpacePartition implements Iterable<Triangle> {
   			return null;
   	}
   	
-	public Iterator<Triangle> iterator() {
-		if (vertexData == null) {
-			return Arrays.asList(getTriangles()).iterator();
-		} else {
-			return new Iterator<Triangle>() {
-				int i = 0;
-				
-				@Override
-				public boolean hasNext() {
-					return i < vertexData.getTriangleCount();
-				}
-				
-				@Override
-				public Triangle next() {
-					int t[] = vertexData.getTriangle(i);
-					i++;
-					return new Triangle(t[0], t[1], t[2],
-							(RGB) Mesh.white.clone(), vertexData);
-				}
-			};
-		}
+	public Iterable<Triangle> triangles() {
+		return () -> {
+			if (vertexData == null) {
+				return Arrays.asList(getTriangles()).iterator();
+			} else {
+				return new Iterator<Triangle>() {
+					int i = 0;
+					
+					@Override
+					public boolean hasNext() {
+						return i < vertexData.getTriangleCount();
+					}
+					
+					@Override
+					public Triangle next() {
+						int t[] = vertexData.getTriangle(i);
+						i++;
+						return new Triangle(t[0], t[1], t[2],
+								(RGB) Mesh.white.clone(), vertexData);
+					}
+				};
+			}
+		};
 	}
 	
 	/**
