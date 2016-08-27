@@ -88,7 +88,7 @@ public class RayTracingEngine {
   
   public static RGB black = new RGB(0.0, 0.0, 0.0);
   
-  /**
+  	/**
 	 * Computes all intersection and lighting calculations required to produce an image of the specified width and height
 	 * that is a rendering of the specified Scene object and returns the image as an array of RGB objects.
 	 * The image is anti-aliased using the specified supersampling width (ssWidth) and height (ssHeight).

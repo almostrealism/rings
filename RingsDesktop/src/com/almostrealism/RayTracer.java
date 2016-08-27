@@ -241,19 +241,18 @@ public class RayTracer implements EventListener, EventGenerator {
 		this.frame.setVisible(true);
 	}
 	
-	/**
-	 * Method called when an event has been fired.
-	 */
+	/** Method called when an event has been fired. */
 	public void eventFired(Event event) {
 		if (event instanceof SceneOpenEvent) {
-			this.scene = ((SceneOpenEvent)event).getScene();
+			this.scene = ((SceneOpenEvent) event).getScene();
 		} else if (event instanceof SceneCloseEvent) {
 			this.scene = null;
 		}
 	}
 	
 	/**
-	 * Sets the EventHandler object used by the ray tracing interface. Setting this to null will deactivate event reporting.
+	 * Sets the {@link EventHandler} used by the ray tracing interface.
+	 * Setting this to null will deactivate event reporting.
 	 */
 	public void setEventHandler(EventHandler handler) {
 		this.handler = handler;
