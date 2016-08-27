@@ -40,9 +40,7 @@ public class DesktopPanel extends DesktopPanelUI {
     private Point initialClick;
     private JFrame frame;
 	
-	public DesktopPanel(JFrame parent) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		Replicator r = new Replicator();
-		
+	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 	    this.frame = parent;
 
 	    addMouseListener(new MouseAdapter() {

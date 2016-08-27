@@ -42,7 +42,7 @@ public class Desktop extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		add(new DesktopPanel(this), BorderLayout.CENTER);
+		add(new DesktopPanel(this, new Replicator()), BorderLayout.CENTER);
 	}
 
 	public static void main(String[] args) {
