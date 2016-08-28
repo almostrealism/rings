@@ -24,12 +24,25 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 
 /**
  * {@link ReplicantScene} stores for rendering all the {@link Replicant}s in a
- * {@link SurfaceGroup}
+ * {@link SurfaceGroup}. The {@link Scene} hierarchy is flattened when a new
+ * {@link ReplicantScene} is construced, making the {@link Scene} into a simple
+ * list of {@link Replicant}s. This flattening does not side effect the
+ * {@link SurfaceGroup} that is passed to the constructor.
  * 
  * @author  Michael Murray
  */
 public class ReplicantScene extends Scene<Replicant> {
 	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
-		for (Surface s : g) if (s instanceof Replicant) add((Replicant) s);
+		addReplicants(this, g);
+	}
+	
+	private static void addReplicants(ReplicantScene scene, SurfaceGroup<ShadableSurface> g) {
+		for (Surface s : g) {
+			if (s instanceof Replicant) {
+				scene.add((Replicant) s);
+			} else if (s instanceof SurfaceGroup) {
+				addReplicants(scene, (SurfaceGroup) s);
+			}
+		}
 	}
 }

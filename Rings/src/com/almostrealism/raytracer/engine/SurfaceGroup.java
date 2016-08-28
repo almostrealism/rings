@@ -44,9 +44,7 @@ import com.almostrealism.raytracer.primitives.Triangle;
 public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface implements Iterable<T> {
 	private ArrayList<T> surfaces;
 
-	/**
-	 * Constructs a {@link SurfaceGroup} object with no {@link Surface} objects.
-	 */
+	/** Constructs a {@link SurfaceGroup} object with no {@link Surface} objects. */
 	public SurfaceGroup() {
 		surfaces = new ArrayList<T>();
 		setColor(new RGB(1.0, 1.0, 1.0));
@@ -72,8 +70,9 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	}
 	
 	/**
-	 * Adds the specified Surface object to this SurfaceGroup object and sets its parent
-	 * to this SurfaceGroup object (if it is an instance of AbstractSurface).
+	 * Adds the specified {@link Surface} object to this {@link SurfaceGroup} object and
+	 * sets its parent to this {@link SurfaceGroup} object (if it is an instance of
+	 * {@link AbstractSurface}).
 	 */
 	public void addSurface(T surface) {
 		if (surface instanceof AbstractSurface)
@@ -99,6 +98,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	 * Returns the {@link ShadableSurface} objects stored by this {@link SurfaceGroup} object as
 	 * a {@link ShadableSurface} array.
 	 */
+	@Deprecated
 	public ShadableSurface[] getSurfaces() {
 		return this.surfaces.toArray(new ShadableSurface[0]);
 	}
@@ -107,6 +107,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	 * Returns the {@link ShadableSurface} object stored by this {@link SurfaceGroup} object at
 	 * the specified index.
 	 */
+	@Deprecated
 	public ShadableSurface getSurface(int index) {
 		return this.surfaces.get(index);
 	}
@@ -179,9 +180,9 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	}
 	
 	/**
-	 * Returns an Intersection object that represents the ray-surface intersections
-	 * for the AbstractSurface object which is intersected closest to the origin of
-	 * the ray (>= 0). If there is no intersection >= 0 along the ray, null is returned.
+	 * Returns an {@link Intersection} object that represents the ray-surface intersections
+	 * for the AbstractSurface object which is intersected closest to the origin of the ray
+	 * (>= 0). If there is no intersection >= 0 along the ray, null is returned.
 	 */
 	public Intersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());

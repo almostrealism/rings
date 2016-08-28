@@ -152,10 +152,10 @@ public class RayTracingEngine {
 		
 		RGB image[][] = new RGB[p.dx][p.dy];
 		
-		i: for(int i = p.x; i < (p.x + p.dx); i++) {
-			j: for(int j = p.y; j < (p.y + p.dy); j++) {
-				k: for(int k = 0; k < p.ssWidth; k++)
-				l: for(int l = 0; l < p.ssHeight; l++) {
+		for (int i = p.x; i < (p.x + p.dx); i++) {
+			for (int j = p.y; j < (p.y + p.dy); j++) {
+				for (int k = 0; k < p.ssWidth; k++)
+				for (int l = 0; l < p.ssHeight; l++) {
 					double r = i + ((double)k / (double)p.ssWidth);
 					double q = j + ((double)l / (double)p.ssHeight);
 					
