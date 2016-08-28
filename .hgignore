@@ -13,3 +13,5 @@ syntax: regexp
 ^Common/target$
 syntax: regexp
 \.DS_Store$
+syntax: regexp
+^ringsdb\.log$
