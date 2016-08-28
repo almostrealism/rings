@@ -44,7 +44,7 @@ public class SamplePad extends JPanel implements ActionListener {
 		durationField = new JFormattedTextField(intFormat);
 		durationField.setText("100");
 		
-		JButton sampleButton = new JButton(new ImageIcon("/Users/mike/Desktop/veda.jpg"));
+		JButton sampleButton = new JButton(new ImageIcon(SamplePad.class.getResource("/icons/sampler_button.png")));
 		
 		sampleButton.addActionListener(this);
 		
