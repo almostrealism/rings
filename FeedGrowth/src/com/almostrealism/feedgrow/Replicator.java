@@ -66,9 +66,6 @@ public class Replicator {
 		
 		model = new ReplicatorTableModel();
 		
-		JButton samplerButton = new JButton("Sampler");
-		samplerButton.addActionListener((e) -> { showSamplerFrame(0, 0); });
-		
 		layersFrame = new JFrame("Layers");
 		layersFrame.setLayout(new BorderLayout());
 		layersFrame.getContentPane().add(new JTable(model));

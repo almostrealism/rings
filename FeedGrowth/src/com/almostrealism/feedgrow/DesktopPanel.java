@@ -35,34 +35,33 @@ import com.almostrealism.receptor.ReceptorRenderPanel;
  * @author  Michael Murray
  */
 public class DesktopPanel extends DesktopPanelUI {
-    private JFrame frame;
-	
+	private JFrame frame;
+
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-	    this.frame = parent;
-	    
-	    DragSupport draggable = new DragSupport(frame, this);
-	    
-	    addMouseListener(draggable);
-	    addMouseMotionListener(draggable);
-	    
+		this.frame = parent;
+
+		DragSupport draggable = new DragSupport(frame, this);
+		addMouseListener(draggable);
+		addMouseMotionListener(draggable);
+
 		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
-		
+
 		toolBar.add(new QuitAction());
 		toolBar.add(r.getCanvasAction());
 		toolBar.add(r.getLayersAction());
 		toolBar.add(r.getSamplerAction());
 		toolBar.add(r.getFeedbackAction());
-		
+
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		raytracer.render();
 	}
-	
+
 	private static class QuitAction extends AbstractAction {
 		public QuitAction() {
 			super("Quit", new ImageIcon(QuitAction.class.getResource("/icons/x.png")));
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) { System.exit(0); }
 	}
