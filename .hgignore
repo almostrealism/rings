@@ -9,3 +9,7 @@ syntax: regexp
 ^GraphPersist/target$
 syntax: regexp
 ^TreeView/target$
+syntax: regexp
+^Common/target$
+syntax: regexp
+\.DS_Store$
