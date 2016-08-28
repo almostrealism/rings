@@ -100,6 +100,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	 */
 	@Deprecated
 	public ShadableSurface[] getSurfaces() {
+		System.out.println("Call to deprecated getSurfaces method");
 		return this.surfaces.toArray(new ShadableSurface[0]);
 	}
 	
@@ -109,6 +110,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	 */
 	@Deprecated
 	public ShadableSurface getSurface(int index) {
+		System.out.println("Call to deprecated getSurface method");
 		return this.surfaces.get(index);
 	}
 	

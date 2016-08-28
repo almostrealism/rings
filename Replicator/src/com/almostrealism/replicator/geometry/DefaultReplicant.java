@@ -17,19 +17,20 @@
 package com.almostrealism.replicator.geometry;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.almostrealism.space.BasicGeometry;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
-public class DefaultReplicant extends Replicant {
+public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 	private Map<String, BasicGeometry> geo;
 	
-	public DefaultReplicant(ShadableSurface s) {
+	public DefaultReplicant(T s) {
 		geo = new HashMap<String, BasicGeometry>();
-		setGeometry(this);
-		setSurface(s);
+		setGeometry(geometry());
+		addSurface(s);
 	}
 	
 	public BasicGeometry get(String name) { return geo.get(name); }
@@ -41,4 +42,9 @@ public class DefaultReplicant extends Replicant {
 	}
 	
 	public void clear() { geo.clear(); }
+	
+	public Iterator<T> iterator() {
+		// TODO  Apply each geometry to each surface
+		throw new RuntimeException("Not implemented");
+	}
 }

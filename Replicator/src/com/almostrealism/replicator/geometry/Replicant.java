@@ -16,6 +16,8 @@
 
 package com.almostrealism.replicator.geometry;
 
+import java.util.List;
+
 import org.almostrealism.space.BasicGeometry;
 
 import com.jogamp.opengl.GL2;
@@ -26,16 +28,18 @@ import com.almostrealism.renderable.RenderableGeometry;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 /**
- * A {@link Replicant} combines a set of {@link BasicGeometry}s
- * with a {@link ShadableSurface}. The resulting {@link SurfaceGroup} is
- * a collection of {@link ShadableSurface}s for each {@link BasicGeometry},
- * with the transformations of the {@link BasicGeometry} applied.
+ * A {@link Replicant} combines a set of {@link BasicGeometry}s with the
+ * {@link ShadableSurface}s in the {@link SurfaceGroup}. The resulting
+ * {@link SurfaceGroup} functions as a collection of {@link ShadableSurface}s
+ * for each {@link BasicGeometry}, with the transformations of the
+ * {@link BasicGeometry} applied. {@link Replicant} also handles the
+ * creation of an Open GL render delegate for each surface using
+ * {@link RenderableSurfaceFactory}.
  * 
  * @author  Michael Murray
  */
-public class Replicant extends SurfaceGroup implements Renderable {
-	private ShadableSurface surface;
-	private Renderable delegate;
+public class Replicant<T extends ShadableSurface> extends SurfaceGroup<T> implements Renderable {
+	private List<Renderable> delegates;
 	private Iterable<BasicGeometry> geo;
 	
 	protected Replicant() { }
@@ -44,17 +48,24 @@ public class Replicant extends SurfaceGroup implements Renderable {
 		setGeometry(n);
 	}
 	
-	public void setSurface(ShadableSurface s) {
-		this.surface = s;
-		this.delegate = RenderableSurfaceFactory.createRenderableSurface(s);
+	public void addSurface(T s) {
+		super.addSurface(s);
+		this.delegates.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
 	
-	protected void setGeometry(Iterable<BasicGeometry> n) {
-		this.geo = n;
+	public void removeSurface(int index) {
+		super.removeSurface(index);
+		this.delegates.remove(index);
 	}
+	
+	protected void setGeometry(Iterable<BasicGeometry> n) { this.geo = n; }
 	
 	@Override
-	public void init(GL2 gl) { if (delegate != null) delegate.init(gl); }
+	public void init(GL2 gl) {
+		for (Renderable delegate : delegates) {
+			if (delegate != null) delegate.init(gl);
+		}
+	}
 	
 	@Override
 	public void display(GL2 gl) {
@@ -62,7 +73,9 @@ public class Replicant extends SurfaceGroup implements Renderable {
 			gl.glPushMatrix();
 			RenderableGeometry.applyTransform(gl, g);
 			// TODO  Inherit surface color, etc?
-			delegate.display(gl);
+			for (Renderable delegate : delegates) {
+				if (delegate != null) delegate.display(gl);
+			}
 			gl.glPopMatrix();
 		}
 	}
