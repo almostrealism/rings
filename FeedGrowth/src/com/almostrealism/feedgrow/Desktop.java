@@ -40,7 +40,7 @@ public class Desktop extends JFrame {
 		setLayout(new BorderLayout());
 		
 		setUndecorated(true);
-		setSize(200, 90);
+		setSize(200, 200);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

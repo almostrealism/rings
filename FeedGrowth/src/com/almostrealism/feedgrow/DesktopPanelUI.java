@@ -39,6 +39,7 @@ public class DesktopPanelUI extends JPanel {
 		
 		renderPanel = new JPanel();
 		panel.add(renderPanel, BorderLayout.CENTER);
+		renderPanel.setLayout(new BorderLayout(0, 0));
 		
 		toolBar = new JToolBar();
 		panel.add(toolBar, BorderLayout.SOUTH);

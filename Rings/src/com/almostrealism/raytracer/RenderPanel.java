@@ -17,6 +17,7 @@
 package com.almostrealism.raytracer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -144,6 +145,10 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		
 		this.revalidate();
 		this.repaint();
+	}
+	
+	public Dimension getPreferredSize() {
+		return new Dimension(width, height);
 	}
 	
 	/**
