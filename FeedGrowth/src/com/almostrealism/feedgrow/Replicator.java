@@ -17,14 +17,16 @@
 package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import org.almostrealism.cells.CellAdjustment;
@@ -56,8 +58,6 @@ public class Replicator {
 	private ReplicatorCanvas canvas;
 	private ReplicatorTableModel model;
 	
-	private JPanel controlPanel;
-	
 	private JFrame layersFrame, samplerFrame;
 	
 	public Replicator() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
@@ -66,23 +66,8 @@ public class Replicator {
 		
 		model = new ReplicatorTableModel();
 		
-		controlPanel = new JPanel(new GridLayout(0, 1));
-		
-		JButton layersButton = new JButton("Layers");
-		layersButton.addActionListener((e) -> { showLayersFrame(0, 0); });
-		controlPanel.add(layersButton);
-		
 		JButton samplerButton = new JButton("Sampler");
 		samplerButton.addActionListener((e) -> { showSamplerFrame(0, 0); });
-		controlPanel.add(samplerButton);
-		
-		JButton receptorButton = new JButton("Receptor");
-		receptorButton.addActionListener((e) -> { receptor.showReceptorFrame(0, 0); });
-		controlPanel.add(receptorButton);
-		
-		JButton feedbackButton = new JButton("Feedback");
-		feedbackButton.addActionListener((e) -> { receptor.showFeedbackFrame(0, 0); });
-		controlPanel.add(feedbackButton);
 		
 		layersFrame = new JFrame("Layers");
 		layersFrame.setLayout(new BorderLayout());
@@ -166,7 +151,13 @@ public class Replicator {
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
-	public JPanel getControlPanel() { return controlPanel; }
+	public Action getLayersAction() { return new LayersAction(); }
+	
+	public Action getCanvasAction() { return new CanvasAction(); }
+	
+	public Action getSamplerAction() { return new SamplerAction(); }
+	
+	public Action getFeedbackAction() { return new FeedbackAction(); }
 	
 	public ReplicantScene getScene() {
 		return new ReplicantScene(model.getSurfaces());
@@ -180,5 +171,41 @@ public class Replicator {
 	public void showSamplerFrame(int x, int y) {
 		samplerFrame.setLocation(x, y);
 		samplerFrame.setVisible(true);
+	}
+	
+	private class LayersAction extends AbstractAction {
+		public LayersAction() {
+			super("Layers", new ImageIcon(LayersAction.class.getResource("/icons/L.png")));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) { showLayersFrame(0, 0); }
+	}
+	
+	private class CanvasAction extends AbstractAction {
+		public CanvasAction() {
+			super("Canvas", new ImageIcon(CanvasAction.class.getResource("/icons/V.png")));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) { receptor.showReceptorFrame(0, 0); }
+	}
+	
+	private class SamplerAction extends AbstractAction {
+		public SamplerAction() {
+			super("Sampler", new ImageIcon(SamplerAction.class.getResource("/icons/S.png")));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) { showSamplerFrame(0, 0); }
+	}
+	
+	private class FeedbackAction extends AbstractAction {
+		public FeedbackAction() {
+			super("Feedback", new ImageIcon(FeedbackAction.class.getResource("/icons/F.png")));
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) { receptor.showFeedbackFrame(0, 0); }
 	}
 }

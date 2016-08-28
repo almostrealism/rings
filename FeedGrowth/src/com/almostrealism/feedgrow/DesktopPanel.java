@@ -68,28 +68,14 @@ public class DesktopPanel extends DesktopPanelUI {
 	            frame.setLocation(X, Y);
 	        }
 	    });
-		
-		CanvasAction.canvasFrame = new JFrame("Replicant");
-		CanvasAction.canvasFrame.setLayout(new BorderLayout());
-		CanvasAction.canvasFrame.getContentPane().add(r.getCanvas());
-		CanvasAction.canvasFrame.setSize(400, 400);
-		CanvasAction.canvasFrame.setLocationRelativeTo(null);
-		CanvasAction.canvasFrame.setVisible(false);
-		
-		ControlAction.controlFrame = new JFrame("");
-		ControlAction.controlFrame.setLayout(new BorderLayout());
-		ControlAction.controlFrame.getContentPane().add(r.getControlPanel());
-		ControlAction.controlFrame.setLocation(CanvasAction.canvasFrame.getLocation().x +
-								CanvasAction.canvasFrame.getWidth(),
-								CanvasAction.canvasFrame.getLocation().y);
-		ControlAction.controlFrame.setSize(90, 140);
-		ControlAction.controlFrame.setVisible(false);
-		
+	    
 		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
 		
 		toolBar.add(new QuitAction());
-		toolBar.add(new CanvasAction());
-		toolBar.add(new ControlAction());
+		toolBar.add(r.getCanvasAction());
+		toolBar.add(r.getLayersAction());
+		toolBar.add(r.getSamplerAction());
+		toolBar.add(r.getFeedbackAction());
 		
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
@@ -98,32 +84,10 @@ public class DesktopPanel extends DesktopPanelUI {
 	
 	private static class QuitAction extends AbstractAction {
 		public QuitAction() {
-			super("Quit", new ImageIcon(CanvasAction.class.getResource("/icons/x.png")));
+			super("Quit", new ImageIcon(QuitAction.class.getResource("/icons/x.png")));
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) { System.exit(0); }
-	}
-	
-	private static class CanvasAction extends AbstractAction {
-		static JFrame canvasFrame;
-		
-		public CanvasAction() {
-			super("Viewer", new ImageIcon(CanvasAction.class.getResource("/icons/v.png")));
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) { canvasFrame.setVisible(true); }
-	}
-	
-	private static class ControlAction extends AbstractAction {
-		static JFrame controlFrame;
-		
-		public ControlAction() {
-			super("Control", new ImageIcon(CanvasAction.class.getResource("/icons/e.png")));
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) { controlFrame.setVisible(true); }
 	}
 }
