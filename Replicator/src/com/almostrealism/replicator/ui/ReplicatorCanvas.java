@@ -17,9 +17,19 @@
 package com.almostrealism.replicator.ui;
 
 import com.almostrealism.gl.SurfaceCanvas;
+import com.almostrealism.gl.nurbs.AnimatedNurbsSurface;
+import com.jogamp.opengl.glu.GLUnurbs;
+import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 public class ReplicatorCanvas extends SurfaceCanvas {
 	public ReplicatorCanvas() {
+		GLUgl2 glu = new GLUgl2();
+		GLUnurbs nurbs = glu.gluNewNurbsRenderer();
 		
+		AnimatedNurbsSurface n = new AnimatedNurbsSurface(8, 8, glu, nurbs);
+		n.setPosition(-6.0f, -5.0f, 0.0f);
+		n.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
+		
+		add(n);
 	}
 }

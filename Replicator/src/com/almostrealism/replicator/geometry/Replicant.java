@@ -16,6 +16,7 @@
 
 package com.almostrealism.replicator.geometry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.almostrealism.space.BasicGeometry;
@@ -42,9 +43,10 @@ public class Replicant<T extends ShadableSurface> extends SurfaceGroup<T> implem
 	private List<Renderable> delegates;
 	private Iterable<BasicGeometry> geo;
 	
-	protected Replicant() { }
+	protected Replicant() { delegates = new ArrayList<Renderable>(); }
 	
 	public Replicant(Iterable<BasicGeometry> n) {
+		this();
 		setGeometry(n);
 	}
 	

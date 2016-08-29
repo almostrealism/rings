@@ -35,6 +35,7 @@ import org.almostrealism.heredity.DoubleScaleFactor;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.CellAdjustmentFactory;
 import org.almostrealism.protein.FloatingPointProteinCache;
+import org.almostrealism.swing.ValueSlider;
 
 import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.Mixer;
@@ -59,11 +60,16 @@ public class Replicator {
 	
 	private JFrame layersFrame, samplerFrame;
 	
+	private ValueSlider zoomSlider;
+	
 	public Replicator() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		canvas = new ReplicatorCanvas();
 		receptor = new Receptor();
 		
 		model = new ReplicatorTableModel();
+		
+		zoomSlider = new ValueSlider(ValueSlider.VERTICAL, 0, 10, 5);
+		canvas.setZoom(zoomSlider);
 		
 		layersFrame = new JFrame("Layers");
 		layersFrame.setLayout(new BorderLayout());
@@ -147,17 +153,16 @@ public class Replicator {
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
-	public Action getLayersAction() { return new LayersAction(); }
-	
-	public Action getCanvasAction() { return new CanvasAction(); }
-	
-	public Action getSamplerAction() { return new SamplerAction(); }
-	
-	public Action getFeedbackAction() { return new FeedbackAction(); }
-	
 	public ReplicantScene getScene() {
 		return new ReplicantScene(model.getSurfaces());
 	}
+	
+	public ValueSlider getZoomSlider() { return zoomSlider; }
+	
+	public Action getLayersAction() { return new LayersAction(); }
+	public Action getCanvasAction() { return new CanvasAction(); }
+	public Action getSamplerAction() { return new SamplerAction(); }
+	public Action getFeedbackAction() { return new FeedbackAction(); }
 	
 	public void showLayersFrame(int x, int y) {
 		layersFrame.setLocation(x, y);

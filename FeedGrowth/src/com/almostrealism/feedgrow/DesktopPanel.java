@@ -54,6 +54,8 @@ public class DesktopPanel extends DesktopPanelUI {
 
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
+		renderPanel.add(r.getZoomSlider(), BorderLayout.EAST);
+		renderPanel.add(new OptimizerDesktopWidget<Long>(null), BorderLayout.NORTH);
 		raytracer.render();
 	}
 

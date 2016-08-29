@@ -35,11 +35,15 @@ public class OptimizerDesktopWidget<T> extends JPanel {
 		
 		ScrollingTextDisplay.TextProducer producer = new ScrollingTextDisplay.TextProducer() {
 			public String nextPhrase() {
-				return optimizer.getConsole().lastLine();
+				if (optimizer == null) {
+					return "No running optimizer";
+				} else {
+					return optimizer.getConsole().lastLine();
+				}
 			}
 		};
 		
-		this.display = new ScrollingTextDisplay(producer, 30);
+		this.display = new ScrollingTextDisplay(producer, 30, false);
 		this.add(display, BorderLayout.CENTER);
 	}
 	

@@ -20,18 +20,15 @@ import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 import com.almostrealism.gl.DefaultGLCanvas;
-import com.almostrealism.gl.RenderableGLList;
-import com.almostrealism.gl.models.NurbsMoleHill;
 import com.almostrealism.gl.nurbs.AnimatedNurbsSurface;
 
+/**
+ * TODO  Is this unnecessary due, since we are using {@link ReplicatorCanvas} ?
+ * 
+ * @author  Michael Murray
+ */
 public class ReceptorCanvas extends DefaultGLCanvas {
 	public ReceptorCanvas() {
-		NurbsMoleHill m = new NurbsMoleHill();
-		RenderableGLList l = new RenderableGLList(m);
-		l.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
-		l.setShininess(100);
-//		add(l);
-
 		GLUgl2 glu = new GLUgl2();
 		GLUnurbs nurbs = glu.gluNewNurbsRenderer();
 		
