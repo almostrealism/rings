@@ -32,8 +32,12 @@ public class ScrollingTextDisplay extends JLabel implements Runnable {
 	private String text, display;
 	private int col;
 	private int sleep;
-	
+
 	public ScrollingTextDisplay(TextProducer p, int col) {
+		this(p, col, true);
+	}
+	
+	public ScrollingTextDisplay(TextProducer p, int col, boolean scroll) {
 		this.producer = p;
 		this.col = col;
 		
@@ -45,7 +49,11 @@ public class ScrollingTextDisplay extends JLabel implements Runnable {
 		
 		Thread t = new Thread(this);
 //		t.setDaemon(true);
-		t.start();
+		if (scroll) {
+			t.start();
+		} else {
+			setText(text);
+		}
 	}
 	
 	public void run() {
