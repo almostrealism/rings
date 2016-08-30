@@ -193,7 +193,7 @@ public class OpenMenu extends JMenu implements EventListener, EventGenerator {
 					
 					try {
 						ShadableSurface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
-						scene.addSurface(newSurface);
+						scene.add(newSurface);
 						
 						if (handler != null) handler.fireEvent(new SurfaceAddEvent(newSurface));
 					} catch (FileNotFoundException fnf) {

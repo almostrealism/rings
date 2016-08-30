@@ -138,7 +138,7 @@ public class ImportMenu extends JMenu implements EventListener, EventGenerator {
 						
 						if (ImportMenu.this.scene != null) {
 							for (int i = 0; i < l.length; i++) ImportMenu.this.scene.addLight(l[i]);
-							for (int i = 0; i < s.length; i++) ImportMenu.this.scene.addSurface(s[i]);
+							for (int i = 0; i < s.length; i++) ImportMenu.this.scene.add(s[i]);
 						}
 					} catch (FileNotFoundException fnf) {
 						JOptionPane.showMessageDialog(null, "There was a FileNotFoundException thrown by threeD.io.FileDecoder",
@@ -194,7 +194,7 @@ public class ImportMenu extends JMenu implements EventListener, EventGenerator {
 					
 					try {
 						ShadableSurface newSurface = FileDecoder.decodeSurfaceFile(fileChooser.getSelectedFile(), encoding, true, listener);
-						scene.addSurface(newSurface);
+						scene.add(newSurface);
 						
 						if (handler != null) handler.fireEvent(new SurfaceAddEvent(newSurface));
 					} catch (FileNotFoundException fnf) {
