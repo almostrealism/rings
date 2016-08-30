@@ -29,12 +29,8 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
  * A Sphere object represents a primitive sphere in 3d space.
  */
 public class Sphere extends AbstractSurface {
-	/**
-	 * Constructs a Sphere object that represents a unit sphere centered at the origin that is black.
-	 */
-	public Sphere() {
-		super();
-	}
+	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
+	public Sphere() { }
 	
 	/**
 	 * Constructs a Sphere object that represents a sphere with the specified center location
