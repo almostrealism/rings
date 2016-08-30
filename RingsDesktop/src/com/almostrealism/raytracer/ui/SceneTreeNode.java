@@ -67,8 +67,8 @@ public class SceneTreeNode implements MutableTreeNode, EventGenerator, EventList
 		int l = this.scene.getSurfaces().length;
 		
 		for(int i = 0; i < l; i++) {
-			if (this.scene.getSurface(i) instanceof SurfaceUI)
-				this.children.add(new SurfaceTreeNode((SurfaceUI)this.scene.getSurface(i), this));
+			if (this.scene.get(i) instanceof SurfaceUI)
+				this.children.add(new SurfaceTreeNode((SurfaceUI)this.scene.get(i), this));
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class SceneTreeNode implements MutableTreeNode, EventGenerator, EventList
 	 * at the specified index and updates the children.
 	 */
 	public void remove(int index) {
-		this.scene.removeSurface(index);
+		this.scene.remove(index);
 		this.updateChildren();
 	}
 	
