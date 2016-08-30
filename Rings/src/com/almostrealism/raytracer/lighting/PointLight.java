@@ -20,18 +20,18 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 /**
-  An PointLight object represents a light which has its source at a point in the scene.
-  The color and intensity of the light may by specified, but by default it is white light.
-  Also, coefficients for distance attenuation may be specified also,
-  but by default are 0.0, 0.0, and 1.0 (no attenuation).
-*/
+ * An {@link PointLight} object represents a light which has its source at a point in the scene.
+ * The color and intensity of the light may by specified, but by default it is white light.
+ * Also, coefficients for distance attenuation may be specified also, but by default are 0.0, 0.0,
+ * and 1.0 (no attenuation).
+ */
 public class PointLight implements Light {
-  private double intensity;
-  private RGB color;
-  
-  private Vector location;
-  
-  private double da, db, dc;
+	private double intensity;
+	private RGB color;
+
+	private Vector location;
+
+	private double da, db, dc;
 
 	/**
 	  Constructs a PointLight object with the default intensity and color at the origin.

@@ -32,8 +32,7 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.raytracer.lighting.RectangularLight;
+import com.almostrealism.raytracer.lighting.StandardLightingRigs;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.StripeTexture;
@@ -120,28 +119,7 @@ public class RenderDemo {
 		scene.add(s);
 		scene.add(thing);
 		
-		RectangularLight rl = new RectangularLight(2.0, 2.0);
-		rl.setColor(new RGB(1.0, 1.0, 1.0));
-		rl.getLocation().setY(6.0);
-		rl.setType(Plane.XZ);
-		rl.setIntensity(0.7);
-		rl.setSampleCount(6);
-		
-		PointLight pl1 = new PointLight(new Vector(4.0, 4.0, 3.0), 0.6, new RGB(0.4, 1.0, 0.4));
-		PointLight pl2 = new PointLight(new Vector(-4.0, 4.0, 3.0), 0.6, new RGB(1.0, 0.4, 0.4));
-		
-		PointLight pl3 = new PointLight(new Vector(0.0, 5.0, 4.0), 0.7, new RGB(0.0, 0.0, 1.0)) {
-			public RGB getColorAt(Vector p) {
-				RGB c = super.getColorAt(p);
-				c.multiplyBy(Math.sin(p.subtract(super.getLocation()).length()));
-				return c;
-			}
-		};
-		
-		scene.addLight(rl);
-		scene.addLight(pl1);
-		scene.addLight(pl2);
-		scene.addLight(pl3);
+		StandardLightingRigs.addDefaultLights(scene);
 		
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));

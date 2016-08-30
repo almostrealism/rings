@@ -23,6 +23,7 @@ import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
+import com.almostrealism.raytracer.lighting.StandardLightingRigs;
 
 /**
  * {@link ReplicantScene} stores for rendering all the {@link Replicant}s in a
@@ -36,6 +37,8 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 public class ReplicantScene extends Scene<Replicant> {
 	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
 		addReplicants(this, g);
+
+		StandardLightingRigs.addDefaultLights(this);
 		
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
