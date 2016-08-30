@@ -139,7 +139,7 @@ public class NewSurfaceDialog extends JPanel implements Dialog, EventGenerator {
 		this.closeDialog();
 		
 		if (this.scene != null)
-			this.scene.addSurface(surface);
+			this.scene.add(surface);
 		else if (this.group != null)
 			this.group.addSurface(surface);
 		else
