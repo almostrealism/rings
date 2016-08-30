@@ -52,7 +52,7 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 			
 			@Override
 			public boolean hasNext() {
-				return (!itr.hasNext() && (gitr == null || !gitr.hasNext()));
+				return (itr.hasNext() || (gitr != null && gitr.hasNext()));
 			}
 
 			@Override
@@ -65,8 +65,11 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 				BasicGeometry g = gitr.next();
 				
 				if (surface instanceof BasicGeometry) {
+					// TODO  What about subtracting the previous one?
 					((BasicGeometry) surface).sum(g);
 				}
+				
+				System.out.println("Returning " + surface);
 				
 				return surface;
 			}
