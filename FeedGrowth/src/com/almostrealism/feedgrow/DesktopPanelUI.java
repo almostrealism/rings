@@ -45,6 +45,8 @@ public class DesktopPanelUI extends JPanel {
 		toolBar = new JToolBar();
 		toolBar.setOpaque(true);
 		toolBar.setBackground(Color.black);
+		toolBar.setForeground(Color.black);
+		toolBar.setBorderPainted(false);
 		panel.add(toolBar, BorderLayout.SOUTH);
 		panel.setOpaque(true);
 		panel.setBackground(Color.black);
