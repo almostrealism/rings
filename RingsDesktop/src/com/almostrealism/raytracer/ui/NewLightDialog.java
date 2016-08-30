@@ -38,19 +38,19 @@ import com.almostrealism.raytracer.Scene;
  * A NewLightDialog object can be used to allow the user to add a Light object to a Scene object.
  */
 public class NewLightDialog extends JPanel implements Dialog, EventGenerator {
-  private String lightTypes[] = {"Ambient Light", "Directional Ambient Light", "Point Light",
-  								"Spherical Light", "Rectangular Light"};
-  
-  private Scene scene;
-  
-  private EventHandler handler;
-  
-  private boolean open;
-  
-  private JFrame frame;
-  
-  private JComboBox lightTypesList;
-  private JButton createButton;
+	private String lightTypes[] = {"Ambient Light", "Directional Ambient Light", "Point Light",
+									"Spherical Light", "Rectangular Light"};
+
+	private Scene scene;
+
+	private EventHandler handler;
+
+	private boolean open;
+
+	private JFrame frame;
+
+	private JComboBox lightTypesList;
+	private JButton createButton;
 
 	/**
 	 * Constructs a new NewLightDialog object using the specified Scene object.
