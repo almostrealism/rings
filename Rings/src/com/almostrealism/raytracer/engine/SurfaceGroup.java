@@ -52,9 +52,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 		setColor(new RGB(1.0, 1.0, 1.0));
 	}
 	
-	/**
-	 * Constructs a {@link SurfaceGroup} using the {@link Surface}s in the specified array.
-	 */
+	/** Constructs a {@link SurfaceGroup} using the {@link Surface}s in the specified array. */
 	public SurfaceGroup(T surfaces[]) {
 		this();
 		this.setSurfaces(surfaces);
