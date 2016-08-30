@@ -17,6 +17,7 @@
 package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
@@ -54,8 +55,19 @@ public class DesktopPanel extends DesktopPanelUI {
 
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
+		
+		// Zoom slider
+		r.getZoomSlider().setOpaque(true);
+		r.getZoomSlider().setBackground(Color.black);
 		renderPanel.add(r.getZoomSlider(), BorderLayout.EAST);
-		renderPanel.add(new OptimizerDesktopWidget<Long>(null), BorderLayout.NORTH);
+		
+		// Optimizer status display
+		OptimizerDesktopWidget<Long> ow = new OptimizerDesktopWidget<Long>(null);
+		ow.setBackground(Color.black);
+		ow.setForeground(Color.white);
+		renderPanel.add(ow, BorderLayout.NORTH);
+		
+		// Start rendering
 		raytracer.render();
 	}
 

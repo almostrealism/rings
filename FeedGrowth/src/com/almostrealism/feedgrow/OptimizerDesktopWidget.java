@@ -17,6 +17,7 @@
 package com.almostrealism.feedgrow;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JPanel;
 
@@ -45,6 +46,11 @@ public class OptimizerDesktopWidget<T> extends JPanel {
 		
 		this.display = new ScrollingTextDisplay(producer, 30, false);
 		this.add(display, BorderLayout.CENTER);
+	}
+	
+	public void setForeground(Color c) {
+		super.setForeground(c);
+		if (display != null) display.setForeground(c);
 	}
 	
 	public static void main(String args[]) {
