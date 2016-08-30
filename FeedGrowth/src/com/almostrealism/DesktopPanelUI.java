@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow;
+package com.almostrealism;
 
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;

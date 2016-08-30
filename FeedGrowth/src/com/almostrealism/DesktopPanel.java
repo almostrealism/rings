@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow;
+package com.almostrealism;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 
 import org.almostrealism.swing.DragSupport;
 
+import com.almostrealism.feedgrow.OptimizerDesktopWidget;
 import com.almostrealism.raytracer.io.WavefrontObjParser;
 import com.almostrealism.receptor.ReceptorRenderPanel;
 
