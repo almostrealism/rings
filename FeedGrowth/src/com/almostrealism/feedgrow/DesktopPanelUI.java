@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.JToolBar;
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 /**
  * @author  Michael Murray
@@ -42,7 +43,11 @@ public class DesktopPanelUI extends JPanel {
 		renderPanel.setLayout(new BorderLayout(0, 0));
 		
 		toolBar = new JToolBar();
+		toolBar.setOpaque(true);
+		toolBar.setBackground(Color.black);
 		panel.add(toolBar, BorderLayout.SOUTH);
+		panel.setOpaque(true);
+		panel.setBackground(Color.black);
 	}
 
 }
