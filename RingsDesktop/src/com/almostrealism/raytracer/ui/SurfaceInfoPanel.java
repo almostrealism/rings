@@ -268,8 +268,8 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 						SceneTreeNode sceneParentNode = (SceneTreeNode)parentNode;
 						
 						i: for(int i = 0; i < sceneParentNode.getScene().getSurfaces().length; i++) {
-							if (sceneParentNode.getScene().getSurface(i) == surface) {
-								sceneParentNode.getScene().removeSurface(i);
+							if (sceneParentNode.getScene().get(i) == surface) {
+								sceneParentNode.getScene().remove(i);
 								removed = true;
 								
 								break i;
@@ -277,15 +277,19 @@ public class SurfaceInfoPanel extends JPanel implements EventListener, EventGene
 						}
 					} else if (parentNode instanceof SurfaceTreeNode) {
 						SurfaceTreeNode surfaceParentNode = (SurfaceTreeNode)parentNode;
-						SurfaceGroup group = (SurfaceGroup)surfaceParentNode.getSurface();
+						SurfaceGroup<ShadableSurface> group = (SurfaceGroup<ShadableSurface>) surfaceParentNode.getSurface();
 						
-						i: for(int i = 0; i < group.getSurfaces().length; i++) {
-							if (group.getSurface(i) == surface) {
+						int i = 0;
+						
+						i: for (ShadableSurface s : group) {
+							if (s == surface) {
 								group.removeSurface(i);
 								removed = true;
 								
 								break i;
 							}
+							
+							i++;
 						}
 					}
 				}
