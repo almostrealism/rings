@@ -30,13 +30,13 @@ import java.awt.Graphics;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.SphericalLight;
+import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 import com.almostrealism.raytracer.graphics.ParticleGroupRenderer;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.SphericalLight;
-import com.almostrealism.raytracer.lighting.SurfaceLight;
 import com.almostrealism.raytracer.primitives.Sphere;
 
 
@@ -236,7 +236,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	public SphericalLight getLight() { return this.light; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.SurfaceLight#getSamples(int)
+	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
 	 */
 	public Light[] getSamples(int samples) {
 		if (this.light == null)
@@ -246,7 +246,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.SurfaceLight#getSamples()
+	 * @see com.almostrealism.lighting.SurfaceLight#getSamples()
 	 */
 	public Light[] getSamples() {
 		if (this.light == null)
@@ -256,12 +256,12 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.Light#setIntensity(double)
+	 * @see com.almostrealism.lighting.Light#setIntensity(double)
 	 */
 	public void setIntensity(double intensity) { if (this.light != null) this.light.setIntensity(intensity); }
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.Light#getIntensity()
+	 * @see com.almostrealism.lighting.Light#getIntensity()
 	 */
 	public double getIntensity() {
 		if (this.light == null)

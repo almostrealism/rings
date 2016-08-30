@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.lighting;
+package com.almostrealism.lighting;
 
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;

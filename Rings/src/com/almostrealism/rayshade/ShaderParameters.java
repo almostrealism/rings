@@ -23,9 +23,9 @@ import java.util.Hashtable;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.Light;
 
 
 /**

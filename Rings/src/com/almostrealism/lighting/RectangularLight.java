@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.lighting;
+package com.almostrealism.lighting;
 
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
@@ -72,7 +72,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	public int getSampleCount() { return this.samples; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.SurfaceLight#getSamples(int)
+	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
 	 */
 	public Light[] getSamples(int total) {
 		Light l[] = new Light[total];
@@ -106,7 +106,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	}
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.SurfaceLight#getSamples()
+	 * @see com.almostrealism.lighting.SurfaceLight#getSamples()
 	 */
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 	
@@ -131,12 +131,12 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	public double getHeight() { return this.height; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.Light#setIntensity(double)
+	 * @see com.almostrealism.lighting.Light#setIntensity(double)
 	 */
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.lighting.Light#getIntensity()
+	 * @see com.almostrealism.lighting.Light#getIntensity()
 	 */
 	public double getIntensity() { return this.intensity; }
 	

@@ -34,12 +34,12 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
 import com.almostrealism.io.SpatialData;
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.ui.SurfaceAddEvent;
 
 

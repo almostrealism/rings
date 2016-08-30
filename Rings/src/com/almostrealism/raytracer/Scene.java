@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.almostrealism.space.SurfaceList;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.Light;
 
 /**
  * A Scene object represents a scene in 3d. It stores a Camera object, an array of Light objects,

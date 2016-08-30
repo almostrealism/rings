@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.ui;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.event.SceneEditEvent;
-import com.almostrealism.raytracer.lighting.Light;
 
 /**
   A LightRemoveEvent object represents the event of removing a Light object from the current Scene object.

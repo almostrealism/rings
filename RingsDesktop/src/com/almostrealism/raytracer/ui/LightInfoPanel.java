@@ -29,10 +29,10 @@ import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
-import com.almostrealism.raytracer.lighting.Light;
 
 /**
   A LightInfoPanel object allows access to a list of Light objects contained in the specified Scene object.

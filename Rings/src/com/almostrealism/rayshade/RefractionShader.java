@@ -25,11 +25,11 @@ import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.Light;
 
 // TODO  Fix refraction algorithm.
 

@@ -26,13 +26,13 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 
+import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
-import com.almostrealism.raytracer.lighting.StandardLightingRigs;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.StripeTexture;

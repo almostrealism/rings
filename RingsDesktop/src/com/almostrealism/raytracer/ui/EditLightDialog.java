@@ -39,17 +39,17 @@ import org.almostrealism.swing.panels.EditVectorPanel;
 import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.lighting.AmbientLight;
+import com.almostrealism.lighting.DirectionalAmbientLight;
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.PointLight;
+import com.almostrealism.lighting.RectangularLight;
+import com.almostrealism.lighting.SphericalLight;
+import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
-import com.almostrealism.raytracer.lighting.AmbientLight;
-import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.raytracer.lighting.RectangularLight;
-import com.almostrealism.raytracer.lighting.SphericalLight;
-import com.almostrealism.raytracer.lighting.SurfaceLight;
 
 // TODO  Add presets for attenuation constants
 

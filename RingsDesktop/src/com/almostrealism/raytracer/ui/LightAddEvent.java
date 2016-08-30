@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.ui;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.event.SceneEditEvent;
-import com.almostrealism.raytracer.lighting.Light;
 
 /**
  * A LightAddEvent object represents the event of adding a new Light object to the current Scene object.

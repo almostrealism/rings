@@ -20,10 +20,10 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.PointLight;
+import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.photon.util.Locatable;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.raytracer.lighting.SurfaceLight;
 
 public class PlanarLight extends LightBulb implements SurfaceLight, Locatable {
 	private double w, h;

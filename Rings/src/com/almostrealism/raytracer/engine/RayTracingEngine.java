@@ -38,16 +38,16 @@ import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.lighting.AmbientLight;
+import com.almostrealism.lighting.DirectionalAmbientLight;
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.PointLight;
+import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.lighting.AmbientLight;
-import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.raytracer.lighting.SurfaceLight;
 
 /**
  * The RayTracingEngine class provides static methods for rendering scenes.

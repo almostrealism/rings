@@ -19,11 +19,11 @@ package com.almostrealism.replicator.geometry;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
-import com.almostrealism.raytracer.lighting.StandardLightingRigs;
 
 /**
  * {@link ReplicantScene} stores for rendering all the {@link Replicant}s in a

@@ -32,6 +32,7 @@ import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.photon.distribution.BRDF;
 import com.almostrealism.photon.distribution.SphericalProbabilityDistribution;
 import com.almostrealism.photon.geometry.Elipse;
@@ -54,7 +55,6 @@ import com.almostrealism.projection.Camera;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.Light;
 
 /**
  * An AbsorberHashSet object is an implementation of AbsorberSet that uses a HashSet

@@ -52,6 +52,9 @@ import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.ui.JTextAreaPrintWriter;
 
+import com.almostrealism.lighting.DirectionalAmbientLight;
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.SphericalLight;
 import com.almostrealism.physics.shaders.RigidBodyStateShader;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
@@ -65,9 +68,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.SphericalLight;
 
 /**
  * @author Mike Murray

@@ -25,18 +25,18 @@ import java.util.Date;
 
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.lighting.AmbientLight;
+import com.almostrealism.lighting.DirectionalAmbientLight;
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.PointLight;
+import com.almostrealism.lighting.RectangularLight;
+import com.almostrealism.lighting.SphericalLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.lighting.AmbientLight;
-import com.almostrealism.raytracer.lighting.DirectionalAmbientLight;
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.PointLight;
-import com.almostrealism.raytracer.lighting.RectangularLight;
-import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.raytracer.primitives.Cone;
 import com.almostrealism.raytracer.primitives.Cylinder;
 import com.almostrealism.raytracer.primitives.Mesh;

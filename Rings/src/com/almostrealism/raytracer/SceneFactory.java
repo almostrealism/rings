@@ -27,8 +27,8 @@ package com.almostrealism.raytracer;
 
 import org.almostrealism.space.Vector;
 
-import com.almostrealism.raytracer.lighting.Light;
-import com.almostrealism.raytracer.lighting.PointLight;
+import com.almostrealism.lighting.Light;
+import com.almostrealism.lighting.PointLight;
 
 /**
  * The SceneFactory class provides static utility methods for getting commonly

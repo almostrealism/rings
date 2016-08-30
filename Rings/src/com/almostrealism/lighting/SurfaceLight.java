@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.lighting;
+package com.almostrealism.lighting;
 
 /**
  * A SurfaceLight implementation represents a light that can be represented
