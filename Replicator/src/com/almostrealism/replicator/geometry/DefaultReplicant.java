@@ -68,7 +68,7 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 					((BasicGeometry) surface).sum(g);
 				}
 				
-				return null;
+				return surface;
 			}
 		};
 	}
