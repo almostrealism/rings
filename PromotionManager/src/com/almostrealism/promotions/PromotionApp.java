@@ -34,9 +34,9 @@ public class PromotionApp {
 		if (file.equals("-new")) {
 			loaded = new PromotionDatabase();
 		} else {
-			XMLDecoder d = new XMLDecoder(new FileInputStream(file));
-			loaded = d.readObject();
-			d.close();
+			try (XMLDecoder d = new XMLDecoder(new FileInputStream(file))) {
+				loaded = d.readObject();
+			}
 		}
 		
 		final PromotionDatabase db = (PromotionDatabase) loaded;
@@ -52,10 +52,8 @@ public class PromotionApp {
 				if (f.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION)
 					return;
 				
-				try {
-					XMLEncoder enc = new XMLEncoder(new FileOutputStream(f.getSelectedFile()));
+				try (XMLEncoder enc = new XMLEncoder(new FileOutputStream(f.getSelectedFile()))) {
 					enc.writeObject(db);
-					enc.close();
 				} catch (FileNotFoundException fnf) {
 					fnf.printStackTrace();
 				}
