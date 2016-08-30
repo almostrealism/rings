@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.space.GeometryStack;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
@@ -54,7 +55,7 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 			public boolean hasNext() {
 				return (itr.hasNext() || (gitr != null && gitr.hasNext()));
 			}
-
+			
 			@Override
 			public T next() {
 				if (gitr == null || !gitr.hasNext()) {
@@ -64,12 +65,10 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 				
 				BasicGeometry g = gitr.next();
 				
-				if (surface instanceof BasicGeometry) {
-					// TODO  What about subtracting the previous one?
-					((BasicGeometry) surface).sum(g);
+				if (surface instanceof GeometryStack) {
+					((GeometryStack) surface).pop();
+					((GeometryStack) surface).push(g);
 				}
-				
-				System.out.println("Returning " + surface);
 				
 				return surface;
 			}

@@ -17,11 +17,12 @@
 package com.almostrealism.raytracer.primitives;
 
 import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.space.GeometryStack;
 
 /**
  * @author  Michael Murray
  */
-public class TriangulatableGeometry extends BasicGeometry implements Triangulatable {
+public class TriangulatableGeometry extends GeometryStack implements Triangulatable {
 	
 	/**
 	 * @return  A Mesh object with location, size, scale coefficients,

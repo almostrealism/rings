@@ -28,15 +28,15 @@ import org.almostrealism.geometry.Scaled;
  * @author  Michael Murray
  */
 public class BasicGeometry implements Positioned, Oriented, Scaled {
-	private Vector location;
-	private double size;
+	protected Vector location;
+	protected double size;
 	
 	protected double scaleX, scaleY, scaleZ;
 	protected double rotateX, rotateY, rotateZ;
 
 	private TransformMatrix transforms[];
 	private TransformMatrix transform, completeTransform;
-	private boolean transformCurrent;
+	protected boolean transformCurrent;
 
 	public BasicGeometry() {
 		this.setTransforms(new TransformMatrix[0]);
@@ -145,8 +145,9 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	public TransformMatrix getTransform() { return this.getTransform(false); }
 	
 	/**
-	 * Returns the TransformMatrix object used to transform this BasicGeometry when it is rendered.
-	 * If the specified boolean value is true, this TransformMatrix includes the transformations due to fixed scaling and rotation.
+	 * Returns the {@link TransformMatrix} object used to transform this {@link BasicGeometry}
+	 * when it is rendered. If the specified boolean value is true, this {@link TransformMatrix}
+	 * includes the transformations due to fixed scaling and rotation.
 	 */
 	public TransformMatrix getTransform(boolean include) {
 		this.calculateTransform();
