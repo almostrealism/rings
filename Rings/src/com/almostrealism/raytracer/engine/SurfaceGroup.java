@@ -24,6 +24,7 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Surface;
@@ -34,6 +35,7 @@ import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
+import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
 
 /**
  * A {@link SurfaceGroup} object allows {@link ShadableSurface} objects to be grouped together.
@@ -139,10 +141,10 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	public Mesh triangulate() {
 		Mesh mesh = super.triangulate();
 		
-		i: for (int i = 0; i < this.surfaces.size(); i++) {
-			if (this.surfaces.get(i) instanceof AbstractSurface == false) continue i;
+		i: for (Surface s : this) {
+			if (s instanceof TriangulatableGeometry == false) continue i;
 			
-			Mesh m = ((AbstractSurface) this.surfaces.get(i)).triangulate();
+			Mesh m = ((TriangulatableGeometry) s).triangulate();
 			
 			Vector v[] = m.getVectors();
 			Triangle t[] = m.getTriangles();
@@ -173,8 +175,8 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	public boolean intersect(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		for(int i = 0; i < this.surfaces.size(); i++) {
-			if (this.surfaces.get(i).intersect(ray) == true)
+		for (Intersectable s : this) {
+			if (s.intersect(ray) == true)
 				return true;
 		}
 		
