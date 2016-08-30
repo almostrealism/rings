@@ -37,14 +37,13 @@ import com.almostrealism.raytracer.graphics.ParticleGroupRenderer;
 import com.almostrealism.raytracer.lighting.Light;
 import com.almostrealism.raytracer.lighting.SphericalLight;
 import com.almostrealism.raytracer.lighting.SurfaceLight;
+import com.almostrealism.raytracer.primitives.Sphere;
 
 
 /**
  * @author Mike Murray
  */
-public class Sphere extends com.almostrealism.raytracer.primitives.Sphere implements RigidBody,
-																ParticleGroup,
-																SurfaceLight {
+public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, SurfaceLight {
 	private State state;
 	
 	private SphericalLight light;
@@ -58,7 +57,7 @@ public class Sphere extends com.almostrealism.raytracer.primitives.Sphere implem
 	 * Constructs a new Sphere object using (0.0, 0.0, 0.0) for all vector values
 	 * 1.0 for mass, 1.0 for the coefficient of restitution, and 4 for the radial sample.
 	 */
-	public Sphere() {
+	public RigidSphere() {
 		this(new Vector(0.0, 0.0, 0.0), new Vector(0.0, 0.0, 0.0),
 			new Vector(0.0, 0.0, 0.0), new Vector(0.0, 0.0, 0.0),
 			new Vector(0.0, 0.0, 0.0), new Vector(0.0, 0.0, 0.0),
@@ -78,7 +77,7 @@ public class Sphere extends com.almostrealism.raytracer.primitives.Sphere implem
 	 * @param e  coefficient of restitution
 	 * @param radius  radius
 	 */
-	public Sphere(Vector x, Vector r, Vector v, Vector w, Vector f, Vector t,
+	public RigidSphere(Vector x, Vector r, Vector v, Vector w, Vector f, Vector t,
 					double mass, double e, double radius, int radialSample) {
 		super(x, radius);
 		
@@ -166,9 +165,9 @@ public class Sphere extends com.almostrealism.raytracer.primitives.Sphere implem
 	public Vector[] intersect(RigidBody b) {
 		double r = super.getSize();
 		
-		if (b instanceof Sphere) {
-			State s = ((Sphere)b).getState();
-			double sr = ((Sphere)b).getSize();
+		if (b instanceof RigidSphere) {
+			State s = ((RigidSphere)b).getState();
+			double sr = ((RigidSphere)b).getSize();
 			
 			Vector d = s.x.subtract(this.state.x);
 			

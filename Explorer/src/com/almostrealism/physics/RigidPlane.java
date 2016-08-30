@@ -72,11 +72,11 @@ public class RigidPlane extends Plane implements RigidBody {
 	 * @see com.almostrealism.physics.RigidBody#intersect(com.almostrealism.physics.RigidBody)
 	 */
 	public Vector[] intersect(RigidBody b) {
-		if (b instanceof Sphere) {
-			State s = ((Sphere)b).getState();
+		if (b instanceof RigidSphere) {
+			State s = ((RigidSphere)b).getState();
 			double d = this.state.x.getY() - s.x.getY();
 			
-			if (Math.abs(d) <= ((Sphere)b).getRadius()) {
+			if (Math.abs(d) <= ((RigidSphere)b).getRadius()) {
 				if (d >= 0)
 					return new Vector[] {new Vector(s.x.getX(), s.x.getY(), s.x.getZ()), new Vector(0.0, -1.0, 0.0)};
 				else

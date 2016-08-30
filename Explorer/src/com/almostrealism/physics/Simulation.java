@@ -584,8 +584,8 @@ public class Simulation extends Scene implements Runnable {
 			AbstractSurface surface = null;
 			if (super.get(i) instanceof AbstractSurface) surface = (AbstractSurface) super.get(i);
 			
-			if (surface instanceof Sphere) {
-				Sphere s = (Sphere)surface;
+			if (surface instanceof RigidSphere) {
+				RigidSphere s = (RigidSphere)surface;
 				
 				p.setProperty("bodies." + i + ".type", "sphere");
 				p.setProperty("bodies." + i + ".size", String.valueOf(s.getSize()));
@@ -724,9 +724,9 @@ public class Simulation extends Scene implements Runnable {
 			if (type == null) {
 				continue i;
 			} else if (type.equals("sphere")) {
-				b = new Sphere();
-				((Sphere)b).setRadius(size);
-				((Sphere)b).setColor(new RGB(0.8, 0.8, 0.8));
+				b = new RigidSphere();
+				((RigidSphere)b).setRadius(size);
+				((RigidSphere)b).setColor(new RGB(0.8, 0.8, 0.8));
 				
 				String lit = p.getProperty("bodies." + i + ".light.on");
 				
@@ -738,9 +738,9 @@ public class Simulation extends Scene implements Runnable {
 					double atb = Double.parseDouble(p.getProperty("bodies." + i + ".light.atb", "0.0"));
 					double atc = Double.parseDouble(p.getProperty("bodies." + i + ".light.atc", "1.0"));
 					
-					((Sphere)b).setLighting(true);
+					((RigidSphere)b).setLighting(true);
 					
-					SphericalLight light = ((Sphere)b).getLight();
+					SphericalLight light = ((RigidSphere)b).getLight();
 					light.setColor(new RGB(1.0, 1.0, 1.0));
 					light.setIntensity(intensity);
 					light.setSampleCount(samples);
