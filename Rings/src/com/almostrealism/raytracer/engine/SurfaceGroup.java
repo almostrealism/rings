@@ -189,6 +189,6 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	public Intersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		return Intersections.closestIntersection(ray, surfaces);
+		return Intersections.closestIntersection(ray, this);
 	}
 }
