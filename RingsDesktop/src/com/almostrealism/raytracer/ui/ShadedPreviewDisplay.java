@@ -22,6 +22,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -100,7 +101,7 @@ public class ShadedPreviewDisplay extends JPanel implements Runnable {
 		if (this.sample != null) {
 			RenderParameters p = new RenderParameters(0, 0, w, h, w, h, 1, 1);
 			
-			RGB rgb[][] = RayTracingEngine.render(new ShadableSurface[] { this.sample },
+			RGB rgb[][] = RayTracingEngine.render(Arrays.asList(this.sample),
 												this.camera, this.lights,
 												p, null);
 			this.image = GraphicsConverter.convertToAWTImage(rgb);
