@@ -30,7 +30,7 @@ import javax.swing.JFrame;
 import org.almostrealism.swing.DragSupport;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
-import com.almostrealism.raytracer.io.WavefrontObjParser;
+import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.receptor.ReceptorRenderPanel;
 
 /**
@@ -46,7 +46,8 @@ public class DesktopPanel extends DesktopPanelUI {
 		addMouseListener(draggable);
 		addMouseMotionListener(draggable);
 
-		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
+//		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
+		r.addLayer("Sphere", new Sphere());
 
 		toolBar.add(new QuitAction());
 		toolBar.add(r.getCanvasAction());
