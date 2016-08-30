@@ -17,7 +17,9 @@
 package com.almostrealism.replicator.geometry;
 
 import org.almostrealism.space.Surface;
+import org.almostrealism.space.Vector;
 
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
@@ -34,6 +36,15 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 public class ReplicantScene extends Scene<Replicant> {
 	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
 		addReplicants(this, g);
+		
+		ThinLensCamera c = new ThinLensCamera();
+		c.setLocation(new Vector(0.0, 0.0, 10.0));
+		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+		c.setFocalLength(0.05);
+		c.setFocus(10.0);
+		c.setLensRadius(0.2);
+		setCamera(c);
 	}
 	
 	private static void addReplicants(ReplicantScene scene, SurfaceGroup<ShadableSurface> g) {

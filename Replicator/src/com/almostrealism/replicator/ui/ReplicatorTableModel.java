@@ -44,6 +44,14 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		modelNames = new ArrayList<String>();
 	}
 	
+	/**
+	 * Adds a {@link DefaultReplicant} with 6 aliases, {@link #LEFT},
+	 * {@link #RIGHT}, {@link #TOP}, {@link #BOTTOM}, {@link #FRONT},
+	 * {@link #BACK}.
+	 * 
+	 * @param name  Name of the layer to add.
+	 * @param s  Surface to replicate across the 6 directions.
+	 */
 	public void addLayer(String name, ShadableSurface s) {
 		DefaultReplicant r = new DefaultReplicant(s);
 		r.put(LEFT, new BasicGeometry());

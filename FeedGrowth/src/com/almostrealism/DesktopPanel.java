@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import org.almostrealism.swing.DragSupport;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
 import com.almostrealism.raytracer.primitives.Sphere;
@@ -47,7 +48,11 @@ public class DesktopPanel extends DesktopPanelUI {
 		addMouseMotionListener(draggable);
 
 //		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
-		r.addLayer("Sphere", new Sphere());
+		
+		// Start with one initial layer
+		Sphere s = new Sphere();
+		s.setColor(new RGB(0.8, 0.8, 0.8));
+		r.addLayer("Sphere", s);
 
 		toolBar.add(new QuitAction());
 		toolBar.add(r.getCanvasAction());

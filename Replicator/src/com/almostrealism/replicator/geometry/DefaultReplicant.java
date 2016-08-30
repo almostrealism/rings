@@ -50,6 +50,7 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 		return new Iterator<T>() {
 			private Iterator<BasicGeometry> gitr;
 			private T surface;
+			private boolean pushed = false;
 			
 			@Override
 			public boolean hasNext() {
@@ -66,8 +67,9 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 				BasicGeometry g = gitr.next();
 				
 				if (surface instanceof GeometryStack) {
-					((GeometryStack) surface).pop();
+					if (pushed) ((GeometryStack) surface).pop();
 					((GeometryStack) surface).push(g);
+					pushed = true;
 				}
 				
 				return surface;
