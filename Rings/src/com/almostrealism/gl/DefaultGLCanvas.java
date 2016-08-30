@@ -35,11 +35,12 @@ import com.jogamp.opengl.glu.gl2.GLUgl2;
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.util.ValueProducer;
 
+import com.almostrealism.projection.Camera;
 import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
+public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
 	private FPSAnimator animator;
 	
 	private float view_rotx = 20.0f, view_roty = 30.0f;
@@ -53,7 +54,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	private ValueProducer zoom;
 	private int prevMouseX, prevMouseY;
 	
-	private float camera[] = {0f, 0f, 0f};
+	private float lookAt[] = {0f, 0f, 0f};
 	
 	public DefaultGLCanvas() {
 		scene = new ArrayList<Renderable>();
@@ -76,15 +77,17 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 	
 	public void setZoom(ValueProducer p) { zoom = p; }
 	
-	public void setCamera(float x, float y, float z) {
-		camera[0] = x;
-		camera[1] = y;
-		camera[2] = z;
+	public abstract Camera getCamera();
+	
+	private void setLookAt(float x, float y, float z) {
+		lookAt[0] = x;
+		lookAt[1] = y;
+		lookAt[2] = z;
 	}
 	
 	public void lookAt(BasicGeometry g) {
 		float f[] = g.getPosition();
-		setCamera(f[0], f[1], f[2]);
+		setLookAt(f[0], f[1], f[2]);
 	}
 	
 	@Override
@@ -99,9 +102,9 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		System.err.println("GL_VENDOR: " + gl.glGetString(GL2.GL_VENDOR));
 		System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
 		System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
-
+		
 		float pos[] = { 5000.0f, 5000.0f, 5000.0f, 0.0f };
-
+		
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_LIGHTING);
@@ -140,7 +143,7 @@ public class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseL
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, -200.0f, -z);
-		gl.glTranslatef(camera[0], camera[1], camera[2]);
+		gl.glTranslatef(lookAt[0], lookAt[1], lookAt[2]);
 	}
 
 	@Override

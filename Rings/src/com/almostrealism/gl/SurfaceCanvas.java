@@ -16,11 +16,25 @@
 
 package com.almostrealism.gl;
 
+import org.almostrealism.space.Vector;
+
+import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	public SurfaceCanvas() { }
+	private Camera camera;
+	
+	public SurfaceCanvas() {
+		ThinLensCamera c = new ThinLensCamera();
+		c.setLocation(new Vector(0.0, 0.0, 10.0));
+		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+		c.setFocalLength(0.05);
+		c.setFocus(10.0);
+		c.setLensRadius(0.2);
+	}
 	
 	public void add(ShadableSurface s) {
 		addSurface(s);
@@ -29,4 +43,6 @@ public class SurfaceCanvas extends DefaultGLCanvas {
 	public void addSurface(ShadableSurface s) {
 		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
+	
+	public Camera getCamera() { return camera; }
 }

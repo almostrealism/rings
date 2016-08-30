@@ -31,7 +31,7 @@ import com.almostrealism.raytracer.Settings;
  * @author Mike Murray
  */
 public class ThinLensCamera extends PinholeCamera {
-  private double focalLength, radius, w, h;
+	private double focalLength, radius, w, h;
 
 	/**
 	 * Constructs a new ThinLensCamera object.
