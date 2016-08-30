@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import org.almostrealism.swing.DragSupport;
+import org.almostrealism.swing.ValueSlider;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
@@ -39,6 +40,8 @@ import com.almostrealism.receptor.ReceptorRenderPanel;
  */
 public class DesktopPanel extends DesktopPanelUI {
 	private JFrame frame;
+	
+	private ValueSlider zoomSlider;
 
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		this.frame = parent;
@@ -64,9 +67,10 @@ public class DesktopPanel extends DesktopPanelUI {
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		
 		// Zoom slider
-		r.getZoomSlider().setOpaque(true);
-		r.getZoomSlider().setBackground(Color.black);
-		renderPanel.add(r.getZoomSlider(), BorderLayout.EAST);
+		zoomSlider = new ValueSlider(ValueSlider.VERTICAL, 0, 10, 5);
+		zoomSlider.setOpaque(true);
+		zoomSlider.setBackground(Color.black);
+		renderPanel.add(zoomSlider, BorderLayout.EAST);
 		
 		// Optimizer status display
 		OptimizerDesktopWidget<Long> ow = new OptimizerDesktopWidget<Long>(null);

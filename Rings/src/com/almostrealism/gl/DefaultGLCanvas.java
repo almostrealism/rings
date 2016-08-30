@@ -33,9 +33,9 @@ import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 import org.almostrealism.space.BasicGeometry;
-import org.almostrealism.util.ValueProducer;
+import org.almostrealism.space.Vector;
 
-import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -51,10 +51,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	
 	private List<Renderable> scene;
 	
-	private ValueProducer zoom;
 	private int prevMouseX, prevMouseY;
-	
-	private float lookAt[] = {0f, 0f, 0f};
 	
 	public DefaultGLCanvas() {
 		scene = new ArrayList<Renderable>();
@@ -75,19 +72,11 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	
 	public void removeAll() { scene.clear(); }
 	
-	public void setZoom(ValueProducer p) { zoom = p; }
-	
-	public abstract Camera getCamera();
-	
-	private void setLookAt(float x, float y, float z) {
-		lookAt[0] = x;
-		lookAt[1] = y;
-		lookAt[2] = z;
-	}
+	public abstract PinholeCamera getCamera();
 	
 	public void lookAt(BasicGeometry g) {
 		float f[] = g.getPosition();
-		setLookAt(f[0], f[1], f[2]);
+		getCamera().setViewingDirection(new Vector(f[0], f[1], f[2]));
 	}
 	
 	@Override
@@ -137,15 +126,23 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 6000.0f);
 	}
 	
+	/**
+	 * Configures the {@link GL2#GL_MODELVIEW} matrix to match the
+	 * configuration of the {@link PinholeCamera} returned by the
+	 * {@link #getCamera()} method.
+	 */
 	public void doView(GL2 gl) {
-		float z = zoom == null ? 600.0f : (float) zoom.value();
+		PinholeCamera c = getCamera();
+		Vector loc = c.getLocation();
+		Vector vd = c.getViewDirection();
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, -200.0f, -z);
-		gl.glTranslatef(lookAt[0], lookAt[1], lookAt[2]);
+		gl.glTranslatef((float) loc.getX(), (float) loc.getY(), (float) loc.getZ());
+		gl.glTranslatef((float) vd.getX(), (float) vd.getY(), (float) vd.getZ());
 	}
-
+	
+	/** Does nothing. */
 	@Override
 	public void dispose(GLAutoDrawable drawable) { }
 

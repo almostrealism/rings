@@ -38,7 +38,6 @@ import com.almostrealism.audio.filter.PeriodicCellAdjustment;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.receptor.ReceptorPlayerPanel;
-import com.almostrealism.replicator.ui.ReceptorCanvas;
 import com.almostrealism.synth.SineWaveCell;
 
 public class Receptor {
@@ -46,25 +45,15 @@ public class Receptor {
 	
 	private JFrame receptorFrame, feedbackFrame;
 	
-	private ReceptorCanvas canvas;
 	private ReceptorPlayerPanel panel;
 	
 	public Receptor() throws UnsupportedAudioFileException, IOException {
-		canvas = new ReceptorCanvas();
 		panel = new ReceptorPlayerPanel();
-		
-		receptorFrame = new JFrame("Receptor");
-		receptorFrame.getContentPane().setLayout(new BorderLayout());
-		receptorFrame.getContentPane().add(canvas, BorderLayout.CENTER);
-		receptorFrame.setSize(400, 400);
-		receptorFrame.setLocationRelativeTo(null);
 		
 		feedbackFrame = new JFrame("Feedback");
 		feedbackFrame.getContentPane().setLayout(new BorderLayout());
 		feedbackFrame.getContentPane().add(panel, BorderLayout.CENTER);
 		feedbackFrame.setSize(400, 250);
-		
-		canvas.start();
 	}
 	
 	public void setPlayer(ReceptorPlayer p) { panel.setReceptorPlayer(p); }

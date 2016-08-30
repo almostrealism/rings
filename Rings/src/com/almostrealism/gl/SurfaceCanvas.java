@@ -18,13 +18,13 @@ package com.almostrealism.gl;
 
 import org.almostrealism.space.Vector;
 
-import com.almostrealism.projection.Camera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	private Camera camera;
+	private ThinLensCamera camera;
 	
 	public SurfaceCanvas() {
 		ThinLensCamera c = new ThinLensCamera();
@@ -44,5 +44,5 @@ public class SurfaceCanvas extends DefaultGLCanvas {
 		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
 	
-	public Camera getCamera() { return camera; }
+	public PinholeCamera getCamera() { return camera; }
 }
