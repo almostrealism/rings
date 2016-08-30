@@ -49,6 +49,21 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	}
 	
 	/**
+	 * Sums the location, size, scale coefficients, and rotation coefficients
+	 * of this {@link BasicGeometry} with those from the geometry specified.
+	 */
+	public void sum(BasicGeometry b) {
+		location = location.add(b.getLocation());
+		size += b.getSize();
+		scaleX += b.scaleX;
+		scaleY += b.scaleY;
+		scaleZ += b.scaleZ;
+		rotateX += b.rotateX;
+		rotateY += b.rotateY;
+		rotateZ += b.rotateZ;
+	}
+	
+	/**
 	 * Sets the location of this {@link BasicGeometry} to the specified
 	 * {@link Vector} object. This method calls calulateTransform() after
 	 * it is completed.
@@ -95,19 +110,15 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	}
 	
 	
-	/**
-	 * Returns the location of this BasicGeometry as a Vector object.
-	 */
+	/** Returns the location of this {@link BasicGeometry} as a {@link Vector} object. */
 	public Vector getLocation() { return this.location; }
 	
-	/**
-	 * Returns the size of this BasicGeometry as a double value.
-	 */
+	/** Returns the size of this {@link BasicGeometry} as a double value. */
 	public double getSize() { return this.size; }
 	
 	/**
-	 * Returns an array of double values containing the values used to scale this BasicGeometry
-	 * on the x, y, and z axes when it is rendered.
+	 * Returns an array of double values containing the values used to scale this
+	 * {@link BasicGeometry} on the x, y, and z axes when it is rendered.
 	 */
 	public double[] getScaleCoefficients() {
 		double scale[] = {this.scaleX, this.scaleY, this.scaleZ};
@@ -116,8 +127,9 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	}
 	
 	/**
-	 * Returns an array of double values containing the angle measurements (in radians) used to rotate
-	 * this BasicGeometry about the x, y, and z axes when it is rendered as an array of double values.
+	 * Returns an array of double values containing the angle measurements
+	 * (in radians) used to rotate this {@link BasicGeometry} about the x,
+	 * y, and z axes when it is rendered as an array of double values.
 	 */
 	public double[] getRotationCoefficients() {
 		double rotation[] = {this.rotateX, this.rotateY, this.rotateZ};
@@ -126,8 +138,9 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	}
 	
 	/**
-	 * Returns the TransformMatrix object used to transform this BasicGeometry when it is rendered.
-	 * This TransformMatrix does not represents the transformations due to fixed scaling and rotation.
+	 * Returns the {@link TransformMatrix} object used to transform this {@link BasicGeometry}
+	 * when it is rendered. This {@link TransformMatrix} does not represents the transformations
+	 * due to fixed scaling and rotation.
 	 */
 	public TransformMatrix getTransform() { return this.getTransform(false); }
 	

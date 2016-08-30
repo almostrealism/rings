@@ -44,7 +44,32 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 	public void clear() { geo.clear(); }
 	
 	public Iterator<T> iterator() {
-		// TODO  Apply each geometry to each surface
-		throw new RuntimeException("Not implemented");
+		final Iterator<T> itr = super.iterator();
+		
+		return new Iterator<T>() {
+			private Iterator<BasicGeometry> gitr;
+			private T surface;
+			
+			@Override
+			public boolean hasNext() {
+				return (!itr.hasNext() && (gitr == null || !gitr.hasNext()));
+			}
+
+			@Override
+			public T next() {
+				if (gitr == null || !gitr.hasNext()) {
+					surface = itr.next();
+					gitr = geometry().iterator();
+				}
+				
+				BasicGeometry g = gitr.next();
+				
+				if (surface instanceof BasicGeometry) {
+					((BasicGeometry) surface).sum(g);
+				}
+				
+				return null;
+			}
+		};
 	}
 }
