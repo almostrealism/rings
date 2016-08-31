@@ -24,7 +24,7 @@ import com.almostrealism.renderable.RenderableSurfaceFactory;
 public class SurfaceCanvas extends DefaultGLCanvas {
 	private Projectable<PinholeCamera> projectable;
 	
-	public SurfaceCanvas(Projectable<PinholeCamera> p) {
+	public SurfaceCanvas(Projectable<? extends PinholeCamera> p) {
 		projectable = p;
 	}
 	

@@ -61,7 +61,7 @@ public class Replicator {
 	private JFrame layersFrame, samplerFrame;
 	
 	public Replicator() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		canvas = new ReplicatorCanvas();
+		canvas = new ReplicatorCanvas(model.getScene());
 		receptor = new Receptor();
 		
 		model = new ReplicatorTableModel();
@@ -148,9 +148,7 @@ public class Replicator {
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
-	public ReplicantScene getScene() {
-		return new ReplicantScene(model.getSurfaces());
-	}
+	public ReplicantScene getScene() { return model.getScene(); }
 	
 	public Action getLayersAction() { return new LayersAction(); }
 	public Action getCanvasAction() { return new CanvasAction(); }

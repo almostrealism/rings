@@ -27,6 +27,7 @@ import org.almostrealism.space.Vector;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
+import com.almostrealism.replicator.geometry.ReplicantScene;
 
 public class ReplicatorTableModel extends AbstractTableModel {
 	private static final String LEFT = "Left";
@@ -68,6 +69,10 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		SurfaceGroup g = new SurfaceGroup();
 		for (DefaultReplicant r : layers) g.addSurface(r);
 		return g;
+	}
+	
+	public ReplicantScene getScene() {
+		return new ReplicantScene(getSurfaces());
 	}
 	
 	@Override
