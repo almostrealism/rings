@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.feedgrow;
+package com.almostrealism;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import com.almostrealism.audio.AudioProteinCache;
 import com.almostrealism.audio.Mixer;
 import com.almostrealism.audio.filter.Envelope;
 import com.almostrealism.audio.filter.PeriodicCellAdjustment;
+import com.almostrealism.feedgrow.ReceptorPlayer;
 import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.receptor.ReceptorPlayerPanel;

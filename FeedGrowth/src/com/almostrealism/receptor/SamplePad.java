@@ -26,7 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
-import com.almostrealism.feedgrow.Receptor;
+import com.almostrealism.Receptor;
 import com.almostrealism.synth.Sample;
 
 public class SamplePad extends JPanel implements ActionListener {
