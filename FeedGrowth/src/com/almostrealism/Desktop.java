@@ -46,7 +46,7 @@ public class Desktop extends JFrame {
 		
 		add(new DesktopPanel(this, new Replicator()), BorderLayout.CENTER);
 	}
-
+	
 	public static void main(String[] args) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();

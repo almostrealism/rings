@@ -24,11 +24,11 @@ import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import org.almostrealism.swing.DragSupport;
 import org.almostrealism.swing.ValueSlider;
+import org.almostrealism.texture.Icons;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
@@ -45,24 +45,26 @@ public class DesktopPanel extends DesktopPanelUI {
 
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		this.frame = parent;
-
+		
 		DragSupport draggable = new DragSupport(frame, this);
 		addMouseListener(draggable);
 		addMouseMotionListener(draggable);
 
+//		TODO  Add a cube layer
 //		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
 		
 		// Start with one initial layer
 		Sphere s = new Sphere();
+		s.setSize(0.1);
 		s.setColor(new RGB(0.8, 0.8, 0.8));
 		r.addLayer("Sphere", s);
-
+		
 		toolBar.add(new QuitAction());
 		toolBar.add(r.getCanvasAction());
 		toolBar.add(r.getLayersAction());
 		toolBar.add(r.getSamplerAction());
 		toolBar.add(r.getFeedbackAction());
-
+		
 		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		
@@ -81,12 +83,21 @@ public class DesktopPanel extends DesktopPanelUI {
 		// Start rendering
 		raytracer.render();
 	}
-
+	
 	private static class QuitAction extends AbstractAction {
 		public QuitAction() {
-			super("Quit", new ImageIcon(QuitAction.class.getResource("/icons/x.png")));
+			super("Quit", Icons.loadImageIcon("/icons/x.png"));
 		}
 
+		@Override
+		public void actionPerformed(ActionEvent e) { System.exit(0); }
+	}
+	
+	private static class RefreshAction extends AbstractAction {
+		public RefreshAction() {
+			super("Refresh", Icons.loadImageIcon("/icons/refresh.png"));
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) { System.exit(0); }
 	}
