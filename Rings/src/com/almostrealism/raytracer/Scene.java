@@ -20,45 +20,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.almostrealism.space.Surface;
 import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.projection.Camera;
-import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.projection.Projectable;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
- * A Scene object represents a scene in 3d. It stores a Camera object, an array of Light objects,
- * and an array of Surface objects.
+ * {@link Scene} extends {@link SurfaceList} to store {@link Light}s and a {@link Camera}.
  */
-public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
-  private Camera camera;
-  
-  private Light lights[];
-
+public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceList<T> implements Projectable<C> {
+	private C camera;
+	
+	private Light lights[];
+	
 	/**
-	 * Constructs a Scene object with a default Camera object and no Light or Surface objects.
+	 * Constructs a {@link Scene} with no {@link Camera} and no {@link Light}s or {@link Surface}s.
 	 */
 	public Scene() {
-		this.setCamera(new PinholeCamera());
 		this.setLights(new Light[0]);
 	}
 	
 	/**
-	 * Constructs a Scene object with a default Camera object, no Light objects,
-	 * and the surfaces represented by the specified Surface array.
+	 * Constructs a {@link Scene} object with no camera object, no Light objects,
+	 * and the surfaces represented by the specified {@link ShadableSurface} array.
 	 */
 	public Scene(T surfaces[]) {
-		this.setCamera(new PinholeCamera());
-		
 		this.setLights(new Light[0]);
 		this.setSurfaces(surfaces);
 	}
 	
 	/**
-	 * Constructs a Scene object with the specified Camera object, Light array, and Surface array.
+	 * Constructs a {@link Scene} with the specified {@link Camera}, {@link Light}s,
+	 * and {@link Surface}s.
 	 */
-	public Scene(Camera camera, Light lights[], T surfaces[]) {
+	public Scene(C camera, Light lights[], T surfaces[]) {
 		this.setCamera(camera);
 		
 		this.setLights(lights);
@@ -72,13 +70,12 @@ public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
 	
 	public ShadableSurface[] getSurfaces() { return toArray(new ShadableSurface[0]); }
 	
-	/**
-	 * Sets the camera of this Scene object to the camera represented by the specified Camera object.
-	 */
-	public void setCamera(Camera camera) { this.camera = camera; }
+	/** Sets the camera of this {@link Scene}. */
+	public void setCamera(C camera) { this.camera = camera; }
 	
 	/**
-	 * Replaces all of the lights of this Scene object with those represented by the specified Light array.
+	 * Replaces all of the lights of this {@link Scene} object with those represented
+	 * by the specified {@link Light} array.
 	 */
 	public void setLights(Light lights[]) { this.lights = lights; }
 	
@@ -107,7 +104,7 @@ public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
 	}
 	
 	/** Returns the Camera object stored by this Scene object. */
-	public Camera getCamera() { return this.camera; }
+	public C getCamera() { return this.camera; }
 	
 	/** Returns the Light objects stored by this Scene object as a Light array. */
 	public Light[] getLights() { return this.lights; }

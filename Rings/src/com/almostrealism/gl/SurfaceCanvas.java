@@ -16,24 +16,16 @@
 
 package com.almostrealism.gl;
 
-import org.almostrealism.space.Vector;
-
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.projection.ThinLensCamera;
+import com.almostrealism.projection.Projectable;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	private ThinLensCamera camera;
+	private Projectable<PinholeCamera> projectable;
 	
-	public SurfaceCanvas() {
-		ThinLensCamera c = new ThinLensCamera();
-		c.setLocation(new Vector(0.0, 0.0, 10.0));
-		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
-		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
-		c.setFocalLength(0.05);
-		c.setFocus(10.0);
-		c.setLensRadius(0.2);
+	public SurfaceCanvas(Projectable<PinholeCamera> p) {
+		projectable = p;
 	}
 	
 	public void add(ShadableSurface s) {
@@ -44,5 +36,5 @@ public class SurfaceCanvas extends DefaultGLCanvas {
 		super.add(RenderableSurfaceFactory.createRenderableSurface(s));
 	}
 	
-	public PinholeCamera getCamera() { return camera; }
+	public PinholeCamera getCamera() { return projectable.getCamera(); }
 }
