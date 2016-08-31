@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.almostrealism.projection;
-
-import org.almostrealism.space.Ray;
-import org.almostrealism.uml.ModelEntity;
-
 /**
- * Implementations of the Camera interface provide a method for calculating viewing rays.
+ * Annotations for keeping track of data types that store state
+ * so that the state of any system can be understood by looking
+ * for references to the annotations or depicting the meaning
+ * of those annotations visually.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
-@ModelEntity
-public interface Camera {
-	/**
-	 * @param i  X coordinate of pixel.
-	 * @param j  Y coordinate of pixel.
-	 * @param screenWidth  Width of image.
-	 * @param screenHeight  Height of image.
-	 * @return  A Ray object that represents the viewing ray at (i, j)
-	 */
-	public Ray rayAt(double i, double j, int screenWidth, int screenHeight);
-}
+package org.almostrealism.uml;

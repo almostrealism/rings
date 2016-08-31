@@ -16,9 +16,9 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 

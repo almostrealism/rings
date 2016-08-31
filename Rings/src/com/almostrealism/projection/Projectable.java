@@ -16,7 +16,7 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.bean.ModelEntity;
+import org.almostrealism.uml.ModelEntity;
 
 /**
  * @author  Michael Murray

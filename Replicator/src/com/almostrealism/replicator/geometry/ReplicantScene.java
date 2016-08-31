@@ -16,9 +16,9 @@
 
 package com.almostrealism.replicator.geometry;
 
-import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
+import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.projection.ThinLensCamera;

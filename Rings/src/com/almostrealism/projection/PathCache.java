@@ -18,10 +18,10 @@ package com.almostrealism.projection;
 
 import java.util.Hashtable;
 
-import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.texture.ImageCoordinates;
+import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Scene;
 
