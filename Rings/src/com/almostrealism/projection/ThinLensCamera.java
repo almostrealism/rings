@@ -16,6 +16,7 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
@@ -30,6 +31,7 @@ import com.almostrealism.raytracer.Settings;
  * 
  * @author Mike Murray
  */
+@ModelEntity
 public class ThinLensCamera extends PinholeCamera {
 	private double focalLength, radius, w, h;
 

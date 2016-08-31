@@ -16,6 +16,7 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
@@ -33,6 +34,7 @@ import com.almostrealism.raytracer.Settings;
  * 
  * @author Mike Murray
  */
+@ModelEntity
 public class OrthographicCamera implements Camera {
   private Vector location = new Vector(0.0, 0.0, 0.0);
   private Vector viewDirection = new Vector(0.0, 0.0, 1.0);

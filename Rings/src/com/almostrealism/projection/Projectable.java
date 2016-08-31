@@ -16,9 +16,12 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.bean.ModelEntity;
+
 /**
  * @author  Michael Murray
  */
+@ModelEntity
 public interface Projectable<T extends Camera> {
 	public T getCamera();
 }

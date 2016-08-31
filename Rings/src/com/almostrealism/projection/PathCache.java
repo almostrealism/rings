@@ -18,6 +18,7 @@ package com.almostrealism.projection;
 
 import java.util.Hashtable;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.texture.ImageCoordinates;
@@ -31,6 +32,7 @@ import com.almostrealism.raytracer.Scene;
  * 
  * @author  Michael Murray
  */
+@ModelEntity
 public class PathCache<V extends Intersection> extends Hashtable<ImageCoordinates, PathElement<V>> {
 	public PathCache() {
 		

@@ -16,6 +16,7 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
@@ -40,6 +41,7 @@ import com.almostrealism.raytracer.Settings;
  * 
  * @author Mike Murray
  */
+@ModelEntity
 public class PinholeCamera extends OrthographicCamera {
   private double focalLength = 1.0;
   private double blur = 0.0;

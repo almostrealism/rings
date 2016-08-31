@@ -16,6 +16,7 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Ray;
 
 /**
@@ -23,6 +24,7 @@ import org.almostrealism.space.Ray;
  * 
  * @author Mike Murray
  */
+@ModelEntity
 public interface Camera {
 	/**
 	 * @param i  X coordinate of pixel.
