@@ -21,8 +21,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-## More Details ##
-
 The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
 
 #### Common ####
