@@ -22,12 +22,14 @@ import java.util.List;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.uml.Stateless;
 
 /**
  * Tools for computing ray intersections.
  * 
  * @author  Michael Murray
  */
+@Stateless
 public class Intersections {
 
 	/**

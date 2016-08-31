@@ -19,6 +19,7 @@ package org.almostrealism.space;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Scaled;
+import org.almostrealism.uml.ModelEntity;
 
 /**
  * Provides a simple mechanism to keep track of tranformation
@@ -27,6 +28,7 @@ import org.almostrealism.geometry.Scaled;
  * 
  * @author  Michael Murray
  */
+@ModelEntity
 public class BasicGeometry implements Positioned, Oriented, Scaled {
 	protected Vector location;
 	protected double size;
