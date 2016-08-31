@@ -46,6 +46,27 @@ limitations under the License.
 
 The simplicity of these libraries will hopefully make up for the fact that I have limitted time to write documentation. Please feel free to contact me with questions if you have them.
 
+#### Common ####
+
+**Common** contains useful annotations that help other programmers determine what kind of unit tests are needed for what kind of code.
+
+Types that hold state are annotated with the **ModelEntity** annotation.
+```
+#!java
+@ModelEntity
+public class BasicGeometry implements Positioned, Oriented, Scaled {
+...
+```
+
+Types that are stateless are annotated with the **Stateless** annotation.
+```
+#!java
+@Stateless
+public class Intersections {
+```
+
+While writing tests after developing code directly, the programmer can start with making tests for working with stateful entities and then move on to the stateless entities that reference them.
+
 #### GraphPersist ####
 
 All GraphPersist queries for the running JVM are stored in a root QueryLibrary. You can add queries in just two lines of code which specify the mapping of columns to bean properties and a factory lambda to construct the object which will contain the results.
