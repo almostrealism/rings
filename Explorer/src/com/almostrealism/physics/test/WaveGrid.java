@@ -27,8 +27,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.ImageCanvas;
 
 public class WaveGrid {
 	private double max = 10.0, delta = 1.0;

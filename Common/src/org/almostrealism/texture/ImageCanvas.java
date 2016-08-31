@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.ui;
+package org.almostrealism.texture;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -28,9 +28,6 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 
 /**

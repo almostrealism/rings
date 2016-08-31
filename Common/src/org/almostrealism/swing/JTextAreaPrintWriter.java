@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.ui;
+package org.almostrealism.swing;
 
 import javax.swing.JTextArea;
 

@@ -48,9 +48,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.JTextAreaPrintWriter;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.Light;

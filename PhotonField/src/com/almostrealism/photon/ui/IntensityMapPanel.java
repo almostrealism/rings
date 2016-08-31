@@ -23,8 +23,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.ImageCanvas;
 
 import com.almostrealism.photon.texture.CosineIntensityMap;
 import com.almostrealism.photon.texture.IntensityMap;

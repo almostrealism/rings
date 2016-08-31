@@ -40,7 +40,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.text.JTextComponent;
 
-import org.almostrealism.ui.JTextAreaPrintWriter;
+import org.almostrealism.swing.JTextAreaPrintWriter;
 
 /**
  * A DebugOutputPanel object provides a display for the debug output of the ray tracing application.

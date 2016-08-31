@@ -29,8 +29,8 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
+import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.RGB;
-import org.almostrealism.ui.ImageCanvas;
 
 import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;
