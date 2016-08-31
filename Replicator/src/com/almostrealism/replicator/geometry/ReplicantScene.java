@@ -16,6 +16,7 @@
 
 package com.almostrealism.replicator.geometry;
 
+import org.almostrealism.bean.ModelEntity;
 import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 
@@ -34,6 +35,7 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
  * 
  * @author  Michael Murray
  */
+@ModelEntity
 public class ReplicantScene extends Scene<Replicant, ThinLensCamera> {
 	
 	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
