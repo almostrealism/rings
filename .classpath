@@ -201,6 +201,19 @@
 	<classpathentry kind="lib" path="PromotionManager/lib/mailapi.jar"/>
 	<classpathentry kind="lib" path="PromotionManager/lib/pop3.jar"/>
 	<classpathentry kind="lib" path="PromotionManager/lib/smtp.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-1.2-api-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-api-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-core-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-flume-ng-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-iostreams-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-jcl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-jmx-gui-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-jul-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-nosql-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-slf4j-impl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-taglib-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-to-slf4j-2.6.2.jar"/>
+	<classpathentry kind="lib" path="Common/lib/log4j-web-2.6.2.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraph"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgrapht-jdk1.5"/>
