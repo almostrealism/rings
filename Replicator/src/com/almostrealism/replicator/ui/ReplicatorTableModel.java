@@ -61,7 +61,7 @@ public class ReplicatorTableModel extends ReplicantScene implements TableModel {
 	 * @param s  Surface to replicate across the 6 directions.
 	 */
 	public void addLayer(String name, ShadableSurface s) {
-		DefaultReplicant r = new DefaultReplicant(s);
+		DefaultReplicant<ShadableSurface> r = new DefaultReplicant<ShadableSurface>(s);
 		r.put(LEFT, new BasicGeometry());
 		r.put(RIGHT, new BasicGeometry());
 		r.put(TOP, new BasicGeometry());
