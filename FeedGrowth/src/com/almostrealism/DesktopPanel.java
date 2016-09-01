@@ -81,6 +81,8 @@ public class DesktopPanel extends DesktopPanelUI {
 		ow.setBackground(Color.black);
 		ow.setForeground(Color.white);
 		renderPanel.add(ow, BorderLayout.NORTH);
+		
+		raytracer.render();
 	}
 	
 	private static class QuitAction extends AbstractAction {
