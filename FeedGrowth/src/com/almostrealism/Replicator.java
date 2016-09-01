@@ -45,7 +45,6 @@ import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;
-import com.almostrealism.replicator.geometry.ReplicantScene;
 import com.almostrealism.replicator.ui.ReplicatorCanvas;
 import com.almostrealism.replicator.ui.ReplicatorTableModel;
 import com.almostrealism.synth.SineWaveCell;
@@ -62,7 +61,7 @@ public class Replicator {
 	
 	public Replicator() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		model = new ReplicatorTableModel();
-		canvas = new ReplicatorCanvas(model.getScene());
+		canvas = new ReplicatorCanvas(model);
 		receptor = new Receptor();
 		
 		layersFrame = new JFrame("Layers");
@@ -147,7 +146,7 @@ public class Replicator {
 	
 	public ReplicatorCanvas getCanvas() { return canvas; }
 	
-	public ReplicantScene getScene() { return model.getScene(); }
+	public ReplicatorTableModel getTableModel() { return model; }
 	
 	public Action getLayersAction() { return new LayersAction(); }
 	public Action getCanvasAction() { return new CanvasAction(); }

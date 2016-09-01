@@ -18,13 +18,11 @@ package com.almostrealism.replicator.ui;
 
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.gl.nurbs.AnimatedNurbsSurface;
-import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.projection.Projectable;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 public class ReplicatorCanvas extends SurfaceCanvas {
-	public ReplicatorCanvas(Projectable<? extends PinholeCamera> p) {
+	public ReplicatorCanvas(ReplicatorTableModel p) {
 		super(p);
 		GLUgl2 glu = new GLUgl2();
 		GLUnurbs nurbs = glu.gluNewNurbsRenderer();

@@ -67,7 +67,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		toolBar.add(r.getSamplerAction());
 		toolBar.add(r.getFeedbackAction());
 		
-		raytracer = new ReceptorRenderPanel(r.getScene());
+		raytracer = new ReceptorRenderPanel(r.getTableModel());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		
 		// Zoom slider

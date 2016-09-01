@@ -19,7 +19,8 @@ package com.almostrealism.replicator.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.table.AbstractTableModel;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
@@ -29,8 +30,13 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 import com.almostrealism.replicator.geometry.ReplicantScene;
 
+/**
+ * TODO  Add listener support
+ * 
+ * @author  Michael Murray
+ */
 @ViewModel
-public class ReplicatorTableModel extends AbstractTableModel {
+public class ReplicatorTableModel extends ReplicantScene implements TableModel {
 	private static final String LEFT = "Left";
 	private static final String RIGHT = "Right";
 	private static final String TOP = "Top";
@@ -41,12 +47,9 @@ public class ReplicatorTableModel extends AbstractTableModel {
 	private List<DefaultReplicant> layers;
 	private List<String> modelNames;
 	
-	private ReplicantScene scene;
-	
 	public ReplicatorTableModel() {
 		layers = new ArrayList<DefaultReplicant>();
 		modelNames = new ArrayList<String>();
-		scene = new ReplicantScene();
 	}
 	
 	/**
@@ -67,10 +70,8 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		r.put(BACK, new BasicGeometry());
 		layers.add(r);
 		modelNames.add(name);
-		scene.addReplicants(r);
+		addReplicants(r);
 	}
-	
-	public ReplicantScene getScene() { return scene; }
 	
 	@Override
 	public int getRowCount() { return layers.size(); }
@@ -210,5 +211,23 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		}
 		
 		return "";
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#addTableModelListener(javax.swing.event.TableModelListener)
+	 */
+	@Override
+	public void addTableModelListener(TableModelListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
+	 */
+	@Override
+	public void removeTableModelListener(TableModelListener l) {
+		// TODO Auto-generated method stub
+		
 	}
 }
