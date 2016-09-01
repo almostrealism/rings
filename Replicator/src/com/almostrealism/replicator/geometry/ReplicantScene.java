@@ -16,7 +16,6 @@
 
 package com.almostrealism.replicator.geometry;
 
-import org.almostrealism.space.Surface;
 import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ModelEntity;
 
@@ -36,7 +35,7 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
  * @author  Michael Murray
  */
 @ModelEntity
-public class ReplicantScene extends Scene<Replicant, ThinLensCamera> {
+public class ReplicantScene<T extends ShadableSurface> extends Scene<Replicant<T>, ThinLensCamera> {
 	
 	public ReplicantScene() {
 		StandardLightingRigs.addDefaultLights(this);
@@ -49,15 +48,5 @@ public class ReplicantScene extends Scene<Replicant, ThinLensCamera> {
 		c.setFocus(10.0);
 		c.setLensRadius(0.2);
 		setCamera(c);
-	}
-	
-	public void addReplicants(SurfaceGroup<ShadableSurface> g) {
-		for (Surface s : g) {
-			if (s instanceof Replicant) {
-				add((Replicant) s);
-			} else if (s instanceof SurfaceGroup) {
-				addReplicants((SurfaceGroup) s);
-			}
-		}
 	}
 }

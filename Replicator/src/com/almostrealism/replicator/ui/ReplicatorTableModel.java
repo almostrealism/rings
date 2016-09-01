@@ -70,7 +70,7 @@ public class ReplicatorTableModel extends ReplicantScene implements TableModel {
 		r.put(BACK, new BasicGeometry());
 		layers.add(r);
 		modelNames.add(name);
-		addReplicants(r);
+		add(r);
 	}
 	
 	@Override
