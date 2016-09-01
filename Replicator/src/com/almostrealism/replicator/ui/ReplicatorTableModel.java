@@ -23,11 +23,13 @@ import javax.swing.table.AbstractTableModel;
 
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
+import org.almostrealism.uml.ViewModel;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 import com.almostrealism.replicator.geometry.ReplicantScene;
 
+@ViewModel
 public class ReplicatorTableModel extends AbstractTableModel {
 	private static final String LEFT = "Left";
 	private static final String RIGHT = "Right";
