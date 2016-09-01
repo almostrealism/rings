@@ -22,7 +22,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	private Projectable<PinholeCamera> projectable;
+	private Projectable<? extends PinholeCamera> projectable;
 	
 	public SurfaceCanvas(Projectable<? extends PinholeCamera> p) {
 		projectable = p;
