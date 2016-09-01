@@ -48,7 +48,7 @@ import com.almostrealism.raytracer.primitives.SurfaceUI;
  * 
  * @author Mike Murray
  */
-public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
+public class RenderPanel<T extends Scene<? extends ShadableSurface, ?>> extends JPanel implements EventListener, EventGenerator {
 	private T scene;
 	private EventHandler handler;
 

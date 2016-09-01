@@ -111,7 +111,7 @@ public class FileDecoder extends SpatialData {
 			return group;
 		} else if (encoding == SpatialData.GTSEncoding ||
 				encoding == SpatialData.PLYEncoding) {
-			Scene<ShadableSurface> scene = FileDecoder.decodeSceneFile(file, encoding, ui, listener, s);
+			Scene<ShadableSurface, ?> scene = FileDecoder.decodeSceneFile(file, encoding, ui, listener, s);
 			return scene.get(0);
 		} else {
 			return null;
