@@ -38,9 +38,7 @@ import com.almostrealism.raytracer.engine.SurfaceGroup;
 @ModelEntity
 public class ReplicantScene extends Scene<Replicant, ThinLensCamera> {
 	
-	public ReplicantScene(SurfaceGroup<ShadableSurface> g) {
-		addReplicants(this, g);
-		
+	public ReplicantScene() {
 		StandardLightingRigs.addDefaultLights(this);
 		
 		ThinLensCamera c = new ThinLensCamera();
@@ -53,12 +51,12 @@ public class ReplicantScene extends Scene<Replicant, ThinLensCamera> {
 		setCamera(c);
 	}
 	
-	private static void addReplicants(ReplicantScene scene, SurfaceGroup<ShadableSurface> g) {
+	public void addReplicants(SurfaceGroup<ShadableSurface> g) {
 		for (Surface s : g) {
 			if (s instanceof Replicant) {
-				scene.add((Replicant) s);
+				add((Replicant) s);
 			} else if (s instanceof SurfaceGroup) {
-				addReplicants(scene, (SurfaceGroup) s);
+				addReplicants((SurfaceGroup) s);
 			}
 		}
 	}

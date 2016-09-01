@@ -25,7 +25,6 @@ import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.replicator.geometry.DefaultReplicant;
 import com.almostrealism.replicator.geometry.ReplicantScene;
 
@@ -40,9 +39,12 @@ public class ReplicatorTableModel extends AbstractTableModel {
 	private List<DefaultReplicant> layers;
 	private List<String> modelNames;
 	
+	private ReplicantScene scene;
+	
 	public ReplicatorTableModel() {
 		layers = new ArrayList<DefaultReplicant>();
 		modelNames = new ArrayList<String>();
+		scene = new ReplicantScene();
 	}
 	
 	/**
@@ -63,17 +65,10 @@ public class ReplicatorTableModel extends AbstractTableModel {
 		r.put(BACK, new BasicGeometry());
 		layers.add(r);
 		modelNames.add(name);
+		scene.addReplicants(r);
 	}
 	
-	public SurfaceGroup getSurfaces() {
-		SurfaceGroup g = new SurfaceGroup();
-		for (DefaultReplicant r : layers) g.addSurface(r);
-		return g;
-	}
-	
-	public ReplicantScene getScene() {
-		return new ReplicantScene(getSurfaces());
-	}
+	public ReplicantScene getScene() { return scene; }
 	
 	@Override
 	public int getRowCount() { return layers.size(); }

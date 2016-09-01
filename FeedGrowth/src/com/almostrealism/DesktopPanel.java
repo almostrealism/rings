@@ -41,6 +41,7 @@ import com.almostrealism.receptor.ReceptorRenderPanel;
 public class DesktopPanel extends DesktopPanelUI {
 	private JFrame frame;
 	
+	private ReceptorRenderPanel raytracer;
 	private ValueSlider zoomSlider;
 
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
@@ -60,12 +61,13 @@ public class DesktopPanel extends DesktopPanelUI {
 		r.addLayer("Sphere", s);
 		
 		toolBar.add(new QuitAction());
+		toolBar.add(new RefreshAction());
 		toolBar.add(r.getCanvasAction());
 		toolBar.add(r.getLayersAction());
 		toolBar.add(r.getSamplerAction());
 		toolBar.add(r.getFeedbackAction());
 		
-		ReceptorRenderPanel raytracer = new ReceptorRenderPanel(r.getScene());
+		raytracer = new ReceptorRenderPanel(r.getScene());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		
 		// Zoom slider
@@ -79,9 +81,6 @@ public class DesktopPanel extends DesktopPanelUI {
 		ow.setBackground(Color.black);
 		ow.setForeground(Color.white);
 		renderPanel.add(ow, BorderLayout.NORTH);
-		
-		// Start rendering
-		raytracer.render();
 	}
 	
 	private static class QuitAction extends AbstractAction {
@@ -93,12 +92,15 @@ public class DesktopPanel extends DesktopPanelUI {
 		public void actionPerformed(ActionEvent e) { System.exit(0); }
 	}
 	
-	private static class RefreshAction extends AbstractAction {
+	private class RefreshAction extends AbstractAction {
 		public RefreshAction() {
 			super("Refresh", Icons.loadImageIcon("/icons/refresh.png"));
 		}
 		
 		@Override
-		public void actionPerformed(ActionEvent e) { System.exit(0); }
+		public void actionPerformed(ActionEvent e) {
+			// Start rendering
+			raytracer.render();
+		}
 	}
 }
