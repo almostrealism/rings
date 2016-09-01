@@ -25,6 +25,7 @@ import com.almostrealism.gl.SurfaceCanvas;
 
 public class TerrainCanvas extends SurfaceCanvas {
 	public TerrainCanvas() {
+		super(null);
 	}
 	
 	public static void main(String args[]) throws IOException {
