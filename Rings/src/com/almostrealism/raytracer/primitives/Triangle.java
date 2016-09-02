@@ -353,7 +353,7 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 	 * Returns an Intersection object representing the points along the ray represented by the specified Ray object that intersection
 	 * between the ray and the triangle represented by this Triangle object occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		double r[];
 		
 		if (useT)

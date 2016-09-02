@@ -32,6 +32,7 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.Intersections;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
@@ -186,7 +187,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	 * for the AbstractSurface object which is intersected closest to the origin of the ray
 	 * (>= 0). If there is no intersection >= 0 along the ray, null is returned.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		return Intersections.closestIntersection(ray, this);

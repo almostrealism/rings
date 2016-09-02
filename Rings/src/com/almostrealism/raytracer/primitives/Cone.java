@@ -123,7 +123,7 @@ public class Cone extends AbstractSurface {
 	 * @return  An Intersection object storing the locations along the ray represented by
 	 *          the specified Ray object that intersection between the ray and the cone occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		Vector d = ray.getDirection().divide(ray.getDirection().length());

@@ -123,10 +123,11 @@ public class Plane extends AbstractSurface implements ParticleGroup {
 	}
 	
 	/**
-	 * Returns an Intersection object representing the points along the ray represented by the specified Ray object that intersection
-	 * between the ray and the plane represented by this Plane object occurs.
+	 * Returns an {@link Intersection} representing the points along the specified
+	 * {@link Ray} that intersection between the ray and this {@link Plane} occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	@Override
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		double t[] = new double[1];

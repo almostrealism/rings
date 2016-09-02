@@ -583,11 +583,7 @@ public class RayTracingEngine {
 	  Returns true if the point has a shadow cast on it.
 	*/
 	
-	public static boolean shadowCalculation(Vector point, Iterable<? extends Intersectable> surfaces, Light light) {
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.print(" Shadow {");
-		}
-		
+	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterable<? extends Intersectable<T>> surfaces, Light light) {
 		double maxDistance = -1.0;
 		Vector direction = null;
 		
@@ -598,16 +594,12 @@ public class RayTracingEngine {
 		} else if (light instanceof DirectionalAmbientLight) {
 			direction = ((DirectionalAmbientLight)light).getDirection().minus();
 		} else {
-			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-				Settings.rayEngineOut.print(" False }");
-			}
-			
 			return false;
 		}
 		
 		Ray shadowRay = new Ray(point, direction);
 		
-		Intersection closestIntersectedSurface = Intersections.closestIntersection(shadowRay, surfaces);
+		T closestIntersectedSurface = Intersections.closestIntersection(shadowRay, surfaces);
 		double intersect = 0.0;
 		if (closestIntersectedSurface != null)
 			intersect = closestIntersectedSurface.getClosestIntersection();

@@ -16,11 +16,11 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 /**
@@ -111,43 +111,26 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	}
 	
 	/**
-	  Returns the total intensity of this PointLightGrid
-	  (the sum of the intensities of all lights in the grid).
-	*/
+	 * Returns the total intensity of this PointLightGrid
+	 * (the sum of the intensities of all lights in the grid).
+	 */
+	public double getIntensity() { return this.intensity; }
 	
-	public double getIntensity() {
-		return this.intensity;
-	}
+	/** Returns the array of {@link PointLight}s stored by this {@link PointLightGrid}. */
+	public PointLight[] getLights() { return this.lights; }
 	
-	/**
-	  Returns the array of PointLight objects stored by this PointLightGrid object.
-	*/
-	
-	public PointLight[] getLights() {
-		return this.lights;
-	}
-	
-	/**
-	  Returns a zero vector.
-	*/
-	
+	/** Returns a zero vector. */
 	public Vector getNormalAt(Vector point) {
 		return new Vector(0.0, 0.0, 0.0);
 	}
 	
-	/**
-	  Returns false.
-	*/
-	
+	/** Returns false. */
 	public boolean intersect(Ray ray) {
 		return false;
 	}
 	
-	/**
-	  Returns null.
-	*/
-	
-	public Intersection intersectAt(Ray ray) {
+	/** Returns null. */
+	public ShadableIntersection intersectAt(Ray ray) {
 		return null;
 	}
 }

@@ -38,8 +38,8 @@ public class Intersections {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, Intersectable... surfaces) {
-		List<Intersectable> intersectables = new ArrayList<Intersectable>();
+	public static <T extends Intersection> T closestIntersection(Ray ray, Intersectable<T>... surfaces) {
+		List<Intersectable<T>> intersectables = new ArrayList<Intersectable<T>>();
 		for (int i = 0; i < surfaces.length; i++) intersectables.add(surfaces[i]);
 		return closestIntersection(ray, intersectables);
 	}
@@ -49,10 +49,10 @@ public class Intersections {
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static Intersection closestIntersection(Ray ray, Iterable<? extends Intersectable> surfaces) {
-		List<Intersection> intersections = new ArrayList<Intersection>();
+	public static <T extends Intersection> T closestIntersection(Ray ray, Iterable<? extends Intersectable<T>> surfaces) {
+		List<T> intersections = new ArrayList<T>();
 		
-		for (Intersectable s : surfaces) {
+		for (Intersectable<T> s : surfaces) {
 			intersections.add(s.intersectAt((Ray) ray.clone()));
 		}
 		

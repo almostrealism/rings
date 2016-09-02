@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
@@ -857,7 +856,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 		return (this.getDistance(x, d, false, true) < Double.MAX_VALUE - 2);
 	}
 	
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		double c[] = ray.getCoords();
 		double x[] = {c[0], c[1], c[2]};
 		double d[] = {c[3], c[4], c[5]};

@@ -35,6 +35,7 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.SpatialData;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -103,7 +104,7 @@ public class Mesh extends SpacePartition {
 		public RGB getColorAt(Vector point) { return this.getSurface().getColorAt(point); }
 		public Vector getNormalAt(Vector point) { return this.getSurface().getNormalAt(point); }
 		public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
-		public Intersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
+		public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
 		public RGB shade(ShaderParameters p) { return this.getSurface().shade(p); }
 	}
 	
@@ -171,7 +172,7 @@ public class Mesh extends SpacePartition {
 	
   private List points, triangles;
   private Triangle tcache[];
-  private Intersection inter[];
+  private ShadableIntersection inter[];
   private boolean ignore[];
   private boolean smooth, removeBackFaces, intcolor;
   
@@ -297,9 +298,9 @@ public class Mesh extends SpacePartition {
 	
 	public synchronized void clearIntersectionCache() {
 		if (this.vertexData == null)
-			this.inter = new Intersection[this.triangles.size()];
+			this.inter = new ShadableIntersection[this.triangles.size()];
 		else
-			this.inter = new Intersection[this.vertexData.getTriangleCount()];
+			this.inter = new ShadableIntersection[this.vertexData.getTriangleCount()];
 	}
   	
   	/**
@@ -634,7 +635,7 @@ public class Mesh extends SpacePartition {
 	/**
 	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.space.Ray)
 	 */
-	public synchronized Intersection intersectAt(Ray ray) {
+	public synchronized ShadableIntersection intersectAt(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersectAt(ray);
 		
 		ray.transform(this.getTransform(true).getInverse());

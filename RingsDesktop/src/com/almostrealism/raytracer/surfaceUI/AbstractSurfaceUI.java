@@ -23,13 +23,13 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
@@ -201,7 +201,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * Returns an Intersection object representing the point along the ray represented by the specified Ray object
 	 * that intersection between the ray and the surface represented by this AbstractSurfaceUI occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		return this.surface.intersectAt(ray);
 	}
 	

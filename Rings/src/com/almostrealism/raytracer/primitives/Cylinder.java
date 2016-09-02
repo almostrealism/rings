@@ -16,7 +16,6 @@
 
 package com.almostrealism.raytracer.primitives;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
@@ -107,10 +106,11 @@ public class Cylinder extends AbstractSurface {
 	}
 	
 	/**
-	 * Returns an Intersection object representing the points along the ray represented by the specified Ray object that intersection
-	 * between the ray and the cylinder represented by this Cylinder object occurs.
+	 * Returns a {@link ShadableIntersection} representing the points along the ray
+	 * represented by the specified {@link Ray} that intersection between the ray
+	 * and the cylinder represented by this {@link Cylinder} occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		Vector a = (Vector) ray.getOrigin();

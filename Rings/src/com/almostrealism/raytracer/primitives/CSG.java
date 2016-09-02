@@ -87,8 +87,8 @@ public class CSG extends AbstractSurface {
     /**
      * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.space.Ray)
      */
-    public Intersection intersectAt(Ray ray) {
-    		ray.transform(this.getTransform(true).getInverse());
+    public ShadableIntersection intersectAt(Ray ray) {
+    	ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
             return Intersections.closestIntersection(ray, this.sa, this.sb);

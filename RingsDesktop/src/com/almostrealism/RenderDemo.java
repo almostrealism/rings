@@ -19,7 +19,6 @@ package com.almostrealism;
 import java.io.File;
 import java.io.IOException;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
@@ -97,7 +96,7 @@ public class RenderDemo {
 					return this.p.intersect(ray);
 				}
 				
-				public Intersection intersectAt(Ray ray) {
+				public ShadableIntersection intersectAt(Ray ray) {
 					ray.transform(this.getTransform(true).getInverse());
 					
 					if (Math.random() > 0.5) {

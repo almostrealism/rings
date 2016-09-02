@@ -23,6 +23,7 @@ import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Triangle;
 
@@ -266,15 +267,15 @@ public class SpacePartition extends SurfaceGroup {
 			return (right || left);
 		}
 		
-		public Intersection intersectAt(Ray r) {
-			List l = new ArrayList();
+		public ShadableIntersection intersectAt(Ray r) {
+			List<ShadableIntersection> l = new ArrayList<ShadableIntersection>();
 			
 			if (this.surfaces != null) {
 				for (int i = 0; i < this.surfaces.length; i++) {
 					if (this.scache[i] == null)
 						this.scache[i] = SpacePartition.this.getSurface(surfaces[i]);
 					
-					Intersection inter = this.scache[i].intersectAt(r);
+					ShadableIntersection inter = this.scache[i].intersectAt(r);
 					if (inter != null) l.add(inter);
 				}
 			}
@@ -284,16 +285,16 @@ public class SpacePartition extends SurfaceGroup {
 				
 				if (side == Node.SPANNING) {
 					if (this.right != null) {
-						Intersection inter = this.right.intersectAt(r);
+						ShadableIntersection inter = this.right.intersectAt(r);
 						if (inter != null) l.add(inter);
 					}
 					
 					if (this.left != null) {
-						Intersection inter = this.left.intersectAt(r);
+						ShadableIntersection inter = this.left.intersectAt(r);
 						if (inter != null) l.add(inter);
 					}
 				} else if (this.left != null && side == Node.LEFT) {
-					Intersection inter = this.left.intersectAt(r);
+					ShadableIntersection inter = this.left.intersectAt(r);
 					
 					if (inter != null) {
 						l.add(inter);
@@ -302,7 +303,7 @@ public class SpacePartition extends SurfaceGroup {
 						if (inter != null) l.add(inter);
 					}
 				} else if (this.right != null && side == Node.RIGHT) {
-					Intersection inter = this.right.intersectAt(r);
+					ShadableIntersection inter = this.right.intersectAt(r);
 					
 					if (inter != null) {
 						l.add(inter);
@@ -332,7 +333,7 @@ public class SpacePartition extends SurfaceGroup {
 			if (closestIntersectionIndex < 0)
 				return null;
 			else
-				return (Intersection) l.get(closestIntersectionIndex);
+				return l.get(closestIntersectionIndex);
 		}
 		
 		public String toString() {
@@ -365,7 +366,7 @@ public class SpacePartition extends SurfaceGroup {
 		return this.root.intersect(r);
 	}
 	
-	public Intersection intersectAt(Ray r) {
+	public ShadableIntersection intersectAt(Ray r) {
 		r.transform(this.getTransform(true).getInverse());
 		return this.root.intersectAt(r);
 	}

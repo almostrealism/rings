@@ -115,7 +115,7 @@ public class Sphere extends AbstractSurface {
 	 * by the specified Ray object that intersection between the ray and the sphere
 	 * represented by this Sphere object occurs.
 	 */
-	public Intersection intersectAt(Ray ray) {
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		double b = ray.oDotd();

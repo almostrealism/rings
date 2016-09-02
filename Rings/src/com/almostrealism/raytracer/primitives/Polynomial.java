@@ -16,7 +16,6 @@
 
 package com.almostrealism.raytracer.primitives;
 
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
@@ -373,11 +372,11 @@ public class Polynomial extends AbstractSurface {
 	}
 	
 	/**
-	  Returns an array of double values representing the distance along the ray represented by the specified Ray object that intersection
-	  between the ray and the polynomial surface represented by this Polynomial object occurs.
-	*/
-	
-	public Intersection intersectAt(Ray ray) {
+	 * Returns an array of double values representing the distance along the specified
+	 * {@link Ray} object that intersection between the ray and the polynomial surface
+	 * represented by this {@link Polynomial} object occurs.
+	 */
+	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
 		Vector o = ray.getOrigin();
