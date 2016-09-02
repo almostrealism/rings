@@ -15,10 +15,12 @@
  */
 package org.almostrealism.space;
 
+import org.almostrealism.uml.Function;
 
 /**
  * @author  Michael Murray
  */
+@Function
 public interface Intersectable<T extends Intersection> {
 	/** Returns true if the ray intersects the 3d surface in real space. */
 	public boolean intersect(Ray ray);
