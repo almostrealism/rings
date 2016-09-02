@@ -21,6 +21,7 @@ import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.Intersections;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
@@ -99,11 +100,11 @@ public class CSG extends AbstractSurface {
             }
             
             if (!this.sa.intersect((Ray)ray.clone()))
-                return new Intersection(ray, this, new double[0]);
+                return new ShadableIntersection(ray, this, new double[0]);
             
             double a[] = this.sa.intersectAt((Ray)ray.clone()).getIntersections();
             if (a.length <= 0)
-                return new Intersection(ray, this, new double[0]);
+                return new ShadableIntersection(ray, this, new double[0]);
             
             double b[] = null;
             
@@ -164,10 +165,10 @@ public class CSG extends AbstractSurface {
                 }
             }
             
-            return new Intersection(ray, s, intersect);
+            return new ShadableIntersection(ray, s, intersect);
         } else if (this.type == CSG.INTERSECTION) {
             double a[] = this.sa.intersectAt((Ray)ray.clone()).getIntersections();
-            if (a.length < 0) return new Intersection(ray, this, new double[0]);
+            if (a.length < 0) return new ShadableIntersection(ray, this, new double[0]);
             double b[] = this.sb.intersectAt((Ray)ray.clone()).getIntersections();
             
             ShadableSurface s;
@@ -183,9 +184,9 @@ public class CSG extends AbstractSurface {
             double i[] = this.intervalIntersection(ia, ib);
             
             if (i[1] - i[0] > Intersection.e)
-                return new Intersection(ray, s, i);
+                return new ShadableIntersection(ray, s, i);
             else
-                return new Intersection(ray, s, new double[0]);
+                return new ShadableIntersection(ray, s, new double[0]);
         } else {
             return null;
         }

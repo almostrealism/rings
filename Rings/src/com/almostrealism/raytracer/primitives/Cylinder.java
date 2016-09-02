@@ -22,6 +22,7 @@ import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 //TODO Add ParticleGroup implementation.
@@ -140,10 +141,10 @@ public class Cylinder extends AbstractSurface {
 		double l1 = ray.pointAt(t1).getY();
 		
 		if (l0 >= 0 && l0 <= 1.0)
-			return new Intersection(ray, this, new double[] { l0 });
+			return new ShadableIntersection(ray, this, new double[] { l0 });
 		else if (l1 >= 0 && l1 <= 1.0)
-			return new Intersection(ray, this, new double[] { l1 });
+			return new ShadableIntersection(ray, this, new double[] { l1 });
 		else
-			return new Intersection(ray, this, new double[0]);
+			return new ShadableIntersection(ray, this, new double[0]);
 	}
 }

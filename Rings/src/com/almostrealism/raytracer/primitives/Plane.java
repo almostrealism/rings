@@ -22,6 +22,7 @@ import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 
@@ -142,7 +143,7 @@ public class Plane extends AbstractSurface implements ParticleGroup {
 		else
 			return null;
 		
-		return new Intersection(ray, this, t);
+		return new ShadableIntersection(ray, this, t);
 	}
 
     /**

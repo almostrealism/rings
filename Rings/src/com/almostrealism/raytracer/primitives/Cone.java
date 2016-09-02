@@ -26,6 +26,7 @@ import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 
@@ -143,7 +144,7 @@ public class Cone extends AbstractSurface {
 			double discr = c1*c1 - c0*c2;
 			
 			if (discr < 0.0) {
-				return new Intersection(ray, this, new double[0]);
+				return new ShadableIntersection(ray, this, new double[0]);
 			} else if (discr > Intersection.e) {
 				double root = Math.sqrt(discr);
 				double invC2 = 1.0 / c2;
@@ -176,6 +177,6 @@ public class Cone extends AbstractSurface {
 		Iterator itr = inter.iterator();
 		while(itr.hasNext()) t[i++] = ((Number)itr.next()).doubleValue();
 		
-		return new Intersection(ray, this, t);
+		return new ShadableIntersection(ray, this, t);
 	}
 }

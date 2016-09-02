@@ -27,6 +27,7 @@ import org.almostrealism.texture.Texture;
 
 import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.projection.ThinLensCamera;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -102,7 +103,7 @@ public class RenderDemo {
 					if (Math.random() > 0.5) {
 						return this.p.intersectAt(ray);
 					} else {
-						return new Intersection(ray, this, new double[0]);
+						return new ShadableIntersection(ray, this, new double[0]);
 					}
 				}
 			};

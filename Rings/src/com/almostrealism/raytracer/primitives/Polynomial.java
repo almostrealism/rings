@@ -20,6 +20,7 @@ import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 /**
@@ -481,7 +482,7 @@ public class Polynomial extends AbstractSurface {
 //		
 //		System.out.println("}");
 		
-		return new Intersection(ray, this, zeros);
+		return new ShadableIntersection(ray, this, zeros);
 	}
 	
 	/**

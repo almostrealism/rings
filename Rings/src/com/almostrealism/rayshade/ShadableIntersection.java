@@ -19,6 +19,7 @@ package com.almostrealism.rayshade;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.space.Vector;
 
 /**
  * Extends {@link Intersection} to provide metadata that is required for shading.
@@ -26,9 +27,11 @@ import org.almostrealism.space.Ray;
  * @author  Michael Murray
  */
 public class ShadableIntersection extends Intersection {
+	private Vector normal;
+	
 	public ShadableIntersection(Ray ray, Intersectable surface, double intersections[]) {
 		super(ray, surface, intersections);
-		
-		// TODO  Obtain normal vector
 	}
+	
+	public Vector getNormal() { return normal; }
 }

@@ -52,6 +52,7 @@ import com.almostrealism.photon.util.buffers.ColorBuffer;
 import com.almostrealism.photon.util.buffers.TriangularMeshColorBuffer;
 import com.almostrealism.photon.util.color.Spectrum;
 import com.almostrealism.projection.Camera;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.engine.RayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -871,7 +872,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 		
 		this.rclosest = this.closest;
 		
-		return new Intersection(ray, this, di);
+		return new ShadableIntersection(ray, this, di);
 	}
 	
 	public RGB shade(ShaderParameters p) {

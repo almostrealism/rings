@@ -21,6 +21,7 @@ import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 //TODO Add ParticleGroup implementation.
@@ -129,6 +130,6 @@ public class Sphere extends AbstractSurface {
 		t[0] = (-b + discriminantSqrt) / (g);
 		t[1] = (-b - discriminantSqrt) / (g);
 		
-		return new Intersection(ray, this, t);
+		return new ShadableIntersection(ray, this, t);
 	}
 }
