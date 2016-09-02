@@ -19,7 +19,7 @@ package org.almostrealism.space;
 /**
  * @author  Michael Murray
  */
-public interface Intersectable {
+public interface Intersectable<T extends Intersection> {
 	/** Returns true if the ray intersects the 3d surface in real space. */
 	public boolean intersect(Ray ray);
 	
@@ -28,5 +28,5 @@ public interface Intersectable {
 	 * the vector equation p = o + t * d where p is a point of intersection of
 	 * the specified ray and the surface.
 	 */
-	public Intersection intersectAt(Ray ray);
+	public T intersectAt(Ray ray);
 }
