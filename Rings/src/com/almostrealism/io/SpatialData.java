@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
-import org.almostrealism.space.Surface;
+import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
@@ -66,7 +66,7 @@ public class SpatialData {
 			Scene scene = (Scene)decoder.readObject();
 
 			if (!ui) {
-				Surface sr[] = scene.getSurfaces();
+				Gradient sr[] = scene.getSurfaces();
 				for (int i = 0; i < sr.length; i++)
 					if (sr[i] instanceof ShadableSurfaceWrapper)
 						sr[i] = ((ShadableSurfaceWrapper) sr[i]).getSurface();

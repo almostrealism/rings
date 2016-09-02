@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.almostrealism.space.Surface;
+import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
 
 import com.almostrealism.io.LinkedMatrix;
@@ -120,7 +120,7 @@ public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {
 	
 	public void loadPieceFromGTS(int p, InputStream in) throws IOException {
 		Scene scene = SpatialData.decodeScene(in, SpatialData.GTSEncoding, false, null);
-		Surface s[] = scene.getSurfaces();
+		Gradient s[] = scene.getSurfaces();
 		
 		boolean piece[][][] = new boolean[this.x][this.y][this.z];
 		this.models[p] = null;

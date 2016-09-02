@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.almostrealism.space.Surface;
+import org.almostrealism.space.Gradient;
 import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.lighting.Light;
@@ -37,7 +37,7 @@ public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceL
 	private Light lights[];
 	
 	/**
-	 * Constructs a {@link Scene} with no {@link Camera} and no {@link Light}s or {@link Surface}s.
+	 * Constructs a {@link Scene} with no {@link Camera} and no {@link Light}s or {@link Gradient}s.
 	 */
 	public Scene() {
 		this.setLights(new Light[0]);
@@ -54,7 +54,7 @@ public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceL
 	
 	/**
 	 * Constructs a {@link Scene} with the specified {@link Camera}, {@link Light}s,
-	 * and {@link Surface}s.
+	 * and {@link Gradient}s.
 	 */
 	public Scene(C camera, Light lights[], T surfaces[]) {
 		this.setCamera(camera);

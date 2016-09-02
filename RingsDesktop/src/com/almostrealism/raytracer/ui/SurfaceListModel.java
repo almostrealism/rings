@@ -18,7 +18,7 @@ package com.almostrealism.raytracer.ui;
 
 import javax.swing.AbstractListModel;
 
-import org.almostrealism.space.Surface;
+import org.almostrealism.space.Gradient;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
@@ -26,7 +26,7 @@ import com.almostrealism.raytracer.Scene;
 
 /**
  * The {@link SurfaceListModel} extends {@link AbstractListModel} to provide a list model
- * that dynamically displays the {@link Surface}s of a {@link Scene} in a list.
+ * that dynamically displays the {@link Gradient}s of a {@link Scene} in a list.
  */
 public class SurfaceListModel extends AbstractListModel implements EventListener {
 	private Scene scene;

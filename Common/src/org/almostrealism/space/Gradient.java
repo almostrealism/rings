@@ -16,14 +16,14 @@
 package org.almostrealism.space;
 
 /**
+ * A {@link Gradient} represents any continuously evaluable function returning a {@link Vector}.
+ * 
  * @author  Michael Murray
  */
-public interface Surface {
+public interface Gradient {
 	/**
 	 * Returns a Vector object that represents the vector normal to the 3d surface at the point
 	 * represented by the specified Vector object.
-	 * 
-	 * @deprecated  Normal vector is now a member of ShadableIntersection
 	 */
 	public Vector getNormalAt(Vector point);
 }

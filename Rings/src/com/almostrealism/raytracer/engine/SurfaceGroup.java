@@ -27,7 +27,7 @@ import java.util.Iterator;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
-import org.almostrealism.space.Surface;
+import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
@@ -46,21 +46,21 @@ import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
 public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface implements Iterable<T> {
 	private ArrayList<T> surfaces;
 
-	/** Constructs a {@link SurfaceGroup} object with no {@link Surface} objects. */
+	/** Constructs a {@link SurfaceGroup} object with no {@link Gradient} objects. */
 	public SurfaceGroup() {
 		surfaces = new ArrayList<T>();
 		setColor(new RGB(1.0, 1.0, 1.0));
 	}
 	
-	/** Constructs a {@link SurfaceGroup} using the {@link Surface}s in the specified array. */
+	/** Constructs a {@link SurfaceGroup} using the {@link Gradient}s in the specified array. */
 	public SurfaceGroup(T surfaces[]) {
 		this();
 		this.setSurfaces(surfaces);
 	}
 	
 	/**
-	 * Replaces all of the {@link Surface} objects of this {@link SurfaceGroup} object with
-	 * those represented by the specified {@link Surface} array.
+	 * Replaces all of the {@link Gradient} objects of this {@link SurfaceGroup} object with
+	 * those represented by the specified {@link Gradient} array.
 	 */
 	public void setSurfaces(T surfaces[]) {
 		this.surfaces.clear();
@@ -70,7 +70,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	}
 	
 	/**
-	 * Adds the specified {@link Surface} object to this {@link SurfaceGroup} object and
+	 * Adds the specified {@link Gradient} object to this {@link SurfaceGroup} object and
 	 * sets its parent to this {@link SurfaceGroup} object (if it is an instance of
 	 * {@link AbstractSurface}).
 	 */
@@ -139,7 +139,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	public Mesh triangulate() {
 		Mesh mesh = super.triangulate();
 		
-		i: for (Surface s : this) {
+		i: for (Gradient s : this) {
 			if (s instanceof TriangulatableGeometry == false) continue i;
 			
 			Mesh m = ((TriangulatableGeometry) s).triangulate();
