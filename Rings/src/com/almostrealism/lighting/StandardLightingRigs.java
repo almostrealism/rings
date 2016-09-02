@@ -27,6 +27,8 @@ import com.almostrealism.raytracer.primitives.Plane;
 public class StandardLightingRigs {
 	private static final boolean enableRectangularLight = false;
 	
+	public static double defaultBrightness = 1.0;
+	
 	public static void addDefaultLights(Scene<?, ?> scene) {
 		RectangularLight rl = new RectangularLight(2.0, 2.0);
 		rl.setColor(new RGB(1.0, 1.0, 1.0));
@@ -35,20 +37,20 @@ public class StandardLightingRigs {
 		rl.setIntensity(0.7);
 		rl.setSampleCount(6);
 		
-		PointLight pl1 = new PointLight(new Vector(4.0, 4.0, 3.0), 0.6, new RGB(0.4, 1.0, 0.4));
-		PointLight pl2 = new PointLight(new Vector(-4.0, 4.0, 3.0), 0.6, new RGB(1.0, 0.4, 0.4));
+		PointLight pl1 = new PointLight(new Vector(4.0, 4.0, 10.0), defaultBrightness, new RGB(1.0, 1.0, 1.0));
+//		PointLight pl2 = new PointLight(new Vector(-4.0, 4.0, 3.0), defaultBrightness, new RGB(1.0, 1.0, 1.0));
 		
-		PointLight pl3 = new PointLight(new Vector(0.0, 5.0, 4.0), 0.7, new RGB(0.0, 0.0, 1.0)) {
-			public RGB getColorAt(Vector p) {
-				RGB c = super.getColorAt(p);
-				c.multiplyBy(Math.sin(p.subtract(super.getLocation()).length()));
-				return c;
-			}
-		};
+//		PointLight pl3 = new PointLight(new Vector(0.0, 5.0, 4.0), 0.7, new RGB(0.0, 0.0, 1.0)) {
+//			public RGB getColorAt(Vector p) {
+//				RGB c = super.getColorAt(p);
+//				c.multiplyBy(Math.sin(p.subtract(super.getLocation()).length()));
+//				return c;
+//			}
+//		};
 		
 		if (enableRectangularLight) scene.addLight(rl);
 		scene.addLight(pl1);
-		scene.addLight(pl2);
-		scene.addLight(pl3);
+//		scene.addLight(pl2);
+//		scene.addLight(pl3);
 	}
 }
