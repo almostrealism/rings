@@ -28,13 +28,14 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shadable;
+import com.almostrealism.rayshade.ShadableIntersection;
 
 /**
  * The {@link ShadableSurface} interface is implemented by any 3d object which may be
  * intersected by a 3d ray. These objects must supply methods for calculating
  * ray-surface intersections.
  */
-public interface ShadableSurface extends Gradient, Intersectable, Shadable {
+public interface ShadableSurface extends Gradient, Intersectable<ShadableIntersection>, Shadable {
 	/**
 	 * Returns true if the front side of this Surface object should be shaded.
 	 * The "front side" is the side that the Vector object returned by the
