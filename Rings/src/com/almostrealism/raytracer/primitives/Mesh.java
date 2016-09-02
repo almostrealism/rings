@@ -534,7 +534,7 @@ public class Mesh extends SpacePartition {
 	 */
 	public int extrudeFace(int face, double l) {
 		return this.extrudeFace(face,
-				((Triangle)this.triangles.get(face)).getNormalAt(new Vector()).multiply(l));
+				((Triangle) this.triangles.get(face)).getNormalAt(new Vector()).multiply(l));
 	}
 	
 	/**

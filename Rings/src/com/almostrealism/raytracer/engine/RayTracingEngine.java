@@ -522,24 +522,10 @@ public class RayTracingEngine {
 														Collection<ShadableSurface> otherSurfaces,
 														DirectionalAmbientLight light, Light otherLights[],
 														ShaderParameters p) {
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.print(" DirectionalAmbientLight {");
-		}
-		
 		RGB color = null;
-		
-		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
 		
 		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
-		
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Vector n = surface.getNormalAt(point);
-			
-			Settings.rayEngineOut.print(" V = " + v.toString());
-			Settings.rayEngineOut.print(" N = " + n.toString());
-			Settings.rayEngineOut.print(" L = " + l.toString());
-		}
 		
 		if (p == null) {
 			color = surface.shade(new ShaderParameters(point, v, l, light, otherLights, otherSurfaces));
@@ -552,10 +538,6 @@ public class RayTracingEngine {
 			p.setOtherSurfaces(otherSurfaces);
 			
 			color = surface.shade(p);
-		}
-		
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.print(" : Color = " + color + " }");
 		}
 		
 		return color;
