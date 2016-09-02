@@ -58,7 +58,8 @@ public class DesktopPanel extends DesktopPanelUI {
 		Sphere s = new Sphere();
 		s.setSize(0.1);
 		s.setColor(new RGB(0.8, 0.8, 0.8));
-		r.addLayer("Sphere", s);
+		r.getTableModel().add(s);
+//		r.addLayer("Sphere", s);
 		
 		toolBar.add(new QuitAction());
 		toolBar.add(new RefreshAction());

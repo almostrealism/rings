@@ -25,6 +25,8 @@ import com.almostrealism.raytracer.primitives.Plane;
  * @author  Michael Murray
  */
 public class StandardLightingRigs {
+	private static final boolean enableRectangularLight = false;
+	
 	public static void addDefaultLights(Scene<?, ?> scene) {
 		RectangularLight rl = new RectangularLight(2.0, 2.0);
 		rl.setColor(new RGB(1.0, 1.0, 1.0));
@@ -44,7 +46,7 @@ public class StandardLightingRigs {
 			}
 		};
 		
-		scene.addLight(rl);
+		if (enableRectangularLight) scene.addLight(rl);
 		scene.addLight(pl1);
 		scene.addLight(pl2);
 		scene.addLight(pl3);
