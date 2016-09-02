@@ -26,6 +26,7 @@ import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.RGB;
+import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.rayshade.Shadable;
 import com.almostrealism.rayshade.ShadableIntersection;
@@ -35,6 +36,7 @@ import com.almostrealism.rayshade.ShadableIntersection;
  * intersected by a 3d ray. These objects must supply methods for calculating
  * ray-surface intersections.
  */
+@ModelEntity
 public interface ShadableSurface extends Gradient, Intersectable<ShadableIntersection>, Shadable {
 	/**
 	 * Returns true if the front side of this Surface object should be shaded.
