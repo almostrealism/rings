@@ -39,30 +39,19 @@ public class BasicGeometry implements Positioned, Oriented, Scaled {
 	private TransformMatrix transforms[];
 	private TransformMatrix transform, completeTransform;
 	protected boolean transformCurrent;
-
+	
 	public BasicGeometry() {
+		this(new Vector(0.0, 0.0, 0.0));
+	}
+	
+	public BasicGeometry(Vector location) {
 		this.setTransforms(new TransformMatrix[0]);
 		
-		this.setLocation(new Vector(0.0, 0.0, 0.0));
+		this.setLocation(location);
 		this.setSize(1.0);
 		
 		this.setScaleCoefficients(1.0, 1.0, 1.0);
 		this.setRotationCoefficients(0.0, 0.0, 0.0);
-	}
-	
-	/**
-	 * Sums the location, size, scale coefficients, and rotation coefficients
-	 * of this {@link BasicGeometry} with those from the geometry specified.
-	 */
-	public void sum(BasicGeometry b) {
-		location = location.add(b.getLocation());
-		size += b.getSize();
-		scaleX += b.scaleX;
-		scaleY += b.scaleY;
-		scaleZ += b.scaleZ;
-		rotateX += b.rotateX;
-		rotateY += b.rotateY;
-		rotateZ += b.rotateZ;
 	}
 	
 	/**

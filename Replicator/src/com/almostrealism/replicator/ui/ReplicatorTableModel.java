@@ -62,12 +62,12 @@ public class ReplicatorTableModel extends ReplicantScene implements TableModel {
 	 */
 	public void addLayer(String name, ShadableSurface s) {
 		DefaultReplicant<ShadableSurface> r = new DefaultReplicant<ShadableSurface>(s);
-		r.put(LEFT, new BasicGeometry());
-		r.put(RIGHT, new BasicGeometry());
-		r.put(TOP, new BasicGeometry());
-		r.put(BOTTOM, new BasicGeometry());
-		r.put(FRONT, new BasicGeometry());
-		r.put(BACK, new BasicGeometry());
+		r.put(LEFT, new BasicGeometry(new Vector(-2.0, 0.0, 0.0)));
+		r.put(RIGHT, new BasicGeometry(new Vector(2.0, 0.0, 0.0)));
+		r.put(TOP, new BasicGeometry(new Vector(0.0, 2.0, 0.0)));
+		r.put(BOTTOM, new BasicGeometry(new Vector(0.0, -2.0, 0.0)));
+		r.put(FRONT, new BasicGeometry(new Vector(0.0, 0.0, 2.0)));
+		r.put(BACK, new BasicGeometry(new Vector(0.0, 0.0, -2.0)));
 		layers.add(r);
 		modelNames.add(name);
 		add(r);
