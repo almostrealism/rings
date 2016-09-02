@@ -17,13 +17,13 @@
 package com.almostrealism.photon.light;
 
 import org.almostrealism.space.VectorMath;
+import org.almostrealism.stats.ProbabilityDistribution;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.Clock;
 import com.almostrealism.photon.Volume;
 import com.almostrealism.photon.distribution.SphericalProbabilityDistribution;
 import com.almostrealism.photon.util.PhysicalConstants;
-import com.almostrealism.photon.util.ProbabilityDistribution;
 import com.almostrealism.photon.util.Transparent;
 
 /**

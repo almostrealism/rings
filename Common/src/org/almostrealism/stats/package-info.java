@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.photon.util.color;
-
-import org.almostrealism.stats.ProbabilityDistribution;
-
 /**
- * @author  Mike Murray
+ * @author  Michael Murray
  */
-public interface Spectrum {
-	public ProbabilityDistribution getSpectra();
-}
+package org.almostrealism.stats;

@@ -23,11 +23,12 @@ import java.util.Hashtable;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.stats.OverlayDistribution;
+import org.almostrealism.stats.ProbabilityDistribution;
+import org.almostrealism.stats.RangeSumDistribution;
+
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionConfigurationPanel;
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;
-import com.almostrealism.photon.util.OverlayDistribution;
-import com.almostrealism.photon.util.ProbabilityDistribution;
-import com.almostrealism.photon.util.RangeSumDistribution;
 import com.almostrealism.photon.xml.ProbabilityDistributionDisplay;
 
 /**

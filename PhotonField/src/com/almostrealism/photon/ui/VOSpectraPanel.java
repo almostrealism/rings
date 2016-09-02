@@ -17,6 +17,9 @@
 package com.almostrealism.photon.ui;
 
 import javax.swing.JPanel;
+
+import org.almostrealism.stats.ProbabilityDistribution;
+
 import javax.swing.JLabel;
 
 import com.almostrealism.photon.util.*;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.photon.util;
+package org.almostrealism.stats;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

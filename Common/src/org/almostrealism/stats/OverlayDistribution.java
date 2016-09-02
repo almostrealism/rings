@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.photon.util;
+package org.almostrealism.stats;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

@@ -20,9 +20,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import org.almostrealism.obj.ObjectFactory;
-
-import com.almostrealism.photon.util.OverlayDistribution;
-import com.almostrealism.photon.util.ProbabilityDistribution;
+import org.almostrealism.stats.OverlayDistribution;
+import org.almostrealism.stats.ProbabilityDistribution;
 
 /**
  * @author  Mike Murray

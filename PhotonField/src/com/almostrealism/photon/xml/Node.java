@@ -24,12 +24,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.stats.ProbabilityDistribution;
 import org.almostrealism.util.Nameable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.almostrealism.photon.Absorber;
-import com.almostrealism.photon.util.ProbabilityDistribution;
 
 public class Node {
 	protected String name;
