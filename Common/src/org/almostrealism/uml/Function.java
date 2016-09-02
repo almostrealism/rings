@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.almostrealism.space;
+package org.almostrealism.uml;
 
-import org.almostrealism.uml.Function;
+import static java.lang.annotation.ElementType.TYPE;
 
+import java.lang.annotation.Target;
+
+@Target(TYPE)
 /**
- * A {@link Gradient} represents any continuously evaluable function returning a {@link Vector}.
+ * A type is a function if it represents something that can be evaluated
+ * for varying parameters.
  * 
- * @author  Michael Murray
+ * @author  Michael
  */
-@Function
-public interface Gradient {
-	/**
-	 * Returns a Vector object that represents the vector normal to the 3d surface at the point
-	 * represented by the specified Vector object.
-	 */
-	public Vector getNormalAt(Vector point);
+public @interface Function {
+
 }
