@@ -16,6 +16,10 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
@@ -27,11 +31,21 @@ import org.almostrealism.space.Vector;
  * @author  Michael Murray
  */
 public class ShadableIntersection extends Intersection {
-	private Vector normal;
+	private List<Vector> normals;
 	
 	public ShadableIntersection(Ray ray, Intersectable surface, double intersections[]) {
 		super(ray, surface, intersections);
+		
+		normals = new ArrayList<Vector>();
+		
+		if (surface instanceof Gradient) {
+			for (int i = 0; i < intersections.length; i++) {
+				normals.add(((Gradient) surface).getNormalAt(ray.pointAt(intersections[0])));
+			}
+		}
 	}
 	
-	public Vector getNormal() { return normal; }
+	public Vector getNormal(int index) { return normals.get(index); }
+	
+	public int size() { return normals.size(); }
 }
