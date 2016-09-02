@@ -28,7 +28,7 @@ import org.almostrealism.util.*;
 /**
  * @author Mike Murray and Sam Tepper
  */
-public class ProbabilityDistribution implements Nameable{
+public class ProbabilityDistribution implements Nameable {
 	private class Node {
 		double start, end, p;
 		private Node left, right;
