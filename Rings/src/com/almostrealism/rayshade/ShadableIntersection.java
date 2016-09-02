@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.almostrealism.space;
+
+package com.almostrealism.rayshade;
+
+import org.almostrealism.space.Intersectable;
+import org.almostrealism.space.Intersection;
+import org.almostrealism.space.Ray;
 
 /**
+ * Extends {@link Intersection} to provide metadata that is required for shading.
+ * 
  * @author  Michael Murray
  */
-public interface Surface {
-	/**
-	 * Returns a Vector object that represents the vector normal to the 3d surface at the point
-	 * represented by the specified Vector object.
-	 * 
-	 * @deprecated  Normal vector is now a member of ShadableIntersection
-	 */
-	public Vector getNormalAt(Vector point);
+public class ShadableIntersection extends Intersection {
+	public ShadableIntersection(Ray ray, Intersectable surface, double intersections[]) {
+		super(ray, surface, intersections);
+		
+		// TODO  Obtain normal vector
+	}
 }

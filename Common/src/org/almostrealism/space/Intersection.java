@@ -45,20 +45,14 @@ public class Intersection implements PathElement<Intersection> {
 
 		this.intersections = intersections;
 	}
-
-	/**
-	 * @return  The Ray object stored by this Intersection object.
-	 */
+	
+	/** @return  The Ray object stored by this Intersection object. */
 	public Ray getRay() { return this.ray; }
-
-	/**
-	 * @return  The Surface object stored by this Intersection object.
-	 */
+	
+	/** @return  The Surface object stored by this Intersection object. */
 	public Intersectable getSurface() { return this.surface; }
-
-	/**
-	 * @return  The intersections stored by this Intersection object.
-	 */
+	
+	/** @return  The intersections stored by this Intersection object. */
 	public double[] getIntersections() { return this.intersections; }
 
 	public double getClosestIntersection() {

@@ -269,9 +269,6 @@ public class RayTracingEngine {
 				}
 			}
 			
-//			if (RefractionShader.lastRay != null && !RefractionShader.lastRay.equals(r.getDirection()))
-//				System.out.println("1: " + RefractionShader.lastRay + " " + r.getDirection());
-			
 			for(int i = 0; i < allLights.length; i++) {
 				// See RayTracingEngine.seperateLights method
 				
@@ -280,13 +277,7 @@ public class RayTracingEngine {
 				for (int j = 0; j < i; j++) { otherL[j] = allLights[j]; }
 				for (int j = i + 1; j < allLights.length; j++) { otherL[j - 1] = allLights[j]; }
 				
-//				if (RefractionShader.lastRay != null && !RefractionShader.lastRay.equals(r.getDirection()))
-//					System.out.println("2: " + RefractionShader.lastRay + " " + r.getDirection());
-				
 				RGB c = null;
-				
-//				if (RefractionShader.lastRay != null && !RefractionShader.lastRay.equals(r.getDirection()))
-//					System.out.println("3: " + RefractionShader.lastRay + " " + r.getDirection());
 				
 				if (RayTracingEngine.castShadows && allLights[i].castShadows &&
 						RayTracingEngine.shadowCalculation(point, allSurfaces, allLights[i]))
@@ -300,18 +291,10 @@ public class RayTracingEngine {
 					DirectionalAmbientLight directionalLight =
 						new DirectionalAmbientLight(1.0, allLights[i].getColorAt(point), direction);
 					
-//					if (RefractionShader.lastRay != null &&
-//							!RefractionShader.lastRay.equals(r.getDirection()))
-//						System.out.println("4:" + RefractionShader.lastRay + " " + r.getDirection());
-					
 					Vector rayDirection = r.getDirection();
 					
 					Vector v = (rayDirection.divide(rayDirection.length())).minus();
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
-					
-//					if (RefractionShader.lastRay != null &&
-//						!RefractionShader.lastRay.equals(r.getDirection()))
-//						System.out.println("5: " + RefractionShader.lastRay + " " + rayDirection);
 					
 					if (p == null) {
 						c = surf.shade(new ShaderParameters(point, v, l, directionalLight,
@@ -334,10 +317,6 @@ public class RayTracingEngine {
 					Vector v = (rayDirection.divide(rayDirection.length())).minus();
 					Vector l = (directionalLight.getDirection().divide(
 							directionalLight.getDirection().length())).minus();
-					
-//					if (RefractionShader.lastRay != null &&
-//							!RefractionShader.lastRay.equals(r.getDirection()))
-//						System.out.println("6: " + RefractionShader.lastRay + " " + rayDirection);
 					
 					if (p == null) {
 						c = surface.shade(new ShaderParameters(point, v, l, directionalLight,
