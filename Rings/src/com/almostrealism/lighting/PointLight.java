@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 /**
@@ -33,10 +34,7 @@ public class PointLight implements Light {
 
 	private double da, db, dc;
 
-	/**
-	  Constructs a PointLight object with the default intensity and color at the origin.
-	*/
-	
+	/** Constructs a PointLight object with the default intensity and color at the origin. */
 	public PointLight() {
 		this.setIntensity(1.0);
 		this.setColor(new RGB(1.0, 1.0, 1.0));
@@ -46,10 +44,7 @@ public class PointLight implements Light {
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 	
-	/**
-	  Constructs a PointLight object with the specified location and default intensity and color.
-	*/
-	
+	/** Constructs a {@link PointLight} with the specified location and default intensity and color. */
 	public PointLight(Vector location) {
 		this.setIntensity(1.0);
 		this.setColor(new RGB(1.0, 1.0, 1.0));
@@ -59,10 +54,7 @@ public class PointLight implements Light {
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 	
-	/**
-	  Constructs a PointLight object with the specified intensity and default color at the origin.
-	*/
-	
+	/** Constructs a PointLight object with the specified intensity and default color at the origin. */
 	public PointLight(double intensity) {
 		this.setIntensity(intensity);
 		this.setColor(new RGB(1.0, 1.0, 1.0));
@@ -72,10 +64,7 @@ public class PointLight implements Light {
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 	
-	/**
-	  Constructs a PointLight object with the specified intensity and color at the origin.
-	*/
-	
+	/** Constructs a PointLight object with the specified intensity and color at the origin. */
 	public PointLight(double intensity, RGB color) {
 		this.setIntensity(intensity);
 		this.setColor(color);
@@ -85,10 +74,7 @@ public class PointLight implements Light {
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 	
-	/**
-	  Constructs a PointLight object with the specified location, intensity, and color.
-	*/
-	
+	/** Constructs a PointLight object with the specified location, intensity, and color. */
 	public PointLight(Vector location, double intensity, RGB color) {
 		this.setIntensity(intensity);
 		this.setColor(color);
@@ -147,7 +133,7 @@ public class PointLight implements Light {
 	 * Returns the color of the light represented by this PointLight object at the
 	 * specified point as an RGB object.
 	 */
-	public RGB getColorAt(Vector point) {
+	public ColorProducer getColorAt(Vector point) {
 		double d = point.subtract(this.location).lengthSq();
 		
 		RGB color = this.getColor().multiply(this.getIntensity());

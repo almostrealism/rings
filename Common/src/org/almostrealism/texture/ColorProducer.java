@@ -16,6 +16,7 @@
 
 package org.almostrealism.texture;
 
+import org.almostrealism.uml.Function;
 import org.almostrealism.util.Producer;
 
 /**
@@ -24,6 +25,7 @@ import org.almostrealism.util.Producer;
  * 
  * @author Mike Murray
  */
+@Function
 public interface ColorProducer extends Producer {
     /**
      * Produces a color using the specified arguments.

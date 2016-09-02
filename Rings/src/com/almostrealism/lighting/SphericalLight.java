@@ -18,6 +18,7 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.primitives.Sphere;
 
@@ -92,7 +93,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
 			
-			l[i] = new PointLight(p, in, super.getColorAt(p));
+			l[i] = new PointLight(p, in, (RGB) super.getColorAt(p));
 			l[i].setAttenuationCoefficients(this.atta, this.attb, this.attc);
 		}
 		

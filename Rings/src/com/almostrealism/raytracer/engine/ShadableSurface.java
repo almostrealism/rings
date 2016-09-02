@@ -25,7 +25,7 @@ package com.almostrealism.raytracer.engine;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.rayshade.Shadable;
@@ -56,5 +56,5 @@ public interface ShadableSurface extends Gradient, Intersectable<ShadableInterse
 	/**
 	 * Returns the color of this Surface object at the specified point as an RGB object.
 	 */
-	public RGB getColorAt(Vector point);
+	public ColorProducer getColorAt(Vector point);
 }

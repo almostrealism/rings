@@ -77,8 +77,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 	 */
 	public RGB shade(ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections)
-			return this.reflectiveColor.evaluate(
-									new Object[] {p}).multiply(p.getSurface().getColorAt(p.getPoint()));
+			return this.reflectiveColor.evaluate(new Object[] {p})
+					.multiply(p.getSurface().getColorAt(p.getPoint()).evaluate(null));
 		
 		p.addReflection();
 		
@@ -90,7 +90,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
 		allLights[allLights.length - 1] = p.getLight();
 		
-		RGB lightColor = p.getLight().getColorAt(p.getPoint());
+		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
 		Vector n = p.getSurface().getNormalAt(p.getPoint());
 		// TODO Should surface color be factored in to reflection?

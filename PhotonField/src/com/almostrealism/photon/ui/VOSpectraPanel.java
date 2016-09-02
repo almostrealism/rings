@@ -22,8 +22,6 @@ import org.almostrealism.stats.ProbabilityDistribution;
 
 import javax.swing.JLabel;
 
-import com.almostrealism.photon.util.*;
-
 import java.awt.FlowLayout;
 
 /**

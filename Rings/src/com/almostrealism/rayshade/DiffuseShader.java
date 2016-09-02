@@ -42,10 +42,10 @@ public class DiffuseShader implements Shader, Editable {
 	 * Method specified by the Shader interface.
 	 */
 	public RGB shade(ShaderParameters p) {
-		RGB lightColor = p.getLight().getColorAt(p.getPoint());
+		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
 		Vector n = p.getSurface().getNormalAt(p.getPoint());
-		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
+		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint()).evaluate(null);
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		

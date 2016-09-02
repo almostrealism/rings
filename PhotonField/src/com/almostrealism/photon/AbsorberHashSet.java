@@ -28,6 +28,7 @@ import java.util.Set;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 
@@ -835,7 +836,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 		this.rgb = new RGB(this.colorDepth, r, g, b);
 	}
 	
-	public RGB getColorAt(Vector point) { return this.rgb; }
+	public ColorProducer getColorAt(Vector point) { return this.rgb; }
 	
 	public Vector getNormalAt(Vector point) {
 		Volume v = this.getVolume(this.rclosest.absorber);

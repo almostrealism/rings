@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 
@@ -514,7 +515,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	/**
 	 * @return  The color of this AbstractSurface at the specified point as an RGB object.
 	 */
-	public RGB getColorAt(Vector p) { return this.getColorAt(p, true); }
+	public ColorProducer getColorAt(Vector p) { return this.getColorAt(p, true); }
 	
 	/**
 	 * @return  The color of this AbstractSurface at the specified point as an RGB object.
@@ -534,8 +535,9 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	        colorAt = (RGB)this.color.clone();
 	    }
 	    
+	    // TODO  Return color multiplier
 	    if (this.parent != null)
-	        colorAt.multiplyBy(this.parent.getColorAt(point));
+	        colorAt.multiplyBy(this.parent.getColorAt(point).evaluate(null));
 		
 		return colorAt;
 	}

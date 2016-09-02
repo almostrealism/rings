@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 /**
@@ -76,7 +77,7 @@ public class AmbientLight implements Light {
 	/**
 	 * Returns the color of this AmbientLight object as an RGB object.
 	 */
-	public RGB getColorAt(Vector point) { return this.color.multiply(this.intensity); }
+	public ColorProducer getColorAt(Vector point) { return this.color.multiply(this.intensity); }
 	
 	/**
 	 * Returns "Ambient Light".

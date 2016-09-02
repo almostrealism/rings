@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 /**
@@ -52,5 +53,5 @@ public interface Light {
 	 * Returns the color of the light represented by this Light object at the specified point
 	 * as an RGB object.
 	 */
-	public RGB getColorAt(Vector point);
+	public ColorProducer getColorAt(Vector point);
 }

@@ -32,6 +32,7 @@ import java.util.List;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.SpatialData;
@@ -101,7 +102,7 @@ public class Mesh extends SpacePartition {
 		
 		public boolean getShadeFront() { return this.getSurface().getShadeFront(); }
 		public boolean getShadeBack() { return this.getSurface().getShadeBack(); }
-		public RGB getColorAt(Vector point) { return this.getSurface().getColorAt(point); }
+		public ColorProducer getColorAt(Vector point) { return this.getSurface().getColorAt(point); }
 		public Vector getNormalAt(Vector point) { return this.getSurface().getNormalAt(point); }
 		public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
 		public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }

@@ -18,6 +18,7 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.space.TransformMatrix;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.primitives.Plane;
@@ -99,7 +100,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 			Vector p = new Vector(x, y, z);
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
 			
-			l[i] = new PointLight(p, in, super.getColorAt(p));
+			l[i] = new PointLight(p, in, (RGB) super.getColorAt(p));
 		}
 		
 		return l;

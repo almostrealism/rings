@@ -18,6 +18,7 @@ package com.almostrealism.photon.light;
 
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.Light;
@@ -110,7 +111,7 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable {
 	public void setIntensity(double intensity) { }
 	public double getIntensity() { return 1.0; }
 	
-	public RGB getColorAt(Vector point) { return null; }
+	public ColorProducer getColorAt(Vector point) { return null; }
 	public void setColor(RGB color) { }
 	public RGB getColor() { return null; }
 	

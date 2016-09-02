@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.RGB;
 
@@ -179,7 +180,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	/**
 	 * Returns the color of this AbstractSurfaceUI at the specified point as an RGB object.
 	 */
-	public RGB getColorAt(Vector point) {
+	public ColorProducer getColorAt(Vector point) {
 		return this.surface.getColorAt(point);
 	}
 	

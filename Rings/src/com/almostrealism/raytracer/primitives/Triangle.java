@@ -23,6 +23,7 @@ package com.almostrealism.raytracer.primitives;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.rayshade.ShadableIntersection;
@@ -265,7 +266,7 @@ public class Triangle extends AbstractSurface implements ParticleGroup {
 		}
 	}
 	
-	public RGB getColorAt(Vector p) {
+	public ColorProducer getColorAt(Vector p) {
 		RGB dc = super.getColorAt(p, this.useT);
 		if (dc.length() < (Intersection.e * 100)) return new RGB(0.0, 0.0, 0.0);
 		

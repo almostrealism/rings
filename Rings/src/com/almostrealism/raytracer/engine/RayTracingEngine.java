@@ -289,7 +289,7 @@ public class RayTracingEngine {
 				} else if (allLights[i] instanceof PointLight) {
 					Vector direction = point.subtract(((PointLight)allLights[i]).getLocation());
 					DirectionalAmbientLight directionalLight =
-						new DirectionalAmbientLight(1.0, allLights[i].getColorAt(point), direction);
+						new DirectionalAmbientLight(1.0, allLights[i].getColorAt(point).evaluate(null), direction);
 					
 					Vector rayDirection = r.getDirection();
 					
@@ -482,20 +482,10 @@ public class RayTracingEngine {
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static RGB ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces, AmbientLight light) {
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.print(" AmbientLight {");
-		}
-		
 		RGB color = null;
 		
-		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
-		
 		color = light.getColor().multiply(light.getIntensity());
-		color.multiplyBy(surface.getColorAt(point));
-		
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-			Settings.rayEngineOut.print(" : Color = " + color.toString() + " }");
-		}
+		color.multiplyBy(surface.getColorAt(point).evaluate(null));
 		
 		return color;
 	}
@@ -564,11 +554,11 @@ public class RayTracingEngine {
 		DirectionalAmbientLight dLight = null;
 		
 		if (RayTracingEngine.premultiplyIntensity) {
-			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point), direction);
+			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point).evaluate(null), direction);
 		} else {
 			double in = light.getIntensity();
 			light.setIntensity(1.0);
-			dLight = new DirectionalAmbientLight(in, light.getColorAt(point), direction);
+			dLight = new DirectionalAmbientLight(in, light.getColorAt(point).evaluate(null), direction);
 			light.setIntensity(in);
 		}
 		
