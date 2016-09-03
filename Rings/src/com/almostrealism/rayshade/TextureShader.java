@@ -165,11 +165,6 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 		
 		return this.tex.getColorAt(p.getPoint()).add(super.shade(p));
 	}
-
-	/**
-	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
-	 */
-	public RGB evaluate(Object[] args) { return this.shade((ShaderParameters)args[0]); }
 	
 	/**
 	 * @return The string representation of the Texture object used by this TextureShader object

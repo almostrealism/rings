@@ -102,9 +102,4 @@ public class RigidBodyStateShader implements Shader {
 		
 		return this.shader.shade(p).multiply(m);
 	}
-
-	/**
-	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
-	 */
-	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters)args[0]); }
 }

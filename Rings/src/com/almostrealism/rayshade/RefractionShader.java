@@ -253,18 +253,6 @@ public class RefractionShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @throws IllegalArgumentException  If args[0] is not a ShaderParameters object.
-	 * @return  this.shade(args[0]).
-	 */
-	public RGB evaluate(Object args[]) {
-	    if (args[0] instanceof ShaderParameters) {
-	        return this.shade((ShaderParameters)args[0]);
-	    } else {
-	        throw new IllegalArgumentException("Illegal argument: " + args[0]);
-	    }
-	}
-	
-	/**
 	 * Sets the index of refraction value used by this RefractionShader object.
 	 */
 	public void setIndexOfRefraction(double n) { this.indexOfRefraction = n; }

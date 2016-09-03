@@ -38,18 +38,6 @@ public class ShaderSet extends HashSet<Shader> implements Shader {
         return color;
     }
     
-	/**
-	 * @throws IllegalArgumentException  If args[0] is not a ShaderParameters object.
-	 * @return  this.shade(args[0]).
-	 */
-	public RGB evaluate(Object args[]) {
-	    if (args[0] instanceof ShaderParameters) {
-	        return this.shade((ShaderParameters)args[0]);
-	    } else {
-	        throw new IllegalArgumentException("Illegal argument: " + args[0]);
-	    }
-	}
-	
 	/** @return  False. */
 	public boolean equals(Object o) { return false; }
 	

@@ -69,18 +69,6 @@ public class DiffuseShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @throws IllegalArgumentException  If args[0] is not a ShaderParameters object.
-	 * @return  this.shade(args[0]).
-	 */
-	public RGB evaluate(Object args[]) {
-	    if (args[0] instanceof ShaderParameters) {
-	        return this.shade((ShaderParameters)args[0]);
-	    } else {
-	        throw new IllegalArgumentException("Illegal argument: " + args[0]);
-	    }
-	}
-	
-	/**
 	 * Returns a zero length array.
 	 */	
 	public String[] getPropertyNames() { return new String[0]; }

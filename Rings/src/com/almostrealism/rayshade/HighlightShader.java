@@ -88,18 +88,6 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	}
 	
 	/**
-	 * @throws IllegalArgumentException  If args[0] is not a ShaderParameters object.
-	 * @return  this.shade(args[0]).
-	 */
-	public RGB evaluate(Object args[]) {
-	    if (args[0] instanceof ShaderParameters) {
-	        return this.shade((ShaderParameters)args[0]);
-	    } else {
-	        throw new IllegalArgumentException("Illegal argument: " + args[0]);
-	    }
-	}
-	
-	/**
 	 * Sets the color used for the highlight shaded by this HighlightShader object
 	 * to the color represented by the specifed RGB object.
 	 */

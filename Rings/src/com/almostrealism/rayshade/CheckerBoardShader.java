@@ -56,11 +56,6 @@ public class CheckerBoardShader implements Shader {
 		
 		return hot;
 	}
-
-	/**
-	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
-	 */
-	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters) args[0]); }
 	
 	/**
 	 * @return Returns the coldColor.

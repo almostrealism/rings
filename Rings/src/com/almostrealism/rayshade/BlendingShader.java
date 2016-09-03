@@ -123,11 +123,6 @@ public class BlendingShader implements Shader, Editable {
 		else
 			throw new IndexOutOfBoundsException("Property index out of bounds: " + index);
 	}
-
-	/**
-	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
-	 */
-	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters)args[0]); }
 	
 	/**
 	 * @return  "Blending Shader".

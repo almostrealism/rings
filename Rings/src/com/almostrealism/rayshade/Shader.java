@@ -21,10 +21,11 @@ import org.almostrealism.color.ColorProducer;
 /**
  * The Shader interface is implemented by classes that provide a method for shading a surface.
  */
-public interface Shader extends ColorProducer {
+public interface Shader {
 	/**
-	 * Returns an RGB object that represents the shaded color calculated using the values
-	 * of the specified ShaderParameters object.
+	 * Returns a {@link ColorProducer} object that represents the
+	 * shaded color calculated using the values of the specified
+	 * {@link ShaderParameters} object.
 	 */
 	public ColorProducer shade(ShaderParameters parameters);
 }
