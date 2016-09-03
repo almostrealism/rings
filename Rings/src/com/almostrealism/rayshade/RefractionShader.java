@@ -19,6 +19,7 @@ package com.almostrealism.rayshade;
 import java.util.List;
 
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
@@ -70,7 +71,7 @@ public class RefractionShader implements Shader, Editable {
 	public ColorProducer shade(ShaderParameters p) {
 		p.addReflection();
 		
-		RGB color = new RGB(0.0, 0.0, 0.0);
+		ColorSum color = new ColorSum();
 		
 		Vector po = p.getPoint();
 		
@@ -82,21 +83,21 @@ public class RefractionShader implements Shader, Editable {
 		n = n.divide(n.length());
 		
 		if (p.getSurface().getShadeFront()) {
-			RGB c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
+			ColorProducer c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
 					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n, p);
-			if (c != null) color.addTo(c);
+			if (c != null) color.add(c);
 		}
 		
 		if (p.getSurface().getShadeBack()) {
-			RGB c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
+			ColorProducer c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
 					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n.minus(), p);
-			if (c != null) color.addTo(c);
+			if (c != null) color.add(c);
 		}
 		
 		return color;
 	}
 	
-	public RGB shade(Vector point, Vector viewerDirection, Vector lightDirection,
+	public ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
 				Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[], Vector n,
 				ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
@@ -156,7 +157,7 @@ public class RefractionShader implements Shader, Editable {
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
 		RefractionShader.lastRay = r.getDirection();
 		
-		RGB color = RayTracingEngine.lightingCalculation(r, allSurfaces, allLights,
+		ColorProducer color = RayTracingEngine.lightingCalculation(r, allSurfaces, allLights,
 											p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));

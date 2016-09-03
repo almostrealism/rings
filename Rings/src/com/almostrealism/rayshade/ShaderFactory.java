@@ -65,13 +65,6 @@ public class ShaderFactory extends EditableFactory {
 			return new RefractionShader();
 		} else if (index == ShaderFactory.silhouetteShader) {
 			return new SilhouetteShader();
-		} else if (index == ShaderFactory.textureShader) {
-			TextureShader ts = new TextureShader(null, this);
-			
-// TODO		AddDialog d = new AddDialog(ts, null, new TextureFactory());
-//			d.setVisible(true);
-			
-			return ts;
 		} else {
 			throw new IndexOutOfBoundsException("Index out of bounds: " + index);
 		}

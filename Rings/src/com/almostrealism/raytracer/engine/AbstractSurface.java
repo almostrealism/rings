@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.Texture;
@@ -475,18 +476,16 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	 * calculated by the Shader objects stored by this AbstractSurface and the parent
 	 * of this AbstractSurface and returns this value as an RGB object.
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		p.setSurface(this);
 		
-		RGB color = null;
+		ColorSum color = new ColorSum();
 		
-		if (this.shaders == null)
-			color = new RGB(0.0, 0.0, 0.0);
-		else
-			color = this.shaders.shade(p);
+		if (this.shaders != null)
+			color.add(this.shaders.shade(p));
 		
 		if (this.getParent() != null)
-			color.addTo(this.getParent().shade(p));
+			color.add(this.getParent().shade(p));
 		
 		return color;
 	}

@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.RGB;
+import org.almostrealism.color.ColorSum;
 
 /**
  * @author Mike Murray
@@ -30,10 +30,10 @@ public class ShaderSet extends HashSet<Shader> implements Shader {
      * @return  The sum of the values given by the shade method for each Shader object stored by this ShaderSet object.
      */
     public ColorProducer shade(ShaderParameters p) {
-        RGB color = new RGB(0.0, 0.0, 0.0);
+        ColorSum color = new ColorSum();
         
         Iterator<Shader> itr = super.iterator();
-        while (itr.hasNext()) color.addTo(itr.next().shade(p));
+        while (itr.hasNext()) color.add(itr.next().shade(p));
         
         return color;
     }

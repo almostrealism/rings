@@ -508,12 +508,12 @@ public class RayTracingEngine {
 	 *           during a single set of ray casting events (reflections, refractions, etc.)
 	 *           (null accepted).
 	 */
-	public static RGB directionalAmbientLightingCalculation(Vector point, Vector rayDirection,
+	public static ColorProducer directionalAmbientLightingCalculation(Vector point, Vector rayDirection,
 														ShadableSurface surface,
 														Collection<ShadableSurface> otherSurfaces,
 														DirectionalAmbientLight light, Light otherLights[],
 														ShaderParameters p) {
-		RGB color = null;
+		ColorProducer color = null;
 		
 		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
@@ -546,7 +546,7 @@ public class RayTracingEngine {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static RGB pointLightingCalculation(Vector point, Vector rayDirection,
+	public static ColorProducer pointLightingCalculation(Vector point, Vector rayDirection,
 											ShadableSurface surface,
 											Collection<ShadableSurface> otherSurfaces,
 											PointLight light, Light otherLights[],

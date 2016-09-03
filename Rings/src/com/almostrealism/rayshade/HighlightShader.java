@@ -16,7 +16,9 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
@@ -54,9 +56,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		this.setHighlightExponent(exponent);
 	}
 	
-	/**
-	 * Method specified by the Shader interface.
-	 */
+	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderParameters p) {
 		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
@@ -65,23 +65,23 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		Vector h = p.getViewerDirection().add(p.getLightDirection());
 		h = h.divide(h.length());
 		
-		RGB color = new RGB(0.0, 0.0, 0.0);
+		ColorSum color = new ColorSum();
 		
-		RGB hc = this.getHighlightColor().evaluate(new Object[] {p});
-		if (super.size() > 0) hc.multiplyBy(super.shade(p));
+		ColorProducer hc = this.getHighlightColor().evaluate(new Object[] {p});
+		if (super.size() > 0) hc = new ColorMultiplier(hc, super.shade(p));
 		
 		if (p.getSurface().getShadeFront()) {
 			double c = h.dotProduct(n);
 			c = Math.pow(c, this.getHighlightExponent());
 			
-			color.addTo((lightColor.multiply(hc)).multiply(c));
+			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
 		}
 		
 		if (p.getSurface().getShadeBack()) {
 			double c = h.dotProduct(n.minus());
 			c = Math.pow(c, this.getHighlightExponent());
 			
-			color.addTo((lightColor.multiply(hc)).multiply(c));
+			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
 		}
 		
 		return color;

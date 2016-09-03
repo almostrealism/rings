@@ -27,6 +27,7 @@ import java.util.Iterator;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
@@ -118,16 +119,14 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	public Iterator<T> iterator() { return surfaces.iterator(); }
 	
 	/** {@link ShadableSurface#shade(ShaderParameters)} */
-	public RGB shade(ShaderParameters p) {
-		RGB color = null;
+	public ColorSum shade(ShaderParameters p) {
+		ColorSum color = new ColorSum();
 		
 		if (super.getShaderSet() != null)
-			color = super.getShaderSet().shade(p);
-		else
-			color = new RGB(0.0, 0.0, 0.0);
+			color.add(super.getShaderSet().shade(p));
 		
 		if (super.getParent() != null)
-			color.addTo(super.getParent().shade(p));
+			color.add(super.getParent().shade(p));
 		
 		return color;
 	}

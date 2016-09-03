@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.almostrealism.rayshade;
 
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 /**
@@ -27,5 +29,5 @@ public interface Shadable {
 	 *
 	 * @see Shader
 	 */
-	public RGB shade(ShaderParameters parameters);
+	public ColorProducer shade(ShaderParameters parameters);
 }

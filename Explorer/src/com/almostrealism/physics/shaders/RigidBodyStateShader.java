@@ -25,6 +25,7 @@
 
 package com.almostrealism.physics.shaders;
 
+import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
@@ -100,6 +101,6 @@ public class RigidBodyStateShader implements Shader {
 		d.divideBy(d.length());
 		p.setLightDirection(d);
 		
-		return this.shader.shade(p).multiply(m);
+		return new ColorMultiplier(this.shader.shade(p), m);
 	}
 }

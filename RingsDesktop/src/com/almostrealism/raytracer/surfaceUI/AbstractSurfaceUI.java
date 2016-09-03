@@ -209,7 +209,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	/**
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
-	public RGB shade(ShaderParameters parameters) {
+	public ColorProducer shade(ShaderParameters parameters) {
 		return this.surface.shade(parameters);
 	}
 }

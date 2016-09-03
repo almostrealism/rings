@@ -26,11 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
 import org.almostrealism.swing.DynamicDisplay;
-import org.almostrealism.texture.Texture;
 import org.almostrealism.util.EditableFactory;
-
-import com.almostrealism.rayshade.TextureShader;
-import com.almostrealism.raytracer.primitives.TextureFactory;
 
 /**
  * An AddDialog object can be used to allow a user to add an Editable object to a specified Set object.
@@ -83,10 +79,7 @@ public class AddDialog extends JFrame {
 	 * DynamicDisplay object stored by this AddDialog.
 	 */
 	public void add() {
-		if (this.set instanceof TextureShader && this.factory instanceof TextureFactory)
-			((TextureShader)this.set).setTexture((Texture)this.factory.constructObject(this.typesList.getSelectedIndex()));
-		else
-			this.set.add(this.factory.constructObject(this.typesList.getSelectedIndex()));
+		this.set.add(this.factory.constructObject(this.typesList.getSelectedIndex()));
 		
 		if (this.display != null)
 			this.display.updateDisplay();

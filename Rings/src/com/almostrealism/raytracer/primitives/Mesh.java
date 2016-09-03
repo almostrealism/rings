@@ -100,13 +100,13 @@ public class Mesh extends SpacePartition {
 			return this.mesh;
 		}
 		
-		public boolean getShadeFront() { return this.getSurface().getShadeFront(); }
-		public boolean getShadeBack() { return this.getSurface().getShadeBack(); }
-		public ColorProducer getColorAt(Vector point) { return this.getSurface().getColorAt(point); }
-		public Vector getNormalAt(Vector point) { return this.getSurface().getNormalAt(point); }
-		public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
-		public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
-		public RGB shade(ShaderParameters p) { return this.getSurface().shade(p); }
+		@Override public boolean getShadeFront() { return this.getSurface().getShadeFront(); }
+		@Override public boolean getShadeBack() { return this.getSurface().getShadeBack(); }
+		@Override public ColorProducer getColorAt(Vector point) { return this.getSurface().getColorAt(point); }
+		@Override public Vector getNormalAt(Vector point) { return this.getSurface().getNormalAt(point); }
+		@Override public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
+		@Override public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
+		@Override public ColorProducer shade(ShaderParameters p) { return this.getSurface().shade(p); }
 	}
 	
 	public static class Vertex extends Vector {

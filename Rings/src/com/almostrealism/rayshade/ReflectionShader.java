@@ -100,10 +100,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		
 		ColorSum totalColor = new ColorSum();
 		
-		RGB r = this.getReflectiveColor().evaluate(new Object[] {p});
-		if (super.size() > 0) r.multiplyBy(super.shade(p));
-		
-		if (r.getRed() + r.getGreen() + r.getBlue() < 0.001) return new RGB(0.0, 0.0, 0.0);
+		ColorProducer r = this.getReflectiveColor();
+		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p));
 		
 		f: if (p.getSurface().getShadeFront()) {
 			Vector ref = RayTracingEngine.reflect(p.getViewerDirection(), n);
@@ -112,7 +110,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				double a = this.blur * (-0.5 + Math.random());
 				double b = this.blur * (-0.5 + Math.random());
 				
-				Vector u, v, w = (Vector)n.clone();
+				Vector u, v, w = (Vector) n.clone();
 				
 				Vector t = (Vector)n.clone();
 				
@@ -150,7 +148,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color = new ColorMultiplier(color, r.multiply(reflectivity));
+			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			
 			totalColor.add(color);
 		}
@@ -202,7 +200,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color = new ColorMultiplier(color, r.multiply(reflectivity));
+			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			
 			totalColor.add(color);
 		}

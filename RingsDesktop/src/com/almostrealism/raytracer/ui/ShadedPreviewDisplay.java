@@ -58,7 +58,7 @@ public class ShadedPreviewDisplay extends JPanel implements Runnable {
 		public boolean getShadeFront() { return this.surface.getShadeFront(); }
 		public boolean getShadeBack() { return this.surface.getShadeBack(); }
 		public ColorProducer getColorAt(Vector p) { return this.surface.getColorAt(p); }
-		public RGB shade(ShaderParameters sp) { return this.surface.shade(sp); }
+		public ColorProducer shade(ShaderParameters sp) { return this.surface.shade(sp); }
 	}
 	
 	private Camera camera;
