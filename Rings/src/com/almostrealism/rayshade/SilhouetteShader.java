@@ -50,7 +50,7 @@ public class SilhouetteShader implements Editable, Shader {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
-	public RGB shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
+	public ColorProducer shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
 	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])

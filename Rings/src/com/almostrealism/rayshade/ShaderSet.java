@@ -16,58 +16,24 @@
 
 package com.almostrealism.rayshade;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 /**
  * @author Mike Murray
  */
-public class ShaderSet extends HashSet implements Shader {
-    /**
-     * Adds the specified Object to this set and returns true.
-     * 
-     * @throws IllegalArgumentException  If the specified Object is not an instance of Shader.
-     */
-    public boolean add(Object o) {
-        if (o instanceof Shader == false)
-            throw new IllegalArgumentException("Illegal argument: " + o.toString());
-        
-        return super.add(o);
-    }
-    
-    /**
-     * Adds all of the elements stored by the specified Collection object to this set.
-     * Returns true if the set changed as a result.
-     * 
-     * @throws IllegalArgumentException  If an element in the specified Collection object is not
-     * 									an instance of Shader. Note: Elements that have not yet been added
-     * 									to the set at the time this error occurs will not be added.
-     * @throws NullPointerException  If the specified Collection object is null.
-     */
-    public boolean addAll(Collection c) {
-        boolean added = false;
-        
-        Iterator itr = c.iterator();
-        
-        while (itr.hasNext()) {
-            this.add(itr.next());
-            added = true;
-        }
-        
-        return added;
-    }
-    
+public class ShaderSet extends HashSet<Shader> implements Shader {
     /**
      * @return  The sum of the values given by the shade method for each Shader object stored by this ShaderSet object.
      */
-    public RGB shade(ShaderParameters p) {
+    public ColorProducer shade(ShaderParameters p) {
         RGB color = new RGB(0.0, 0.0, 0.0);
         
-        Iterator itr = super.iterator();
-        while (itr.hasNext()) color.addTo(((Shader)itr.next()).shade(p));
+        Iterator<Shader> itr = super.iterator();
+        while (itr.hasNext()) color.addTo(itr.next().shade(p));
         
         return color;
     }
@@ -84,13 +50,9 @@ public class ShaderSet extends HashSet implements Shader {
 	    }
 	}
 	
-	/**
-	 * @return  False.
-	 */
+	/** @return  False. */
 	public boolean equals(Object o) { return false; }
 	
-	/**
-	 * @return  "ShaderSet".
-	 */
+	/** @return  "ShaderSet". */
 	public String toString() { return "ShaderSet"; }
 }

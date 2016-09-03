@@ -21,6 +21,7 @@ import java.util.List;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -66,7 +67,7 @@ public class RefractionShader implements Shader, Editable {
 	/**
 	 * Method specified by the Shader interface.
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		p.addReflection();
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);

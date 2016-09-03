@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -41,7 +42,7 @@ public class DiffuseShader implements Shader, Editable {
 	/**
 	 * Method specified by the Shader interface.
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
 		Vector n = p.getSurface().getNormalAt(p.getPoint());

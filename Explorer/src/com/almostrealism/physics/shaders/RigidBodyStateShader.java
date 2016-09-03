@@ -26,6 +26,7 @@
 package com.almostrealism.physics.shaders;
 
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.RGB;
 
 import com.almostrealism.physics.RigidBody;
@@ -80,7 +81,7 @@ public class RigidBodyStateShader implements Shader {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		if (p.getSurface() instanceof RigidBody == false) return new RGB(1.0, 1.0, 1.0);
 		
 		RigidBody.State state = ((RigidBody)p.getSurface()).getState();

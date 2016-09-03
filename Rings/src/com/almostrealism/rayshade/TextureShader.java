@@ -155,7 +155,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.raytracer.engine.ShaderParameters)
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		if (this.tex instanceof Editable) {
 			Editable t = (Editable)this.tex;
 			

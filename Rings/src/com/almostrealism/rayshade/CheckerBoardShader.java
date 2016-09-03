@@ -31,7 +31,7 @@ public class CheckerBoardShader implements Shader {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		double intensity = 0.0;
 		
 		AbstractSurface s = (AbstractSurface) p.getSurface();

@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.ColorMultiplier;
 import org.almostrealism.texture.ColorProducer;
+import org.almostrealism.texture.ColorSum;
 import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
@@ -75,7 +77,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 	/**
 	 * Method specified by the Shader interface.
 	 */
-	public RGB shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections)
 			return this.reflectiveColor.evaluate(new Object[] {p})
 					.multiply(p.getSurface().getColorAt(p.getPoint()).evaluate(null));
@@ -96,7 +98,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
 		
-		RGB totalColor = new RGB(0.0, 0.0, 0.0);
+		ColorSum totalColor = new ColorSum();
 		
 		RGB r = this.getReflectiveColor().evaluate(new Object[] {p});
 		if (super.size() > 0) r.multiplyBy(super.shade(p));
@@ -136,7 +138,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(p.getPoint(), ref);
 			
-			RGB color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
+			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
@@ -148,9 +150,9 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color.multiplyBy(r.multiply(reflectivity));
+			color = new ColorMultiplier(color, r.multiply(reflectivity));
 			
-			totalColor.addTo(color);
+			totalColor.add(color);
 		}
 		
 		b: if (p.getSurface().getShadeBack()) {
@@ -188,8 +190,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(p.getPoint(), ref);
 			
-			RGB color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
-												p.fogColor, p.fogDensity, p.fogRatio, p);
+			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
+																	p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
 				if (this.eMap == null)
@@ -200,14 +202,12 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color.multiplyBy(r.multiply(reflectivity));
+			color = new ColorMultiplier(color, r.multiply(reflectivity));
 			
-			totalColor.addTo(color);
+			totalColor.add(color);
 		}
 		
-		totalColor.multiplyBy(lightColor);
-		
-		return totalColor;
+		return new ColorMultiplier(totalColor, lightColor);
 	}
 	
 	/**

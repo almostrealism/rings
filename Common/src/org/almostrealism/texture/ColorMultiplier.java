@@ -28,6 +28,11 @@ public class ColorMultiplier implements ColorProducer {
 	private ColorProducer color;
 	private ColorProducer multiplier;
 	
+	public ColorMultiplier(ColorProducer color, double multiplier) {
+		this.color = color;
+		this.multiplier = new RGB(multiplier, multiplier, multiplier);
+	}
+	
 	public ColorMultiplier(ColorProducer color, ColorProducer multiplier) {
 		this.color = color;
 		this.multiplier = multiplier;
