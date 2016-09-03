@@ -22,8 +22,6 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
-import com.almostrealism.raytracer.Settings;
-
 /**
  * A DiffuseShader object provides a shading method for diffuse surfaces.
  * The DiffuseShader class uses a lambertian shading algorithm.
@@ -50,20 +48,11 @@ public class DiffuseShader implements Shader, Editable {
 		
 		RGB color = new RGB(0.0, 0.0, 0.0);
 		
-		if (Settings.produceShaderOutput && DiffuseShader.produceOutput) {
-			Settings.shaderOut.print("Diffuse Shader: " + lightColor + " " + n + " " + surfaceColor + "  " +
-									p.getSurface().getShadeFront() + " " + p.getSurface().getShadeBack());
-		}
-		
 		if (p.getSurface().getShadeFront())
 			color.addTo((lightColor.multiply(surfaceColor)).multiply(n.dotProduct(p.getLightDirection())));
 		
 		if (p.getSurface().getShadeBack())
 			color.addTo((lightColor.multiply(surfaceColor)).multiply(n.minus().dotProduct(p.getLightDirection())));
-		
-		if (Settings.produceShaderOutput && DiffuseShader.produceOutput) {
-			Settings.shaderOut.println(" -- " + color);
-		}
 		
 		return color;
 	}
