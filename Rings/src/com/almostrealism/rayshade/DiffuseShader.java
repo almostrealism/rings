@@ -32,14 +32,10 @@ public class DiffuseShader implements Shader, Editable {
   public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
   public static boolean produceOutput = false;
 
-	/**
-	 * Constructs a new DiffuseShader object.
-	 */
-	public DiffuseShader() {}
+	/** Constructs a new {@link DiffuseShader}. */
+	public DiffuseShader() { }
 	
-	/**
-	 * Method specified by the Shader interface.
-	 */
+	/** Method specified by the {@link Shader} interface. */
 	public ColorProducer shade(ShaderParameters p) {
 		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
