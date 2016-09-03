@@ -32,5 +32,6 @@ public class ReplicatorCanvas extends SurfaceCanvas {
 		n.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
 		
 		add(n);
+		start();
 	}
 }

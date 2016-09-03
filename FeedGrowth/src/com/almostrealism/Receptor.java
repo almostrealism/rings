@@ -61,11 +61,6 @@ public class Receptor {
 	
 	public ReceptorPlayerPanel getPlayerPanel() { return panel; }
 	
-	public void showReceptorFrame(int x, int y) {
-		receptorFrame.setLocation(x, y);
-		receptorFrame.setVisible(true);
-	}
-	
 	public void showFeedbackFrame(int x, int y) {
 		feedbackFrame.setLocation(x, y);
 		feedbackFrame.setVisible(true);
@@ -75,7 +70,6 @@ public class Receptor {
 		AudioProteinCache cache = new AudioProteinCache();
 		
 		Receptor r = new Receptor();
-		r.showReceptorFrame(0, 0);
 		r.showFeedbackFrame(0, 0);
 		
 		ReceptorPlayer p = new ReceptorPlayer(cache);

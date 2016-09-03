@@ -57,12 +57,17 @@ public class Replicator {
 	private ReplicatorCanvas canvas;
 	private ReplicatorTableModel model;
 	
-	private JFrame layersFrame, samplerFrame;
+	private JFrame canvasFrame, layersFrame, samplerFrame;
 	
 	public Replicator() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		model = new ReplicatorTableModel();
 		canvas = new ReplicatorCanvas(model);
 		receptor = new Receptor();
+		
+		canvasFrame = new JFrame("Replicator");
+		canvasFrame.getContentPane().setLayout(new BorderLayout());
+		canvasFrame.getContentPane().add(canvas, BorderLayout.CENTER);
+		canvasFrame.setSize(400, 250);
 		
 		layersFrame = new JFrame("Layers");
 		layersFrame.setLayout(new BorderLayout());
@@ -78,7 +83,6 @@ public class Replicator {
 			AudioProteinCache cache = new AudioProteinCache();
 			
 			Receptor r = new Receptor();
-			r.showReceptorFrame(0, 0);
 			r.showFeedbackFrame(0, 0);
 			
 			ReceptorPlayer p = new ReceptorPlayer(cache);
@@ -153,6 +157,11 @@ public class Replicator {
 	public Action getSamplerAction() { return new SamplerAction(); }
 	public Action getFeedbackAction() { return new FeedbackAction(); }
 	
+	public void showCanvasFrame(int x, int y) {
+		canvasFrame.setLocation(x, y);
+		canvasFrame.setVisible(true);
+	}
+	
 	public void showLayersFrame(int x, int y) {
 		layersFrame.setLocation(x, y);
 		layersFrame.setVisible(true);
@@ -178,7 +187,7 @@ public class Replicator {
 		}
 		
 		@Override
-		public void actionPerformed(ActionEvent e) { receptor.showReceptorFrame(0, 0); }
+		public void actionPerformed(ActionEvent e) { showCanvasFrame(0, 0); }
 	}
 	
 	private class SamplerAction extends AbstractAction {
