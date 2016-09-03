@@ -45,8 +45,8 @@ import com.almostrealism.feedgrow.test.BasicDyadicCellularSystem;
 import com.almostrealism.feedgrow.test.BasicDyadicChromosome;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.receptor.SamplerPanel;
-import com.almostrealism.replicator.ui.ReplicatorCanvas;
-import com.almostrealism.replicator.ui.ReplicatorTableModel;
+import com.almostrealism.replicator.ReplicatorCanvas;
+import com.almostrealism.replicator.ReplicatorTableModel;
 import com.almostrealism.synth.SineWaveCell;
 
 public class Replicator {

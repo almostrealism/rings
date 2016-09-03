@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.replicator.ui;
+package com.almostrealism.replicator;
 
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.gl.nurbs.AnimatedNurbsSurface;

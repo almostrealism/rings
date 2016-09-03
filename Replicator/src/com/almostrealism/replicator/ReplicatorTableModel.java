@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.replicator.ui;
+package com.almostrealism.replicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,6 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ViewModel;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.replicator.DefaultReplicant;
-import com.almostrealism.replicator.ReplicantScene;
 
 /**
  * TODO  Add listener support
