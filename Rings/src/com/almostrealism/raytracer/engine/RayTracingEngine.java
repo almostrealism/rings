@@ -48,6 +48,7 @@ import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.Intersections;
+import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
@@ -251,7 +252,7 @@ public class RayTracingEngine {
 	 */
 	public static ColorSum lightingCalculation(Ray r, Iterable<? extends ShadableSurface> allSurfaces, Light allLights[],
 											RGB fog, double fd, double fr, ShaderParameters p) {
-		Intersection intersect = Intersections.closestIntersection(r, allSurfaces);
+		ShadableIntersection intersect = (ShadableIntersection) Intersections.closestIntersection(r, allSurfaces);
 		
 		ColorSum color = new ColorSum();
 		
@@ -287,8 +288,8 @@ public class RayTracingEngine {
 					return new ColorSum();
 				
 				if (allLights[i] instanceof SurfaceLight) {
-					c = RayTracingEngine.lightingCalculation(point, r.getDirection(),
-							surf, otherSurf, ((SurfaceLight)allLights[i]).getSamples(), p);
+					c = RayTracingEngine.lightingCalculation(intersect, point,
+							r.getDirection(), surf, otherSurf, ((SurfaceLight)allLights[i]).getSamples(), p);
 				} else if (allLights[i] instanceof PointLight) {
 					Vector direction = point.subtract(((PointLight)allLights[i]).getLocation());
 					DirectionalAmbientLight directionalLight =
@@ -300,7 +301,7 @@ public class RayTracingEngine {
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(null, point, v, l, directionalLight, otherL, otherSurf));
+						c = surf.shade(new ShaderParameters(intersect, point, v, l, directionalLight, otherL, otherSurf));
 					} else {
 						p.setPoint(point);
 						p.setViewerDirection(v);
@@ -413,9 +414,9 @@ public class RayTracingEngine {
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static ColorSum lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
-											Collection<ShadableSurface> otherSurfaces, Light lights[],
-											ShaderParameters p) {
+	public static ColorSum lightingCalculation(ShadableIntersection intersection, Vector point, Vector rayDirection,
+											ShadableSurface surface, Collection<ShadableSurface> otherSurfaces,
+											Light lights[], ShaderParameters p) {
 		ColorSum color = new ColorSum();
 		
 		for(int i = 0; i < lights.length; i++) {
@@ -426,9 +427,9 @@ public class RayTracingEngine {
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 			
-			ColorProducer c = RayTracingEngine.lightingCalculation(point, rayDirection,
-														surface, otherSurfaces,
-														lights[i], otherLights, p);
+			ColorProducer c = RayTracingEngine.lightingCalculation(intersection, point,
+														rayDirection, surface,
+														otherSurfaces, lights[i], otherLights, p);
 			if (c != null) color.add(c);
 		}
 		
@@ -442,9 +443,9 @@ public class RayTracingEngine {
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer lightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface,
-										Collection<ShadableSurface> otherSurfaces, Light light, Light otherLights[],
-										ShaderParameters p) {
+	public static ColorProducer lightingCalculation(ShadableIntersection intersection, Vector point, Vector rayDirection,
+										ShadableSurface surface, Collection<ShadableSurface> otherSurfaces, Light light,
+										Light otherLights[], ShaderParameters p) {
 		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
 		for (ShadableSurface s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
@@ -455,18 +456,18 @@ public class RayTracingEngine {
 		
 		if (light instanceof SurfaceLight) {
 			Light l[] = ((SurfaceLight)light).getSamples();
-			return RayTracingEngine.lightingCalculation(point, rayDirection, surface,
-														otherSurfaces, l, p);
+			return RayTracingEngine.lightingCalculation(intersection, point, rayDirection,
+														surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
-			return RayTracingEngine.pointLightingCalculation(point, rayDirection,
-															surface, otherSurfaces,
-															(PointLight)light, otherLights, p);
+			return RayTracingEngine.pointLightingCalculation(intersection, point,
+															rayDirection, surface,
+															otherSurfaces, (PointLight)light, otherLights, p);
 		} else if (light instanceof DirectionalAmbientLight) {
 			return RayTracingEngine.directionalAmbientLightingCalculation(
-															point, rayDirection,
-															surface, otherSurfaces,
-															(DirectionalAmbientLight)light,
-															otherLights, p);
+															intersection, point,
+															rayDirection, surface,
+															otherSurfaces,
+															(DirectionalAmbientLight)light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
 			return RayTracingEngine.ambientLightingCalculation(point, rayDirection,
 																surface, otherSurfaces,
@@ -497,28 +498,30 @@ public class RayTracingEngine {
 	 * be specified for reflection/shadowing. This list does not include the specified surface for which
 	 * the lighting calculations are to be done.
 	 * 
+	 * @param intersection  The intersection point on the surface to be shaded.
 	 * @param point  The intersection point on the surface to be shaded.
 	 * @param rayDirection  Direction of the ray that intersected the surface to be shaded.
 	 * @param surface  The Surface object to use for shading calculations.
 	 * @param otherSurfaces  An array of Surface objects that are also in the scene.
 	 * @param light  The DirectionalAmbientLight instance to use for shading calculations.
-	 * @param otherLights[]  An array of Light objects that are also in the scene.
 	 * @param p  A ShaderParameters object that stores all parameters that are persisted
 	 *           during a single set of ray casting events (reflections, refractions, etc.)
 	 *           (null accepted).
+	 * 
+	 * @param otherLights[]  An array of Light objects that are also in the scene.
 	 */
-	public static ColorProducer directionalAmbientLightingCalculation(Vector point, Vector rayDirection,
+	public static ColorProducer directionalAmbientLightingCalculation(ShadableIntersection intersection, Vector point,
+														Vector rayDirection,
 														ShadableSurface surface,
-														Collection<ShadableSurface> otherSurfaces,
-														DirectionalAmbientLight light, Light otherLights[],
-														ShaderParameters p) {
+														Collection<ShadableSurface> otherSurfaces, DirectionalAmbientLight light,
+														Light otherLights[], ShaderParameters p) {
 		ColorProducer color = null;
 		
 		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface.shade(new ShaderParameters(null, point, v, l, light, otherLights, otherSurfaces));
+			color = surface.shade(new ShaderParameters(intersection, point, v, l, light, otherLights, otherSurfaces));
 		} else {
 			p.setPoint(point);
 			p.setViewerDirection(v);
@@ -545,11 +548,11 @@ public class RayTracingEngine {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static ColorProducer pointLightingCalculation(Vector point, Vector rayDirection,
+	public static ColorProducer pointLightingCalculation(ShadableIntersection intersection, Vector point,
+											Vector rayDirection,
 											ShadableSurface surface,
-											Collection<ShadableSurface> otherSurfaces,
-											PointLight light, Light otherLights[],
-											ShaderParameters p) {
+											Collection<ShadableSurface> otherSurfaces, PointLight light,
+											Light otherLights[], ShaderParameters p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight = null;
 		
@@ -563,9 +566,9 @@ public class RayTracingEngine {
 		}
 		
 		return RayTracingEngine.directionalAmbientLightingCalculation(
-											point, rayDirection,
-											surface, otherSurfaces,
-											dLight, otherLights, p);
+											intersection, point,
+											rayDirection, surface,
+											otherSurfaces, dLight, otherLights, p);
 	}
 	
 	/**

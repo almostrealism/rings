@@ -60,7 +60,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	public ColorProducer shade(ShaderParameters p) {
 		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
-		Vector n = p.getSurface().getNormalAt(p.getPoint());
+		Vector n = p.getIntersection().getNormal(0);
 		n.divideBy(n.length());
 		Vector h = p.getViewerDirection().add(p.getLightDirection());
 		h = h.divide(h.length());

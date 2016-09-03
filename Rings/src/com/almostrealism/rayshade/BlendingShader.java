@@ -60,7 +60,7 @@ public class BlendingShader implements Shader, Editable {
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
 	public ColorProducer shade(ShaderParameters p) {
-		Vector n = p.getSurface().getNormalAt(p.getPoint());
+		Vector n = p.getIntersection().getNormal(0);
 		Vector l = p.getLightDirection();
 		
 		double k = (1.0 + n.dotProduct(l));

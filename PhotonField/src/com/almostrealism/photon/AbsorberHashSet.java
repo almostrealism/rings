@@ -934,9 +934,9 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 				
 			Vector vpo = new Vector(po[0], po[1], po[2]);
 			Vector vs = new Vector(s[0], s[1], s[2]);
-			c = RayTracingEngine.lightingCalculation(vpo, vs, this,
-													Arrays.asList(p.getOtherSurfaces()),
-													p.getAllLights(), p).evaluate(null);
+			c = RayTracingEngine.lightingCalculation(null, vpo, vs,
+													this,
+													Arrays.asList(p.getOtherSurfaces()), p.getAllLights(), p).evaluate(null);
 			if (c != null)
 				c.multiplyBy(p.getLight().getIntensity() * d);
 			

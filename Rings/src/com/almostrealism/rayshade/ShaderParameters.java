@@ -62,8 +62,8 @@ public class ShaderParameters {
 	 * @param surface  Surface object to be shaded.
 	 */
 	public ShaderParameters(ShadableIntersection intersection, Vector point, Vector viewerDirection,
-			Vector lightDirection, Light light,
-			Light otherLights[], Collection<ShadableSurface> otherSurfaces) {
+							Vector lightDirection, Light light, Light otherLights[],
+							Collection<ShadableSurface> otherSurfaces) {
 		this(intersection, point, viewerDirection, lightDirection, light,
 				otherLights, otherSurfaces.toArray(new ShadableSurface[0]));
 	}
@@ -97,6 +97,8 @@ public class ShaderParameters {
 		
 		this.refCount = 0;
 	}
+	
+	public ShadableIntersection getIntersection() { return intersection; }
 	
 	/**
 	 * Sets the point to be shaded to the specified Vector object.
