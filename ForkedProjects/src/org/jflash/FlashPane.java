@@ -14,7 +14,6 @@ package org.jflash;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
-import java.awt.image.*;
 import java.net.URL;
 import javax.swing.*;
 
