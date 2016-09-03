@@ -300,8 +300,7 @@ public class RayTracingEngine {
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(point, v, l, directionalLight,
-								otherL, otherSurf));
+						c = surf.shade(new ShaderParameters(point, v, l, directionalLight, otherL, otherSurf));
 					} else {
 						p.setPoint(point);
 						p.setViewerDirection(v);

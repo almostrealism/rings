@@ -27,6 +27,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 
 public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 	private Map<String, BasicGeometry> geo;
+	private boolean pushed = false;
 	
 	public DefaultReplicant(T s) {
 		geo = new HashMap<String, BasicGeometry>();
@@ -50,7 +51,6 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 		return new Iterator<T>() {
 			private Iterator<BasicGeometry> gitr;
 			private T surface;
-			private boolean pushed = false;
 			
 			@Override
 			public boolean hasNext() {
@@ -60,6 +60,8 @@ public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 			@Override
 			public T next() {
 				if (gitr == null || !gitr.hasNext()) {
+					if (surface instanceof GeometryStack) ((GeometryStack) surface).pop();
+					pushed = false;
 					surface = itr.next();
 					gitr = geometry().iterator();
 				}

@@ -36,7 +36,7 @@ import com.almostrealism.replicator.geometry.ReplicantScene;
  * @author  Michael Murray
  */
 @ViewModel
-public class ReplicatorTableModel extends ReplicantScene implements TableModel {
+public class ReplicatorTableModel extends ReplicantScene<ShadableSurface> implements TableModel {
 	private static final String LEFT = "Left";
 	private static final String RIGHT = "Right";
 	private static final String TOP = "Top";
@@ -84,7 +84,7 @@ public class ReplicatorTableModel extends ReplicantScene implements TableModel {
 		if (columnIndex < 2) return String.class;
 		return Double.class;
 	}
-
+	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		if (columnIndex < 2) return false;

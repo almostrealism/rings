@@ -209,14 +209,10 @@ public class ShaderParameters extends Hashtable {
 	 */
 	public int getExitCount() { return this.exit; }
 	
-	/**
-	 * Adds one to the reflection count stored by this ShaderParameters object.
-	 */
+	/** Adds one to the reflection count stored by this ShaderParameters object. */
 	public void addReflection() { this.refCount++; }
 	
-	/**
-	 * Adds one to the reflection count and the enterance count.
-	 */
+	/** Adds one to the reflection count and the enterance count. */
 	public void addEnterance() { this.enter++; this.refCount++; }
 	
 	/**
