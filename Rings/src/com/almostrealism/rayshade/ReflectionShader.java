@@ -94,7 +94,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		
 		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
 		
-		Vector n = p.getIntersection().getNormal(0);
+		Vector n = p.getIntersection().getNormal();
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
 		

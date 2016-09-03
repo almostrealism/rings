@@ -32,6 +32,7 @@ import org.almostrealism.space.Vector;
  */
 public class ShadableIntersection extends Intersection {
 	private List<Vector> normals;
+	private int nearestIndex = 0;
 	
 	public ShadableIntersection(Ray ray, Intersectable<ShadableIntersection> surface, double intersections[]) {
 		super(ray, surface, intersections);
@@ -41,9 +42,18 @@ public class ShadableIntersection extends Intersection {
 		if (surface instanceof Gradient) {
 			for (int i = 0; i < intersections.length; i++) {
 				normals.add(((Gradient) surface).getNormalAt(ray.pointAt(intersections[i])));
+				
+				if (intersections[i] >= 0 && intersections[i] < intersections[nearestIndex]) {
+					nearestIndex = i;
+				}
 			}
 		}
 	}
+	
+	/**
+	 * Returns the normal vector at the point that is the nearest intersection.
+	 */
+	public Vector getNormal() { return getNormal(nearestIndex); }
 	
 	public Vector getNormal(int index) { return normals.get(index); }
 	

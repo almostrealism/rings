@@ -79,7 +79,7 @@ public class RefractionShader implements Shader, Editable {
 				po.getX() * po.getX() + po.getY() * po.getY() + po.getZ() * po.getZ() - 1.0 > 0.01)
 			System.out.println(po);
 		
-		Vector n = p.getIntersection().getNormal(0);
+		Vector n = p.getIntersection().getNormal();
 		n = n.divide(n.length());
 		
 		if (p.getSurface().getShadeFront()) {
