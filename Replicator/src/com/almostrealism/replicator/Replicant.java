@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.replicator.geometry;
+package com.almostrealism.replicator;
 
 import java.util.ArrayList;
 import java.util.List;

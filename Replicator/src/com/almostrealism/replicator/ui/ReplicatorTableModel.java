@@ -27,8 +27,8 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ViewModel;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.replicator.geometry.DefaultReplicant;
-import com.almostrealism.replicator.geometry.ReplicantScene;
+import com.almostrealism.replicator.DefaultReplicant;
+import com.almostrealism.replicator.ReplicantScene;
 
 /**
  * TODO  Add listener support

@@ -17,7 +17,7 @@ package com.almostrealism.receptor;
 
 import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.replicator.geometry.ReplicantScene;
+import com.almostrealism.replicator.ReplicantScene;
 
 /**
  * {@link ReceptorRenderPanel} extends {@link RenderPanel}.
