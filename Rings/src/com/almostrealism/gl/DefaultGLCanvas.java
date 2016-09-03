@@ -49,7 +49,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int swapInterval;
 	private boolean toReset;
 	
-	private List<Renderable> scene;
+	protected List<Renderable> scene;
 	
 	private int prevMouseX, prevMouseY;
 	
@@ -170,15 +170,18 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		} else {
 			gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		}
-
+		
 		// Rotate the entire assembly based on how the user
 		// dragged the mouse around
 		gl.glPushMatrix();
 		gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 		gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 		gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
-
-		for (Renderable r : scene) r.display(gl);
+		
+		for (Renderable r : scene) {
+			System.out.println("Displaying " + r);
+			r.display(gl);
+		}
 		
 		gl.glPopMatrix();
 	}
