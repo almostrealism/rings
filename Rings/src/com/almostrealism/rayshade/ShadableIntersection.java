@@ -40,7 +40,7 @@ public class ShadableIntersection extends Intersection {
 		
 		if (surface instanceof Gradient) {
 			for (int i = 0; i < intersections.length; i++) {
-				normals.add(((Gradient) surface).getNormalAt(ray.pointAt(intersections[0])));
+				normals.add(((Gradient) surface).getNormalAt(ray.pointAt(intersections[i])));
 			}
 		}
 	}
