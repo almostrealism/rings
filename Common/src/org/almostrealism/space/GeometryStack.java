@@ -40,10 +40,10 @@ public class GeometryStack extends BasicGeometry {
 		BasicGeometry g = stack.pop();
 		
 		this.location = location.subtract(g.location);
-		this.size = size - g.size;
-		this.scaleX = scaleX - g.scaleX;
-		this.scaleY = scaleY - g.scaleY;
-		this.scaleZ = scaleZ - g.scaleZ;
+		this.size = size / g.size;
+		this.scaleX = scaleX / g.scaleX;
+		this.scaleY = scaleY / g.scaleY;
+		this.scaleZ = scaleZ / g.scaleZ;
 		this.rotateX = scaleX - g.scaleX;
 		this.rotateY = scaleY - g.scaleY;
 		this.rotateZ = scaleZ - g.scaleZ;
@@ -55,10 +55,10 @@ public class GeometryStack extends BasicGeometry {
 		this.stack.push(g);
 		
 		this.location = location.add(g.location);
-		this.size = size + g.size;
-		this.scaleX = scaleX + g.scaleX;
-		this.scaleY = scaleY + g.scaleY;
-		this.scaleZ = scaleZ + g.scaleZ;
+		this.size = size * g.size;
+		this.scaleX = scaleX * g.scaleX;
+		this.scaleY = scaleY * g.scaleY;
+		this.scaleZ = scaleZ * g.scaleZ;
 		this.rotateX = scaleX + g.scaleX;
 		this.rotateY = scaleY + g.scaleY;
 		this.rotateZ = scaleZ + g.scaleZ;
