@@ -300,7 +300,7 @@ public class RayTracingEngine {
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(point, v, l, directionalLight, otherL, otherSurf));
+						c = surf.shade(new ShaderParameters(null, point, v, l, directionalLight, otherL, otherSurf));
 					} else {
 						p.setPoint(point);
 						p.setViewerDirection(v);
@@ -321,8 +321,8 @@ public class RayTracingEngine {
 							directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surface.shade(new ShaderParameters(point, v, l, directionalLight,
-								otherL, otherSurf));
+						c = surface.shade(new ShaderParameters(null, point, v, l,
+								directionalLight, otherL, otherSurf));
 					} else {
 						p.setPoint(point);
 						p.setViewerDirection(v);
@@ -518,7 +518,7 @@ public class RayTracingEngine {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface.shade(new ShaderParameters(point, v, l, light, otherLights, otherSurfaces));
+			color = surface.shade(new ShaderParameters(null, point, v, l, light, otherLights, otherSurfaces));
 		} else {
 			p.setPoint(point);
 			p.setViewerDirection(v);
