@@ -18,7 +18,6 @@ package com.almostrealism.rayshade;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Hashtable;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
@@ -33,7 +32,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
  * 
  * @author Mike Murray
  */
-public class ShaderParameters extends Hashtable {
+public class ShaderParameters {
 	private ShadableIntersection intersection;
 	
 	private Vector point;
