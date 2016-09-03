@@ -17,23 +17,26 @@
 package org.almostrealism.texture;
 
 import org.almostrealism.uml.Function;
-import org.almostrealism.util.Producer;
 
 /**
- * ColorProducer is implemented by any class that can produce an RGB object
- * given some array of input objects.
+ * {@link ColorMultiplier} is a {@link ColorProducer} which evaluates another.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 @Function
-public interface ColorProducer extends Producer {
-    /**
-     * Produces a color using the specified arguments.
-     * 
-     * TODO  Uses generics for the type of arguments.
-     * 
-     * @param args  Arguments.
-     * @return  The RGB color produced.
-     */
-    RGB evaluate(Object args[]);
+public class ColorMultiplier implements ColorProducer {
+	private ColorProducer color;
+	private ColorProducer multiplier;
+	
+	public ColorMultiplier(ColorProducer color, ColorProducer multiplier) {
+		this.color = color;
+		this.multiplier = multiplier;
+	}
+	
+	@Override
+	public RGB evaluate(Object[] args) {
+		return new RGB(color.evaluate(args).getRed() * multiplier.evaluate(args).getRed(),
+				color.evaluate(args).getGreen() * multiplier.evaluate(args).getGreen(),
+				color.evaluate(args).getBlue() * multiplier.evaluate(args).getBlue());
+	}
 }
