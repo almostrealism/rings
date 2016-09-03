@@ -33,7 +33,7 @@ import org.almostrealism.space.Vector;
 public class ShadableIntersection extends Intersection {
 	private List<Vector> normals;
 	
-	public ShadableIntersection(Ray ray, Intersectable surface, double intersections[]) {
+	public ShadableIntersection(Ray ray, Intersectable<ShadableIntersection> surface, double intersections[]) {
 		super(ray, surface, intersections);
 		
 		normals = new ArrayList<Vector>();
