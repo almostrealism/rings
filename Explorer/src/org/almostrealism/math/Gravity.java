@@ -18,8 +18,8 @@ package org.almostrealism.math;
 
 import javax.swing.JFrame;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.texture.RGB;
 
 
 /**

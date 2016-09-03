@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -120,7 +120,7 @@ public class StripeTexture implements Texture, Editable {
 	 * @param args[] {point, arg0, arg1, ...}
 	 * @throws IllegalArgumentException  If args does not contain the correct object types.
 	 * 
-	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) {
 	    if (!(args[0] instanceof Vector)) throw new IllegalArgumentException("Illegal argument: " + args[0]);

@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.swing.Event;
@@ -39,7 +40,6 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.panels.EditRGBPanel;
 import org.almostrealism.swing.panels.EditVectorPanel;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;

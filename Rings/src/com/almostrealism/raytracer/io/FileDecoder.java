@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.flow.Resource;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.SpatialData;
 import com.almostrealism.raytracer.Scene;

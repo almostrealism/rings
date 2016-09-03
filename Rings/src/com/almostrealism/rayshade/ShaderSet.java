@@ -19,8 +19,8 @@ package com.almostrealism.rayshade;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.almostrealism.texture.ColorProducer;
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 
 /**
  * @author Mike Murray

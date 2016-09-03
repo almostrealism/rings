@@ -41,13 +41,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.flow.Job;
 import org.almostrealism.flow.db.Client;
 import org.almostrealism.flow.db.JobOutput;
 import org.almostrealism.flow.db.OutputHandler;
 import org.almostrealism.flow.db.Query;
 import org.almostrealism.flow.db.QueryHandler;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.io.SpatialData;

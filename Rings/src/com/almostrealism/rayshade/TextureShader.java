@@ -16,8 +16,8 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.texture.ColorProducer;
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -167,7 +167,7 @@ public class TextureShader extends ShaderSet implements Editable, Shader {
 	}
 
 	/**
-	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object[] args) { return this.shade((ShaderParameters)args[0]); }
 	

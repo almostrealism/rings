@@ -19,7 +19,7 @@ package org.almostrealism.stats;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.RGB;
 
 /**
  * @author  Mike Murray

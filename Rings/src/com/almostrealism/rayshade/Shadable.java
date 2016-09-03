@@ -15,7 +15,7 @@
  */
 package com.almostrealism.rayshade;
 
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.RGB;
 
 /**
  * @author  Michael Murray

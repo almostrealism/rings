@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Settings;

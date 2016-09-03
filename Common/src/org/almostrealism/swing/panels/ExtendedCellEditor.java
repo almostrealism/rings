@@ -29,13 +29,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.dialogs.EditRGBDialog;
 import org.almostrealism.swing.dialogs.EditVectorDialog;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.ImageTexture;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 
 

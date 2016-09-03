@@ -25,11 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
-import org.almostrealism.texture.ColorProducer;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 
 import com.almostrealism.lighting.Light;

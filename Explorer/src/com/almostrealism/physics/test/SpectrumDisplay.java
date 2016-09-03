@@ -21,8 +21,8 @@ import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 public class SpectrumDisplay extends JPanel {
 

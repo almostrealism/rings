@@ -16,9 +16,9 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.ColorProducer;
-import org.almostrealism.texture.RGB;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.RGB;
 import org.almostrealism.util.*;
 
 /**

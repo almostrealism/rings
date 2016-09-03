@@ -25,9 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.panels.EditRGBPanel;
-import org.almostrealism.texture.RGB;
 
 /**
  * An EditRGBDialog object can be used to allow a user to specify

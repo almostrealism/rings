@@ -26,13 +26,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.engine.RayTracingEngine;

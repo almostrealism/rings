@@ -21,10 +21,10 @@ import java.awt.Color;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.stats.ProbabilityDistribution;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.AbsorberHashSet;

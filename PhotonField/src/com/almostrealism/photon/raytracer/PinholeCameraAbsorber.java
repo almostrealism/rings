@@ -16,10 +16,10 @@
 
 package com.almostrealism.photon.raytracer;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.space.VectorMath;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.AbsorptionPlane;

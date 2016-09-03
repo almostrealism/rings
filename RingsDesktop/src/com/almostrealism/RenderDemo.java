@@ -19,9 +19,9 @@ package com.almostrealism;
 import java.io.File;
 import java.io.IOException;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.lighting.StandardLightingRigs;

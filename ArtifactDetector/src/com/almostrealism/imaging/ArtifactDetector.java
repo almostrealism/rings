@@ -33,9 +33,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.swing.panels.PercentagePanel;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 public class ArtifactDetector {
 	public static boolean verbose = false;

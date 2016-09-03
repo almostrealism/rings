@@ -26,6 +26,8 @@ import java.awt.image.RenderedImage;
 
 import javax.swing.ImageIcon;
 
+import org.almostrealism.color.RGB;
+
 /**
  * The GraphicsConverter class provides static methods that allow conversion between colors
  * and images stored as RGB objects and those stored as AWT colors.

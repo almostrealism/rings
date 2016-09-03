@@ -16,6 +16,8 @@
 
 package org.almostrealism.texture;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 
 /**

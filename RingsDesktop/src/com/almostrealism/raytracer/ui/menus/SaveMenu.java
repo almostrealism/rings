@@ -25,12 +25,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.Scene;

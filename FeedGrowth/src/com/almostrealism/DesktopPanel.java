@@ -26,10 +26,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.swing.DragSupport;
 import org.almostrealism.swing.ValueSlider;
 import org.almostrealism.texture.Icons;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
 import com.almostrealism.raytracer.primitives.Sphere;

@@ -16,9 +16,9 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.ColorProducer;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
@@ -125,7 +125,7 @@ public class BlendingShader implements Shader, Editable {
 	}
 
 	/**
-	 * @see org.almostrealism.texture.ColorProducer#evaluate(java.lang.Object[])
+	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.shade((ShaderParameters)args[0]); }
 	

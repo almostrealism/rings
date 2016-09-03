@@ -29,6 +29,8 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.almostrealism.color.RGB;
+
 
 /**
  * An {@link ImageCanvas} object stores image data and paints the parent

@@ -27,9 +27,9 @@ import java.util.Iterator;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShadableIntersection;

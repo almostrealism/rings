@@ -15,8 +15,8 @@
  */
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.primitives.Plane;

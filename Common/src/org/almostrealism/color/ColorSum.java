@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.almostrealism.color;
 
-package com.almostrealism.rayshade;
+import java.util.ArrayList;
 
-import org.almostrealism.color.ColorProducer;
+import org.almostrealism.uml.Function;
 
 /**
- * The Shader interface is implemented by classes that provide a method for shading a surface.
+ * @author  Michael Murray
  */
-public interface Shader extends ColorProducer {
-	/**
-	 * Returns an RGB object that represents the shaded color calculated using the values
-	 * of the specified ShaderParameters object.
-	 */
-	public ColorProducer shade(ShaderParameters parameters);
+@Function
+public class ColorSum extends ArrayList<ColorProducer> implements ColorProducer {
+	public ColorSum() { }
+	
+	@Override
+	public RGB evaluate(Object[] args) {
+		RGB rgb = new RGB();
+		for (ColorProducer c : this) { rgb.addTo(c.evaluate(args)); }
+		return rgb;
+	}
 }

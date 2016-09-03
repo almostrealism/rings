@@ -65,6 +65,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.flow.JobFactory;
 import org.almostrealism.flow.Message;
 import org.almostrealism.flow.Node;
@@ -84,7 +85,6 @@ import org.almostrealism.io.Storable;
 import org.almostrealism.swing.GraphDisplay;
 import org.almostrealism.swing.ScrollingTextDisplay;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Help;
 
 import com.almostrealism.raytracer.NetworkDialog;

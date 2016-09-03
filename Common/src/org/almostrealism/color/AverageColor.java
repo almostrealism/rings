@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.texture;
+package org.almostrealism.color;
 
 import java.util.ArrayList;
 import java.util.Iterator;

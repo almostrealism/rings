@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.swing.Event;
@@ -37,7 +38,6 @@ import org.almostrealism.swing.dialogs.DialogCloseEvent;
 import org.almostrealism.swing.panels.EditRGBPanel;
 import org.almostrealism.swing.panels.EditVectorPanel;
 import org.almostrealism.swing.panels.PercentagePanel;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;

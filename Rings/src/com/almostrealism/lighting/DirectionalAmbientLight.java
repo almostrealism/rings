@@ -16,8 +16,8 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.RGB;
 
 /**
   A DirectionAmbientLight object represents an ambient light source that always comes from a particular direction.

@@ -36,9 +36,9 @@ import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.flow.db.Client;
 import org.almostrealism.space.VectorMath;
-import org.almostrealism.texture.RGB;
 import org.almostrealism.util.Nameable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

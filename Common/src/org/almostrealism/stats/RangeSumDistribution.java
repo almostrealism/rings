@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.almostrealism.texture.RGB;
+import org.almostrealism.color.RGB;
 
 /**
  * @author  Mike Murray

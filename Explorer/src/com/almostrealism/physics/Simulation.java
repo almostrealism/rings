@@ -47,10 +47,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.Light;

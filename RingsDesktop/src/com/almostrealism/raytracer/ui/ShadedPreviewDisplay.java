@@ -27,10 +27,10 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.ColorProducer;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.Light;

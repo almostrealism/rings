@@ -23,11 +23,11 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;

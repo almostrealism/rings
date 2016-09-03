@@ -30,9 +30,9 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.VectorMath;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 import com.almostrealism.photon.geometry.Plane;
 import com.almostrealism.photon.util.Fast;

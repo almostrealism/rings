@@ -52,6 +52,7 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
+import org.almostrealism.color.RGB;
 import org.almostrealism.flow.db.Client;
 import org.almostrealism.flow.db.DatabaseConnection;
 import org.almostrealism.flow.db.Query;
@@ -60,7 +61,6 @@ import org.almostrealism.flow.resources.ImageResource;
 import org.almostrealism.flow.resources.LocalResource;
 import org.almostrealism.flow.resources.ResourceDistributionTask;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.RGB;
 
 // TODO Consider performing routine tasks (eg Garbage Collector, delete unused db rows, etc.)
 //      during time when activity rating is low.
