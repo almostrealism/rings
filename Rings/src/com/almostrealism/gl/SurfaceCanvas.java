@@ -18,14 +18,28 @@ package com.almostrealism.gl;
 
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.renderable.Renderable;
+import com.almostrealism.renderable.RenderableSurfaceFactory;
+import com.jogamp.opengl.GL2;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	private Scene<?, ? extends PinholeCamera> scene;
+	private Scene<ShadableSurface, ? extends PinholeCamera> scene;
 	
-	public SurfaceCanvas(Scene<?, ? extends PinholeCamera> scene) {
+	public SurfaceCanvas(Scene<ShadableSurface, ? extends PinholeCamera> scene) {
 		this.scene = scene;
 	}
 	
 	@Override
 	public PinholeCamera getCamera() { return scene.getCamera(); }
+	
+	protected void initRenderables(GL2 gl) {
+		renderables.clear();
+		
+		for (ShadableSurface s : scene) {
+			renderables.add(RenderableSurfaceFactory.createRenderableSurface(s));
+		}
+		
+		for (Renderable r : renderables) r.init(gl);
+	}
 }
