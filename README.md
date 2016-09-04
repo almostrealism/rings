@@ -42,6 +42,14 @@ Types that are stateless are annotated with the **Stateless** annotation.
 public class Intersections {
 ```
 
+If a type represents a function or set of functions, where the required unit test would be an evaluation of some use cases of the function, it can be annotated with **Function**.
+
+```
+#!java
+@Function
+public class ColorMultiplier implements ColorProducer {
+```
+
 While writing tests after developing code directly, the programmer can start with making tests for working with stateful entities and then move on to the stateless entities that reference them.
 
 ### GraphPersist ###
