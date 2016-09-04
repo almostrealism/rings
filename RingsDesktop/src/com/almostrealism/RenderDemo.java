@@ -45,7 +45,7 @@ public class RenderDemo {
 	public static final boolean enableRandomThing = false;
 	
 	public static void main(String[] args) {
-		Scene<ShadableSurface, ThinLensCamera> scene = null;
+		Scene<ShadableSurface> scene = null;
 		
 		if (enableCornellBox) {
 			try {
@@ -55,7 +55,7 @@ public class RenderDemo {
 				System.exit(1);
 			}
 		} else {
-			scene = new Scene<ShadableSurface, ThinLensCamera>();
+			scene = new Scene<ShadableSurface>();
 		}
 		
 		Sphere s = new Sphere();

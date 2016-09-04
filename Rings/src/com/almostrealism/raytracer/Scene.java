@@ -25,14 +25,13 @@ import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.projection.Camera;
-import com.almostrealism.projection.Projectable;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * {@link Scene} extends {@link SurfaceList} to store {@link Light}s and a {@link Camera}.
  */
-public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceList<T> implements Projectable<C> {
-	private C camera;
+public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
+	private Camera camera;
 	
 	private Light lights[];
 	
@@ -56,7 +55,7 @@ public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceL
 	 * Constructs a {@link Scene} with the specified {@link Camera}, {@link Light}s,
 	 * and {@link Gradient}s.
 	 */
-	public Scene(C camera, Light lights[], T surfaces[]) {
+	public Scene(Camera camera, Light lights[], T surfaces[]) {
 		this.setCamera(camera);
 		
 		this.setLights(lights);
@@ -71,7 +70,7 @@ public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceL
 	public ShadableSurface[] getSurfaces() { return toArray(new ShadableSurface[0]); }
 	
 	/** Sets the camera of this {@link Scene}. */
-	public void setCamera(C camera) { this.camera = camera; }
+	public void setCamera(Camera camera) { this.camera = camera; }
 	
 	/**
 	 * Replaces all of the lights of this {@link Scene} object with those represented
@@ -104,7 +103,7 @@ public class Scene<T extends ShadableSurface, C extends Camera> extends SurfaceL
 	}
 	
 	/** Returns the Camera object stored by this Scene object. */
-	public C getCamera() { return this.camera; }
+	public Camera getCamera() { return this.camera; }
 	
 	/** Returns the Light objects stored by this Scene object as a Light array. */
 	public Light[] getLights() { return this.lights; }

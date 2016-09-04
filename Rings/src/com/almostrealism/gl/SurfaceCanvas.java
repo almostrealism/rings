@@ -24,14 +24,14 @@ import com.almostrealism.renderable.RenderableSurfaceFactory;
 import com.jogamp.opengl.GL2;
 
 public class SurfaceCanvas extends DefaultGLCanvas {
-	private Scene<ShadableSurface, ? extends PinholeCamera> scene;
+	private Scene<ShadableSurface> scene;
 	
-	public SurfaceCanvas(Scene<ShadableSurface, ? extends PinholeCamera> scene) {
+	public SurfaceCanvas(Scene<ShadableSurface> scene) {
 		this.scene = scene;
 	}
 	
 	@Override
-	public PinholeCamera getCamera() { return scene.getCamera(); }
+	public PinholeCamera getCamera() { return (PinholeCamera) scene.getCamera(); }
 	
 	protected void initRenderables(GL2 gl) {
 		renderables.clear();

@@ -26,6 +26,9 @@ import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ViewModel;
 
+import com.almostrealism.lighting.StandardLightingRigs;
+import com.almostrealism.projection.ThinLensCamera;
+import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -34,7 +37,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
  * @author  Michael Murray
  */
 @ViewModel
-public class ReplicatorTableModel extends ReplicantScene<ShadableSurface> implements TableModel {
+public class ReplicatorTableModel extends Scene<ShadableSurface> implements TableModel {
 	private static final String LEFT = "Left";
 	private static final String RIGHT = "Right";
 	private static final String TOP = "Top";
@@ -48,6 +51,17 @@ public class ReplicatorTableModel extends ReplicantScene<ShadableSurface> implem
 	public ReplicatorTableModel() {
 		layers = new ArrayList<DefaultReplicant>();
 		modelNames = new ArrayList<String>();
+		
+		StandardLightingRigs.addDefaultLights(this);
+		
+		ThinLensCamera c = new ThinLensCamera();
+		c.setLocation(new Vector(0.0, 0.0, 10.0));
+		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+		c.setFocalLength(0.05);
+		c.setFocus(10.0);
+		c.setLensRadius(0.2);
+		setCamera(c);
 	}
 	
 	/**

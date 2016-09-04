@@ -32,8 +32,8 @@ import org.almostrealism.swing.ValueSlider;
 import org.almostrealism.texture.Icons;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
+import com.almostrealism.raytracer.RenderPanel;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.receptor.ReceptorRenderPanel;
 
 /**
  * @author  Michael Murray
@@ -41,7 +41,7 @@ import com.almostrealism.receptor.ReceptorRenderPanel;
 public class DesktopPanel extends DesktopPanelUI {
 	private JFrame frame;
 	
-	private ReceptorRenderPanel raytracer;
+	private RenderPanel raytracer;
 	private ValueSlider zoomSlider;
 
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
@@ -67,7 +67,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		toolBar.add(r.getSamplerAction());
 		toolBar.add(r.getFeedbackAction());
 		
-		raytracer = new ReceptorRenderPanel(r.getTableModel());
+		raytracer = new RenderPanel(r.getTableModel());
 		renderPanel.add(raytracer, BorderLayout.CENTER);
 		
 		// Zoom slider

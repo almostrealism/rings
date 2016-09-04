@@ -29,7 +29,7 @@ public class StandardLightingRigs {
 	
 	public static double defaultBrightness = 1.0;
 	
-	public static void addDefaultLights(Scene<?, ?> scene) {
+	public static void addDefaultLights(Scene<?> scene) {
 		RectangularLight rl = new RectangularLight(2.0, 2.0);
 		rl.setColor(new RGB(1.0, 1.0, 1.0));
 		rl.getLocation().setY(6.0);
