@@ -49,12 +49,12 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int swapInterval;
 	private boolean toReset;
 	
-	protected List<Renderable> scene;
+	protected List<Renderable> renderables;
 	
 	private int prevMouseX, prevMouseY;
 	
 	public DefaultGLCanvas() {
-		scene = new ArrayList<Renderable>();
+		renderables = new ArrayList<Renderable>();
 		
 		animator = new FPSAnimator(20);
 		addGLEventListener(this);
@@ -64,13 +64,13 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		this.swapInterval = 1;
 	}
 	
-	public void add(Renderable r) { if (r != null) scene.add(r); }
+	public void add(Renderable r) { if (r != null) renderables.add(r); }
 	
 	public void start() { animator.start(); }
 	
 	public void reset() { toReset = true; }
 	
-	public void removeAll() { scene.clear(); }
+	public void removeAll() { renderables.clear(); }
 	
 	public abstract PinholeCamera getCamera();
 	
@@ -107,7 +107,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 	
 	protected void initRenderables(GL2 gl) {
-		for (Renderable r : scene) r.init(gl);
+		for (Renderable r : renderables) r.init(gl);
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 		gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
 		
-		for (Renderable r : scene) {
+		for (Renderable r : renderables) {
 			System.out.println("Displaying " + r);
 			r.display(gl);
 		}
