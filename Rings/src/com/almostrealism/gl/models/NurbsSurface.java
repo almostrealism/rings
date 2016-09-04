@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.gl.nurbs;
+package com.almostrealism.gl.models;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLUnurbs;

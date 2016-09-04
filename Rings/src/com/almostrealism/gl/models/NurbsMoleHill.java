@@ -19,8 +19,6 @@ package com.almostrealism.gl.models;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
-
-import com.almostrealism.gl.nurbs.NurbsSurface;
 import com.almostrealism.renderable.RenderableList;
 
 public class NurbsMoleHill extends RenderableList {
