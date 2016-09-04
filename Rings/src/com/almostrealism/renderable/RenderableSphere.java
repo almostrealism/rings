@@ -13,23 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.almostrealism.renderable;
 
-import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.primitives.Mesh;
+import com.almostrealism.gl.DisplayList;
 import com.almostrealism.raytracer.primitives.Sphere;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.gl2.GLUT;
 
-public class RenderableSurfaceFactory {
-	public static Renderable createRenderableSurface(ShadableSurface s) {
-		if (s instanceof Renderable) {
-			return (Renderable) s;
-		} else if (s instanceof Sphere) {
-			return new RenderableSphere((Sphere) s);
-		} else if (s instanceof Mesh) {
-			return new RenderableMesh((Mesh) s);
-		}
-		
-		return null;
+/**
+ * @author  Michael Murray
+ */
+public class RenderableSphere extends RenderableGeometry {
+	protected DisplayList list;
+	
+	public RenderableSphere(Sphere s) {
+		super(s);
+		list = new DisplayList() {
+			public void init(GL2 gl) {
+				super.init(gl);
+				gl.glNewList(displayListIndex, GL2.GL_COMPILE);
+				initMaterial(gl);
+				GLUT glut = new GLUT();
+				glut.glutSolidSphere(1, 40, 40);
+				gl.glEndList();
+			}
+		};
 	}
+	
+	@Override
+	public void init(GL2 gl) { list.init(gl); }
+	
+	public void render(GL2 gl) { list.display(gl); }
 }
