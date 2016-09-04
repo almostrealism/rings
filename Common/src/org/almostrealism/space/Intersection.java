@@ -33,6 +33,8 @@ public class Intersection implements PathElement<Intersection> {
 	private int closest = -1;
 	private double intersections[];
 	
+	private Vector point;
+	
 	private ArrayList<PathElement<Intersection>> children;
 
 	/**
@@ -44,6 +46,8 @@ public class Intersection implements PathElement<Intersection> {
 		this.surface = surface;
 
 		this.intersections = intersections;
+		
+		this.point = ray.pointAt(getClosestIntersection());
 	}
 	
 	/** @return  The Ray object stored by this Intersection object. */
@@ -54,6 +58,8 @@ public class Intersection implements PathElement<Intersection> {
 	
 	/** @return  The intersections stored by this Intersection object. */
 	public double[] getIntersections() { return this.intersections; }
+	
+	public Vector getPoint() { return point; }
 
 	public double getClosestIntersection() {
 		if (this.closest >= 0) {
