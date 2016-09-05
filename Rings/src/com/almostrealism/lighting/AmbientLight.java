@@ -16,9 +16,12 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
+
+import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.
@@ -83,4 +86,18 @@ public class AmbientLight implements Light {
 	 * Returns "Ambient Light".
 	 */
 	public String toString() { return "Ambient Light"; }
+
+	/**
+	 * Performs the lighting calculations for the specified surface at the specified point of
+	 * interesection on that surface using the lighting data from the specified AmbientLight
+	 * object and returns an RGB object that represents the color of the point. A list of all
+	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
+	 * not include the specified surface for which the lighting calculations are to be done.
+	 */
+	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces, AmbientLight light) {
+		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
+		color = new ColorMultiplier(color, surface.getColorAt(point));
+		
+		return color;
+	}
 }

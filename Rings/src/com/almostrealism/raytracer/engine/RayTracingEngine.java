@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
@@ -323,7 +322,7 @@ public class RayTracingEngine {
 						c = surf.shade(p);
 					}
 				} else if (allLights[i] instanceof AmbientLight) {
-					c = RayTracingEngine.ambientLightingCalculation(intersect.getPoint(), r.getDirection(),
+					c = AmbientLight.ambientLightingCalculation(intersect.getPoint(), r.getDirection(),
 												surf, otherSurf, (AmbientLight)allLights[i]);
 				} else {
 					c = new RGB(0.0, 0.0, 0.0);
@@ -447,114 +446,22 @@ public class RayTracingEngine {
 			return RayTracingEngine.lightingCalculation(intersection, point, rayDirection,
 														surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
-			return RayTracingEngine.pointLightingCalculation(intersection, point,
+			return PointLight.pointLightingCalculation(intersection, point,
 															rayDirection, surface,
 															otherSurfaces, (PointLight)light, otherLights, p);
 		} else if (light instanceof DirectionalAmbientLight) {
-			return RayTracingEngine.directionalAmbientLightingCalculation(
+			return DirectionalAmbientLight.directionalAmbientLightingCalculation(
 															intersection, point,
 															rayDirection, surface,
 															otherSurfaces,
 															(DirectionalAmbientLight)light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
-			return RayTracingEngine.ambientLightingCalculation(point, rayDirection,
+			return AmbientLight.ambientLightingCalculation(point, rayDirection,
 																surface, otherSurfaces,
 																(AmbientLight)light);
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
 		}
-	}
-	
-	/**
-	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * interesection on that surface using the lighting data from the specified AmbientLight
-	 * object and returns an RGB object that represents the color of the point. A list of all
-	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
-	 * not include the specified surface for which the lighting calculations are to be done.
-	 */
-	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces, AmbientLight light) {
-		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
-		color = new ColorMultiplier(color, surface.getColorAt(point));
-		
-		return color;
-	}
-	
-	/**
-	 * Performs the lighting calculations for the specified surface at the specified point of interesection
-	 * on that surface using the lighting data from the specified DirectionalAmbientLight object and returns
-	 * an RGB object that represents the color of the point. A list of all other surfaces in the scene must
-	 * be specified for reflection/shadowing. This list does not include the specified surface for which
-	 * the lighting calculations are to be done.
-	 * 
-	 * @param intersection  The intersection point on the surface to be shaded.
-	 * @param point  The intersection point on the surface to be shaded.
-	 * @param rayDirection  Direction of the ray that intersected the surface to be shaded.
-	 * @param surface  The Surface object to use for shading calculations.
-	 * @param otherSurfaces  An array of Surface objects that are also in the scene.
-	 * @param light  The DirectionalAmbientLight instance to use for shading calculations.
-	 * @param p  A ShaderParameters object that stores all parameters that are persisted
-	 *           during a single set of ray casting events (reflections, refractions, etc.)
-	 *           (null accepted).
-	 * 
-	 * @param otherLights[]  An array of Light objects that are also in the scene.
-	 */
-	public static ColorProducer directionalAmbientLightingCalculation(ShadableIntersection intersection, Vector point,
-														Vector rayDirection,
-														ShadableSurface surface,
-														Collection<ShadableSurface> otherSurfaces, DirectionalAmbientLight light,
-														Light otherLights[], ShaderParameters p) {
-		ColorProducer color = null;
-		
-		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
-		
-		if (p == null) {
-			color = surface.shade(new ShaderParameters(intersection, l, light, otherLights, otherSurfaces));
-		} else {
-			p.setIntersection(intersection);
-			p.setLightDirection(l);
-			p.setLight(light);
-			p.setOtherLights(otherLights);
-			p.setOtherSurfaces(otherSurfaces);
-			
-			color = surface.shade(p);
-		}
-		
-		return color;
-	}
-	
-	/**
-	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * interesection on that surface using the lighting data from the specified PointLight
-	 * object and returns an RGB object that represents the color of the point.
-	 * A list of all other surfaces in the scene must be specified for reflection/shadowing.
-	 * This list does not include the specified surface for which the lighting calculations
-	 * are to be done. If the premultiplyIntensity option is set to true the color of the
-	 * point light will be adjusted by the intensity of the light and the intensity will
-	 * then be set to 1.0. If the premultiplyIntensity option is set to false, the color will
-	 * be left unattenuated and the shaders will be responsible for adjusting the color
-	 * based on intensity.
-	 */
-	public static ColorProducer pointLightingCalculation(ShadableIntersection intersection, Vector point,
-											Vector rayDirection,
-											ShadableSurface surface,
-											Collection<ShadableSurface> otherSurfaces, PointLight light,
-											Light otherLights[], ShaderParameters p) {
-		Vector direction = point.subtract(light.getLocation());
-		DirectionalAmbientLight dLight = null;
-		
-		if (RayTracingEngine.premultiplyIntensity) {
-			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point).evaluate(null), direction);
-		} else {
-			double in = light.getIntensity();
-			light.setIntensity(1.0);
-			dLight = new DirectionalAmbientLight(in, light.getColorAt(point).evaluate(null), direction);
-			light.setIntensity(in);
-		}
-		
-		return RayTracingEngine.directionalAmbientLightingCalculation(
-											intersection, point,
-											rayDirection, surface,
-											otherSurfaces, dLight, otherLights, p);
 	}
 	
 	/**
@@ -599,9 +506,9 @@ public class RayTracingEngine {
 	}
 	
 	/**
-	  Reflects the specified Vector object across the normal vector represented by the second specified Vector object and returns the result.
-	*/
-	
+	 * Reflects the specified {@link Vector} across the normal vector represented by the 
+	 * second specified {@link Vector} and returns the result.
+	 */
 	public static Vector reflect(Vector vector, Vector normal) {
 		vector = vector.minus();
 		Vector reflected = vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
@@ -610,14 +517,13 @@ public class RayTracingEngine {
 	}
 	
 	/**
-	  Refracts the specified Vector object based on the specified normal vector and 2 specified indices of refraction.
-	  
-	  @param vector  A Vector object representing a unit vector in the direction of the incident ray
-	         normal  A Vector object respresenting a unit vector that is normal to the surface refracting the ray
-	         ni  A double value representing the index of refraction of the incident medium
-	         nr  A double value representing the index of refraction of the refracting medium
-	*/
-	
+	 * Refracts the specified Vector object based on the specified normal vector and 2 specified indices of refraction.
+	 * 
+	 * @param vector  A Vector object representing a unit vector in the direction of the incident ray
+	 * @param normal  A Vector object respresenting a unit vector that is normal to the surface refracting the ray
+	 * @param ni  A double value representing the index of refraction of the incident medium
+	 * @param nr  A double value representing the index of refraction of the refracting medium
+	 */
 	public static Vector refract(Vector vector, Vector normal, double ni, double nr, boolean v) {
 		if (v) System.out.println("Vector = " + vector);
 		
