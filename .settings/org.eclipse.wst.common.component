@@ -24,5 +24,6 @@
         <wb-resource deploy-path="/" source-path="/FeedGrowth/resources"/>
         <wb-resource deploy-path="/" source-path="/RingsDesktop/resources"/>
         <wb-resource deploy-path="/" source-path="/OptimalZoo/src"/>
+        <wb-resource deploy-path="/" source-path="/Rings/test"/>
     </wb-module>
 </project-modules>
