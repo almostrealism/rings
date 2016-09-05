@@ -260,8 +260,6 @@ public class RayTracingEngine {
 		ShadableSurface surface = null;
 		
 		if (intersect != null) {
-			double intersection = intersect.getClosestIntersection();
-			
 			ShadableSurface surf = (ShadableSurface) intersect.getSurface();
 			List<ShadableSurface> otherSurf = new ArrayList<ShadableSurface>();
 			
