@@ -31,11 +31,16 @@ import org.almostrealism.space.Vector;
  * @author  Michael Murray
  */
 public class ShadableIntersection extends Intersection {
-	private List<Vector> normals;
 	private int nearestIndex = 0;
+	
+	private Vector viewerDirection;
+	private List<Vector> normals;
 	
 	public ShadableIntersection(Ray ray, Intersectable<ShadableIntersection> surface, double intersections[]) {
 		super(ray, surface, intersections);
+		
+		Vector rayDirection = ray.getDirection();
+		viewerDirection = (rayDirection.divide(rayDirection.length())).minus();
 		
 		normals = new ArrayList<Vector>();
 		
@@ -56,6 +61,8 @@ public class ShadableIntersection extends Intersection {
 	public Vector getNormal() { return getNormal(nearestIndex); }
 	
 	public Vector getNormal(int index) { return normals.get(index); }
+	
+	public Vector getViewerDirection() { return viewerDirection; }
 	
 	public int size() { return normals.size(); }
 }

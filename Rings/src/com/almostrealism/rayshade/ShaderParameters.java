@@ -35,7 +35,6 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 public class ShaderParameters {
 	private ShadableIntersection intersection;
 	
-	private Vector viewerDirection;
 	private Vector lightDirection;
 	private Light light;
 	private Light otherLights[];
@@ -52,38 +51,34 @@ public class ShaderParameters {
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * 
 	 * @param intersection  The details about the surface/ray intersection.
-	 * @param viewerDirection  Vector object representing the direction toward the viewer (should be unit length).
 	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
 	 * @param light  Light object representing the light.
 	 * @param otherLights  Array of Light objects representing other lights in the scene.
 	 * @param otherSurfaces  Collection of other Surface objects in the scene.
 	 * @param surface  Surface object to be shaded.
 	 */
-	public ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
-							Light light, Light otherLights[], Collection<ShadableSurface> otherSurfaces) {
-		this(intersection, viewerDirection, lightDirection, light, otherLights,
-				otherSurfaces.toArray(new ShadableSurface[0]));
+	public ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+							Light otherLights[], Collection<ShadableSurface> otherSurfaces) {
+		this(intersection, lightDirection, light, otherLights, otherSurfaces.toArray(new ShadableSurface[0]));
 	}
 	
-	private ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
-			Light light, Light otherLights[], ShadableSurface otherSurfaces[]) {
-		this(intersection, viewerDirection, lightDirection, light, otherLights, null, otherSurfaces);
+	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+			Light otherLights[], ShadableSurface otherSurfaces[]) {
+		this(intersection, lightDirection, light, otherLights, null, otherSurfaces);
 	}
 	
 	/**
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * @param intersection TODO
-	 * @param viewerDirection  Vector object representing the direction toward the viewer (should be unit length).
 	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
 	 * @param light  Light object representing the light.
 	 * @param otherLights  Array of Light objects representing other lights in the scene.
 	 * @param surface  Surface object to be shaded.
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
-	private ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
-			Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
+	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+			Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
 		this.intersection = intersection;
-		this.viewerDirection = viewerDirection;
 		this.lightDirection = lightDirection;
 		this.light = light;
 		this.otherLights = otherLights;
@@ -96,19 +91,6 @@ public class ShaderParameters {
 	public void setIntersection(ShadableIntersection intersect) { intersection = intersect; }
 	
 	public ShadableIntersection getIntersection() { return intersection; }
-	
-	/**
-	 * Sets the direction toward the viewer to the specified Vector object.
-	 * 
-	 * @param v  Vector object to use.
-	 */
-	public void setViewerDirection(Vector v) { this.viewerDirection = v; }
-	
-	/**
-	 * @return  A Vector object representing the direction toward the viewer
-	 *          (this can be expected to be unit length).
-	 */
-	public Vector getViewerDirection() { return this.viewerDirection; }
 	
 	/**
 	 * Sets the direction toward the light to the specified Vector object.
@@ -219,7 +201,7 @@ public class ShaderParameters {
 	}
 	
 	public String toString() {
-		return this.intersection + ", " + this.viewerDirection + ", " + this.lightDirection + ", " +
+		return this.intersection + ", " + this.lightDirection + ", " +
 				this.light + ", " + Arrays.toString(this.otherLights) + ", " + this.surface;
 	}
 }

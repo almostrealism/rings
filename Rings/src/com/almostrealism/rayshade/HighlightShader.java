@@ -62,7 +62,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		
 		Vector n = p.getIntersection().getNormal();
 		n.divideBy(n.length());
-		Vector h = p.getViewerDirection().add(p.getLightDirection());
+		Vector h = p.getIntersection().getViewerDirection().add(p.getLightDirection());
 		h = h.divide(h.length());
 		
 		ColorSum color = new ColorSum();

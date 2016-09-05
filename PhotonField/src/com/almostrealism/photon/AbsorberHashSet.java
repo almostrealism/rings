@@ -889,7 +889,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 		Vector n = this.getNormalAt(point);
 		double norm[] = {n.getX(), n.getY(), n.getZ()};
 		double d = n.dotProduct(p.getLightDirection());
-		boolean front = p.getViewerDirection().dotProduct(n) >= 0.0;
+		boolean front = p.getIntersection().getViewerDirection().dotProduct(n) >= 0.0;
 		
 		if (d < 0) {
 			if (this.getShadeBack())
@@ -915,7 +915,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 			v[1] *= -1;
 			v[2] *= -1;
 
-			double vd[] = p.getViewerDirection().getData();
+			double vd[] = p.getIntersection().getViewerDirection().getData();
 			
 			if (this.rclosest.brdf != null)
 				b.multiplyBy(VectorMath.dot(vd, this.rclosest.brdf.getSample(v, norm)));
@@ -926,7 +926,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 		// Transmitted or reflected
 		
 		if (this.rclosest.brdf != null && p.getReflectionCount() < 2) {
-			Vector viewer = p.getViewerDirection();
+			Vector viewer = p.getIntersection().getViewerDirection();
 			double v[] = {viewer.getX(), viewer.getY(), viewer.getZ()};
 			double s[] = this.rclosest.brdf.getSample(v, norm);
 			

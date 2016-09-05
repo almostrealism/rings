@@ -104,7 +104,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p));
 		
 		f: if (p.getSurface().getShadeFront()) {
-			Vector ref = RayTracingEngine.reflect(p.getViewerDirection(), n);
+			Vector ref = RayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -146,7 +146,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 					color = this.eMap.getColorAt(ref);
 			}
 			
-			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
+			double c = 1 - p.getIntersection().getViewerDirection().minus().dotProduct(n) / (p.getIntersection().getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			
@@ -156,7 +156,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		b: if (p.getSurface().getShadeBack()) {
 			n = n.minus();
 			
-			Vector ref = RayTracingEngine.reflect(p.getViewerDirection(), n);
+			Vector ref = RayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -198,7 +198,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 					color = this.eMap.getColorAt(ref);
 			}
 			
-			double c = 1 - p.getViewerDirection().minus().dotProduct(n) / (p.getViewerDirection().minus().length() * n.length());
+			double c = 1 - p.getIntersection().getViewerDirection().minus().dotProduct(n) /
+					(p.getIntersection().getViewerDirection().minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			

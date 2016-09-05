@@ -291,16 +291,12 @@ public class RayTracingEngine {
 					DirectionalAmbientLight directionalLight =
 						new DirectionalAmbientLight(1.0, allLights[i].getColorAt(intersect.getPoint()).evaluate(null), direction);
 					
-					Vector rayDirection = r.getDirection();
-					
-					Vector v = (rayDirection.divide(rayDirection.length())).minus();
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(intersect, v, l, directionalLight, otherL, otherSurf));
+						c = surf.shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf));
 					} else {
 						p.setIntersection(intersect);
-						p.setViewerDirection(v);
 						p.setLightDirection(l);
 						p.setLight(directionalLight);
 						p.setOtherLights(otherL);
@@ -311,18 +307,14 @@ public class RayTracingEngine {
 				} else if (allLights[i] instanceof DirectionalAmbientLight) {
 					DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) allLights[i];
 					
-					Vector rayDirection = r.getDirection();
-					
-					Vector v = (rayDirection.divide(rayDirection.length())).minus();
 					Vector l = (directionalLight.getDirection().divide(
 							directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surface.shade(new ShaderParameters(intersect, v, l, directionalLight,
-								otherL, otherSurf));
+						c = surface.shade(new ShaderParameters(intersect, l, directionalLight, otherL,
+								otherSurf));
 					} else {
 						p.setIntersection(intersect);
-						p.setViewerDirection(v);
 						p.setLightDirection(l);
 						p.setLight(directionalLight);
 						p.setOtherLights(otherL);
@@ -513,14 +505,12 @@ public class RayTracingEngine {
 														Light otherLights[], ShaderParameters p) {
 		ColorProducer color = null;
 		
-		Vector v = (rayDirection.divide(rayDirection.length())).minus();
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface.shade(new ShaderParameters(intersection, v, l, light, otherLights, otherSurfaces));
+			color = surface.shade(new ShaderParameters(intersection, l, light, otherLights, otherSurfaces));
 		} else {
 			p.setIntersection(intersection);
-			p.setViewerDirection(v);
 			p.setLightDirection(l);
 			p.setLight(light);
 			p.setOtherLights(otherLights);
