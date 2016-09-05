@@ -884,7 +884,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 			return new RGB(this.colorDepth, 1.0, 1.0, 1.0);
 		}
 		
-		Vector point = p.getPoint();
+		Vector point = p.getIntersection().getPoint();
 		double po[] = {point.getX(), point.getY(), point.getZ()};
 		Vector n = this.getNormalAt(point);
 		double norm[] = {n.getX(), n.getY(), n.getZ()};

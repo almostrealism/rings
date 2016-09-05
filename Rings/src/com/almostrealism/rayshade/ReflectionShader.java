@@ -80,7 +80,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 	public ColorProducer shade(ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections)
 			return this.reflectiveColor.evaluate(new Object[] {p})
-					.multiply(p.getSurface().getColorAt(p.getPoint()).evaluate(null));
+					.multiply(p.getSurface().getColorAt(p.getIntersection().getPoint()).evaluate(null));
 		
 		p.addReflection();
 		
@@ -92,7 +92,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
 		allLights[allLights.length - 1] = p.getLight();
 		
-		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
+		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
 		
 		Vector n = p.getIntersection().getNormal();
 		// TODO Should surface color be factored in to reflection?
@@ -134,7 +134,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				ref.divideBy(ref.length());
 			}
 			
-			Ray reflectedRay = new Ray(p.getPoint(), ref);
+			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
 			
 			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
@@ -186,7 +186,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				ref.divideBy(ref.length());
 			}
 			
-			Ray reflectedRay = new Ray(p.getPoint(), ref);
+			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
 			
 			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
 																	p.fogColor, p.fogDensity, p.fogRatio, p);

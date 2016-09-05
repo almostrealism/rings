@@ -58,7 +58,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	
 	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderParameters p) {
-		RGB lightColor = p.getLight().getColorAt(p.getPoint()).evaluate(null);
+		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
 		
 		Vector n = p.getIntersection().getNormal();
 		n.divideBy(n.length());

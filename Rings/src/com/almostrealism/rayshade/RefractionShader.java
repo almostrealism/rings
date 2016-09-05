@@ -73,7 +73,7 @@ public class RefractionShader implements Shader, Editable {
 		
 		ColorSum color = new ColorSum();
 		
-		Vector po = p.getPoint();
+		Vector po = p.getIntersection().getPoint();
 		
 		if (Math.random() < 0.01 &&
 				po.getX() * po.getX() + po.getY() * po.getY() + po.getZ() * po.getZ() - 1.0 > 0.01)
@@ -83,13 +83,13 @@ public class RefractionShader implements Shader, Editable {
 		n = n.divide(n.length());
 		
 		if (p.getSurface().getShadeFront()) {
-			ColorProducer c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
+			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getViewerDirection(), p.getLightDirection(),
 					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n, p);
 			if (c != null) color.add(c);
 		}
 		
 		if (p.getSurface().getShadeBack()) {
-			ColorProducer c = this.shade(p.getPoint(), p.getViewerDirection(), p.getLightDirection(),
+			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getViewerDirection(), p.getLightDirection(),
 					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n.minus(), p);
 			if (c != null) color.add(c);
 		}

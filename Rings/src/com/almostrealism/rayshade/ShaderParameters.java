@@ -35,7 +35,6 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
 public class ShaderParameters {
 	private ShadableIntersection intersection;
 	
-	private Vector point;
 	private Vector viewerDirection;
 	private Vector lightDirection;
 	private Light light;
@@ -53,7 +52,6 @@ public class ShaderParameters {
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * 
 	 * @param intersection  The details about the surface/ray intersection.
-	 * @param point  Vector object representing the point to be shaded.
 	 * @param viewerDirection  Vector object representing the direction toward the viewer (should be unit length).
 	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
 	 * @param light  Light object representing the light.
@@ -61,22 +59,20 @@ public class ShaderParameters {
 	 * @param otherSurfaces  Collection of other Surface objects in the scene.
 	 * @param surface  Surface object to be shaded.
 	 */
-	public ShaderParameters(ShadableIntersection intersection, Vector point, Vector viewerDirection,
-							Vector lightDirection, Light light, Light otherLights[],
-							Collection<ShadableSurface> otherSurfaces) {
-		this(intersection, point, viewerDirection, lightDirection, light,
-				otherLights, otherSurfaces.toArray(new ShadableSurface[0]));
+	public ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
+							Light light, Light otherLights[], Collection<ShadableSurface> otherSurfaces) {
+		this(intersection, viewerDirection, lightDirection, light, otherLights,
+				otherSurfaces.toArray(new ShadableSurface[0]));
 	}
 	
-	private ShaderParameters(ShadableIntersection intersection, Vector point, Vector viewerDirection,
-			Vector lightDirection, Light light, Light otherLights[], ShadableSurface otherSurfaces[]) {
-		this(intersection, point, viewerDirection, lightDirection, light, otherLights, null, otherSurfaces);
+	private ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
+			Light light, Light otherLights[], ShadableSurface otherSurfaces[]) {
+		this(intersection, viewerDirection, lightDirection, light, otherLights, null, otherSurfaces);
 	}
 	
 	/**
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * @param intersection TODO
-	 * @param point  Vector object representing the point to be shaded.
 	 * @param viewerDirection  Vector object representing the direction toward the viewer (should be unit length).
 	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
 	 * @param light  Light object representing the light.
@@ -84,10 +80,9 @@ public class ShaderParameters {
 	 * @param surface  Surface object to be shaded.
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
-	private ShaderParameters(ShadableIntersection intersection, Vector point, Vector viewerDirection,
-			Vector lightDirection, Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
+	private ShaderParameters(ShadableIntersection intersection, Vector viewerDirection, Vector lightDirection,
+			Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
 		this.intersection = intersection;
-		this.point = point;
 		this.viewerDirection = viewerDirection;
 		this.lightDirection = lightDirection;
 		this.light = light;
@@ -98,19 +93,9 @@ public class ShaderParameters {
 		this.refCount = 0;
 	}
 	
+	public void setIntersection(ShadableIntersection intersect) { intersection = intersect; }
+	
 	public ShadableIntersection getIntersection() { return intersection; }
-	
-	/**
-	 * Sets the point to be shaded to the specified Vector object.
-	 * 
-	 * @param p  Vector object to use.
-	 */
-	public void setPoint(Vector p) { this.point = p; }
-	
-	/**
-	 * @return  A Vector object representing the point to be shaded.
-	 */
-	public Vector getPoint() { return (Vector) this.point.clone(); }
 	
 	/**
 	 * Sets the direction toward the viewer to the specified Vector object.
@@ -234,7 +219,7 @@ public class ShaderParameters {
 	}
 	
 	public String toString() {
-		return this.point + ", " + this.viewerDirection + ", " + this.lightDirection + ", " +
+		return this.intersection + ", " + this.viewerDirection + ", " + this.lightDirection + ", " +
 				this.light + ", " + Arrays.toString(this.otherLights) + ", " + this.surface;
 	}
 }

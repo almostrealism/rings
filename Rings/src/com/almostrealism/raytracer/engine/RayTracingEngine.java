@@ -299,9 +299,9 @@ public class RayTracingEngine {
 					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(intersect, intersect.getPoint(), v, l, directionalLight, otherL, otherSurf));
+						c = surf.shade(new ShaderParameters(intersect, v, l, directionalLight, otherL, otherSurf));
 					} else {
-						p.setPoint(intersect.getPoint());
+						p.setIntersection(intersect);
 						p.setViewerDirection(v);
 						p.setLightDirection(l);
 						p.setLight(directionalLight);
@@ -320,10 +320,10 @@ public class RayTracingEngine {
 							directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surface.shade(new ShaderParameters(null, intersect.getPoint(), v, l,
-								directionalLight, otherL, otherSurf));
+						c = surface.shade(new ShaderParameters(intersect, v, l, directionalLight,
+								otherL, otherSurf));
 					} else {
-						p.setPoint(intersect.getPoint());
+						p.setIntersection(intersect);
 						p.setViewerDirection(v);
 						p.setLightDirection(l);
 						p.setLight(directionalLight);
@@ -519,9 +519,9 @@ public class RayTracingEngine {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface.shade(new ShaderParameters(intersection, point, v, l, light, otherLights, otherSurfaces));
+			color = surface.shade(new ShaderParameters(intersection, v, l, light, otherLights, otherSurfaces));
 		} else {
-			p.setPoint(point);
+			p.setIntersection(intersection);
 			p.setViewerDirection(v);
 			p.setLightDirection(l);
 			p.setLight(light);
