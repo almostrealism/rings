@@ -15,3 +15,5 @@ syntax: regexp
 \.DS_Store$
 syntax: regexp
 ^ringsdb\.log$
+syntax: regexp
+^MatrixView/target$
