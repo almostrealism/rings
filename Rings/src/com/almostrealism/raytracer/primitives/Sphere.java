@@ -34,6 +34,12 @@ public class Sphere extends AbstractSurface {
 	public Sphere() { }
 	
 	/**
+	 * Constructs a {@link Sphere} representing a sphere with the specified center radius
+	 * centered at the origin that is black.
+	 */
+	public Sphere(double radius) { this(new Vector(0.0, 0.0, 0.0), radius); }
+	
+	/**
 	 * Constructs a Sphere object that represents a sphere with the specified center location
 	 * and radius that is black.
 	 */
