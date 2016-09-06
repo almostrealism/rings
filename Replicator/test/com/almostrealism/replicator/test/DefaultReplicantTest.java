@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.almostrealism.gl.test;
-
-import javax.swing.JFrame;
+package com.almostrealism.replicator.test;
 
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 import org.junit.Test;
 
-import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.replicator.DefaultReplicant;
+import com.almostrealism.replicator.ReplicatorTableModel;
 
 /**
  * @author  Michael Murray
  */
-public class SurfaceCanvasTest {
+public class DefaultReplicantTest {
 	@Test
 	public void test() {
 		PinholeCamera camera = new PinholeCamera();
@@ -42,15 +42,17 @@ public class SurfaceCanvasTest {
 		
 		Sphere s = new Sphere(2.0);
 		s.setColor(RGB.gray(0.8));
-		scene.add(new Sphere(2.0));
 		
-		SurfaceCanvas c = new SurfaceCanvas(scene);
+		DefaultReplicant<ShadableSurface> r = new DefaultReplicant<ShadableSurface>(s);
+		r.put(ReplicatorTableModel.LEFT, new BasicGeometry(new Vector(-2.0, 0.0, 0.0)));
+		r.put(ReplicatorTableModel.RIGHT, new BasicGeometry(new Vector(2.0, 0.0, 0.0)));
+		r.put(ReplicatorTableModel.TOP, new BasicGeometry(new Vector(0.0, 2.0, 0.0)));
+		r.put(ReplicatorTableModel.BOTTOM, new BasicGeometry(new Vector(0.0, -2.0, 0.0)));
+		r.put(ReplicatorTableModel.FRONT, new BasicGeometry(new Vector(0.0, 0.0, 2.0)));
+		r.put(ReplicatorTableModel.BACK, new BasicGeometry(new Vector(0.0, 0.0, -2.0)));
 		
-		JFrame frame = new JFrame("Test");
-		frame.setSize(300, 300);
-		frame.getContentPane().add(c);
-		frame.setVisible(true);
+		scene.add(r);
 	}
 	
-	public static void main(String args[]) { new SurfaceCanvasTest().test(); }
+	public static void main(String args[]) { new DefaultReplicantTest().test(); }
 }

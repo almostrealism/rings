@@ -38,12 +38,12 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
  */
 @ViewModel
 public class ReplicatorTableModel extends Scene<ShadableSurface> implements TableModel {
-	private static final String LEFT = "Left";
-	private static final String RIGHT = "Right";
-	private static final String TOP = "Top";
-	private static final String BOTTOM = "Bottom";
-	private static final String FRONT = "Front";
-	private static final String BACK = "Back";
+	public static final String LEFT = "Left";
+	public static final String RIGHT = "Right";
+	public static final String TOP = "Top";
+	public static final String BOTTOM = "Bottom";
+	public static final String FRONT = "Front";
+	public static final String BACK = "Back";
 	
 	private List<DefaultReplicant> layers;
 	private List<String> modelNames;
