@@ -162,12 +162,12 @@ public class Replicator {
 	public void showCanvasFrame(int x, int y) {
 		canvasFrame.setLocation(x, y);
 		canvasFrame.setVisible(true);
+		canvas.reset();
 	}
 	
 	public void showLayersFrame(int x, int y) {
 		layersFrame.setLocation(x, y);
 		layersFrame.setVisible(true);
-		canvas.reset();
 	}
 	
 	public void showSamplerFrame(int x, int y) {
