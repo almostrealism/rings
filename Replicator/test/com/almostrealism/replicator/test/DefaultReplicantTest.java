@@ -16,11 +16,14 @@
 
 package com.almostrealism.replicator.test;
 
+import javax.swing.JFrame;
+
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
 import org.junit.Test;
 
+import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
@@ -52,6 +55,13 @@ public class DefaultReplicantTest {
 		r.put(ReplicatorTableModel.BACK, new BasicGeometry(new Vector(0.0, 0.0, -2.0)));
 		
 		scene.add(r);
+		
+		SurfaceCanvas c = new SurfaceCanvas(scene);
+		
+		JFrame frame = new JFrame("Test");
+		frame.setSize(300, 300);
+		frame.getContentPane().add(c);
+		frame.setVisible(true);
 	}
 	
 	public static void main(String args[]) { new DefaultReplicantTest().test(); }
