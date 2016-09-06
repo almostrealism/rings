@@ -133,30 +133,30 @@ public class ReplicatorTableModel extends Scene<ShadableSurface> implements Tabl
 		double v = ((Double) aValue).doubleValue();
 		
 		switch (columnIndex) {
-			case 2: setScale(rowIndex, LEFT, 0, v);
-			case 3: setScale(rowIndex, LEFT, 1, v);
-			case 4: setScale(rowIndex, LEFT, 2, v);
-			case 5: setScale(rowIndex, RIGHT, 0, v);
-			case 6: setScale(rowIndex, RIGHT, 1, v);
-			case 7: setScale(rowIndex, RIGHT, 2, v);
-			case 8: setScale(rowIndex, TOP, 0, v);
-			case 9: setScale(rowIndex, TOP, 1, v);
-			case 10: setScale(rowIndex, TOP, 2, v);
-			case 11: setScale(rowIndex, BOTTOM, 0, v);
-			case 12: setScale(rowIndex, BOTTOM, 1, v);
-			case 13: setScale(rowIndex, BOTTOM, 2, v);
-			case 14: setScale(rowIndex, FRONT, 0, v);
-			case 15: setScale(rowIndex, FRONT, 1, v);
-			case 16: setScale(rowIndex, FRONT, 2, v);
-			case 17: setScale(rowIndex, BACK, 0, v);
-			case 18: setScale(rowIndex, BACK, 1, v);
-			case 19: setScale(rowIndex, BACK, 2, v);
-			case 20: setOffset(rowIndex, LEFT, 0, true, v);
-			case 21: setOffset(rowIndex, RIGHT, 0, false, v);
-			case 22: setOffset(rowIndex, TOP, 1, false, v);
-			case 23: setOffset(rowIndex, BOTTOM, 1, true, v);
-			case 24: setOffset(rowIndex, FRONT, 2, false, v);
-			case 25: setOffset(rowIndex, BACK, 2, true, v);
+			case 2: setScale(rowIndex, LEFT, 0, v); break;
+			case 3: setScale(rowIndex, LEFT, 1, v); break;
+			case 4: setScale(rowIndex, LEFT, 2, v); break;
+			case 5: setScale(rowIndex, RIGHT, 0, v); break;
+			case 6: setScale(rowIndex, RIGHT, 1, v); break;
+			case 7: setScale(rowIndex, RIGHT, 2, v); break;
+			case 8: setScale(rowIndex, TOP, 0, v); break;
+			case 9: setScale(rowIndex, TOP, 1, v); break;
+			case 10: setScale(rowIndex, TOP, 2, v); break;
+			case 11: setScale(rowIndex, BOTTOM, 0, v); break;
+			case 12: setScale(rowIndex, BOTTOM, 1, v); break;
+			case 13: setScale(rowIndex, BOTTOM, 2, v); break;
+			case 14: setScale(rowIndex, FRONT, 0, v); break;
+			case 15: setScale(rowIndex, FRONT, 1, v); break;
+			case 16: setScale(rowIndex, FRONT, 2, v); break;
+			case 17: setScale(rowIndex, BACK, 0, v); break;
+			case 18: setScale(rowIndex, BACK, 1, v); break;
+			case 19: setScale(rowIndex, BACK, 2, v); break;
+			case 20: setOffset(rowIndex, LEFT, 0, true, v); break;
+			case 21: setOffset(rowIndex, RIGHT, 0, false, v); break;
+			case 22: setOffset(rowIndex, TOP, 1, false, v); break;
+			case 23: setOffset(rowIndex, BOTTOM, 1, true, v); break;
+			case 24: setOffset(rowIndex, FRONT, 2, false, v); break;
+			case 25: setOffset(rowIndex, BACK, 2, true, v); break;
 		}
 	}
 	
