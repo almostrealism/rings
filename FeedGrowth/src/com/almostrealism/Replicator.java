@@ -152,6 +152,8 @@ public class Replicator {
 	
 	public ReplicatorTableModel getTableModel() { return model; }
 	
+	public void start() { canvas.start(); }
+	
 	public Action getLayersAction() { return new LayersAction(); }
 	public Action getCanvasAction() { return new CanvasAction(); }
 	public Action getSamplerAction() { return new SamplerAction(); }

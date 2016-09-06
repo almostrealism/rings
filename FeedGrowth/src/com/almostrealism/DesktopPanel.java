@@ -80,6 +80,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		renderPanel.add(ow, BorderLayout.NORTH);
 		
 		raytracer.render();
+		r.start();
 	}
 	
 	private static class QuitAction extends AbstractAction {
