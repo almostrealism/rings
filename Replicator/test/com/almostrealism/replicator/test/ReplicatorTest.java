@@ -20,13 +20,11 @@ import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JFrame;
 
 import org.almostrealism.color.RGB;
 import org.junit.Test;
 
 import com.almostrealism.Replicator;
-import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.raytracer.primitives.Sphere;
 
 /**
@@ -41,14 +39,8 @@ public class ReplicatorTest {
 		s.setColor(RGB.gray(0.8));
 		r.addLayer("Sphere", s);
 		
-		SurfaceCanvas c = r.getCanvas();
-
-		c.start();
-		
-		JFrame frame = new JFrame("Test");
-		frame.setSize(300, 300);
-		frame.getContentPane().add(c);
-		frame.setVisible(true);
+		r.showCanvasFrame(0, 0);
+		r.start();
 	}
 	
 	public static void main(String args[]) throws UnsupportedAudioFileException, IOException, LineUnavailableException {

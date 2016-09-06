@@ -119,9 +119,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		float h = (float) height / (float) width;
 		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
-		
-//		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 2400.0f);
-		
 		gl.glLoadIdentity();
 		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
 	}

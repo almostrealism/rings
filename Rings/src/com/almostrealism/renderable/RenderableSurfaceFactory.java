@@ -28,6 +28,8 @@ public class RenderableSurfaceFactory {
 			return new RenderableSphere((Sphere) s);
 		} else if (s instanceof Mesh) {
 			return new RenderableMesh((Mesh) s);
+		} else {
+			System.err.println("Returning null for " + s);
 		}
 		
 		return null;

@@ -64,11 +64,6 @@ public class Replicator {
 		canvas = new SurfaceCanvas(model);
 		receptor = new Receptor();
 		
-		canvasFrame = new JFrame("Replicator");
-		canvasFrame.getContentPane().setLayout(new BorderLayout());
-		canvasFrame.getContentPane().add(canvas, BorderLayout.CENTER);
-		canvasFrame.setSize(400, 250);
-		
 		layersFrame = new JFrame("Layers");
 		layersFrame.setLayout(new BorderLayout());
 		layersFrame.getContentPane().add(new JTable(model));
@@ -160,7 +155,13 @@ public class Replicator {
 	public Action getFeedbackAction() { return new FeedbackAction(); }
 	
 	public void showCanvasFrame(int x, int y) {
-		canvasFrame.setLocation(x, y);
+		if (canvasFrame == null) {
+			canvasFrame = new JFrame("Replicator");
+			canvasFrame.getContentPane().add(canvas);
+			canvasFrame.setSize(400, 250);
+			canvasFrame.setLocation(x, y);
+		}
+		
 		canvasFrame.setVisible(true);
 		canvas.reset();
 	}

@@ -142,9 +142,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		}
 		
 		renderThread.start();
-		
-		this.revalidate();
-		this.repaint();
 	}
 	
 	public Dimension getPreferredSize() {

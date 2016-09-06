@@ -26,36 +26,34 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 
-import org.almostrealism.color.RGB;
 import org.almostrealism.swing.DragSupport;
 import org.almostrealism.swing.ValueSlider;
 import org.almostrealism.texture.Icons;
 
 import com.almostrealism.feedgrow.OptimizerDesktopWidget;
 import com.almostrealism.raytracer.RenderPanel;
-import com.almostrealism.raytracer.primitives.Sphere;
 
 /**
  * @author  Michael Murray
  */
 public class DesktopPanel extends DesktopPanelUI {
+	public static final boolean enableDraggable = false;
+	
 	private JFrame frame;
 	
+	private Replicator replicator;
 	private RenderPanel raytracer;
 	private ValueSlider zoomSlider;
 
 	public DesktopPanel(JFrame parent, Replicator r) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		this.frame = parent;
+		this.replicator = r;
 		
-		DragSupport draggable = new DragSupport(frame, this);
-		addMouseListener(draggable);
-		addMouseMotionListener(draggable);
-		
-		// Start with one initial layer
-		Sphere s = new Sphere();
-		s.setSize(2.0);
-		s.setColor(RGB.gray(0.8));
-		r.addLayer("Sphere", s);
+		if (enableDraggable) {
+			DragSupport draggable = new DragSupport(frame, this);
+			addMouseListener(draggable);
+			addMouseMotionListener(draggable);
+		}
 		
 		toolBar.add(new QuitAction());
 		toolBar.add(new RefreshAction());
@@ -78,9 +76,6 @@ public class DesktopPanel extends DesktopPanelUI {
 		ow.setBackground(Color.black);
 		ow.setForeground(Color.white);
 		renderPanel.add(ow, BorderLayout.NORTH);
-		
-		raytracer.render();
-		r.start();
 	}
 	
 	private static class QuitAction extends AbstractAction {
@@ -99,8 +94,7 @@ public class DesktopPanel extends DesktopPanelUI {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// Start rendering
-			raytracer.render();
+			replicator.getCanvas().reset();
 		}
 	}
 }

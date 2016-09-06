@@ -16,62 +16,42 @@
 
 package com.almostrealism;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsDevice.WindowTranslucency;
-import java.awt.BorderLayout;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
-import com.almostrealism.NetworkClient;
+import org.almostrealism.color.RGB;
+
+import com.almostrealism.raytracer.primitives.Sphere;
 
 /**
  * @author  Michael Murray
  */
 public class Desktop extends JFrame {
-	public static final boolean enableTranslucency = false;
-	
 	public Desktop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		super("Rings");
-		setLayout(new BorderLayout());
 		
 		setUndecorated(true);
 		setSize(300, 200);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		add(new DesktopPanel(this, new Replicator()), BorderLayout.CENTER);
+		Replicator r = new Replicator();
+		
+		Sphere s = new Sphere(2.0);
+		s.setColor(RGB.gray(0.8));
+		r.addLayer("Sphere", s);
+		
+		r.start();
+		
+		getContentPane().add(new DesktopPanel(this, r));
 	}
 	
-	public static void main(String[] args) {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		final boolean isTranslucencySupported = gd.isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT);
-		
-		if (!isTranslucencySupported) {
-			System.out.println("Translucency is not supported");
-		}
-		
-		SwingUtilities.invokeLater(() -> {
-			Desktop d = null;
-			
-			try {
-				d = new Desktop();
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			
-			if (enableTranslucency && isTranslucencySupported) d.setOpacity(0.8f);
-			
-			// Display the window.
-			d.setVisible(true);
-		});
-		
+	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		final Desktop d = new Desktop();
+		d.setVisible(true);
 		NetworkClient.main(new String[0]);
 	}
 }
