@@ -30,7 +30,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
-import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 import org.almostrealism.space.BasicGeometry;
 import org.almostrealism.space.Vector;
@@ -120,10 +119,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		
-		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 2400.0f);
+//		new GLUgl2().gluPerspective(55.0f, 1.0f, 2.0f, 2400.0f);
 		
 		gl.glLoadIdentity();
-		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 6000.0f);
+		gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
 	}
 	
 	/**
@@ -134,12 +133,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public void doView(GL2 gl) {
 		PinholeCamera c = getCamera();
 		Vector loc = c.getLocation();
-		Vector vd = c.getViewDirection();
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glTranslatef((float) loc.getX(), (float) loc.getY(), (float) loc.getZ());
-		gl.glTranslatef((float) vd.getX(), (float) vd.getY(), (float) vd.getZ());
 	}
 	
 	/** Does nothing. */

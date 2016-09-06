@@ -16,6 +16,9 @@
 
 package com.almostrealism.gl.test;
 
+import javax.swing.JFrame;
+
+import org.almostrealism.space.Vector;
 import org.junit.Test;
 
 import com.almostrealism.gl.DefaultGLCanvas;
@@ -27,16 +30,23 @@ import com.almostrealism.projection.PinholeCamera;
  */
 public class DefaultGLCanvasTest {
 	@Test
-	public static void test() {
+	public void test() {
 		DefaultGLCanvas c = new DefaultGLCanvas() {
 			@Override
 			public PinholeCamera getCamera() {
 				PinholeCamera c = new PinholeCamera();
-				
+				c.setLocation(new Vector(0.0, 0.0, -40.0));
 				return c;
 			}
 		};
 		
 		c.add(new Gear(1.0f, 4.0f, 1.0f, 20, 0.7f));
+		
+		JFrame frame = new JFrame("Test");
+		frame.setSize(300, 300);
+		frame.getContentPane().add(c);
+		frame.setVisible(true);
 	}
+	
+	public static void main(String args[]) { new DefaultGLCanvasTest().test(); }
 }
