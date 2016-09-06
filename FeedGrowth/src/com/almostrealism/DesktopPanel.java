@@ -50,14 +50,11 @@ public class DesktopPanel extends DesktopPanelUI {
 		DragSupport draggable = new DragSupport(frame, this);
 		addMouseListener(draggable);
 		addMouseMotionListener(draggable);
-
-//		TODO  Add a cube layer
-//		r.addLayer("Cube", new WavefrontObjParser(Replicator.class.getClassLoader().getResourceAsStream("models/Cube.obj")).getMesh());
 		
 		// Start with one initial layer
 		Sphere s = new Sphere();
-		s.setSize(1.0);
-		s.setColor(new RGB(0.8, 0.8, 0.8));
+		s.setSize(2.0);
+		s.setColor(RGB.gray(0.8));
 		r.addLayer("Sphere", s);
 		
 		toolBar.add(new QuitAction());

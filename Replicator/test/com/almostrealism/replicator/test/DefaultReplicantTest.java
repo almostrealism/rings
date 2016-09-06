@@ -62,6 +62,8 @@ public class DefaultReplicantTest {
 		frame.setSize(300, 300);
 		frame.getContentPane().add(c);
 		frame.setVisible(true);
+		
+		c.start();
 	}
 	
 	public static void main(String args[]) { new DefaultReplicantTest().test(); }

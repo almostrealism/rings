@@ -56,6 +56,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		renderables = new ArrayList<Renderable>();
 		
 		animator = new FPSAnimator(20);
+		animator.add(this);
 		addGLEventListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);

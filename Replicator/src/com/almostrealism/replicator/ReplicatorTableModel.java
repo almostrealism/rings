@@ -27,7 +27,7 @@ import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ViewModel;
 
 import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.projection.ThinLensCamera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
@@ -54,13 +54,16 @@ public class ReplicatorTableModel extends Scene<ShadableSurface> implements Tabl
 		
 		StandardLightingRigs.addDefaultLights(this);
 		
-		ThinLensCamera c = new ThinLensCamera();
-		c.setLocation(new Vector(0.0, 0.0, 10.0));
-		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
-		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
-		c.setFocalLength(0.05);
-		c.setFocus(10.0);
-		c.setLensRadius(0.2);
+//		ThinLensCamera c = new ThinLensCamera();
+//		c.setLocation(new Vector(0.0, 0.0, -40.0));
+//		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+//		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+//		c.setFocalLength(0.05);
+//		c.setFocus(10.0);
+//		c.setLensRadius(0.2);
+		
+		PinholeCamera c = new PinholeCamera();
+		c.setLocation(new Vector(0.0, 0.0, -40.0));
 		setCamera(c);
 	}
 	
