@@ -174,7 +174,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
 		
 		for (Renderable r : renderables) {
-			System.out.println("Displaying " + r);
 			r.display(gl);
 		}
 		
