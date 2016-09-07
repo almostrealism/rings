@@ -40,8 +40,8 @@ public class Desktop extends JFrame {
 		
 		Replicator r = new Replicator();
 		
-		Sphere s = new Sphere(2.0);
-		s.setColor(RGB.gray(0.8));
+		Sphere s = new Sphere(1.0);
+		s.setColor(new RGB(0.8, 0.0, 0.0));
 		r.addLayer("Sphere", s);
 		
 		r.start();
