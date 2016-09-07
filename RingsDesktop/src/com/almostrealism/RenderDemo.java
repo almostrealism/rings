@@ -22,6 +22,7 @@ import java.io.IOException;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
+import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.lighting.StandardLightingRigs;
@@ -34,7 +35,6 @@ import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.io.FileEncoder;
 import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.raytracer.primitives.StripeTexture;
 import com.almostrealism.raytracer.ui.RenderTestFrame;
 
 /**

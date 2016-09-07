@@ -17,6 +17,7 @@
 package com.almostrealism.raytracer.primitives;
 
 import org.almostrealism.texture.ImageTexture;
+import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.util.*;
 
 /**

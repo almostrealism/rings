@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.primitives;
+package org.almostrealism.texture;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Vector;
-import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
