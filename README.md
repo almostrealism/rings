@@ -21,11 +21,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-### Latest News ###
-| Date   | Tool      | News |
-|--------|-----------|------|
-| 7/7/16 | **Rings** | Begun work on converting the ray tracer to provide an export to **TensorFlow**. |
-
 The simplicity of these libraries will hopefully make up for the fact that I have limited time to write documentation. Please feel free to contact me with questions if you have them.
 
 ### Common ###
