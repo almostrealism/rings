@@ -74,6 +74,7 @@ public class Tensor<T> implements HTMLContent {
 			if (get(i, 0) == null) break i;
 			
 			Div row = new Div();
+			row.addStyleClass("tensor-row");
 			
 			j: for (int j = 0; ; j++) {
 				Future<T> f = get(i, j);
