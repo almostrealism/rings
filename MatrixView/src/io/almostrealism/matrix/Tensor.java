@@ -22,12 +22,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.almostrealism.html.Div;
+import org.almostrealism.html.HTMLContent;
+
 /**
  * An arbitrary dimension tensor implemented as a recursive {@link LinkedList}.
  * 
  * @author  Michael Murray
  */
-public class Tensor<T> {
+public class Tensor<T> implements HTMLContent {
 	private LinkedList top;
 	
 	public Tensor() { top = new LinkedList(); }
@@ -36,26 +39,60 @@ public class Tensor<T> {
 		LinkedList l = top;
 		
 		for (int i = 0; i < loc.length - 1; i++) {
-			l = get(l, loc[i]);
+			l = get(l, loc[i], true);
 		}
 		
-		l.set(loc[loc.length - 1], new Leaf(o));
+		int newLocation = loc[loc.length - 1];
+		
+		if (l.size() <= newLocation) {
+			for (int j = l.size(); j <= newLocation; j++) {
+				l.add(new Leaf(null));
+			}
+		}
+		
+		l.set(newLocation, new Leaf(o));
 	}
 	
 	public Future<T> get(int... loc) {
 		LinkedList l = top;
 		
 		for (int i = 0; i < loc.length - 1; i++) {
-			l = get(l, loc[i]);
+			l = get(l, loc[i], false);
+			if (l == null) return null;
 		}
 		
-		Object o = l.get(loc[loc.length - 1]);
+		Object o = l.size() <= loc[loc.length - 1] ? null : l.get(loc[loc.length - 1]);
+		if (o instanceof LinkedList) return null;
 		if (o == null) return null;
 		return (Leaf) o;
 	}
 	
-	public String getHTML() {
-		return "<table>" + "</table>";
+	public String toHTML() {
+		Div d = new Div();
+		
+		i: for (int i = 0; ; i++) {
+			if (get(i, 0) == null) break i;
+			
+			Div row = new Div();
+			
+			j: for (int j = 0; ; j++) {
+				Future<T> f = get(i, j);
+				if (f == null) break j;
+				
+				try {
+					T o = f.get();
+					if (o instanceof HTMLContent) {
+						row.add((HTMLContent) o);
+					}
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			d.add(row);
+		}
+		
+		return d.toHTML();
 	}
 	
 	private static class Leaf<T> implements Future<T> {
@@ -78,7 +115,17 @@ public class Tensor<T> {
 		public boolean isDone() { return true; }
 	}
 	
-	private static LinkedList get(LinkedList l, int i) {
+	private static LinkedList get(LinkedList l, int i, boolean create) {
+		if (l.size() <= i) {
+			if (create) {
+				for (int j = l.size(); j <= i; j++) {
+					l.add(new LinkedList());
+				}
+			} else {
+				return null;
+			}
+		}
+		
 		Object o = l.get(i);
 		
 		if (o instanceof Leaf) {
