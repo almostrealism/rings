@@ -20,5 +20,5 @@ package org.almostrealism.html;
  * @author  Michael Murray
  */
 public interface Styleable {
-	public void addClass(String name);
+	public void addStyleClass(String name);
 }

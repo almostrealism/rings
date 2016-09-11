@@ -41,7 +41,7 @@ public class Div extends ArrayList<HTMLContent> implements HTMLContent, Styleabl
 	}
 	
 	@Override
-	public void addClass(String name) {
+	public void addStyleClass(String name) {
 		classNames.add(name);
 	}
 	
