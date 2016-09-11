@@ -47,11 +47,14 @@ public class Div extends ArrayList<HTMLContent> implements HTMLContent, Styleabl
 	
 	private String getClassString() {
 		StringBuffer buf = new StringBuffer();
+		buf.append("class=\"");
 		
 		for (String s : classNames) {
 			buf.append(s);
 			buf.append(" ");
 		}
+		
+		buf.append("\"");
 		
 		return buf.toString();
 	}
