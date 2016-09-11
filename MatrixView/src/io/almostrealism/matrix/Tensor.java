@@ -53,7 +53,7 @@ public class Tensor<T> implements HTMLContent {
 		l.set(newLocation, new Leaf(o));
 	}
 	
-	public Future<T> get(int... loc) {
+	public T get(int... loc) {
 		LinkedList l = top;
 		
 		for (int i = 0; i < loc.length - 1; i++) {
@@ -64,7 +64,7 @@ public class Tensor<T> implements HTMLContent {
 		Object o = l.size() <= loc[loc.length - 1] ? null : l.get(loc[loc.length - 1]);
 		if (o instanceof LinkedList) return null;
 		if (o == null) return null;
-		return (Leaf) o;
+		return ((Leaf<T>) o).get();
 	}
 	
 	public String toHTML() {
@@ -77,17 +77,8 @@ public class Tensor<T> implements HTMLContent {
 			row.addStyleClass("tensor-row");
 			
 			j: for (int j = 0; ; j++) {
-				Future<T> f = get(i, j);
-				if (f == null) break j;
-				
-				try {
-					T o = f.get();
-					if (o instanceof HTMLContent) {
-						row.add((HTMLContent) o);
-					}
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
+				T o = get(i, j);
+				if (o == null) break j;
 			}
 			
 			d.add(row);
