@@ -79,6 +79,9 @@ public class Tensor<T> implements HTMLContent {
 			j: for (int j = 0; ; j++) {
 				T o = get(i, j);
 				if (o == null) break j;
+				if (o instanceof HTMLContent) {
+					row.add((HTMLContent) o);
+				}
 			}
 			
 			d.add(row);
