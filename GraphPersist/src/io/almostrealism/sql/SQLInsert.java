@@ -22,9 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -62,8 +60,6 @@ public class SQLInsert<V> extends SimpleUpdate<ComboPooledDataSource, String[], 
 	 * @throws NoSuchMethodException 
 	 */
 	public void execute(ComboPooledDataSource database, String keys[], V value) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		List<V> data = new ArrayList<V>();
-		
 		String splitOnWhereClause[] = query.split("[w,W][h,H][e,E][r,R][e,E]");
 		
 		StringBuffer q = new StringBuffer();
