@@ -80,8 +80,6 @@ public class SQLInsert<V> extends SimpleUpdate<ComboPooledDataSource, String[], 
 		
 		q.append(" where");
 		q.append(splitOnWhereClause[1]);
-
-		System.out.println(q);
 		
 		try (Connection c = database.getConnection();
 				PreparedStatement s = c.prepareStatement(q.toString())) {
