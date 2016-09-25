@@ -33,7 +33,7 @@ public class UpdateLibrary<D, K> {
 		updates.put(type, q);
 	}
 	
-	public <V> void put(D database, Class<V> type, K key, V data) throws IllegalAccessException, InvocationTargetException {
+	public <V> void put(D database, Class<V> type, K key, V data) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Update q = null;
 		
 		synchronized (this) { q = updates.get(type); }

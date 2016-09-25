@@ -16,20 +16,25 @@
 
 package io.almostrealism.query;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
- * An {@link Update} writes an object to structured data in any database.
- * 
+ * {@link SimpleUpdate} maps named columns to the POJO fields that should be populated.
+ *
  * @author  Michael Murray
  */
-public interface Update<D, K, V> {
-	/**
-	 * This method may be called by multiple threads simultaneously.
-	 * 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException 
-	 */
-	void execute(D database, K key, V value) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+public abstract class SimpleUpdate<D, K, V> implements Update<D, K, V>, Iterable<Map.Entry> {
+	private Hashtable map = new Hashtable<>();
+
+	protected String query;
+	
+	public SimpleUpdate(String q) { query = q; }
+
+	public void put(String column, String fieldName) { map.put(column, fieldName); }
+
+	public String get(String name) { return (String) map.get(name); }
+	
+	public Iterator<Map.Entry> iterator() { return map.entrySet().iterator(); }
 }
