@@ -17,3 +17,5 @@ syntax: regexp
 ^ringsdb\.log$
 syntax: regexp
 ^MatrixView/target$
+syntax: regexp
+^test\.jpg$
