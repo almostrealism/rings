@@ -30,9 +30,9 @@ import java.util.HashMap;
  */
 public class QueryLibrary<D, K> {
 	private static QueryLibrary root = new QueryLibrary();
-
+	
 	private HashMap<Class, Query<? extends D, ? extends K, ?>>  queries;
-
+	
 	protected QueryLibrary() { queries = new HashMap<>(); }
 
 	public synchronized <V> void addQuery(Class<V> type, Query<? extends D, ? extends K, V> q) {
