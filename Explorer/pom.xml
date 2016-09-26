@@ -5,8 +5,23 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Explorer</artifactId>
-	<version>0.1-rc</version>
-
+	<version>LATEST</version>
+    
+    <build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<repositories>
 		<repository>
 			<id>osgeo</id>
@@ -19,7 +34,7 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>Replicator</artifactId>
-			<version>LATEST</version>
+			<version>0.1-rc</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/jep/jep -->
