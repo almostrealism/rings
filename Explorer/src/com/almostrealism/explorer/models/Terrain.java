@@ -26,8 +26,6 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.Feature;
 
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.renderable.RenderableMesh;
@@ -58,6 +56,7 @@ public class Terrain extends RenderableMesh {
 			FeatureSource featureSource = dataStore.getFeatureSource(typeName);
 			FeatureCollection collection = featureSource.getFeatures();
 
+			/*
 			try (FeatureIterator iterator = collection.features()) {
 				while (iterator.hasNext()) {
 					Feature feature = iterator.next();
@@ -65,6 +64,7 @@ public class Terrain extends RenderableMesh {
 //					Geometry sourceGeometry = feature.getDefaultGeometryProperty().getDescriptor().;
 				}
 			}
+			*/
 		} catch (Throwable e) { }
 	}
 	

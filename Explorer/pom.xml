@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Explorer</artifactId>
-	<version>LATEST</version>
+	<version>0.1-rc</version>
     
     <build>
 		<sourceDirectory>src</sourceDirectory>
