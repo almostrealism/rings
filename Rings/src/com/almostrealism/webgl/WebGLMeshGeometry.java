@@ -38,7 +38,7 @@ public class WebGLMeshGeometry implements WebGLExportable {
 				buf.append("\n");
 			}
 			
-			buf.append(");\n");
+			buf.append(");\n\n");
 			
 			buf.append("geometry.faces.push(");
 			
