@@ -66,6 +66,9 @@ class TerrainVertexData implements VertexData {
 	@Override
 	public int getTriangleCount() { return triangles.length; }
 	
+	@Override
+	public int getVertexCount() { return vertices.length; }
+	
 	protected void populateMesh() {
 		// center x,z on origin
 		double offset = width / 2.0f;
