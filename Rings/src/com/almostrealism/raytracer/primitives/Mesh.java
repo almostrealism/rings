@@ -169,6 +169,8 @@ public class Mesh extends SpacePartition {
 		
 		public int[] getTriangle(int index);
 		public int getTriangleCount();
+		
+		public int getVertexCount();
 	}
 	
   private List points, triangles;

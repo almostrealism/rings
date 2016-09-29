@@ -23,12 +23,26 @@ import com.almostrealism.raytracer.primitives.Mesh;
 public class WebGLMeshGeometry implements WebGLExportable {
 	private Mesh.VertexData data;
 	
-	public WebGLMeshGeometry(Mesh.VertexData data) {
-		
-	}
+	public WebGLMeshGeometry(Mesh.VertexData data) { this.data = data; }
 	
 	@Override
 	public HTMLContent getWebGLContent() {
-		return null;
+		return () -> {
+			StringBuffer buf = new StringBuffer();
+			buf.append("geometry.vertices.push(");
+			
+			for (int i = 0; i < data.getVertexCount(); i++) {
+				buf.append(asThreeVector(data, i));
+				if (i < (data.getVertexCount() - 1)) buf.append(",");
+			}
+			
+			buf.append(");");
+			
+			return buf.toString();
+		};
+	}
+	
+	private static String asThreeVector(Mesh.VertexData v, int index) {
+		return "new THREE.Vector3(" + v.getX(index) + ", " + v.getY(index) + ", " + v.getZ(index) + ")";
 	}
 }
