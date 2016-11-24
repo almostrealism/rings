@@ -28,30 +28,47 @@ import java.util.HashMap;
  *
  * @author  Michael Murray
  */
-public class QueryLibrary<D, K> {
+public class QueryLibrary<D> {
 	private static QueryLibrary root = new QueryLibrary();
 	
-	private HashMap<Class, Query<? extends D, ? extends K, ?>>  queries;
+	private HashMap<KeyValueTypes, Query<? extends D, ?, ?>>  queries;
 	
 	protected QueryLibrary() { queries = new HashMap<>(); }
 
-	public synchronized <V> void addQuery(Class<V> type, Query<? extends D, ? extends K, V> q) {
-		queries.put(type, q);
+	public synchronized <V, K> void addQuery(Class<V> type, Class<K> argumentType, Query<? extends D, ? extends K, V> q) {
+		queries.put(new KeyValueTypes(argumentType, type), q);
 	}
-	
-	public synchronized <V> void addEnrichment() { }
 	
 	public <V> Collection<V> get(D database, Class type) throws IllegalAccessException, InvocationTargetException {
-		return get(database, type, null);
+		return get(database, type, null, null);
 	}
 	
-	public <V> Collection<V> get(D database, Class type, K arguments) throws IllegalAccessException, InvocationTargetException {
+	public <V, K> Collection<V> get(D database, Class type, Class<K> argumentType, K arguments) throws IllegalAccessException, InvocationTargetException {
 		Query q = null;
 		
-		synchronized (this) { q = queries.get(type); }
+		synchronized (this) { q = queries.get(new KeyValueTypes(argumentType, type)); }
 		
 		return q.execute(database, arguments);
 	}
 	
 	public static QueryLibrary root() { return root; }
+	
+	private static class KeyValueTypes {
+		Class keyType;
+		Class valueType;
+		
+		public KeyValueTypes(Class keyType, Class valueType) {
+			this.keyType = keyType;
+			this.valueType = valueType;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof KeyValueTypes == false) return false;
+			if (!((KeyValueTypes) o).keyType.equals(keyType)) return false;
+			if (!((KeyValueTypes) o).valueType.equals(valueType)) return false;
+			return true;
+		}
+		
+		public int hashCode() { return valueType.hashCode(); }
+	}
 }

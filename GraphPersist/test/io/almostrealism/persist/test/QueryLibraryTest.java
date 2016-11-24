@@ -14,7 +14,7 @@ public class QueryLibraryTest extends DatabaseTest {
 	@org.junit.Test
 	public void selectAll() throws Exception {
 		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
-		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
+		QueryLibrary.root().addQuery(TestEntity.class, null, SQLSelect.prepare(
 									"select * from testdata where id > 1",
 									fieldMap, () -> { return new TestEntity(); }));
 		
@@ -26,7 +26,7 @@ public class QueryLibraryTest extends DatabaseTest {
 	@org.junit.Test
 	public void selectStyles() throws Exception {
 		InputStream fieldMap = QueryLibraryTest.class.getResourceAsStream("TestEntity.properties");
-		QueryLibrary.root().addQuery(TestEntity.class, SQLSelect.prepare(
+		QueryLibrary.root().addQuery(TestEntity.class, null, SQLSelect.prepare(
 									"select * from testdata,testlinked where testdata.id > 1",
 									fieldMap, () -> { return new TestEntity(); }));
 		
