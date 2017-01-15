@@ -43,10 +43,12 @@ public class QueryLibrary<D> {
 		return get(database, type, null, null);
 	}
 	
-	public <V, K> Collection<V> get(D database, Class type, Class<K> argumentType, K arguments) throws IllegalAccessException, InvocationTargetException {
+	public <V, K> Collection<V> get(D database, Class<V> type, Class<K> argumentType, K arguments) throws IllegalAccessException, InvocationTargetException {
 		Query q = null;
 		
 		synchronized (this) { q = queries.get(new KeyValueTypes(argumentType, type)); }
+		
+		if (q == null) return null;
 		
 		return q.execute(database, arguments);
 	}
