@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,9 +26,9 @@ import java.util.List;
 import io.almostrealism.persist.CascadingQuery;
 
 /**
- * The {@link QueryLibrary} tracks {@link Query}s and {@link io.almostrealism.enrich.Enrichment}s
- * for various object types, making it trivial to retrieve data without the need for creating
- * separate DAO types for your POJOs.
+ * The {@link QueryLibrary} tracks {@link Query}s for various object types,
+ * making it trivial to retrieve data without the need for creating separate
+ * DAO types for your POJOs.
  *
  * @author  Michael Murray
  */
