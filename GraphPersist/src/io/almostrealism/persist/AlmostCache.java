@@ -21,7 +21,7 @@ import io.almostrealism.query.QueryLibrary;
 /**
  * @author  Michael Murray
  */
-public class AlmostCache<D, K> extends QueryLibrary<D, K> {
+public class AlmostCache<D, K> extends QueryLibrary<D> {
 	public AlmostCache(D data) {
 		
 	}
