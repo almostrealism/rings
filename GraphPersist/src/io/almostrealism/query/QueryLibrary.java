@@ -18,8 +18,12 @@
 package io.almostrealism.query;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+
+import io.almostrealism.persist.CascadingQuery;
 
 /**
  * The {@link QueryLibrary} tracks {@link Query}s and {@link io.almostrealism.enrich.Enrichment}s
@@ -51,6 +55,22 @@ public class QueryLibrary<D> {
 		if (q == null) return null;
 		
 		return q.execute(database, arguments);
+	}
+	
+	public Collection<CascadingQuery> getCascades(Class type) {
+		List<CascadingQuery> l = new ArrayList<CascadingQuery>();
+		
+		for (KeyValueTypes k : queries.keySet()) {
+			if (k.keyType == type) {
+				Query q = queries.get(k);
+				if (q instanceof CascadingQuery) {
+					l.add((CascadingQuery) q);
+					l.addAll(getCascades(k.valueType));
+				}
+			}
+		}
+		
+		return l;
 	}
 	
 	public static QueryLibrary root() { return root; }
