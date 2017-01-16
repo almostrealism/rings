@@ -35,5 +35,5 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 	
 	public abstract Collection<V> getReturnValue(K key);
 	
-	public abstract void process(ResultSet rs, K arguments) throws SQLException;
+	public abstract V process(ResultSet rs, K arguments) throws SQLException;
 }
