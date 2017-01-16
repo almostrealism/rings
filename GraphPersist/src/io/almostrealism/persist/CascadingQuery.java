@@ -4,12 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.List;
 
 import io.almostrealism.sql.SQLConnectionProvider;
 
 public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V extends Cacheable> extends CacheableQuery<D, K, V> {
 	@Override
-	public Collection<V> execute(D database, K key) {
+	public Collection<V> execute(D database, K key, List<CascadingQuery> cascades) {
 		init(key);
 		
 		try (Statement s = database.getSQLConnection().createStatement()) {

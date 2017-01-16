@@ -57,7 +57,7 @@ public class QueryLibrary<D> {
 		if (ql == null) return null;
 		
 		List<V> l = new ArrayList<V>();
-		for (Query q : ql) l.addAll(q.execute(database, arguments));
+		for (Query q : ql) l.addAll(q.execute(database, arguments, null));
 		return l;
 	}
 	

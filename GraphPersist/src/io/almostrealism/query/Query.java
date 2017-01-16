@@ -18,6 +18,9 @@ package io.almostrealism.query;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.List;
+
+import io.almostrealism.persist.CascadingQuery;
 
 /**
  * A Query produces an object from any structured data in any database.
@@ -27,9 +30,10 @@ import java.util.Collection;
 public interface Query<D, K, V> {
 	/**
 	 * This method may be called by multiple threads simultaneously.
+	 * @param cascades TODO
 	 * 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException
 	 */
-	Collection<V> execute(D database, K arguments) throws IllegalAccessException, InvocationTargetException;
+	Collection<V> execute(D database, K arguments, List<CascadingQuery> cascades) throws IllegalAccessException, InvocationTargetException;
 }
