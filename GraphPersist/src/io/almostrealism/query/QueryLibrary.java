@@ -67,7 +67,7 @@ public class QueryLibrary<D> {
 		for (KeyValueTypes k : queries.keySet()) {
 			if (k.keyType == type) {
 				for (Query q : queries.get(k)) {
-					if (q instanceof CascadingQuery) {
+					if (q instanceof CascadingQuery && !((CascadingQuery)q).isRoot()) {
 						l.add((CascadingQuery) q);
 						l.addAll(getCascades(k.valueType));
 					}

@@ -27,6 +27,8 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 		return getReturnValue(key);
 	}
 	
+	public boolean isRoot() { return false; }
+	
 	public abstract void init(K key);
 	
 	public abstract String getQuery(K key);
