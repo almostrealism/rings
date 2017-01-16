@@ -35,12 +35,14 @@ import io.almostrealism.persist.CascadingQuery;
 public class QueryLibrary<D> {
 	private static QueryLibrary root = new QueryLibrary();
 	
-	private HashMap<KeyValueTypes, Query<? extends D, ?, ?>>  queries;
+	private HashMap<KeyValueTypes, List<Query<? extends D, ?, ?>>>  queries;
 	
 	protected QueryLibrary() { queries = new HashMap<>(); }
 
 	public synchronized <V, K> void addQuery(Class<V> type, Class<K> argumentType, Query<? extends D, ? extends K, V> q) {
-		queries.put(new KeyValueTypes(argumentType, type), q);
+		KeyValueTypes t = new KeyValueTypes(argumentType, type);
+		if (queries.get(t) == null) queries.put(t, new ArrayList<Query<? extends D, ?, ?>>());
+		queries.get(t).add(q);
 	}
 	
 	public <V> Collection<V> get(D database, Class type) throws IllegalAccessException, InvocationTargetException {
@@ -48,13 +50,15 @@ public class QueryLibrary<D> {
 	}
 	
 	public <V, K> Collection<V> get(D database, Class<V> type, Class<K> argumentType, K arguments) throws IllegalAccessException, InvocationTargetException {
-		Query q = null;
+		List<Query<? extends D, ?, ?>> ql = null;
 		
-		synchronized (this) { q = queries.get(new KeyValueTypes(argumentType, type)); }
+		synchronized (this) { ql = queries.get(new KeyValueTypes(argumentType, type)); }
 		
-		if (q == null) return null;
+		if (ql == null) return null;
 		
-		return q.execute(database, arguments);
+		List<V> l = new ArrayList<V>();
+		for (Query q : ql) l.addAll(q.execute(database, arguments));
+		return l;
 	}
 	
 	public Collection<CascadingQuery> getCascades(Class type) {
@@ -62,10 +66,11 @@ public class QueryLibrary<D> {
 		
 		for (KeyValueTypes k : queries.keySet()) {
 			if (k.keyType == type) {
-				Query q = queries.get(k);
-				if (q instanceof CascadingQuery) {
-					l.add((CascadingQuery) q);
-					l.addAll(getCascades(k.valueType));
+				for (Query q : queries.get(k)) {
+					if (q instanceof CascadingQuery) {
+						l.add((CascadingQuery) q);
+						l.addAll(getCascades(k.valueType));
+					}
 				}
 			}
 		}
