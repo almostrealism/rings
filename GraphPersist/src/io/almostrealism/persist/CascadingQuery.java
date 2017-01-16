@@ -36,4 +36,13 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 	public abstract Collection<V> getReturnValue(K key);
 	
 	public abstract V process(ResultSet rs, K arguments, Map<Class, List<CascadingQuery>> cascades) throws SQLException;
+	
+	public void processCascades(ResultSet rs, V value, Map<Class, List<CascadingQuery>> cascades) throws SQLException {
+		List<CascadingQuery> l = cascades.get(value.getClass());
+		if (l == null) return;
+		
+		for (CascadingQuery q : l) {
+			q.process(rs, value, cascades);
+		}
+	}
 }
