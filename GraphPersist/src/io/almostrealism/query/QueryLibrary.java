@@ -57,11 +57,11 @@ public class QueryLibrary<D> {
 		if (ql == null) return null;
 		
 		List<V> l = new ArrayList<V>();
-		for (Query q : ql) l.addAll(q.execute(database, arguments, null));
+		for (Query q : ql) l.addAll(q.execute(database, arguments, getCascades(type)));
 		return l;
 	}
 	
-	public Collection<CascadingQuery> getCascades(Class type) {
+	public List<CascadingQuery> getCascades(Class type) {
 		List<CascadingQuery> l = new ArrayList<CascadingQuery>();
 		
 		for (KeyValueTypes k : queries.keySet()) {

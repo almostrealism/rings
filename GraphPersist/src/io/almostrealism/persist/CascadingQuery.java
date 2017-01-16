@@ -18,6 +18,7 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 			
 			while (rs.next()) {
 				process(rs, key);
+				for (CascadingQuery q : cascades) q.process(rs, key);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
