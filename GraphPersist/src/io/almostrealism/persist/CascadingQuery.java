@@ -10,6 +10,8 @@ import io.almostrealism.sql.SQLConnectionProvider;
 public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V extends Cacheable> extends CacheableQuery<D, K, V> {
 	@Override
 	public Collection<V> execute(D database, K key) {
+		init(key);
+		
 		try (Statement s = database.getSQLConnection().createStatement()) {
 			ResultSet rs = s.executeQuery(getQuery(key));
 			
@@ -23,9 +25,11 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 		return getReturnValue(key);
 	}
 	
+	public abstract void init(K key);
+	
 	public abstract String getQuery(K key);
 	
 	public abstract Collection<V> getReturnValue(K key);
 	
-	public abstract void process(ResultSet s, K arguments) throws SQLException;
+	public abstract void process(ResultSet rs, K arguments) throws SQLException;
 }
