@@ -47,7 +47,7 @@ public class SQLSelect<V> extends SimpleQuery<ComboPooledDataSource, String[], V
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public Collection<V> execute(ComboPooledDataSource database, String arguments[], List<CascadingQuery> cascades) throws IllegalAccessException, InvocationTargetException {
+	public Collection<V> execute(ComboPooledDataSource database, String arguments[], Map<Class, List<CascadingQuery>> cascades) throws IllegalAccessException, InvocationTargetException {
 		List<V> data = new ArrayList<V>();
 		
 		try (Connection c = database.getConnection();

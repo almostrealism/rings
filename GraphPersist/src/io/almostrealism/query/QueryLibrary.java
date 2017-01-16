@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.almostrealism.persist.CascadingQuery;
 
@@ -57,25 +58,29 @@ public class QueryLibrary<D> {
 		if (ql == null) return null;
 		
 		List<V> l = new ArrayList<V>();
-		for (Query q : ql) l.addAll(q.execute(database, arguments, getCascades(type)));
+		for (Query q : ql) l.addAll(q.execute(database, arguments, getCascades(type, new HashMap<Class, List<CascadingQuery>>())));
 		return l;
 	}
 	
-	public List<CascadingQuery> getCascades(Class type) {
-		List<CascadingQuery> l = new ArrayList<CascadingQuery>();
-		
+	public Map<Class, List<CascadingQuery>> getCascades(Class type, Map<Class, List<CascadingQuery>> m) {
 		for (KeyValueTypes k : queries.keySet()) {
 			if (k.keyType == type) {
 				for (Query q : queries.get(k)) {
-					if (q instanceof CascadingQuery && !((CascadingQuery)q).isRoot()) {
+					if (q instanceof CascadingQuery && !((CascadingQuery) q).isRoot()) {
+						List<CascadingQuery> l = m.get(k.keyType);
+						if (l == null) {
+							l = new ArrayList<CascadingQuery>();
+							m.put(k.keyType, l);
+						}
+						
 						l.add((CascadingQuery) q);
-						l.addAll(getCascades(k.valueType));
+						getCascades(k.valueType, m);
 					}
 				}
 			}
 		}
 		
-		return l;
+		return m;
 	}
 	
 	public static QueryLibrary root() { return root; }

@@ -19,6 +19,7 @@ package io.almostrealism.query;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import io.almostrealism.persist.CascadingQuery;
 
@@ -35,5 +36,5 @@ public interface Query<D, K, V> {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException
 	 */
-	Collection<V> execute(D database, K arguments, List<CascadingQuery> cascades) throws IllegalAccessException, InvocationTargetException;
+	Collection<V> execute(D database, K arguments, Map<Class, List<CascadingQuery>> cascades) throws IllegalAccessException, InvocationTargetException;
 }
