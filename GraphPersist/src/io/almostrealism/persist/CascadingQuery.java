@@ -15,6 +15,7 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 		init(key);
 		
 		try (Statement s = database.getSQLConnection().createStatement()) {
+			System.out.println(getQuery(key));
 			ResultSet rs = s.executeQuery(getQuery(key));
 			
 			while (rs.next()) {
@@ -38,6 +39,7 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 	public abstract V process(ResultSet rs, K arguments, Map<Class, List<CascadingQuery>> cascades) throws SQLException;
 	
 	public void processCascades(ResultSet rs, V value, Map<Class, List<CascadingQuery>> cascades) throws SQLException {
+		if (value == null || cascades == null) return;
 		List<CascadingQuery> l = cascades.get(value.getClass());
 		if (l == null) return;
 		
