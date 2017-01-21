@@ -58,7 +58,10 @@ public class QueryLibrary<D> {
 		if (ql == null) return null;
 		
 		List<V> l = new ArrayList<V>();
-		for (Query q : ql) l.addAll(q.execute(database, arguments, getCascades(type, new HashMap<Class, List<CascadingQuery>>())));
+		for (Query q : ql) {
+			Collection<V> v = q.execute(database, arguments, getCascades(type, new HashMap<Class, List<CascadingQuery>>()));
+			if (v != null) l.addAll(v);
+		}
 		return l;
 	}
 	
