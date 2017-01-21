@@ -18,7 +18,7 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 			String q = getQuery(key);
 			if (q == null) return null;
 			
-			System.out.println("CascadingQuery: " + q);
+//			System.out.println("CascadingQuery: " + q);
 			ResultSet rs = s.executeQuery(q);
 			
 			while (rs.next()) {
