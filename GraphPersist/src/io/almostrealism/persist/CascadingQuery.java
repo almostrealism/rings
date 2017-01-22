@@ -1,5 +1,6 @@
 package io.almostrealism.persist;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,7 +15,7 @@ public abstract class CascadingQuery<D extends SQLConnectionProvider, K, V exten
 	public Collection<V> execute(D database, K key, Map<Class, List<CascadingQuery>> cascades) {
 		init(key);
 		
-		try (Statement s = database.getSQLConnection().createStatement()) {
+		try (Connection c = database.getSQLConnection(); Statement s = c.createStatement()) {
 			String q = getQuery(key);
 			if (q == null) return null;
 			
