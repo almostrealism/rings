@@ -2,6 +2,7 @@ package io.almostrealism.etl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Map;
 
@@ -20,19 +21,32 @@ public abstract class View<V> {
 	
 	public abstract Map<String, String> encode(V value);
 	
+	public abstract String getPrimaryKey();
+	
 	public void process() throws SQLException {
-		try (Connection c = sql.getSQLConnection()) {
+		try (Connection c = sql.getSQLConnection(); Statement s = c.createStatement()) {
 			for (V v : values) {
 				Map<String, String> data = encode(v);
-				
-				c.createStatement().executeUpdate(getQuery(data));
+				s.executeUpdate(getDelete(data));
+				s.executeUpdate(getInsert(data));
 			}
 		}
 	}
 	
 	protected String quote(String s) { return "\"" + s + "\""; }
 	
-	protected String getQuery(Map<String, String> data) {
+	protected String getDelete(Map<String, String> data) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("delete from ");
+		buf.append(table);
+		buf.append(" where ");
+		buf.append(getPrimaryKey());
+		buf.append(" = ");
+		buf.append(data.get(getPrimaryKey()));
+		return buf.toString();
+	}
+	
+	protected String getInsert(Map<String, String> data) {
 		String names[] = new String[data.size()];
 		String values[] = new String[data.size()];
 		
