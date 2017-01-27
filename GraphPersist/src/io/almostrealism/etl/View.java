@@ -64,9 +64,6 @@ public abstract class View<V> {
 		buf.append(getValueList(names));
 		buf.append(" values ");
 		buf.append(getValueList(values));
-		
-		System.out.println("View: " + buf);
-		
 		return buf.toString();
 	}
 	
