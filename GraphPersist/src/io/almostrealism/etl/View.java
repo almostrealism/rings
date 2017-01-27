@@ -25,10 +25,12 @@ public abstract class View<V> {
 			for (V v : values) {
 				Map<String, String> data = encode(v);
 				
-				c.createStatement().executeQuery(getQuery(data));
+				c.createStatement().executeUpdate(getQuery(data));
 			}
 		}
 	}
+	
+	protected String quote(String s) { return "\"" + s + "\""; }
 	
 	protected String getQuery(Map<String, String> data) {
 		String names[] = new String[data.size()];
