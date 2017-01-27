@@ -33,7 +33,7 @@ public abstract class View<V> {
 		}
 	}
 	
-	protected String quote(String s) { return "\"" + s + "\""; }
+	protected String quote(String s) { return "'" + s + "'"; }
 	
 	protected String getDelete(Map<String, String> data) {
 		StringBuffer buf = new StringBuffer();
