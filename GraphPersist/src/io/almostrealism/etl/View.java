@@ -50,12 +50,23 @@ public abstract class View<V> {
 		String names[] = new String[data.size()];
 		String values[] = new String[data.size()];
 		
+		int i = 0;
+		for (Map.Entry<String, String> m : data.entrySet()) {
+			names[i] = m.getKey();
+			values[i] = m.getValue();
+			i++;
+		}
+		
 		StringBuffer buf = new StringBuffer();
 		buf.append("insert into ");
 		buf.append(table);
+		buf.append(" ");
 		buf.append(getValueList(names));
 		buf.append(" values ");
 		buf.append(getValueList(values));
+		
+		System.out.println("View: " + buf);
+		
 		return buf.toString();
 	}
 	
