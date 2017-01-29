@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.html.Div;
 import org.almostrealism.html.HTMLContent;
+import org.almostrealism.html.HTMLString;
 
 /**
  * An arbitrary dimension tensor implemented as a recursive {@link LinkedList}.
@@ -79,8 +80,14 @@ public class Tensor<T> implements HTMLContent {
 			j: for (int j = 0; ; j++) {
 				T o = get(i, j);
 				if (o == null) break j;
+				
 				if (o instanceof HTMLContent) {
 					row.add((HTMLContent) o);
+				} else if (o instanceof String) {
+					Div cell = new Div();
+					cell.addStyleClass("tensor-cell");
+					cell.add(new HTMLString((String) o));
+					row.add(cell);
 				}
 			}
 			
