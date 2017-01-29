@@ -21,7 +21,7 @@ public abstract class View<V> {
 	
 	public abstract Map<String, String> encode(V value);
 	
-	public abstract String getPrimaryKey();
+	public abstract String[] getPrimaryKeys();
 	
 	public void process() throws SQLException {
 		try (Connection c = sql.getSQLConnection(); Statement s = c.createStatement()) {
@@ -40,9 +40,19 @@ public abstract class View<V> {
 		buf.append("delete from ");
 		buf.append(table);
 		buf.append(" where ");
-		buf.append(getPrimaryKey());
-		buf.append(" = ");
-		buf.append(data.get(getPrimaryKey()));
+		
+		String where[] = getPrimaryKeys();
+		
+		for (int i = 0; i < where.length; i++) {
+			buf.append(where[i]);
+			buf.append(" = ");
+			buf.append(data.get(where[i]));
+			
+			if (i < (where.length - 1)) {
+				buf.append(" and ");
+			}
+		}
+		
 		return buf.toString();
 	}
 	
