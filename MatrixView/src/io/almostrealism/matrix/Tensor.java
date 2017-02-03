@@ -70,6 +70,7 @@ public class Tensor<T> implements HTMLContent {
 	
 	public String toHTML() {
 		Div d = new Div();
+		d.addStyleClass("tensor-table");
 		
 		i: for (int i = 0; ; i++) {
 			if (get(i, 0) == null) break i;
