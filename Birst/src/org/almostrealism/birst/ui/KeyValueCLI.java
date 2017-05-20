@@ -2,7 +2,9 @@ package org.almostrealism.birst.ui;
 
 import java.util.Scanner;
 
-import org.geotools.xml.xsi.XSISimpleTypes.String;
+import org.almostrealism.birst.util.DuplicateKeyException;
+import org.almostrealism.birst.util.KeyValueStore;
+import org.almostrealism.birst.util.UnknownKeyException;
 
 public class KeyValueCLI implements Runnable {
 	private KeyValueStore store;
@@ -12,8 +14,7 @@ public class KeyValueCLI implements Runnable {
 		store = new KeyValueStore();
 		scanner = new Scanner(System.in);
 	}
-
-	@Override
+	
 	public void run() {
 		String line;
 		
@@ -52,7 +53,7 @@ public class KeyValueCLI implements Runnable {
 			} catch (DuplicateKeyException e) {
 				System.out.println("Key " + e.getKey() + " already exists");
 			} catch (UnknownKeyException e) {
-				System.out.println("Key not found")
+				System.out.println("Key not found");
 			}
 		}
 	}

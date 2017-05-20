@@ -25,11 +25,6 @@
 	<classpathentry kind="src" path="Rings/test"/>
 	<classpathentry kind="src" path="Replicator/test"/>
 	<classpathentry kind="src" path="Birst/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/ant-1.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/batik-transcoder-1.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="Explorer/lib/bridj-0.6-c-only.jar"/>
@@ -220,5 +215,6 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraph"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgrapht-jdk1.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
