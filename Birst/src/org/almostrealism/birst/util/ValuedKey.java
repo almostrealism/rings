@@ -1,6 +1,7 @@
 package org.almostrealism.birst.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link ValuedKey} is a {@link Node} with a corresponding
@@ -43,7 +44,7 @@ public class ValuedKey extends Node<ValuedKey> {
 				return right.add(key, value);
 			}
 		} else {
-			throw new DuplicateKeyException();
+			throw new DuplicateKeyException(key);
 		}
 	}
 	
