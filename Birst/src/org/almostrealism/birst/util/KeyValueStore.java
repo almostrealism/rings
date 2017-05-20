@@ -27,4 +27,8 @@ public class KeyValueStore {
 	public String get(String key) {
 		return root.get(key).getValue();
 	}
+	
+	public void remove(String key) {
+		root.remove(key);
+	}
 }
