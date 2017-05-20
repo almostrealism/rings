@@ -1,5 +1,8 @@
 package org.almostrealism.birst.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link KeyValueStore} is responsible for maintaining a table of keys and values
  * which are all of which are {@link String}s. The {@link String}s are stored in
@@ -30,5 +33,9 @@ public class KeyValueStore {
 	
 	public void remove(String key) {
 		root.remove(key);
+	}
+	
+	public List<String> keys() {
+		return root.keys();
 	}
 }

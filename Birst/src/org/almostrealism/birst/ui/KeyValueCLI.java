@@ -18,6 +18,8 @@ public class KeyValueCLI implements Runnable {
 	public void run() {
 		String line;
 		
+		System.out.println(">");
+		
 		while ((line = scanner.next()) != null) {
 			line = line.trim();
 			int index = line.indexOf(" ");
@@ -55,6 +57,8 @@ public class KeyValueCLI implements Runnable {
 			} catch (UnknownKeyException e) {
 				System.out.println("Key not found");
 			}
+			
+			System.out.println(">");
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package org.almostrealism.birst.util;
 
+import java.util.ArrayList;
+
 /**
  * A {@link ValuedKey} is a {@link Node} with a corresponding
  * {@link String} value.
@@ -108,5 +110,12 @@ public class ValuedKey extends Node<ValuedKey> {
 		}
 		
 		return v;
+	}
+	
+	public List<String> keys() {
+		ArrayList<String> l = new ArrayList();
+		if (left != null) l.addAll(left.keys());
+		if (right != null) l.addAll(right.keys());
+		return l;
 	}
 }
