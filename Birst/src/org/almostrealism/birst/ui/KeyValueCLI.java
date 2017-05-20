@@ -20,7 +20,7 @@ public class KeyValueCLI implements Runnable {
 		
 		System.out.print(">");
 		
-		while ((line = scanner.next()) != null) {
+		while ((line = scanner.nextLine()) != null) {
 			line = line.trim();
 			int index = line.indexOf(" ");
 			

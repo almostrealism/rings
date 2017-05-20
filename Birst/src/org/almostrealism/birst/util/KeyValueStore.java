@@ -17,8 +17,11 @@ public class KeyValueStore {
 	}
 	
 	public void put(String key, String value) {
-		if (root == null) root = new ValuedKey(key, value);
-		root.add(key, value);
+		if (root == null) {
+			root = new ValuedKey(key, value);
+		} else {
+			root.add(key, value);
+		}
 	}
 	
 	public void update(String key, String value) {
