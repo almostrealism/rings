@@ -18,7 +18,7 @@ public class KeyValueCLI implements Runnable {
 	public void run() {
 		String line;
 		
-		System.out.println(">");
+		System.out.print(">");
 		
 		while ((line = scanner.next()) != null) {
 			line = line.trim();
@@ -58,7 +58,7 @@ public class KeyValueCLI implements Runnable {
 				System.out.println("Key not found");
 			}
 			
-			System.out.println(">");
+			System.out.print(">");
 		}
 	}
 	
