@@ -61,4 +61,8 @@ public class KeyValueCLI implements Runnable {
 			System.out.println(">");
 		}
 	}
+	
+	public static void main(String args[]) {
+		KeyValueCLI cli = new KeyValueCLI();
+	}
 }
