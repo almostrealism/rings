@@ -64,5 +64,7 @@ public class KeyValueCLI implements Runnable {
 	
 	public static void main(String args[]) {
 		KeyValueCLI cli = new KeyValueCLI();
+		Thread t = new Thread(cli);
+		t.start();
 	}
 }
