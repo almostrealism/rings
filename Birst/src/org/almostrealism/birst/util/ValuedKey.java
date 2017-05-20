@@ -83,15 +83,17 @@ public class ValuedKey extends Node<ValuedKey> {
 				return right.remove(key);
 			}
 		} else {
-			if (parent.left == this) {
-				parent.left = null;
-			} else if (parent.right == this) {
-				parent.right = null;
+			if (parent != null) {
+				if (parent.left == this) {
+					parent.left = null;
+				} else if (parent.right == this) {
+					parent.right = null;
+				}
 			}
 			
 			ValuedKey root = getRoot();
-			root.addAll(left);
-			root.addAll(right);
+			if (left != null) root.addAll(left);
+			if (right != null) root.addAll(right);
 			
 			return this;
 		}

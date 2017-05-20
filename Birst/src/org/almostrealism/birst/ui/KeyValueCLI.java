@@ -47,7 +47,7 @@ public class KeyValueCLI implements Runnable {
 					store.remove(arg);
 				} else if (cmd.equals("GETALL")) {
 					for (String s : store.keys()) {
-						System.out.println(s + " = " + store.get(s));
+						System.out.println(s + "=" + store.get(s));
 					}
 				} else if (cmd.equals("QUIT")) {
 					System.exit(0);
