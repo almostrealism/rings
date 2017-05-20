@@ -115,6 +115,7 @@ public class ValuedKey extends Node<ValuedKey> {
 	
 	public List<String> keys() {
 		ArrayList<String> l = new ArrayList();
+		l.add(this.key);
 		if (left != null) l.addAll(left.keys());
 		if (right != null) l.addAll(right.keys());
 		return l;
