@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-06  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
- */
-
 package org.almostrealism.flow;
 
 import java.io.IOException;
 
 /**
  * An implementation of the Proxy interface provides a method
- * for sending and recieving messages (objects) using IO streams
+ * for sending and receiving messages (objects) using IO streams
  * and an integer id. This allows for sharing of a socket connection
- * between a number of seperate clients with unique id numbers.
- * A Proxy implementation must keep a FIFO queue of recieved objects
+ * between a number of separate clients with unique id numbers.
+ * A Proxy implementation must keep a FIFO queue of received objects
  * and return them based on ID.
  * 
  * @author Mike Murray
@@ -50,8 +41,8 @@ public interface Proxy {
     /**
      * Returns the next object in the queue with the specified id.
      * 
-     * @param id  Unique id of the reciever.
-     * @return  The recieved object or null if one is not found.
+     * @param id  Unique id of the receiver.
+     * @return  The received object or null if one is not found.
      */
     public Object nextObject(int id);
 }
