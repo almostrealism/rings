@@ -28,10 +28,10 @@
 	</build>
 	
     <dependencies>
-        <dependency>
-            <groupId>org.almostrealism</groupId>
-            <artifactId>Common</artifactId>
-            <version>LATEST</version>
-        </dependency>
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>Common</artifactId>
+			<version>0.1-rc</version>
+		</dependency>
     </dependencies>
 </project>

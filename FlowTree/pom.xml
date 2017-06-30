@@ -28,12 +28,6 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.almostrealism</groupId>
-			<artifactId>Common</artifactId>
-			<version>0.1-rc</version>
-		</dependency>
-
-		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>TreeView</artifactId>
 			<version>0.1-rc</version>
