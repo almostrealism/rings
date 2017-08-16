@@ -43,14 +43,14 @@ public abstract class AuthenticationServlet<T extends Authenticatable> extends H
 		T user = factory.getAuthenticatable(identifier);
 		
 		if (user == null) {
-			response.getWriter().append("NO_CONTENT");
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			response.getWriter().append("NOT_FOUND");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else if (user.getPassword().equals(password)) {
 			response.getWriter().append("OK");
 			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().append("FORBIDDEN");
+			response.getWriter().append("NO_CONTENT");
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 		}
 	}
 }
