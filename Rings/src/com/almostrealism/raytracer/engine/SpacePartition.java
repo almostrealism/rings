@@ -28,7 +28,7 @@ import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Triangle;
 
 
-public class SpacePartition extends SurfaceGroup {
+public class SpacePartition<T extends ShadableSurface> extends SurfaceGroup<T> {
 	public static int l, r, s;
 	
 	private class Node {
