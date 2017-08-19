@@ -35,7 +35,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.DebugOutputPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.io.FileDecoder;
 
 /**
@@ -183,7 +183,7 @@ public class RenderFile {
 		
 		System.out.println("Ray tracing...");
 		
-		RGB image[][] = RayTracingEngine.render(scene, RenderFile.imageWidth, RenderFile.imageHeight, RenderFile.superSampleWidth, RenderFile.superSampleHeight, monitor);
+		RGB image[][] = LegacyRayTracingEngine.render(scene, RenderFile.imageWidth, RenderFile.imageHeight, RenderFile.superSampleWidth, RenderFile.superSampleHeight, monitor);
 		
 		try {
 			ImageCanvas.encodeImageFile(image, new File(RenderFile.outputFile), imageEncoding);

@@ -36,7 +36,7 @@ import javax.swing.event.ChangeListener;
 import org.almostrealism.swing.Dialog;
 
 import com.almostrealism.raytracer.RenderPanel;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 
 /**
  * A RenderOptionsDialog can be used to allow the user to modify a RenderPanel object.
@@ -255,7 +255,7 @@ public class RenderOptionsDialog extends JPanel implements Dialog {
 		this.renderPanel.setSupersampleWidth(Integer.parseInt(this.supersampleWidthField.getText()));
 		this.renderPanel.setSupersampleHeight(Integer.parseInt(this.supersampleHeightField.getText()));
 		
-		RayTracingEngine.castShadows = this.castShadowsBox.isSelected();
+		LegacyRayTracingEngine.castShadows = this.castShadowsBox.isSelected();
 	}
 	
 	/**
@@ -318,6 +318,6 @@ public class RenderOptionsDialog extends JPanel implements Dialog {
 	 * Updates the cast shadows check box so that it displays the value of RayTracingEngine.castShadows.
 	 */
 	public void updateShadowFields() {
-		this.castShadowsBox.setSelected(RayTracingEngine.castShadows);
+		this.castShadowsBox.setSelected(LegacyRayTracingEngine.castShadows);
 	}
 }

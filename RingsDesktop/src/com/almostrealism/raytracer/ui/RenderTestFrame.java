@@ -31,7 +31,7 @@ import org.almostrealism.texture.ImageCanvas;
 
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 
 
@@ -84,7 +84,7 @@ public class RenderTestFrame extends JPanel {
 			e.printStackTrace();
 		}
 		
-		RGB rgb[][] = RayTracingEngine.render(this.scene, this.par, this.prog);
+		RGB rgb[][] = LegacyRayTracingEngine.render(this.scene, this.par, this.prog);
 		this.image = GraphicsConverter.convertToAWTImage(rgb);
 		
 		super.remove(this);

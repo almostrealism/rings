@@ -30,7 +30,7 @@ import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
 import com.almostrealism.lighting.Light;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -104,7 +104,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p));
 		
 		f: if (p.getSurface().getShadeFront()) {
-			Vector ref = RayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
+			Vector ref = LegacyRayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -136,7 +136,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
 			
-			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
+			ColorProducer color = LegacyRayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
@@ -156,7 +156,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		b: if (p.getSurface().getShadeBack()) {
 			n = n.minus();
 			
-			Vector ref = RayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
+			Vector ref = LegacyRayTracingEngine.reflect(p.getIntersection().getViewerDirection(), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -188,7 +188,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
 			
-			ColorProducer color = RayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
+			ColorProducer color = LegacyRayTracingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
 																	p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {

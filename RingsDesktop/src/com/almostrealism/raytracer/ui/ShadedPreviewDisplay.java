@@ -37,7 +37,7 @@ import com.almostrealism.lighting.Light;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Sphere;
@@ -102,7 +102,7 @@ public class ShadedPreviewDisplay extends JPanel implements Runnable {
 		if (this.sample != null) {
 			RenderParameters p = new RenderParameters(0, 0, w, h, w, h, 1, 1);
 			
-			RGB rgb[][] = RayTracingEngine.render(Arrays.asList(this.sample),
+			RGB rgb[][] = LegacyRayTracingEngine.render(Arrays.asList(this.sample),
 												this.camera, this.lights,
 												p, null);
 			this.image = GraphicsConverter.convertToAWTImage(rgb);

@@ -24,7 +24,7 @@ import org.almostrealism.space.Vector;
 
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -190,7 +190,7 @@ public class PointLight implements Light {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight = null;
 		
-		if (RayTracingEngine.premultiplyIntensity) {
+		if (LegacyRayTracingEngine.premultiplyIntensity) {
 			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point).evaluate(null), direction);
 		} else {
 			double in = light.getIntensity();

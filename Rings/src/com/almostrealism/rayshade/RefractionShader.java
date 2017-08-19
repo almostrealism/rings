@@ -30,7 +30,7 @@ import org.almostrealism.util.Producer;
 import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 // TODO  Fix refraction algorithm.
@@ -138,7 +138,7 @@ public class RefractionShader implements Shader, Editable {
 		Vector dv = viewerDirection;
 		dv = dv.minus();
 		
-		Vector d = RayTracingEngine.refract(dv, n, currentR, nextR, (Math.random() < 0.0000));
+		Vector d = LegacyRayTracingEngine.refract(dv, n, currentR, nextR, (Math.random() < 0.0000));
 		d.divideBy(d.length());
 		
 		// if (d.dotProduct(dv) > 0) d.multiplyBy(-1.0);
@@ -157,7 +157,7 @@ public class RefractionShader implements Shader, Editable {
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
 		RefractionShader.lastRay = r.getDirection();
 		
-		ColorProducer color = RayTracingEngine.lightingCalculation(r, allSurfaces, allLights,
+		ColorProducer color = LegacyRayTracingEngine.lightingCalculation(r, allSurfaces, allLights,
 											p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));

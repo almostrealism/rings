@@ -54,7 +54,7 @@ import com.almostrealism.photon.util.color.Spectrum;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -821,8 +821,8 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 //		if (h == 0) return null;
 //		if (camera == null) return null;
 		
-		RayTracingEngine.castShadows = false;
-		RayTracingEngine.premultiplyIntensity = false;
+		LegacyRayTracingEngine.castShadows = false;
+		LegacyRayTracingEngine.premultiplyIntensity = false;
 		
 		AbsorberSetRayTracer tracer =
 				new AbsorberSetRayTracer(camera, new ShadableSurface[] {this},
@@ -934,7 +934,7 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 				
 			Vector vpo = new Vector(po[0], po[1], po[2]);
 			Vector vs = new Vector(s[0], s[1], s[2]);
-			c = RayTracingEngine.lightingCalculation(null, vpo, vs,
+			c = LegacyRayTracingEngine.lightingCalculation(null, vpo, vs,
 													this,
 													Arrays.asList(p.getOtherSurfaces()), p.getAllLights(), p).evaluate(null);
 			if (c != null)

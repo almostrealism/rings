@@ -66,7 +66,7 @@ import com.almostrealism.raytracer.DebugOutputPanel;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -559,7 +559,7 @@ public class Simulation extends Scene implements Runnable {
 		
 		p.setProperty("bodies.length", String.valueOf(this.bodies.length));
 		
-		if (RayTracingEngine.castShadows == false) p.setProperty("render.shadows", "false");
+		if (LegacyRayTracingEngine.castShadows == false) p.setProperty("render.shadows", "false");
 		
 		Vector cl = ((PinholeCamera)super.getCamera()).getLocation();
 		Vector cv = ((PinholeCamera)super.getCamera()).getViewingDirection();
@@ -676,7 +676,7 @@ public class Simulation extends Scene implements Runnable {
 		this.totalTime = Double.parseDouble(p.getProperty("simulation.time", "0.0"));
 		
 		String shadows = p.getProperty("render.shadows");
-		if (shadows != null && shadows.equals("false")) RayTracingEngine.castShadows = false;
+		if (shadows != null && shadows.equals("false")) LegacyRayTracingEngine.castShadows = false;
 		
 		List bodies = new ArrayList();
 		
@@ -842,7 +842,7 @@ public class Simulation extends Scene implements Runnable {
 			String fn = this.dir + "frame_" + instance + "." + i + ".jpeg";
 			File f = new File(fn);
 			
-			RGB image[][] = RayTracingEngine.render(this, this.imageWidth, this.imageHeight, 1, 1, null);
+			RGB image[][] = LegacyRayTracingEngine.render(this, this.imageWidth, this.imageHeight, 1, 1, null);
 			this.image = GraphicsConverter.convertToAWTImage(image);
 			
 			BufferedImage buff = new BufferedImage(this.imageWidth, this.imageHeight, BufferedImage.TYPE_INT_RGB);

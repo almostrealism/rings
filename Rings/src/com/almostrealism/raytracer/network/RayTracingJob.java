@@ -56,7 +56,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.io.FileDecoder;
 
@@ -781,7 +781,7 @@ public class RayTracingJob implements Job, SceneLoader {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RGB rgb[][] = RayTracingEngine.render(s, camera, s.getLights(), p, null);
+		RGB rgb[][] = LegacyRayTracingEngine.render(s, camera, s.getLights(), p, null);
 		
 		long time = System.currentTimeMillis() - start;
 		

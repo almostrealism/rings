@@ -35,7 +35,7 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
@@ -105,7 +105,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		
 		final Thread renderThread = new Thread(new Runnable() {
 			public void run() {
-				renderedImageData = RayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
+				renderedImageData = LegacyRayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
 				renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
 				
 				try {
@@ -262,7 +262,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	public EventHandler getEventHandler() { return this.handler; }
 	
 	public double calculateAverageBrightness() {
-		return RayTracingEngine.calculateAverageBrightness(this.scene, this.width, this.height, 3);
+		return LegacyRayTracingEngine.calculateAverageBrightness(this.scene, this.width, this.height, 3);
 	}
 	
 	/**

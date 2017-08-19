@@ -24,7 +24,7 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import com.almostrealism.lighting.Light;
 import com.almostrealism.projection.Camera;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.RayTracingEngine;
+import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 public class AbsorberSetRayTracer {
@@ -64,7 +64,7 @@ public class AbsorberSetRayTracer {
 	
 	public RGB[][] generateImage(int ssw, int ssh) {
 		Scene s = this.getScene();
-		return RayTracingEngine.render(s, 0, 0, this.w, this.h,
+		return LegacyRayTracingEngine.render(s, 0, 0, this.w, this.h,
 										this.w, this.h, ssw, ssh, this.display);
 	}
 }
