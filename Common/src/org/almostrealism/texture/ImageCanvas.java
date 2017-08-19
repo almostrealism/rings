@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 
@@ -178,7 +179,7 @@ public class ImageCanvas extends JPanel {
 		g.drawImage(img, 0, 0, Color.black, this);
 	}
 
-	public static void writeImage(RGB image[][], OutputStream o, int encoding)
+	public static void writeImage(ColorProducer image[][], OutputStream o, int encoding)
 						throws IOException {
 		if (encoding == ImageCanvas.RGBListEncoding) {
 			ObjectOutputStream out = new ObjectOutputStream(o);
@@ -188,7 +189,7 @@ public class ImageCanvas extends JPanel {
 					if (image[i][j] == null) {
 						new RGB(0.0, 0.0, 0.0).writeExternal(out);
 					} else {
-						image[i][j].writeExternal(out);
+						image[i][j].evaluate(null).writeExternal(out);
 					}
 				}
 			}
@@ -207,9 +208,10 @@ public class ImageCanvas extends JPanel {
 					if (image[i][j] == null) {
 						out.println("0 0 0");
 					} else {
-						int r = (int)(255 * image[i][j].getRed());
-						int g = (int)(255 * image[i][j].getGreen());
-						int b = (int)(255 * image[i][j].getBlue());
+						RGB c = image[i][j].evaluate(null);
+						int r = (int)(255 * c.getRed());
+						int g = (int)(255 * c.getGreen());
+						int b = (int)(255 * c.getBlue());
 						out.println(r + " " + g + " " + b);
 					}
 				}
@@ -235,10 +237,11 @@ public class ImageCanvas extends JPanel {
 			
 			for (int j = 0; j < h; j++) {
 				for (int i = 0; i < w; i++) {
+					RGB c = image[i][j].evaluate(null);
 					b[index++] = 1;
-					b[index++] = (byte)(255 * image[i][j].getBlue());
-					b[index++] = (byte)(255 * image[i][j].getGreen());
-					b[index++] = (byte)(255 * image[i][j].getRed());
+					b[index++] = (byte)(255 * c.getBlue());
+					b[index++] = (byte)(255 * c.getGreen());
+					b[index++] = (byte)(255 * c.getRed());
 				}
 			}
 			
@@ -259,7 +262,7 @@ public class ImageCanvas extends JPanel {
 	 * file represented by the specified File object. If the encoding code is not
 	 * recognized, the method returns.
 	 */
-	public static void encodeImageFile(RGB image[][], File file, int encoding) throws IOException {
+	public static void encodeImageFile(ColorProducer image[][], File file, int encoding) throws IOException {
 		try (OutputStream o = new FileOutputStream(file)) {
 			ImageCanvas.writeImage(image, o, encoding);
 			o.flush();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Murray
+ * Copyright 2016 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.util;
+package org.almostrealism.io;
 
 /**
- * The Producer interface is implemented by classes that represent a
- * repeatedly evaluated function.
- * 
- * @see org.almostrealism.util.Editable
- * 
- * @author Mike Murray
+ * The OutputHandler interface is implemented by classes that wish to be notified when job output
+ * is sent to a DatabaseConnection object to be stored.
  */
-public interface Producer<T> {
-	public T evaluate(Object args[]);
+public interface OutputHandler {
+	public void storeOutput(long time, int uid, JobOutput output);
 }

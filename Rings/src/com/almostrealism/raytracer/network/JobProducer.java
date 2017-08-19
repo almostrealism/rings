@@ -27,8 +27,9 @@ package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
-import org.almostrealism.flow.db.Client;
 import org.almostrealism.flow.ui.NetworkClient;
+
+import io.almostrealism.db.Client;
 
 // TODO  Add constructor that accepts a RayTracingEngine.RenderingProperties object.
 

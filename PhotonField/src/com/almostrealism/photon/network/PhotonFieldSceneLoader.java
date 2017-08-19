@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 
 import org.almostrealism.flow.Resource;
-import org.almostrealism.flow.db.Client;
 import org.almostrealism.flow.resources.DistributedResource;
 import org.xml.sax.SAXException;
 
@@ -35,6 +34,8 @@ import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.util.FileLoader;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.network.SceneLoader;
+
+import io.almostrealism.db.Client;
 
 public class PhotonFieldSceneLoader implements SceneLoader {
 	public static boolean local = false;

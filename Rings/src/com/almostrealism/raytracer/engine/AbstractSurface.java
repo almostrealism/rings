@@ -512,9 +512,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	 */
 	public Texture[] getTextures() { return this.textures; }
 	
-	/**
-	 * Returns the color of this AbstractSurface as an RGB object.
-	 */
+	/** Returns the color of this {@link AbstractSurface} as an {@link RGB} object. */
 	public RGB getColor() { return this.color; }
 	
 	/**

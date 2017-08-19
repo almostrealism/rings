@@ -43,11 +43,8 @@ import java.util.Set;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.flow.Job;
-import org.almostrealism.flow.db.Client;
-import org.almostrealism.flow.db.JobOutput;
-import org.almostrealism.flow.db.OutputHandler;
-import org.almostrealism.flow.db.Query;
-import org.almostrealism.flow.db.QueryHandler;
+import org.almostrealism.io.JobOutput;
+import org.almostrealism.io.OutputHandler;
 
 import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.io.SpatialData;
@@ -59,6 +56,10 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.io.FileDecoder;
+
+import io.almostrealism.db.Client;
+import io.almostrealism.db.Query;
+import io.almostrealism.db.QueryHandler;
 
 /**
  * A RayTracingJob object provides an implementation of

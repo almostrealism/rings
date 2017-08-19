@@ -26,7 +26,7 @@ import org.almostrealism.util.Producer;
  * @author Mike Murray
  */
 @Function
-public interface ColorProducer extends Producer {
+public interface ColorProducer extends Producer<RGB> {
     /**
      * Produces a color using the specified arguments.
      * 

@@ -33,8 +33,9 @@ import java.util.List;
 import org.almostrealism.flow.Job;
 import org.almostrealism.flow.JobFactory;
 import org.almostrealism.flow.Server;
-import org.almostrealism.flow.db.Client;
-import org.almostrealism.flow.db.Query;
+
+import io.almostrealism.db.Client;
+import io.almostrealism.db.Query;
 
 /**
  * @author Mike Murray

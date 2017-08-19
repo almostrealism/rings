@@ -16,11 +16,13 @@
 
 package com.almostrealism.raytracer.engine;
 
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
-public class RayMarchingEngine {
+public class RayMarchingEngine implements RayTracer.Engine {
 	public static final int MAX_RAY_STEPS = 1000;
 	public static final double MIN_DISTANCE = 0.000001;
 	
@@ -30,7 +32,7 @@ public class RayMarchingEngine {
 		this.estimator = e;
 	}
 	
-	public double trace(Vector from, Vector direction) {
+	public ColorProducer trace(Vector from, Vector direction) {
 		double totalDistance = 0.0;
 		int steps;
 		
@@ -41,6 +43,7 @@ public class RayMarchingEngine {
 			if (distance < MIN_DISTANCE) break s;
 		}
 		
-		return 1.0 - steps / MAX_RAY_STEPS;
+		double d = 1.0 - steps / MAX_RAY_STEPS;
+		return new RGB(d, d, d);
 	}
 }

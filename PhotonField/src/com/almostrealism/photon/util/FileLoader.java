@@ -37,7 +37,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.almostrealism.color.RGB;
-import org.almostrealism.flow.db.Client;
 import org.almostrealism.space.VectorMath;
 import org.almostrealism.util.Nameable;
 import org.xml.sax.Attributes;
@@ -56,6 +55,8 @@ import com.almostrealism.photon.raytracer.AbsorberSetRayTracer;
 import com.almostrealism.photon.raytracer.PinholeCameraAbsorber;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.RayTracingJobFactory;
+
+import io.almostrealism.db.Client;
 
 public class FileLoader extends DefaultHandler {
 	public static double verbose = Math.pow(10.0, -5.0);

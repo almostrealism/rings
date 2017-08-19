@@ -26,7 +26,6 @@ import org.almostrealism.flow.Job;
 import org.almostrealism.flow.JobFactory;
 import org.almostrealism.flow.Resource;
 import org.almostrealism.flow.Server;
-import org.almostrealism.flow.db.Client;
 import org.xml.sax.SAXException;
 
 import com.almostrealism.photon.AbsorberSet;
@@ -34,6 +33,8 @@ import com.almostrealism.photon.AbsorptionPlane;
 import com.almostrealism.photon.Clock;
 import com.almostrealism.photon.DefaultPhotonField;
 import com.almostrealism.photon.util.FileLoader;
+
+import io.almostrealism.db.Client;
 
 public class PhotonFieldJob implements JobFactory, Job {
 	public static double verbose = Math.pow(10.0, -3.0);

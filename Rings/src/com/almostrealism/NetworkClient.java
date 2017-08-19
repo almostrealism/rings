@@ -67,20 +67,15 @@ import javax.swing.SwingUtilities;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.flow.JobFactory;
-import org.almostrealism.flow.Message;
 import org.almostrealism.flow.Node;
 import org.almostrealism.flow.NodeGroup;
-import org.almostrealism.flow.NodeProxy;
 import org.almostrealism.flow.Resource;
 import org.almostrealism.flow.Server;
 import org.almostrealism.flow.ServerBehavior;
-import org.almostrealism.flow.db.Client;
-import org.almostrealism.flow.db.OutputHandler;
-import org.almostrealism.flow.db.Query;
-import org.almostrealism.flow.db.QueryHandler;
 import org.almostrealism.flow.resources.DistributedResource;
 import org.almostrealism.flow.resources.ResourceDistributionTask;
 import org.almostrealism.flow.tests.TestJobFactory;
+import org.almostrealism.io.OutputHandler;
 import org.almostrealism.io.Storable;
 import org.almostrealism.swing.GraphDisplay;
 import org.almostrealism.swing.ScrollingTextDisplay;
@@ -91,6 +86,12 @@ import com.almostrealism.raytracer.NetworkDialog;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.JobProducer;
 import com.almostrealism.raytracer.network.RayTracingJob;
+
+import io.almostrealism.db.Client;
+import io.almostrealism.db.Query;
+import io.almostrealism.db.QueryHandler;
+import io.almostrealism.msg.Message;
+import io.almostrealism.msg.NodeProxy;
 
 // TODO  Add cd and pwd commands.
 // TODO  mkdir does not update slide
@@ -188,7 +189,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		
 		if ("true".equals(p.getProperty("db.start", "true"))) {
 			try {
-				org.almostrealism.flow.db.OutputServer s = new org.almostrealism.flow.db.OutputServer(p);
+				io.almostrealism.db.OutputServer s = new io.almostrealism.db.OutputServer(p);
 				System.out.println("DB Server started");
 			} catch (IOException ioe) {
 				System.out.println("IO error starting DBS: " + ioe.getMessage());
@@ -1358,13 +1359,13 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					Properties p = new Properties();
 					p.setProperty("db.test", "true");
 					
-					org.almostrealism.flow.db.OutputServer server =
-						new org.almostrealism.flow.db.OutputServer(p);
+					io.almostrealism.db.OutputServer server =
+						new io.almostrealism.db.OutputServer(p);
 					
 					return "Started DBS.";
 				} else if (s[0].equals("create")) {
-					org.almostrealism.flow.db.OutputServer server = 
-						org.almostrealism.flow.db.OutputServer.getCurrentServer();
+					io.almostrealism.db.OutputServer server = 
+						io.almostrealism.db.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					if (server.getDatabaseConnection().createOutputTable())
@@ -1372,8 +1373,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					else
 						return "Could not create DB tables.";
 				} else if (s[0].equals("add")) {
-					org.almostrealism.flow.db.OutputServer server = 
-						org.almostrealism.flow.db.OutputServer.getCurrentServer();
+					io.almostrealism.db.OutputServer server = 
+						io.almostrealism.db.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					Object o = Class.forName(s[1]).newInstance();
@@ -1405,8 +1406,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					return "Unknown DBS command: " + s[0] + "\nTry start, create, or add.";
 				}
 			} else if (c.startsWith("dbnotify")) {
-				org.almostrealism.flow.db.OutputServer server = 
-					org.almostrealism.flow.db.OutputServer.getCurrentServer();
+				io.almostrealism.db.OutputServer server = 
+					io.almostrealism.db.OutputServer.getCurrentServer();
 				if (server == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1414,8 +1415,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				
 				return "Output from " + s[0] + " passed to output handlers.";
 			} else if (c.startsWith("dbupdate")) {
-				org.almostrealism.flow.db.OutputServer dbs = 
-					org.almostrealism.flow.db.OutputServer.getCurrentServer();
+				io.almostrealism.db.OutputServer dbs = 
+					io.almostrealism.db.OutputServer.getCurrentServer();
 				if (dbs == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1485,12 +1486,12 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 
 	/**
-	 * @see org.almostrealism.flow.NodeProxy.EventListener#connect(org.almostrealism.flow.NodeProxy)
+	 * @see io.almostrealism.msg.NodeProxy.EventListener#connect(io.almostrealism.msg.NodeProxy)
 	 */
 	public void connect(NodeProxy p) { this.button.setIcon(this.activeIcon); }
 
 	/**
-	 * @see org.almostrealism.flow.NodeProxy.EventListener#disconnect(org.almostrealism.flow.NodeProxy)
+	 * @see io.almostrealism.msg.NodeProxy.EventListener#disconnect(io.almostrealism.msg.NodeProxy)
 	 */
 	public int disconnect(NodeProxy p) {
 		if (Client.getCurrentClient().getServer().getNodeGroup().getServers().length == 0)
@@ -1500,7 +1501,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 	
 	/**
-	 * @see org.almostrealism.flow.NodeProxy.EventListener#recievedMessage(org.almostrealism.flow.Message, int)
+	 * @see io.almostrealism.msg.NodeProxy.EventListener#recievedMessage(io.almostrealism.msg.Message, int)
 	 * @return  false.
 	 */
 	public boolean recievedMessage(Message m, int reciever) { return false; }
