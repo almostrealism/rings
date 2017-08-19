@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-16  Mike Murray
- * All rights reserved.
- */
-
 package com.almostrealism.raytracer.engine;
 
 import java.util.Collection;
@@ -29,6 +24,9 @@ import java.util.Set;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.DistanceEstimator;
+import org.almostrealism.space.Intersection;
+import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 import org.almostrealism.texture.Texture;
 
@@ -48,7 +46,7 @@ import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
  * 
  * @author  Mike Murray
  */
-public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface {
+public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface, DistanceEstimator {
 	private boolean shadeFront, shadeBack;
 
 	private RGB color;
@@ -212,8 +210,8 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	/**
 	 * Returns a Set object that maintains the Texture objects stored by this AbstractSurface.
 	 */
-	public Set getTextureSet() {
-		Set textureSet = new Set() {
+	public Set<Texture> getTextureSet() {
+		Set<Texture> textureSet = new Set<Texture>() {
 			/**
 			 * @return  The number of elements stored by this set.
 			 */
@@ -232,8 +230,8 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 			/**
 			 * @return  An Iterator object using the elements stored by this set.
 			 */
-			public Iterator iterator() {
-				Iterator itr = new Iterator() {
+			public Iterator<Texture> iterator() {
+				Iterator<Texture> itr = new Iterator<Texture>() {
 					int index = 0;
 
 					public boolean hasNext() {
@@ -243,7 +241,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 							return false;
 					}
 
-					public Object next() throws NoSuchElementException {
+					public Texture next() throws NoSuchElementException {
 						if (this.index >= textures.length)
 							throw new NoSuchElementException("No element at " + this.index);
 						return textures[this.index++];
@@ -273,7 +271,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 			 * 
 			 * @throws IllegalArgumentException  If the specified Object is not an instance of Texture.
 			 */
-			public boolean add(Object o) {
+			public boolean add(Texture o) {
 				if (o instanceof Texture == false)
 					throw new IllegalArgumentException("Illegal argument: " + o.toString());
 				
@@ -294,7 +292,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 			public boolean addAll(Collection c) {
 				boolean added = false;
 				
-				Iterator itr = c.iterator();
+				Iterator<Texture> itr = c.iterator();
 				
 				while (itr.hasNext()) {
 					this.add(itr.next());
@@ -467,14 +465,22 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	}
 	
 	/**
-	 * Returns a Set object that maintains the Shader objects stored by this AbstractSurface.
+	 * Returns a {@link Set} that maintains the {@link Shader} objects stored by this AbstractSurface.
 	 */
 	public ShaderSet getShaderSet() { return this.shaders; }
 	
 	/**
-	 * Calculates a color value for this AbstractSurface using the sum of the values
-	 * calculated by the Shader objects stored by this AbstractSurface and the parent
-	 * of this AbstractSurface and returns this value as an RGB object.
+	 * Delegates to {@link Intersection#getClosestIntersection()} for the {@link Intersection}
+	 * returned by {@link #intersectAt(Ray)}.
+	 */
+	public double estimateDistance(Ray r) {
+		return intersectAt(r).getClosestIntersection();
+	}
+	
+	/**
+	 * Calculates a color value for this {@link AbstractSurface} using the sum of the values
+	 * calculated by the {@link Shader} objects stored by this AbstractSurface and the parent
+	 * of this {@link AbstractSurface} and returns this value as an {@link RGB}.
 	 */
 	public ColorProducer shade(ShaderParameters p) {
 		p.setSurface(this);
