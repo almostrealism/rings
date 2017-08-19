@@ -1,0 +1,11 @@
+awscli
+httplib2
+celery
+Flask
+airflow[slack, s3, rabbitmq, postgres, celery]
+nose
+pdb
+psycopg2
+urllib2
+pdb
+boto3
