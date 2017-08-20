@@ -72,7 +72,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	}
 	
 	/**
-	 * Sets the location and size of this AbstractSurface to those specifed, and uses the defaults for the other values.
+	 * Sets the location and size of this AbstractSurface to those specified, and uses the defaults for the other values.
 	 */
 	public AbstractSurface(Vector location, double size) {
 		this();

@@ -17,6 +17,7 @@
 package org.almostrealism.color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.almostrealism.uml.Function;
 
@@ -26,6 +27,8 @@ import org.almostrealism.uml.Function;
 @Function
 public class ColorSum extends ArrayList<ColorProducer> implements ColorProducer {
 	public ColorSum() { }
+	
+	public ColorSum(ColorProducer... producers) { addAll(Arrays.asList(producers)); }
 	
 	@Override
 	public RGB evaluate(Object[] args) {

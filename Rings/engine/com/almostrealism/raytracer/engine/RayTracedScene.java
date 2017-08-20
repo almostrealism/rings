@@ -3,6 +3,8 @@ package com.almostrealism.raytracer.engine;
 import java.util.concurrent.ExecutionException;
 
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorProduct;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.space.Ray;
@@ -12,7 +14,7 @@ import com.almostrealism.raytracer.Scene;
 
 import io.almostrealism.lambda.Realization;
 
-public class RayTracedScene implements Realization<Scene<ShadableSurface>, RealizableImage, RenderParameters> {
+public class RayTracedScene implements Realization<RealizableImage, RenderParameters> {
 	private RayTracer tracer;
 	private Camera camera;
 	
@@ -22,7 +24,7 @@ public class RayTracedScene implements Realization<Scene<ShadableSurface>, Reali
 	}
 	
 	@Override
-	public RealizableImage realize(Scene<ShadableSurface> data, RenderParameters p) {
+	public RealizableImage realize(RenderParameters p) {
 		ColorProducer image[][] = new ColorProducer[p.dx][p.dy];
 		
 		for (int i = p.x; i < (p.x + p.dx); i++) {
@@ -51,21 +53,16 @@ public class RayTracedScene implements Realization<Scene<ShadableSurface>, Reali
 					
 					if (image[i - p.x][j - p.y] == null) {
 						if (p.ssWidth > 1 || p.ssHeight > 1) {
-							if (color instanceof RGB) {
-								((RGB) color).divideBy(p.ssWidth * p.ssHeight);
-							} else {
-								System.err.println("Cannot use super sampling with unrealized ColorProducer values");
-							}
+							double scale = 1.0 / (p.ssWidth * p.ssHeight);
+							color = new ColorProduct(color, new RGB(scale, scale, scale));
 						}
 						
 						image[i - p.x][j - p.y] = color;
 					} else {
-						if (color instanceof RGB) {
-							((RGB) color).divideBy(p.ssWidth * p.ssHeight);
-							((RGB) image[i - p.x][j - p.y]).addTo((RGB) color);
-						} else {
-							System.err.println("Cannot use super sampling with unrealized ColorProducer values");
-						}
+						double scale = 1.0 / (p.ssWidth * p.ssHeight);
+						color = new ColorProduct(color, new RGB(scale, scale, scale));
+						
+						image[i - p.x][j - p.y] = new ColorSum(image[i - p.x][j - p.y], color);
 					}
 				}
 			}

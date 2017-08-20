@@ -41,7 +41,7 @@ public class RenderParameters {
 	public int width, height;
 	
 	/** Super sample dimensions. */
-	public int ssWidth, ssHeight;
+	public int ssWidth = 2, ssHeight = 2;
 	
 	/** Coordinates of upper left corner of image. */
 	public int x, y;

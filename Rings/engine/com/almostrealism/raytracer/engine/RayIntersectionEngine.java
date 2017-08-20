@@ -26,19 +26,17 @@ import com.almostrealism.raytracer.Settings;
 public class RayIntersectionEngine implements RayTracer.Engine {
 	private Scene<ShadableSurface> scene;
 	private RenderParameters rparams;
-	private ShaderParameters sparams;
 	
-	public RayIntersectionEngine(Scene<ShadableSurface> s, RenderParameters rparams, ShaderParameters sparams) {
+	public RayIntersectionEngine(Scene<ShadableSurface> s, RenderParameters rparams) {
 		this.scene = s;
 		this.rparams = rparams;
-		this.sparams = sparams;
 	}
 	
 	public ColorProducer trace(Vector from, Vector direction) {
 		Ray r = new Ray(from, direction);
 		
 		return lightingCalculation(r, scene, scene.getLights(), rparams.fogColor,
-									rparams.fogDensity, rparams.fogRatio, sparams);
+									rparams.fogDensity, rparams.fogRatio, null);
 	}
 	
 	/**

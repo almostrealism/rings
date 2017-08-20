@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.almostrealism.space.Vector;
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
-//TODO Add ParticleGroup implementation.
+// TODO Add ParticleGroup implementation.
 
 /**
- * A Sphere object represents a primitive sphere in 3d space.
+ * A Sphere represents a primitive sphere in 3d space.
  */
 public class Sphere extends AbstractSurface {
 	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
