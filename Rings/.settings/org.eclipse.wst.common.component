@@ -2,5 +2,9 @@
     <wb-module deploy-name="Rings">
         <wb-resource deploy-path="/" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/game"/>
+        <wb-resource deploy-path="/" source-path="/geometry"/>
+        <wb-resource deploy-path="/" source-path="/shading"/>
+        <wb-resource deploy-path="/" source-path="/ui"/>
+        <wb-resource deploy-path="/" source-path="/engine"/>
     </wb-module>
 </project-modules>
