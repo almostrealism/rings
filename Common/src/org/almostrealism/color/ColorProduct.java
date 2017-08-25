@@ -1,19 +1,29 @@
 package org.almostrealism.color;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.almostrealism.uml.Function;
 
 @Function
-public class ColorProduct extends ArrayList<ColorProducer> implements ColorProducer {
+public class ColorProduct extends ColorFutureAdapter {
 	public ColorProduct() { }
-	public ColorProduct(ColorProducer... producers) { addAll(Arrays.asList(producers)); }
+	public ColorProduct(ColorProducer... producers) { addAll(convertToFutures(producers)); }
+	public ColorProduct(Future<ColorProducer>... producers) { addAll(Arrays.asList(producers)); }
 	
 	@Override
 	public RGB evaluate(Object[] args) {
-		RGB rgb = new RGB();
-		for (ColorProducer c : this) { rgb.multiplyBy(c.evaluate(args)); }
+		RGB rgb = new RGB(1.0, 1.0, 1.0);
+		
+		for (Future<ColorProducer> c : this) {
+			try {
+				rgb.multiplyBy(c.get().evaluate(args));
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return rgb;
 	}
 }

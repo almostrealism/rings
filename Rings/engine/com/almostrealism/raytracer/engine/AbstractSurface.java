@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
@@ -491,7 +492,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 			color.add(this.shaders.shade(p));
 		
 		if (this.getParent() != null)
-			color.add(this.getParent().shade(p));
+			color.add((Future) this.getParent().shade(p));
 		
 		return color;
 	}

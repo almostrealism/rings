@@ -23,6 +23,7 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.Future;
 
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
@@ -126,7 +127,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 			color.add(super.getShaderSet().shade(p));
 		
 		if (super.getParent() != null)
-			color.add(super.getParent().shade(p));
+			color.add((Future) super.getParent().shade(p));
 		
 		return color;
 	}

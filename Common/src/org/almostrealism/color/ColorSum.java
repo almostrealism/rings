@@ -16,8 +16,9 @@
 
 package org.almostrealism.color;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.almostrealism.uml.Function;
 
@@ -25,15 +26,24 @@ import org.almostrealism.uml.Function;
  * @author  Michael Murray
  */
 @Function
-public class ColorSum extends ArrayList<ColorProducer> implements ColorProducer {
+public class ColorSum extends ColorFutureAdapter {
 	public ColorSum() { }
 	
-	public ColorSum(ColorProducer... producers) { addAll(Arrays.asList(producers)); }
+	public ColorSum(Future<ColorProducer>... producers) { addAll(Arrays.asList(producers)); }
 	
 	@Override
 	public RGB evaluate(Object[] args) {
 		RGB rgb = new RGB();
-		for (ColorProducer c : this) { rgb.addTo(c.evaluate(args)); }
+		
+		for (Future<ColorProducer> c : this) {
+			try {
+				rgb.addTo(c.get().evaluate(args));
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return rgb;
 	}
 }

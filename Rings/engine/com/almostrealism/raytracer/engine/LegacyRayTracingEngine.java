@@ -20,29 +20,15 @@
 
 package com.almostrealism.raytracer.engine;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Intersectable;
-import org.almostrealism.space.Intersection;
 import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 
-import com.almostrealism.lighting.AmbientLight;
-import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.Light;
-import com.almostrealism.lighting.PointLight;
-import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.Camera;
-import com.almostrealism.projection.Intersections;
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 
@@ -83,9 +69,7 @@ public class LegacyRayTracingEngine {
   
   public static double dropOffDistance = 10.0;
   
-  public static RGB black = new RGB(0.0, 0.0, 0.0);
-  
-  	/**
+  /**
 	 * Computes all intersection and lighting calculations required to produce an image of the specified width and height
 	 * that is a rendering of the specified Scene object and returns the image as an array of RGB objects.
 	 * The image is anti-aliased using the specified supersampling width (ssWidth) and height (ssHeight).
@@ -162,7 +146,7 @@ public class LegacyRayTracingEngine {
 					
 					if (color == null) {
 						// System.out.println("null");
-						color = LegacyRayTracingEngine.black;
+						color = RayTracedScene.black;
 					}
 					
 					if (image[i - p.x][j - p.y] == null) {

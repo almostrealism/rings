@@ -16,6 +16,8 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.concurrent.Future;
+
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
@@ -28,7 +30,7 @@ import org.almostrealism.util.Producer;
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
  * The {@link DiffuseShader} class uses a lambertian shading algorithm.
  * 
- * @author Mike Murray
+ * @author Michael Murray
  */
 public class DiffuseShader implements Shader, Editable {
   public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
@@ -48,12 +50,12 @@ public class DiffuseShader implements Shader, Editable {
 		
 		if (p.getSurface().getShadeFront()) {
 			double scale = n.dotProduct(p.getLightDirection());
-			color.add(new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
+			color.add((Future) new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
 		}
 		
 		if (p.getSurface().getShadeBack()) {
 			double scale = n.minus().dotProduct(p.getLightDirection());
-			color.add(new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
+			color.add((Future) new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
 		}
 		
 		return color;

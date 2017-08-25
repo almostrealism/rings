@@ -23,8 +23,7 @@ import org.almostrealism.space.Ray;
 import org.almostrealism.space.Vector;
 
 public class RayMarchingEngine implements RayTracer.Engine {
-	public static final int MAX_RAY_STEPS = 1000;
-	public static final double MIN_DISTANCE = 0.000001;
+	public static final int MAX_RAY_STEPS = 30;
 	
 	private DistanceEstimator estimator;
 	
@@ -34,16 +33,23 @@ public class RayMarchingEngine implements RayTracer.Engine {
 	
 	public ColorProducer trace(Vector from, Vector direction) {
 		double totalDistance = 0.0;
+		
 		int steps;
 		
-		s: for (steps = 0; steps < MAX_RAY_STEPS; steps++) {
+		Ray r = new Ray(from, direction);
+		
+		steps: for (steps = 0; steps < MAX_RAY_STEPS; steps++) {
 			Vector p = from.add(direction.multiply(totalDistance));
-			double distance = estimator.estimateDistance(new Ray(from, p));
+			r = new Ray(p, direction);
+			double distance = estimator.estimateDistance(r);
 			totalDistance += distance;
-			if (distance < MIN_DISTANCE) break s;
+			if (distance < 0.0001) break steps;
 		}
 		
-		double d = 1.0 - steps / MAX_RAY_STEPS;
+		double d = 1.0 - steps / ((double) MAX_RAY_STEPS);
+		
+		
+		
 		return new RGB(d, d, d);
 	}
 }

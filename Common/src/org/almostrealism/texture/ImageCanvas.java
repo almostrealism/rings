@@ -200,7 +200,6 @@ public class ImageCanvas extends JPanel {
 			
 			out.println("P3");
 			
-			out.println(image.length + " " + image[0].length);
 			out.println("255");
 			
 			for (int j = 0; j < image[0].length; j++) {
