@@ -17,6 +17,7 @@
 package org.almostrealism.texture;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Map;
  * 
  * @author  Michael Murray
  */
-public class ImageLayers implements ImageSource {
+public class ImageLayers implements ImageSource, Layered<ImageSource> {
 	private HashMap<String, ImageSource> layers;
 	
 	public ImageLayers() {
@@ -56,4 +57,7 @@ public class ImageLayers implements ImageSource {
 
 	@Override
 	public boolean isAlpha() { return layers.values().iterator().next().isAlpha(); }
+
+	@Override
+	public Iterator<ImageSource> iterator() { return layers.values().iterator(); }
 }
