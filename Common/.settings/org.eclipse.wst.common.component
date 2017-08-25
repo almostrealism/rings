@@ -2,5 +2,6 @@
     <wb-module deploy-name="Common">
         <wb-resource deploy-path="/" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/ui"/>
+        <wb-resource deploy-path="/" source-path="/world"/>
     </wb-module>
 </project-modules>

@@ -61,30 +61,22 @@ public class DiffuseShader implements Shader, Editable {
 		return color;
 	}
 	
-	/**
-	 * Returns a zero length array.
-	 */	
+	/** Returns a zero length array. */	
 	public String[] getPropertyNames() { return new String[0]; }
 	
-	/**
-	 * Returns a zero length array.
-	 */
+	/** Returns a zero length array. */
 	public String[] getPropertyDescriptions() { return new String[0]; }
 	
-	/**
-	 * Returns a zero length array.
-	 */
+	/** Returns a zero length array. */
 	public Class[] getPropertyTypes() { return new Class[0]; }
 	
-	/**
-	 * Returns a zero length array.
-	 */
+	/** Returns a zero length array. */
 	public Object[] getPropertyValues() { return new Object[0]; }
 	
-	/**
-	 * @throws IndexOutOfBoundsException
-	 */
-	public void setPropertyValue(Object value, int index) { throw new IndexOutOfBoundsException("Index out of bounds: " + index); }
+	/** @throws IndexOutOfBoundsException */
+	public void setPropertyValue(Object value, int index) {
+		throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+	}
 	
 	/**
 	 * Does nothing.
@@ -96,13 +88,9 @@ public class DiffuseShader implements Shader, Editable {
 	 */
 	public Producer[] getInputPropertyValues() { return new Producer[0]; }
 	
-	/**
-	 * Does nothing.
-	 */
+	/** Does nothing. */
 	public void setInputPropertyValue(int index, Producer p) {}
 	
-	/**
-	 * Returns "Diffuse Shader".
-	 */
+	/** Returns "Diffuse Shader". */
 	public String toString() { return "Diffuse Shader"; }
 }
