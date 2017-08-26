@@ -4,8 +4,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.space.Vector;
 
 public class RayTracer {
 	private final ExecutorService pool = Executors.newFixedThreadPool(10);

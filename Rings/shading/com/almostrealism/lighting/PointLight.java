@@ -18,9 +18,9 @@ package com.almostrealism.lighting;
 
 import java.util.Collection;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;

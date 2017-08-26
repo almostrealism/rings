@@ -16,9 +16,9 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 
 /**
  * A Light implmentation provides lighting information used for rendering.

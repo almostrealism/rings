@@ -19,12 +19,12 @@ package com.almostrealism.rayshade;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;

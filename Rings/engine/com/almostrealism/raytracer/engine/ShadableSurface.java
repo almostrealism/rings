@@ -23,9 +23,9 @@
 package com.almostrealism.raytracer.engine;
 
 import org.almostrealism.space.Intersectable;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.space.Gradient;
-import org.almostrealism.space.Vector;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.rayshade.Shadable;

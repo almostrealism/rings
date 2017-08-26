@@ -18,7 +18,7 @@ package com.almostrealism.raytracer.ui;
 
 import javax.swing.AbstractListModel;
 
-import org.almostrealism.space.TransformMatrix;
+import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 

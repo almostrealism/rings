@@ -16,6 +16,8 @@
 
 package org.almostrealism.space;
 
+import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Scaled;

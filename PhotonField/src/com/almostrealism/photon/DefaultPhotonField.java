@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.util.Graph;
 
 import com.almostrealism.photon.util.PhysicalConstants;

@@ -16,11 +16,11 @@
 
 package com.almostrealism.raytracer.engine;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 
 public class RayMarchingEngine implements RayTracer.Engine {
 	public static final int MAX_RAY_STEPS = 30;

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;

@@ -23,10 +23,10 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 

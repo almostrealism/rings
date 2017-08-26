@@ -27,7 +27,7 @@ package com.almostrealism.photon;
 import java.lang.Math;
 import java.util.ArrayList;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 
 import com.almostrealism.photon.Absorber;
 

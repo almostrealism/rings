@@ -16,11 +16,11 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 

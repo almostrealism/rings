@@ -27,9 +27,9 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;

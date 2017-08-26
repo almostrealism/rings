@@ -31,8 +31,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.BasicGeometry;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;

@@ -25,7 +25,7 @@
 
 package com.almostrealism.raytracer;
 
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;

@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Gradient;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.io.LinkedMatrix;
 import com.almostrealism.io.SpatialData;

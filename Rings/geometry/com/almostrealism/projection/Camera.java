@@ -16,7 +16,7 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.space.Ray;
+import org.almostrealism.algebra.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 /**

@@ -29,8 +29,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.dialogs.EditRGBDialog;
 import org.almostrealism.swing.dialogs.EditVectorDialog;

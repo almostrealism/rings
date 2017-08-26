@@ -23,7 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.almostrealism.space.TransformMatrix;
+import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;

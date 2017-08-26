@@ -18,8 +18,8 @@ package com.almostrealism.raytracer.graphics;
 
 import java.awt.Graphics;
 
-import org.almostrealism.space.TransformMatrix;
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;

@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Intersection;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.io.SpatialData;
 import com.almostrealism.rayshade.ShadableIntersection;
@@ -609,7 +609,7 @@ public class Mesh extends SpacePartition {
 	public Mesh triangulate() { return this; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.space.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.algebra.Ray)
 	 */
 	public synchronized boolean intersect(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersect(ray);
@@ -636,7 +636,7 @@ public class Mesh extends SpacePartition {
 	}
 
 	/**
-	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.space.Ray)
+	 * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
 	 */
 	public synchronized ShadableIntersection intersectAt(Ray ray) {
 		if (this.isTreeLoaded()) return super.intersectAt(ray);

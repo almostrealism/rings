@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 
 import com.almostrealism.photon.AbsorberHashSet;
 import com.almostrealism.photon.AbsorptionPlane;

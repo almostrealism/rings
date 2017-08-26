@@ -15,6 +15,7 @@
  */
 package org.almostrealism.space;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.uml.Function;
 
 /**

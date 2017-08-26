@@ -18,11 +18,11 @@ package com.almostrealism.rayshade;
 
 import java.util.concurrent.Future;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 

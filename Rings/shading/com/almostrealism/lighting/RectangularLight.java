@@ -16,9 +16,9 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.TransformMatrix;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.primitives.Plane;

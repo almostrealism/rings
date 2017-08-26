@@ -18,7 +18,7 @@ package com.almostrealism.gl.test;
 
 import javax.swing.JFrame;
 
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.Vector;
 import org.junit.Test;
 
 import com.almostrealism.gl.DefaultGLCanvas;

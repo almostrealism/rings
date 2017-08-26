@@ -16,10 +16,10 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
 

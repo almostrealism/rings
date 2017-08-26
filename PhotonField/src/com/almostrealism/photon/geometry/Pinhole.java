@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.geometry;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.Clock;

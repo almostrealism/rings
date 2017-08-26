@@ -16,9 +16,9 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Intersection;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShadableIntersection;
@@ -75,7 +75,7 @@ public class CSG extends AbstractSurface {
     /**
      * This method calls intersectAt to determine the value to return.
      * 
-     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.space.Ray)
+     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.algebra.Ray)
      */
     public boolean intersect(Ray ray) {
 		if (this.intersectAt(ray).getIntersections().length <= 0)
@@ -85,7 +85,7 @@ public class CSG extends AbstractSurface {
     }
 
     /**
-     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.space.Ray)
+     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
      */
     public ShadableIntersection intersectAt(Ray ray) {
     	ray.transform(this.getTransform(true).getInverse());

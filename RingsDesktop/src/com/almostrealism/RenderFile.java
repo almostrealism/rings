@@ -23,8 +23,8 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.ImageCanvas;

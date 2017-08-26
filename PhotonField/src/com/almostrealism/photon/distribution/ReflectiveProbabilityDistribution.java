@@ -16,8 +16,8 @@
 
 package com.almostrealism.photon.distribution;
 
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.space.Length;
-import org.almostrealism.space.VectorMath;
 
 public class ReflectiveProbabilityDistribution implements SphericalProbabilityDistribution, Length {
 	private double m = 1.0;

@@ -27,8 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;

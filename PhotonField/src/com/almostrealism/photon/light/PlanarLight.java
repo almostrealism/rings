@@ -16,10 +16,10 @@
 
 package com.almostrealism.photon.light;
 
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
-import org.almostrealism.space.VectorMath;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;

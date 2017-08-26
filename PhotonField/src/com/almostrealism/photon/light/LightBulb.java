@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.light;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.stats.ProbabilityDistribution;
 
 import com.almostrealism.photon.Absorber;

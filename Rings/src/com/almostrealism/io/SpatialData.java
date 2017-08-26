@@ -24,9 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Gradient;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.raytracer.Scene;

@@ -21,8 +21,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
-import org.almostrealism.space.TransformMatrix;
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.raytracer.engine.AbstractSurface;
 import com.almostrealism.raytracer.engine.ShadableSurface;

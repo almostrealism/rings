@@ -757,25 +757,25 @@ public class RayTracingJob implements Job, SceneLoader {
 			double nfl = ((PinholeCamera)camera).getFocalLength();
 			if (this.fl != -1) nfl = this.fl;
 			
-			org.almostrealism.space.Vector cd = (org.almostrealism.space.Vector)
+			org.almostrealism.algebra.Vector cd = (org.almostrealism.algebra.Vector)
 								((PinholeCamera)camera).getViewDirection().clone();
 			
 			if (this.cdz != 0 ||
 				this.cdy != 0 ||
 				this.cdz != 0) {
-				cd = new org.almostrealism.space.Vector(this.cdx, this.cdy, this.cdz);
+				cd = new org.almostrealism.algebra.Vector(this.cdx, this.cdy, this.cdz);
 			}
 			
-			org.almostrealism.space.Vector cl = (org.almostrealism.space.Vector)
+			org.almostrealism.algebra.Vector cl = (org.almostrealism.algebra.Vector)
 								((PinholeCamera)camera).getLocation().clone();
 			
 			if (this.clz != 0 ||
 					this.cly != 0 ||
 					this.clz != 0) {
-					cl = new org.almostrealism.space.Vector(this.clx, this.cly, this.clz);
+					cl = new org.almostrealism.algebra.Vector(this.clx, this.cly, this.clz);
 				}
 			
-			camera = new PinholeCamera(cl, cd, new org.almostrealism.space.Vector(0.0, 1.0, 0.0),
+			camera = new PinholeCamera(cl, cd, new org.almostrealism.algebra.Vector(0.0, 1.0, 0.0),
 										nfl, npw, nph);
 		}
 		

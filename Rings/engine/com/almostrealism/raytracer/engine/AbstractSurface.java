@@ -22,13 +22,13 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.Intersection;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.rayshade.DiffuseShader;

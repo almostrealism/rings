@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.geometry;
 
-import org.almostrealism.space.VectorMath;
+import org.almostrealism.algebra.VectorMath;
 
 public class Elipse {
 	private static double center[], major[], minor[];

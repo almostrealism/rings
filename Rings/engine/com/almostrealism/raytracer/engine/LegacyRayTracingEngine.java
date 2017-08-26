@@ -22,8 +22,8 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.Collection;
 
+import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Ray;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 

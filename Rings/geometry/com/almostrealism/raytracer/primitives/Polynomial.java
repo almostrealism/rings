@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytracer.primitives;
 
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;

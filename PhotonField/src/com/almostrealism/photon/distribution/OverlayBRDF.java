@@ -18,8 +18,8 @@ package com.almostrealism.photon.distribution;
 
 import java.lang.reflect.Method;
 
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.space.Length;
-import org.almostrealism.space.VectorMath;
 import org.almostrealism.util.Nameable;
 
 /**

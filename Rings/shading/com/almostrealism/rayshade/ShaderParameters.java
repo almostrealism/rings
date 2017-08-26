@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,17 @@ package com.almostrealism.rayshade;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Vector;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
-
 /**
  * A {@link ShaderParameters} object stores parameters needed by most {@link Shader} implementations.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class ShaderParameters {
 	private ShadableIntersection intersection;

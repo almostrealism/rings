@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package com.almostrealism.rayshade;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
-import org.almostrealism.space.Ray;
-import org.almostrealism.space.Vector;
 
 /**
  * Extends {@link Intersection} to provide metadata that is required for shading.
@@ -55,9 +55,7 @@ public class ShadableIntersection extends Intersection {
 		}
 	}
 	
-	/**
-	 * Returns the normal vector at the point that is the nearest intersection.
-	 */
+	/** Returns the normal vector at the point that is the nearest intersection. */
 	public Vector getNormal() { return getNormal(nearestIndex); }
 	
 	public Vector getNormal(int index) { return normals.get(index); }
