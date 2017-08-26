@@ -61,14 +61,10 @@ public class RefractionShader implements Shader, Editable {
   
   private int entered, exited;
 
-	/**
-	 * Constructs a new RefractionShader object.
-	 */
+	/** Constructs a new RefractionShader object. */
 	public RefractionShader() {}
 	
-	/**
-	 * Method specified by the Shader interface.
-	 */
+	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderParameters p) {
 		p.addReflection();
 		
@@ -80,7 +76,7 @@ public class RefractionShader implements Shader, Editable {
 				po.getX() * po.getX() + po.getY() * po.getY() + po.getZ() * po.getZ() - 1.0 > 0.01)
 			System.out.println(po);
 		
-		Vector n = p.getIntersection().getNormal();
+		Vector n = p.getIntersection().getNormal().getDirection();
 		n = n.divide(n.length());
 		
 		if (p.getSurface().getShadeFront()) {

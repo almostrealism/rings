@@ -43,7 +43,7 @@ public class DiffuseShader implements Shader, Editable {
 	public ColorProducer shade(ShaderParameters p) {
 		ColorProducer lightColor = p.getLight().getColorAt(p.getIntersection().getPoint());
 		
-		Vector n = p.getIntersection().getNormal();
+		Vector n = p.getIntersection().getNormal().getDirection();
 		ColorProducer surfaceColor = p.getSurface().getColorAt(p.getIntersection().getPoint());
 		
 		ColorSum color = new ColorSum();
