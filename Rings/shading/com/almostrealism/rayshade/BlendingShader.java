@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -59,8 +60,16 @@ public class BlendingShader implements Shader, Editable {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
-	public ColorProducer shade(ShaderParameters p) {
-		Vector n = p.getIntersection().getNormal().getDirection();
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+		Vector n;
+		
+		try {
+			n = normals.iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		Vector l = p.getLightDirection();
 		
 		double k = (1.0 + n.dotProduct(l));

@@ -18,6 +18,7 @@ package com.almostrealism.rayshade;
 
 import java.util.concurrent.Future;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
@@ -40,10 +41,18 @@ public class DiffuseShader implements Shader, Editable {
 	public DiffuseShader() { }
 	
 	/** Method specified by the {@link Shader} interface. */
-	public ColorProducer shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
 		ColorProducer lightColor = p.getLight().getColorAt(p.getIntersection().getPoint());
 		
-		Vector n = p.getIntersection().getNormal().getDirection();
+		Vector n;
+		
+		try {
+			n = normals.iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		ColorProducer surfaceColor = p.getSurface().getColorAt(p.getIntersection().getPoint());
 		
 		ColorSum color = new ColorSum();

@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.ColorProducer;
 
 /**
@@ -27,5 +28,5 @@ public interface Shader {
 	 * shaded color calculated using the values of the specified
 	 * {@link ShaderParameters} object.
 	 */
-	public ColorProducer shade(ShaderParameters parameters);
+	public ColorProducer shade(ShaderParameters parameters, DiscreteField normals);
 }

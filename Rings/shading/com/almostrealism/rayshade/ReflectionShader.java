@@ -19,6 +19,7 @@ package com.almostrealism.rayshade;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
@@ -75,10 +76,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		this.setBlur(0.0);
 	}
 	
-	/**
-	 * Method specified by the Shader interface.
-	 */
-	public ColorProducer shade(ShaderParameters p) {
+	/** Method specified by the Shader interface. */
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections)
 			return this.reflectiveColor.evaluate(new Object[] {p})
 					.multiply(p.getSurface().getColorAt(p.getIntersection().getPoint()).evaluate(null));
@@ -95,14 +94,22 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		
 		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
 		
-		Vector n = p.getIntersection().getNormal().getDirection();
+		Vector n;
+		
+		try {
+			n = normals.iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
 		
 		ColorSum totalColor = new ColorSum();
 		
 		ColorProducer r = this.getReflectiveColor();
-		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p));
+		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
 		
 		f: if (p.getSurface().getShadeFront()) {
 			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getViewerDirection(), n);

@@ -124,7 +124,7 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 		ColorSum color = new ColorSum();
 		
 		if (super.getShaderSet() != null)
-			color.add(super.getShaderSet().shade(p));
+			color.add(super.getShaderSet().shade(p, p.getIntersection()));
 		
 		if (super.getParent() != null)
 			color.add((Future) super.getParent().shade(p));

@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
@@ -57,10 +58,18 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	}
 	
 	/** Method specified by the Shader interface. */
-	public ColorProducer shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
 		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
 		
-		Vector n = p.getIntersection().getNormal().getDirection();
+		Vector n;
+		
+		try {
+			n = normals.iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		n.divideBy(n.length());
 		Vector h = p.getIntersection().getViewerDirection().add(p.getLightDirection());
 		h = h.divide(h.length());
@@ -68,7 +77,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		ColorSum color = new ColorSum();
 		
 		ColorProducer hc = this.getHighlightColor().evaluate(new Object[] {p});
-		if (super.size() > 0) hc = new ColorMultiplier(hc, super.shade(p));
+		if (super.size() > 0) hc = new ColorMultiplier(hc, super.shade(p, normals));
 		
 		if (p.getSurface().getShadeFront()) {
 			double c = h.dotProduct(n);

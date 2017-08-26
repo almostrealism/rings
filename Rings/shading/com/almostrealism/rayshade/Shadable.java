@@ -17,14 +17,13 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.RGB;
 
 /**
  * @author  Michael Murray
  */
 public interface Shadable {
 	/**
-	 * Returns an {@link RGB} object representing the color of this surface at the specified
+	 * Returns a {@link ColorProducer} representing the color of this surface at the specified
 	 * point based on the specified parameters.
 	 *
 	 * @see Shader

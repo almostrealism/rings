@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.util.Editable;
@@ -50,7 +51,7 @@ public class SilhouetteShader implements Editable, Shader {
 	/**
 	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
 	 */
-	public ColorProducer shade(ShaderParameters p) { return this.color.evaluate(new Object[] {p}); }
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
 	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])

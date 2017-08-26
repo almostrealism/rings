@@ -18,6 +18,7 @@ package com.almostrealism.rayshade;
 
 import java.util.List;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -65,7 +66,7 @@ public class RefractionShader implements Shader, Editable {
 	public RefractionShader() {}
 	
 	/** Method specified by the Shader interface. */
-	public ColorProducer shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
 		p.addReflection();
 		
 		ColorSum color = new ColorSum();
@@ -76,7 +77,15 @@ public class RefractionShader implements Shader, Editable {
 				po.getX() * po.getX() + po.getY() * po.getY() + po.getZ() * po.getZ() - 1.0 > 0.01)
 			System.out.println(po);
 		
-		Vector n = p.getIntersection().getNormal().getDirection();
+		Vector n;
+		
+		try {
+			n = normals.iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 		n = n.divide(n.length());
 		
 		if (p.getSurface().getShadeFront()) {

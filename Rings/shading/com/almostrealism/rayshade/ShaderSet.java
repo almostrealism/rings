@@ -19,21 +19,22 @@ package com.almostrealism.rayshade;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 
 /**
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class ShaderSet extends HashSet<Shader> implements Shader {
     /**
      * @return  The sum of the values given by the shade method for each Shader object stored by this ShaderSet object.
      */
-    public ColorProducer shade(ShaderParameters p) {
+    public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
         ColorSum color = new ColorSum();
         
         Iterator<Shader> itr = super.iterator();
-        while (itr.hasNext()) color.add(itr.next().shade(p));
+        while (itr.hasNext()) color.add(itr.next().shade(p, normals));
         
         return color;
     }

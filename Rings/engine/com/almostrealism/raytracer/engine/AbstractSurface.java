@@ -489,7 +489,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 		ColorSum color = new ColorSum();
 		
 		if (this.shaders != null)
-			color.add(this.shaders.shade(p));
+			color.add(this.shaders.shade(p, p.getIntersection()));
 		
 		if (this.getParent() != null)
 			color.add((Future) this.getParent().shade(p));
