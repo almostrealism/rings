@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,13 @@
 
 package org.almostrealism.algebra;
 
-
-
 /**
-  A {@link TransformMatrix} object represents a 4 X 4 matrix used for transforming vectors.
-  A {@link TransformMatrix} object stores 16 double values for the matrix data and provides
-  methods for transforming
-  varius types of vectors. The TransformMatrix class also provides some static methods that generate
-  certain useful matracies.
-*/
-public class TransformMatrix {
+ * A {@link TransformMatrix} object represents a 4 X 4 matrix used for transforming vectors.
+ * A {@link TransformMatrix} object stores 16 double values for the matrix data and provides
+ * methods for transforming varius types of vectors. The TransformMatrix class also provides
+ * some static methods that generate certain useful matrices.
+ */
+public class TransformMatrix implements TripleFunction<Vector> {
   public static final int TRANSFORM_AS_LOCATION = 1;
   public static final int TRANSFORM_AS_OFFSET = 2;
   public static final int TRANSFORM_AS_NORMAL = 4;
@@ -78,7 +75,8 @@ public class TransformMatrix {
 	
 	/**
 	 * Sets the 16 values stored by this TransformMatrix to those specified.
-	 * Any extra array entries are removed and missing array entries are replaced with 0.0.
+	 * Any extra array entries are removed and missing array entries are
+	 * replaced with 0.0.
 	 */
 	public void setMatrix(double matrix[][]) {
 		double newMatrix[][] = new double[4][4];
@@ -111,9 +109,9 @@ public class TransformMatrix {
 	}
 	
 	/**
-	  Multiplys the matrix represented by this TransformMatrix object with the specified double value and returns the result as a TransformMatrix object.
-	*/
-	
+	 * Multiplys the matrix represented by this TransformMatrix object with the specified
+	 * double value and returns the result as a TransformMatrix object.
+	 */
 	public TransformMatrix multiply(double value) {
 		double newMatrix[][] = new double[4][4];
 		
@@ -127,10 +125,10 @@ public class TransformMatrix {
 	}
 	
 	/**
-	  Multiplys the matrix represented by this TransformMatrix object with the matrix represented by the specified TransformMatrix object
-	  and returns the result as a TransformMatrix object.
-	*/
-	
+	 * Multiplys the matrix represented by this TransformMatrix object with the matrix
+	 * represented by the specified TransformMatrix object and returns the result as a
+	 * TransformMatrix object.
+	 */
 	public TransformMatrix multiply(TransformMatrix matrix) {
 		double product[][] = new double[4][4];
 		
@@ -144,6 +142,14 @@ public class TransformMatrix {
 		}
 		
 		return new TransformMatrix(product);
+	}
+	
+	/**
+	 * Delegates to {@link #transformAsOffset(Vector)}.
+	 */
+	@Override
+	public Vector operate(Vector in) {
+		return transformAsOffset(in);
 	}
 	
 	public void transform(Vector vector, int type) {

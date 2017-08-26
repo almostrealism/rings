@@ -142,6 +142,6 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	
 	@Override
 	public double estimateDistance(Ray r) {
-		return r.getOrigin().subtract(getLocation()).length();
+		return r.getOrigin().subtract(getLocation()).length() - getSize();
 	}
 }

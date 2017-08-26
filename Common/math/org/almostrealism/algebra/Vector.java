@@ -21,7 +21,7 @@ import org.almostrealism.util.Defaults;
 /**
  * A Vector object represents a 3d vector. It stores three coordinates, x, y, z.
  */
-public class Vector implements Cloneable {
+public class Vector implements Triple, Cloneable {
   public static final int CARTESIAN_COORDINATES = 0;
   public static final int SPHERICAL_COORDINATES = 1;
   
@@ -103,6 +103,24 @@ public class Vector implements Cloneable {
 	 * Returns the Z coordinate of this Vector object.
 	 */
 	public double getZ() { return this.z; }
+	
+	@Override
+	public double getA() { return getX(); }
+
+	@Override
+	public double getB() { return getY(); }
+
+	@Override
+	public double getC() { return getZ(); }
+
+	@Override
+	public void setA(double a) { setX(a); }
+
+	@Override
+	public void setB(double b) { setY(b); }
+
+	@Override
+	public void setC(double c) { setZ(c); }
 	
 	/**
 	 * Returns the opposite of the vector represented by this Vector object.
