@@ -45,13 +45,6 @@ public class LegacyRayTracingEngine {
   public static boolean castShadows = true;
   
   /**
-   * Controls whether the color of a point light source will be adjusted based on the
-   * intensity of the point light or whether this will be left up to the shader.
-   * By default set to true.
-   */
-  public static boolean premultiplyIntensity = true;
-  
-  /**
    * This value will be set to true when a render method starts
    * and false when all render methods end.
    */

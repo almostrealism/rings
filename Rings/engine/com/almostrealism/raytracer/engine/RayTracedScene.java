@@ -19,6 +19,14 @@ import io.almostrealism.lambda.Realization;
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters> {
 	private RayTracer tracer;
 	private Camera camera;
+	
+	/**
+	 * Controls whether the color of a point light source will be adjusted based on the
+	 * intensity of the point light or whether this will be left up to the shader.
+	 * By default set to true.
+	 */
+	public static boolean premultiplyIntensity = true;
+	
 	public static RGB black = new RGB(0.0, 0.0, 0.0);
 	
 	public RayTracedScene(RayTracer.Engine t, Camera c) {
@@ -33,7 +41,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		for (int i = p.x; i < (p.x + p.dx); i++) {
 			for (int j = p.y; j < (p.y + p.dy); j++) {
 				for (int k = 0; k < p.ssWidth; k++)
-				l: for (int l = 0; l < p.ssHeight; l++) {
+				for (int l = 0; l < p.ssHeight; l++) {
 					double r = i + ((double) k / (double) p.ssWidth);
 					double q = j + ((double) l / (double) p.ssHeight);
 					

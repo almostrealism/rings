@@ -79,9 +79,9 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 				
 				if (allLights[i] instanceof SurfaceLight) {
 					c = lightingCalculation(intersect, intersect.getPoint(),
-							r.getDirection(), surf, otherSurf, ((SurfaceLight)allLights[i]).getSamples(), p);
+							r.getDirection(), surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
 				} else if (allLights[i] instanceof PointLight) {
-					Vector direction = intersect.getPoint().subtract(((PointLight)allLights[i]).getLocation());
+					Vector direction = intersect.getPoint().subtract(((PointLight) allLights[i]).getLocation());
 					DirectionalAmbientLight directionalLight =
 						new DirectionalAmbientLight(1.0, allLights[i].getColorAt(intersect.getPoint()).evaluate(null), direction);
 					
@@ -219,7 +219,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * interesection on that surface using the lighting data from the specified Light object
+	 * intersection on that surface using the lighting data from the specified Light object
 	 * and returns an RGB object that represents the color of the point. A list of all other
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
@@ -236,43 +236,42 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 			return new RGB(0.0, 0.0, 0.0);
 		
 		if (light instanceof SurfaceLight) {
-			Light l[] = ((SurfaceLight)light).getSamples();
+			Light l[] = ((SurfaceLight) light).getSamples();
 			return lightingCalculation(intersection, point, rayDirection,
 														surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
 			return PointLight.pointLightingCalculation(intersection, point,
 															rayDirection, surface,
-															otherSurfaces, (PointLight)light, otherLights, p);
+															otherSurfaces, (PointLight) light, otherLights, p);
 		} else if (light instanceof DirectionalAmbientLight) {
 			return DirectionalAmbientLight.directionalAmbientLightingCalculation(
 															intersection, point,
 															rayDirection, surface,
 															otherSurfaces,
-															(DirectionalAmbientLight)light, otherLights, p);
+															(DirectionalAmbientLight) light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
 			return AmbientLight.ambientLightingCalculation(point, rayDirection,
 																surface, otherSurfaces,
-																(AmbientLight)light);
+																(AmbientLight) light);
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
 		}
 	}
 	
 	/**
-	  Performs the shadow calculations for the specified surfaces at the specified point using the data from the specified Light object.
-	  Returns true if the point has a shadow cast on it.
-	*/
-	
+	 * Performs the shadow calculations for the specified surfaces at the specified point using the data
+	 * from the specified Light object. Returns true if the point has a shadow cast on it.
+	 */
 	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterable<? extends Intersectable<T>> surfaces, Light light) {
 		double maxDistance = -1.0;
 		Vector direction = null;
 		
 		if (light instanceof PointLight) {
-			direction = ((PointLight)light).getLocation().subtract(point);
+			direction = ((PointLight) light).getLocation().subtract(point);
 			direction = direction.divide(direction.length());
 			maxDistance = direction.length();
 		} else if (light instanceof DirectionalAmbientLight) {
-			direction = ((DirectionalAmbientLight)light).getDirection().minus();
+			direction = ((DirectionalAmbientLight) light).getDirection().minus();
 		} else {
 			return false;
 		}
@@ -305,16 +304,14 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	 */
 	public static Vector reflect(Vector vector, Vector normal) {
 		vector = vector.minus();
-		Vector reflected = vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
-		
-		return reflected;
+		return vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
 	}
 	
 	/**
 	 * Refracts the specified Vector object based on the specified normal vector and 2 specified indices of refraction.
 	 * 
 	 * @param vector  A Vector object representing a unit vector in the direction of the incident ray
-	 * @param normal  A Vector object respresenting a unit vector that is normal to the surface refracting the ray
+	 * @param normal  A Vector object representing a unit vector that is normal to the surface refracting the ray
 	 * @param ni  A double value representing the index of refraction of the incident medium
 	 * @param nr  A double value representing the index of refraction of the refracting medium
 	 */

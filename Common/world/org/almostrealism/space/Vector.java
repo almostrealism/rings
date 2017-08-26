@@ -231,12 +231,13 @@ public class Vector implements Cloneable {
 	}
 	
 	/**
-	 * Returns an integer hash code value for this Vector object obtained by adding all 3 components and casting to an int.
+	 * Returns an integer hash code value for this Vector object obtained by adding all 3
+	 * components and casting to an int.
 	 */
 	public int hashCode() {
 		double value = this.getX() + this.getY() + this.getZ();
 		
-		return (int)value;
+		return (int) value;
 	}
 	
 	/**
