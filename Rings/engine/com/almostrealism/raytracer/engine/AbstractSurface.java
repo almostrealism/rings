@@ -47,7 +47,7 @@ import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
  * 
  * @author  Michael Murray
  */
-public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface, DistanceEstimator {
+public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface {
 	private boolean shadeFront, shadeBack;
 
 	private RGB color;
@@ -469,14 +469,6 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	 * Returns a {@link Set} that maintains the {@link Shader} objects stored by this AbstractSurface.
 	 */
 	public ShaderSet getShaderSet() { return this.shaders; }
-	
-	/**
-	 * Delegates to {@link Intersection#getClosestIntersection()} for the {@link Intersection}
-	 * returned by {@link #intersectAt(Ray)}.
-	 */
-	public double estimateDistance(Ray r) {
-		return intersectAt(r).getClosestIntersection();
-	}
 	
 	/**
 	 * Calculates a color value for this {@link AbstractSurface} using the sum of the values

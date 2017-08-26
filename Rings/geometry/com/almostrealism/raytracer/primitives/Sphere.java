@@ -19,6 +19,7 @@ package com.almostrealism.raytracer.primitives;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.Intersection;
 
 import com.almostrealism.rayshade.ShadableIntersection;
@@ -29,7 +30,7 @@ import com.almostrealism.raytracer.engine.AbstractSurface;
 /**
  * A Sphere represents a primitive sphere in 3d space.
  */
-public class Sphere extends AbstractSurface {
+public class Sphere extends AbstractSurface implements DistanceEstimator {
 	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
 	public Sphere() { }
 	
@@ -137,5 +138,10 @@ public class Sphere extends AbstractSurface {
 		t[1] = (-b - discriminantSqrt) / (g);
 		
 		return new ShadableIntersection(ray, this, t);
+	}
+	
+	@Override
+	public double estimateDistance(Ray r) {
+		return r.getOrigin().subtract(getLocation()).length();
 	}
 }

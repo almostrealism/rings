@@ -22,13 +22,17 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
 
+import com.almostrealism.rayshade.ShaderSet;
+
 public class RayMarchingEngine implements RayTracer.Engine {
 	public static final int MAX_RAY_STEPS = 30;
 	
 	private DistanceEstimator estimator;
+	private ShaderSet shaders;
 	
-	public RayMarchingEngine(DistanceEstimator e) {
+	public RayMarchingEngine(DistanceEstimator e, ShaderSet shaders) {
 		this.estimator = e;
+		this.shaders = shaders;
 	}
 	
 	public ColorProducer trace(Vector from, Vector direction) {
