@@ -24,9 +24,8 @@ import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.raytracer.engine.AbstractSurface;
 
 /**
-  A PointLightGrid object stores a grid of PointLight objects.
-*/
-
+ * A {@link PointLightGrid} object stores a grid of {@link PointLight} objects.
+ */
 public class PointLightGrid extends AbstractSurface implements Light {
   private double intensity;
   private RGB color;

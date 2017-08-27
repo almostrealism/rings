@@ -22,9 +22,13 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import javax.security.auth.callback.Callback;
+
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorProducerAdapter;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
@@ -540,4 +544,37 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 		
 		return colorAt;
 	}
+	
+	public ColorProducer call() {
+		return new ColorProducerAdapter() {
+			@Override
+			public RGB evaluate(Object[] args) {
+				Vector point =  (Vector) args[0];
+			    point = getTransform(true).getInverse().transformAsLocation(point);
+			    
+			    RGB colorAt = new RGB(0.0, 0.0, 0.0);
+			    
+			    if (textures.length > 0) {
+			        for (int i = 0; i < textures.length; i++) {
+			            colorAt.addTo(textures[i].getColorAt(point));
+			        }
+			        
+			        colorAt.multiplyBy(color);
+			    } else {
+			        colorAt = (RGB) color.clone();
+			    }
+			    
+			    // TODO  Return color multiplier
+			    if (parent != null)
+			        colorAt.multiplyBy(parent.getColorAt(point).evaluate(null));
+				
+				return colorAt;
+			}
+		};
+	}
+	
+	/**
+	 * Delegates to  {#getNormalAt(Vector)}
+	 */
+	public Vector operate(Triple p) { return getNormalAt(new Vector(p.getA(), p.getB(), p.getC())); }
 }

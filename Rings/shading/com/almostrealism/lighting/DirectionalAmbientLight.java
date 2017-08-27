@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -87,7 +88,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	}
 
 	/**
-	 * Performs the lighting calculations for the specified surface at the specified point of interesection
+	 * Performs the lighting calculations for the specified surface at the specified point of intersection
 	 * on that surface using the lighting data from the specified DirectionalAmbientLight object and returns
 	 * an RGB object that represents the color of the point. A list of all other surfaces in the scene must
 	 * be specified for reflection/shadowing. This list does not include the specified surface for which
@@ -108,7 +109,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	public static ColorProducer directionalAmbientLightingCalculation(ShadableIntersection intersection, Vector point,
 														Vector rayDirection,
 														ShadableSurface surface,
-														Collection<ShadableSurface> otherSurfaces, DirectionalAmbientLight light,
+														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
 														Light otherLights[], ShaderParameters p) {
 		ColorProducer color = null;
 		

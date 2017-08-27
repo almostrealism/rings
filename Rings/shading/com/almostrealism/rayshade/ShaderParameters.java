@@ -18,8 +18,11 @@ package com.almostrealism.rayshade;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
+import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.lighting.Light;
@@ -37,8 +40,8 @@ public class ShaderParameters {
 	private Vector lightDirection;
 	private Light light;
 	private Light otherLights[];
-	private ShadableSurface surface;
-	private ShadableSurface otherSurfaces[];
+	private Callable<ColorProducer> surface;
+	private Callable<ColorProducer> otherSurfaces[];
 	
 	public RGB fogColor;
 	public double fogRatio, fogDensity;
@@ -57,12 +60,12 @@ public class ShaderParameters {
 	 * @param surface  Surface object to be shaded.
 	 */
 	public ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
-							Light otherLights[], Collection<ShadableSurface> otherSurfaces) {
-		this(intersection, lightDirection, light, otherLights, otherSurfaces.toArray(new ShadableSurface[0]));
+							Light otherLights[], Collection<Callable<ColorProducer>> otherSurfaces) {
+		this(intersection, lightDirection, light, otherLights, otherSurfaces.toArray(new Callable[0]));
 	}
 	
 	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
-			Light otherLights[], ShadableSurface otherSurfaces[]) {
+			Light otherLights[], Callable<ColorProducer> otherSurfaces[]) {
 		this(intersection, lightDirection, light, otherLights, null, otherSurfaces);
 	}
 	
@@ -76,7 +79,7 @@ public class ShaderParameters {
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
 	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
-			Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[]) {
+			Light otherLights[], Callable<ColorProducer> surface, Callable<ColorProducer> otherSurfaces[]) {
 		this.intersection = intersection;
 		this.lightDirection = lightDirection;
 		this.light = light;
@@ -130,12 +133,9 @@ public class ShaderParameters {
 	/**
 	 * @param surface  The new Surface object.
 	 */
-	public void setSurface(ShadableSurface surface) { this.surface = surface; }
+	public void setSurface(Callable<ColorProducer> surface) { this.surface = surface; }
 	
-	/**
-	 * @return  The Surface object to be shaded.
-	 */
-	public ShadableSurface getSurface() { return this.surface; }
+	public Callable<ColorProducer> getSurface() { return this.surface; }
 	
 	/**
 	 * Sets the other Surfaces to those stored in the specified array.
@@ -149,14 +149,14 @@ public class ShaderParameters {
 	 * 
 	 * @param s  Array of Surface objects to use.
 	 */
-	public void setOtherSurfaces(Collection<ShadableSurface> s) {
-		this.otherSurfaces = s.toArray(new ShadableSurface[0]);
+	public void setOtherSurfaces(Collection<Callable<ColorProducer>> s) {
+		this.otherSurfaces = (Callable<ColorProducer>[]) s.toArray(new Callable[0]);
 	}
 	
 	/**
 	 * @return  An array of other Surface objects in the scene.
 	 */
-	public ShadableSurface[] getOtherSurfaces() { return this.otherSurfaces; }
+	public Callable<ColorProducer>[] getOtherSurfaces() { return this.otherSurfaces; }
 	
 	public Light[] getAllLights() {
 		Light l[] = new Light[this.otherLights.length + 1];
@@ -183,13 +183,13 @@ public class ShaderParameters {
 	/** Adds one to the reflection count stored by this ShaderParameters object. */
 	public void addReflection() { this.refCount++; }
 	
-	/** Adds one to the reflection count and the enterance count. */
-	public void addEnterance() { this.enter++; this.refCount++; }
+	/** Adds one to the reflection count and the entrance count. */
+	public void addEntrance() { this.enter++; this.refCount++; }
 	
 	/**
 	 * Adds one to the reflection count and the exit count.
 	 * This method may result in a random warning if exit count
-	 * is greater than enterance count.
+	 * is greater than entrance count.
 	 */
 	public void addExit() {
 		this.exit++; this.refCount++;

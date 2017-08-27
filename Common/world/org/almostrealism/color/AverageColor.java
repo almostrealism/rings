@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.almostrealism.algebra.Triple;
 
-public class AverageColor implements ColorProducer {
+public class AverageColor extends ColorProducerAdapter {
 	private static class Color {
 		double p;
 		RGB c;
@@ -60,7 +60,4 @@ public class AverageColor implements ColorProducer {
 		
 		return c;
 	}
-	
-	@Override
-	public RGB operate(Triple in) { return evaluate(new Triple[] { in }); }
 }

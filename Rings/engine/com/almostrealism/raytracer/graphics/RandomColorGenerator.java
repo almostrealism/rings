@@ -17,12 +17,13 @@
 package com.almostrealism.raytracer.graphics;
 
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorProducerAdapter;
 import org.almostrealism.color.RGB;
 
 /**
  * @author Mike Murray
  */
-public class RandomColorGenerator implements ColorProducer {
+public class RandomColorGenerator extends ColorProducerAdapter {
  private ColorProducer baseRGB, offsetRGB;
  
 	public RandomColorGenerator() {

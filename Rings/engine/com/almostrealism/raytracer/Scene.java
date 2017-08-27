@@ -18,9 +18,13 @@ package com.almostrealism.raytracer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.space.Gradient;
+import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.SurfaceList;
 
 import com.almostrealism.lighting.Light;
@@ -143,16 +147,17 @@ public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
 		return allSurfaces;
 	}
 	
-	public static List<ShadableSurface> combineSurfaces(ShadableSurface surface, ShadableSurface otherSurfaces[]) {
-		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
-		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
+	public static List<Callable<ColorProducer>> combineSurfaces(ShadableSurface surface,
+										Iterator<Callable<ColorProducer>> otherSurfaces) {
+		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
+		while (otherSurfaces.hasNext()) { allSurfaces.add(otherSurfaces.next()); }
 		allSurfaces.add(surface);
 		return allSurfaces;
 	}
 	
-	public static List<ShadableSurface> combineSurfaces(ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces) {
-		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
-		for (ShadableSurface s : otherSurfaces) { allSurfaces.add(s); }
+	public static List<Callable<ColorProducer>> combineSurfaces(Callable<ColorProducer> surface, Iterable<? extends Callable<ColorProducer>> otherSurfaces) {
+		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
+		for (Callable<ColorProducer> s : otherSurfaces) { allSurfaces.add(s); }
 		allSurfaces.add(surface);
 		return allSurfaces;
 	}

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.StripeTexture;
@@ -82,6 +83,9 @@ public class RenderDemo {
 	
 				public RGB getColorAt(Vector point, Object args[]) { return this.getColorAt(point); }
 				public RGB evaluate(Object args[]) { return this.getColorAt((Vector) args[0]); }
+				
+				@Override
+				public RGB operate(Triple in) { return evaluate(new Triple[] { in }); }
 			};
 			
 			s.addTexture(randomTex);

@@ -18,6 +18,9 @@ package com.almostrealism.rayshade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
@@ -33,6 +36,7 @@ import org.almostrealism.util.Producer;
 import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RayIntersectionEngine;
+import com.almostrealism.raytracer.engine.RayTracer;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -78,13 +82,23 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 	
 	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
-		if (p.getReflectionCount() > ReflectionShader.maxReflections)
-			return this.reflectiveColor.evaluate(new Object[] {p})
-					.multiply(p.getSurface().getColorAt(p.getIntersection().getPoint()).evaluate(null));
+		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
+			Future<ColorProducer> f = RayTracer.getExecutorService().submit(p.getSurface());
+			
+			ColorProducer prod;
+			try {
+				prod = f.get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+				prod = new RGB(0.0, 0.0, 0.0);
+			}
+			
+			return this.reflectiveColor.evaluate(new Object[] {p}).multiply(prod.operate(p.getIntersection().getPoint()).evaluate(null));
+		}
 		
 		p.addReflection();
 		
-		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
+		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
 		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces.add(p.getOtherSurfaces()[i]); }
 		allSurfaces.add(p.getSurface());
 		
@@ -111,7 +125,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		ColorProducer r = this.getReflectiveColor();
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
 		
-		f: if (p.getSurface().getShadeFront()) {
+		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getViewerDirection(), n);
 			
 			if (this.blur != 0.0) {
@@ -161,7 +175,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			totalColor.add(color);
 		}
 		
-		b: if (p.getSurface().getShadeBack()) {
+		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = n.minus();
 			
 			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getViewerDirection(), n);

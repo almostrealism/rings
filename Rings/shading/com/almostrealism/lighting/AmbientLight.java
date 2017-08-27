@@ -94,7 +94,7 @@ public class AmbientLight implements Light {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, Iterable<? extends ShadableSurface> otherSurfaces, AmbientLight light) {
+	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, AmbientLight light) {
 		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
 		color = new ColorMultiplier(color, surface.getColorAt(point));
 		

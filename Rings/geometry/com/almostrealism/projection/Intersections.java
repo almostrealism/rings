@@ -17,6 +17,7 @@
 package com.almostrealism.projection;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.algebra.Ray;
@@ -31,18 +32,18 @@ import org.almostrealism.uml.Stateless;
  */
 @Stateless
 public class Intersections {
-
 	/**
 	 * Returns an Intersection object that represents the closest intersection
 	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface
 	 * objects and the ray represented by the specified Ray object. If there are
 	 * no intersections >= RayTracingEngine.e then null is returned.
 	 */
-	public static <T extends Intersection> T closestIntersection(Ray ray, Intersectable<T>... surfaces) {
+	public static <T extends Intersection> T closestIntersection(Ray ray, Iterator<Intersectable<T>> surfaces) {
 		List<Intersectable<T>> intersectables = new ArrayList<Intersectable<T>>();
-		for (int i = 0; i < surfaces.length; i++) intersectables.add(surfaces[i]);
+		while (surfaces.hasNext()) intersectables.add(surfaces.next());
 		return closestIntersection(ray, intersectables);
 	}
+	
 	/**
 	 * Returns an Intersection object that represents the closest intersection
 	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface
@@ -98,6 +99,36 @@ public class Intersections {
 		}
 		
 		return closestIntersection;
+	}
+	
+	public static Iterator filterIntersectables(Iterable it) {
+		Iterator itr = it.iterator();
+		
+		return new Iterator<Intersectable>() {
+			private Intersectable last;
+			private Intersectable next;
+			
+			{ next(); }
+			
+			@Override
+			public boolean hasNext() { return next != null; }
+
+			@Override
+			public Intersectable next() {
+				last = next;
+				
+				while (itr.hasNext()) {
+					Object o = itr.next();
+					if (o instanceof Intersectable) {
+						next = (Intersectable) o;
+						return last;
+					}
+				}
+				
+				next = null;
+				return last;
+			}
+		};
 	}
 
 }

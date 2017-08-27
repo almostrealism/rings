@@ -25,7 +25,7 @@ import org.almostrealism.uml.Function;
  * @author  Michael Murray
  */
 @Function
-public class ColorMultiplier implements ColorProducer {
+public class ColorMultiplier extends ColorProducerAdapter {
 	private ColorProducer color;
 	private ColorProducer multiplier;
 	
@@ -45,7 +45,4 @@ public class ColorMultiplier implements ColorProducer {
 				color.evaluate(args).getGreen() * multiplier.evaluate(args).getGreen(),
 				color.evaluate(args).getBlue() * multiplier.evaluate(args).getBlue());
 	}
-	
-	@Override
-	public RGB operate(Triple in) { return evaluate(new Triple[] { in }); }
 }

@@ -8,7 +8,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 
 public class RayTracer {
-	private final ExecutorService pool = Executors.newFixedThreadPool(10);
+	private static final ExecutorService pool = Executors.newFixedThreadPool(10);
 	
 	private Engine engine;
 	
@@ -25,4 +25,6 @@ public class RayTracer {
 	public static interface Engine {
 		public ColorProducer trace(Vector from, Vector direction);
 	}
+	
+	public static ExecutorService getExecutorService() { return pool; }
 }

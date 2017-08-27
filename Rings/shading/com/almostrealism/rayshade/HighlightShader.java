@@ -25,6 +25,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
+import com.almostrealism.raytracer.engine.ShadableSurface;
+
 /**
  * A HighlightShader object provides a shading method for highlights on surfaces.
  * The HighlightShader class uses a phong shading algorithm.
@@ -79,14 +81,14 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		ColorProducer hc = this.getHighlightColor().evaluate(new Object[] {p});
 		if (super.size() > 0) hc = new ColorMultiplier(hc, super.shade(p, normals));
 		
-		if (p.getSurface().getShadeFront()) {
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			double c = h.dotProduct(n);
 			c = Math.pow(c, this.getHighlightExponent());
 			
 			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
 		}
 		
-		if (p.getSurface().getShadeBack()) {
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			double c = h.dotProduct(n.minus());
 			c = Math.pow(c, this.getHighlightExponent());
 			

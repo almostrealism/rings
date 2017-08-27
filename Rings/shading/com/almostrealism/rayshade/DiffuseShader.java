@@ -16,7 +16,11 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import javax.security.auth.callback.Callback;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
@@ -27,6 +31,9 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
+import com.almostrealism.raytracer.engine.RayTracer;
+import com.almostrealism.raytracer.engine.ShadableSurface;
+
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
  * The {@link DiffuseShader} class uses a lambertian shading algorithm.
@@ -34,8 +41,8 @@ import org.almostrealism.util.Producer;
  * @author Michael Murray
  */
 public class DiffuseShader implements Shader, Editable {
-  public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
-  public static boolean produceOutput = false;
+	public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
+	public static boolean produceOutput = false;
 
 	/** Constructs a new {@link DiffuseShader}. */
 	public DiffuseShader() { }
@@ -53,18 +60,27 @@ public class DiffuseShader implements Shader, Editable {
 			return null;
 		}
 		
-		ColorProducer surfaceColor = p.getSurface().getColorAt(p.getIntersection().getPoint());
-		
 		ColorSum color = new ColorSum();
 		
-		if (p.getSurface().getShadeFront()) {
-			double scale = n.dotProduct(p.getLightDirection());
-			color.add((Future) new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
+		Future<ColorProducer> surfaceColor = RayTracer.getExecutorService().submit(p.getSurface());
+		
+		ColorProducer realized;
+		
+		try {
+			realized = surfaceColor.get().operate(p.getIntersection().getPoint());
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+			return color;
 		}
 		
-		if (p.getSurface().getShadeBack()) {
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+			double scale = n.dotProduct(p.getLightDirection());
+			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+		}
+		
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			double scale = n.minus().dotProduct(p.getLightDirection());
-			color.add((Future) new ColorProduct(lightColor, surfaceColor, new RGB(scale, scale, scale)));
+			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
 		}
 		
 		return color;

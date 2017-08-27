@@ -1,8 +1,11 @@
 package com.almostrealism.raytracer.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
@@ -44,9 +47,9 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public static ColorSum lightingCalculation(Ray r, Iterable<? extends ShadableSurface> allSurfaces, Light allLights[],
+	public static ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[],
 											RGB fog, double fd, double fr, ShaderParameters p) {
-		ShadableIntersection intersect = (ShadableIntersection) Intersections.closestIntersection(r, allSurfaces);
+		ShadableIntersection intersect = (ShadableIntersection) Intersections.closestIntersection(r, Intersections.filterIntersectables(allSurfaces));
 		
 		ColorSum color = new ColorSum();
 		
@@ -55,9 +58,9 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		
 		if (intersect != null) {
 			ShadableSurface surf = (ShadableSurface) intersect.getSurface();
-			List<ShadableSurface> otherSurf = new ArrayList<ShadableSurface>();
+			List<Callable<ColorProducer>> otherSurf = new ArrayList<Callable<ColorProducer>>();
 			
-			for (ShadableSurface s : allSurfaces) {
+			for (Callable<ColorProducer> s : allSurfaces) {
 				if (surface != s) {
 					otherSurf.add(s);
 				}
@@ -74,12 +77,13 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 				ColorProducer c = null;
 				
 				if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
-						shadowCalculation(intersect.getPoint(), allSurfaces, allLights[i]))
+						shadowCalculation(intersect.getPoint(),
+								Intersections.filterIntersectables(Arrays.asList(allSurfaces)), allLights[i]))
 					return new ColorSum();
 				
 				if (allLights[i] instanceof SurfaceLight) {
-					c = lightingCalculation(intersect, intersect.getPoint(),
-							r.getDirection(), surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
+					c = lightingCalculation(intersect, intersect.getPoint(), r.getDirection(),
+								surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
 				} else if (allLights[i] instanceof PointLight) {
 					Vector direction = intersect.getPoint().subtract(((PointLight) allLights[i]).getLocation());
 					DirectionalAmbientLight directionalLight =
@@ -105,8 +109,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 							directionalLight.getDirection().length())).minus();
 					
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(intersect, l, directionalLight, otherL,
-								otherSurf));
+						c = surf.shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf));
 					} else {
 						p.setIntersection(intersect);
 						p.setLightDirection(l);
@@ -118,7 +121,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 					}
 				} else if (allLights[i] instanceof AmbientLight) {
 					c = AmbientLight.ambientLightingCalculation(intersect.getPoint(), r.getDirection(),
-												surf, otherSurf, (AmbientLight) allLights[i]);
+																surf, (AmbientLight) allLights[i]);
 				} else {
 					c = new RGB(0.0, 0.0, 0.0);
 				}
@@ -197,7 +200,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	 * calculations are to be done.
 	 */
 	public static ColorSum lightingCalculation(ShadableIntersection intersection, Vector point, Vector rayDirection,
-											ShadableSurface surface, Collection<ShadableSurface> otherSurfaces,
+											ShadableSurface surface, Collection<Callable<ColorProducer>> otherSurfaces,
 											Light lights[], ShaderParameters p) {
 		ColorSum color = new ColorSum();
 		
@@ -225,14 +228,14 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static ColorProducer lightingCalculation(ShadableIntersection intersection, Vector point, Vector rayDirection,
-										ShadableSurface surface, Collection<ShadableSurface> otherSurfaces, Light light,
+										ShadableSurface surface, Collection<Callable<ColorProducer>> otherSurfaces, Light light,
 										Light otherLights[], ShaderParameters p) {
-		List<ShadableSurface> allSurfaces = new ArrayList<ShadableSurface>();
-		for (ShadableSurface s : otherSurfaces) allSurfaces.add(s);
+		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
+		for (Callable<ColorProducer> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
 		
 		if (LegacyRayTracingEngine.castShadows && light.castShadows &&
-				shadowCalculation(point, allSurfaces, light))
+				shadowCalculation(point, Intersections.filterIntersectables(allSurfaces), light))
 			return new RGB(0.0, 0.0, 0.0);
 		
 		if (light instanceof SurfaceLight) {
@@ -250,9 +253,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 															otherSurfaces,
 															(DirectionalAmbientLight) light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
-			return AmbientLight.ambientLightingCalculation(point, rayDirection,
-																surface, otherSurfaces,
-																(AmbientLight) light);
+			return AmbientLight.ambientLightingCalculation(point, rayDirection, surface, (AmbientLight) light);
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
 		}
@@ -262,7 +263,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	 * Performs the shadow calculations for the specified surfaces at the specified point using the data
 	 * from the specified Light object. Returns true if the point has a shadow cast on it.
 	 */
-	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterable<? extends Intersectable<T>> surfaces, Light light) {
+	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterator<Intersectable<T>> surfaces, Light light) {
 		double maxDistance = -1.0;
 		Vector direction = null;
 		

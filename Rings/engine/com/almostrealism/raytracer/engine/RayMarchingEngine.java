@@ -50,6 +50,8 @@ public class RayMarchingEngine implements RayTracer.Engine {
 			if (distance < 0.0001) break steps;
 		}
 		
+		
+		
 		double d = 1.0 - steps / ((double) MAX_RAY_STEPS);
 		
 		

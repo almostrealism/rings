@@ -16,6 +16,8 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import java.util.Arrays;
+
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Intersection;
@@ -88,10 +90,10 @@ public class CSG extends AbstractSurface {
      * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
      */
     public ShadableIntersection intersectAt(Ray ray) {
-    	ray.transform(this.getTransform(true).getInverse());
+    		ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
-            return Intersections.closestIntersection(ray, this.sa, this.sb);
+            return Intersections.closestIntersection(ray, Arrays.asList(this.sa, this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
             if (this.inverted) {
                 double scale[] = this.sb.getScaleCoefficients();

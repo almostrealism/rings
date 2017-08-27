@@ -16,7 +16,9 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
@@ -88,15 +90,17 @@ public class RefractionShader implements Shader, Editable {
 		
 		n = n.divide(n.length());
 		
-		if (p.getSurface().getShadeFront()) {
-			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getIntersection().getViewerDirection(), p.getLightDirection(),
-					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n, p);
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getIntersection().getViewerDirection(),
+										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
+										p.getOtherSurfaces(), n, p);
 			if (c != null) color.add(c);
 		}
 		
-		if (p.getSurface().getShadeBack()) {
-			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getIntersection().getViewerDirection(), p.getLightDirection(),
-					p.getLight(), p.getOtherLights(), p.getSurface(), p.getOtherSurfaces(), n.minus(), p);
+		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
+			ColorProducer c = this.shade(p.getIntersection().getPoint(), p.getIntersection().getViewerDirection(),
+										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
+										p.getOtherSurfaces(), n.minus(), p);
 			if (c != null) color.add(c);
 		}
 		
@@ -104,8 +108,8 @@ public class RefractionShader implements Shader, Editable {
 	}
 	
 	public ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
-				Light light, Light otherLights[], ShadableSurface surface, ShadableSurface otherSurfaces[], Vector n,
-				ShaderParameters p) {
+								Light light, Light otherLights[], Callable<ColorProducer> surface,
+								Callable<ColorProducer> otherSurfaces[], Vector n, ShaderParameters p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
 			return new RGB(0.0, 0.0, 0.0);
@@ -115,7 +119,7 @@ public class RefractionShader implements Shader, Editable {
 		double currentR = 0.0, nextR = 0.0;
 		
 		if (entering)
-			p.addEnterance();
+			p.addEntrance();
 		else
 			p.addExit();
 		
@@ -154,7 +158,7 @@ public class RefractionShader implements Shader, Editable {
 		// if (entering) d.multiplyBy(-1.0);
 		Ray r = new Ray(point, d);
 		
-		List<ShadableSurface> allSurfaces = Scene.combineSurfaces(surface, otherSurfaces);
+		List<Callable<ColorProducer>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
 		Light allLights[] = new Light[p.getOtherLights().length + 1];
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
@@ -164,7 +168,7 @@ public class RefractionShader implements Shader, Editable {
 		RefractionShader.lastRay = r.getDirection();
 		
 		ColorProducer color = RayIntersectionEngine.lightingCalculation(r, allSurfaces, allLights,
-											p.fogColor, p.fogDensity, p.fogRatio, p);
+															p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));
 		

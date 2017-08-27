@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -107,6 +108,10 @@ public class Mesh extends SpacePartition {
 		@Override public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
 		@Override public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
 		@Override public ColorProducer shade(ShaderParameters p) { return this.getSurface().shade(p); }
+		@Override
+		public Vector operate(Triple in) { return getSurface().operate(in); }
+		@Override
+		public ColorProducer call() throws Exception { return getSurface().call(); }
 	}
 	
 	public static class Vertex extends Vector {

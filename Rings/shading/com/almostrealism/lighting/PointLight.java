@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -183,9 +184,8 @@ public class PointLight implements Light {
 	 * based on intensity.
 	 */
 	public static ColorProducer pointLightingCalculation(ShadableIntersection intersection, Vector point,
-											Vector rayDirection,
-											ShadableSurface surface,
-											Collection<ShadableSurface> otherSurfaces, PointLight light,
+											Vector rayDirection, ShadableSurface surface,
+											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
 											Light otherLights[], ShaderParameters p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight = null;
