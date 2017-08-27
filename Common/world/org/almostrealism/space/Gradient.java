@@ -16,6 +16,7 @@
 
 package org.almostrealism.space;
 
+import org.almostrealism.algebra.Differentiable;
 import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.uml.Function;
@@ -26,7 +27,7 @@ import org.almostrealism.uml.Function;
  * @author  Michael Murray
  */
 @Function
-public interface Gradient extends TripleFunction<Vector> {
+public interface Gradient extends Differentiable<Vector> {
 	/**
 	 * Returns a Vector object that represents the vector normal to the 3d surface at the point
 	 * represented by the specified Vector object.
