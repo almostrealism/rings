@@ -8,7 +8,7 @@
 	<version>0.1-rc</version>
     
     <build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src, geometry, shading, ui, engine</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
