@@ -16,15 +16,24 @@
 
 package com.almostrealism.raytracer.engine;
 
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.DistanceEstimator;
 
+import com.almostrealism.rayshade.ShadableCurve;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.rayshade.ShaderSet;
 
-public class RayMarchingEngine implements RayTracer.Engine {
+public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
 	public static final int MAX_RAY_STEPS = 30;
 	
 	private DistanceEstimator estimator;
@@ -57,5 +66,34 @@ public class RayMarchingEngine implements RayTracer.Engine {
 		
 		
 		return new RGB(d, d, d);
+	}
+
+	@Override
+	public Vector getNormalAt(Vector point) {
+		try {
+			return iterator().next().call().getDirection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public Vector operate(Triple in) { return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())); }
+
+	@Override
+	public ColorProducer call() throws Exception {
+		return new RGB(0.8, 0.8, 0.8);  // TODO  Support colors
+	}
+	
+	@Override
+	public ColorProducer shade(ShaderParameters parameters) {
+		ColorSum c = new ColorSum();
+		
+		for (Shader s : shaders) {
+			c.add(s.shade(parameters, this));
+		}
+		
+		return c;
 	}
 }
