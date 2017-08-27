@@ -18,11 +18,11 @@ package com.almostrealism.photon.util.buffers;
 
 import java.io.IOException;
 
-import org.almostrealism.color.AverageColor;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.photon.Absorber;
 import com.almostrealism.photon.network.PhotonFieldSceneLoader;
+import com.almostrealism.rayshade.AverageColor;
 import com.almostrealism.raytracer.io.FileDecoder;
 
 public class ArrayColorBuffer implements ColorBuffer {

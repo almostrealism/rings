@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2004-2016 Mike Murray
- * 
- * All rights reserved.
- */
-
 package com.almostrealism.raytracer.engine;
 
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.space.Gradient;
 import org.almostrealism.uml.ModelEntity;
 
-import com.almostrealism.rayshade.Shadable;
+import com.almostrealism.rayshade.ShadableCurve;
 import com.almostrealism.rayshade.ShadableIntersection;
 
 /**
@@ -37,7 +30,7 @@ import com.almostrealism.rayshade.ShadableIntersection;
  * ray-surface intersections.
  */
 @ModelEntity
-public interface ShadableSurface extends Gradient, Intersectable<ShadableIntersection>, Shadable {
+public interface ShadableSurface extends ShadableCurve, Intersectable<ShadableIntersection> {
 	/**
 	 * Returns true if the front side of this Surface object should be shaded.
 	 * The "front side" is the side that the Vector object returned by the
