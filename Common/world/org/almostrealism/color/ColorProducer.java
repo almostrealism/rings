@@ -16,6 +16,7 @@
 
 package org.almostrealism.color;
 
+import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.uml.Function;
 import org.almostrealism.util.Producer;
 
@@ -26,7 +27,7 @@ import org.almostrealism.util.Producer;
  * @author Mike Murray
  */
 @Function
-public interface ColorProducer extends Producer<RGB> {
+public interface ColorProducer extends Producer<RGB>, TripleFunction<RGB> {
     /**
      * Produces a color using the specified arguments.
      * 

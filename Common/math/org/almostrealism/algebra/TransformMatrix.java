@@ -148,8 +148,8 @@ public class TransformMatrix implements TripleFunction<Vector> {
 	 * Delegates to {@link #transformAsOffset(Vector)}.
 	 */
 	@Override
-	public Vector operate(Vector in) {
-		return transformAsOffset(in);
+	public Vector operate(Triple in) {
+		return transformAsOffset(new Vector(in.getA(), in.getB(), in.getC()));
 	}
 	
 	public void transform(Vector vector, int type) {

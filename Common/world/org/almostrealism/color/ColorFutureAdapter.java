@@ -7,10 +7,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class ColorFutureAdapter extends ArrayList<Future<ColorProducer>> implements ColorProducer, Future<ColorProducer> {
+import org.almostrealism.algebra.Triple;
+
+public abstract class ColorFutureAdapter extends ArrayList<Future<ColorProducer>>
+										implements ColorProducer, Future<ColorProducer> {
 
 	public void add(ColorProducer p) {
 		addAll(convertToFutures(new ColorProducer[] { p }));
+	}
+	
+	@Override
+	public RGB operate(Triple in) {
+		return evaluate(new Triple[] { in });
 	}
 	
 	@Override

@@ -25,7 +25,9 @@ import java.awt.image.PixelGrabber;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -270,7 +272,13 @@ public class ImageTexture implements Texture, Editable {
 	    
 	    for (int i = 0; i < o.length; i++) o[i] = args[i + 1];
 	    
-	    return this.getColorAt((Vector)args[0], o);
+	    return this.getColorAt((Vector) args[0], o);
+	}
+	
+	public RGB operate(Triple location) {
+		return getColorAt(new Vector(location.getA(),
+									location.getB(),
+									location.getC()));
 	}
 
     /**

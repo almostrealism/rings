@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.almostrealism.color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.almostrealism.algebra.Triple;
 
 public class AverageColor implements ColorProducer {
 	private static class Color {
@@ -58,4 +60,7 @@ public class AverageColor implements ColorProducer {
 		
 		return c;
 	}
+	
+	@Override
+	public RGB operate(Triple in) { return evaluate(new Triple[] { in }); }
 }

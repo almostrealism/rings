@@ -16,6 +16,7 @@
 
 package org.almostrealism.color;
 
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.uml.Function;
 
 /**
@@ -44,4 +45,7 @@ public class ColorMultiplier implements ColorProducer {
 				color.evaluate(args).getGreen() * multiplier.evaluate(args).getGreen(),
 				color.evaluate(args).getBlue() * multiplier.evaluate(args).getBlue());
 	}
+	
+	@Override
+	public RGB operate(Triple in) { return evaluate(new Triple[] { in }); }
 }

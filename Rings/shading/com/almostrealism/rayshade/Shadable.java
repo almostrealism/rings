@@ -16,12 +16,15 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.concurrent.Callable;
+
+import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.color.ColorProducer;
 
 /**
  * @author  Michael Murray
  */
-public interface Shadable {
+public interface Shadable extends Callable<TripleFunction> {
 	/**
 	 * Returns a {@link ColorProducer} representing the color of this surface at the specified
 	 * point based on the specified parameters.

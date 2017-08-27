@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.util.Defaults;
 
 /**
@@ -28,7 +29,7 @@ import org.almostrealism.util.Defaults;
  * An RGB object stores these channels as double values between 0.0 (no color) and
  * 1.0 (strongest color).
  */
-public class RGB implements Externalizable, Cloneable, ColorProducer {
+public class RGB implements Externalizable, Cloneable, ColorProducer, Triple {
 	private interface Data {
 		void set(int i, double r);
 		void add(int i, double r);
@@ -257,6 +258,27 @@ public class RGB implements Externalizable, Cloneable, ColorProducer {
 	  Returns the value of the blue channel of this RGB object as a double value.
 	*/
 	public double getBlue() { return this.data.get(2); }
+	
+	@Override
+	public RGB operate(Triple in) { return this; }
+
+	@Override
+	public double getA() { return getRed(); }
+
+	@Override
+	public double getB() { return getGreen(); }
+
+	@Override
+	public double getC() { return getBlue(); }
+
+	@Override
+	public void setA(double a) { setRed(a); }
+
+	@Override
+	public void setB(double b) { setGreen(b); }	
+
+	@Override
+	public void setC(double c) { setBlue(c); }
 	
 	/**
 	 * Returns the sum of the RGB value represented by this RGB object and that of the

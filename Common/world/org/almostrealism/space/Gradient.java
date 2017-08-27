@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.almostrealism.space;
 
+import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.uml.Function;
 
@@ -24,7 +26,7 @@ import org.almostrealism.uml.Function;
  * @author  Michael Murray
  */
 @Function
-public interface Gradient {
+public interface Gradient extends TripleFunction<Vector> {
 	/**
 	 * Returns a Vector object that represents the vector normal to the 3d surface at the point
 	 * represented by the specified Vector object.

@@ -16,6 +16,7 @@
 
 package org.almostrealism.texture;
 
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.util.Editable;
@@ -129,6 +130,13 @@ public class StripeTexture implements Texture, Editable {
 	    for (int i = 0; i < o.length; i++) o[i] = args[i + 1];
 	    
 	    return this.getColorAt((Vector)args[0], o);
+	}
+	
+	@Override
+	public RGB operate(Triple location) {
+		return getColorAt(new Vector(location.getA(),
+									location.getB(),
+									location.getC()));
 	}
 	
 	/**
