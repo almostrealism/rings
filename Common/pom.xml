@@ -12,7 +12,7 @@
 	<packaging>jar</packaging>
 
     <build>
-		<sourceDirectory>src, world, ui</sourceDirectory>
+		<sourceDirectory>src, world, ui, math</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
