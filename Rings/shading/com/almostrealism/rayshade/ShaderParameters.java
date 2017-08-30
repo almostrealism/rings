@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -35,7 +37,7 @@ import com.almostrealism.raytracer.engine.ShadableSurface;
  * @author  Michael Murray
  */
 public class ShaderParameters {
-	private ShadableIntersection intersection;
+	private ContinuousField intersection;
 	
 	private Vector lightDirection;
 	private Light light;
@@ -59,18 +61,19 @@ public class ShaderParameters {
 	 * @param otherSurfaces  Collection of other Surface objects in the scene.
 	 * @param surface  Surface object to be shaded.
 	 */
-	public ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+	public ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
 							Light otherLights[], Collection<Callable<ColorProducer>> otherSurfaces) {
 		this(intersection, lightDirection, light, otherLights, otherSurfaces.toArray(new Callable[0]));
 	}
 	
-	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+	private ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
 			Light otherLights[], Callable<ColorProducer> otherSurfaces[]) {
 		this(intersection, lightDirection, light, otherLights, null, otherSurfaces);
 	}
 	
 	/**
 	 * Constructs a new ShaderParameters object using the specified arguments.
+	 * 
 	 * @param intersection TODO
 	 * @param lightDirection  Vector object representing the direction toward the light (should be unit length).
 	 * @param light  Light object representing the light.
@@ -78,7 +81,7 @@ public class ShaderParameters {
 	 * @param surface  Surface object to be shaded.
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
-	private ShaderParameters(ShadableIntersection intersection, Vector lightDirection, Light light,
+	private ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
 			Light otherLights[], Callable<ColorProducer> surface, Callable<ColorProducer> otherSurfaces[]) {
 		this.intersection = intersection;
 		this.lightDirection = lightDirection;
@@ -90,9 +93,9 @@ public class ShaderParameters {
 		this.refCount = 0;
 	}
 	
-	public void setIntersection(ShadableIntersection intersect) { intersection = intersect; }
+	public void setIntersection(ContinuousField intersect) { intersection = intersect; }
 	
-	public ShadableIntersection getIntersection() { return intersection; }
+	public ContinuousField getIntersection() { return intersection; }
 	
 	/**
 	 * Sets the direction toward the light to the specified Vector object.
@@ -170,17 +173,13 @@ public class ShaderParameters {
 	 */
 	public int getReflectionCount() { return this.refCount; }
 	
-	/**
-	 * @return  The number of surface enterances undergone.
-	 */
+	/** @return  The number of surface enterances undergone. */
 	public int getEnteranceCount() { return this.enter; }
 	
-	/**
-	 * @return  The number of surface exits undergone.
-	 */
+	/** @return  The number of surface exits undergone. */
 	public int getExitCount() { return this.exit; }
 	
-	/** Adds one to the reflection count stored by this ShaderParameters object. */
+	/** Adds one to the reflection count stored by this {@link ShaderParameters}s object. */
 	public void addReflection() { this.refCount++; }
 	
 	/** Adds one to the reflection count and the entrance count. */

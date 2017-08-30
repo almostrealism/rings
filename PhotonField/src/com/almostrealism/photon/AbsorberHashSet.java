@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
@@ -852,12 +853,21 @@ public class AbsorberHashSet extends HashSet implements AbsorberSet, ShadableSur
 	
 	/** Delegates to {@link #getNormalAt(Vector)}.*/
 	@Override
-	public Vector operate(Vector in) { return getNormalAt(in); }
-
+	public Vector operate(Triple in) { return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())); }
+	
 	@Override
-	public TripleFunction call() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ColorProducer call() throws Exception {
+		return new ColorProducer() {
+			@Override
+			public RGB operate(Triple in) {
+				return getColorAt(new Vector(in.getA(), in.getB(), in.getC())).evaluate(new Object[] { in });
+			}
+
+			@Override
+			public RGB evaluate(Object[] args) {
+				return operate((Triple) args[0]);
+			}
+		};
 	}
 	
 	public boolean getShadeBack() { return false; }

@@ -49,7 +49,16 @@ public class DiffuseShader implements Shader, Editable {
 	
 	/** Method specified by the {@link Shader} interface. */
 	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
-		ColorProducer lightColor = p.getLight().getColorAt(p.getIntersection().getPoint());
+		Vector point;
+		
+		try {
+			point = p.getIntersection().get(0).call().getOrigin();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
+		ColorProducer lightColor = p.getLight().getColorAt(point);
 		
 		Vector n;
 		
@@ -67,8 +76,9 @@ public class DiffuseShader implements Shader, Editable {
 		ColorProducer realized;
 		
 		try {
-			realized = surfaceColor.get().operate(p.getIntersection().getPoint());
-		} catch (InterruptedException | ExecutionException e) {
+			point = p.getIntersection().get(0).call().getOrigin();
+			realized = surfaceColor.get().operate(point);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return color;
 		}

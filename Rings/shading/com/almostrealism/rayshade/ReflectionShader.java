@@ -93,7 +93,16 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				prod = new RGB(0.0, 0.0, 0.0);
 			}
 			
-			return this.reflectiveColor.evaluate(new Object[] {p}).multiply(prod.operate(p.getIntersection().getPoint()).evaluate(null));
+			Vector point;
+			
+			try {
+				point = p.getIntersection().get(0).call().getOrigin();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+			return this.reflectiveColor.evaluate(new Object[] {p}).multiply(prod.operate(point).evaluate(null));
 		}
 		
 		p.addReflection();
@@ -105,8 +114,17 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		Light allLights[] = new Light[p.getOtherLights().length + 1];
 		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
 		allLights[allLights.length - 1] = p.getLight();
+
+		Vector point;
 		
-		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
+		try {
+			point = p.getIntersection().get(0).call().getOrigin();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
+		RGB lightColor = p.getLight().getColorAt(point).evaluate(null);
 		
 		Vector n;
 		
@@ -126,7 +144,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
 		
 		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getViewerDirection(), n);
+			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getNormalAt(point), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -134,7 +152,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				
 				Vector u, v, w = (Vector) n.clone();
 				
-				Vector t = (Vector)n.clone();
+				Vector t = (Vector) n.clone();
 				
 				if (t.getX() < t.getY() && t.getY() < t.getZ()) {
 					t.setX(1.0);
@@ -156,7 +174,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				ref.divideBy(ref.length());
 			}
 			
-			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
+			Ray reflectedRay = new Ray(point, ref);
 			
 			ColorProducer color = RayIntersectionEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
@@ -168,7 +186,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 					color = this.eMap.getColorAt(ref);
 			}
 			
-			double c = 1 - p.getIntersection().getViewerDirection().minus().dotProduct(n) / (p.getIntersection().getViewerDirection().minus().length() * n.length());
+			Vector nor = p.getIntersection().getNormalAt(point);
+			double c = 1 - nor.minus().dotProduct(n) / (nor.minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			
@@ -178,7 +197,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = n.minus();
 			
-			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getViewerDirection(), n);
+			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getNormalAt(point), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -208,7 +227,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				ref.divideBy(ref.length());
 			}
 			
-			Ray reflectedRay = new Ray(p.getIntersection().getPoint(), ref);
+			Ray reflectedRay = new Ray(p.getIntersection().getNormalAt(point), ref);
 			
 			ColorProducer color = RayIntersectionEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
 																	p.fogColor, p.fogDensity, p.fogRatio, p);
@@ -220,8 +239,8 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 					color = this.eMap.getColorAt(ref);
 			}
 			
-			double c = 1 - p.getIntersection().getViewerDirection().minus().dotProduct(n) /
-					(p.getIntersection().getViewerDirection().minus().length() * n.length());
+			double c = 1 - p.getIntersection().getNormalAt(point).minus().dotProduct(n) /
+					(p.getIntersection().getNormalAt(point).minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			

@@ -160,9 +160,6 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 		return m;
 	}
 	
-	/** Delegates to {@link #getNormalAt(Vector)}. */
-	public Vector operate(Vector v ) { return getNormalAt(v); }
-	
 	public void setIndexOfRefraction(double n) { this.rindex = n; }
 	public double getIndexOfRefraction() { return this.rindex; }
 	public double getIndexOfRefraction(Vector p) { return this.rindex; }

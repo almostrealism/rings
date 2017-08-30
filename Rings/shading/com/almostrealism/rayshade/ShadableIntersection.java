@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
 
+import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Intersectable;
@@ -35,7 +37,7 @@ import org.almostrealism.space.Intersection;
  * 
  * @author  Michael Murray
  */
-public class ShadableIntersection extends Intersection implements DiscreteField {
+public class ShadableIntersection extends Intersection implements ContinuousField {
 	private int nearestIndex = 0;
 	
 	private Vector viewerDirection;
@@ -65,18 +67,13 @@ public class ShadableIntersection extends Intersection implements DiscreteField 
 		}
 	}
 	
-	/** Returns the normal vector at the point that is the nearest intersection. */
-	public Ray getNormal() { return getNormal(nearestIndex); }
+	/** Returns the viewer direction. */
+	@Override
+	public Vector getNormalAt(Vector point) { return viewerDirection; }
 	
-	public Ray getNormal(int index) {
-		try {
-			return normals.get(index).call();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+	/** Delegates to {@link #getNormalAt(Vector)}. */
+	@Override
+	public Vector operate(Triple t) { return getNormalAt(new Vector(t.getA(), t.getB(), t.getC())); }
 	
 	@Override
 	public Callable<Ray> get(int index) {

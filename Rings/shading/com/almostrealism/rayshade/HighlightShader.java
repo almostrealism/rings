@@ -61,7 +61,16 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	
 	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
-		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getPoint()).evaluate(null);
+		Vector point;
+		
+		try {
+			point = p.getIntersection().get(0).call().getOrigin();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
+		RGB lightColor = p.getLight().getColorAt(p.getIntersection().getNormalAt(point)).evaluate(null);
 		
 		Vector n;
 		
@@ -73,7 +82,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 		}
 		
 		n.divideBy(n.length());
-		Vector h = p.getIntersection().getViewerDirection().add(p.getLightDirection());
+		Vector h = p.getIntersection().getNormalAt(point).add(p.getLightDirection());
 		h = h.divide(h.length());
 		
 		ColorSum color = new ColorSum();
