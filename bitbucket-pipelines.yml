@@ -11,154 +11,70 @@ pipelines:
           # Common Dependencies
           - cd Common
           - mvn dependency:copy-dependencies
-          
-          # Common Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # GraphPersist Dependencies
           - cd ../GraphPersist
           - mvn dependency:copy-dependencies
-          
-          # GraphPersist Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # TreeView Dependencies
           - cd ../TreeView
           - mvn dependency:copy-dependencies
-          
-          # TreeView Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # MatrixView Dependencies
           - cd ../MatrixView
           - mvn dependency:copy-dependencies
-          
-          # MatrixView Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # FlowTree Dependencies
           - cd ../FlowTree
           - mvn dependency:copy-dependencies
-          
-          # FlowTree Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # OptimalZoo Dependencies
           - cd ../OptimalZoo
           - mvn dependency:copy-dependencies
-          
-          # OptimalZoo Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # Rings Dependencies
           - cd ../Rings
           - mvn dependency:copy-dependencies
-          
-          # Rings Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # PhotonField Dependencies
           - cd ../PhotonField
           - mvn dependency:copy-dependencies
-          
-          # PhotonField Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # ArtifactDetector Dependencies
           - cd ../ArtifactDetector
           - mvn dependency:copy-dependencies
-          
-          # ArtifactDetector Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # Replicator Dependencies
           - cd ../Replicator
           - mvn dependency:copy-dependencies
-          
-          # Replicator Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # Explorer Dependencies
           - cd ../Explorer
           - mvn dependency:copy-dependencies
-          
-          # Explorer Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
           
           
           # FeedGrowth Dependencies
           - cd ../FeedGrowth
           - mvn dependency:copy-dependencies
-          
-          # FeedGrowth Compile
-          - mkdir target/classes
-          - cd src
-          - find -name "*.java" > sources.txt
-          - javac -cp "../target/dependency/*" -d ../target/classes @sources.txt
-          - cd ../
           - mvn install
