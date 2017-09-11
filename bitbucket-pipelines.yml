@@ -10,7 +10,7 @@ pipelines:
           
           
           # GraphPersist Dependencies
-          - cd ../GraphPersist
+          - cd GraphPersist
           - mvn dependency:copy-dependencies
           - mvn install
           
