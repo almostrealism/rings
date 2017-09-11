@@ -13,11 +13,17 @@ import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
+import org.almostrealism.util.Factory;
 
 import java.util.*;
 import java.util.concurrent.Callable;
 
 public class LightingEngine {
+	private Factory<ContinuousField> fields;
+
+	public LightingEngine(Factory<ContinuousField> fields) {
+		this.fields = fields;
+	}
 
 	/**
 	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
