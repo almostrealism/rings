@@ -19,6 +19,7 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -173,8 +174,8 @@ public class PointLight implements Light {
 
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * interesection on that surface using the lighting data from the specified PointLight
-	 * object and returns an RGB object that represents the color of the point.
+	 * intersection on that surface using the lighting data from the specified {@link PointLight}
+	 * object and returns an {@link RGB} object that represents the color of the point.
 	 * A list of all other surfaces in the scene must be specified for reflection/shadowing.
 	 * This list does not include the specified surface for which the lighting calculations
 	 * are to be done. If the premultiplyIntensity option is set to true the color of the
@@ -183,7 +184,7 @@ public class PointLight implements Light {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static ColorProducer pointLightingCalculation(ShadableIntersection intersection, Vector point,
+	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point,
 											Vector rayDirection, ShadableSurface surface,
 											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
 											Light otherLights[], ShaderParameters p) {

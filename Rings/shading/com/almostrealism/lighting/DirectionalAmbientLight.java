@@ -19,6 +19,7 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -106,7 +107,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 * 
 	 * @param otherLights[]  An array of Light objects that are also in the scene.
 	 */
-	public static ColorProducer directionalAmbientLightingCalculation(ShadableIntersection intersection, Vector point,
+	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Vector point,
 														Vector rayDirection,
 														ShadableSurface surface,
 														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
