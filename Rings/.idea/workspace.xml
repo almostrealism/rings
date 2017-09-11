@@ -452,7 +452,7 @@
       <workItem from="1503464601881" duration="653000" />
       <workItem from="1504153657929" duration="890000" />
       <workItem from="1504239239523" duration="840000" />
-      <workItem from="1505020200954" duration="5865000" />
+      <workItem from="1505020200954" duration="5969000" />
     </task>
     <task id="LOCAL-00001" summary="Breaking out lighting functionality from RayTracingEngine into LightingEngine.">
       <created>1505150668838</created>
@@ -465,7 +465,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9871000" />
+    <option name="totallyTimeSpent" value="9975000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
