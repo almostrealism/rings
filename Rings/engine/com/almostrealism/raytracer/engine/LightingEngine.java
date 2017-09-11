@@ -19,9 +19,9 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 public class LightingEngine {
-	private Factory<ContinuousField> fields;
+	private ParameterizedFactory<ContinuousField> fields;
 
-	public LightingEngine(Factory<ContinuousField> fields) {
+	public LightingEngine(ParameterizedFactory<ContinuousField> fields) {
 		this.fields = fields;
 	}
 
