@@ -7,11 +7,6 @@ pipelines:
         script:
           # Maven details
           - mvn --version
-        
-          # Common Dependencies
-          - cd Common
-          - mvn dependency:copy-dependencies
-          - mvn install
           
           
           # GraphPersist Dependencies
