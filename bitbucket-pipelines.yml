@@ -21,18 +21,6 @@ pipelines:
           - mvn install
           
           
-          # MatrixView Dependencies
-          - cd ../MatrixView
-          - mvn dependency:copy-dependencies
-          - mvn install
-          
-          
-          # FlowTree Dependencies
-          - cd ../FlowTree
-          - mvn dependency:copy-dependencies
-          - mvn install
-          
-          
           # OptimalZoo Dependencies
           - cd ../OptimalZoo
           - mvn dependency:copy-dependencies
