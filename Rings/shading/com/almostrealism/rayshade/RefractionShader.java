@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
@@ -32,10 +33,6 @@ import org.almostrealism.util.Producer;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
-import com.almostrealism.raytracer.engine.RayIntersectionEngine;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 // TODO  Fix refraction algorithm.
 
@@ -172,7 +169,7 @@ public class RefractionShader implements Shader, Editable {
 		Vector dv = viewerDirection;
 		dv = dv.minus();
 		
-		Vector d = RayIntersectionEngine.refract(dv, n, currentR, nextR, (Math.random() < 0.0000));
+		Vector d = LightingEngine.refract(dv, n, currentR, nextR, (Math.random() < 0.0000));
 		d.divideBy(d.length());
 		
 		// if (d.dotProduct(dv) > 0) d.multiplyBy(-1.0);
@@ -191,7 +188,7 @@ public class RefractionShader implements Shader, Editable {
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
 		RefractionShader.lastRay = r.getDirection();
 		
-		ColorProducer color = RayIntersectionEngine.lightingCalculation(r, allSurfaces, allLights,
+		ColorProducer color = LightingEngine .lightingCalculation(r, allSurfaces, allLights,
 															p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));

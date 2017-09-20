@@ -22,6 +22,7 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.Collection;
 
+import javafx.scene.effect.Lighting;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.RGB;
 import org.almostrealism.swing.ProgressMonitor;
@@ -104,14 +105,6 @@ public class LegacyRayTracingEngine {
 	 * @param surfaces  Surface objects in scene.
 	 * @param camera  Camera object for scene.
 	 * @param lights  Light objects in scene.
-	 * @param x  X coordinate of upper left corner of image.
-	 * @param y  Y coordinate of upper left corner of image.
-	 * @param dx  Width of image.
-	 * @param dy  Height of image.
-	 * @param width  Width of total image.
-	 * @param height  Height of total image.
-	 * @param ssWidth  Supersample width.
-	 * @param ssHeight  Supersample height.
 	 * @param monitor  ProgressMonitor instance to use.
 	 * @return  Image data.
 	 */
@@ -134,7 +127,7 @@ public class LegacyRayTracingEngine {
 					double q = j + ((double)l / (double)p.ssHeight);
 					
 					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-					RGB color = RayIntersectionEngine.lightingCalculation(ray, surfaces, lights,
+					RGB color = LightingEngine.lightingCalculation(ray, surfaces, lights,
 										p.fogColor, p.fogDensity, p.fogRatio, null).evaluate(null);
 					
 					if (color == null) {

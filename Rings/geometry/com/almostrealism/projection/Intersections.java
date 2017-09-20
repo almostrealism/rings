@@ -16,11 +16,14 @@
 
 package com.almostrealism.projection;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.Callable;
 
+import com.almostrealism.rayshade.ShadableIntersection;
+import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Triple;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
 import org.almostrealism.uml.Stateless;
@@ -32,6 +35,10 @@ import org.almostrealism.uml.Stateless;
  */
 @Stateless
 public class Intersections {
+	public static ContinuousField getIntersections(Ray r, Iterator<? extends Intersectable<T>> surfaces) {
+		return new ShadableIntersection();
+	}
+
 	/**
 	 * Returns an Intersection object that represents the closest intersection
 	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface

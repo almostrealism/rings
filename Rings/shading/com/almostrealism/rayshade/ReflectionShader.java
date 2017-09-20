@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
@@ -34,10 +35,6 @@ import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
 import com.almostrealism.lighting.Light;
-import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
-import com.almostrealism.raytracer.engine.RayIntersectionEngine;
-import com.almostrealism.raytracer.engine.RayTracer;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.
@@ -144,7 +141,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
 		
 		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getNormalAt(point), n);
+			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -176,7 +173,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(point, ref);
 			
-			ColorProducer color = RayIntersectionEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
+			ColorProducer color = LightingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
@@ -197,7 +194,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = n.minus();
 			
-			Vector ref = RayIntersectionEngine.reflect(p.getIntersection().getNormalAt(point), n);
+			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -229,7 +226,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			
 			Ray reflectedRay = new Ray(p.getIntersection().getNormalAt(point), ref);
 			
-			ColorProducer color = RayIntersectionEngine.lightingCalculation(reflectedRay, allSurfaces, allLights, 
+			ColorProducer color = LightingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
 																	p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {

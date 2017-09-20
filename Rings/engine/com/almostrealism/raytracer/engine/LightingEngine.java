@@ -13,15 +13,15 @@ import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Intersectable;
 import org.almostrealism.space.Intersection;
-import org.almostrealism.util.Factory;
+import org.almostrealism.util.ParameterizedFactory;
 
 import java.util.*;
 import java.util.concurrent.Callable;
 
 public class LightingEngine {
-	private ParameterizedFactory<ContinuousField> fields;
+	private ParameterizedFactory<Ray, ContinuousField> fields;
 
-	public LightingEngine(ParameterizedFactory<ContinuousField> fields) {
+	public LightingEngine(ParameterizedFactory<Ray, ContinuousField> fields) {
 		this.fields = fields;
 	}
 
@@ -30,9 +30,10 @@ public class LightingEngine {
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public static ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[],
+	public ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[],
 											   RGB fog, double fd, double fr, ShaderParameters p) {
-		ShadableIntersection intersect = (ShadableIntersection) Intersections.closestIntersection(r, Intersections.filterIntersectables(allSurfaces));
+		fields.setParameter(Ray.class, r);
+		ContinuousField intersect = fields.construct();
 
 		ColorSum color = new ColorSum();
 
