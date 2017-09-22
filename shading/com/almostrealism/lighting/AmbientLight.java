@@ -16,12 +16,15 @@
 
 package com.almostrealism.lighting;
 
+import com.almostrealism.rayshade.Shadable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.raytracer.engine.ShadableSurface;
+
+import java.util.concurrent.Callable;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.
@@ -94,9 +97,10 @@ public class AmbientLight implements Light {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, ShadableSurface surface, AmbientLight light) {
+	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, Callable<ColorProducer> surface, AmbientLight light) {
 		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
-		color = new ColorMultiplier(color, surface.getColorAt(point));
+		if (surface instanceof ShadableSurface)
+			color = new ColorMultiplier(color, ((ShadableSurface) surface).getColorAt(point));
 		
 		return color;
 	}

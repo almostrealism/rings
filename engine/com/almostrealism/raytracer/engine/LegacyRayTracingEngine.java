@@ -25,6 +25,7 @@ import java.util.Collection;
 import javafx.scene.effect.Lighting;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.Intersection;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 
@@ -127,7 +128,8 @@ public class LegacyRayTracingEngine {
 					double q = j + ((double)l / (double)p.ssHeight);
 					
 					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-					RGB color = LightingEngine.lightingCalculation(ray, surfaces, lights,
+					IntersectionalLightingEngine le = new IntersectionalLightingEngine(surfaces);
+					RGB color = le.lightingCalculation(ray, surfaces, lights,
 										p.fogColor, p.fogDensity, p.fogRatio, null).evaluate(null);
 					
 					if (color == null) {

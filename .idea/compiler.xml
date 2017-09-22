@@ -6,20 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Common" />
-        <module name="Explorer" />
-        <module name="FeedGrowth" />
-        <module name="GraphPersist" />
-        <module name="MatrixView" />
-        <module name="PhotonField" />
-        <module name="Replicator" />
         <module name="Rings" />
-        <module name="RingsDesktop" />
-        <module name="TreeView" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8">
-      <module name="RingsDesktop" target="1.8" />
+    <bytecodeTargetLevel>
+      <module name="Rings" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

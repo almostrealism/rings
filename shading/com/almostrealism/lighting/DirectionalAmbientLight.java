@@ -19,6 +19,7 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import com.almostrealism.rayshade.Shadable;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -108,8 +109,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 * @param otherLights[]  An array of Light objects that are also in the scene.
 	 */
 	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Vector point,
-														Vector rayDirection,
-														ShadableSurface surface,
+														Vector rayDirection, Callable<ColorProducer> surface,
 														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
 														Light otherLights[], ShaderParameters p) {
 		ColorProducer color = null;
@@ -117,7 +117,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface.shade(new ShaderParameters(intersection, l, light, otherLights, otherSurfaces));
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderParameters(intersection, l, light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
 			p.setLightDirection(l);
@@ -125,7 +125,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 			p.setOtherLights(otherLights);
 			p.setOtherSurfaces(otherSurfaces);
 			
-			color = surface.shade(p);
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(p) : null;
 		}
 		
 		return color;

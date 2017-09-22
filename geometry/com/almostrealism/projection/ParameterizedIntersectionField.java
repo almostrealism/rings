@@ -22,19 +22,19 @@ import org.almostrealism.util.ParameterizedFactory;
 
 import java.util.Iterator;
 
-public class ParameterizedIntersectionField implements ParameterizedFactory<Object, ContinuousField> {
+public class ParameterizedIntersectionField implements ParameterizedFactory<Ray, ContinuousField> {
     private Ray ray;
     private Iterator itr;
 
-    <T extends Object> void setParameter(Class<T> type, T var) {
+    public <T extends Ray> void setParameter(Class<T> type, T var) {
         if (type.equals(Ray.class)) {
-            this.ray = (Ray) var;
+            this.ray = var;
         } else if (type.equals(Iterator.class)) {
             this.itr = (Iterator) var;
         }
     }
 
-    ContinuousField construct() {
-        return Intersections.closestIntersection(ray, itr);
+    public ContinuousField construct() {
+        return (ContinuousField) Intersections.closestIntersection(ray, itr);
     }
 }

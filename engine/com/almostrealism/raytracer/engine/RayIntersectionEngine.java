@@ -38,8 +38,9 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	
 	public ColorProducer trace(Vector from, Vector direction) {
 		Ray r = new Ray(from, direction);
-		
-		return LightingEngine.lightingCalculation(r, scene, scene.getLights(), rparams.fogColor,
+
+		IntersectionalLightingEngine l = new IntersectionalLightingEngine(scene);
+		return l.lightingCalculation(r, scene, scene.getLights(), rparams.fogColor,
 									rparams.fogDensity, rparams.fogRatio, null);
 	}
 }

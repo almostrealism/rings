@@ -2,6 +2,7 @@ package com.almostrealism.raytracer.engine;
 
 import com.almostrealism.lighting.*;
 import com.almostrealism.projection.Intersections;
+import com.almostrealism.rayshade.Shadable;
 import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Settings;
@@ -41,7 +42,7 @@ public class LightingEngine {
 		ShadableSurface surface = null;
 
 		if (intersect != null) {
-			ShadableSurface surf = (ShadableSurface) intersect.getSurface();
+			Callable<ColorProducer> surf = intersect instanceof Intersection ? (Callable<ColorProducer>) ((Intersection) intersect).getSurface() : null;
 			List<Callable<ColorProducer>> otherSurf = new ArrayList<Callable<ColorProducer>>();
 
 			for (Callable<ColorProducer> s : allSurfaces) {
@@ -50,8 +51,8 @@ public class LightingEngine {
 				}
 			}
 
-			for(int i = 0; i < allLights.length; i++) {
-				// See RayTracingEngine.seperateLights method
+			for (int i = 0; i < allLights.length; i++) {
+				// See RayTracingEngine.separateLights method
 
 				Light otherL[] = new Light[allLights.length - 1];
 
@@ -60,31 +61,46 @@ public class LightingEngine {
 
 				ColorProducer c = null;
 
-				if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
-						shadowCalculation(intersect.getPoint(),
-								Intersections.filterIntersectables(Arrays.asList(allSurfaces)), allLights[i]))
-					return new ColorSum();
+				try {
+					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
+							shadowCalculation(intersect.get(0).call().getOrigin(),
+									Intersections.filterIntersectables(Arrays.asList(allSurfaces)), allLights[i]))
+						return new ColorSum();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
 
 				if (allLights[i] instanceof SurfaceLight) {
-					c = lightingCalculation(intersect, intersect.getPoint(), r.getDirection(),
-							surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
+					try {
+						c = lightingCalculation(intersect, intersect.get(0).call().getOrigin(), r.getDirection(),
+												surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
 				} else if (allLights[i] instanceof PointLight) {
-					Vector direction = intersect.getPoint().subtract(((PointLight) allLights[i]).getLocation());
-					DirectionalAmbientLight directionalLight =
-							new DirectionalAmbientLight(1.0, allLights[i].getColorAt(intersect.getPoint()).evaluate(null), direction);
+					try {
+						Vector direction = intersect.get(0).call().getOrigin().subtract(((PointLight) allLights[i]).getLocation());
+						DirectionalAmbientLight directionalLight =
+								new DirectionalAmbientLight(1.0, allLights[i].getColorAt(intersect.get(0).call().getOrigin()).evaluate(null), direction);
 
-					Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
+						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 
-					if (p == null) {
-						c = surf.shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf));
-					} else {
-						p.setIntersection(intersect);
-						p.setLightDirection(l);
-						p.setLight(directionalLight);
-						p.setOtherLights(otherL);
-						p.setOtherSurfaces(otherSurf);
+						if (p == null) {
+							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf)) : null;
+						} else {
+							p.setIntersection(intersect);
+							p.setLightDirection(l);
+							p.setLight(directionalLight);
+							p.setOtherLights(otherL);
+							p.setOtherSurfaces(otherSurf);
 
-						c = surf.shade(p);
+							c = surf instanceof Shadable ? ((Shadable) surf).shade(p) : null;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();;
+						return null;
 					}
 				} else if (allLights[i] instanceof DirectionalAmbientLight) {
 					DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) allLights[i];
@@ -93,7 +109,7 @@ public class LightingEngine {
 							directionalLight.getDirection().length())).minus();
 
 					if (p == null) {
-						c = surf.shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf));
+						c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf)) : null;
 					} else {
 						p.setIntersection(intersect);
 						p.setLightDirection(l);
@@ -101,11 +117,16 @@ public class LightingEngine {
 						p.setOtherLights(otherL);
 						p.setOtherSurfaces(otherSurf);
 
-						c = surf.shade(p);
+						c = surf instanceof Shadable ? ((Shadable) surf).shade(p) : null;
 					}
 				} else if (allLights[i] instanceof AmbientLight) {
-					c = AmbientLight.ambientLightingCalculation(intersect.getPoint(), r.getDirection(),
-							surf, (AmbientLight) allLights[i]);
+					try {
+						c = AmbientLight.ambientLightingCalculation(intersect.get(0).call().getOrigin(),
+													r.getDirection(), surf, (AmbientLight) allLights[i]);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
 				} else {
 					c = new RGB(0.0, 0.0, 0.0);
 				}
@@ -184,7 +205,7 @@ public class LightingEngine {
 	 * calculations are to be done.
 	 */
 	public static ColorSum lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
-											   ShadableSurface surface, Collection<Callable<ColorProducer>> otherSurfaces,
+											   Callable<ColorProducer> surface, Collection<Callable<ColorProducer>> otherSurfaces,
 											   Light lights[], ShaderParameters p) {
 		ColorSum color = new ColorSum();
 
@@ -212,7 +233,8 @@ public class LightingEngine {
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static ColorProducer lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
-													ShadableSurface surface, Collection<Callable<ColorProducer>> otherSurfaces, Light light,
+													Callable<ColorProducer> surface,
+													Collection<Callable<ColorProducer>> otherSurfaces, Light light,
 													Light otherLights[], ShaderParameters p) {
 		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
 		for (Callable<ColorProducer> s : otherSurfaces) allSurfaces.add(s);

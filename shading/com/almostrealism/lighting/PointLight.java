@@ -185,7 +185,7 @@ public class PointLight implements Light {
 	 * based on intensity.
 	 */
 	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point,
-											Vector rayDirection, ShadableSurface surface,
+											Vector rayDirection, Callable<ColorProducer> surface,
 											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
 											Light otherLights[], ShaderParameters p) {
 		Vector direction = point.subtract(light.getLocation());

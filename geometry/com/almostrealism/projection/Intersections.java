@@ -35,10 +35,6 @@ import org.almostrealism.uml.Stateless;
  */
 @Stateless
 public class Intersections {
-	public static ContinuousField getIntersections(Ray r, Iterator<? extends Intersectable<T>> surfaces) {
-		return new ShadableIntersection();
-	}
-
 	/**
 	 * Returns an Intersection object that represents the closest intersection
 	 * (>= RayTracingEngine.e) between a surface in the specified array of Surface

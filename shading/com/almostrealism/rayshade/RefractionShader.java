@@ -187,9 +187,10 @@ public class RefractionShader implements Shader, Editable {
 		
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
 		RefractionShader.lastRay = r.getDirection();
-		
-		ColorProducer color = LightingEngine .lightingCalculation(r, allSurfaces, allLights,
-															p.fogColor, p.fogDensity, p.fogRatio, p);
+
+		IntersectionalLightingEngine l = new IntersectionalLightingEngine(allSurfaces);
+		ColorProducer color = l.lightingCalculation(r, allSurfaces, allLights,
+													p.fogColor, p.fogDensity, p.fogRatio, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));
 		
