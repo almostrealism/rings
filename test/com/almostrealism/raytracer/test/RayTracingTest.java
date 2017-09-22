@@ -37,7 +37,8 @@ public class RayTracingTest {
 		
 		try {
 			ImageCanvas.encodeImageFile(r.realize(params).evaluate(null),
-										new File("test.ppm"), ImageCanvas.PPMEncoding);
+										new File("test.jpeg"),
+										ImageCanvas.JPEGEncoding);
 		} catch (FileNotFoundException fnf) {
 			System.out.println("ERROR: Output file not found");
 		} catch (IOException ioe) {
