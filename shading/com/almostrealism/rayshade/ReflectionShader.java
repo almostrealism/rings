@@ -227,15 +227,17 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			}
 			
 			Ray reflectedRay = new Ray(p.getIntersection().getNormalAt(point), ref);
-			
-			ColorProducer color = LightingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
-																	p.fogColor, p.fogDensity, p.fogRatio, p);
+
+			IntersectionalLightingEngine l = new IntersectionalLightingEngine(allSurfaces);
+			ColorProducer color = l.lightingCalculation(reflectedRay, allSurfaces, allLights,
+													p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
-				if (this.eMap == null)
+				if (this.eMap == null) {
 					break b;
-				else
+				} else {
 					color = this.eMap.getColorAt(ref);
+				}
 			}
 			
 			double c = 1 - p.getIntersection().getNormalAt(point).minus().dotProduct(n) /
