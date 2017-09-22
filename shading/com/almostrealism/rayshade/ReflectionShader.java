@@ -172,8 +172,10 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			}
 			
 			Ray reflectedRay = new Ray(point, ref);
-			
-			ColorProducer color = LightingEngine.lightingCalculation(reflectedRay, allSurfaces, allLights,
+
+			LightingEngine l = new IntersectionalLightingEngine(allSurfaces);
+
+			ColorProducer color = l.lightingCalculation(reflectedRay, allSurfaces, allLights,
 														p.fogColor, p.fogDensity, p.fogRatio, p);
 			
 			if (color == null) {
