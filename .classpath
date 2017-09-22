@@ -1,220 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="Common/src"/>
-	<classpathentry kind="src" path="Explorer/src"/>
-	<classpathentry kind="src" path="FeedGrowth/src"/>
-	<classpathentry kind="src" path="FlowTree/src"/>
-	<classpathentry kind="src" path="ForkedProjects/src"/>
-	<classpathentry kind="src" path="GlitchFarm/src"/>
-	<classpathentry kind="src" path="GraphPersist/src"/>
-	<classpathentry kind="src" path="MatrixView/src"/>
-	<classpathentry kind="src" path="Metamerise/src"/>
-	<classpathentry kind="src" path="PhotonField/src"/>
-	<classpathentry kind="src" path="PromotionManager/src"/>
-	<classpathentry kind="src" path="Replicator/src"/>
-	<classpathentry kind="src" path="Rings/src"/>
-	<classpathentry kind="src" path="RingsDesktop/src"/>
-	<classpathentry kind="src" path="TreeView/src"/>
-	<classpathentry kind="src" path="GraphPersist/test"/>
-	<classpathentry kind="src" path="ArtifactDetector/src"/>
-	<classpathentry kind="src" path="FlowTree/resources"/>
-	<classpathentry kind="src" path="Replicator/resources"/>
-	<classpathentry kind="src" path="FeedGrowth/resources"/>
-	<classpathentry kind="src" path="RingsDesktop/resources"/>
-	<classpathentry kind="src" path="OptimalZoo/src"/>
-	<classpathentry kind="src" path="Rings/test"/>
-	<classpathentry kind="src" path="Replicator/test"/>
-	<classpathentry kind="src" path="Birst/src"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/ant-1.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/batik-transcoder-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/bridj-0.6-c-only.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/bufr-4.6.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/cdm-4.6.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-beanutils-1.7.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-cli-2.0-gt2-pre1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-codec-1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-collections-3.2.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-dbcp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-digester-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-httpclient-3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-io-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-io-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-jxpath-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-lang-2.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/commons-pool-1.5.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/core-0.26.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/core.commands-3.6.0.I20100512-1500.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/core.runtime-3.6.0.v20100505.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/eastwood-1.1.1-20090908.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/ecore-2.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/ehcache-1.6.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/common-2.6.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/equinox.common-3.6.0.v20100503.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gdal-1.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/geodb-0.7-RC2.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/GeographicLib-Java-1.44.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-app-schema-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-app-schema-resolver-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-arcgrid-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-arcsde-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-arcsde-common-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-brewer-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-charts-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-complex-15-RC1-tests.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-complex-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-coverage-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-coverage-api-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-coveragetools-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-cql-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-css-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-csv-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-data-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-epsg-extension-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-epsg-hsql-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-epsg-oracle-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-epsg-postgresql-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-epsg-wkt-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-feature-aggregate-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-feature-pregeneralized-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geobuf-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geojson-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geojsondatastore-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geometry-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geopkg-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-geotiff-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-graph-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-grassraster-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-grib-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-grid-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-gtopo30-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-image-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-imageio-ext-gdal-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-imagemosaic-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-imagemosaic-jdbc-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-imagepyramid-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-db2-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-h2-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-mysql-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-oracle-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-postgis-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-spatialite-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-sqlserver-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jdbc-teradata-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jp2k-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-jts-wrapper-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-main-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-matfile5-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-mbtiles-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-metadata-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-mongodb-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-bridj-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-core-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ogr-jni-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-opengis-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-process-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-process-feature-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-process-geometry-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-process-raster-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-property-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-referencing-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-referencing3D-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-render-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-sample-data-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-sample-data-access-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-sfs-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-shapefile-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-solr-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-svg-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-swing-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-swt-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-transform-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-validation-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-vpf-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-wfs-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-wfs-ng-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-wms-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-wps-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xml-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-core-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-csw-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-fes-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-filter-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-gml2-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-gml3-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-kml-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-ows-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-sld-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-wcs-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-wfs-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-wms-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-xsd-wps-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/gt-ysld-15-RC1.jar"/>
-	<classpathentry exported="true" kind="lib" path="Explorer/lib/h2-1.1.119.jar"/>
-	<classpathentry kind="lib" path="Common/lib/jep-2.23.jar"/>
-	<classpathentry kind="lib" path="PhotonField/lib/j3dcore.jar"/>
-	<classpathentry kind="lib" path="PhotonField/lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="PhotonField/lib/vecmath.jar"/>
-	<classpathentry kind="lib" path="Common/lib/trove-3.0.3.jar"/>
-	<classpathentry kind="lib" path="GraphPersist/lib/c3p0-0.9.5.2.jar"/>
-	<classpathentry kind="lib" path="GraphPersist/lib/commons-pool2-2.3.jar"/>
-	<classpathentry kind="lib" path="Common/lib/hamcrest-core-1.3.jar"/>
-	<classpathentry kind="lib" path="Common/lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="FlowTree/lib/jsch-0.1.53.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-android-aarch64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-android-armv6.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-linux-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-linux-armv6.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-linux-armv6hf.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-linux-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-macosx-universal.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-solaris-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-solaris-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-windows-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2-natives-windows-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-2.3.2.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/gluegen-rt-main-2.3.2.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-android-aarch64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-android-armv6.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-linux-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-linux-armv6.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-linux-armv6hf.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-linux-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-macosx-universal.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-solaris-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-solaris-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-windows-amd64.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2-natives-windows-i586.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-2.3.2.jar"/>
-	<classpathentry kind="lib" path="Rings/lib/jogl-all-main-2.3.2.jar"/>
-	<classpathentry kind="lib" path="FlowTree/lib/hsqldb-j5-2.2.4.jar"/>
-	<classpathentry kind="lib" path="GraphPersist/lib/slf4j-simple-1.7.5.jar"/>
-	<classpathentry kind="lib" path="GraphPersist/lib/slf4j-log4j12-1.6.6.jar"/>
-	<classpathentry kind="lib" path="GraphPersist/lib/slf4j-api-1.7.7.jar"/>
-	<classpathentry kind="lib" path="FeedGrowth/lib/com.cycling74.max-5.1.9.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/dsn.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/gimap.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/imap.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/mailapi.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/pop3.jar"/>
-	<classpathentry kind="lib" path="PromotionManager/lib/smtp.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-1.2-api-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-api-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-core-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-flume-ng-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-iostreams-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-jcl-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-jmx-gui-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-jul-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-nosql-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-slf4j-impl-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-taglib-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-to-slf4j-2.6.2.jar"/>
-	<classpathentry kind="lib" path="Common/lib/log4j-web-2.6.2.jar"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgraph"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jgrapht-jdk1.5"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="test">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="game"/>
+	<classpathentry kind="src" path="geometry"/>
+	<classpathentry kind="src" path="shading"/>
+	<classpathentry kind="src" path="ui"/>
+	<classpathentry kind="src" path="engine"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
