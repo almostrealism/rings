@@ -1,3 +1,0 @@
-#!/bin/sh
-
-java -classpath rings.jar:kunststoff.jar threeD.run.RayTracer $1 $2 $3 $4 $5

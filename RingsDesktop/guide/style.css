@@ -1,9 +1,0 @@
-BODY { color: 006099; background-color: aaaeb1; font-size: 12pt; font-family: Arial }
-h1 { font-size: 20pt }
-h2 { font-size: 18pt }
-h3 { font-size: 14pt }
-a { text-color: 006099; text-decoration: none}
-a:active { color: red }
-a:visited { color: 8e6bae }
-.indented { padding-left: 16pt; padding-right: 16pt; }
-.section { margin-top: 35pt; margin-bottom: 35pt; }

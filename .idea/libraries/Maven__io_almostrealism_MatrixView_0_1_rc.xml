@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.almostrealism:MatrixView:0.1-rc">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/almostrealism/MatrixView/0.1-rc/MatrixView-0.1-rc.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/almostrealism/MatrixView/0.1-rc/MatrixView-0.1-rc-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/almostrealism/MatrixView/0.1-rc/MatrixView-0.1-rc-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
