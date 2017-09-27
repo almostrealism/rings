@@ -97,12 +97,8 @@
 			<id>internal</id>
 			<name>Archiva Managed Internal Repository</name>
 			<url>http://13.59.14.87:8080/repository/internal/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
 	</repositories>
 </project>
