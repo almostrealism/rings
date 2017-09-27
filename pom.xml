@@ -11,9 +11,9 @@
 	<packaging>jar</packaging>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
@@ -32,10 +32,11 @@
 						</goals>
 						<configuration>
 							<sources>
+								<source>engine</source>
 								<source>geometry</source>
 								<source>shading</source>
+								<source>src</source>
 								<source>ui</source>
-								<source>engine</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -46,7 +47,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
 				<configuration>
-					<test>EncryptionServiceTestOnAWS#run</test>
 				</configuration>
 			</plugin>
 		</plugins>
