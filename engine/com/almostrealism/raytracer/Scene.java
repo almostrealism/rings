@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.space.Gradient;
 import org.almostrealism.space.Intersectable;
@@ -43,6 +44,7 @@ public class Scene<T extends ShadableSurface> extends SurfaceList<T> {
 	 * Constructs a {@link Scene} with no {@link Camera} and no {@link Light}s or {@link Gradient}s.
 	 */
 	public Scene() {
+		setCamera(new PinholeCamera());
 		this.setLights(new Light[0]);
 	}
 	
