@@ -31,8 +31,6 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProducerAdapter;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.space.Intersection;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.rayshade.DiffuseShader;
@@ -226,10 +224,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 			 * @return  True if this set contains no elements, false otherwise.
 			 */
 			public boolean isEmpty() {
-				if (textures.length <= 0)
-					return true;
-				else
-					return false;
+				return (textures.length <= 0);
 			}
 			
 			/**

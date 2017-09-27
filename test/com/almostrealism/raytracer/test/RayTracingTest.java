@@ -44,7 +44,7 @@ public class RayTracingTest {
 		} catch (IOException ioe) {
 			System.out.println("IO ERROR");
 		}
-		
+
 		System.exit(0);
 	}
 }

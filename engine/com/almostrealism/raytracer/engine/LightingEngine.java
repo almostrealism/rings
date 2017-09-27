@@ -36,6 +36,10 @@ public class LightingEngine {
 		fields.setParameter(Ray.class, r);
 		ContinuousField intersect = fields.construct();
 
+		if (intersect != null) {
+			System.out.println("LightingEngine: Intersect was " + intersect);
+		}
+
 		ColorSum color = new ColorSum();
 
 		// TODO  Figure out what this is for.
@@ -246,7 +250,7 @@ public class LightingEngine {
 
 		if (light instanceof SurfaceLight) {
 			Light l[] = ((SurfaceLight) light).getSamples();
-			return lightingCalculation(intersection, point, rayDirection,
+			return   lightingCalculation(intersection, point, rayDirection,
 					surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
 			return PointLight.pointLightingCalculation(intersection, point,
