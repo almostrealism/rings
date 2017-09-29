@@ -19,6 +19,7 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import com.almostrealism.lighting.Light;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
@@ -34,38 +35,25 @@ import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.rayshade.ShaderSet;
 
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
-	public static final int MAX_RAY_STEPS = 30;
-	
+	private RenderParameters params;
 	private DistanceEstimator estimator;
+	private Light lights[];
 	private ShaderSet shaders;
 	
-	public RayMarchingEngine(DistanceEstimator e, ShaderSet shaders) {
+	public RayMarchingEngine(RenderParameters params, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
+		this.params = params;
 		this.estimator = e;
+		this.lights = allLights;
 		this.shaders = shaders;
 	}
 	
 	public ColorProducer trace(Vector from, Vector direction) {
-		double totalDistance = 0.0;
-		
-		int steps;
-		
 		Ray r = new Ray(from, direction);
-		
-		steps: for (steps = 0; steps < MAX_RAY_STEPS; steps++) {
-			Vector p = from.add(direction.multiply(totalDistance));
-			r = new Ray(p, direction);
-			double distance = estimator.estimateDistance(r);
-			totalDistance += distance;
-			if (distance < 0.0001) break steps;
-		}
-		
-		
-		
-		double d = 1.0 - steps / ((double) MAX_RAY_STEPS);
-		
-		
-		
-		return new RGB(d, d, d);
+
+		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator);
+		return l.lightingCalculation(r, new ArrayList<Callable<ColorProducer>>(),
+										this.lights, params.fogColor,
+										params.fogDensity, params.fogRatio, null);
 	}
 
 	@Override

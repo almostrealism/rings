@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import javax.swing.text.NumberFormatter;
 
+import com.almostrealism.lighting.Light;
+import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.Animation;
@@ -19,10 +21,12 @@ import com.almostrealism.raytracer.primitives.Sphere;
 
 public class RayMarchingTest {
 	public static double minRadius2 = 0.25;
+
 	public static double fixedRadius2 = 1.0;
 	public static double foldingLimit = 1.0;
-	public static int Iterations = 20;
-	public static double POWER = 9.53;
+	public static int Iterations = 50;
+//	public static double POWER = 9.53;
+	public static double POWER = 7.80;
 	public static Vector Offset = new Vector(1.0, 1.0, 1.0);
 	
 	private static NumberFormatter format = new NumberFormatter(NumberFormat.getPercentInstance());
@@ -35,36 +39,43 @@ public class RayMarchingTest {
 //			Vector z = ray.getOrigin();
 //			double dr = 1.0;
 //			double r = 0.0;
-//			
+//
 //			int steps;
-//			
+//
 //			for (steps = 0; steps < Iterations; steps++) {
 //				r = z.length();
-//				
+//
 //				double theta = Math.acos(z.getZ() / r) ;
 //				double phi = Math.atan2(z.getY() , z.getX()) ;
 //				dr = Math.pow(r, POWER - 1.0) * POWER * dr + 1.0;
-//				
+//
 //				double zr = Math.pow(r, POWER);
 //				theta = theta * POWER ;
 //				phi = phi * POWER ;
-//				
+//
 //				z = new Vector(Math.sin(theta) * Math.cos(phi),
 //									Math.sin(phi) *  Math.sin(theta),
 //									Math.cos(theta)).multiply(zr);
 //				z = z.add(ray.getOrigin());
 //			}
-//			
+//
 //			return 0.5 * Math.log(r) * r / dr;
 //		}, s);
 		
-		RayMarchingEngine mandel = new RayMarchingEngine(
+		RayMarchingEngine mandel = new RayMarchingEngine(new RenderParameters(),
 										new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
-													new RGB(0.8, 0.8, 0.8)), s);
-		
+													new RGB(0.8, 0.8, 0.8)), new Light[0], s);
+
+		OrthographicCamera c = new OrthographicCamera(new Vector(10.0, 0.0, 400.0),
+														new Vector(0.0, 0.0, -1.0),
+														new Vector(0.0, 1.0, 0.0));
+//		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, 10.0),
+//											new Vector(0.0, 0.0, -1.0),
+//											new Vector(0.0, 1.0, 0.0));
+
 		RenderParameters params = new RenderParameters();
-		params.width = 400;
-		params.height = 400;
+		params.width = (int) (400 * c.getProjectionWidth());
+		params.height = (int) (400 * c.getProjectionHeight());
 		params.dx = 400;
 		params.dy = 400;
 		
@@ -73,9 +84,7 @@ public class RayMarchingTest {
 			public String next() {
 				POWER = POWER + 0.01;
 				
-				this.setImage(new RayTracedScene(mandel, new OrthographicCamera(new Vector(0.0, 0.0, 10.0),
-																		new Vector(0.0, 0.0, -1.0),
-																		new Vector(0.0, 1.0, 0.0))).realize(params));
+				this.setImage(new RayTracedScene(mandel, c).realize(params));
 				
 				try {
 					return "marching" + format.valueToString(POWER) + ".jpg";
