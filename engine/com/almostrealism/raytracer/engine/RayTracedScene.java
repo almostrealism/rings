@@ -78,14 +78,30 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 					if (image[i - p.x][j - p.y] == null) {
 						if (p.ssWidth > 1 || p.ssHeight > 1) {
 							double scale = 1.0 / (p.ssWidth * p.ssHeight);
-							color = new ColorProduct(color);
+
+							try {
+								color = new ColorProduct(color.get());
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							}
+
 							((ColorProduct) color).add(new RGB(scale, scale, scale));
 						}
 						
 						image[i - p.x][j - p.y] = color;
 					} else {
 						double scale = 1.0 / (p.ssWidth * p.ssHeight);
-						color = new ColorProduct(color);
+
+						try {
+							color = new ColorProduct(color.get());
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+
 						((ColorProduct) color).add(new RGB(scale, scale, scale));
 						
 						image[i - p.x][j - p.y] = new ColorSum(image[i - p.x][j - p.y], color);
