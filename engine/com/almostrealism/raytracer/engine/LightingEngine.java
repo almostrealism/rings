@@ -36,6 +36,8 @@ public class LightingEngine {
 		fields.setParameter(Ray.class, r);
 		ContinuousField intersect = fields.construct();
 
+//		System.out.println("Intersection is " + intersect);
+
 		ColorSum color = new ColorSum();
 
 		// TODO  Figure out what this is for.

@@ -41,7 +41,10 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 					if (distance < 0.0001) break steps;
 				}
 
-				return new Locus(from, direction);
+				if (totalDistance > 0.1 && totalDistance < Math.pow(10, 6))
+	 				System.out.println("Total distance = " + totalDistance);
+
+				return new Locus(r.getOrigin(), r.getDirection());
 			}
 		});
 
@@ -73,6 +76,16 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 			}
 
 			return null;
+		}
+
+		public String toString() {
+			try {
+				return String.valueOf(get(0).call());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return "null";
 		}
 	}
 }
