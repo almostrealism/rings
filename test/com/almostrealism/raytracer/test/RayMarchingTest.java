@@ -109,7 +109,7 @@ public class RayMarchingTest {
 		} else {
 			try {
 				ImageCanvas.encodeImageFile(new RayTracedScene(mandel, c).realize(params).evaluate(null),
-						new File("test.jpeg"),
+						new File("test-march.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			} catch (FileNotFoundException fnf) {
 				System.out.println("ERROR: Output file not found");

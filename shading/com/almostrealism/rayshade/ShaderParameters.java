@@ -50,7 +50,11 @@ public class ShaderParameters {
 
 	private int refCount;
 	private int exit, enter;
-	
+
+	public ShaderParameters() {
+
+	}
+
 	/**
 	 * Constructs a new ShaderParameters object using the specified arguments.
 	 * 
@@ -81,8 +85,8 @@ public class ShaderParameters {
 	 * @param surface  Surface object to be shaded.
 	 * @param otherSurfaces  Array of other Surface objects in the scene.
 	 */
-	private ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
-			Light otherLights[], Callable<ColorProducer> surface, Callable<ColorProducer> otherSurfaces[]) {
+	public ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
+							Light otherLights[], Callable<ColorProducer> surface, Callable<ColorProducer> otherSurfaces[]) {
 		this.intersection = intersection;
 		this.lightDirection = lightDirection;
 		this.light = light;

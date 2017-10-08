@@ -1,21 +1,29 @@
 package com.almostrealism.raytracer.engine;
 
+import com.almostrealism.rayshade.Shadable;
+import com.almostrealism.rayshade.Shader;
+import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderSet;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorSum;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.ParameterizedFactory;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 public class DistanceEstimationLightingEngine extends LightingEngine {
 	public static final int MAX_RAY_STEPS = 30;
 
 	private DistanceEstimator estimator;
+	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(DistanceEstimator estimator) {
+	public DistanceEstimationLightingEngine(DistanceEstimator estimator, ShaderSet shaders) {
 		super(new ParameterizedFactory<Ray, ContinuousField>() {
 			private Ray r;
 
@@ -44,16 +52,23 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 				if (totalDistance > 0.1 && totalDistance < Math.pow(10, 6))
 	 				System.out.println("Total distance = " + totalDistance);
 
-				return new Locus(r.getOrigin(), r.getDirection());
+				return new Locus(r.getOrigin(), r.getDirection(), shaders, new ShaderParameters());
 			}
 		});
 
 		this.estimator = estimator;
+		this.shaders = shaders;
 	}
 
-	private static class Locus extends ArrayList<Callable<Ray>> implements ContinuousField {
-		public Locus(Vector location, Vector normal) {
+	public static class Locus extends ArrayList<Callable<Ray>> implements ContinuousField, Callable<ColorProducer>, Shadable {
+
+		private ShaderSet shaders;
+		private ShaderParameters params;
+
+		public Locus(Vector location, Vector normal, ShaderSet s, ShaderParameters p) {
 			this.add(() -> { return new Ray(location, normal); });
+			shaders = s;
+			params = p;
 		}
 
 		@Override
@@ -78,6 +93,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 			return null;
 		}
 
+		public ShaderSet getShaders() { return shaders; }
+
 		public String toString() {
 			try {
 				return String.valueOf(get(0).call());
@@ -86,6 +103,26 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 			}
 
 			return "null";
+		}
+
+		@Override
+		public ColorProducer shade(ShaderParameters parameters) {
+			try {
+				ColorSum color = new ColorSum();
+
+				if (shaders != null)
+					color.add(shaders.shade(parameters, this));
+
+				return color;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		@Override
+		public ColorProducer call() throws Exception {
+			return shade(params);
 		}
 	}
 }

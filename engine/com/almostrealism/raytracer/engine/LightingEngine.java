@@ -3,7 +3,6 @@ package com.almostrealism.raytracer.engine;
 import com.almostrealism.lighting.*;
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.Shadable;
-import com.almostrealism.rayshade.ShadableIntersection;
 import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.algebra.ContinuousField;
@@ -45,6 +44,9 @@ public class LightingEngine {
 
 		if (intersect != null) {
 			Callable<ColorProducer> surf = intersect instanceof Intersection ? (Callable<ColorProducer>) ((Intersection) intersect).getSurface() : null;
+			if (surf == null && intersect instanceof DistanceEstimationLightingEngine.Locus)
+				surf = (DistanceEstimationLightingEngine.Locus) intersect;
+
 			List<Callable<ColorProducer>> otherSurf = new ArrayList<Callable<ColorProducer>>();
 
 			for (Callable<ColorProducer> s : allSurfaces) {
@@ -90,7 +92,8 @@ public class LightingEngine {
 						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 
 						if (p == null) {
-							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf)) : null;
+							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight,
+																		otherL, surf, otherSurf.toArray(new Callable[0]))) : null;
 						} else {
 							p.setIntersection(intersect);
 							p.setLightDirection(l);

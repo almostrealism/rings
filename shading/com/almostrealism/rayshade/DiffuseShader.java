@@ -52,7 +52,7 @@ public class DiffuseShader implements Shader, Editable {
 		Vector point;
 		
 		try {
-			point = p.getIntersection().get(0).call().getOrigin();
+			point = normals.get(0).call().getOrigin();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -73,11 +73,14 @@ public class DiffuseShader implements Shader, Editable {
 		
 		Future<ColorProducer> surfaceColor = RayTracer.getExecutorService().submit(p.getSurface());
 		
-		ColorProducer realized;
+		ColorProducer realized = null;
 		
 		try {
-			point = p.getIntersection().get(0).call().getOrigin();
-			realized = surfaceColor.get().operate(point);
+			point = normals.get(0).call().getOrigin();
+			if (surfaceColor != null) {
+				ColorProducer pr = surfaceColor.get();
+				realized = pr == null ? null : pr.operate(point);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return color;

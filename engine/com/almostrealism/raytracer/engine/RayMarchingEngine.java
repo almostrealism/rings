@@ -50,7 +50,7 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	public ColorProducer trace(Vector from, Vector direction) {
 		Ray r = new Ray(from, direction);
 
-		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator);
+		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders);
 		return l.lightingCalculation(r, new ArrayList<Callable<ColorProducer>>(),
 										this.lights, params.fogColor,
 										params.fogDensity, params.fogRatio, null);
