@@ -70,7 +70,11 @@ public class DiffuseShader implements Shader, Editable {
 		}
 		
 		ColorSum color = new ColorSum();
-		
+
+		if (p.getSurface() == null) {
+			throw new NullPointerException();
+		}
+
 		Future<ColorProducer> surfaceColor = RayTracer.getExecutorService().submit(p.getSurface());
 		
 		ColorProducer realized = null;

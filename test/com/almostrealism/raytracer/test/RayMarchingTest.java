@@ -11,6 +11,7 @@ import javax.swing.text.NumberFormatter;
 import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.rayshade.ShaderParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.Animation;
@@ -68,19 +69,22 @@ public class RayMarchingTest {
 //
 //			return 0.5 * Math.log(r) * r / dr;
 //		}, s);
-		
-		RayMarchingEngine mandel = new RayMarchingEngine(new RenderParameters(),
-										new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
-													new RGB(0.8, 0.8, 0.8)),
-								new Light[] { new PointLight(new Vector(10.0, 10.0, -10.0), 0.8, new RGB(0.8, 0.9, 0.7))}, s);
 
-		OrthographicCamera c = new OrthographicCamera(new Vector(0.0, 0.0, 10.0),
+		Light l = new PointLight(new Vector(10.0, 10.0, -10.0),
+								0.8, new RGB(0.8, 0.9, 0.7));
+		Sphere sphere = new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
+										new RGB(0.8, 0.8, 0.8));
+
+		RayMarchingEngine mandel = new RayMarchingEngine(new ShaderParameters(sphere, l), new RenderParameters(),
+															sphere, new Light[] {l}, s);
+
+//		OrthographicCamera c = new OrthographicCamera(new Vector(0.0, 0.0, 60.0),
+//														new Vector(0.0, 0.0, -1.0),
+//														new Vector(0.0, 1.0, 0.0));
+
+		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, 60.0),
 														new Vector(0.0, 0.0, -1.0),
 														new Vector(0.0, 1.0, 0.0));
-
-//		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, -1.0),
-//											new Vector(0.0, 10.0, 1.0),
-//											new Vector(0.0, 1.0, 0.0));
 
 		RenderParameters params = new RenderParameters();
 		params.width = (int) (400 * c.getProjectionWidth());

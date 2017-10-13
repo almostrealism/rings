@@ -51,8 +51,9 @@ public class ShaderParameters {
 	private int refCount;
 	private int exit, enter;
 
-	public ShaderParameters() {
-
+	public ShaderParameters(Callable<ColorProducer> surface, Light l) {
+		this.surface = surface;
+		this.light = l;
 	}
 
 	/**

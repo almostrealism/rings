@@ -35,12 +35,14 @@ import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.rayshade.ShaderSet;
 
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
+	private ShaderParameters sparams;
 	private RenderParameters params;
 	private DistanceEstimator estimator;
 	private Light lights[];
 	private ShaderSet shaders;
 	
-	public RayMarchingEngine(RenderParameters params, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
+	public RayMarchingEngine(ShaderParameters sparams, RenderParameters params, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
+		this.sparams = sparams;
 		this.params = params;
 		this.estimator = e;
 		this.lights = allLights;
@@ -50,10 +52,10 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	public ColorProducer trace(Vector from, Vector direction) {
 		Ray r = new Ray(from, direction);
 
-		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders);
+		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders, this.sparams.getLight());
 		return l.lightingCalculation(r, new ArrayList<Callable<ColorProducer>>(),
 										this.lights, params.fogColor,
-										params.fogDensity, params.fogRatio, null);
+										params.fogDensity, params.fogRatio, sparams);
 	}
 
 	@Override

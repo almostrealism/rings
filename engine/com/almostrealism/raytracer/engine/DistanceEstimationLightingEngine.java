@@ -1,5 +1,6 @@
 package com.almostrealism.raytracer.engine;
 
+import com.almostrealism.lighting.Light;
 import com.almostrealism.rayshade.Shadable;
 import com.almostrealism.rayshade.Shader;
 import com.almostrealism.rayshade.ShaderParameters;
@@ -23,7 +24,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	private DistanceEstimator estimator;
 	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(DistanceEstimator estimator, ShaderSet shaders) {
+	public DistanceEstimationLightingEngine(DistanceEstimator estimator, ShaderSet shaders, Light l) {
 		super(new ParameterizedFactory<Ray, ContinuousField>() {
 			private Ray r;
 
@@ -49,10 +50,12 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 					if (distance < 0.0001) break steps;
 				}
 
-				if (totalDistance > 0.1 && totalDistance < Math.pow(10, 6))
-	 				System.out.println("Total distance = " + totalDistance);
+//				if (totalDistance > 0.1 && totalDistance < Math.pow(10, 6))
+//	 				System.out.println("Total distance = " + totalDistance);
 
-				return new Locus(r.getOrigin(), r.getDirection(), shaders, new ShaderParameters());
+				return new Locus(r.getOrigin(), r.getDirection(), shaders,
+						new ShaderParameters(estimator instanceof Callable ?
+											((Callable) estimator) : null, l));
 			}
 		});
 
