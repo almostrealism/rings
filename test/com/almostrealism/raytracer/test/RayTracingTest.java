@@ -24,15 +24,15 @@ public class RayTracingTest {
 		
 		scene.addLight(new PointLight(new Vector(10.0, 10.0, -10.0), 0.8, new RGB(0.8, 0.9, 0.7)));
 
-		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, -1.0),
-											new Vector(0.0, 10.0, 1.0),
+		PinholeCamera c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
+											new Vector(0.0, 1.0, 1.0),
 											new Vector(0.0, 1.0, 0.0));
 
 		RenderParameters params = new RenderParameters();
 		params.width = (int) (c.getProjectionWidth() * 1000);
 		params.height = (int) (c.getProjectionHeight() * 1000);
-		params.dx = 1000;
-		params.dy = 1000;
+		params.dx = (int) (c.getProjectionWidth() * 1000);
+		params.dy = (int) (c.getProjectionHeight() * 1000);
 		
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, params), c);
 		
