@@ -109,6 +109,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				RenderParameters rparams = new RenderParameters();
 				rparams.width = RenderPanel.this.width;
 				rparams.height = RenderPanel.this.height;
+				rparams.dx = RenderPanel.this.width;
+				rparams.dy = RenderPanel.this.height;
 				rparams.ssWidth = RenderPanel.this.ssWidth;
 				rparams.ssHeight = RenderPanel.this.ssHeight;
 
