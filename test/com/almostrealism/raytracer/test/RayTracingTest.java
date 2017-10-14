@@ -19,7 +19,7 @@ import com.almostrealism.raytracer.primitives.Sphere;
 
 public class RayTracingTest {
 	public static void main(String args[]) {
-		Scene<ShadableSurface> scene = new Scene<>();
+ 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.add(new Sphere(new Vector(), 1.0, new RGB(0.8, 0.8, 0.8)));
 		
 		scene.addLight(new PointLight(new Vector(10.0, 10.0, -10.0), 0.8, new RGB(0.8, 0.9, 0.7)));

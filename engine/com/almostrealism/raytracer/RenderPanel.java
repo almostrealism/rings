@@ -26,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.almostrealism.raytracer.engine.*;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
@@ -35,12 +37,11 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
+import org.almostrealism.util.Factory;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and
@@ -56,7 +57,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	private int width, height, ssWidth, ssHeight;
 
-	private RGB renderedImageData[][];
+	private ColorProducer renderedImageData[][];
 	private Image renderedImage;
 	
 	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
@@ -105,7 +106,16 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		
 		final Thread renderThread = new Thread(new Runnable() {
 			public void run() {
-				renderedImageData = LegacyRayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
+				RenderParameters rparams = new RenderParameters();
+				rparams.width = RenderPanel.this.width;
+				rparams.height = RenderPanel.this.height;
+				rparams.ssWidth = RenderPanel.this.ssWidth;
+				rparams.ssHeight = RenderPanel.this.ssHeight;
+
+				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, rparams), scene.getCamera());
+				renderedImageData = r.realize(rparams).evaluate(null);
+
+//				renderedImageData = LegacyRayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
 				renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
 				
 				try {
@@ -249,7 +259,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	/**
 	 * Return the image rendered by this RenderPanel as an array of RGB objects.
 	 */
-	public RGB[][] getRenderedImageData() { return this.renderedImageData; }
+	public ColorProducer[][] getRenderedImageData() { return this.renderedImageData; }
 	
 	/**
 	 * Sets the EventHandler object used by this RenderPanel object. Setting this to null will deactivae event reporting.

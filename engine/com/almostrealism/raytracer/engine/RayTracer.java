@@ -22,8 +22,8 @@ public class RayTracer {
 		});
 	}
 	
-	public static interface Engine {
-		public ColorProducer trace(Vector from, Vector direction);
+	public interface Engine {
+		ColorProducer trace(Vector from, Vector direction);
 	}
 	
 	public static ExecutorService getExecutorService() { return pool; }
