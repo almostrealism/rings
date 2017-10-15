@@ -14,6 +14,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.ShaderParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.texture.Animation;
 
 import com.almostrealism.projection.OrthographicCamera;
@@ -42,55 +43,58 @@ public class RayMarchingTest {
 	public static void main(String args[]) {
 		ShaderSet s = new ShaderSet();
 		s.add(DiffuseShader.defaultDiffuseShader);
-		
-//		RayMarchingEngine mandel = new RayMarchingEngine((ray) -> {
-//			Vector z = ray.getOrigin();
-//			double dr = 1.0;
-//			double r = 0.0;
-//
-//			int steps;
-//
-//			for (steps = 0; steps < Iterations; steps++) {
-//				r = z.length();
-//
-//				double theta = Math.acos(z.getZ() / r) ;
-//				double phi = Math.atan2(z.getY() , z.getX()) ;
-//				dr = Math.pow(r, POWER - 1.0) * POWER * dr + 1.0;
-//
-//				double zr = Math.pow(r, POWER);
-//				theta = theta * POWER ;
-//				phi = phi * POWER ;
-//
-//				z = new Vector(Math.sin(theta) * Math.cos(phi),
-//									Math.sin(phi) *  Math.sin(theta),
-//									Math.cos(theta)).multiply(zr);
-//				z = z.add(ray.getOrigin());
-//			}
-//
-//			return 0.5 * Math.log(r) * r / dr;
-//		}, s);
+
+		DistanceEstimator estimator = (ray) -> {
+			Vector z = ray.getOrigin();
+			double dr = 1.0;
+			double r = 0.0;
+
+			int steps;
+
+			for (steps = 0; steps < Iterations; steps++) {
+				r = z.length();
+
+				double theta = Math.acos(z.getZ() / r) ;
+				double phi = Math.atan2(z.getY() , z.getX()) ;
+				dr = Math.pow(r, POWER - 1.0) * POWER * dr + 1.0;
+
+				double zr = Math.pow(r, POWER);
+				theta = theta * POWER ;
+				phi = phi * POWER ;
+
+				z = new Vector(Math.sin(theta) * Math.cos(phi),
+						Math.sin(phi) *  Math.sin(theta),
+						Math.cos(theta)).multiply(zr);
+				z = z.add(ray.getOrigin());
+			}
+
+			return 0.5 * Math.log(r) * r / dr;
+		};
 
 		Light l = new PointLight(new Vector(10.0, 10.0, -10.0),
 								0.8, new RGB(0.8, 0.9, 0.7));
-		Sphere sphere = new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
-										new RGB(0.8, 0.8, 0.8));
 
-		RayMarchingEngine mandel = new RayMarchingEngine(new ShaderParameters(sphere, l), new RenderParameters(),
-															sphere, new Light[] {l}, s);
+		RayMarchingEngine mandel = new RayMarchingEngine(l, estimator, new Light[] {l}, s);
 
-//		OrthographicCamera c = new OrthographicCamera(new Vector(0.0, 0.0, 60.0),
-//														new Vector(0.0, 0.0, -1.0),
-//														new Vector(0.0, 1.0, 0.0));
+//		Sphere sphere = new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
+//										new RGB(0.8, 0.8, 0.8));
+//
+//		RayMarchingEngine mandel = new RayMarchingEngine(new ShaderParameters(sphere, l), new RenderParameters(),
+//															sphere, new Light[] {l}, s);
 
-		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, 60.0),
+		OrthographicCamera c = new OrthographicCamera(new Vector(0.0, 0.0, 2.0),
 														new Vector(0.0, 0.0, -1.0),
 														new Vector(0.0, 1.0, 0.0));
+
+//		PinholeCamera c = new PinholeCamera(new Vector(0.0, 0.0, 60.0),
+//														new Vector(0.0, 0.0, -1.0),
+//														new Vector(0.0, 1.0, 0.0));
 
 		RenderParameters params = new RenderParameters();
 		params.width = (int) (400 * c.getProjectionWidth());
 		params.height = (int) (400 * c.getProjectionHeight());
-		params.dx = 400;
-		params.dy = 400;
+		params.dx = (int) (100 * c.getProjectionWidth());
+		params.dy = (int) (100 * c.getProjectionHeight());
 
 		if (enableAnimation) {
 			Animation animation = new Animation(null) {
@@ -121,6 +125,8 @@ public class RayMarchingTest {
 				System.out.println("IO ERROR");
 			}
 		}
+
+		System.exit(0);
 	}
 	
 	// simply scale the dual vectors

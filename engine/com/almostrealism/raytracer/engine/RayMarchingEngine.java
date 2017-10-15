@@ -41,9 +41,9 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	private Light lights[];
 	private ShaderSet shaders;
 	
-	public RayMarchingEngine(ShaderParameters sparams, RenderParameters params, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
-		this.sparams = sparams;
-		this.params = params;
+	public RayMarchingEngine(Light l, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
+		this.sparams = new ShaderParameters(this, l);
+		this.params = new RenderParameters();
 		this.estimator = e;
 		this.lights = allLights;
 		this.shaders = shaders;

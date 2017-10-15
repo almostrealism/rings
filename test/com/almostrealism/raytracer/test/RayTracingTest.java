@@ -23,6 +23,7 @@ import com.almostrealism.raytracer.primitives.Sphere;
 public class RayTracingTest {
 	public static boolean useCornellBox = false;
 	public static boolean displaySpheres = false;
+	public static boolean displayCar = true;
 
 	public static void main(String args[]) throws IOException {
  		Scene<ShadableSurface> scene = useCornellBox ?
@@ -38,6 +39,11 @@ public class RayTracingTest {
 
 			scene.add(s1);
 			scene.add(s2);
+		}
+
+		if (displayCar) {
+ 			scene.add(FileDecoder.decodeSurfaceFile(new File("dragon.ply"),
+									FileDecoder.PLYEncoding, false, null));
 		}
 
 		Plane p = new Plane(Plane.XY);
