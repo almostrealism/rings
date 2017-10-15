@@ -67,10 +67,7 @@
          </array> 
         </void> 
        </object> 
-      </void> 
-      <void property="dialogClass"> 
-       <class>com.almostrealism.raytracer.ui.EditPlaneDialog</class> 
-      </void> 
+      </void>
       <void property="name"> 
        <string>Floor</string> 
       </void> 
@@ -127,10 +124,7 @@
          </array> 
         </void> 
        </object> 
-      </void> 
-      <void property="dialogClass"> 
-       <class>com.almostrealism.raytracer.ui.EditPlaneDialog</class> 
-      </void> 
+      </void>
       <void property="name"> 
        <string>Right Wall</string> 
       </void> 
@@ -181,10 +175,7 @@
          </array> 
         </void> 
        </object> 
-      </void> 
-      <void property="dialogClass"> 
-       <class>com.almostrealism.raytracer.ui.EditPlaneDialog</class> 
-      </void> 
+      </void>
       <void property="name"> 
        <string>Left Wall</string> 
       </void> 
@@ -235,10 +226,7 @@
          </array> 
         </void> 
        </object> 
-      </void> 
-      <void property="dialogClass"> 
-       <class>com.almostrealism.raytracer.ui.EditPlaneDialog</class> 
-      </void> 
+      </void>
       <void property="name"> 
        <string>Back Wall</string> 
       </void> 
@@ -275,8 +263,8 @@
           <double>0.8</double> 
          </void> 
         </void> 
-        <void property="transforms"> 
-         <array class="org.almostrealism.space.TransformMatrix" length="2"> 
+        <void property="transforms">
+         <array class="org.almostrealism.algebra.TransformMatrix" length="2">
           <void index="0"> 
            <object class="com.almostrealism.raytracer.surfaceUI.TransformMatrixUI"> 
             <void property="matrix"> 
@@ -336,10 +324,7 @@
          </array> 
         </void> 
        </object> 
-      </void> 
-      <void property="dialogClass"> 
-       <class>com.almostrealism.raytracer.ui.EditPlaneDialog</class> 
-      </void> 
+      </void>
       <void property="name"> 
        <string>Cieling</string> 
       </void> 

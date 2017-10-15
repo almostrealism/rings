@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.almostrealism.rayshade.ReflectionShader;
+import com.almostrealism.rayshade.RefractionShader;
+import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.io.FileDecoder;
+import com.almostrealism.raytracer.primitives.Plane;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -14,30 +18,68 @@ import org.almostrealism.texture.ImageCanvas;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.RayIntersectionEngine;
-import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.engine.RenderParameters;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Sphere;
 
 public class RayTracingTest {
+	public static boolean useCornellBox = false;
+	public static boolean displaySpheres = false;
+
 	public static void main(String args[]) throws IOException {
- 		Scene<ShadableSurface> scene =
+ 		Scene<ShadableSurface> scene = useCornellBox ?
 				FileDecoder.decodeSceneFile(new File("CornellBox.xml"), FileDecoder.XMLEncoding,
-											false, (e) -> { e.printStackTrace(); });
-		scene.add(new Sphere(new Vector(), 1.0, new RGB(0.8, 0.8, 0.8)));
+											false, (e) -> { e.printStackTrace(); }) : new Scene<>();
 
-		scene.addLight(new PointLight(new Vector(10.0, 10.0, -10.0), 0.8, new RGB(0.8, 0.9, 0.7)));
+ 		if (displaySpheres) {
+			Sphere s1 = new Sphere(new Vector(-1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
+			s1.addShader(new RefractionShader());
 
-		PinholeCamera c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
-											new Vector(0.0, 1.0, 1.0),
-											new Vector(0.0, 1.0, 0.0));
+			Sphere s2 = new Sphere(new Vector(1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
+			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
+
+			scene.add(s1);
+			scene.add(s2);
+		}
+
+		Plane p = new Plane(Plane.XY);
+		p.setLocation(new Vector(0, 0, 1));
+		p.setShadeBack(true);
+		p.setShadeFront(true);
+//		scene.add(p);
+
+		for (ShadableSurface s : scene) {
+			if (s instanceof AbstractSurface) {
+				((AbstractSurface) s).setShadeFront(true);
+				((AbstractSurface) s).setShadeBack(true);
+			}
+
+			if (s instanceof Plane) {
+				((Plane) s).setColor(new RGB(1.0, 1.0, 1.0));
+				if (((Plane) s).getType() == Plane.XZ) {
+					if (((Plane) s).getLocation().getX() <= 0) {
+						System.out.println(((Plane) s).getLocation());
+					}
+				}
+			}
+		}
+
+		scene.addLight(new PointLight(new Vector(00.0, 10.0, -1.0), 1.0, new RGB(0.8, 0.9, 0.7)));
+
+//		PinholeCamera c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
+//											new Vector(0.0, 1.0, 1.0),
+//											new Vector(0.0, 1.0, 0.0));
+		PinholeCamera c = (PinholeCamera) scene.getCamera();
+		c.setViewDirection(new Vector(0.0, -0.05, 1.0));
+		c.setProjectionDimensions(50, 45);
+		c.setFocalLength(400);
+		Vector l = c.getLocation();
+		l.setZ(-60);
+		c.setLocation(l);
 
 		RenderParameters params = new RenderParameters();
-		params.width = (int) (c.getProjectionWidth() * 1000);
-		params.height = (int) (c.getProjectionHeight() * 1000);
-		params.dx = (int) (c.getProjectionWidth() * 1000);
-		params.dy = (int) (c.getProjectionHeight() * 1000);
+		params.width = (int) (c.getProjectionWidth() * 10);
+		params.height = (int) (c.getProjectionHeight() * 10);
+		params.dx = (int) (c.getProjectionWidth() * 10);
+		params.dy = (int) (c.getProjectionHeight() * 10);
 		
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, params), c);
 		
