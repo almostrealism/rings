@@ -1,6 +1,5 @@
 package com.almostrealism.raytracer.test;
 
-import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,29 +18,40 @@ import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.primitives.Sphere;
+import org.almostrealism.texture.StripeTexture;
 
 public class RayTracingTest {
+	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
-	public static boolean displaySpheres = false;
-	public static boolean displayCar = true;
+	public static boolean displaySpheres = true;
+	public static boolean displayDragon = false;
 
 	public static void main(String args[]) throws IOException {
  		Scene<ShadableSurface> scene = useCornellBox ?
 				FileDecoder.decodeSceneFile(new File("CornellBox.xml"), FileDecoder.XMLEncoding,
 											false, (e) -> { e.printStackTrace(); }) : new Scene<>();
 
+ 		if (useStripedFloor) {
+ 			Plane p = new Plane(Plane.XZ);
+ 			p.setLocation(new Vector(0.0, -10, 0.0));
+ 			p.addTexture(new StripeTexture());
+ 			scene.add(p);
+		}
+
  		if (displaySpheres) {
 			Sphere s1 = new Sphere(new Vector(-1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
+			s1.getShaderSet().clear();
 			s1.addShader(new RefractionShader());
 
 			Sphere s2 = new Sphere(new Vector(1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
 			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
+			s2.getShaderSet().clear();
 
 			scene.add(s1);
 			scene.add(s2);
 		}
 
-		if (displayCar) {
+		if (displayDragon) {
  			scene.add(FileDecoder.decodeSurfaceFile(new File("dragon.ply"),
 									FileDecoder.PLYEncoding, false, null));
 		}

@@ -16,8 +16,10 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.ContinuousField;
@@ -64,7 +66,6 @@ public class ShaderParameters {
 	 * @param light  Light object representing the light.
 	 * @param otherLights  Array of Light objects representing other lights in the scene.
 	 * @param otherSurfaces  Collection of other Surface objects in the scene.
-	 * @param surface  Surface object to be shaded.
 	 */
 	public ShaderParameters(ContinuousField intersection, Vector lightDirection, Light light,
 							Light otherLights[], Collection<Callable<ColorProducer>> otherSurfaces) {
@@ -170,6 +171,13 @@ public class ShaderParameters {
 		Light l[] = new Light[this.otherLights.length + 1];
 		for (int i = 0; i < this.otherLights.length; i++) l[i] = this.otherLights[i];
 		l[l.length - 1] = this.light;
+		return l;
+	}
+
+	public Iterable<? extends Callable<ColorProducer>> getAllSurfaces() {
+		List<Callable<ColorProducer>> l = new ArrayList<>();
+		if (getSurface() != null) l.add(getSurface());
+		l.addAll(Arrays.asList(getOtherSurfaces()));
 		return l;
 	}
 	
