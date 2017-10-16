@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/rayshade/ShaderParameters.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/rayshade/ShaderParameters.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" afterPath="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="285">
-              <caret line="37" column="25" lean-forward="true" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
+              <caret line="37" column="25" lean-forward="false" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
               <folding>
                 <marker date="1508113345000" expanded="true" signature="2656:2803" ph="..." />
               </folding>
@@ -42,8 +40,8 @@
       <file leaf-file-name="ShaderParameters.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/rayshade/ShaderParameters.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="67" column="78" lean-forward="false" selection-start-line="67" selection-start-column="78" selection-end-line="67" selection-end-column="78" />
+            <state relative-caret-position="185">
+              <caret line="72" column="5" lean-forward="false" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -437,7 +435,7 @@
       <workItem from="1507056115953" duration="7722000" />
       <workItem from="1507497003665" duration="6466000" />
       <workItem from="1507860956599" duration="31169000" />
-      <workItem from="1508053209881" duration="5114000" />
+      <workItem from="1508053209881" duration="5628000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -572,11 +570,18 @@
       <option name="project" value="LOCAL" />
       <updated>1508032854462</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Added getAllSurfaces method to ShaderParameters. Added support for a striped floor in the RayTracingTest.">
+      <created>1508129150507</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1508129150507</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94510000" />
+    <option name="totallyTimeSpent" value="95024000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -586,7 +591,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -598,9 +603,9 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39066666" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39066666" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31866667" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31866667" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1703125" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -674,7 +679,8 @@
     <MESSAGE value="AbstractSurfaceUI and SurfaceUIFactory need to be included here so that legacy xml files can be imported." />
     <MESSAGE value="Minor changes to RayTracingTest." />
     <MESSAGE value="The RayMarchingEngine passes along itself as the surface to render." />
-    <option name="LAST_COMMIT_MESSAGE" value="The RayMarchingEngine passes along itself as the surface to render." />
+    <MESSAGE value="Added getAllSurfaces method to ShaderParameters. Added support for a striped floor in the RayTracingTest." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added getAllSurfaces method to ShaderParameters. Added support for a striped floor in the RayTracingTest." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1149,7 +1155,7 @@
     <entry file="file://$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
-          <caret line="37" column="25" lean-forward="true" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
+          <caret line="37" column="25" lean-forward="false" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
           <folding>
             <marker date="1508113345000" expanded="true" signature="2656:2803" ph="..." />
           </folding>
@@ -1158,8 +1164,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/rayshade/ShaderParameters.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="67" column="78" lean-forward="false" selection-start-line="67" selection-start-column="78" selection-end-line="67" selection-end-column="78" />
+        <state relative-caret-position="185">
+          <caret line="72" column="5" lean-forward="false" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
           <folding />
         </state>
       </provider>
