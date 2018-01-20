@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.almostrealism.color.RGB;
-import org.almostrealism.flow.Job;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
 
@@ -60,6 +59,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
 import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
+import io.flowtree.job.Job;
 
 /**
  * A RayTracingJob object provides an implementation of
@@ -576,7 +576,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	}
 	
 	/**
-	 * @see org.almostrealism.flow.Job#encode()
+	 * @see io.flowtree.job.Job#encode()
 	 */
 	public String encode() {
 		StringBuffer s = new StringBuffer();
@@ -658,7 +658,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	}
 	
 	/**
-	 * @see org.almostrealism.flow.Job#set(java.lang.String, java.lang.String)
+	 * @see io.flowtree.job.Job#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri"))
@@ -827,7 +827,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	
 
 	/**
-	 * @see org.almostrealism.flow.Job#getTaskId()
+	 * @see io.flowtree.job.Job#getTaskId()
 	 */
 	public long getTaskId() { return this.jobId; }
 	

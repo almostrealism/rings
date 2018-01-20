@@ -34,11 +34,12 @@ import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.graph.Automata;
 import org.almostrealism.space.Intersection;
 
 import com.almostrealism.io.SpatialData;
 import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.SpacePartition;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.engine.ShadableSurfaceWrapper;
@@ -53,7 +54,7 @@ import com.almostrealism.raytracer.io.FileDecoder;
  * 
  * @author Mike Murray
  */
-public class Mesh extends SpacePartition {
+public class Mesh<C> extends SpacePartition implements Automata<C, Vector> {
 	private static RGB white = new RGB(1.0, 1.0, 1.0);
 	
 	public static class MeshFile implements ShadableSurfaceWrapper, ShadableSurface {
@@ -107,7 +108,7 @@ public class Mesh extends SpacePartition {
 		@Override public Vector getNormalAt(Vector point) { return this.getSurface().getNormalAt(point); }
 		@Override public boolean intersect(Ray ray) { return this.getSurface().intersect(ray); }
 		@Override public ShadableIntersection intersectAt(Ray ray) { return this.getSurface().intersectAt(ray); }
-		@Override public ColorProducer shade(ShaderParameters p) { return this.getSurface().shade(p); }
+		@Override public ColorProducer shade(ShaderContext p) { return this.getSurface().shade(p); }
 		@Override
 		public Vector operate(Triple in) { return getSurface().operate(in); }
 		@Override

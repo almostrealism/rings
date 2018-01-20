@@ -1,32 +1,32 @@
+/*
+ * Copyright 2017 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almostrealism.raytracer.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.RGB;
-import org.almostrealism.space.Intersectable;
-import org.almostrealism.space.Intersection;
 
-import com.almostrealism.lighting.AmbientLight;
-import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.Light;
-import com.almostrealism.lighting.PointLight;
-import com.almostrealism.lighting.SurfaceLight;
-import com.almostrealism.projection.Intersections;
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
 import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.Settings;
 
+/**
+ * TODO  This does not need {@link RenderParameters}, but rather it needs Fog Parameters.
+ * 
+ * @author  Michael Murray
+ */
 public class RayIntersectionEngine implements RayTracer.Engine {
 	private Scene<ShadableSurface> scene;
 	private RenderParameters rparams;

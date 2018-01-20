@@ -26,7 +26,7 @@ public interface Shader {
 	/**
 	 * Returns a {@link ColorProducer} object that represents the
 	 * shaded color calculated using the values of the specified
-	 * {@link ShaderParameters} object.
+	 * {@link ShaderContext} object.
 	 */
-	public ColorProducer shade(ShaderParameters parameters, DiscreteField normals);
+	public ColorProducer shade(ShaderContext parameters, DiscreteField normals);
 }

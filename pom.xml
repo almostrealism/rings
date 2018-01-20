@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.1-rc</version>
+	<version>0.2-rc</version>
 
 	<!-- Output to jar format -->
 	<packaging>jar</packaging>
@@ -56,19 +56,19 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>FlowTree</artifactId>
-			<version>0.1-rc</version>
+			<version>0.2-rc</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>Common</artifactId>
-			<version>0.1-rc</version>
+			<version>0.2-rc</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>MatrixView</artifactId>
-			<version>0.1-rc</version>
+			<version>0.2-rc</version>
 		</dependency>
 
 		<dependency>
@@ -94,7 +94,7 @@
 	<distributionManagement>
 		<repository>
 			<id>internal</id>
-			<url>http://13.59.14.87:8080/repository/internal/</url>
+			<url>http://mvn.almostrealism.org:8080/repository/internal/</url>
 		</repository>
 	</distributionManagement>
 
@@ -102,7 +102,7 @@
 		<repository>
 			<id>internal</id>
 			<name>Archiva Managed Internal Repository</name>
-			<url>http://13.59.14.87:8080/repository/internal/</url>
+			<url>http://mvn.almostrealism.org:8080/repository/internal/</url>
 			<releases><enabled>true</enabled></releases>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>

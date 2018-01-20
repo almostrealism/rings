@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,39 +19,37 @@ package com.almostrealism.lighting;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.texture.Texture;
 
 /**
- * A Light implmentation provides lighting information used for rendering.
- * The intensity and color of the Light may by specified.
+ * A {@link Light} implementation provides lighting information used for rendering.
+ * The intensity and color of the {@link Light} may by specified.
  * 
- * @author Mike Murray.
+ * @author Michael Murray.
  */
 public interface Light {
 	public boolean castShadows = true;
 	
-	/**
-	 * Sets the intensity of this Light object.
-	 */
+	/** Sets the intensity of this {@link Light}. */
 	public void setIntensity(double intensity);
 	
 	/**
-	 * Sets the color of this Light object to the color represented by the specified RGB object.
+	 * Sets the color of this Light object to the color represented by the specified {@link RGB} object.
 	 */
 	public void setColor(RGB color);
 	
-	/**
-	 * Returns the intensity of this Light object as a double value.
-	 */
+	/** Returns the intensity of this {@link Light} as a double value. */
 	public double getIntensity();
 	
-	/**
-	 * Returns the color of this Light object as an RGB object.
-	 */
+	/** Returns the color of this Light object as an {@link RGB} object. */
 	public RGB getColor();
 	
 	/**
-	 * Returns the color of the light represented by this Light object at the specified point
-	 * as an RGB object.
+	 * Returns the color of this {@link Light} at the specified point
+	 * as an {@link RGB} object.
+	 * 
+	 * TODO  This is unnecessary. Some methods {@link Light}s may implement {@link Texture}
+	 *       if they want to provide this kind of function.
 	 */
 	public ColorProducer getColorAt(Vector point);
 }

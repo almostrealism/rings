@@ -27,5 +27,9 @@
         <wb-resource deploy-path="/" source-path="/Rings/test"/>
         <wb-resource deploy-path="/" source-path="/Replicator/test"/>
         <wb-resource deploy-path="/" source-path="/Birst/src"/>
+        <wb-resource deploy-path="/" source-path="/geometry"/>
+        <wb-resource deploy-path="/" source-path="/shading"/>
+        <wb-resource deploy-path="/" source-path="/ui"/>
+        <wb-resource deploy-path="/" source-path="/engine"/>
     </wb-module>
 </project-modules>

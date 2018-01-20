@@ -30,5 +30,5 @@ public interface Shadable extends Callable<ColorProducer> {
 	 *
 	 * @see Shader
 	 */
-	public ColorProducer shade(ShaderParameters parameters);
+	public ColorProducer shade(ShaderContext parameters);
 }

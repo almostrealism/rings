@@ -58,9 +58,9 @@ public class BlendingShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderContext)
 	 */
-	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		Vector n;
 		
 		try {

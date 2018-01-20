@@ -31,7 +31,7 @@ import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 
@@ -209,7 +209,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	/**
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
-	public ColorProducer shade(ShaderParameters parameters) {
+	public ColorProducer shade(ShaderContext parameters) {
 		return this.surface.shade(parameters);
 	}
 }

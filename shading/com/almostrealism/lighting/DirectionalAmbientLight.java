@@ -26,7 +26,7 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
@@ -111,13 +111,13 @@ public class DirectionalAmbientLight extends AmbientLight {
 	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Vector point,
 														Vector rayDirection, Callable<ColorProducer> surface,
 														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
-														Light otherLights[], ShaderParameters p) {
+														Light otherLights[], ShaderContext p) {
 		ColorProducer color = null;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderParameters(intersection, l, light, otherLights, otherSurfaces)) : null;
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, l, light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
 			p.setLightDirection(l);

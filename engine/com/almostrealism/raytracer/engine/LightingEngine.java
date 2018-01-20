@@ -3,7 +3,7 @@ package com.almostrealism.raytracer.engine;
 import com.almostrealism.lighting.*;
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.Shadable;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
@@ -31,12 +31,10 @@ public class LightingEngine {
 	 * (or "nothing").
 	 */
 	public ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[],
-											   RGB fog, double fd, double fr, ShaderParameters p) {
+											   RGB fog, double fd, double fr, ShaderContext p) {
 		fields.setParameter(Ray.class, r);
 		ContinuousField intersect = fields.construct();
-
-//		System.out.println("Intersection is " + intersect);
-
+		
 		ColorSum color = new ColorSum();
 
 		// TODO  Figure out what this is for.
@@ -92,7 +90,7 @@ public class LightingEngine {
 						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 
 						if (p == null) {
-							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight,
+							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderContext(intersect, l, directionalLight,
 																		otherL, surf, otherSurf.toArray(new Callable[0]))) : null;
 						} else {
 							p.setIntersection(intersect);
@@ -114,7 +112,7 @@ public class LightingEngine {
 							directionalLight.getDirection().length())).minus();
 
 					if (p == null) {
-						c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderParameters(intersect, l, directionalLight, otherL, otherSurf)) : null;
+						c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderContext(intersect, l, directionalLight, otherL, otherSurf)) : null;
 					} else {
 						p.setIntersection(intersect);
 						p.setLightDirection(l);
@@ -211,7 +209,7 @@ public class LightingEngine {
 	 */
 	public static ColorSum lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
 											   Callable<ColorProducer> surface, Collection<Callable<ColorProducer>> otherSurfaces,
-											   Light lights[], ShaderParameters p) {
+											   Light lights[], ShaderContext p) {
 		ColorSum color = new ColorSum();
 
 		for(int i = 0; i < lights.length; i++) {
@@ -240,7 +238,7 @@ public class LightingEngine {
 	public static ColorProducer lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
 													Callable<ColorProducer> surface,
 													Collection<Callable<ColorProducer>> otherSurfaces, Light light,
-													Light otherLights[], ShaderParameters p) {
+													Light otherLights[], ShaderContext p) {
 		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
 		for (Callable<ColorProducer> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);

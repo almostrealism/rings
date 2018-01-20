@@ -35,7 +35,7 @@ import org.almostrealism.space.Gradient;
 
 import com.almostrealism.projection.Intersections;
 import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.Triangle;
 import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
@@ -119,8 +119,8 @@ public class SurfaceGroup<T extends ShadableSurface> extends AbstractSurface imp
 	
 	public Iterator<T> iterator() { return surfaces.iterator(); }
 	
-	/** {@link ShadableSurface#shade(ShaderParameters)} */
-	public ColorSum shade(ShaderParameters p) {
+	/** {@link ShadableSurface#shade(ShaderContext)} */
+	public ColorSum shade(ShaderContext p) {
 		ColorSum color = new ColorSum();
 		
 		if (super.getShaderSet() != null)

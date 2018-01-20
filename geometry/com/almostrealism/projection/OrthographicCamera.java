@@ -19,6 +19,7 @@ package com.almostrealism.projection;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.Positioned;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -35,7 +36,7 @@ import com.almostrealism.raytracer.Settings;
  * @author Mike Murray
  */
 @ModelEntity
-public class OrthographicCamera implements Camera {
+public class OrthographicCamera implements Camera, Positioned {
   private Vector location = new Vector(0.0, 0.0, 0.0);
   private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
   private Vector upDirection = new Vector(0.0, 1.0, 0.0);
@@ -163,39 +164,35 @@ public class OrthographicCamera implements Camera {
 		}
 	}
 	
-	/**
-	 * Returns the location of this PinholeCamera object as a Vector object.
-	 */
+	@Override
+	public void setPosition(float x, float y, float z) { setLocation(new Vector(x, y, z)); }
+	
+	@Override
+	public float[] getPosition() { return getLocation().toFloat(); }
+	
+	/** Returns the location of this PinholeCamera object as a Vector object. */
 	public Vector getLocation() { return this.location; }
 	
-	/**
-	 * Calls the getViewingDirection() method and returns the result.
-	 */
+	/** Calls the {@link #getViewingDirection()} method and returns the result. */
 	public Vector getViewDirection() { return this.getViewingDirection(); }
 	
-	/**
-	 * Returns the viewing direction of this PinholeCamera object as a Vector object.
-	 */
+	/** Returns the viewing direction of this {@link OrthographicCamera} object as a {@link Vector} object. */
 	public Vector getViewingDirection() { return this.viewDirection; }
 	
 	/**
-	 * Returns the up direction of this PinholeCamera object as a Vector object.
+	 * Returns the up direction of this {@link OrthographicCamera} as a {@link Vector} object.
 	 */
 	public Vector getUpDirection() { return this.upDirection; }
 	
-	/**
-	 * Returns the projection width of this PinholeCamera object as a double value.
-	 */
+	/** Returns the projection width of this {@link OrthographicCamera} object as a double value. */
 	public double getProjectionWidth() { return this.projectionX; }
 	
-	/**
-	 * Returns the projection height of this PinholeCamera object as a double value.
-	 */
+	/** Returns the projection height of this {@link OrthographicCamera} object as a double value. */
 	public double getProjectionHeight() { return this.projectionY; }
 	
 	/**
-	 * @return  A TransformMatrix object that can be used to convert coordinates in the coordinate system described by this Camera object
-	 * 			to the standard x, y, z coordinates.
+	 * @return  A {@link TransformMatrix} object that can be used to convert coordinates in the
+	 *          coordinate system described by this {@link Camera} to the standard x, y, z coordinates.
 	 */
 	public TransformMatrix getRotationMatrix() {
 	    double matrix[][] = {{this.u.getX(), this.u.getY(), this.u.getZ()},
@@ -217,5 +214,4 @@ public class OrthographicCamera implements Camera {
 		
 		return new Ray(o, this.viewDirection);
 	}
-
 }

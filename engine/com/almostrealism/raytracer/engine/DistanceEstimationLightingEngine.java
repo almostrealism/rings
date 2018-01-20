@@ -3,7 +3,7 @@ package com.almostrealism.raytracer.engine;
 import com.almostrealism.lighting.Light;
 import com.almostrealism.rayshade.Shadable;
 import com.almostrealism.rayshade.Shader;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.rayshade.ShaderSet;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
@@ -54,7 +54,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 //	 				System.out.println("Total distance = " + totalDistance);
 
 				return new Locus(r.getOrigin(), r.getDirection(), shaders,
-						new ShaderParameters(estimator instanceof Callable ?
+						new ShaderContext(estimator instanceof Callable ?
 											((Callable) estimator) : null, l));
 			}
 		});
@@ -66,9 +66,9 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	public static class Locus extends ArrayList<Callable<Ray>> implements ContinuousField, Callable<ColorProducer>, Shadable {
 
 		private ShaderSet shaders;
-		private ShaderParameters params;
+		private ShaderContext params;
 
-		public Locus(Vector location, Vector normal, ShaderSet s, ShaderParameters p) {
+		public Locus(Vector location, Vector normal, ShaderSet s, ShaderContext p) {
 			this.add(() -> { return new Ray(location, normal); });
 			shaders = s;
 			params = p;
@@ -109,7 +109,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public ColorProducer shade(ShaderParameters parameters) {
+		public ColorProducer shade(ShaderContext parameters) {
 			try {
 				ColorSum color = new ColorSum();
 

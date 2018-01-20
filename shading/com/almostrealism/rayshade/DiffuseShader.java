@@ -48,7 +48,7 @@ public class DiffuseShader implements Shader, Editable {
 	public DiffuseShader() { }
 	
 	/** Method specified by the {@link Shader} interface. */
-	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		Vector point;
 		
 		try {

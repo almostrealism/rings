@@ -60,7 +60,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 	}
 	
 	/** Method specified by the Shader interface. */
-	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		Vector point;
 		
 		try {

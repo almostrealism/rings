@@ -31,18 +31,18 @@ import org.almostrealism.space.DistanceEstimator;
 
 import com.almostrealism.rayshade.ShadableCurve;
 import com.almostrealism.rayshade.Shader;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.rayshade.ShaderSet;
 
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
-	private ShaderParameters sparams;
+	private ShaderContext sparams;
 	private RenderParameters params;
 	private DistanceEstimator estimator;
 	private Light lights[];
 	private ShaderSet shaders;
 	
 	public RayMarchingEngine(Light l, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
-		this.sparams = new ShaderParameters(this, l);
+		this.sparams = new ShaderContext(this, l);
 		this.params = new RenderParameters();
 		this.estimator = e;
 		this.lights = allLights;
@@ -77,7 +77,7 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	}
 	
 	@Override
-	public ColorProducer shade(ShaderParameters parameters) {
+	public ColorProducer shade(ShaderContext parameters) {
 		ColorSum c = new ColorSum();
 		
 		for (Shader s : shaders) {

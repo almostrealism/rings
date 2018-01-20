@@ -30,7 +30,7 @@ public class ShaderSet extends HashSet<Shader> implements Shader {
     /**
      * @return  The sum of the values given by the shade method for each Shader object stored by this ShaderSet object.
      */
-    public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+    public ColorProducer shade(ShaderContext p, DiscreteField normals) {
         ColorSum color = new ColorSum();
         
         Iterator<Shader> itr = super.iterator();

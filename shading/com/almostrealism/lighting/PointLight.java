@@ -25,7 +25,7 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.RayTracedScene;
 import com.almostrealism.raytracer.engine.ShadableSurface;
 
@@ -187,7 +187,7 @@ public class PointLight implements Light {
 	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point,
 											Vector rayDirection, Callable<ColorProducer> surface,
 											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
-											Light otherLights[], ShaderParameters p) {
+											Light otherLights[], ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight = null;
 		

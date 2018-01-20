@@ -66,7 +66,6 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import org.almostrealism.color.RGB;
-import org.almostrealism.flow.JobFactory;
 import org.almostrealism.flow.Node;
 import org.almostrealism.flow.NodeGroup;
 import org.almostrealism.flow.Resource;
@@ -92,6 +91,7 @@ import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.almostrealism.msg.Message;
 import io.almostrealism.msg.NodeProxy;
+import io.flowtree.job.JobFactory;
 
 // TODO  Add cd and pwd commands.
 // TODO  mkdir does not update slide

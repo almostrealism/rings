@@ -65,7 +65,7 @@ public class RefractionShader implements Shader, Editable {
 	public RefractionShader() {}
 	
 	/** Method specified by the Shader interface. */
-	public ColorProducer shade(ShaderParameters p, DiscreteField normals) {
+	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		p.addReflection();
 		
 		ColorSum color = new ColorSum();
@@ -130,7 +130,7 @@ public class RefractionShader implements Shader, Editable {
 	
 	public ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
 								Light light, Light otherLights[], Callable<ColorProducer> surface,
-								Callable<ColorProducer> otherSurfaces[], Vector n, ShaderParameters p) {
+								Callable<ColorProducer> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
 			return new RGB(0.0, 0.0, 0.0);

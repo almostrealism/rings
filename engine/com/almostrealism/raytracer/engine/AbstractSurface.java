@@ -31,11 +31,12 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProducerAdapter;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
+import org.almostrealism.physics.Porous;
 import org.almostrealism.texture.Texture;
 
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.Shader;
-import com.almostrealism.rayshade.ShaderParameters;
+import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
@@ -49,12 +50,13 @@ import com.almostrealism.raytracer.primitives.TriangulatableGeometry;
  * 
  * @author  Michael Murray
  */
-public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface {
+public abstract class AbstractSurface extends TriangulatableGeometry implements ShadableSurface, Porous {
 	private boolean shadeFront, shadeBack;
 
 	private RGB color;
 
 	private double rindex = 1.0, reflectP = 1.0, refractP = 0.0;
+	private double porosity;
 
 	private Texture textures[];
 	private ShaderSet shaders;
@@ -153,6 +155,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	 *          rotation coefficients, and transformations as this AbstractSurface.
 	 */
 	public Mesh triangulate() {
+		// TODO  Pass porosity on to the mesh.
 		Mesh m = super.triangulate();
 		m.setColor(this.getColor());
 		return m;
@@ -169,6 +172,9 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	public double getReflectedPercentage(Vector p) { return this.reflectP; }
 	public double getRefractedPercentage() { return this.refractP; }
 	public double getRefractedPercentage(Vector p) { return this.refractP; }
+	
+	public void setPorosity(double p) { this.porosity = p; }
+	public double getPorosity() { return porosity; }
 	
 	/**
 	 * Sets the Texture object (used to color this AbstractSurface) at the specified index
@@ -474,7 +480,7 @@ public abstract class AbstractSurface extends TriangulatableGeometry implements 
 	 * calculated by the {@link Shader} objects stored by this AbstractSurface and the parent
 	 * of this {@link AbstractSurface} and returns this value as an {@link RGB}.
 	 */
-	public ColorProducer shade(ShaderParameters p) {
+	public ColorProducer shade(ShaderContext p) {
 		p.setSurface(this);
 		
 		ColorSum color = new ColorSum();

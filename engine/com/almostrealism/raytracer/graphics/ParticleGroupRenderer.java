@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.ParticleGroup;
 
 /**
- * @author Mike Murray
+ * @author Michael Murray
  */
 public class ParticleGroupRenderer {
     public static void draw(ParticleGroup p, PinholeCamera c, Graphics g, double ox, double oy, double scale, double minSize, double maxSize, double far) {

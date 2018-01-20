@@ -21,12 +21,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.almostrealism.flow.Job;
-import org.almostrealism.flow.JobFactory;
 import org.almostrealism.flow.Server;
 
 import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;
+import io.flowtree.job.Job;
+import io.flowtree.job.JobFactory;
 
 /**
  * @author Mike Murray
@@ -100,7 +100,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see org.almostrealism.flow.JobFactory#nextJob()
+	 * @see io.flowtree.job.JobFactory#nextJob()
 	 */
 	public Job nextJob() {
 		if (i >= this.totalJobs) {
@@ -178,7 +178,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 
 	/**
-	 * @see org.almostrealism.flow.JobFactory#createJob(java.lang.String)
+	 * @see io.flowtree.job.JobFactory#createJob(java.lang.String)
 	 */
 	public Job createJob(String data) {
 		Client c = Client.getCurrentClient();
@@ -266,7 +266,7 @@ public class RayTracingJobFactory implements JobFactory {
 	}
 	
 	/**
-	 * @see org.almostrealism.flow.JobFactory#set(java.lang.String, java.lang.String)
+	 * @see io.flowtree.job.JobFactory#set(java.lang.String, java.lang.String)
 	 */
 	public void set(String key, String value) {
 		if (key.equals("uri")) {

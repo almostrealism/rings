@@ -49,9 +49,9 @@ public class SilhouetteShader implements Editable, Shader {
 	public SilhouetteShader(ColorProducer color) { this.color = color; }
 	
 	/**
-	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderParameters)
+	 * @see com.almostrealism.rayshade.Shader#shade(com.almostrealism.rayshade.ShaderContext)
 	 */
-	public ColorProducer shade(ShaderParameters p, DiscreteField normals) { return this.color.evaluate(new Object[] {p}); }
+	public ColorProducer shade(ShaderContext p, DiscreteField normals) { return this.color.evaluate(new Object[] {p}); }
 
 	/**
 	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])

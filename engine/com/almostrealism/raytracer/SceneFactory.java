@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,78 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
- */
-
 package com.almostrealism.raytracer;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RandomColorGenerator;
+import org.almostrealism.geometry.Positioned;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
+import org.almostrealism.util.Factory;
+import org.almostrealism.util.ProbabilisticFactory;
 
 import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;
+import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.projection.ThinLensCamera;
+import com.almostrealism.raytracer.engine.ShadableSurface;
+import com.almostrealism.raytracer.primitives.Sphere;
 
 /**
- * The SceneFactory class provides static utility methods for getting commonly
- * used components of a scene for the ray tracing engine.
+ * The {@link SceneFactory} class provides static utility methods for getting commonly
+ * used components of a {@link Scene} for the ray tracing engine as well as a method
+ * for generating a {@link Scene} from a {@link Chromosome}.
  * 
- * @author  Mike Murray
+ * @author  Michael Murray
  */
-public class SceneFactory {
+public class SceneFactory implements Factory<Scene<ShadableSurface>> {
+	private ProbabilisticFactory<ShadableSurface> surfaces;
+	
+	public SceneFactory() {
+		this(new FloatingPointRandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
+	}
+	
+	public SceneFactory(Chromosome<Double> c) {
+		List<Factory<ShadableSurface>> f =
+			Arrays.asList(
+				new Factory<ShadableSurface>() { public Sphere construct() { return new Sphere(location(), Math.random(), color()); } }
+			);
+		
+		surfaces = new ProbabilisticFactory<>(f, c.getGene(0));
+	}
+	
+	private int count() { return (int) (2 + Math.random() * 4); }
+	
+	private Vector location() {
+		return new Vector((Math.random() * 10) - 5,
+							(Math.random() * 5),
+							(Math.random() * 10) - 5);
+	}
+	
+	/** TODO  Use {@link RandomColorGenerator}. */
+	private RGB color() { return new RGB(Math.random(), Math.random(), Math.random()); }
+	
+	/**
+	 * @see org.almostrealism.util.Factory#construct()
+	 */
+	@Override
+	public Scene<ShadableSurface> construct() {
+		Scene<ShadableSurface> s = new Scene<ShadableSurface>();
+		s.setLights(getStandard3PointLightRig(10));
+		s.setCamera(new ThinLensCamera());
+		((Positioned) s.getCamera()).setPosition(0, 5, 10);
+		((OrthographicCamera) s.getCamera()).setViewDirection(new Vector(0.0, -0.75, -1.0));
+		
+		int c = count();
+		
+		for (int i = 0; i < c; i++) s.add(surfaces.construct());
+		return s;
+	}
+	
 	public static Light[] getStandard3PointLightRig(double scale) {
 		Light l[] = new Light[3];
 		
