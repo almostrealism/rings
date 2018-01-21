@@ -6,17 +6,21 @@ import java.io.IOException;
 
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
-import com.almostrealism.raytracer.engine.*;
-import com.almostrealism.raytracer.io.FileDecoder;
-import com.almostrealism.raytracer.primitives.Plane;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.io.FileDecoder;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.Plane;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.Scene;
+import com.almostrealism.raytracer.engine.RayIntersectionEngine;
+import com.almostrealism.raytracer.engine.RayTracedScene;
+import com.almostrealism.raytracer.engine.RenderParameters;
 import com.almostrealism.raytracer.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 

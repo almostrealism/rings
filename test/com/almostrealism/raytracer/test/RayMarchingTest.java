@@ -8,18 +8,17 @@ import java.text.ParseException;
 
 import javax.swing.text.NumberFormatter;
 
-import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.rayshade.ShaderParameters;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShaderSet;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.texture.Animation;
 
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.rayshade.DiffuseShader;
-import com.almostrealism.rayshade.ShaderSet;
 import com.almostrealism.raytracer.engine.RayMarchingEngine;
 import com.almostrealism.raytracer.engine.RayTracedScene;
 import com.almostrealism.raytracer.engine.RenderParameters;

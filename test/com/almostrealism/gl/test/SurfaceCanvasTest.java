@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2017 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ import javax.swing.JFrame;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.junit.Test;
 
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Sphere;
 
 /**
