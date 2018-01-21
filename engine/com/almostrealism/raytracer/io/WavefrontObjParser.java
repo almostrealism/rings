@@ -23,8 +23,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.graph.Mesh;
 
-import com.almostrealism.raytracer.primitives.Mesh;
 import com.almostrealism.raytracer.primitives.ObjPolygon;
 
 /**

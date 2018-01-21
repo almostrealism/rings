@@ -18,14 +18,13 @@ package com.almostrealism.raytracer.primitives;
 
 import java.util.Arrays;
 
+import org.almostrealism.algebra.Intersection;
+import org.almostrealism.algebra.Intersections;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.space.Intersection;
-
-import com.almostrealism.projection.Intersections;
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.ShadableSurface;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.space.ShadableSurface;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 
@@ -77,7 +76,7 @@ public class CSG extends AbstractSurface {
     /**
      * This method calls intersectAt to determine the value to return.
      * 
-     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersect(org.almostrealism.algebra.Ray)
+     * @see org.almostrealism.space.ShadableSurface#intersect(org.almostrealism.algebra.Ray)
      */
     public boolean intersect(Ray ray) {
 		if (this.intersectAt(ray).getIntersections().length <= 0)
@@ -87,7 +86,7 @@ public class CSG extends AbstractSurface {
     }
 
     /**
-     * @see com.almostrealism.raytracer.engine.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
+     * @see org.almostrealism.space.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
      */
     public ShadableIntersection intersectAt(Ray ray) {
     		ray.transform(this.getTransform(true).getInverse());

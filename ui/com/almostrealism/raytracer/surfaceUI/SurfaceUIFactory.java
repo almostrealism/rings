@@ -20,22 +20,22 @@ import java.awt.Graphics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.Triangle;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.Plane;
+import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
 
-import com.almostrealism.projection.Camera;
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.SurfaceGroup;
 import com.almostrealism.raytracer.primitives.Cone;
 import com.almostrealism.raytracer.primitives.Cylinder;
-import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
-import com.almostrealism.raytracer.primitives.Triangle;
 
 
 // TODO  Add Mesh dialog that allows user to configure space partition.

@@ -1,16 +1,16 @@
 package com.almostrealism.raytracer.engine;
 
-import com.almostrealism.lighting.Light;
-import com.almostrealism.rayshade.Shadable;
-import com.almostrealism.rayshade.Shader;
-import com.almostrealism.rayshade.ShaderContext;
-import com.almostrealism.rayshade.ShaderSet;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.ShaderSet;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.ParameterizedFactory;
 

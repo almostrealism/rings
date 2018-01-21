@@ -22,17 +22,20 @@ import java.util.concurrent.Callable;
 
 import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Intersection;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-
-import com.almostrealism.lighting.Light;
-import com.almostrealism.raytracer.Scene;
 
 // TODO  Fix refraction algorithm.
 

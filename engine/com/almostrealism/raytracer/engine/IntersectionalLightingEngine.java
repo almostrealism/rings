@@ -1,10 +1,10 @@
 package com.almostrealism.raytracer.engine;
 
-import com.almostrealism.projection.Intersections;
-import com.almostrealism.rayshade.ShadableIntersection;
 import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.Intersections;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.ParameterizedFactory;
 
 import java.util.concurrent.Callable;

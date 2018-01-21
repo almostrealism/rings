@@ -16,13 +16,13 @@
 
 package com.almostrealism.lighting;
 
-import com.almostrealism.rayshade.Shadable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-
-import com.almostrealism.raytracer.engine.ShadableSurface;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.space.ShadableSurface;
 
 import java.util.concurrent.Callable;
 

@@ -19,15 +19,15 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import com.almostrealism.rayshade.Shadable;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderContext;
-import com.almostrealism.raytracer.engine.ShadableSurface;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.space.ShadableSurface;
 
 /**
   A DirectionAmbientLight object represents an ambient light source that always comes from a particular direction.

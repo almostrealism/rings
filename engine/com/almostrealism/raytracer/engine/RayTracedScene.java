@@ -20,14 +20,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
-
-import com.almostrealism.projection.Camera;
 
 import io.almostrealism.lambda.Realization;
 

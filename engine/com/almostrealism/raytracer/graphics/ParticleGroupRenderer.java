@@ -18,11 +18,11 @@ package com.almostrealism.raytracer.graphics;
 
 import java.awt.Graphics;
 
+import org.almostrealism.algebra.ParticleGroup;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.engine.ParticleGroup;
 
 /**
  * @author Michael Murray

@@ -21,9 +21,11 @@ import java.awt.Graphics;
 
 import javax.swing.Icon;
 
+import org.almostrealism.algebra.Camera;
+import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.space.ShadableSurfaceWrapper;
 import org.almostrealism.swing.Dialog;
 
-import com.almostrealism.projection.Camera;
 import com.almostrealism.raytracer.engine.*;
 
 /**

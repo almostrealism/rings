@@ -16,9 +16,10 @@
 
 package com.almostrealism.gl;
 
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
+
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import com.jogamp.opengl.GL2;

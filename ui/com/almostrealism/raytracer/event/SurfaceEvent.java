@@ -16,9 +16,8 @@
 
 package com.almostrealism.raytracer.event;
 
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
-
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /** A SurfaceEvent object represents an event that targets a surface. */
 public interface SurfaceEvent extends Event {

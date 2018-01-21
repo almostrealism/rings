@@ -18,10 +18,10 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-
-import com.almostrealism.rayshade.Shader;
-import com.almostrealism.raytracer.primitives.Plane;
+import org.almostrealism.color.Shader;
+import org.almostrealism.space.Plane;
 
 /**
  * A RectangularLight object provides PointLight samples that are randomly distributed
@@ -132,12 +132,12 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	public double getHeight() { return this.height; }
 	
 	/**
-	 * @see com.almostrealism.lighting.Light#setIntensity(double)
+	 * @see org.almostrealism.color.Light#setIntensity(double)
 	 */
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/**
-	 * @see com.almostrealism.lighting.Light#getIntensity()
+	 * @see org.almostrealism.color.Light#getIntensity()
 	 */
 	public double getIntensity() { return this.intensity; }
 	

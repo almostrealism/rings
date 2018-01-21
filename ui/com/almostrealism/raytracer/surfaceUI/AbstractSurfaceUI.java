@@ -27,11 +27,14 @@ import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 

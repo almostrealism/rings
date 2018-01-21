@@ -18,6 +18,7 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 
 import com.almostrealism.raytracer.primitives.Sphere;
@@ -106,12 +107,12 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 
 	/**
-	 * @see com.almostrealism.lighting.Light#setIntensity(double)
+	 * @see org.almostrealism.color.Light#setIntensity(double)
 	 */
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 
 	/**
-	 * @see com.almostrealism.lighting.Light#getIntensity()
+	 * @see org.almostrealism.color.Light#getIntensity()
 	 */
 	public double getIntensity() { return this.intensity; }
 	
@@ -130,7 +131,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	public double[] getAttenuationCoefficients() { return new double[] { this.atta, this.attb, this.attc }; }
 	
 	/**
-	 * @see com.almostrealism.raytracer.engine.ParticleGroup#getParticleVertices()
+	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()
 	 */
 	public double[][] getParticleVertices() { return new double[0][0]; }
 	

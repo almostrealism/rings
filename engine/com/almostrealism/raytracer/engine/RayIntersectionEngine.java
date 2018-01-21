@@ -19,8 +19,8 @@ package com.almostrealism.raytracer.engine;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
-
-import com.almostrealism.raytracer.Scene;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 
 /**
  * TODO  This does not need {@link RenderParameters}, but rather it needs Fog Parameters.

@@ -16,14 +16,16 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.Light;
+
 /**
- * A SurfaceLight implementation represents a light that can be represented
- * by some (possible infinite) set of other Light objects. A correct implementation
- * should be able to return any number of samples (Light objects) that are well
- * distributed and representitive of the surface. Factoring in number of samples
- * to create an intensity value for each sample will be handled by the ray tracing engine.
+ * A {@link SurfaceLight} implementation represents a light that can be described
+ * by some (possibly infinite) set of other {@link Light}s. A correct implementation
+ * should be able to return any number of samples ({@link Light}s) that are well
+ * distributed and representative of the surface. Factoring in number of samples
+ * to create an intensity value for each sample is handeled externally.
  * 
- * @author Mike Murray
+ * @author Michael Murray
  */
 public interface SurfaceLight extends Light {
 	/**

@@ -28,11 +28,13 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
 import com.almostrealism.raytracer.engine.RayTracer;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.

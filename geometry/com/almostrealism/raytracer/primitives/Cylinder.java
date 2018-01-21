@@ -20,9 +20,8 @@ import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.raytracer.engine.AbstractSurface;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.ShadableIntersection;
 
 //TODO Add ParticleGroup implementation.
 

@@ -1,18 +1,20 @@
 package com.almostrealism.raytracer.engine;
 
 import com.almostrealism.lighting.*;
-import com.almostrealism.projection.Intersections;
-import com.almostrealism.rayshade.Shadable;
-import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.algebra.Intersection;
+import org.almostrealism.algebra.Intersections;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Intersectable;
-import org.almostrealism.space.Intersection;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.ParameterizedFactory;
 
 import java.util.*;
@@ -66,7 +68,7 @@ public class LightingEngine {
 				try {
 					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
 							shadowCalculation(intersect.get(0).call().getOrigin(),
-									Intersections.filterIntersectables(Arrays.asList(allSurfaces)), allLights[i]))
+									Intersections.filterIntersectables(allSurfaces), allLights[i]))
 						return new ColorSum();
 				} catch (Exception e) {
 					e.printStackTrace();

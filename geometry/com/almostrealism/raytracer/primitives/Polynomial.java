@@ -18,9 +18,8 @@ package com.almostrealism.raytracer.primitives;
 
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
-
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.raytracer.engine.AbstractSurface;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.ShadableIntersection;
 
 /**
   A Polynomial object represents a 3d polynomial surface.

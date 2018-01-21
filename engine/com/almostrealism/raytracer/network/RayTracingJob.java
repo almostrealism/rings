@@ -41,20 +41,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
+import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
+import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
 
 import com.almostrealism.io.FilePrintWriter;
-import com.almostrealism.io.SpatialData;
-import com.almostrealism.projection.Camera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
-import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
-import com.almostrealism.raytracer.io.FileDecoder;
 
 import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;

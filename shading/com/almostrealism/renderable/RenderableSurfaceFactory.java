@@ -16,8 +16,9 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.raytracer.engine.ShadableSurface;
-import com.almostrealism.raytracer.primitives.Mesh;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.space.ShadableSurface;
+
 import com.almostrealism.raytracer.primitives.Sphere;
 
 public class RenderableSurfaceFactory {

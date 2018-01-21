@@ -23,9 +23,8 @@ import java.util.Stack;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.ShadableSurface;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.ShadableSurface;
 
 /**
  * @author Mike Murray

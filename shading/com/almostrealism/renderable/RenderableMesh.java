@@ -18,7 +18,8 @@ package com.almostrealism.renderable;
 
 import com.jogamp.opengl.GL2;
 
-import com.almostrealism.raytracer.primitives.Mesh;
+import org.almostrealism.graph.Mesh;
+
 import com.almostrealism.webgl.WebGLExportable;
 import com.almostrealism.webgl.WebGLMeshGeometry;
 import com.almostrealism.webgl.WebGLRenderable;

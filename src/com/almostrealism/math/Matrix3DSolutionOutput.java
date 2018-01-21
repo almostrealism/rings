@@ -26,14 +26,14 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.Triangle;
+import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Gradient;
+import org.almostrealism.space.Scene;
 
 import com.almostrealism.io.LinkedMatrix;
-import com.almostrealism.io.SpatialData;
-import com.almostrealism.raytracer.Scene;
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.primitives.Triangle;
 
 public class Matrix3DSolutionOutput implements LinkedMatrix.SolutionOutput {
 	private int x, y, z, off;

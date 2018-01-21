@@ -19,9 +19,9 @@ package com.almostrealism.renderable;
 import com.jogamp.opengl.GL2;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.graph.Triangle;
 
 import com.almostrealism.gl.DisplayList;
-import com.almostrealism.raytracer.primitives.Triangle;
 
 public class TriangleDisplayList extends DisplayList {
 	private Iterable<Triangle> triangles;

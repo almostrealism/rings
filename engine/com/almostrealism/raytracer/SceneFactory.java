@@ -20,19 +20,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Factory;
 import org.almostrealism.util.ProbabilisticFactory;
 
-import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Sphere;
 
 /**

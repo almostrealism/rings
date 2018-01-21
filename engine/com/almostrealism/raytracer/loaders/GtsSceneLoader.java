@@ -27,10 +27,11 @@ package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
-import com.almostrealism.io.SpatialData;
-import com.almostrealism.raytracer.Scene;
+import org.almostrealism.io.FileDecoder;
+import org.almostrealism.io.SpatialData;
+import org.almostrealism.space.Scene;
+
 import com.almostrealism.raytracer.SceneFactory;
-import com.almostrealism.raytracer.io.FileDecoder;
 import com.almostrealism.raytracer.network.SceneLoader;
 
 import io.almostrealism.db.Client;

@@ -17,6 +17,7 @@
 package com.almostrealism.projection;
 
 import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.Intersections;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.util.ParameterizedFactory;
 

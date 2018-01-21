@@ -29,6 +29,8 @@ import javax.swing.SwingUtilities;
 import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;

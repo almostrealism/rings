@@ -16,6 +16,7 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
@@ -203,7 +204,7 @@ public class OrthographicCamera implements Camera, Positioned {
 	}
 	
 	/**
-	 * @see com.almostrealism.projection.Camera#rayAt(double, double, int, int)
+	 * @see org.almostrealism.algebra.Camera#rayAt(double, double, int, int)
 	 */
 	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
 		double x = this.projectionX * ((i / screenWidth) - 0.5);

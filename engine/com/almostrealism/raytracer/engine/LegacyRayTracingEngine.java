@@ -22,14 +22,15 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.Collection;
 
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 
-import com.almostrealism.lighting.Light;
-import com.almostrealism.projection.Camera;
-import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
 
 /**

@@ -27,7 +27,7 @@ package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
-import com.almostrealism.raytracer.Scene;
+import org.almostrealism.space.Scene;
 
 public interface SceneLoader {
 	public Scene loadScene(String uri) throws IOException;

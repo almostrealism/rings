@@ -24,26 +24,26 @@ import java.io.PrintStream;
 import java.util.Date;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.Triangle;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.Plane;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 
 import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.Light;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.RectangularLight;
 import com.almostrealism.lighting.SphericalLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.raytracer.Scene;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.AbstractSurface;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 import com.almostrealism.raytracer.primitives.Cone;
 import com.almostrealism.raytracer.primitives.Cylinder;
-import com.almostrealism.raytracer.primitives.Mesh;
-import com.almostrealism.raytracer.primitives.Plane;
 import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.raytracer.primitives.Triangle;
 
 // TODO  Add GIF encoding.
 // TODO  Add GTS and RAW encoding.

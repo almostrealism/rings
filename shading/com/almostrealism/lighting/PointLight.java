@@ -22,12 +22,13 @@ import java.util.concurrent.Callable;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.rayshade.ShadableIntersection;
-import com.almostrealism.rayshade.ShaderContext;
 import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.engine.ShadableSurface;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
