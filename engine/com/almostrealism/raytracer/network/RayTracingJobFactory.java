@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.almostrealism.flow.Client;
 import org.almostrealism.flow.Server;
 
-import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;
 import io.flowtree.job.Job;
 import io.flowtree.job.JobFactory;

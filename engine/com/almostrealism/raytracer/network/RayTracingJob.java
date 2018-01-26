@@ -43,11 +43,13 @@ import java.util.Set;
 
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
+import org.almostrealism.flow.Client;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 
 import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.projection.PinholeCamera;
@@ -56,7 +58,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
 import com.almostrealism.raytracer.engine.RenderParameters;
 
-import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.flowtree.job.Job;
@@ -464,8 +465,8 @@ public class RayTracingJob implements Job, SceneLoader {
 	/**
 	 * @return  The scene referenced by this RayTracingJob object.
 	 */
-	public Scene getScene() {
-		Scene s = null;
+	public Scene<ShadableSurface> getScene() {
+		Scene<ShadableSurface> s = null;
 		
 		i: for (int i = 0;;) {
 			s = (Scene)RayTracingJob.scenes.get(this.sceneUri);
@@ -710,7 +711,7 @@ public class RayTracingJob implements Job, SceneLoader {
 	 */
 	public void run() {
 		Client c = Client.getCurrentClient();
-		Scene s = this.getScene();
+		Scene<ShadableSurface> s = this.getScene();
 		
 		if (RayTracingJob.verboseRender)
 			System.out.println("Got scene: " + s);

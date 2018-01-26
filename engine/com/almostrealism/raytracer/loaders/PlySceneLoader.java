@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
- */
-
 package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
+import org.almostrealism.flow.Client;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
@@ -34,13 +26,11 @@ import org.almostrealism.space.Scene;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.network.SceneLoader;
 
-import io.almostrealism.db.Client;
-
 /**
  * The PlySceneLoader loads a PLY model from the distributed database
  * and places it in a default scene.
  * 
- * @author  Mike Murray
+ * @author  Michael Murray
  */
 public class PlySceneLoader implements SceneLoader {
 	public static final double scale = 100.0;

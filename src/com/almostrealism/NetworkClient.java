@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/*
- * Copyright (C) 2005-07  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
  */
 
 package com.almostrealism;
@@ -66,12 +57,13 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import org.almostrealism.color.RGB;
+import org.almostrealism.flow.Client;
+import org.almostrealism.flow.DistributedResource;
 import org.almostrealism.flow.Node;
 import org.almostrealism.flow.NodeGroup;
+import org.almostrealism.flow.ResourceDistributionTask;
 import org.almostrealism.flow.Server;
 import org.almostrealism.flow.ServerBehavior;
-import org.almostrealism.flow.resources.DistributedResource;
-import org.almostrealism.flow.resources.ResourceDistributionTask;
 import org.almostrealism.flow.tests.TestJobFactory;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.io.Resource;
@@ -86,7 +78,6 @@ import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.network.JobProducer;
 import com.almostrealism.raytracer.network.RayTracingJob;
 
-import io.almostrealism.db.Client;
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.almostrealism.msg.Message;
@@ -189,7 +180,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		
 		if ("true".equals(p.getProperty("db.start", "true"))) {
 			try {
-				io.almostrealism.db.OutputServer s = new io.almostrealism.db.OutputServer(p);
+				org.almostrealism.flow.OutputServer s = new org.almostrealism.flow.OutputServer(p);
 				System.out.println("DB Server started");
 			} catch (IOException ioe) {
 				System.out.println("IO error starting DBS: " + ioe.getMessage());
@@ -1359,13 +1350,13 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					Properties p = new Properties();
 					p.setProperty("db.test", "true");
 					
-					io.almostrealism.db.OutputServer server =
-						new io.almostrealism.db.OutputServer(p);
+					org.almostrealism.flow.OutputServer server =
+						new org.almostrealism.flow.OutputServer(p);
 					
 					return "Started DBS.";
 				} else if (s[0].equals("create")) {
-					io.almostrealism.db.OutputServer server = 
-						io.almostrealism.db.OutputServer.getCurrentServer();
+					org.almostrealism.flow.OutputServer server = 
+						org.almostrealism.flow.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					if (server.getDatabaseConnection().createOutputTable())
@@ -1373,8 +1364,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					else
 						return "Could not create DB tables.";
 				} else if (s[0].equals("add")) {
-					io.almostrealism.db.OutputServer server = 
-						io.almostrealism.db.OutputServer.getCurrentServer();
+					org.almostrealism.flow.OutputServer server = 
+						org.almostrealism.flow.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					Object o = Class.forName(s[1]).newInstance();
@@ -1406,8 +1397,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					return "Unknown DBS command: " + s[0] + "\nTry start, create, or add.";
 				}
 			} else if (c.startsWith("dbnotify")) {
-				io.almostrealism.db.OutputServer server = 
-					io.almostrealism.db.OutputServer.getCurrentServer();
+				org.almostrealism.flow.OutputServer server = 
+					org.almostrealism.flow.OutputServer.getCurrentServer();
 				if (server == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1415,8 +1406,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				
 				return "Output from " + s[0] + " passed to output handlers.";
 			} else if (c.startsWith("dbupdate")) {
-				io.almostrealism.db.OutputServer dbs = 
-					io.almostrealism.db.OutputServer.getCurrentServer();
+				org.almostrealism.flow.OutputServer dbs = 
+					org.almostrealism.flow.OutputServer.getCurrentServer();
 				if (dbs == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);

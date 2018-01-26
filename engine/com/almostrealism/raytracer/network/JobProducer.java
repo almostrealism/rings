@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2005-06  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
- */
-
 package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
+import org.almostrealism.flow.Client;
 import org.almostrealism.flow.ui.NetworkClient;
-
-import io.almostrealism.db.Client;
 
 // TODO  Add constructor that accepts a RayTracingEngine.RenderingProperties object.
 
 /**
- * A JobProducer object is used to produce and send jobs
+ * A {@link JobProducer} is used to produce and send jobs
  * to a network node.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class JobProducer {
   public static final String helpText = "Usage: JobProducer sceneURI WxH SSWxSSH jobsize hostname port\n" +

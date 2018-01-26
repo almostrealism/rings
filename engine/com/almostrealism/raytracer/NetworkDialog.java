@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.almostrealism.flow.Client;
 import org.almostrealism.util.Defaults;
 
 import com.almostrealism.flow.LoginDialog;
 
-import io.almostrealism.db.Client;
 import io.almostrealism.msg.NodeProxy;
 
 
 /**
- * A NetworkDialog object allows the user to set up a node group for a network.
+ * A {@link NetworkDialog} allows the user to set up a node group for a network.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class NetworkDialog extends JPanel {
   private static final boolean verbose = true;

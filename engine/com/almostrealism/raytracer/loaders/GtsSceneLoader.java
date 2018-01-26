@@ -27,6 +27,7 @@ package com.almostrealism.raytracer.loaders;
 
 import java.io.IOException;
 
+import org.almostrealism.flow.Client;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
@@ -34,13 +35,11 @@ import org.almostrealism.space.Scene;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.network.SceneLoader;
 
-import io.almostrealism.db.Client;
-
 /**
  * The PlySceneLoader loads a PLY model from the distributed database
  * and places it in a default scene.
  * 
- * @author  Mike Murray
+ * @author  Michael Murray
  */
 public class GtsSceneLoader implements SceneLoader {
 	public static final double scale = 100.0;
