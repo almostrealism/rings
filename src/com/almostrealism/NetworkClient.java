@@ -58,12 +58,10 @@ import javax.swing.SwingUtilities;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.flow.Client;
-import org.almostrealism.flow.DistributedResource;
 import org.almostrealism.flow.Node;
 import org.almostrealism.flow.NodeGroup;
-import org.almostrealism.flow.ResourceDistributionTask;
 import org.almostrealism.flow.Server;
-import org.almostrealism.flow.ServerBehavior;
+import org.almostrealism.flow.behavior.ServerBehavior;
 import org.almostrealism.flow.tests.TestJobFactory;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.io.Resource;
@@ -72,6 +70,7 @@ import org.almostrealism.swing.GraphDisplay;
 import org.almostrealism.swing.ScrollingTextDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.util.Help;
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.almostrealism.raytracer.NetworkDialog;
 import com.almostrealism.raytracer.Settings;
@@ -82,6 +81,8 @@ import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.almostrealism.msg.Message;
 import io.almostrealism.msg.NodeProxy;
+import io.flowtree.fs.DistributedResource;
+import io.flowtree.fs.ResourceDistributionTask;
 import io.flowtree.job.JobFactory;
 
 // TODO  Add cd and pwd commands.
@@ -180,7 +181,7 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		
 		if ("true".equals(p.getProperty("db.start", "true"))) {
 			try {
-				org.almostrealism.flow.OutputServer s = new org.almostrealism.flow.OutputServer(p);
+				io.flowtree.fs.OutputServer s = new io.flowtree.fs.OutputServer(p);
 				System.out.println("DB Server started");
 			} catch (IOException ioe) {
 				System.out.println("IO error starting DBS: " + ioe.getMessage());
@@ -235,11 +236,11 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 		if ("on".equals(p.getProperty("server.resource.dist", "on"))) {
 			int jobs = Integer.parseInt(p.getProperty("server.resource.jobs", "10"));
 			int jsleep = Integer.parseInt(p.getProperty("server.resource.sleep", "10000"));
-			NetworkClient.startResourceDist(jobs, jsleep);
+			Client.getCurrentClient().getServer().startResourceDist(jobs, jsleep);
 		}
 		
 		if ("on".equals(p.getProperty("server.slide"))) {
-			System.out.println("NetworkClient: Tried to start slide server...");
+			throw new NotImplementedException("Slide is no longer implemented");
 		}
 		
 		Client.getCurrentClient().getServer().setParam(p);
@@ -551,13 +552,6 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 	}
 	
 	public static NetworkClient getCurrentInstance() { return NetworkClient.current; }
-	
-	public static ResourceDistributionTask startResourceDist(int jobs, int jsleep) {
-		ResourceDistributionTask rtask = new ResourceDistributionTask(jobs, jsleep);
-		Client.getCurrentClient().getServer().addTask(rtask);
-		System.out.println("NetworkClient: Added task " + rtask);
-		return rtask;
-	}
 	
 	public static String runCommand(String c, PrintStream ps) {
 		return NetworkClient.runCommand(c, ps, null);
@@ -1331,8 +1325,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				} else if (s[0].equals("start")) {
 					int jobs = Integer.parseInt(s[1]);
 					int jsleep = Integer.parseInt(s[2]);
-					ResourceDistributionTask rtask = NetworkClient.startResourceDist(jobs, jsleep);
-					return "NetworkClient: Added " + rtask;
+					Client.getCurrentClient().getServer().startResourceDist(jobs, jsleep);
+					return "NetworkClient: Added " + ResourceDistributionTask.getCurrentTask();
 				} else if (s[0].equals("notify")) {
 					ResourceDistributionTask t = ResourceDistributionTask.getCurrentTask();
 					if (t == null) return "No running ResourceDistributionTask.";
@@ -1350,13 +1344,13 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					Properties p = new Properties();
 					p.setProperty("db.test", "true");
 					
-					org.almostrealism.flow.OutputServer server =
-						new org.almostrealism.flow.OutputServer(p);
+					io.flowtree.fs.OutputServer server =
+						new io.flowtree.fs.OutputServer(p);
 					
 					return "Started DBS.";
 				} else if (s[0].equals("create")) {
-					org.almostrealism.flow.OutputServer server = 
-						org.almostrealism.flow.OutputServer.getCurrentServer();
+					io.flowtree.fs.OutputServer server = 
+						io.flowtree.fs.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					if (server.getDatabaseConnection().createOutputTable())
@@ -1364,8 +1358,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					else
 						return "Could not create DB tables.";
 				} else if (s[0].equals("add")) {
-					org.almostrealism.flow.OutputServer server = 
-						org.almostrealism.flow.OutputServer.getCurrentServer();
+					io.flowtree.fs.OutputServer server = 
+						io.flowtree.fs.OutputServer.getCurrentServer();
 					if (server == null) return "No DBS running.";
 					
 					Object o = Class.forName(s[1]).newInstance();
@@ -1397,8 +1391,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 					return "Unknown DBS command: " + s[0] + "\nTry start, create, or add.";
 				}
 			} else if (c.startsWith("dbnotify")) {
-				org.almostrealism.flow.OutputServer server = 
-					org.almostrealism.flow.OutputServer.getCurrentServer();
+				io.flowtree.fs.OutputServer server = 
+					io.flowtree.fs.OutputServer.getCurrentServer();
 				if (server == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
@@ -1406,8 +1400,8 @@ public class NetworkClient implements Runnable, NodeProxy.EventListener, Node.Ac
 				
 				return "Output from " + s[0] + " passed to output handlers.";
 			} else if (c.startsWith("dbupdate")) {
-				org.almostrealism.flow.OutputServer dbs = 
-					org.almostrealism.flow.OutputServer.getCurrentServer();
+				io.flowtree.fs.OutputServer dbs = 
+					io.flowtree.fs.OutputServer.getCurrentServer();
 				if (dbs == null) return "No DBS running.";
 				
 				String s[] = NetworkClient.parseCommand(c);
