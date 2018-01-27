@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.algebra.Polynomial;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -33,7 +34,6 @@ import org.almostrealism.swing.Dialog;
 
 import com.almostrealism.raytracer.primitives.Cone;
 import com.almostrealism.raytracer.primitives.Cylinder;
-import com.almostrealism.raytracer.primitives.Polynomial;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 
