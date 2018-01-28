@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package com.almostrealism.raytracer.loaders;
+package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
 import org.almostrealism.flow.Client;
-import org.almostrealism.io.FileDecoder;
-import org.almostrealism.io.SpatialData;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.io.PlyResource;
 import org.almostrealism.space.Scene;
 
 import com.almostrealism.raytracer.SceneFactory;
-import com.almostrealism.raytracer.network.SceneLoader;
 
 /**
  * The PlySceneLoader loads a PLY model from the distributed database
@@ -35,14 +34,15 @@ import com.almostrealism.raytracer.network.SceneLoader;
 public class PlySceneLoader implements SceneLoader {
 	public static final double scale = 100.0;
 	
-	// TODO  Add use of exception listener.
 	/**
 	 * @see com.almostrealism.raytracer.SceneLoader#loadScene(java.lang.String)
 	 */
-	public Scene loadScene(String uri) throws IOException {
-		Scene scene = FileDecoder.decodeScene(Client.getCurrentClient().getServer().loadResource(uri),
-												SpatialData.PLYEncoding, null);
-		scene.setLights(SceneFactory.getStandard3PointLightRig(scale));
-		return scene;
+	public Scene<Mesh> loadScene(String uri) throws IOException {
+		Scene<Mesh> s = new Scene<Mesh>();
+		PlyResource r = ((PlyResource) Client.getCurrentClient().getServer().loadResource(uri));
+		PlyResource.MeshReader reader = new PlyResource.MeshReader();
+		s.add(reader.transcode(r).getMesh());
+		s.setLights(SceneFactory.getStandard3PointLightRig(scale));
+		return s;
 	}
 }

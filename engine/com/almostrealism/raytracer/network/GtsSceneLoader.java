@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2007  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
- */
-
-package com.almostrealism.raytracer.loaders;
+package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
 import org.almostrealism.flow.Client;
-import org.almostrealism.io.FileDecoder;
-import org.almostrealism.io.SpatialData;
+import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.io.GtsResource;
 import org.almostrealism.space.Scene;
 
 import com.almostrealism.raytracer.SceneFactory;
-import com.almostrealism.raytracer.network.SceneLoader;
 
 /**
  * The PlySceneLoader loads a PLY model from the distributed database
@@ -44,14 +34,15 @@ import com.almostrealism.raytracer.network.SceneLoader;
 public class GtsSceneLoader implements SceneLoader {
 	public static final double scale = 100.0;
 	
-	// TODO  Add use of exception listener.
 	/**
 	 * @see com.almostrealism.raytracer.SceneLoader#loadScene(java.lang.String)
 	 */
-	public Scene loadScene(String uri) throws IOException {
-		Scene scene = FileDecoder.decodeScene(Client.getCurrentClient().getServer().loadResource(uri),
-												SpatialData.GTSEncoding, null);
-		scene.setLights(SceneFactory.getStandard3PointLightRig(scale));
-		return scene;
+	public Scene<Mesh> loadScene(String uri) throws IOException {
+		Scene<Mesh> s = new Scene<Mesh>();
+		GtsResource r = ((GtsResource) Client.getCurrentClient().getServer().loadResource(uri));
+		GtsResource.MeshReader reader = new GtsResource.MeshReader();
+		s.add(reader.transcode(r).getMesh());
+		s.setLights(SceneFactory.getStandard3PointLightRig(scale));
+		return s;
 	}
 }
