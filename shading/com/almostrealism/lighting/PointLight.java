@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
@@ -95,34 +96,26 @@ public class PointLight implements Light {
 	}
 	
 	/**
-	  Sets the intensity of this PointLight object to the specified double value.
-	*/
-	
-	public void setIntensity(double intensity) {
-		this.intensity = intensity;
-	}
+	 * Sets the intensity of this PointLight object to the specified double value.
+	 */
+	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/**
-	  Sets the color of this PointLight object to the color represented by the specified RGB object.
-	*/
-	
-	public void setColor(RGB color) {
-		this.color = color;
-	}
+	 * Sets the color of this PointLight object to the color represented by the specified RGB object.
+	 */
+	public void setColor(RGB color) { this.color = color; }
 	
 	/**
-	  Sets the location of this PointLight object to the location represented by the specified Vector object.
-	*/
-	
+	 * Sets the location of this PointLight object to the location represented by the specified Vector object.
+	 */
 	public void setLocation(Vector location) {
 		this.location = location;
 	}
 	
 	/**
-	  Sets the coefficients a, b, and c for the quadratic function used for distance attenuation
-	  of the light represented by this PointLight object to the specified double values.
-	*/
-	
+	 * Sets the coefficients a, b, and c for the quadratic function used for distance attenuation
+	 * of the light represented by this PointLight object to the specified double values.
+	 */
 	public void setAttenuationCoefficients(double a, double b, double c) {
 		this.da = a;
 		this.db = b;
@@ -130,13 +123,29 @@ public class PointLight implements Light {
 	}
 	
 	/**
-	 * Returns the intensity of this PointLight object as a double value.
+	 * Sets the coefficients a, b, and c for the quadratic function used for distance attenuation
+	 * of the light represented by this PointLight object to the specified double values.
 	 */
-	public double getIntensity() { return this.intensity; }
+	public void setAttenuationCoefficients(double a[]) {
+		this.da = a[0];
+		this.db = a[1];
+		this.dc = a[2];
+	}
 	
 	/**
-	 * Returns the color of this PointLight object as an RGB object.
+	 * Sets the coefficients a, b, and c for the quadratic function used for distance attenuation
+	 * of the light represented by this PointLight object to the specified double values.
 	 */
+	public void setAttenuationCoefficients(Triple a) {
+		this.da = a.getA();
+		this.db = a.getB();
+		this.dc = a.getC();
+	}
+	
+	/** Returns the intensity of this PointLight object as a double value. */
+	public double getIntensity() { return this.intensity; }
+	
+	/** Returns the color of this PointLight object as an RGB object. */
 	public RGB getColor() { return this.color; }
 	
 	/**
@@ -152,9 +161,7 @@ public class PointLight implements Light {
 		return color;
 	}
 	
-	/**
-	 * Returns the location of this PointLight object as a Vector object.
-	 */
+	/** Returns the location of this PointLight object as a Vector object. */
 	public Vector getLocation() { return this.location; }
 	
 	/**
@@ -168,9 +175,7 @@ public class PointLight implements Light {
 		return d;
 	}
 	
-	/**
-	 * Returns "Point Light".
-	 */
+	/** Returns "Point Light". */
 	public String toString() { return "Point Light"; }
 
 	/**

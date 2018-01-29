@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.dcache.chimera:chimera-core:0.0.15-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/dcache/chimera/chimera-core/0.0.15-SNAPSHOT/chimera-core-0.0.15-20150622.133857-10.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/dcache/chimera/chimera-core/0.0.15-SNAPSHOT/chimera-core-0.0.15-20150622.133857-10-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/dcache/chimera/chimera-core/0.0.15-SNAPSHOT/chimera-core-0.0.15-20150622.133857-10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

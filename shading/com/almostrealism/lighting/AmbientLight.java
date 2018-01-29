@@ -92,7 +92,7 @@ public class AmbientLight implements Light {
 
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * interesection on that surface using the lighting data from the specified AmbientLight
+	 * intersection on that surface using the lighting data from the specified AmbientLight
 	 * object and returns an RGB object that represents the color of the point. A list of all
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
