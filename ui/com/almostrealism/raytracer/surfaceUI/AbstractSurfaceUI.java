@@ -19,15 +19,18 @@ package com.almostrealism.raytracer.surfaceUI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.almostrealism.algebra.Ray;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
@@ -206,9 +209,49 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * that intersection between the ray and the surface represented by this AbstractSurfaceUI occurs.
 	 */
 	public ShadableIntersection intersectAt(Ray ray) {
-		return this.surface.intersectAt(ray);
+		return (ShadableIntersection) this.surface.intersectAt(ray);
 	}
-	
+
+	@Override
+	public ColorProducer call() throws Exception {
+		return getSurface().call();
+	}
+
+	@Override
+	public Vector operate(Triple triple) {
+		return getSurface().operate(triple);
+	}
+
+	@Override
+	public Operator<Scalar> expect() {
+		return getSurface().expect();
+	}
+
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		return getSurface().cancel(mayInterruptIfRunning);
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return getSurface().isCancelled();
+	}
+
+	@Override
+	public boolean isDone() {
+		return getSurface().isDone();
+	}
+
+	@Override
+	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+		return getSurface().get();
+	}
+
+	@Override
+	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return getSurface().get(timeout, unit);
+	}
+
 	/**
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */

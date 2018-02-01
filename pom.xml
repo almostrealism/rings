@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.2</version>
+	<version>0.3-rc</version>
 
 	<!-- Output to jar format -->
 	<packaging>jar</packaging>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>Common</artifactId>
-			<version>0.2-rc</version>
+			<version>0.4-rc</version>
 		</dependency>
 
 		<dependency>

@@ -17,11 +17,17 @@
 package com.almostrealism.raytracer.primitives;
 
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 //TODO Add ParticleGroup implementation.
 
@@ -145,5 +151,20 @@ public class Cylinder extends AbstractSurface {
 			return new ShadableIntersection(ray, this, new double[] { l1 });
 		else
 			return new ShadableIntersection(ray, this, new double[0]);
+	}
+
+	@Override
+	public Operator<Scalar> expect() {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return null;
 	}
 }

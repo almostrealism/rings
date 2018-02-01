@@ -153,12 +153,27 @@ public class PointLight implements Light {
 	 * specified point as an RGB object.
 	 */
 	public ColorProducer getColorAt(Vector point) {
-		double d = point.subtract(this.location).lengthSq();
-		
-		RGB color = this.getColor().multiply(this.getIntensity());
-		color.divideBy(da * d + db * Math.sqrt(d) + dc);
-		
-		return color;
+		return new ColorProducer() {
+			@Override
+			public RGB evaluate(Object[] objects) {
+				return operate(point);
+			}
+
+			@Override
+			public RGB operate(Triple triple) {
+				double d = ((Vector) triple).subtract(location).lengthSq();
+
+				RGB color = getColor().multiply(getIntensity());
+				color.divideBy(da * d + db * Math.sqrt(d) + dc);
+
+				return color;
+			}
+
+			@Override
+			public void compact() {
+				// TODO  Should this compact the underlying colors?
+			}
+		};
 	}
 	
 	/** Returns the location of this PointLight object as a Vector object. */

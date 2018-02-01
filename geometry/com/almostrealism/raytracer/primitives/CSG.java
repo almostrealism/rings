@@ -17,11 +17,12 @@
 package com.almostrealism.raytracer.primitives;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.almostrealism.algebra.Intersection;
-import org.almostrealism.algebra.Intersections;
-import org.almostrealism.algebra.Ray;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
@@ -86,13 +87,15 @@ public class CSG extends AbstractSurface {
     }
 
     /**
-     * @see org.almostrealism.space.ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
+     * @see  ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
      */
     public ShadableIntersection intersectAt(Ray ray) {
-    		ray.transform(this.getTransform(true).getInverse());
+        ray.transform(this.getTransform(true).getInverse());
         
         if (this.type == CSG.UNION) {
-            return Intersections.closestIntersection(ray, Arrays.asList(this.sa, this.sb));
+            return Intersections.closestIntersection(ray,
+                    Arrays.asList((Intersectable<ShadableIntersection, ?>) this.sa,
+                                    (Intersectable<ShadableIntersection, ?>) this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
             if (this.inverted) {
                 double scale[] = this.sb.getScaleCoefficients();
@@ -192,7 +195,12 @@ public class CSG extends AbstractSurface {
             return null;
         }
     }
-    
+
+    @Override
+    public Operator<Scalar> expect() {
+        return null;
+    }
+
     public double[] interval(double intersect[]) {
         if (intersect.length <= 0) return new double[] {0.0, 0.0};
         
@@ -230,5 +238,15 @@ public class CSG extends AbstractSurface {
     
     public double[] intervalIntersection(double ia[], double ib[]) {
         return new double[] {Math.max(ia[0], ib[0]), Math.min(ia[1], ib[1])};
+    }
+
+    @Override
+    public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+        return null;
+    }
+
+    @Override
+    public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return null;
     }
 }

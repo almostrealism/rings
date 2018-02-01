@@ -17,11 +17,17 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * A {@link PointLightGrid} object stores a grid of {@link PointLight} objects.
@@ -130,6 +136,21 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	
 	/** Returns null. */
 	public ShadableIntersection intersectAt(Ray ray) {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> expect() {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 		return null;
 	}
 }

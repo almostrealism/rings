@@ -63,7 +63,7 @@ public class LightingEngine {
 				for (int j = 0; j < i; j++) { otherL[j] = allLights[j]; }
 				for (int j = i + 1; j < allLights.length; j++) { otherL[j - 1] = allLights[j]; }
 
-				ColorProducer c = null;
+				ColorProducer c;
 
 				try {
 					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
@@ -274,7 +274,7 @@ public class LightingEngine {
 	 * Performs the shadow calculations for the specified surfaces at the specified point using the data
 	 * from the specified Light object. Returns true if the point has a shadow cast on it.
 	 */
-	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterator<Intersectable<T>> surfaces, Light light) {
+	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterator<Intersectable<T, ?>> surfaces, Light light) {
 		double maxDistance = -1.0;
 		Vector direction = null;
 

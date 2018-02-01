@@ -17,9 +17,7 @@ public class RayTracer {
 	}
 	
 	public Future<ColorProducer> trace(Vector from, Vector direction) {
-		return pool.submit(() -> {
-			return engine.trace(from, direction);
-		});
+		return pool.submit(() -> engine.trace(from, direction));
 	}
 	
 	public interface Engine {

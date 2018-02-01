@@ -19,12 +19,13 @@ package com.almostrealism.raytracer.primitives;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.almostrealism.algebra.Intersection;
-import org.almostrealism.algebra.Ray;
-import org.almostrealism.algebra.TransformMatrix;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 
@@ -177,5 +178,20 @@ public class Cone extends AbstractSurface {
 		while(itr.hasNext()) t[i++] = ((Number)itr.next()).doubleValue();
 		
 		return new ShadableIntersection(ray, this, t);
+	}
+
+	@Override
+	public Operator<Scalar> expect() {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+		return null;
+	}
+
+	@Override
+	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return null;
 	}
 }

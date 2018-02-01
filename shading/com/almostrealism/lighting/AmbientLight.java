@@ -16,6 +16,7 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorMultiplier;
 import org.almostrealism.color.ColorProducer;
@@ -83,7 +84,24 @@ public class AmbientLight implements Light {
 	/**
 	 * Returns the color of this AmbientLight object as an RGB object.
 	 */
-	public ColorProducer getColorAt(Vector point) { return this.color.multiply(this.intensity); }
+	public ColorProducer getColorAt(Vector point) {
+		return new ColorProducer() {
+			@Override
+			public RGB evaluate(Object[] objects) {
+				return color.multiply(intensity);
+			}
+
+			@Override
+			public RGB operate(Triple triple) {
+				return evaluate(null);
+			}
+
+			@Override
+			public void compact() {
+				// TODO  Should this compact the underlying colors?
+			}
+		};
+	}
 	
 	/**
 	 * Returns "Ambient Light".

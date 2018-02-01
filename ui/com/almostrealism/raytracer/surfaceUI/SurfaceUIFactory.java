@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,7 @@ import java.awt.Graphics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Polynomial;
-import org.almostrealism.algebra.Triple;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
+import org.almostrealism.algebra.*;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.graph.Triangle;
 import org.almostrealism.space.AbstractSurface;
@@ -98,16 +94,6 @@ public class SurfaceUIFactory {
 		 * Perhaps someday this will be a useful method...
 		 */
 		public void draw(Graphics g, Camera camera) { }
-
-		@Override
-		public ColorProducer call() throws Exception {
-			return null;
-		}
-
-		@Override
-		public Vector operate(Triple triple) {
-			return null;
-		}
 	}
 	
   private static final Class typeClasses[] = {Mesh.class,

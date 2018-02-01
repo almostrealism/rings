@@ -123,7 +123,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 				}
 			}
 		}
-		
+
 		return new RealizableImage(image);
 	}
 }

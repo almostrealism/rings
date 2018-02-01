@@ -18,12 +18,19 @@ package com.almostrealism.raytracer.primitives;
 
 import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.Mesh;
+import org.almostrealism.relation.Constant;
+import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 // TODO Add ParticleGroup implementation.
 
@@ -143,5 +150,28 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	@Override
 	public double estimateDistance(Ray r) {
 		return r.getOrigin().subtract(getLocation()).length() - getSize();
+	}
+
+	@Override
+	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+		return new Operator<Scalar>() {
+			@Override
+			public Scalar evaluate(Object[] args) {
+				return new Scalar(((Operator<Vector>) getInput()).evaluate(args).lengthSq());
+			}
+
+			@Override
+			public void compact() { }
+		};
+	}
+
+	@Override
+	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return get();
+	}
+
+	@Override
+	public Operator<Scalar> expect() {
+		return new Constant<>(new Scalar(1.0));
 	}
 }

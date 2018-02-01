@@ -52,15 +52,19 @@ import org.almostrealism.util.Factory;
  * @author Mike Murray
  */
 public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
+	public static final boolean enableCompaction = true;
+
 	private T scene;
 	private EventHandler handler;
 
-	private boolean showProgressWindow;
+	private boolean showProgressWindow = true;
 
 	private int width, height, ssWidth, ssHeight;
 
 	private ColorProducer renderedImageData[][];
 	private Image renderedImage;
+
+	private Thread evaluationThread;
 	
 	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
 	public RenderPanel(T scene) {
@@ -85,7 +89,16 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 */
 	public void render() {
 		int totalPixels = this.getImageWidth() * this.getImageHeight();
-		
+		if (totalPixels == 0) {
+			System.out.println("Image size is zero");
+			return;
+		}
+
+		if (evaluationThread != null) {
+			System.out.println("Please wait until the current render is evaluated");
+			return;
+		}
+
 		final ProgressDisplay display = new ProgressDisplay(totalPixels / 100, totalPixels);
 		final JButton cancelButton = new JButton("Cancel");
 		
@@ -119,22 +132,16 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, rparams), scene.getCamera());
 				renderedImageData = r.realize(rparams).evaluate(null);
 
-//				renderedImageData = LegacyRayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
-				renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
-				
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							RenderPanel.this.removeAll();
-							revalidate();
-							repaint();
+				if (enableCompaction) {
+					for (int i = 0; i < renderedImageData.length; i++) {
+						for (int j = 0; j < renderedImageData[i].length; j++) {
+							renderedImageData[i][j].compact();
 						}
-					});
-				} catch(InterruptedException ie) {
-					System.out.println("Swing Utilities Interruption: " + ie.toString());
-				} catch(java.lang.reflect.InvocationTargetException ite) {
-					System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
+					}
 				}
+
+//				renderedImageData = LegacyRayTracingEngine.render(scene, getImageWidth(), getImageHeight(), getSupersampleWidth(), getSupersampleHeight(), display);
+				evaluateImage();
 			}
 		});
 		
@@ -151,7 +158,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			}
 		});
 		
-		if (this.showProgressWindow == true) {
+		if (this.showProgressWindow) {
 			frame.setVisible(true);
 		}
 		
@@ -161,7 +168,28 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	public Dimension getPreferredSize() {
 		return new Dimension(width, height);
 	}
-	
+
+	protected void evaluateImage() {
+		if (evaluationThread != null) return;
+
+		evaluationThread = new Thread(() -> {
+			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
+			evaluationThread = null;
+
+			try {
+				SwingUtilities.invokeAndWait(() -> {
+					RenderPanel.this.removeAll();
+					revalidate();
+					repaint();
+				});
+			} catch(InterruptedException ie) {
+				System.out.println("Swing Utilities Interruption: " + ie.toString());
+			} catch(java.lang.reflect.InvocationTargetException ite) {
+				System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
+			}
+		});
+	}
+
 	/**
 	 * Removes any stored image data from this RenderPanel object and repaints the panel.
 	 */
@@ -184,7 +212,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		}
 		
 		if (event instanceof SurfaceEditEvent) {
-			this.repaint();
+			this.evaluateImage();
 		}
 	}
 	
