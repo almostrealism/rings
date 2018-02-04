@@ -37,6 +37,7 @@ import com.almostrealism.raytracer.engine.RayTracedScene;
  * Also, coefficients for distance attenuation may be specified also, but by default are 0.0, 0.0,
  * and 1.0 (no attenuation).
  */
+// TODO  Accept a ColorProducer instead of an RGB
 public class PointLight implements Light {
 	private double intensity;
 	private RGB color;

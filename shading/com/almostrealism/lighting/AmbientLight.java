@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,8 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorMultiplier;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shadable;
+import org.almostrealism.color.*;
 import org.almostrealism.space.ShadableSurface;
 
 import java.util.concurrent.Callable;
@@ -31,11 +26,14 @@ import java.util.concurrent.Callable;
  * An AmbientLight object represents a light that is applied to all objects in the scene.
  * The color and intensity of the light may by specified, but by default it is white light.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class AmbientLight implements Light {
-  private double intensity;
-  private RGB color;
+	private double intensity;
+	private RGB color;
+
+	private ColorProducer colorProducer = ColorProducerAdapter.fromFunction((t) -> color.multiply(intensity));
+
 
 	/**
 	 * Constructs an AmbientLight object with the default intensity and color.
@@ -76,36 +74,13 @@ public class AmbientLight implements Light {
 	 */
 	public double getIntensity() { return this.intensity; }
 	
-	/**
-	 * Returns the color of this AmbientLight object as an RGB object.
-	 */
+	/** Returns the color of this AmbientLight object as an RGB object. */
 	public RGB getColor() { return this.color; }
 	
-	/**
-	 * Returns the color of this AmbientLight object as an RGB object.
-	 */
-	public ColorProducer getColorAt(Vector point) {
-		return new ColorProducer() {
-			@Override
-			public RGB evaluate(Object[] objects) {
-				return color.multiply(intensity);
-			}
-
-			@Override
-			public RGB operate(Triple triple) {
-				return evaluate(null);
-			}
-
-			@Override
-			public void compact() {
-				// TODO  Should this compact the underlying colors?
-			}
-		};
-	}
+	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
+	public ColorProducer getColorAt(Vector point) { return colorProducer; }
 	
-	/**
-	 * Returns "Ambient Light".
-	 */
+	/** Returns "Ambient Light". */
 	public String toString() { return "Ambient Light"; }
 
 	/**
@@ -115,10 +90,10 @@ public class AmbientLight implements Light {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer ambientLightingCalculation(Vector point, Vector rayDirection, Callable<ColorProducer> surface, AmbientLight light) {
+	public static ColorProducer ambientLightingCalculation(Callable<ColorProducer> surface, AmbientLight light) {
 		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
 		if (surface instanceof ShadableSurface)
-			color = new ColorMultiplier(color, ((ShadableSurface) surface).getColorAt(point));
+			color = new ColorProduct(color, ((ShadableSurface) surface).getColorAt());
 		
 		return color;
 	}

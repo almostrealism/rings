@@ -19,6 +19,7 @@ package com.almostrealism.lighting;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.relation.Operator;
@@ -103,7 +104,6 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	  Sets the color of the PointLight objects stored by this PointLightGrid object
 	  to the color represented by the specified RGB object.
 	*/
-	
 	public void setColor(RGB color) {
 		super.setColor(color);
 		
@@ -128,6 +128,10 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	public Vector getNormalAt(Vector point) {
 		return new Vector(0.0, 0.0, 0.0);
 	}
+
+	@Override
+	@Deprecated
+	public ColorProducer getColorAt(Vector point) { return getColor().operate(point); }
 	
 	/** Returns false. */
 	public boolean intersect(Ray ray) {

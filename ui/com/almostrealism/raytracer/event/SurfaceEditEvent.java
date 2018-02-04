@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package com.almostrealism.raytracer.event;
 import org.almostrealism.space.ShadableSurface;
 
 /**
-  A SurfaceEditEvent object represents the event of editing a surface in the current scene.
-  The integer code of the SurfaceEditEvent is the sum of all of the codes that apply to the edit.
-*/
-
+ * A {@link SurfaceEditEvent} represents the event of editing a surface in the
+ * current scene. The integer code of the {@link SurfaceEditEvent} is the sum
+ * of all of the codes that apply to the edit.
+ */
 public class SurfaceEditEvent extends SceneEditEvent implements SurfaceEvent {
   /** The code for name change event. */
   public static final int nameChangeEvent = 1;
@@ -54,143 +54,68 @@ public class SurfaceEditEvent extends SceneEditEvent implements SurfaceEvent {
   private int code = 0;
   private ShadableSurface target;
 	
-	/**
-	  Constructs a new SurfaceEditEvent object with the specified integer code.
-	*/
-	
+	/** Constructs a new {@link SurfaceEditEvent} with the specified integer code. */
 	public SurfaceEditEvent(int code, ShadableSurface target) {
 		this.code = code;
 		this.target = target;
 	}
 	
-	/**
-	  Returns the integer code of this SurfaceEditEvent object.
-	*/
-	
+	/** Returns the integer code of this {@link SurfaceEditEvent}. */
 	public int getCode() {
 		return this.code;
 	}
 	
-	/**
-	  Returns the target of this SurfaceEditEvent.
-	*/
-	
+	/** Returns the target of this {@link SurfaceEditEvent}. */
 	public ShadableSurface getTarget() {
 		return this.target;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a name change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a name change event. */
 	public boolean isNameChangeEvent() {
-		if ((this.code & SurfaceEditEvent.nameChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.nameChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a location change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a location change event. */
 	public boolean isLocationChangeEvent() {
-		if ((this.code & SurfaceEditEvent.locationChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.locationChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a size change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a size change event. */
 	public boolean isSizeChangeEvent() {
-		if ((this.code & SurfaceEditEvent.sizeChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.sizeChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a scale coefficient change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a scale coefficient change event. */
 	public boolean isScaleCoefficientChangeEvent() {
-		if ((this.code & SurfaceEditEvent.scaleCoefficientChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.scaleCoefficientChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a rotation coefficient change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a rotation coefficient change event. */
 	public boolean isRotationCoefficientChangeEvent() {
-		if ((this.code & SurfaceEditEvent.rotationCoefficientChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.rotationCoefficientChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent obeject is a transformation change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a transformation change event. */
 	public boolean isTransformationChangeEvent() {
-		if ((this.code & SurfaceEditEvent.transformationChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.transformationChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a color change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a color change event. */
 	public boolean isColorChangeEvent() {
-		if ((this.code & SurfaceEditEvent.colorChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.colorChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if thsi SurfaceEditEvent object is a shading option change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a shading option change event. */
 	public boolean isShadingOptionChangeEvent() {
-		if ((this.code & SurfaceEditEvent.shadingOptionChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.shadingOptionChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns true if this SurfaceEditEvent object is a data change event.
-	*/
-	
+	/** Returns true if this {@link SurfaceEditEvent} is a data change event. */
 	public boolean isDataChangeEvent() {
-		if ((this.code & SurfaceEditEvent.dataChangeEvent) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return (this.code & SurfaceEditEvent.dataChangeEvent) != 0;
 	}
 	
-	/**
-	  Returns "SurfaceEditEvent".
-	*/
-	
+	/** Returns "SurfaceEditEvent". */
 	public String toString() {
 		return "SurfaceEditEvent";
 	}

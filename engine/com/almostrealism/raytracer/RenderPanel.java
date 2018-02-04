@@ -44,12 +44,13 @@ import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 import org.almostrealism.util.Factory;
+import sun.java2d.Surface;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and
  * rendered images of the {@link Scene} object it uses.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
 	public static final boolean enableCompaction = true;
@@ -74,12 +75,12 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		
 		double ph = this.getProjectionHeight();
 		double pw = this.getProjectionWidth();
-		int w = 100;
+		int w = 320;
 		
 		this.setImageWidth(w);
 		this.setImageHeight((int)(ph * (w / pw)));
-		this.setSupersampleWidth(1);
-		this.setSupersampleHeight(1);
+		this.setSupersampleWidth(2);
+		this.setSupersampleHeight(2);
 		
 		this.setShowProgressWindow(true);
 	}
@@ -180,13 +181,11 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		return new Dimension(width, height);
 	}
 
-	protected synchronized void evaluateImage() {
+	public synchronized void evaluateImage() {
 		if (evaluationThread != null) return;
 
 		evaluationThread = new Thread(() -> {
-			System.out.println("Evaluating image...");
 			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
-			System.out.println("Done");
 
 			evaluationThread = null;
 
@@ -228,7 +227,27 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		}
 		
 		if (event instanceof SurfaceEditEvent) {
-			this.evaluateImage();
+			SurfaceEditEvent se = (SurfaceEditEvent) event;
+
+			if (se.isNameChangeEvent()) {
+				return;
+			} else if (se.isLocationChangeEvent()) {
+				render();
+			} else if (se.isSizeChangeEvent()) {
+				render();
+			} else if (se.isScaleCoefficientChangeEvent()) {
+				render();
+			} else if (se.isRotationCoefficientChangeEvent()) {
+				render();
+			} else if (se.isTransformationChangeEvent()) {
+				render();
+			} else if (se.isColorChangeEvent()) {
+				evaluateImage();
+			} else if (se.isShadingOptionChangeEvent()) {
+				render();
+			} else if (se.isDataChangeEvent()) {
+				render();
+			}
 		}
 	}
 

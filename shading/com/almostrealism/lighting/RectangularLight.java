@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.space.Plane;
 
 /**
- * A RectangularLight object provides PointLight samples that are randomly distributed
- * across the a plane surface. The location of the plane is used for the upper left corner
- * of the area to sample.
+ * A {@link RectangularLight} provides {@link PointLight} samples that are randomly distributed
+ * across a {@link Plane} surface. The location of the {@link Plane} is used for the upper left
+ * corner of the area to sample, not the center of the area to sample.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class RectangularLight extends Plane implements SurfaceLight {
   private double width, height;
@@ -99,50 +99,38 @@ public class RectangularLight extends Plane implements SurfaceLight {
 			
 			Vector p = new Vector(x, y, z);
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
-			
-			l[i] = new PointLight(p, in, (RGB) super.getColorAt(p));
+
+			// TODO This should hand off the color producer directly
+			l[i] = new PointLight(p, in, super.getColorAt().operate(new Vector()));
 		}
 		
 		return l;
 	}
-	
-	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples()
-	 */
+
+	@Deprecated
+	public ColorProducer getColorAt(Vector p) { return getColorAt(); }
+
+	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 	
-	/**
-	 * Sets the width of the rectangular area of this RectangularLight object.
-	 */
+	/** Sets the width of the rectangular area of this {@link RectangularLight}. */
 	public void setWidth(double width) { this.width = width; }
 	
-	/**
-	 * Sets the height of the rectangular area of this RectangularLight object.
-	 */
+	/** Sets the height of the rectangular area of this {@link RectangularLight}. */
 	public void setHeight(double height) { this.height = height; }
 	
-	/**
-	 * @return  The width of the rectangular area of this RectangularLight object.
-	 */
+	/** @return  The width of the rectangular area of this {@link RectangularLight}. */
 	public double getWidth() { return this.width; }
 	
-	/**
-	 * @return  The width of the rectangular area of this RectangularLight object.
-	 */
+	/** @return  The width of the rectangular area of this {@link RectangularLight}. */
 	public double getHeight() { return this.height; }
 	
-	/**
-	 * @see org.almostrealism.color.Light#setIntensity(double)
-	 */
+	/** @see org.almostrealism.color.Light#setIntensity(double) */
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
-	/**
-	 * @see org.almostrealism.color.Light#getIntensity()
-	 */
+	/** @see org.almostrealism.color.Light#getIntensity() */
 	public double getIntensity() { return this.intensity; }
 	
-	/**
-	 * @return  "Rectangular Light".
-	 */
+	/** @return  "Rectangular Light". */
 	public String toString() { return "Rectangular Light"; }
 }

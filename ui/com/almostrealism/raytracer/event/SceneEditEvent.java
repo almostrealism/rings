@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,11 @@
 
 package com.almostrealism.raytracer.event;
 
-
 /**
-  A SceneEditEvent object represents the event of editing an element of the current scene.
-*/
-
+ * A {@link SceneEditEvent} represents the event of editing an element of the current scene.
+ */
 public abstract class SceneEditEvent extends SceneEvent {
-	
-	/**
-	  Returns "SceneEditEvent".
-	*/
-	
+	/** Returns "SceneEditEvent". */
 	public String toString() {
 		return "SceneEditEvent";
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 
@@ -27,16 +28,14 @@ import com.almostrealism.raytracer.primitives.Sphere;
  * A SphericalLight object provides PointLight samples that are randomly distributed
  * across the surface of a sphere.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class SphericalLight extends Sphere implements SurfaceLight {
   private double intensity, atta, attb, attc;
   
   private int samples;
 
-	/**
-	 * Constructs a new SphericalLight object.
-	 */
+	/** Constructs a new {@link SphericalLight}. */
 	public SphericalLight() {
 		super(new Vector(0.0, 0.0, 0.0), 0.0);
 		
@@ -47,7 +46,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	}
 	
 	/**
-	 * Constructs a new SphericalLight object.
+	 * Constructs a new {@link SphericalLight}.
 	 * 
 	 * @param location  Location for sphere.
 	 * @param radius  Radius of sphere.
@@ -93,50 +92,39 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			Vector p = new Vector(x, y, z);
 			
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
-			
-			l[i] = new PointLight(p, in, (RGB) super.getColorAt(p));
+
+			// TODO  This should pass along the ColorProucer directly rather than evaluating it
+			l[i] = new PointLight(p, in, super.getColorAt().operate(p));
 			l[i].setAttenuationCoefficients(this.atta, this.attb, this.attc);
 		}
 		
 		return l;
 	}
 	
-	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples()
-	 */
+	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 
-	/**
-	 * @see org.almostrealism.color.Light#setIntensity(double)
-	 */
+	public ColorProducer getColorAt(Vector p) { return getColorAt().operate(p); }
+
+	/** @see org.almostrealism.color.Light#setIntensity(double) */
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 
-	/**
-	 * @see org.almostrealism.color.Light#getIntensity()
-	 */
+	/** @see org.almostrealism.color.Light#getIntensity() */
 	public double getIntensity() { return this.intensity; }
 	
-	/**
-	 * Sets the attenuation coefficients to be used when light samples are created.
-	 */
+	/** Sets the attenuation coefficients to be used when light samples are created. */
 	public void setAttenuationCoefficients(double a, double b, double c) {
 		this.atta = a;
 		this.attb = b;
 		this.attc = c;
 	}
 	
-	/**
-	 * @return  An array containing the attenuation coefficients used when light samples are created.
-	 */
+	/** @return  An array containing the attenuation coefficients used when light samples are created. */
 	public double[] getAttenuationCoefficients() { return new double[] { this.atta, this.attb, this.attc }; }
 	
-	/**
-	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()
-	 */
+	/** @see org.almostrealism.algebra.ParticleGroup#getParticleVertices() */
 	public double[][] getParticleVertices() { return new double[0][0]; }
 	
-	/**
-	 * @return  "Spherical Light".
-	 */
+	/** @return  "Spherical Light". */
 	public String toString() { return "Spherical Light"; }
 }

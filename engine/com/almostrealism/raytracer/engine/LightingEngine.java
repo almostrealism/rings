@@ -126,8 +126,8 @@ public class LightingEngine {
 					}
 				} else if (allLights[i] instanceof AmbientLight) {
 					try {
-						c = AmbientLight.ambientLightingCalculation(intersect.get(0).call().getOrigin(),
-													r.getDirection(), surf, (AmbientLight) allLights[i]);
+						c = AmbientLight.ambientLightingCalculation(surf, (AmbientLight) allLights[i])
+											.operate(intersect.get(0).call().getOrigin());
 					} catch (Exception e) {
 						e.printStackTrace();
 						return null;
@@ -264,7 +264,8 @@ public class LightingEngine {
 					otherSurfaces,
 					(DirectionalAmbientLight) light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
-			return AmbientLight.ambientLightingCalculation(point, rayDirection, surface, (AmbientLight) light);
+			return AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light)
+									.operate(point);
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
 		}

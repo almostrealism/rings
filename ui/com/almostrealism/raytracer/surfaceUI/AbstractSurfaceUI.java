@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +38,13 @@ import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
-import com.almostrealism.raytracer.engine.*;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 
 /**
- * AbstractSurfaceUI is an abstract implementation of the SurfaceUI interface
- * that takes care of all of the standard methods of SurfaceUI that all SurfaceUI implementations
- * use in the same way. The name is "Surface" by default.
+ * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface
+ * that takes care of all of the standard methods of {@link SurfaceUI} that all
+ * {@link SurfaceUI} implementations use in the same way. The name is "Surface"
+ * by default.
  */
 public abstract class AbstractSurfaceUI implements SurfaceUI {
   protected AbstractSurface surface;
@@ -55,9 +55,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
   private RGB lastColor;
   private Color background = Color.white;
 
-	/**
-	 * Sets all values to the default.
-	 */
+	/** Sets all values to the default. */
 	public AbstractSurfaceUI() {
 		this.setSurface(null);
 		this.setName("Surface");
@@ -96,30 +94,22 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 		return this.surface.getShadeBack();
 	}
 	
-	/**
-	 * Sets the name of this AbstractSurfaceUI to the specified String object.
-	 */
+	/** Sets the name of this AbstractSurfaceUI to the specified String. */
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-	/**
-	 * Returns the name of this AbstractSurfaceUI as a String object.
-	 */
+	/** Returns the name of this AbstractSurfaceUI as a String. */
 	public String getName() {
 		return this.name;
 	}
 	
-	/**
-	 * Returns false.
-	 */
+	/** Returns false. */
 	public boolean hasDialog() {
 		return false;
 	}
 	
-	/**
-	 * Returns null.
-	 */
+	/** Returns null. */
 	public Dialog getDialog() {
 		return null;
 	}
@@ -159,7 +149,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * @param parent  The new parent
 	 */
 	public void setParent(SurfaceGroup parent) {
-		this.surface.setParent(parent);
+		((AbstractSurface) getSurface()).setParent(parent);
 	}
 	
 	/**
@@ -183,25 +173,22 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 		return this.getName();
 	}
 	
-	/**
-	 * Returns the color of this AbstractSurfaceUI at the specified point as an RGB object.
-	 */
-	public ColorProducer getColorAt(Vector point) {
-		return this.surface.getColorAt(point);
-	}
+	/** Returns the {@link ColorProducer} for this AbstractSurfaceUI. */
+	@Override
+	public ColorProducer getColorAt() { return getSurface().getColorAt(); }
 	
 	/**
 	 * Returns a Vector object that represents the vector normal to this surface at the point represented by the specified Vector object.
 	 */
 	public Vector getNormalAt(Vector point) {
-		return this.surface.getNormalAt(point);
+		return getSurface().getNormalAt(point);
 	}
 	
 	/**
 	 * Returns true if the ray represented by the specified Ray object intersects the surface represented by this AbstractSurfaceUI in real space.
 	 */
 	public boolean intersect(Ray ray) {
-		return this.surface.intersect(ray);
+		return getSurface().intersect(ray);
 	}
 	
 	/**
@@ -209,13 +196,11 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * that intersection between the ray and the surface represented by this AbstractSurfaceUI occurs.
 	 */
 	public ShadableIntersection intersectAt(Ray ray) {
-		return (ShadableIntersection) this.surface.intersectAt(ray);
+		return getSurface().intersectAt(ray);
 	}
 
 	@Override
-	public ColorProducer call() throws Exception {
-		return getSurface().call();
-	}
+	public ColorProducer call() throws Exception { return getSurface().call();  }
 
 	@Override
 	public Vector operate(Triple triple) {
