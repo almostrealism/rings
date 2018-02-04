@@ -32,7 +32,7 @@ public class AmbientLight implements Light {
 	private double intensity;
 	private RGB color;
 
-	private ColorProducer colorProducer = ColorProducerAdapter.fromFunction((t) -> color.multiply(intensity));
+	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, (t) -> color.multiply(intensity));
 
 
 	/**
