@@ -26,14 +26,7 @@ import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorMultiplier;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
-import org.almostrealism.color.ShaderSet;
+import org.almostrealism.color.*;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
@@ -251,7 +244,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			totalColor.add(color);
 		}
 		
-		return new ColorMultiplier(totalColor, lightColor);
+		return GeneratedColorProducer.fromFunction(this, new ColorMultiplier(totalColor, lightColor));
 	}
 	
 	/**

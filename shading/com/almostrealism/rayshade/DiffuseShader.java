@@ -24,12 +24,7 @@ import javax.security.auth.callback.Callback;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorProduct;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.*;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -102,7 +97,7 @@ public class DiffuseShader implements Shader, Editable {
 			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
 		}
 		
-		return color;
+		return GeneratedColorProducer.fromFunction(this, color);
 	}
 	
 	/** Returns a zero length array. */	

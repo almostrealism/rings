@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,7 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorMultiplier;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
-import org.almostrealism.color.ShaderSet;
+import org.almostrealism.color.*;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -33,7 +27,7 @@ import org.almostrealism.util.Producer;
  * A HighlightShader object provides a shading method for highlights on surfaces.
  * The HighlightShader class uses a phong shading algorithm.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class HighlightShader extends ShaderSet implements Shader, Editable {
   private static final String propNames[] = {"Highlight Color", "Highlight Exponent"};
@@ -106,7 +100,7 @@ public class HighlightShader extends ShaderSet implements Shader, Editable {
 			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
 		}
 		
-		return color;
+		return GeneratedColorProducer.fromFunction(this, color);
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,16 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.*;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
 /**
- * A BlendingShader object provides a method for blending values from two
- * different ColorProducer instances based on lighting. This is best for
- * cool to warm shading or cartoon shading.
+ * A {@link BlendingShader} provides a method for blending values from two
+ * different {@link ColorProducer} instances based on lighting. This is best
+ * for cool to warm shading or cartoon shading.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class BlendingShader implements Shader, Editable {
   private static final String names[] = {"Hot color", "Cold color"};
@@ -60,7 +57,7 @@ public class BlendingShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @see org.almostrealism.color.Shader#shade(org.almostrealism.color.ShaderContext)
+	 * @see  Shader#shade(ShaderContext, DiscreteField)
 	 */
 	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		Vector n;
@@ -82,7 +79,7 @@ public class BlendingShader implements Shader, Editable {
 		RGB c = hc.multiply(k);
 		c.addTo(cc.multiply(1 - k));
 		
-		return c;
+		return GeneratedColorProducer.fromFunction(this, c);
 	}
 
 	/**
@@ -117,9 +114,7 @@ public class BlendingShader implements Shader, Editable {
 		for (int i = 0; i < values.length; i++) this.setPropertyValue(values[i], i);
 	}
 
-	/**
-	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
-	 */
+	/** @see org.almostrealism.util.Editable#getInputPropertyValues() */
 	public Producer[] getInputPropertyValues() { return new Producer[] {this.hotColor, this.coldColor}; }
 
 	/**

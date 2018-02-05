@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,7 @@ import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.*;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -128,10 +123,10 @@ public class RefractionShader implements Shader, Editable {
 			if (c != null) color.add(c);
 		}
 		
-		return color;
+		return GeneratedColorProducer.fromFunction(this, color);
 	}
 	
-	public ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
+	protected ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
 								Light light, Light otherLights[], Callable<ColorProducer> surface,
 								Callable<ColorProducer> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
