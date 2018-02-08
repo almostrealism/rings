@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ import org.almostrealism.util.Defaults;
  * The Settings class provides access to settings that change the way the RayTracer and its components run.
  * This class also includes static fields providing information about this release of the RayTracer.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public abstract class Settings extends Defaults {
   /** String containing the version number of this software. */
   public static final String version = "0.4";
   
   /** String containing "Written by Mike Murray". */
-  public static final String writtenByInfo = "Written by Mike Murray";
+  public static final String writtenByInfo = "Written by Michael Murray";
   
   /** String containing "ashesfall@users.sf.net". */
-  private static final String adminEmail = "ashesfall@almostrealism.com";
+  private static final String adminEmail = "michael@almostrealism.com";
   
   /** String containing "http://almostrealism.org/". */
   public static final String websiteUrl = "http://almostrealism.org/";

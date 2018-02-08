@@ -36,5 +36,4 @@ public class MaterialShader implements Shader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
