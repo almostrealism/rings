@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Properties;
 
 public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> {
-
 	private int imageWidth, imageHeight;
 	private Image image;
 

@@ -26,8 +26,7 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.engine.RayTracedScene;
 
@@ -38,7 +37,7 @@ import com.almostrealism.raytracer.engine.RayTracedScene;
  * and 1.0 (no attenuation).
  */
 // TODO  Accept a ColorProducer instead of an RGB
-public class PointLight implements Light {
+public class PointLight implements Light, Positioned {
 	private double intensity;
 	private RGB color;
 
@@ -211,7 +210,7 @@ public class PointLight implements Light {
 											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
 											Light otherLights[], ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
-		DirectionalAmbientLight dLight = null;
+		DirectionalAmbientLight dLight;
 		
 		if (RayTracedScene.premultiplyIntensity) {
 			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point).evaluate(null), direction);
@@ -226,5 +225,15 @@ public class PointLight implements Light {
 											intersection, point,
 											rayDirection, surface,
 											otherSurfaces, dLight, otherLights, p);
+	}
+
+	@Override
+	public void setPosition(float x, float y, float z) {
+		this.setLocation(new Vector(x, y, z));
+	}
+
+	@Override
+	public float[] getPosition() {
+		return new float[] { (float) location.getX(), (float) location.getY(), (float) location.getZ() };
 	}
 }

@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CameraObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidPlane.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidSphere.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/rayshade/RigidBodyStateShader.java" />
+    <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="Migrated rigid bodies into rings.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/engine/com/almostrealism/raytracer/Settings.java" afterPath="$PROJECT_DIR$/engine/com/almostrealism/raytracer/Settings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/rayshade/MaterialShader.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/rayshade/MaterialShader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java" afterPath="$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,7 +30,7 @@
       <file leaf-file-name="LightingEngine.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/LightingEngine.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
+            <state relative-caret-position="0">
               <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
               <folding>
                 <element signature="e#0#16416#0" expanded="true" />
@@ -44,48 +39,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MaterialShader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/rayshade/MaterialShader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="36" column="20" lean-forward="false" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DiffuseShader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/rayshade/DiffuseShader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="49" column="8" lean-forward="false" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="RayTracedAnimation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="189" column="51" lean-forward="false" selection-start-line="189" selection-start-column="51" selection-end-line="189" selection-end-column="51" />
+            <state relative-caret-position="49">
+              <caret line="35" column="81" lean-forward="false" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1506#1507#0" expanded="true" />
-                <element signature="e#1548#1549#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RigidSphere.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidSphere.java">
+      <file leaf-file-name="PointLight.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="266" column="15" lean-forward="false" selection-start-line="266" selection-start-column="15" selection-end-line="266" selection-end-column="15" />
+            <state relative-caret-position="210">
+              <caret line="28" column="45" lean-forward="false" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="45" />
               <folding>
-                <element signature="e#7814#7815#0" expanded="true" />
-                <element signature="e#7846#7847#0" expanded="true" />
+                <element signature="e#7900#7901#0" expanded="true" />
+                <element signature="e#7944#7945#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -162,7 +135,6 @@
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SceneEvent.java" />
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SceneEditEvent.java" />
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SurfaceEditEvent.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/lighting/RectangularLight.java" />
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/surfaceUI/AbstractSurfaceUI.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/lighting/SphericalLight.java" />
@@ -182,8 +154,9 @@
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CameraObject.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidPlane.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/rayshade/RigidBodyStateShader.java" />
-        <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidSphere.java" />
+        <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java" />
       </list>
     </option>
   </component>
@@ -213,9 +186,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -239,13 +209,16 @@
               <item name="rings" type="462c0819:PsiDirectoryNode" />
               <item name="shading" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="rayshade" type="462c0819:PsiDirectoryNode" />
+              <item name="lighting" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="AndroidView" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -454,7 +427,8 @@
       <workItem from="1517639789128" duration="2134000" />
       <workItem from="1517770578612" duration="2969000" />
       <workItem from="1517788551396" duration="739000" />
-      <workItem from="1518042466828" duration="5017000" />
+      <workItem from="1518042466828" duration="8355000" />
+      <workItem from="1518490214826" duration="896000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -638,11 +612,18 @@
       <option name="project" value="LOCAL" />
       <updated>1517789241142</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Migrated rigid bodies into rings.">
+      <created>1518129770896</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1518129770896</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="121598000" />
+    <option name="totallyTimeSpent" value="125832000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -655,21 +636,21 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5028612" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39066666" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31774417" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23344104" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23344104" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37466666" sideWeight="0.49713877" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -748,7 +729,8 @@
     <MESSAGE value="Updated to match Common 0.4 API, which is working to phase out getColorAt method." />
     <MESSAGE value="Upgrade to Common 0.5-rc. Added use of GeneratedColorProducer in AmbientLight." />
     <MESSAGE value="Shaders are now using GeneratedColorProducer to record the shader that produced the color. This will allow the diagnostic view in the desktop application to inspect the color pipeline on a per-shader basis." />
-    <option name="LAST_COMMIT_MESSAGE" value="Shaders are now using GeneratedColorProducer to record the shader that produced the color. This will allow the diagnostic view in the desktop application to inspect the color pipeline on a per-shader basis." />
+    <MESSAGE value="Migrated rigid bodies into rings." />
+    <option name="LAST_COMMIT_MESSAGE" value="Migrated rigid bodies into rings." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -802,13 +784,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/almostrealism/Common/0.4-rc/Common-0.4-rc.jar!/org/almostrealism/color/Shader.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="9" column="23" lean-forward="false" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/almostrealism/Common/0.4-rc/Common-0.4-rc.jar!/org/almostrealism/color/Light.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -855,7 +830,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="39" column="13" lean-forward="false" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -940,13 +914,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1200">
           <caret line="109" column="17" lean-forward="false" selection-start-line="109" selection-start-column="17" selection-end-line="109" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="39" column="49" lean-forward="false" selection-start-line="39" selection-start-column="49" selection-end-line="39" selection-end-column="49" />
         </state>
       </provider>
     </entry>
@@ -1066,7 +1033,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/LightingEngine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
+        <state relative-caret-position="0">
           <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
           <folding>
             <element signature="e#0#16416#0" expanded="true" />
@@ -1078,7 +1045,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1102,7 +1068,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1111,7 +1076,7 @@
         <state relative-caret-position="390">
           <caret line="34" column="43" lean-forward="false" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
           <folding>
-            <element signature="e#0#8034#0" expanded="true" />
+            <element signature="e#0#8034#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1120,10 +1085,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
           <caret line="112" column="18" lean-forward="false" selection-start-line="112" selection-start-column="18" selection-end-line="112" selection-end-column="18" />
-          <folding>
-            <element signature="e#2648#2649#0" expanded="true" />
-            <element signature="e#2679#2680#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1139,9 +1100,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-106">
           <caret line="27" column="21" lean-forward="false" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#1800#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1149,7 +1107,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="975">
           <caret line="85" column="80" lean-forward="true" selection-start-line="85" selection-start-column="80" selection-end-line="85" selection-end-column="80" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1158,19 +1115,7 @@
         <state relative-caret-position="30">
           <caret line="2" column="2" lean-forward="true" selection-start-line="2" selection-start-column="2" selection-end-line="2" selection-end-column="2" />
           <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="189" column="51" lean-forward="false" selection-start-line="189" selection-start-column="51" selection-end-line="189" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1506#1507#0" expanded="true" />
-            <element signature="e#1548#1549#0" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1182,6 +1127,35 @@
           <folding>
             <element signature="e#7814#7815#0" expanded="true" />
             <element signature="e#7846#7847#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/RayTracedAnimation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="49">
+          <caret line="35" column="81" lean-forward="false" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/almostrealism/Common/0.5-rc/Common-0.5-rc.jar!/org/almostrealism/space/BasicGeometry.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="28" column="45" lean-forward="false" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="45" />
+          <folding>
+            <element signature="e#7900#7901#0" expanded="true" />
+            <element signature="e#7944#7945#0" expanded="true" />
           </folding>
         </state>
       </provider>
