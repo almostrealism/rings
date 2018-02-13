@@ -101,7 +101,7 @@ public class LightingEngine {
 					try {
 						Vector direction = intersect.get(0).call().getOrigin().subtract(((PointLight) allLights[i]).getLocation());
 						DirectionalAmbientLight directionalLight =
-								new DirectionalAmbientLight(1.0, allLights[i].getColorAt(intersect.get(0).call().getOrigin()).evaluate(null), direction);
+								new DirectionalAmbientLight(1.0, allLights[i].getColorAt().operate(intersect.get(0).call().getOrigin()), direction);
 
 						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 

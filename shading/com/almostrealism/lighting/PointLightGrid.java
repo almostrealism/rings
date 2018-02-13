@@ -129,10 +129,6 @@ public class PointLightGrid extends AbstractSurface implements Light {
 		return new Vector(0.0, 0.0, 0.0);
 	}
 
-	@Override
-	@Deprecated
-	public ColorProducer getColorAt(Vector point) { return getColor().operate(point); }
-	
 	/** Returns false. */
 	public boolean intersect(Ray ray) {
 		return false;

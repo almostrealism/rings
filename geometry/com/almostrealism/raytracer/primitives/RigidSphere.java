@@ -228,9 +228,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	 */
 	public SphericalLight getLight() { return this.light; }
 	
-	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
-	 */
+	/** @see com.almostrealism.lighting.SurfaceLight#getSamples(int) */
 	public Light[] getSamples(int samples) {
 		if (this.light == null)
 			return new Light[0];
@@ -238,9 +236,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 			return this.light.getSamples(samples);
 	}
 	
-	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples()
-	 */
+	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
 	public Light[] getSamples() {
 		if (this.light == null)
 			return new Light[0];
@@ -248,24 +244,9 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 			return this.light.getSamples();
 	}
 	
-	/**
-	 * @see org.almostrealism.color.Light#setIntensity(double)
-	 */
+	/** @see org.almostrealism.color.Light#setIntensity(double) */
 	public void setIntensity(double intensity) { if (this.light != null) this.light.setIntensity(intensity); }
 	
-	/**
-	 * @see org.almostrealism.color.Light#getIntensity()
-	 */
-	public double getIntensity() {
-		if (this.light == null)
-			return 0.0;
-		else
-			return this.light.getIntensity();
-	}
-
-	@Override
-	@Deprecated
-	public ColorProducer getColorAt(Vector p) {
-		return super.getColorAt();
-	}
+	/** @see org.almostrealism.color.Light#getIntensity() */
+	public double getIntensity() { return this.light == null ? 0.0 : this.light.getIntensity(); }
 }

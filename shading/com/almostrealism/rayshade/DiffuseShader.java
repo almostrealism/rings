@@ -55,7 +55,7 @@ public class DiffuseShader implements Shader, Editable {
 			return null;
 		}
 		
-		ColorProducer lightColor = p.getLight().getColorAt(point);
+		ColorProducer lightColor = p.getLight().getColorAt().operate(point);
 		
 		Vector n;
 		

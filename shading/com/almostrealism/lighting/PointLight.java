@@ -22,10 +22,7 @@ import java.util.concurrent.Callable;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.*;
 import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.engine.RayTracedScene;
@@ -44,6 +41,15 @@ public class PointLight implements Light, Positioned {
 	private Vector location;
 
 	private double da, db, dc;
+
+	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, (t) -> {
+		double d = ((Vector) t).subtract(location).lengthSq();
+
+		RGB color = getColor().multiply(getIntensity());
+		color.divideBy(da * d + db * Math.sqrt(d) + dc);
+
+		return color;
+	});
 
 	/** Constructs a PointLight object with the default intensity and color at the origin. */
 	public PointLight() {
@@ -152,29 +158,7 @@ public class PointLight implements Light, Positioned {
 	 * Returns the color of the light represented by this PointLight object at the
 	 * specified point as an RGB object.
 	 */
-	public ColorProducer getColorAt(Vector point) {
-		return new ColorProducer() {
-			@Override
-			public RGB evaluate(Object[] objects) {
-				return operate(point);
-			}
-
-			@Override
-			public RGB operate(Triple triple) {
-				double d = ((Vector) triple).subtract(location).lengthSq();
-
-				RGB color = getColor().multiply(getIntensity());
-				color.divideBy(da * d + db * Math.sqrt(d) + dc);
-
-				return color;
-			}
-
-			@Override
-			public void compact() {
-				// TODO  Should this compact the underlying colors?
-			}
-		};
-	}
+	public ColorProducer getColorAt() { return colorProducer; }
 	
 	/** Returns the location of this PointLight object as a Vector object. */
 	public Vector getLocation() { return this.location; }
@@ -213,11 +197,11 @@ public class PointLight implements Light, Positioned {
 		DirectionalAmbientLight dLight;
 		
 		if (RayTracedScene.premultiplyIntensity) {
-			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(point).evaluate(null), direction);
+			dLight = new DirectionalAmbientLight(1.0, light.getColorAt().operate(point), direction);
 		} else {
 			double in = light.getIntensity();
 			light.setIntensity(1.0);
-			dLight = new DirectionalAmbientLight(in, light.getColorAt(point).evaluate(null), direction);
+			dLight = new DirectionalAmbientLight(in, light.getColorAt().operate(point), direction);
 			light.setIntensity(in);
 		}
 		

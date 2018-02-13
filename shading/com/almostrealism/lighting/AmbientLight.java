@@ -69,16 +69,14 @@ public class AmbientLight implements Light {
 	 */
 	public void setColor(RGB color) { this.color = color; }
 	
-	/**
-	 * Returns the intensity of this AmbientLight object as a double value.
-	 */
+	/** Returns the intensity of this AmbientLight object as a double value. */
 	public double getIntensity() { return this.intensity; }
 	
 	/** Returns the color of this AmbientLight object as an RGB object. */
 	public RGB getColor() { return this.color; }
 	
 	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
-	public ColorProducer getColorAt(Vector point) { return colorProducer; }
+	public ColorProducer getColorAt() { return colorProducer; }
 	
 	/** Returns "Ambient Light". */
 	public String toString() { return "Ambient Light"; }

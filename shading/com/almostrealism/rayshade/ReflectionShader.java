@@ -117,7 +117,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 			return null;
 		}
 		
-		RGB lightColor = p.getLight().getColorAt(point).evaluate(null);
+		RGB lightColor = p.getLight().getColorAt().operate(point);
 		
 		Vector n;
 		
@@ -178,7 +178,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				if (this.eMap == null)
 					break f;
 				else
-					color = this.eMap.getColorAt(ref);
+					color = this.eMap.getColorAt(null).operate(ref);
 			}
 			
 			Vector nor = p.getIntersection().getNormalAt(point);
@@ -232,7 +232,7 @@ public class ReflectionShader extends ShaderSet implements Shader, Editable {
 				if (this.eMap == null) {
 					break b;
 				} else {
-					color = this.eMap.getColorAt(ref);
+					color = this.eMap.getColorAt(null).operate(ref);
 				}
 			}
 			
