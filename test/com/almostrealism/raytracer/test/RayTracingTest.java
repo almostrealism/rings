@@ -1,6 +1,7 @@
 package com.almostrealism.raytracer.test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -32,7 +33,8 @@ public class RayTracingTest {
 
 	public static void main(String args[]) throws IOException {
  		Scene<ShadableSurface> scene = useCornellBox ?
-				FileDecoder.decodeSceneFile(new File("CornellBox.xml"), FileDecoder.XMLEncoding,
+				FileDecoder.decodeScene(new FileInputStream(new File("CornellBox.xml")),
+											FileDecoder.XMLEncoding,
 											false, (e) -> { e.printStackTrace(); }) : new Scene<>();
 
  		if (useStripedFloor) {
@@ -56,8 +58,8 @@ public class RayTracingTest {
 		}
 
 		if (displayDragon) {
- 			scene.add(FileDecoder.decodeSurfaceFile(new File("dragon.ply"),
-									FileDecoder.PLYEncoding, false, null));
+ 			scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("dragon.ply")),
+									FileDecoder.PLYEncoding, false, null)).get(0));
 		}
 
 		Plane p = new Plane(Plane.XY);
