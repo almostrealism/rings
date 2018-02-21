@@ -24,19 +24,22 @@ import org.almostrealism.time.Temporal;
 /**
  * @author  Michael Murray
  */
-public class RigidBodyPinholeCamera extends PinholeCamera implements Temporal {
+public class RigidBodyPinholeCamera implements Temporal {
 	private RigidBody.State model;
+	private PinholeCamera c;
 	
-	public RigidBodyPinholeCamera(RigidBody model) {
-		super(model.getState().getLocation(), model.getState().getRotation(), new Vector(0.0, 1.0, 0.0));
+	public RigidBodyPinholeCamera(RigidBody model, PinholeCamera c) {
+		c.setLocation(model.getState().getLocation());
+		c.setViewingDirection(model.getState().getRotation());
+		c.setUpDirection(new Vector(0.0, 1.0, 0.0));
 		
 		this.model = model.getState();
 		this.model.addUpdateListener(this);
 	}
 	
 	public void tick() {
-		super.setLocation(this.model.getLocation());
-		super.setViewingDirection(this.model.getRotation());
+		c.setLocation(this.model.getLocation());
+		c.setViewingDirection(this.model.getRotation());
 	}
 	
 	public void forward(double d) {

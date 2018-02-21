@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/AbsorptionPlane.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Plane.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rings.iml" afterPath="$PROJECT_DIR$/Rings.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" afterPath="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CameraObject.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -45,18 +40,8 @@
       <file leaf-file-name="RigidBodyPinholeCamera.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="27" column="34" lean-forward="false" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PinholeCameraAbsorber.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="35" column="34" lean-forward="false" selection-start-line="35" selection-start-column="34" selection-end-line="35" selection-end-column="34" />
+            <state relative-caret-position="45">
+              <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -64,13 +49,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbsorptionPlane.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/AbsorptionPlane.java">
+      <file leaf-file-name="PinholeCameraAbsorber.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="34" column="78" lean-forward="false" selection-start-line="34" selection-start-column="78" selection-end-line="34" selection-end-column="78" />
+            <state relative-caret-position="144">
+              <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
               <folding>
-                <element signature="e#0#7602#0" expanded="true" />
                 <element signature="imports" expanded="true" />
               </folding>
             </state>
@@ -80,7 +64,7 @@
       <file leaf-file-name="Pinhole.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
+            <state relative-caret-position="255">
               <caret line="31" column="60" lean-forward="false" selection-start-line="31" selection-start-column="60" selection-end-line="31" selection-end-column="60" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -186,11 +170,11 @@
         <option value="$PROJECT_DIR$/shading/com/almostrealism/rayshade/HighlightShader.java" />
         <option value="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CameraObject.java" />
-        <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Plane.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/AbsorptionPlane.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
+        <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java" />
       </list>
     </option>
   </component>
@@ -226,204 +210,6 @@
             <path>
               <item name="rings" type="b2602c69:ProjectViewProjectNode" />
               <item name="rings" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="graphics" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="engine" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="network" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="projection" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="constructives" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="primitives" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="lighting" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="shade" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="io" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="math" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="webgl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="event" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
-              <item name="surfaceUI" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="WebContent" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="WebContent" type="462c0819:PsiDirectoryNode" />
-              <item name="WEB-INF" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -660,7 +446,7 @@
       <workItem from="1518042466828" duration="8355000" />
       <workItem from="1518490214826" duration="1544000" />
       <workItem from="1518496546150" duration="1389000" />
-      <workItem from="1519190322265" duration="1711000" />
+      <workItem from="1519190322265" duration="2026000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -865,11 +651,18 @@
       <option name="project" value="LOCAL" />
       <updated>1518498662248</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Migrated a range of functionality from PhotonField into Rings.">
+      <created>1519192083450</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1519192083450</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="129580000" />
+    <option name="totallyTimeSpent" value="129895000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -879,6 +672,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24798061" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -904,7 +698,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24798061" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
       <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933334" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
@@ -951,7 +744,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ray tracing test should emit a jpeg instead of a ppm." />
     <MESSAGE value="Default camera is a pinhole camera." />
     <MESSAGE value="Point at our cloud maven repository." />
     <MESSAGE value="Enable snapshots." />
@@ -976,7 +768,8 @@
     <MESSAGE value="Migrated rigid bodies into rings." />
     <MESSAGE value="PointLight implements Positioned." />
     <MESSAGE value="Modified to match new Light and Texture interface definitions." />
-    <option name="LAST_COMMIT_MESSAGE" value="Modified to match new Light and Texture interface definitions." />
+    <MESSAGE value="Migrated a range of functionality from PhotonField into Rings." />
+    <option name="LAST_COMMIT_MESSAGE" value="Migrated a range of functionality from PhotonField into Rings." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1029,13 +822,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SceneEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="23" column="32" lean-forward="false" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SceneEditEvent.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -1371,14 +1157,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="27" column="34" lean-forward="false" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Plane.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -1397,16 +1175,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="31" column="60" lean-forward="false" selection-start-line="31" selection-start-column="60" selection-end-line="31" selection-end-column="60" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/AbsorptionPlane.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -1418,10 +1186,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="31" column="60" lean-forward="false" selection-start-line="31" selection-start-column="60" selection-end-line="31" selection-end-column="60" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/OrthographicCamera.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="39" column="13" lean-forward="false" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/RigidBodyPinholeCamera.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="35" column="34" lean-forward="false" selection-start-line="35" selection-start-column="34" selection-end-line="35" selection-end-column="34" />
+        <state relative-caret-position="144">
+          <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

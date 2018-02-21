@@ -29,7 +29,7 @@ import org.almostrealism.time.Clock;
 
 import org.almostrealism.util.PriorityQueue;
 
-public class PinholeCameraAbsorber implements Absorber, Camera {
+public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 	private Clock clock;
 	
 	private Pinhole pinhole;
