@@ -2,6 +2,7 @@ package com.almostrealism.renderable;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.gl2.GLUT;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 
@@ -9,6 +10,7 @@ public class GLDriver {
 	public static final boolean enableDoublePrecision = false;
 
 	private GL2 gl;
+	private GLUT glut = new GLUT();
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
@@ -54,5 +56,10 @@ public class GLDriver {
 
 	public void glFlush() {
 		gl.glFlush();
+	}
+
+	public void glutWireCube(double size) {
+		// TODO  Replace with our own cube code
+		glut.glutWireCube((float) size);
 	}
 }
