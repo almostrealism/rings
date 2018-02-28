@@ -16,6 +16,8 @@
 
 package com.almostrealism.math;
 
+import org.almostrealism.math.Matrix3DSolutionOutput;
+
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;

@@ -20,13 +20,13 @@ import org.almostrealism.space.BasicGeometry;
 
 import com.jogamp.opengl.GL2;
 
-public abstract class RenderableGeometry implements Renderable, RenderDelegate {
-	private BasicGeometry geo;
-	
-	public RenderableGeometry(BasicGeometry geometry) { geo = geometry; }
-	
-	public BasicGeometry getGeometry() { return geo; }
-	
+public abstract class RenderableGeometry<T extends BasicGeometry> implements Renderable, RenderDelegate {
+	private T geo;
+
+	public RenderableGeometry(T geometry) { geo = geometry; }
+
+	public T getGeometry() { return geo; }
+
 	@Override
 	public void display(GL2 gl) {
 		gl.glPushMatrix();
@@ -34,7 +34,7 @@ public abstract class RenderableGeometry implements Renderable, RenderDelegate {
 		render(gl);
 		gl.glPopMatrix();
 	}
-	
+
 	public static void applyTransform(GL2 gl, BasicGeometry g) {
 		// TODO Perform full transformation
 		float p[] = g.getPosition();

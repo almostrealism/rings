@@ -38,10 +38,19 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 	
 	private Colorable colorable;
 	private Vector location;
-	
+
+	/**
+	 * This method exists to support file decoding, but it will not result in a usable
+	 * {@link PinholeCameraAbsorber}. The {@link #init(Pinhole, AbsorptionPlane, double)}
+	 * method must be called to setup the {@link AbsorptionPlane}.
+	 */
 	public PinholeCameraAbsorber() { }
-	
-	public PinholeCameraAbsorber(double fNum, double focalLength,
+
+	public PinholeCameraAbsorber(double fNum, double focalLength, Vector norm, Vector orient) {
+		this(fNum, focalLength, norm.getData(), orient.getData());
+	}
+
+	protected PinholeCameraAbsorber(double fNum, double focalLength,
 								double norm[], double orient[]) {
 		this.plane = new AbsorptionPlane();
 		this.plane.setSurfaceNormal(VectorMath.clone(norm));

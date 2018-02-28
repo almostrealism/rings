@@ -1,0 +1,58 @@
+package com.almostrealism.renderable;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RGB;
+
+public class GLDriver {
+	public static final boolean enableDoublePrecision = false;
+
+	private GL2 gl;
+
+	public GLDriver(GL2 gl) {
+		this.gl = gl;
+	}
+
+	public void glColor(RGB color) {
+		if (enableDoublePrecision) {
+			gl.glColor3d(color.getRed(), color.getGreen(), color.getBlue());
+		} else {
+			gl.glColor3f((float) color.getRed(),
+						(float) color.getGreen(),
+						(float) color.getBlue());
+		}
+	}
+
+	public void glVertex(Vector v) {
+		if (enableDoublePrecision) {
+			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
+		} else {
+			gl.glVertex3f((float) v.getX(),
+						(float) v.getY(),
+						(float) v.getZ());
+		}
+	}
+
+	public void glScale(Vector s) {
+		if (enableDoublePrecision) {
+			gl.glScaled(s.getX(), s.getY(), s.getZ());
+		} else {
+			gl.glScalef((float) s.getX(),
+					(float) s.getY(),
+					(float) s.getZ());
+		}
+	}
+
+	public void clearColorBuffer() {
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+	}
+
+	public void glLoadIdentity() {
+		gl.glLoadIdentity();
+	}
+
+	public void glFlush() {
+		gl.glFlush();
+	}
+}

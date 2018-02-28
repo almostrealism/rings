@@ -42,6 +42,7 @@ public class RenderableSphere extends RenderableGeometry {
 	
 	@Override
 	public void init(GL2 gl) { list.init(gl); }
-	
+
+	@Override
 	public void render(GL2 gl) { list.display(gl); }
 }

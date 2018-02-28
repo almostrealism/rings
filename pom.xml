@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>MatrixView</artifactId>
-			<version>0.2-rc</version>
+			<version>0.3-rc</version>
 		</dependency>
 
 		<dependency>
