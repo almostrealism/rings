@@ -29,8 +29,8 @@
       <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="71" column="0" lean-forward="true" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+            <state relative-caret-position="254">
+              <caret line="78" column="5" lean-forward="true" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -456,7 +456,7 @@
       <workItem from="1519245984056" duration="405000" />
       <workItem from="1519254959429" duration="521000" />
       <workItem from="1519377638239" duration="4637000" />
-      <workItem from="1519859279969" duration="1549000" />
+      <workItem from="1519859279969" duration="2287000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -689,11 +689,18 @@
       <option name="project" value="LOCAL" />
       <updated>1519859732204</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="More OpenGL functionality.">
+      <created>1519937534796</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1519937534796</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="141041000" />
+    <option name="totallyTimeSpent" value="141779000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -775,7 +782,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="New build pipeline config." />
     <MESSAGE value="We need to retrieve the value of the color using the get method or the executor pool gets stuck." />
     <MESSAGE value="Corrected test." />
     <MESSAGE value="Working towards support for a distance estimator engine. We will be using the same basic LightingEngine functionality, but the tracing will be done using distance estimation instead of ray tracing." />
@@ -800,7 +806,8 @@
     <MESSAGE value="Reworking PinholeCameraAbsorber and RigidBodyPinholeCamera so they can be used together." />
     <MESSAGE value="Expanding OpenGL functionality." />
     <MESSAGE value="Added glutWireCube method." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added glutWireCube method." />
+    <MESSAGE value="More OpenGL functionality." />
+    <option name="LAST_COMMIT_MESSAGE" value="More OpenGL functionality." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1203,17 +1210,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2.jar!/com/jogamp/opengl/util/gl2/GLUT.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="124" column="16" lean-forward="false" selection-start-line="124" selection-start-column="16" selection-end-line="124" selection-end-column="16" />
-          <folding>
-            <element signature="e#10946#10947#0" expanded="true" />
-            <element signature="e#11007#11008#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2.jar!/com/jogamp/opengl/GL2ES3.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
@@ -1222,10 +1218,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/jogamp/jogl/jogl-all/2.3.2/jogl-all-2.3.2.jar!/com/jogamp/opengl/util/gl2/GLUT.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="56" column="16" lean-forward="false" selection-start-line="56" selection-start-column="16" selection-end-line="56" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="71" column="0" lean-forward="true" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+        <state relative-caret-position="254">
+          <caret line="78" column="5" lean-forward="true" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

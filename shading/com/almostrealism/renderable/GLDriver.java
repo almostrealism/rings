@@ -77,4 +77,9 @@ public class GLDriver {
 		// TODO  Replace with our own cube code
 		glut.glutWireCube((float) size);
 	}
+
+	public void glutSolidSphere(double radius, int slices, int stacks) {
+		// TODO  Replace with our own sphere code
+		glut.glutSolidSphere(radius, slices, stacks);
+	}
 }
