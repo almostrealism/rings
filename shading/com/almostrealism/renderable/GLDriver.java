@@ -31,6 +31,10 @@ public class GLDriver {
 		}
 	}
 
+	public void glColor(double r, double g, double b, double a) {
+		gl.glColor4d(r, g, b, a);
+	}
+
 	public void glVertex(Vector v) {
 		if (enableDoublePrecision) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
@@ -52,6 +56,8 @@ public class GLDriver {
 	}
 
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
+
+	public void glClear(int bits) { gl.glClear(bits); }
 
 	public void glQuads() { glBegin(GL2.GL_QUADS); }
 
