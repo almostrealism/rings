@@ -20,7 +20,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
 
 /** A SurfaceEvent object represents an event that targets a surface. */
-public interface SurfaceEvent extends Event {
+public interface SurfaceEvent<T extends ShadableSurface> extends Event {
 	/** Returns the target of this SurfaceEvent object. */
-	public ShadableSurface getTarget();
+	T getTarget();
 }

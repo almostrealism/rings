@@ -16,6 +16,10 @@
 
 package com.almostrealism.gl;
 
+import com.almostrealism.raytracer.SurfaceAddEvent;
+import com.almostrealism.raytracer.SurfaceRemoveEvent;
+import com.almostrealism.raytracer.event.SurfaceEvent;
+import com.almostrealism.renderable.RenderableGeometry;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -23,8 +27,12 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import com.jogamp.opengl.GL2;
+import org.almostrealism.swing.Event;
+import org.almostrealism.swing.EventListener;
 
-public class SurfaceCanvas extends DefaultGLCanvas {
+import java.util.Iterator;
+
+public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	private Scene<ShadableSurface> scene;
 	
 	public SurfaceCanvas(Scene<ShadableSurface> scene) {
@@ -42,5 +50,25 @@ public class SurfaceCanvas extends DefaultGLCanvas {
 		}
 		
 		for (Renderable r : renderables) r.init(gl);
+	}
+
+	@Override
+	public void eventFired(Event event) {
+		// TODO  Handle light events
+
+		if (event instanceof SurfaceAddEvent) {
+			renderables.add(RenderableSurfaceFactory.createRenderableSurface(((SurfaceEvent) event).getTarget()));
+		} else if (event instanceof SurfaceRemoveEvent) {
+			Iterator<Renderable> itr = renderables.iterator();
+
+			while (itr.hasNext()) {
+				Renderable r = itr.next();
+
+				if (r instanceof RenderableGeometry &&
+						((RenderableGeometry) r).getGeometry() == ((SurfaceEvent) event).getTarget()) {
+					itr.remove();
+				}
+			}
+		}
 	}
 }
