@@ -28,10 +28,10 @@ import com.almostrealism.renderable.GLDriver;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 
-public class SuperShape {
+public class SuperShape extends GLSpatial {
 	public static final int PARAMS = 15;
 
-	public static final float sParams[][/*SUPERSHAPE_PARAMS*/] =
+	public static final float sParams[][] =
 			{
 					// m  a     b     n1      n2     n3     m     a     b     n1     n2      n3   res1 res2 scale  (org.res1,res2)
 					new float[]{10, 1, 2, 90, 1, -45, 8, 1, 1, -1, 1, -0.4f, 20, 30, 2}, // 40, 60
@@ -63,44 +63,31 @@ public class SuperShape {
 	 * Creates and returns a supershape object. Based on Paul Bourke's POV-Ray implementation.
      * http://astronomy.swin.edu.au/~pbourke/povray/supershape/
 	 */
-	public static GLSpatial createSuperShape(GLDriver gl, final float params[]) {
-		final int resol1 = (int) params[SuperShape.PARAMS - 3];
-		final int resol2 = (int) params[SuperShape.PARAMS - 2];
-		// latitude 0 to pi/2 for no mirrored bottom
-		// (latitudeBegin==0 for -pi/2 to pi/2 originally)
-		final int latitudeBegin = resol2 / 4;
-		final int latitudeEnd = resol2 / 2;    // non-inclusive
-		final int longitudeCount = resol1;
-		final int latitudeCount = latitudeEnd - latitudeBegin;
-		final int triangleCount = longitudeCount * latitudeCount * 2;
-		final int vertices = triangleCount * 3;
-		GLSpatial result;
-		float baseColor[] = new float[3];
-		int a, longitude, latitude;
-		int currentVertex, currentQuad;
+	public SuperShape(GLDriver gl, SuperShapeParams params) {
+		super(gl, params.vertices, 3, true);
 
-		result = new GLSpatial(gl, vertices, 3, true);
+		for (params.a = 0; params.a < 3; ++params.a) {
+			params.baseColor[params.a] = ((DefaultGLCanvas.randomUInt() % 155) + 100) / 255.f;
+		}
 
-		for (a = 0; a < 3; ++a) { baseColor[a] = ((DefaultGLCanvas.randomUInt() % 155) + 100) / 255.f; }
-
-		currentQuad = 0;
-		currentVertex = 0;
+		params.currentQuad = 0;
+		params.currentVertex = 0;
 
 		// longitude -pi to pi
-		for (longitude = 0; longitude < longitudeCount; ++longitude) {
+		for (params.longitude = 0; params.longitude < params.longitudeCount; ++params.longitude) {
 
 			// latitude 0 to pi/2
-			for (latitude = latitudeBegin; latitude < latitudeEnd; ++latitude) {
-				float t1 = (float) (-Math.PI + longitude * 2 * Math.PI / resol1);
-				float t2 = (float) (-Math.PI + (longitude + 1) * 2 * Math.PI / resol1);
-				float p1 = (float) (-Math.PI / 2 + latitude * 2 * Math.PI / resol2);
-				float p2 = (float) (-Math.PI / 2 + (latitude + 1) * 2 * Math.PI / resol2);
+			for (params.latitude = params.latitudeBegin; params.latitude < params.latitudeEnd; ++params.latitude) {
+				float t1 = (float) (-Math.PI + params.longitude * 2 * Math.PI / params.resol1);
+				float t2 = (float) (-Math.PI + (params.longitude + 1) * 2 * Math.PI / params.resol1);
+				float p1 = (float) (-Math.PI / 2 + params.latitude * 2 * Math.PI / params.resol2);
+				float p2 = (float) (-Math.PI / 2 + (params.latitude + 1) * 2 * Math.PI / params.resol2);
 				float r0, r1, r2, r3;
 
-				r0 = Scalar.ssFunc(t1, params);
-				r1 = Scalar.ssFunc(p1, params, 6);
-				r2 = Scalar.ssFunc(t2, params);
-				r3 = Scalar.ssFunc(p2, params, 6);
+				r0 = Scalar.ssFunc(t1, params.params);
+				r1 = Scalar.ssFunc(p1, params.params, 6);
+				r2 = Scalar.ssFunc(t2, params.params);
+				r3 = Scalar.ssFunc(p2, params.params, 6);
 
 				if (r0 != 0 && r1 != 0 && r2 != 0 && r3 != 0) {
 					Vector pa = new Vector(), pb = new Vector(), pc = new Vector(), pd = new Vector();
@@ -115,7 +102,7 @@ public class SuperShape {
 					SuperShape.superShapeMap(pd, r0, r3, t1, p2);
 
 					// kludge to set lower edge of the object to fixed level
-					if (latitude == latitudeBegin + 1) {
+					if (params.latitude == params.latitudeBegin + 1) {
 						pa.setZ(0.0);
 						pb.setZ(0.0);
 					}
@@ -148,66 +135,72 @@ public class SuperShape {
 
 					ca = pa.getZ() + 0.5;
 
-					if (result.normalArray != null) {
-						for (i = currentVertex * 3;
-							 i < (currentVertex + 6) * 3;
-							 i += 3) {
-							result.normalArray.put(i, (float) (n.getX()));
-							result.normalArray.put(i + 1, (float) (n.getY()));
-							result.normalArray.put(i + 2, (float) (n.getZ()));
+					if (normalArray != null) {
+						for (i = params.currentVertex * 3;
+							 	i < (params.currentVertex + 6) * 3;
+							 	i += 3) {
+							normalArray.put(i, (float) (n.getX()));
+							normalArray.put(i + 1, (float) (n.getY()));
+							normalArray.put(i + 2, (float) (n.getZ()));
 						}
 					}
 
-					for (i = currentVertex * DefaultGLCanvas.cComps;
-						 i < (currentVertex + 6) * DefaultGLCanvas.cComps;
-						 i += DefaultGLCanvas.cComps) {
+					for (i = params.currentVertex * DefaultGLCanvas.cComps;
+						 	i < (params.currentVertex + 6) * DefaultGLCanvas.cComps;
+						 	i += DefaultGLCanvas.cComps) {
 						int j;
 						float color[] = new float[3];
 						for (j = 0; j < 3; ++j) {
-							color[j] = (float) (ca * baseColor[j]);
+							color[j] = (float) (ca * params.baseColor[j]);
 							if (color[j] > 1.0f) color[j] = 1.0f;
 						}
-						result.colorArray.put(i, color[0]);
-						result.colorArray.put(i + 1, color[1]);
-						result.colorArray.put(i + 2, color[2]);
+
+						colorArray.put(i, color[0]);
+						colorArray.put(i + 1, color[1]);
+						colorArray.put(i + 2, color[2]);
 						if (3 < DefaultGLCanvas.cComps) {
-							result.colorArray.put(i + 3, 0f);
+							colorArray.put(i + 3, 0f);
 						}
 					}
 
-					result.vertexArray.put(currentVertex * 3, (float) (pa.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pa.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pa.getZ()));
-					++currentVertex;
-					result.vertexArray.put(currentVertex * 3, (float) (pb.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pb.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pb.getZ()));
-					++currentVertex;
-					result.vertexArray.put(currentVertex * 3, (float) (pd.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pd.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pd.getZ()));
-					++currentVertex;
-					result.vertexArray.put(currentVertex * 3, (float) (pb.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pb.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pb.getZ()));
-					++currentVertex;
-					result.vertexArray.put(currentVertex * 3, (float) (pc.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pc.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pc.getZ()));
-					++currentVertex;
-					result.vertexArray.put(currentVertex * 3, (float) (pd.getX()));
-					result.vertexArray.put(currentVertex * 3 + 1, (float) (pd.getY()));
-					result.vertexArray.put(currentVertex * 3 + 2, (float) (pd.getZ()));
-					++currentVertex;
+					vertexArray.put(params.currentVertex * 3, (float) (pa.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pa.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pa.getZ()));
+					++params.currentVertex;
+
+					vertexArray.put(params.currentVertex * 3, (float) (pb.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pb.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pb.getZ()));
+					++params.currentVertex;
+
+					vertexArray.put(params.currentVertex * 3, (float) (pd.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pd.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pd.getZ()));
+					++params.currentVertex;
+
+					vertexArray.put(params.currentVertex * 3, (float) (pb.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pb.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pb.getZ()));
+					++params.currentVertex;
+
+					vertexArray.put(params.currentVertex * 3, (float) (pc.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pc.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pc.getZ()));
+					++params.currentVertex;
+
+					vertexArray.put(params.currentVertex * 3, (float) (pd.getX()));
+					vertexArray.put(params.currentVertex * 3 + 1, (float) (pd.getY()));
+					vertexArray.put(params.currentVertex * 3 + 2, (float) (pd.getZ()));
+					++params.currentVertex;
 				} // r0 && r1 && r2 && r3
-				++currentQuad;
+
+				++params.currentQuad;
 			} // latitude
 		} // longitude
 
 		// Set number of vertices in object to the actual amount created.
-		result.setCount(currentVertex);
-		result.seal(gl);
-		return result;
+		setCount(params.currentVertex);
+		seal(gl);
 	}
 
 	public static void superShapeMap(Vector point, float r1, float r2, float t, float p) {
@@ -215,5 +208,37 @@ public class SuperShape {
 		point.setX((Math.cos(t) * Math.cos(p) / r1 / r2));
 		point.setY((Math.sin(t) * Math.cos(p) / r1 / r2));
 		point.setZ((Math.sin(p) / r2));
+	}
+
+	private static class SuperShapeParams {
+		float params[];
+		int resol1;
+		int resol2;
+		// latitude 0 to pi/2 for no mirrored bottom
+		// (latitudeBegin==0 for -pi/2 to pi/2 originally)
+		int latitudeBegin = resol2 / 4;
+		int latitudeEnd = resol2 / 2;    // non-inclusive
+		int longitudeCount = resol1;
+		int latitudeCount = latitudeEnd - latitudeBegin;
+		int triangleCount = longitudeCount * latitudeCount * 2;
+		int vertices = triangleCount * 3;
+		float baseColor[] = new float[3];
+		int a, longitude, latitude;
+		int currentVertex, currentQuad;
+
+		private SuperShapeParams(float params[]) {
+			this.params = params;
+			resol1 = (int) params[SuperShape.PARAMS - 3];
+			resol2 = (int) params[SuperShape.PARAMS - 2];
+			// latitude 0 to pi/2 for no mirrored bottom
+			// (latitudeBegin==0 for -pi/2 to pi/2 originally)
+			latitudeBegin = resol2 / 4;
+			latitudeEnd = resol2 / 2;    // non-inclusive
+			longitudeCount = resol1;
+			latitudeCount = latitudeEnd - latitudeBegin;
+			triangleCount = longitudeCount * latitudeCount * 2;
+			vertices = triangleCount * 3;
+			baseColor = new float[3];
+		}
 	}
 }
