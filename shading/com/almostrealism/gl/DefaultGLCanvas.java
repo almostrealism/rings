@@ -58,9 +58,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private final float view_rotz = 0.0f;
 	public static long sTick, sStartTick;
 
-	private static int sCurrentCamTrack = 0;
-	private static long sCurrentCamTrackStartTick = 0;
-	private static long sNextCamTrackStartTick = 0x7fffffff;
+	public static int sCurrentCamTrack = 0;
+	public static long sCurrentCamTrackStartTick = 0;
+	public static long sNextCamTrackStartTick = 0x7fffffff;
 
 	private static GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
 	private static GLSpatial sGroundPlane;
@@ -101,7 +101,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		x = 0;
 		y = 0;
 
-		renderables = new ArrayList<Renderable>();
+		renderables = new ArrayList<>();
 
 		animator = new FPSAnimator(20);
 		animator.add(this);
@@ -127,6 +127,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		getCamera().setViewingDirection(new Vector(f[0], f[1], f[2]));
 	}
 
+	public static void sInit(GLDriver gl) {
+		sGroundPlane = new GroundPlane(gl);
+	}
+
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		// Use debug pipeline
@@ -134,7 +138,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		GL2 gl = drawable.getGL().getGL2();
 
-		sGroundPlane = new GroundPlane(new GLDriver(gl));
+		sInit(new GLDriver(gl));
 
 		System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
 		System.err.println("INIT GL IS: " + gl.getClass().getName());

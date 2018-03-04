@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
@@ -132,9 +131,9 @@
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java" />
       </list>
     </option>
   </component>
@@ -188,20 +187,6 @@
               <item name="rings" type="462c0819:PsiDirectoryNode" />
               <item name="shading" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="shading" type="462c0819:PsiDirectoryNode" />
-              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
-              <item name="renderable" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -447,7 +432,7 @@
       <workItem from="1519254959429" duration="521000" />
       <workItem from="1519377638239" duration="4637000" />
       <workItem from="1519859279969" duration="4976000" />
-      <workItem from="1520065211952" duration="13387000" />
+      <workItem from="1520065211952" duration="15166000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -722,11 +707,18 @@
       <option name="project" value="LOCAL" />
       <updated>1520133172769</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="More OpenGl support.">
+      <created>1520135439199</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1520135439199</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="157855000" />
+    <option name="totallyTimeSpent" value="159634000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -1245,28 +1237,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="91" column="37" lean-forward="false" selection-start-line="91" selection-start-column="37" selection-end-line="91" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1966">
           <caret line="64" column="6" lean-forward="false" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="65" column="42" lean-forward="true" selection-start-line="65" selection-start-column="42" selection-end-line="65" selection-end-column="42" />
           <folding />
         </state>
       </provider>
@@ -1276,6 +1250,27 @@
         <state relative-caret-position="-11">
           <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="130" column="43" lean-forward="true" selection-start-line="130" selection-start-column="43" selection-end-line="130" selection-end-column="43" />
+          <folding>
+            <element signature="e#3643#3644#0" expanded="true" />
+            <element signature="e#3684#3685#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

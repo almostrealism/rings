@@ -46,7 +46,14 @@ public class GLDriver {
 	/** It is recommended to use {@link #glColor(RGB)} instead. */
 	public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
 
-	public void glMaterial(int code, int prop, FloatBuffer buf) { gl.glMaterialfv(code, prop, buf); }
+	public void glMaterial(int code, int prop, FloatBuffer buf) {
+		if (buf == null) {
+			throw new IllegalArgumentException("FloatBuffer is null");
+		}
+
+		gl.glMaterialfv(code, prop, buf);
+	}
+
 	public void glMaterial(int code, int prop, float f) { gl.glMaterialf(code, prop, f); }
 
 	public void glVertex(Vector v) {
