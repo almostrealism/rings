@@ -128,6 +128,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void sInit(GLDriver gl) {
+		cComps = gl.isGLES1() ? 4 : 3;
 		sGroundPlane = new GroundPlane(gl);
 	}
 

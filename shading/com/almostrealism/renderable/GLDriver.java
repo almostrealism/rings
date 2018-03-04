@@ -26,6 +26,8 @@ public class GLDriver {
 		this.gl = gl;
 	}
 
+	public boolean isGLES1() { return gl.isGLES1(); }
+
 	public void glColor(RGB color) {
 		if (enableDoublePrecision) {
 			gl.glColor3d(color.getRed(), color.getGreen(), color.getBlue());

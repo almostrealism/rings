@@ -26,7 +26,18 @@
     <select />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="DefaultGLCanvas.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="138">
+              <caret line="130" column="27" lean-forward="false" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -132,8 +143,8 @@
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
       </list>
     </option>
   </component>
@@ -187,6 +198,13 @@
               <item name="rings" type="462c0819:PsiDirectoryNode" />
               <item name="shading" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="gl" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -432,7 +450,7 @@
       <workItem from="1519254959429" duration="521000" />
       <workItem from="1519377638239" duration="4637000" />
       <workItem from="1519859279969" duration="4976000" />
-      <workItem from="1520065211952" duration="15166000" />
+      <workItem from="1520065211952" duration="15549000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -714,11 +732,18 @@
       <option name="project" value="LOCAL" />
       <updated>1520135439199</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Added sInit method to DefaultGLCanvas so that static data structures can be initialized by other systems.">
+      <created>1520137465679</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1520137465679</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="159634000" />
+    <option name="totallyTimeSpent" value="160017000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -800,7 +825,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="RenderPanel is now using the new form of ray tracing that doesn't directly require RGB." />
     <MESSAGE value="Corrected RenderParameters specification." />
     <MESSAGE value="Minor changes." />
     <MESSAGE value="AbstractSurfaceUI and SurfaceUIFactory need to be included here so that legacy xml files can be imported." />
@@ -825,7 +849,8 @@
     <MESSAGE value="SurfaceCanvas responds to SurfaceEvents." />
     <MESSAGE value="More OpenGL support." />
     <MESSAGE value="More OpenGl support." />
-    <option name="LAST_COMMIT_MESSAGE" value="More OpenGl support." />
+    <MESSAGE value="Added sInit method to DefaultGLCanvas so that static data structures can be initialized by other systems." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added sInit method to DefaultGLCanvas so that static data structures can be initialized by other systems." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1253,24 +1278,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="130" column="43" lean-forward="true" selection-start-line="130" selection-start-column="43" selection-end-line="130" selection-end-column="43" />
+        <state relative-caret-position="101">
+          <caret line="28" column="52" lean-forward="false" selection-start-line="28" selection-start-column="52" selection-end-line="28" selection-end-column="52" />
           <folding>
-            <element signature="e#3643#3644#0" expanded="true" />
-            <element signature="e#3684#3685#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="138">
+          <caret line="130" column="27" lean-forward="false" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>
