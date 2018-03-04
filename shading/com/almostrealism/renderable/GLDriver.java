@@ -67,6 +67,15 @@ public class GLDriver {
 	public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
 	public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
 
+	public void glTranslate(Vector t) {
+		if (enableDoublePrecision) {
+			gl.glTranslated(t.getX(), t.getY(), t.getZ());
+		} else {
+			gl.glTranslatef((float) t.getX(),
+							(float) t.getY(),
+							(float) t.getZ());
+		}
+	}
 
 	public void glScale(Vector s) {
 		if (enableDoublePrecision) {

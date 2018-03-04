@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/CamTrack.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
@@ -29,7 +27,30 @@
     <select />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="328">
+              <caret line="75" column="28" lean-forward="false" selection-start-line="75" selection-start-column="28" selection-end-line="75" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DefaultGLCanvas.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-188">
+              <caret line="299" column="14" lean-forward="true" selection-start-line="299" selection-start-column="14" selection-end-line="299" selection-end-column="14" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -65,6 +86,7 @@
       <find>fromFunction</find>
       <find>addTriangle</find>
       <find>LinkedMatrix</find>
+      <find>configure</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -83,7 +105,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Cone.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Cylinder.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CSG.java" />
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/surfaceUI/SurfaceUIFactory.java" />
@@ -130,10 +151,11 @@
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SurfaceEvent.java" />
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/SurfaceAddEvent.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SurfaceCanvas.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
       </list>
     </option>
   </component>
@@ -194,6 +216,13 @@
               <item name="shading" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
               <item name="gl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="renderable" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -439,7 +468,7 @@
       <workItem from="1519254959429" duration="521000" />
       <workItem from="1519377638239" duration="4637000" />
       <workItem from="1519859279969" duration="4976000" />
-      <workItem from="1520065211952" duration="9513000" />
+      <workItem from="1520065211952" duration="11386000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -700,11 +729,18 @@
       <option name="project" value="LOCAL" />
       <updated>1520034787185</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="More OpenGL support.">
+      <created>1520131257553</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1520131257553</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="153981000" />
+    <option name="totallyTimeSpent" value="155854000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -809,9 +845,9 @@
     <MESSAGE value="Added glutWireCube method." />
     <MESSAGE value="More OpenGL functionality." />
     <MESSAGE value="Solid sphere." />
-    <MESSAGE value="More OpenGL support." />
     <MESSAGE value="SurfaceCanvas responds to SurfaceEvents." />
-    <option name="LAST_COMMIT_MESSAGE" value="SurfaceCanvas responds to SurfaceEvents." />
+    <MESSAGE value="More OpenGL support." />
+    <option name="LAST_COMMIT_MESSAGE" value="More OpenGL support." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -864,20 +900,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/lighting/PointLight.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="197" column="8" lean-forward="true" selection-start-line="197" selection-start-column="8" selection-end-line="197" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/lighting/AmbientLight.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="71" column="77" lean-forward="false" selection-start-line="71" selection-start-column="77" selection-end-line="71" selection-end-column="77" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/engine/com/almostrealism/raytracer/engine/LightingEngine.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -1200,22 +1222,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="366" column="67" lean-forward="false" selection-start-line="366" selection-start-column="67" selection-end-line="366" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SurfaceCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-211">
-          <caret line="34" column="47" lean-forward="false" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/src.zip!/java/nio/Buffer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
@@ -1227,22 +1233,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="60" column="0" lean-forward="true" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="149">
           <caret line="120" column="22" lean-forward="false" selection-start-line="120" selection-start-column="22" selection-end-line="120" selection-end-column="22" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1251,6 +1247,50 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="172">
           <caret line="64" column="6" lean-forward="true" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/CamTrack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="29" column="13" lean-forward="false" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SurfaceCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="34" column="47" lean-forward="false" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="58" lean-forward="false" selection-start-line="21" selection-start-column="58" selection-end-line="21" selection-end-column="58" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-188">
+          <caret line="299" column="14" lean-forward="true" selection-start-line="299" selection-start-column="14" selection-end-line="299" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="75" column="28" lean-forward="false" selection-start-line="75" selection-start-column="28" selection-end-line="75" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

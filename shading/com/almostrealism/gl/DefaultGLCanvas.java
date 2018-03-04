@@ -40,37 +40,34 @@ import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
+public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
+																MouseMotionListener, KeyListener {
 	public static final boolean enableProjection = false;
 	public static final boolean enableBlending = true;
 
 	private static long sRandomSeed = 0;
 
 	private FPSAnimator animator;
-	private int frames;
-	private int x, y;
-	private int width, height;
+	public static int frames;
+	public static int x, y;
+	public static int width, height;
 
 	public static int cComps;
 
 	private float view_rotx = 20.0f, view_roty = 30.0f;
 	private final float view_rotz = 0.0f;
-	private long sTick, sStartTick;
+	private static long sTick, sStartTick;
 
-	private int sCurrentCamTrack = 0;
-	private long sCurrentCamTrackStartTick = 0;
-	private long sNextCamTrackStartTick = 0x7fffffff;
+	private static int sCurrentCamTrack = 0;
+	private static long sCurrentCamTrackStartTick = 0;
+	private static long sNextCamTrackStartTick = 0x7fffffff;
 
 	private GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
 	private GLSpatial sGroundPlane;
 	private FloatBuffer quadVertices;
-	private FloatBuffer light0Position;
-	private FloatBuffer light0Diffuse;
-	private FloatBuffer light1Position;
-	private FloatBuffer light1Diffuse;
-	private FloatBuffer light2Position;
-	private FloatBuffer light2Diffuse;
 	private FloatBuffer materialSpecular;
+
+	private GLLightingConfiguration lighting;
 
 	private int swapInterval;
 	private boolean toReset;
@@ -91,29 +88,11 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		});
 		quadVertices.flip();
 
-		light0Position = GLBuffers.newDirectFloatBuffer(4);
-		light0Diffuse = GLBuffers.newDirectFloatBuffer(4);
-		light1Position = GLBuffers.newDirectFloatBuffer(4);
-		light1Diffuse = GLBuffers.newDirectFloatBuffer(4);
-		light2Position = GLBuffers.newDirectFloatBuffer(4);
-		light2Diffuse = GLBuffers.newDirectFloatBuffer(4);
 		materialSpecular = GLBuffers.newDirectFloatBuffer(4);
-
-		light0Position.put(new float[]{FixedPoint.toFloat(-0x40000), 1.0f, 1.0f, 0.0f});
-		light0Diffuse.put(new float[]{1.0f, FixedPoint.toFloat(0x6666), 0.0f, 1.0f});
-		light1Position.put(new float[]{1.0f, FixedPoint.toFloat(-0x20000), -1.0f, 0.0f});
-		light1Diffuse.put(new float[]{FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x23d7), FixedPoint.toFloat(0x5999), 1.0f});
-		light2Position.put(new float[]{-1.0f, 0.0f, FixedPoint.toFloat(-0x40000), 0.0f});
-		light2Diffuse.put(new float[]{FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x2b85), FixedPoint.toFloat(0x23d7), 1.0f});
 		materialSpecular.put(new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-
-		light0Position.flip();
-		light0Diffuse.flip();
-		light1Position.flip();
-		light1Diffuse.flip();
-		light2Position.flip();
-		light2Diffuse.flip();
 		materialSpecular.flip();
+
+		this.lighting = new GLLightingConfiguration();
 
 		seedRandom(15);
 
@@ -282,7 +261,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		camTrack(gl);
 
 		// Configure environment.
-		configureLightAndMaterial(gl);
+		configureLightAndMaterial(gl, lighting, materialSpecular);
 
 		if (enableBlending) {
 			gl.glEnable(GL.GL_CULL_FACE);
@@ -312,7 +291,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		tick = System.currentTimeMillis();
 	}
 
-	public void camTrack(GLDriver gl) {
+	public static void camTrack(GLDriver gl) {
 		float lerp[] = new float[5];
 		float eX, eY, eZ, cX, cY, cZ;
 		float trackPos;
@@ -322,6 +301,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (sNextCamTrackStartTick <= sTick) {
 			++sCurrentCamTrack;
+
 			if (sCurrentCamTrack >= CamTrack.sCamTracks.length) sCurrentCamTrack = 0;
 			sCurrentCamTrackStartTick = sNextCamTrackStartTick;
 		}
@@ -355,13 +335,14 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.gluLookAt(new Vector(eX, eY, eZ), new Vector(cX, cY, cZ), 0, 0, 1);
 	}
 
-	public void configureLightAndMaterial(GLDriver gl) {
-		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, light0Position);
-		gl.glLight(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light0Diffuse);
-		gl.glLight(GL2.GL_LIGHT1, GL2.GL_POSITION, light1Position);
-		gl.glLight(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, light1Diffuse);
-		gl.glLight(GL2.GL_LIGHT2, GL2.GL_POSITION, light2Position);
-		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, light2Diffuse);
+	public static void configureLightAndMaterial(GLDriver gl, GLLightingConfiguration lighting,
+												 	FloatBuffer materialSpecular) {
+		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
+		gl.glLight(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
+		gl.glLight(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
+		gl.glLight(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
+		gl.glLight(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
+		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
 		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, materialSpecular);
 
 		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 60.0f);
