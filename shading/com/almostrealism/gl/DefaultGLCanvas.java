@@ -56,14 +56,14 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	private float view_rotx = 20.0f, view_roty = 30.0f;
 	private final float view_rotz = 0.0f;
-	private static long sTick, sStartTick;
+	public static long sTick, sStartTick;
 
 	private static int sCurrentCamTrack = 0;
 	private static long sCurrentCamTrackStartTick = 0;
 	private static long sNextCamTrackStartTick = 0x7fffffff;
 
-	private GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
-	private GLSpatial sGroundPlane;
+	private static GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
+	private static GLSpatial sGroundPlane;
 	private FloatBuffer quadVertices;
 	private FloatBuffer materialSpecular;
 
@@ -133,6 +133,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// drawable.setGL(new DebugGL(drawable.getGL()));
 
 		GL2 gl = drawable.getGL().getGL2();
+
+		sGroundPlane = new GroundPlane(new GLDriver(gl));
 
 		System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
 		System.err.println("INIT GL IS: " + gl.getClass().getName());
@@ -284,7 +286,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (enableBlending) {
 			// Draw fade quad over whole window (when changing cameras).
-			drawFadeQuad(gl);
+			drawFadeQuad(gl, quadVertices);
 		}
 
 		frames++;
@@ -353,7 +355,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// TODO
 	}
 
-	void drawGroundPlane(GLDriver gl) {
+	public static void drawGroundPlane(GLDriver gl) {
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL.GL_DEPTH_TEST);
 
@@ -372,7 +374,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glEnable(GL2.GL_LIGHTING);
 	}
 
-	protected void drawFadeQuad(GLDriver gl) {
+	public static void drawFadeQuad(GLDriver gl, FloatBuffer quadVertices) {
 		final int beginFade = (int) (sTick - sCurrentCamTrackStartTick);
 		final int endFade = (int) (sNextCamTrackStartTick - sTick);
 		final int minFade = beginFade < endFade ? beginFade : endFade;
@@ -483,7 +485,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	@Override
 	public void mouseMoved(MouseEvent e) { }
 
-	void seedRandom(long seed) {
+	public static void seedRandom(long seed) {
 		sRandomSeed = seed;
 	}
 

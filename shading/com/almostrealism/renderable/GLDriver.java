@@ -87,6 +87,14 @@ public class GLDriver {
 		}
 	}
 
+	public void glRotate(double a, double b, double c, double d) {
+		if (enableDoublePrecision) {
+			gl.glRotated(a, b, c, d);
+		} else {
+			gl.glRotatef((float) a, (float) b, (float) c, (float) d);
+		}
+	}
+
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
 
 	public void glClear(int bits) { gl.glClear(bits); }
