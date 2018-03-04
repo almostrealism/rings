@@ -62,8 +62,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static long sCurrentCamTrackStartTick = 0;
 	public static long sNextCamTrackStartTick = 0x7fffffff;
 
-	private static GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
 	private static GLSpatial sGroundPlane;
+
 	private FloatBuffer quadVertices;
 	private FloatBuffer materialSpecular;
 
@@ -302,23 +302,23 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		float lerp[] = new float[5];
 		float eX, eY, eZ, cX, cY, cZ;
 		float trackPos;
-		CamTrack cam;
+		AnimationTrack cam;
 		long currentCamTick;
 		int a;
 
 		if (sNextCamTrackStartTick <= sTick) {
 			++sCurrentCamTrack;
 
-			if (sCurrentCamTrack >= CamTrack.sCamTracks.length) sCurrentCamTrack = 0;
+			if (sCurrentCamTrack >= AnimationTrack.sCamTracks.length) sCurrentCamTrack = 0;
 			sCurrentCamTrackStartTick = sNextCamTrackStartTick;
 		}
 
 		sNextCamTrackStartTick = sCurrentCamTrackStartTick +
-				CamTrack.sCamTracks[sCurrentCamTrack].len * CamTrack.CAMTRACK_LEN;
+				AnimationTrack.sCamTracks[sCurrentCamTrack].len * AnimationTrack.CAMTRACK_LEN;
 
-		cam = CamTrack.sCamTracks[sCurrentCamTrack];
+		cam = AnimationTrack.sCamTracks[sCurrentCamTrack];
 		currentCamTick = sTick - sCurrentCamTrackStartTick;
-		trackPos = (float) currentCamTick / (CamTrack.CAMTRACK_LEN * cam.len);
+		trackPos = (float) currentCamTick / (AnimationTrack.CAMTRACK_LEN * cam.len);
 
 		for (a = 0; a < 5; ++a) { lerp[a] = (cam.src[a] + cam.dest[a] * trackPos) * 0.01f; }
 

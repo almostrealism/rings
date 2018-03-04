@@ -57,8 +57,6 @@ public class SuperShape extends GLSpatial {
 					new float[]{6, 1, 1, -1, 90, -0.1f, 7, 1, 1, 90, 1.3f, 34, 13, 16, 1}, // 32, 60
 			};
 
-	public static final int COUNT = 21;
-
 	/**
 	 * Creates and returns a supershape object. Based on Paul Bourke's POV-Ray implementation.
      * http://astronomy.swin.edu.au/~pbourke/povray/supershape/
