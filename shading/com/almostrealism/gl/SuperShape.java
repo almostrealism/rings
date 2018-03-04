@@ -210,7 +210,7 @@ public class SuperShape extends GLSpatial {
 		point.setZ((Math.sin(p) / r2));
 	}
 
-	private static class SuperShapeParams {
+	public static class SuperShapeParams {
 		float params[];
 		int resol1;
 		int resol2;
@@ -226,7 +226,7 @@ public class SuperShape extends GLSpatial {
 		int a, longitude, latitude;
 		int currentVertex, currentQuad;
 
-		private SuperShapeParams(float params[]) {
+		public SuperShapeParams(float params[]) {
 			this.params = params;
 			resol1 = (int) params[SuperShape.PARAMS - 3];
 			resol2 = (int) params[SuperShape.PARAMS - 2];

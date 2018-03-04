@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DefaultGLCanvas.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+      <file leaf-file-name="SuperShape.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="130" column="27" lean-forward="false" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="27" />
+            <state relative-caret-position="21">
+              <caret line="211" column="0" lean-forward="true" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -139,12 +138,12 @@
         <option value="$PROJECT_DIR$/ui/com/almostrealism/raytracer/event/SurfaceEvent.java" />
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/SurfaceAddEvent.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SurfaceCanvas.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java" />
       </list>
     </option>
   </component>
@@ -182,11 +181,6 @@
             <path>
               <item name="rings" type="b2602c69:ProjectViewProjectNode" />
               <item name="rings" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rings" type="462c0819:PsiDirectoryNode" />
-              <item name="geometry" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rings" type="b2602c69:ProjectViewProjectNode" />
@@ -450,7 +444,7 @@
       <workItem from="1519254959429" duration="521000" />
       <workItem from="1519377638239" duration="4637000" />
       <workItem from="1519859279969" duration="4976000" />
-      <workItem from="1520065211952" duration="15549000" />
+      <workItem from="1520065211952" duration="17545000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -739,11 +733,25 @@
       <option name="project" value="LOCAL" />
       <updated>1520137465679</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Added isGLES1 method.">
+      <created>1520140574684</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1520140574684</updated>
+    </task>
+    <task id="LOCAL-00043" summary="SuperShape now properly subclasses GLSpatial. GLSpatial is now a RenderableGeometry.">
+      <created>1520141934740</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1520141934740</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="160017000" />
+    <option name="totallyTimeSpent" value="162013000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -825,8 +833,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Corrected RenderParameters specification." />
-    <MESSAGE value="Minor changes." />
     <MESSAGE value="AbstractSurfaceUI and SurfaceUIFactory need to be included here so that legacy xml files can be imported." />
     <MESSAGE value="Minor changes to RayTracingTest." />
     <MESSAGE value="The RayMarchingEngine passes along itself as the surface to render." />
@@ -850,7 +856,9 @@
     <MESSAGE value="More OpenGL support." />
     <MESSAGE value="More OpenGl support." />
     <MESSAGE value="Added sInit method to DefaultGLCanvas so that static data structures can be initialized by other systems." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added sInit method to DefaultGLCanvas so that static data structures can be initialized by other systems." />
+    <MESSAGE value="Added isGLES1 method." />
+    <MESSAGE value="SuperShape now properly subclasses GLSpatial. GLSpatial is now a RenderableGeometry." />
+    <option name="LAST_COMMIT_MESSAGE" value="SuperShape now properly subclasses GLSpatial. GLSpatial is now a RenderableGeometry." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1127,14 +1135,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableSphere.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="254">
@@ -1226,16 +1226,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="120" column="22" lean-forward="false" selection-start-line="120" selection-start-column="22" selection-end-line="120" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/CamTrack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1262,14 +1252,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1966">
-          <caret line="64" column="6" lean-forward="false" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-11">
@@ -1288,10 +1270,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1215">
+          <caret line="90" column="0" lean-forward="false" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+          <folding>
+            <element signature="e#3826#3827#0" expanded="false" />
+            <element signature="e#3855#3856#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="22" column="22" lean-forward="false" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="138">
           <caret line="130" column="27" lean-forward="false" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/SuperShape.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="211" column="0" lean-forward="true" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
           <folding />
         </state>
       </provider>
