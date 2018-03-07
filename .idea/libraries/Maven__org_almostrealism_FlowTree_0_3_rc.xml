@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.almostrealism:FlowTree:0.3-rc">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/almostrealism/FlowTree/0.3-rc/FlowTree-0.3-rc.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/almostrealism/FlowTree/0.3-rc/FlowTree-0.3-rc-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/almostrealism/FlowTree/0.3-rc/FlowTree-0.3-rc-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

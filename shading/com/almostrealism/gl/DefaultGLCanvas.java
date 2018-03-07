@@ -309,16 +309,16 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		if (sNextCamTrackStartTick <= sTick) {
 			++sCurrentCamTrack;
 
-			if (sCurrentCamTrack >= AnimationTrack.sCamTracks.length) sCurrentCamTrack = 0;
+			if (sCurrentCamTrack >= AnimationTrack.tracks.length) sCurrentCamTrack = 0;
 			sCurrentCamTrackStartTick = sNextCamTrackStartTick;
 		}
 
 		sNextCamTrackStartTick = sCurrentCamTrackStartTick +
-				AnimationTrack.sCamTracks[sCurrentCamTrack].len * AnimationTrack.CAMTRACK_LEN;
+				AnimationTrack.tracks[sCurrentCamTrack].len * AnimationTrack.LEN;
 
-		cam = AnimationTrack.sCamTracks[sCurrentCamTrack];
+		cam = AnimationTrack.tracks[sCurrentCamTrack];
 		currentCamTick = sTick - sCurrentCamTrackStartTick;
-		trackPos = (float) currentCamTick / (AnimationTrack.CAMTRACK_LEN * cam.len);
+		trackPos = (float) currentCamTick / (AnimationTrack.LEN * cam.len);
 
 		for (a = 0; a < 5; ++a) { lerp[a] = (cam.src[a] + cam.dest[a] * trackPos) * 0.01f; }
 

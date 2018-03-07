@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>FlowTree</artifactId>
-			<version>0.2-rc</version>
+			<version>0.3-rc</version>
 		</dependency>
 
 		<dependency>

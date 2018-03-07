@@ -18,8 +18,8 @@ package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
-import org.almostrealism.flow.Client;
-import org.almostrealism.flow.ui.NetworkClient;
+import io.flowtree.NetworkClient;
+import io.flowtree.node.Client;
 
 // TODO  Add constructor that accepts a RayTracingEngine.RenderingProperties object.
 
@@ -232,12 +232,7 @@ public class JobProducer {
 			RayTracingJob j = new RayTracingJob(this.sceneURI, x, y, this.dx, this.dy,
 													this.w, this.h, this.ssw, this.ssh, this.jobId);
 			
-			if (this.nc == null)
-				Client.getCurrentClient().getServer().sendTask(j.encode(), 0);
-			else
-				this.nc.sendJob(j);
-			
-			// System.out.println("JobProducer: Sent job " + j);
+			Client.getCurrentClient().getServer().sendTask(j.encode(), 0);
 		}
 	}
 	
@@ -263,8 +258,9 @@ public class JobProducer {
 		this.port = port;
         
         System.out.print("\tStarting network client: ");
+
         try {
-        	this.nc = new NetworkClient(this.host, this.port);
+        	this.nc = new NetworkClient(this.host, 10, this.port, false);
         } catch (Exception e) {
 			e.printStackTrace();
         }

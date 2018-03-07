@@ -20,11 +20,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.almostrealism.flow.Client;
+import io.flowtree.NetworkClient;
+import io.flowtree.msg.Message;
+import io.flowtree.node.Client;
 
-import com.almostrealism.NetworkClient;
-
-import io.almostrealism.msg.Message;
 import io.flowtree.fs.OutputServer;
 
 /**
@@ -67,7 +66,7 @@ public class RayTracingServer {
 		
 		String tr = p.getProperty("server.terminal");
 		if (tr != null && tr.equals("on")) {
-			Thread t = new Thread(new NetworkClient("http://localhost/", 10, 6767, false));
+			Thread t = new Thread(new NetworkClient("http://localhost/", 10,6767, false));
 			t.setName("Server Terminal Thread");
 			t.start();
 		}

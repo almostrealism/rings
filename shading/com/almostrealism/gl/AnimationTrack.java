@@ -24,9 +24,7 @@
 
 package com.almostrealism.gl;
 
-/**
- * Camera track definition for one camera trucking shot.
- */
+/** Camera track definition for one camera trucking shot. */
 public class AnimationTrack {
 	/**
 	 * Length in milliseconds of one camera track base unit.

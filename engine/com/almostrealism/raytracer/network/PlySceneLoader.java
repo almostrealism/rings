@@ -18,7 +18,7 @@ package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
-import org.almostrealism.flow.Client;
+import io.flowtree.node.Client;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.graph.io.PlyResource;
 import org.almostrealism.space.Scene;
@@ -26,7 +26,7 @@ import org.almostrealism.space.Scene;
 import com.almostrealism.raytracer.SceneFactory;
 
 /**
- * The PlySceneLoader loads a PLY model from the distributed database
+ * The {@link PlySceneLoader} loads a PLY model from the distributed database
  * and places it in a default scene.
  * 
  * @author  Michael Murray
@@ -35,7 +35,7 @@ public class PlySceneLoader implements SceneLoader {
 	public static final double scale = 100.0;
 	
 	/**
-	 * @see com.almostrealism.raytracer.SceneLoader#loadScene(java.lang.String)
+	 * @see SceneLoader#loadScene(java.lang.String)
 	 */
 	public Scene<Mesh> loadScene(String uri) throws IOException {
 		Scene<Mesh> s = new Scene<Mesh>();

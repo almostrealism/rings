@@ -27,8 +27,9 @@ import org.almostrealism.io.PrintWriter;
 import org.almostrealism.util.Defaults;
 
 /**
- * The Settings class provides access to settings that change the way the RayTracer and its components run.
- * This class also includes static fields providing information about this release of the RayTracer.
+ * The {@link Settings} class provides access to settings that change the way the RayTracer and
+ * its components run. This class also includes static fields providing information about this
+ * release of Rings.
  * 
  * @author  Michael Murray
  */
@@ -65,7 +66,7 @@ public abstract class Settings extends Defaults {
   public static String localSplashImage = Settings.resourcePath + "splash.jpg";
   
   /** String containing the remote location of the splash screen image. */
-  public static String remoteSplashImage = "http://j3d.sourceforge.net/jws/" + "splash.jpg";
+  public static String remoteSplashImage = "http://almostrealism.org/splash.jpg"; // TODO  Publish a splash screen here
   
   
   /** Setting to true enables debug output. */
