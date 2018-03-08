@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/Apache_License.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,24 +26,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GLMaterial.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GLMaterial.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="22" column="16" lean-forward="false" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
+            <state relative-caret-position="314">
+              <caret line="23" column="56" lean-forward="false" selection-start-line="23" selection-start-column="56" selection-end-line="23" selection-end-column="56" />
               <folding>
-                <element signature="e#0#899#0" expanded="true" />
+                <element signature="e#0#953#0" expanded="true" />
                 <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="285">
-              <caret line="113" column="16" lean-forward="true" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
+              <caret line="113" column="16" lean-forward="false" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -160,8 +157,8 @@
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/network/RayTracingJob.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
       </list>
     </option>
   </component>
@@ -480,7 +477,7 @@
       <workItem from="1519859279969" duration="4976000" />
       <workItem from="1520065211952" duration="20362000" />
       <workItem from="1520214441890" duration="3319000" />
-      <workItem from="1520413590067" duration="1742000" />
+      <workItem from="1520413590067" duration="1922000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
       <created>1506110668677</created>
@@ -804,11 +801,18 @@
       <option name="project" value="LOCAL" />
       <updated>1520413834355</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Added more OpenGL features, including GLMaterial.">
+      <created>1520479097793</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1520479097793</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="169891000" />
+    <option name="totallyTimeSpent" value="170071000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -891,7 +895,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added getAllSurfaces method to ShaderParameters. Added support for a striped floor in the RayTracingTest." />
     <MESSAGE value="This is version 0.2." />
     <MESSAGE value="Improvements to many primitives (though get() and expect() are not implemented for most), improvements to RenderPanel." />
     <MESSAGE value="Improvements to the RenderPanel which resolve some issues with live rendering." />
@@ -916,7 +919,8 @@
     <MESSAGE value="SuperShapeParams is a public class now." />
     <MESSAGE value="Renamed CamTrack to AnimationTrack. Minor updates to SuperShape and DefaultGLCanvas." />
     <MESSAGE value="Migrated some functionality from Rings to FlowTree. Introduced more OpenGL types." />
-    <option name="LAST_COMMIT_MESSAGE" value="Migrated some functionality from Rings to FlowTree. Introduced more OpenGL types." />
+    <MESSAGE value="Added more OpenGL features, including GLMaterial." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added more OpenGL features, including GLMaterial." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1316,22 +1320,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="22" column="16" lean-forward="false" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#899#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
-          <caret line="113" column="16" lean-forward="true" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
+          <caret line="113" column="16" lean-forward="false" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="23" column="56" lean-forward="false" selection-start-line="23" selection-start-column="56" selection-end-line="23" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#953#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
