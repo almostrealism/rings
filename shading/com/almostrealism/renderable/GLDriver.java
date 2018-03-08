@@ -1,11 +1,13 @@
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLMaterial;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.gl2.GLUT;
 import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 
@@ -101,6 +103,18 @@ public class GLDriver {
 			gl.glRotated(a, b, c, d);
 		} else {
 			gl.glRotatef((float) a, (float) b, (float) c, (float) d);
+		}
+	}
+
+	public void glMaterial(GLMaterial mat) {
+		if (enableDoublePrecision) {
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[] { (float) mat.shininess.getValue() }, 0);
+		} else {
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{ (float) mat.shininess.getValue() }, 0);
 		}
 	}
 
