@@ -13,6 +13,7 @@ import org.almostrealism.color.RGB;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Stack;
 
 public class GLDriver {
@@ -50,7 +51,7 @@ public class GLDriver {
 	/** It is recommended to use {@link #glColor(RGB)} instead. */
 	public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
 
-	public void glMaterial(int code, int prop, FloatBuffer buf) {
+	@Deprecated public void glMaterial(int code, int prop, FloatBuffer buf) {
 		if (buf == null) {
 			throw new IllegalArgumentException("FloatBuffer is null");
 		}
@@ -58,7 +59,35 @@ public class GLDriver {
 		gl.glMaterialfv(code, prop, buf);
 	}
 
-	public void glMaterial(int code, int prop, float f) { gl.glMaterialf(code, prop, f); }
+	@Deprecated public void glMaterial(int code, int param, float f[], int i) {
+		gl.glMaterialfv(code, param, f, i);
+	}
+
+	@Deprecated public void glMaterial(int code, int param, float f) {
+		gl.glMaterialf(code, param, f);
+	}
+
+	public void glMaterial(GLMaterial mat) {
+		if (enableDoublePrecision) {
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[] { (float) mat.shininess.getValue() }, 0);
+		} else {
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{ (float) mat.shininess.getValue() }, 0);
+		}
+	}
+
+	public void glGenTextures(int code, IntBuffer buf) { gl.glGenTextures(code, buf); }
+	public void glBindTexture(int code, int tex) { gl.glBindTexture(code, tex); }
+	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, ByteBuffer buf) {
+		gl.glTexImage2D(a, b, c, d, e, f, g, h, buf);
+	}
+
+	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
 
 	public void glVertex(Vector v) {
 		if (enableDoublePrecision) {
@@ -70,13 +99,30 @@ public class GLDriver {
 		}
 	}
 
+	public void glVertex(Pair p) {
+		if (enableDoublePrecision) {
+			gl.glVertex2d(p.getX(), p.getY());
+		} else {
+			gl.glVertex2f((float) p.getX(), (float) p.getY());
+		}
+	}
+
 	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) { gl.glVertexPointer(a, b, c, f); }
 	public void glVertexPointer(GLArrayDataWrapper data) { gl.glVertexPointer(data); }
+
+	public void glNormal(Vector n) {
+		if (enableDoublePrecision) {
+			gl.glNormal3d(n.getX(), n.getY(), n.getZ());
+		} else {
+			gl.glNormal3f((float) n.getX(), (float) n.getY(), (float) n.getZ());
+		}
+	}
 
 	public void glNormalPointer(GLArrayDataWrapper data) { gl.glNormalPointer(data); }
 
 	public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
 	public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
+	@Deprecated public void glLight(int light, int prop, float f[], int a) { gl.glLightfv(light, prop, f, a); }
 
 	public void glTranslate(Vector t) {
 		if (enableDoublePrecision) {
@@ -106,18 +152,6 @@ public class GLDriver {
 		}
 	}
 
-	public void glMaterial(GLMaterial mat) {
-		if (enableDoublePrecision) {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[] { (float) mat.shininess.getValue() }, 0);
-		} else {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{ (float) mat.shininess.getValue() }, 0);
-		}
-	}
-
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
 
 	public void glClear(int bits) { gl.glClear(bits); }
@@ -135,10 +169,15 @@ public class GLDriver {
 	public void glEnableClientState(int code) { gl.glEnableClientState(code); }
 
 	public void glBlendFunc(int c1, int c2) { gl.glBlendFunc(c1, c2); }
+	public void glShadeModel(int model) { gl.glShadeModel(model); }
 
 	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
 	public void glBindBuffer(int code, int v) { gl.glBindBuffer(code, v); }
 	public void glBufferData(int code, int l, ByteBuffer buf, int d) { gl.glBufferData(code, l, buf, d); }
+
+	public int glGenLists(int code) { return gl.glGenLists(code); }
+	public void glCallList(int list) { gl.glCallList(list); }
+	public void glNewList(int list, int code) { gl.glNewList(list, code); }
 
 	public void uv(Pair texCoord) {
 		if (enableDoublePrecision) {
@@ -160,6 +199,7 @@ public class GLDriver {
 
 	public void glFlush() { gl.glFlush(); }
 	public int glEnd() { gl.glEnd(); return begins.pop(); }
+	public void glEndList() { gl.glEndList(); }
 	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
 	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }
 
@@ -174,4 +214,6 @@ public class GLDriver {
 	}
 
 	public void glDrawArrays(int code, int a, int b) { gl.glDrawArrays(code, a, b); }
+
+	public String glGetString(int code) { return gl.glGetString(code); }
 }

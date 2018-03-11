@@ -19,6 +19,7 @@ package com.almostrealism.gl;
 import com.almostrealism.raytracer.SurfaceAddEvent;
 import com.almostrealism.raytracer.SurfaceRemoveEvent;
 import com.almostrealism.raytracer.event.SurfaceEvent;
+import com.almostrealism.renderable.GLDriver;
 import com.almostrealism.renderable.RenderableGeometry;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -41,8 +42,9 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	
 	@Override
 	public PinholeCamera getCamera() { return (PinholeCamera) scene.getCamera(); }
-	
-	protected void initRenderables(GL2 gl) {
+
+	@Override
+	protected void initRenderables(GLDriver gl) {
 		renderables.clear();
 		
 		for (ShadableSurface s : scene) {

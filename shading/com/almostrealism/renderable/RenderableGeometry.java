@@ -28,16 +28,15 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 	public T getGeometry() { return geo; }
 
 	@Override
-	public void display(GL2 gl) {
+	public void display(GLDriver gl) {
 		gl.glPushMatrix();
 		applyTransform(gl, geo);
 		render(gl);
 		gl.glPopMatrix();
 	}
 
-	public static void applyTransform(GL2 gl, BasicGeometry g) {
+	public static void applyTransform(GLDriver gl, BasicGeometry g) {
 		// TODO Perform full transformation
-		float p[] = g.getPosition();
-		gl.glTranslatef(p[0], p[1], p[2]);
+		gl.glTranslate(g.getLocation());
 	}
 }

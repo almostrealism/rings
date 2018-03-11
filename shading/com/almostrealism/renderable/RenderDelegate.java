@@ -16,9 +16,6 @@
 
 package com.almostrealism.renderable;
 
-import com.jogamp.opengl.GL2;
-
 public interface RenderDelegate {
-	// TODO  This method should accept GLDriver
-	void render(GL2 gl);
+	void render(GLDriver gl);
 }

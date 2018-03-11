@@ -18,6 +18,7 @@ package com.almostrealism.renderable;
 
 import com.jogamp.opengl.GL2;
 
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.Triangle;
 
@@ -28,7 +29,7 @@ public class TriangleDisplayList extends DisplayList {
 	
 	public TriangleDisplayList(Iterable<Triangle> t) { triangles = t; }
 	
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 		super.init(gl);
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 		gl.glBegin(GL2.GL_TRIANGLES);
@@ -38,18 +39,15 @@ public class TriangleDisplayList extends DisplayList {
 			Vector v[] = t.getVertices();
 			
 			float tex[][] = t.getTextureCoordinates();
-			
-			float f[] = v[0].toFloat();
-	        if (tex != null) gl.glTexCoord2f(tex[0][0], tex[0][1]);
-			gl.glVertex3f(f[0], f[1], f[2]);
-			
-			f = v[1].toFloat();
-	        if (tex != null) gl.glTexCoord2f(tex[1][0], tex[1][1]);
-			gl.glVertex3f(f[0], f[1], f[2]);
-			
-			f = v[2].toFloat();
-	        if (tex != null) gl.glTexCoord2f(tex[2][0], tex[2][1]);
-			gl.glVertex3f(f[0], f[1], f[2]);
+
+	        if (tex != null) gl.uv(new Pair(tex[0][0], tex[0][1]));
+			gl.glVertex(v[0]);
+
+	        if (tex != null) gl.uv(new Pair(tex[1][0], tex[1][1]));
+			gl.glVertex(v[1]);
+
+	        if (tex != null) gl.uv(new Pair(tex[2][0], tex[2][1]));
+			gl.glVertex(v[2]);
 		}
 		
 		gl.glEnd();

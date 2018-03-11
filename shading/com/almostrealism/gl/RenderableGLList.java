@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import com.jogamp.opengl.GL2;
+import com.almostrealism.renderable.GLDriver;
 
 import com.almostrealism.renderable.RenderableList;
 
@@ -28,10 +28,10 @@ public class RenderableGLList extends RenderableGLAdapter {
 	public RenderableGLList(RenderableList r) { this.renderables = r; }
 	
 	@Override
-	public void init(GL2 gl) { super.init(gl); renderables.init(gl); }
+	public void init(GLDriver gl) { super.init(gl); renderables.init(gl); }
 	
 	@Override
-	public void display(GL2 gl) {
+	public void display(GLDriver gl) {
 		push(gl);
 		renderables.display(gl);
 		pop(gl);

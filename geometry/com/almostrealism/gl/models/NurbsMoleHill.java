@@ -16,6 +16,7 @@
 
 package com.almostrealism.gl.models;
 
+import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
@@ -121,7 +122,7 @@ public class NurbsMoleHill extends RenderableList {
 		add(n4);
 	}
 	
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 //		glu.gluNurbsProperty(nurb, GLUgl2.GLU_SAMPLING_TOLERANCE, 25.0);
 //		glu.gluNurbsProperty(nurb, GLUgl2.GLU_DISPLAY_MODE, GLUgl2.GLU_FILL);
 		

@@ -19,21 +19,19 @@ public class RenderableTriangle extends RenderableGeometry<Triangle> {
 	}
 
 	@Override
-	public void init(GL2 gl) { }
+	public void init(GLDriver gl) { }
 
 	@Override
-	public void render(GL2 gl) {
-		GLDriver d = new GLDriver(gl);
-
+	public void render(GLDriver gl) {
 		Vector v[] = getGeometry().getVertices();
 
 		gl.glBegin(GL2.GL_TRIANGLES);
-		d.glColor(a);
-		d.glVertex(v[0]);
-		d.glColor(b);
-		d.glVertex(v[1]);
-		d.glColor(c);
-		d.glVertex(v[2]);
+		gl.glColor(a);
+		gl.glVertex(v[0]);
+		gl.glColor(b);
+		gl.glVertex(v[1]);
+		gl.glColor(c);
+		gl.glVertex(v[2]);
 		gl.glEnd();
 	}
 }

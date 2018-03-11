@@ -87,7 +87,7 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 
 	private boolean sealed = false;
 
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 
 	}
 
@@ -117,11 +117,7 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 		}
 	}
 
-	public void render(GL2 gl) {
-		draw(new GLDriver(gl));
-	}
-
-	public void draw(GLDriver gl) {
+	public void render(GLDriver gl) {
 		seal(gl);
 
 		if (nComps > 0) {

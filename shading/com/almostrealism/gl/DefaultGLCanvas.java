@@ -137,9 +137,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// Use debug pipeline
 		// drawable.setGL(new DebugGL(drawable.getGL()));
 
-		GL2 gl = drawable.getGL().getGL2();
+		GL2 gl2 = drawable.getGL().getGL2();
+		GLDriver gl = new GLDriver(gl2);
 
-		sInit(new GLDriver(gl));
+		sInit(gl);
 
 		System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
 		System.err.println("INIT GL IS: " + gl.getClass().getName());
@@ -149,7 +150,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		float pos[] = {5000.0f, 5000.0f, 5000.0f, 0.0f};
 
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
+		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_LIGHT0);
@@ -161,7 +162,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glEnable(GL2.GL_NORMALIZE);
 	}
 
-	protected void initRenderables(GL2 gl) {
+	protected void initRenderables(GLDriver gl) {
 		for (Renderable r : renderables) r.init(gl);
 	}
 
@@ -357,7 +358,11 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
-		// TODO
+		for (Renderable r : renderables) {
+			System.out.println("Rendering " + r);
+			r.display(gl);
+			System.out.println("Done rendering " + r);
+		}
 	}
 
 	public static void drawGroundPlane(GLDriver gl) {
@@ -369,7 +374,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
 		}
 
-		sGroundPlane.draw(gl);
+		sGroundPlane.render(gl);
 
 		if (enableBlending) {
 			gl.glDisable(GL.GL_BLEND);

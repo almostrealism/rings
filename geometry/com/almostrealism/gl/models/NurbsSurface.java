@@ -16,6 +16,7 @@
 
 package com.almostrealism.gl.models;
 
+import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
@@ -36,7 +37,7 @@ public class NurbsSurface extends DisplayList {
 	}
 	
 	@Override
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 		super.init(gl);
 		
 		if (pts != null) { buildSurface(gl); }
@@ -47,7 +48,7 @@ public class NurbsSurface extends DisplayList {
 	
 	public float[][][] getPoints() { return pts; }
 	
-	protected void buildSurface(GL2 gl) {
+	protected void buildSurface(GLDriver gl) {
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 		initMaterial(gl);
 		glu.gluBeginSurface(nurbs);

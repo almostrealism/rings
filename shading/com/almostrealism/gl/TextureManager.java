@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 
+import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
@@ -32,7 +33,7 @@ public class TextureManager {
 		this.textures = new HashMap<ImageSource, Integer>();
 	}
 	
-	public void addTexture(GL2 gl, ImageSource s) {
+	public void addTexture(GLDriver gl, ImageSource s) {
 		if (textures.containsKey(s)) return;
 
 		int tex = put(gl, s);
@@ -76,11 +77,11 @@ public class TextureManager {
 							0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
 		}
 		
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+		gl.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+		gl.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 	}
 
-	private int put(GL2 gl, ImageSource s) {
+	private int put(GLDriver gl, ImageSource s) {
 		IntBuffer buf = IntBuffer.allocate(1);
 		gl.glGenTextures(1, buf);
 		
@@ -89,14 +90,14 @@ public class TextureManager {
 		return tex;
 	}
 	
-	public void pushTexture(GL2 gl, ImageSource s) {
+	public void pushTexture(GLDriver gl, ImageSource s) {
 		addTexture(gl, s);
 		
         gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textures.get(s));
 	}
 	
-	public void popTexture(GL2 gl) {
+	public void popTexture(GLDriver gl) {
 		gl.glDisable(GL.GL_TEXTURE_2D);
 	}
 }

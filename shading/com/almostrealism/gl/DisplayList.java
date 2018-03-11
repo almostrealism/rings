@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import com.jogamp.opengl.GL2;
+import com.almostrealism.renderable.GLDriver;
 
 public class DisplayList extends RenderableGLAdapter {
 	protected int displayListIndex;
@@ -27,13 +27,13 @@ public class DisplayList extends RenderableGLAdapter {
 		this.displayListIndex = displayListIndex;
 	}
 	
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 		super.init(gl);
 		displayListIndex = gl.glGenLists(1);
 	}
 	
 	@Override
-	public void display(GL2 gl) {
+	public void display(GLDriver gl) {
 		push(gl);
 		gl.glCallList(displayListIndex);
 		pop(gl);

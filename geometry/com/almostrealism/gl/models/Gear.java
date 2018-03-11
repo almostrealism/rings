@@ -16,9 +16,11 @@
 
 package com.almostrealism.gl.models;
 
+import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL2;
 
 import com.almostrealism.gl.DisplayList;
+import org.almostrealism.algebra.Vector;
 
 public class Gear extends DisplayList {
 	private float innerRadius, outerRadius;
@@ -33,7 +35,7 @@ public class Gear extends DisplayList {
 		this.toothDepth = toothDepth;
 	}
 	
-	public void init(GL2 gl) {
+	public void init(GLDriver gl) {
 		super.init(gl);
 		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 		initMaterial(gl);
@@ -41,7 +43,7 @@ public class Gear extends DisplayList {
 		gl.glEndList();
 	}
 	
-	private static void gear(GL2 gl, float inner_radius, float outer_radius,
+	private static void gear(GLDriver gl, float inner_radius, float outer_radius,
 							float width, int teeth, float tooth_depth) {
 		int i;
 		float r0, r1, r2;
@@ -56,18 +58,18 @@ public class Gear extends DisplayList {
 
 		gl.glShadeModel(GL2.GL_FLAT);
 
-		gl.glNormal3f(0.0f, 0.0f, 1.0f);
+		gl.glNormal(new Vector(0.0, 0.0, 1.0));
 
 		/* draw front face */
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 		for (i = 0; i <= teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-			if(i < teeth)
-			{
-				gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
-				gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
+			gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), width * 0.5));
+
+			if(i < teeth) {
+				gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), width * 0.5));
+				gl.glVertex(new Vector(r1 * Math.cos(angle + 3.0f * da), r1 * Math.sin(angle + 3.0f * da), width * 0.5));
 			}
 		}
 		gl.glEnd();
@@ -76,10 +78,10 @@ public class Gear extends DisplayList {
 		gl.glBegin(GL2.GL_QUADS);
 		for (i = 0; i < teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + 2.0f * da), r2 * (float)Math.sin(angle + 2.0f * da), width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + da), r2 * Math.sin(angle + da), width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + 2.0f * da), r2 * Math.sin(angle + 2.0f * da), width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle + 3.0f * da), r1 * Math.sin(angle + 3.0f * da), width * 0.5));
 		}
 		gl.glEnd();
 
@@ -87,10 +89,10 @@ public class Gear extends DisplayList {
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 		for (i = 0; i <= teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
-			gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-			gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), -width * 0.5));
+			gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), -width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle + 3 * da), r1 * Math.sin(angle + 3 * da), -width * 0.5));
+			gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), -width * 0.5));
 		}
 		gl.glEnd();
 
@@ -98,10 +100,10 @@ public class Gear extends DisplayList {
 		gl.glBegin(GL2.GL_QUADS);
 		for (i = 0; i < teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
+			gl.glVertex(new Vector(r1 * Math.cos(angle + 3 * da), r1 * Math.sin(angle + 3 * da), -width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + 2 * da), r2 * Math.sin(angle + 2 * da), -width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + da), r2 * Math.sin(angle + da), -width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), -width * 0.5));
 		}
 		gl.glEnd();
 
@@ -109,28 +111,29 @@ public class Gear extends DisplayList {
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 		for (i = 0; i < teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle), r1 * Math.sin(angle), -width * 0.5));
 			u = r2 * (float)Math.cos(angle + da) - r1 * (float)Math.cos(angle);
 			v = r2 * (float)Math.sin(angle + da) - r1 * (float)Math.sin(angle);
 			len = (float)Math.sqrt(u * u + v * v);
 			u /= len;
 			v /= len;
-			gl.glNormal3f(v, -u, 0.0f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
-			gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), width * 0.5f);
-			gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
-			u = r1 * (float)Math.cos(angle + 3 * da) - r2 * (float)Math.cos(angle + 2 * da);
-			v = r1 * (float)Math.sin(angle + 3 * da) - r2 * (float)Math.sin(angle + 2 * da);
-			gl.glNormal3f(v, -u, 0.0f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), width * 0.5f);
-			gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-			gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
+			gl.glNormal(new Vector(v, -u, 0.0));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + da), r2 * Math.sin(angle + da), width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + da), r2 * Math.sin(angle + da), -width * 0.5));
+			gl.glNormal(new Vector(Math.cos(angle), Math.sin(angle), 0.0));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + 2 * da), r2 * Math.sin(angle + 2 * da), width * 0.5));
+			gl.glVertex(new Vector(r2 * Math.cos(angle + 2 * da), r2 * Math.sin(angle + 2 * da), -width * 0.5));
+			u = r1 * (float) Math.cos(angle + 3 * da) - r2 * (float) Math.cos(angle + 2 * da);
+			v = r1 * (float) Math.sin(angle + 3 * da) - r2 * (float) Math.sin(angle + 2 * da);
+			gl.glNormal(new Vector(v, -u, 0.0));
+			gl.glVertex(new Vector(r1 * Math.cos(angle + 3 * da), r1 * Math.sin(angle + 3 * da), width * 0.5));
+			gl.glVertex(new Vector(r1 * Math.cos(angle + 3 * da), r1 * Math.sin(angle + 3 * da), -width * 0.5));
+			gl.glNormal(new Vector(Math.cos(angle), Math.sin(angle), 0.0));
 		}
-		gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
-		gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
+
+		gl.glVertex(new Vector(r1 * Math.cos(0), r1 * Math.sin(0), width * 0.5));
+		gl.glVertex(new Vector(r1 * Math.cos(0), r1 * Math.sin(0), -width * 0.5));
 		gl.glEnd();
 
 		gl.glShadeModel(GL2.GL_SMOOTH);
@@ -139,9 +142,9 @@ public class Gear extends DisplayList {
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 		for (i = 0; i <= teeth; i++) {
 			angle = i * 2.0f * (float) Math.PI / teeth;
-			gl.glNormal3f(-(float)Math.cos(angle), -(float)Math.sin(angle), 0.0f);
-			gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
-			gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
+			gl.glNormal(new Vector(-Math.cos(angle), -Math.sin(angle), 0.0));
+			gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), -width * 0.5));
+			gl.glVertex(new Vector(r0 * Math.cos(angle), r0 * Math.sin(angle), width * 0.5));
 		}
 		gl.glEnd();
 	}

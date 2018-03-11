@@ -29,20 +29,19 @@ public class RenderableSphere extends RenderableGeometry {
 	public RenderableSphere(Sphere s) {
 		super(s);
 		list = new DisplayList() {
-			public void init(GL2 gl) {
+			public void init(GLDriver gl) {
 				super.init(gl);
 				gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 				initMaterial(gl);
-				GLUT glut = new GLUT();
-				glut.glutSolidSphere(1, 40, 40);
+				gl.glutSolidSphere(1, 40, 40);
 				gl.glEndList();
 			}
 		};
 	}
 	
 	@Override
-	public void init(GL2 gl) { list.init(gl); }
+	public void init(GLDriver gl) { list.init(gl); }
 
 	@Override
-	public void render(GL2 gl) { list.display(gl); }
+	public void render(GLDriver gl) { list.display(gl); }
 }

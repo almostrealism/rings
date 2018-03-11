@@ -18,8 +18,10 @@ package com.almostrealism.gl;
 
 import java.nio.FloatBuffer;
 
+import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL2;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.texture.ImageSource;
@@ -32,7 +34,7 @@ import com.almostrealism.shade.Specular;
 public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Diffuse, Specular {
 	protected static final TextureManager textureManager = new TextureManager();
 	
-	private float position[] = { 0.0f, 0.0f, 0.0f };
+	private Vector position = new Vector(0.0, 0.0, 0.0);
 	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
 	private float color[] = { 0.5f, 0.5f, 0.5f, 0.5f };
@@ -47,43 +49,45 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public RenderableGLAdapter() { }
 	
 	@Override
-	public void init(GL2 gl) { initTexture(gl); }
+	public void init(GLDriver gl) { initTexture(gl); }
 
-	public void initTexture(GL2 gl) {
+	public void initTexture(GLDriver gl) {
 		if (texture == null) return;
 		textureManager.addTexture(gl, texture);
 	}
 	
-	public void initMaterial(GL2 gl) {
+	public void initMaterial(GLDriver gl) {
 		if (ambient) {
-			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, color, 0);
+			gl.glMaterial(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, color, 0);
 		} else {
-			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(diffuse));
+			gl.glMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(diffuse));
 		}
 		
 		if (shininess > 0.0f) {
-			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(specular));
-			gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, shininess);
+			gl.glMaterial(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(specular));
+			gl.glMaterial(GL2.GL_FRONT, GL2.GL_SHININESS, shininess);
 		}
 	}
 	
-	public void push(GL2 gl) {
+	public void push(GLDriver gl) {
 		gl.glPushMatrix();
-		gl.glTranslatef(position[0], position[1], position[2]);
-		gl.glRotatef(orientation[0], orientation[1], orientation[2], orientation[3]);
+		gl.glTranslate(position);
+		gl.glRotate(orientation[0], orientation[1], orientation[2], orientation[3]);
 		if (texture != null) textureManager.pushTexture(gl, texture);
 	}
 	
-	public void pop(GL2 gl) {
+	public void pop(GLDriver gl) {
 		if (texture != null) textureManager.popTexture(gl);
 		gl.glPopMatrix();
 	}
 	
 	@Override
-	public void setPosition(float x, float y, float z) { position = new float[] { x, y, z }; }
+	public void setPosition(float x, float y, float z) {
+		position.setPosition(x, y, z);
+	}
 
 	@Override
-	public float[] getPosition() { return position; }
+	public float[] getPosition() { return position.getPosition(); }
 	
 	@Override
 	public void setOrientation(float angle, float x, float y, float z) { orientation = new float[] { angle, x, y, z }; }

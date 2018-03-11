@@ -16,8 +16,6 @@
 
 package com.almostrealism.renderable;
 
-import com.jogamp.opengl.GL2;
-
 import org.almostrealism.graph.Mesh;
 
 import com.almostrealism.webgl.WebGLExportable;
@@ -33,9 +31,10 @@ public class RenderableMesh extends RenderableGeometry implements WebGLRenderabl
 	}
 	
 	@Override
-	public void init(GL2 gl) { list.init(gl); }
-	
-	public void render(GL2 gl) { list.display(gl); }
+	public void init(GLDriver gl) { list.init(gl); }
+
+	@Override
+	public void render(GLDriver gl) { list.display(gl); }
 	
 	public WebGLExportable getWebGLGeometry() {
 		return new WebGLMeshGeometry(((Mesh) getGeometry()).getVertexData());

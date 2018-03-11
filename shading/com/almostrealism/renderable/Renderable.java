@@ -16,10 +16,8 @@
 
 package com.almostrealism.renderable;
 
-import com.jogamp.opengl.GL2;
-
 public interface Renderable {
-	void init(GL2 gl);
+	void init(GLDriver gl);
 	
-	void display(GL2 gl);
+	void display(GLDriver gl);
 }
