@@ -16,37 +16,29 @@
 
 package com.almostrealism.gl;
 
-import java.nio.FloatBuffer;
-
 import com.almostrealism.renderable.GLDriver;
-import com.jogamp.opengl.GL2;
 
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.texture.ImageSource;
 
 import com.almostrealism.renderable.Colored;
 import com.almostrealism.renderable.Renderable;
-import com.almostrealism.shade.Diffuse;
-import com.almostrealism.shade.Specular;
 
-public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored, Diffuse, Specular {
+public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored {
 	protected static final TextureManager textureManager = new TextureManager();
 	
 	private Vector position = new Vector(0.0, 0.0, 0.0);
 	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
-	private float color[] = { 0.5f, 0.5f, 0.5f, 0.5f };
-	private float diffuse[] = {0.0f, 0.0f, 0.0f, 0.0f };
-	private float specular[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	private float shininess = 0.0f;
-	
-	private boolean ambient = true;
+	private GLMaterial mat;
 	
 	private ImageSource texture;
 	
-	public RenderableGLAdapter() { }
+	public RenderableGLAdapter() { mat = new GLMaterial(); }
 	
 	@Override
 	public void init(GLDriver gl) { initTexture(gl); }
@@ -56,17 +48,10 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 		textureManager.addTexture(gl, texture);
 	}
 	
-	public void initMaterial(GLDriver gl) {
-		if (ambient) {
-			gl.glMaterial(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, color, 0);
-		} else {
-			gl.glMaterial(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(diffuse));
-		}
-		
-		if (shininess > 0.0f) {
-			gl.glMaterial(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(specular));
-			gl.glMaterial(GL2.GL_FRONT, GL2.GL_SHININESS, shininess);
-		}
+	public void initMaterial(GLDriver gl) { }
+
+	public void display(GLDriver gl) {
+		gl.glMaterial(mat);
 	}
 	
 	public void push(GLDriver gl) {
@@ -98,28 +83,13 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public void setTexture(ImageSource tex) { this.texture = tex; }
 	
 	@Override
-	public void setColor(float r, float g, float b, float a) { color = new float[] { r, g, b, a }; }
+	public void setColor(float r, float g, float b, float a) {
+		mat.diffuse = new RGBA(r, g, b, a);
+	}
 
 	@Override
-	public float[] getColor() { return color; }
+	public float[] getColor() { return Scalar.toFloat(mat.diffuse.toArray()); }
 	
-	public void setAmbient(boolean a) { ambient = a; }
-	
-	@Override
-	public void setDiffuse(float r, float g, float b, float a) { diffuse = new float[] { r, g, b, a}; }
-	
-	@Override
-	public float[] getDiffuse() { return diffuse; }
-	
-	@Override
-	public void setSpecular(float r, float g, float b, float a) { specular = new float[] { r, g, b, a}; }
-
-	@Override
-	public float[] getSpecular() { return specular; }
-
-	@Override
-	public void setShininess(float s) { shininess = s; }
-
-	@Override
-	public float getShininess() { return shininess; }
+	public void setMaterial(GLMaterial m) { this.mat = m; }
+	public GLMaterial getMaterial() { return this.mat; }
 }

@@ -16,6 +16,7 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLMaterial;
 import org.almostrealism.space.BasicGeometry;
 
 import com.jogamp.opengl.GL2;
@@ -23,7 +24,9 @@ import com.jogamp.opengl.GL2;
 public abstract class RenderableGeometry<T extends BasicGeometry> implements Renderable, RenderDelegate {
 	private T geo;
 
-	public RenderableGeometry(T geometry) { geo = geometry; }
+	private GLMaterial mat;
+
+	public RenderableGeometry(T geometry) { geo = geometry; mat = new GLMaterial(); }
 
 	public T getGeometry() { return geo; }
 
@@ -31,9 +34,13 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 	public void display(GLDriver gl) {
 		gl.glPushMatrix();
 		applyTransform(gl, geo);
+		gl.glMaterial(mat);
 		render(gl);
 		gl.glPopMatrix();
 	}
+
+	public void setMaterial(GLMaterial m) { this.mat = m; }
+	public GLMaterial getMaterial() { return this.mat; }
 
 	public static void applyTransform(GLDriver gl, BasicGeometry g) {
 		// TODO Perform full transformation

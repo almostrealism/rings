@@ -1,11 +1,16 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLMaterial;
+import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.raytracer.primitives.Pinhole;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.gl2.GLUT;
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
@@ -27,6 +32,7 @@ public class GLDriver {
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
+		this.begins = new Stack<Integer>();
 	}
 
 	public boolean isGLES1() { return gl.isGLES1(); }
@@ -108,7 +114,13 @@ public class GLDriver {
 	}
 
 	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) { gl.glVertexPointer(a, b, c, f); }
-	public void glVertexPointer(GLArrayDataWrapper data) { gl.glVertexPointer(data); }
+	public void glVertexPointer(GLArrayDataWrapper data) {
+		try {
+			gl.glVertexPointer(data);
+		} catch (GLException gl) {
+			throw exceptionHelper(gl);
+		}
+	}
 
 	public void glNormal(Vector n) {
 		if (enableDoublePrecision) {
@@ -192,9 +204,26 @@ public class GLDriver {
 	public void glPushMatrix() { gl.glPushMatrix(); }
 	public void glPopMatrix() { gl.glPopMatrix(); }
 	public void glLoadIdentity() { gl.glLoadIdentity(); }
-	public void gluPerspective(double d1, double d2, double d3, double d4) { glu.gluPerspective(d1, d2, d3, d4); }
+	@Deprecated public void gluPerspective(double d1, double d2, double d3, double d4) { glu.gluPerspective(d1, d2, d3, d4); }
 	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
 		glu.gluLookAt(e.getX(), e.getY(), e.getZ(), c.getX(), c.getY(), c.getZ(), var13, var15, var17);
+	}
+
+	public void glProjection(Camera c) {
+		if (c instanceof OrthographicCamera == false) return;
+		Vector loc = ((OrthographicCamera) c).getLocation();
+
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
+		glTranslate(loc);
+
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+		if (c instanceof PinholeCamera == false) return;
+
+		float width = (float) ((OrthographicCamera) c).getProjectionWidth();
+		float height = (float) ((OrthographicCamera) c).getProjectionHeight();
+		glu.gluPerspective(45f, width / height, ((PinholeCamera) c).getFocalLength(), (float) Math.pow(10, 9)); // TODO  Compute vertical fov from camera
 	}
 
 	public void glFlush() { gl.glFlush(); }
@@ -216,4 +245,13 @@ public class GLDriver {
 	public void glDrawArrays(int code, int a, int b) { gl.glDrawArrays(code, a, b); }
 
 	public String glGetString(int code) { return gl.glGetString(code); }
+
+	protected GLException exceptionHelper(GLException gle) {
+		if (gle.getMessage() == null) return gle;
+		if (gle.getMessage().contains("May not call this between glBegin and glEnd")) {
+			return new GLException(gle.getMessage() + " (begin = " + this.begins.peek() + ")");
+		}
+
+		return gle;
+	}
 }

@@ -33,6 +33,7 @@ public class RenderableGLList extends RenderableGLAdapter {
 	@Override
 	public void display(GLDriver gl) {
 		push(gl);
+		super.display(gl);
 		renderables.display(gl);
 		pop(gl);
 	}

@@ -106,19 +106,19 @@ public class NurbsMoleHill extends RenderableList {
 		pts4[0][3][2] = 1;
 		
 		NurbsSurface n1 = new NurbsSurface(knots, pts1, glu, nurb);
-		n1.setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
+		n1.getMaterial().setDiffuse(0.7f, 0.0f, 0.1f, 1.0f);
 		add(n1);
 		
 		NurbsSurface n2 = new NurbsSurface(knots, pts2, glu, nurb);
-		n2.setDiffuse(0.0f, 0.7f, 0.1f, 1.0f);
+		n2.getMaterial().setDiffuse(0.0f, 0.7f, 0.1f, 1.0f);
 		add(n2);
 		
 		NurbsSurface n3 = new NurbsSurface(knots, pts3, glu, nurb);
-		n3.setDiffuse(0.0f, 0.1f, 0.7f, 1.0f);
+		n3.getMaterial().setDiffuse(0.0f, 0.1f, 0.7f, 1.0f);
 		add(n3);
 		
 		NurbsSurface n4 = new NurbsSurface(knots, pts4, glu, nurb);
-		n4.setDiffuse(0.7f, 0.8f, 0.1f, 1.0f);
+		n4.getMaterial().setDiffuse(0.7f, 0.8f, 0.1f, 1.0f);
 		add(n4);
 	}
 	

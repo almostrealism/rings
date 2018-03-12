@@ -44,6 +44,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 																MouseMotionListener, KeyListener {
 	public static final boolean enableProjection = false;
 	public static final boolean enableBlending = true;
+	public static final boolean enableCamTrackFade = false;
 
 	private static long sRandomSeed = 0;
 
@@ -199,13 +200,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	 * configuration of the {@link PinholeCamera} returned by the
 	 * {@link #getCamera()} method.
 	 */
-	public void doView(GL2 gl) {
+	public void doView(GLDriver gl) {
 		PinholeCamera c = getCamera();
-		Vector loc = c.getLocation();
-
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
-		gl.glLoadIdentity();
-		gl.glTranslatef((float) loc.getX(), (float) loc.getY(), (float) loc.getZ());
+		gl.glProjection(c);
 	}
 
 	/** Does nothing. */
@@ -263,12 +260,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
-		gl.glMatrixMode(GL2.GL_PROJECTION);
-		gl.glLoadIdentity();
-		gl.gluPerspective(45.0f, (float) width / (float) height, 0.5f, 150.0f);
+		doView(gl);
 
 		// Update the camera position and set the lookat.
-		camTrack(gl);
+//		camTrack(gl); TODO  Restore camera tracking, but actually modify the camera
 
 		// Configure environment.
 		configureLightAndMaterial(gl, lighting, materialSpecular);
@@ -292,7 +287,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// Draw all the models normally.
 		drawRenderables(gl, 1.0);
 
-		if (enableBlending) {
+		if (enableBlending && enableCamTrackFade) {
 			// Draw fade quad over whole window (when changing cameras).
 			drawFadeQuad(gl, quadVertices);
 		}
@@ -353,13 +348,12 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glLight(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
 		gl.glLight(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
 		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
-		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, materialSpecular);
-
-		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 60.0);
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
+		gl.glScale(new Vector(1.0, 1.0, zScale));
+
 		for (Renderable r : renderables) {
 			System.out.println("Rendering " + r);
 			r.display(gl);
