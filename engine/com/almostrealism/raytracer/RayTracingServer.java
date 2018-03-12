@@ -20,7 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import io.flowtree.NetworkClient;
+import io.flowtree.cli.FlowTreeCliServer;
 import io.flowtree.msg.Message;
 import io.flowtree.node.Client;
 
@@ -66,7 +66,7 @@ public class RayTracingServer {
 		
 		String tr = p.getProperty("server.terminal");
 		if (tr != null && tr.equals("on")) {
-			Thread t = new Thread(new NetworkClient("http://localhost/", 10,6767, false));
+			Thread t = new Thread(new FlowTreeCliServer("http://localhost/", 10,6767, false));
 			t.setName("Server Terminal Thread");
 			t.start();
 		}

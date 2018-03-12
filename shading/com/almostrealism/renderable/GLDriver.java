@@ -63,8 +63,8 @@ public class GLDriver {
 		gl.glMaterialfv(code, param, f, i);
 	}
 
-	@Deprecated public void glMaterial(int code, int param, float f) {
-		gl.glMaterialf(code, param, f);
+	@Deprecated public void glMaterial(int code, int param, double f) {
+		gl.glMaterialf(code, param, (float) f);
 	}
 
 	public void glMaterial(GLMaterial mat) {

@@ -83,7 +83,7 @@ public class PinholeCamera extends OrthographicCamera {
 	 * and focal length. Projection dimensions are determined using the specified fields of view.
 	 * 
 	 * @param location  Camera location.
-	 * @param viewDiretion  Camera viewing direction.
+	 * @param viewDirection  Camera viewing direction.
 	 * @param upDirection  Camera up direction.
 	 * @param focalLength  Camera focal length.
 	 * @param fov  Camera fields of view (radians) {horizontal FOV, vertical FOV}.

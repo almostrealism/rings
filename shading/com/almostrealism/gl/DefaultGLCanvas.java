@@ -214,6 +214,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		System.out.println("DefaultGLCanvas.display: renderables.size() = " + renderables.size());
+
 		/*
 		// Get the GL corresponding to the drawable we are animating
 		GL2 gl = drawable.getGL().getGL2();
@@ -353,7 +355,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
 		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, materialSpecular);
 
-		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 60.0f);
+		gl.glMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 60.0);
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 	}
 

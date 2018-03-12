@@ -87,6 +87,24 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 	
 	public void setLocation(Vector p) { this.location = p; }
 	public Vector getLocation() { return this.location; }
+
+	public void setViewingDirection(Vector v) {
+		this.plane.setSurfaceNormal(v.toArray());
+	}
+
+	public Vector getViewingDirection() {
+		return new Vector(this.plane.getSurfaceNormal());
+	}
+
+	public void setUpDirection(Vector v) {
+		this.plane.setOrientation(v.toArray());
+	}
+
+	public Vector getUpDirection() {
+		return new Vector(this.plane.getOrientation());
+	}
+
+	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
 	
 	public void setColorable(Colorable c) { this.colorable = c; }
 	

@@ -18,7 +18,7 @@ package com.almostrealism.raytracer.network;
 
 import java.io.IOException;
 
-import io.flowtree.NetworkClient;
+import io.flowtree.cli.FlowTreeCliServer;
 import io.flowtree.node.Client;
 
 // TODO  Add constructor that accepts a RayTracingEngine.RenderingProperties object.
@@ -53,7 +53,7 @@ public class JobProducer {
   
   private String host;
   private int port;
-  private NetworkClient nc;
+  private FlowTreeCliServer nc;
 
   	/**
   	 * Constructs a JobProducer object and uses it to produce and send jobs
@@ -260,7 +260,7 @@ public class JobProducer {
         System.out.print("\tStarting network client: ");
 
         try {
-        	this.nc = new NetworkClient(this.host, 10, this.port, false);
+        	this.nc = new FlowTreeCliServer(this.host, 10, this.port, false);
         } catch (Exception e) {
 			e.printStackTrace();
         }
