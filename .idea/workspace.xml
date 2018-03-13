@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,11 +30,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Gear.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Gear.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="219">
-              <caret line="149" column="5" lean-forward="true" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
+              <caret line="149" column="5" lean-forward="false" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="103" column="53" lean-forward="false" selection-start-line="103" selection-start-column="53" selection-end-line="103" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RenderableGLAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RenderableGLList.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RenderableGeometry.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="383">
+              <caret line="49" column="94" lean-forward="false" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
               <folding />
             </state>
           </provider>
@@ -95,7 +139,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/test/com/almostrealism/raytracer/test/RayTracingTest.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/CameraObject.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Plane.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/raytracer/primitives/Pinhole.java" />
@@ -141,11 +184,12 @@
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/NurbsMoleHill.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
       </list>
     </option>
   </component>
@@ -584,14 +628,7 @@
       <workItem from="1520065211952" duration="20362000" />
       <workItem from="1520214441890" duration="3319000" />
       <workItem from="1520413590067" duration="4121000" />
-      <workItem from="1520740221411" duration="10995000" />
-    </task>
-    <task id="LOCAL-00003" summary="Cleanup across the code base to deal with the new LightingEngine design.">
-      <created>1506115891003</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1506115891003</updated>
+      <workItem from="1520740221411" duration="12011000" />
     </task>
     <task id="LOCAL-00004" summary="Ray tracing test should emit a jpeg instead of a ppm.">
       <created>1506116092182</created>
@@ -929,7 +966,14 @@
       <option name="project" value="LOCAL" />
       <updated>1520889525010</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Added toString method to Gear.">
+      <created>1520980298720</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1520980298720</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -938,7 +982,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="183265000" />
+    <option name="totallyTimeSpent" value="184281000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -962,10 +1006,10 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3906465" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3906465" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31774417" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31774417" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24394184" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1021,7 +1065,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Upgrade to Common 0.5-rc. Added use of GeneratedColorProducer in AmbientLight." />
     <MESSAGE value="Shaders are now using GeneratedColorProducer to record the shader that produced the color. This will allow the diagnostic view in the desktop application to inspect the color pipeline on a per-shader basis." />
     <MESSAGE value="Migrated rigid bodies into rings." />
     <MESSAGE value="PointLight implements Positioned." />
@@ -1046,7 +1089,8 @@
     <MESSAGE value="Modified Renderable to accept GLDriver." />
     <MESSAGE value="Added features to PinholeCameraAbsorber." />
     <MESSAGE value="Added GLMaterial to RenderableGLAdapter and RenderableGeometry." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added GLMaterial to RenderableGLAdapter and RenderableGeometry." />
+    <MESSAGE value="Added toString method to Gear." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added toString method to Gear." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1399,16 +1443,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
@@ -1478,37 +1512,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="209" column="5" lean-forward="false" selection-start-line="209" selection-start-column="5" selection-end-line="209" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="41" column="40" lean-forward="true" selection-start-line="41" selection-start-column="40" selection-end-line="41" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="30" column="22" lean-forward="false" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1531,7 +1539,39 @@
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
-          <caret line="149" column="5" lean-forward="true" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
+          <caret line="149" column="5" lean-forward="false" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="103" column="53" lean-forward="false" selection-start-line="103" selection-start-column="53" selection-end-line="103" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="49" column="94" lean-forward="false" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
           <folding />
         </state>
       </provider>

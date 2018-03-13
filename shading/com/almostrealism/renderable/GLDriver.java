@@ -10,11 +10,13 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBA;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -44,6 +46,17 @@ public class GLDriver {
 			gl.glColor3f((float) color.getRed(),
 						(float) color.getGreen(),
 						(float) color.getBlue());
+		}
+	}
+
+	public void glColor(RGBA color) {
+		if (enableDoublePrecision) {
+			gl.glColor4d(color.getRGB().getRed(), color.getRGB().getGreen(), color.getRGB().getBlue(), color.a);
+		} else {
+			gl.glColor4f((float) color.getRGB().getRed(),
+						(float) color.getRGB().getGreen(),
+						(float) color.getRGB().getBlue(),
+						(float) color.a);
 		}
 	}
 
@@ -88,10 +101,13 @@ public class GLDriver {
 	}
 
 	public void glGenTextures(int code, IntBuffer buf) { gl.glGenTextures(code, buf); }
+	public void bindTexture(Texture t) { t.bind(gl); }
 	public void glBindTexture(int code, int tex) { gl.glBindTexture(code, tex); }
 	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, ByteBuffer buf) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, buf);
 	}
+
+	public void enableTexture(Texture t) { t.enable(gl); }
 
 	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
 

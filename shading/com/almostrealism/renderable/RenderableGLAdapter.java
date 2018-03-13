@@ -1,21 +1,23 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
-package com.almostrealism.gl;
+package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLMaterial;
+import com.almostrealism.gl.TextureManager;
 import com.almostrealism.renderable.GLDriver;
 
 import org.almostrealism.algebra.Scalar;
@@ -35,7 +37,6 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
 	private GLMaterial mat;
-	
 	private ImageSource texture;
 	
 	public RenderableGLAdapter() { mat = new GLMaterial(); }

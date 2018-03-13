@@ -17,6 +17,7 @@
 package com.almostrealism.gl;
 
 import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.renderable.RenderableGLAdapter;
 
 public class DisplayList extends RenderableGLAdapter {
 	protected int displayListIndex;

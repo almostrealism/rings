@@ -46,4 +46,6 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 		// TODO Perform full transformation
 		gl.glTranslate(g.getLocation());
 	}
+
+	public String toString() { return "RenderableGeometry[" + getGeometry().toString() + "]"; }
 }
