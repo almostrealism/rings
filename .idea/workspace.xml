@@ -3,15 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/NurbsMoleHill.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/NurbsMoleHill.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,8 +29,8 @@
       <file leaf-file-name="Gear.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1537">
-              <caret line="24" column="30" lean-forward="false" selection-start-line="24" selection-start-column="30" selection-end-line="24" selection-end-column="30" />
+            <state relative-caret-position="219">
+              <caret line="149" column="5" lean-forward="true" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -55,7 +47,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ContinuousField</find>
       <find>shade(</find>
       <find>SurfaceUIFactory</find>
       <find>TransformMatrix</find>
@@ -85,6 +76,7 @@
       <find>animator</find>
       <find>asdf</find>
       <find>peek</find>
+      <find>renderx`</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -138,7 +130,6 @@
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/NurbsSurface.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/SurfaceCanvas.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableSphere.java" />
-        <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableTriangle.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableList.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLSpatial.java" />
@@ -154,6 +145,7 @@
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
+        <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
       </list>
     </option>
   </component>
@@ -243,6 +235,14 @@
               <item name="geometry" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
               <item name="raytracer" type="462c0819:PsiDirectoryNode" />
+              <item name="constructives" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="geometry" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="raytracer" type="462c0819:PsiDirectoryNode" />
               <item name="primitives" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -255,6 +255,27 @@
               <item name="rings" type="462c0819:PsiDirectoryNode" />
               <item name="shading" type="462c0819:PsiDirectoryNode" />
               <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="gl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="lighting" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="rayshade" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rings" type="b2602c69:ProjectViewProjectNode" />
@@ -563,14 +584,7 @@
       <workItem from="1520065211952" duration="20362000" />
       <workItem from="1520214441890" duration="3319000" />
       <workItem from="1520413590067" duration="4121000" />
-      <workItem from="1520740221411" duration="9733000" />
-    </task>
-    <task id="LOCAL-00002" summary="Initialize IntersectionalLightingEngine rather than using static methods (since the methods are no longer static).">
-      <created>1506111015003</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1506111015003</updated>
+      <workItem from="1520740221411" duration="10995000" />
     </task>
     <task id="LOCAL-00003" summary="Cleanup across the code base to deal with the new LightingEngine design.">
       <created>1506115891003</created>
@@ -908,7 +922,14 @@
       <option name="project" value="LOCAL" />
       <updated>1520839101452</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Added GLMaterial to RenderableGLAdapter and RenderableGeometry.">
+      <created>1520889525009</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1520889525010</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -917,7 +938,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="182003000" />
+    <option name="totallyTimeSpent" value="183265000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -927,7 +948,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24798061" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24798061" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -947,6 +968,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31774417" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24394184" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -956,7 +978,6 @@
       <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933334" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1000,7 +1021,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated to match Common 0.4 API, which is working to phase out getColorAt method." />
     <MESSAGE value="Upgrade to Common 0.5-rc. Added use of GeneratedColorProducer in AmbientLight." />
     <MESSAGE value="Shaders are now using GeneratedColorProducer to record the shader that produced the color. This will allow the diagnostic view in the desktop application to inspect the color pipeline on a per-shader basis." />
     <MESSAGE value="Migrated rigid bodies into rings." />
@@ -1025,7 +1045,8 @@
     <MESSAGE value="Added diffuse field to GLMaterial." />
     <MESSAGE value="Modified Renderable to accept GLDriver." />
     <MESSAGE value="Added features to PinholeCameraAbsorber." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added features to PinholeCameraAbsorber." />
+    <MESSAGE value="Added GLMaterial to RenderableGLAdapter and RenderableGeometry." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added GLMaterial to RenderableGLAdapter and RenderableGeometry." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1486,7 +1507,7 @@
         <state relative-caret-position="53">
           <caret line="30" column="22" lean-forward="false" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1509,8 +1530,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1537">
-          <caret line="24" column="30" lean-forward="false" selection-start-line="24" selection-start-column="30" selection-end-line="24" selection-end-column="30" />
+        <state relative-caret-position="219">
+          <caret line="149" column="5" lean-forward="true" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
           <folding />
         </state>
       </provider>

@@ -148,4 +148,6 @@ public class Gear extends DisplayList {
 		}
 		gl.glEnd();
 	}
+
+	public String toString() { return "Gear[" + outerRadius + " radius, " + teeth + " teeth]"; }
 }
