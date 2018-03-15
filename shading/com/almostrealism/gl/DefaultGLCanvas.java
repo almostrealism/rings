@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.renderable.Quad3f;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 
@@ -63,10 +64,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static long sCurrentCamTrackStartTick = 0;
 	public static long sNextCamTrackStartTick = 0x7fffffff;
 
-	private static GLSpatial sGroundPlane;
+	private static GroundPlane sGroundPlane;
 
-	private FloatBuffer quadVertices;
-	private FloatBuffer materialSpecular;
+	private static Quad3f sFadeQuad;
 
 	private GLLightingConfiguration lighting;
 
@@ -78,22 +78,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int prevMouseX, prevMouseY;
 
 	public DefaultGLCanvas() {
-		quadVertices = GLBuffers.newDirectFloatBuffer(12);
-		quadVertices.put(new float[] {
-				-1.0f, -1.0f,
-				1.0f, -1.0f,
-				-1.0f, 1.0f,
-				1.0f, -1.0f,
-				1.0f, 1.0f,
-				-1.0f, 1.0f
-		});
-		quadVertices.flip();
-
-		materialSpecular = GLBuffers.newDirectFloatBuffer(4);
-		materialSpecular.put(new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-		materialSpecular.flip();
-
-		this.lighting = new GLLightingConfiguration();
+		lighting = new GLLightingConfiguration();
 
 		seedRandom(15);
 
@@ -110,7 +95,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
-		this.swapInterval = 1;
+		swapInterval = 1;
 	}
 
 	public void add(Renderable r) { if (r != null) renderables.add(r); }
@@ -131,6 +116,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static void sInit(GLDriver gl) {
 		cComps = gl.isGLES1() ? 4 : 3;
 		sGroundPlane = new GroundPlane(gl);
+		sFadeQuad = new Quad3f(new Vector(-1.0, -1.0, 1.0),
+								new Vector(-1.0, -1.0, 1.0),
+								new Vector(1.0, -1.0, 1.0),
+								new Vector(1.0,-1.0, 1.0));
 	}
 
 	@Override
@@ -211,8 +200,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		System.out.println("DefaultGLCanvas.display: renderables.size() = " + renderables.size());
-
 		/*
 		// Get the GL corresponding to the drawable we are animating
 		GL2 gl = drawable.getGL().getGL2();
@@ -266,7 +253,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 //		camTrack(gl); TODO  Restore camera tracking, but actually modify the camera
 
 		// Configure environment.
-		configureLightAndMaterial(gl, lighting, materialSpecular);
+		configureLightAndMaterial(gl, lighting);
 
 		if (enableBlending) {
 			gl.glEnable(GL.GL_CULL_FACE);
@@ -289,7 +276,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (enableBlending && enableCamTrackFade) {
 			// Draw fade quad over whole window (when changing cameras).
-			drawFadeQuad(gl, quadVertices);
+			drawFadeQuad(gl);
 		}
 
 		frames++;
@@ -340,8 +327,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.gluLookAt(new Vector(eX, eY, eZ), new Vector(cX, cY, cZ), 0, 0, 1);
 	}
 
-	public static void configureLightAndMaterial(GLDriver gl, GLLightingConfiguration lighting,
-												 	FloatBuffer materialSpecular) {
+	public static void configureLightAndMaterial(GLDriver gl, GLLightingConfiguration lighting) {
 		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
 		gl.glLight(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
 		gl.glLight(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
@@ -362,6 +348,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void drawGroundPlane(GLDriver gl) {
+		// Temporarily disable lighting and depth test
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL.GL_DEPTH_TEST);
 
@@ -376,11 +363,12 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glDisable(GL.GL_BLEND);
 		}
 
+		// Restore lighting and depth test
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glEnable(GL2.GL_LIGHTING);
 	}
 
-	public static void drawFadeQuad(GLDriver gl, FloatBuffer quadVertices) {
+	public static void drawFadeQuad(GLDriver gl) {
 		final int beginFade = (int) (sTick - sCurrentCamTrackStartTick);
 		final int endFade = (int) (sNextCamTrackStartTick - sTick);
 		final int minFade = beginFade < endFade ? beginFade : endFade;
@@ -403,9 +391,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 			gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 			gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-			gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-			gl.glVertexPointer(2, GL.GL_FLOAT, 0, quadVertices);
-			gl.glDrawArrays(GL.GL_TRIANGLES, 0, 6);
+			gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+			sFadeQuad.display(gl);
 			gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
 
 			gl.glModelView();

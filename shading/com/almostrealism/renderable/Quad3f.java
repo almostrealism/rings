@@ -39,6 +39,7 @@
 
 package com.almostrealism.renderable;
 
+import com.jogamp.opengl.GL2;
 import org.almostrealism.algebra.Vector;
 
 /**
@@ -48,7 +49,7 @@ import org.almostrealism.algebra.Vector;
  * @author Kenneth Russell
  */
 // TODO  This should extend RenderableGeometry
-public class Quad3f {
+public class Quad3f implements Renderable {
 	private Vector[] vecs;
 
 	public static final int UPPER_LEFT = 0;
@@ -97,6 +98,17 @@ public class Quad3f {
 		for (int i = 0; i < NUM_VECS; i++) {
 			setVec(i, quad.getVec(i));
 		}
+	}
+
+	public void init(GLDriver gl) { }
+
+	public void display(GLDriver gl) {
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glVertex(vecs[0]);
+		gl.glVertex(vecs[1]);
+		gl.glVertex(vecs[2]);
+		gl.glVertex(vecs[3]);
+		gl.glEnd();
 	}
 
 	/**

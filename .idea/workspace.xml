@@ -3,11 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d075c6b5-58fb-4488-9d40-498f89fbd615" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" afterPath="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java" afterPath="$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,7 +32,7 @@
       <file leaf-file-name="Gear.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
+            <state relative-caret-position="0">
               <caret line="149" column="5" lean-forward="false" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
               <folding />
             </state>
@@ -43,9 +42,31 @@
       <file leaf-file-name="GLDriver.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="103" column="53" lean-forward="false" selection-start-line="103" selection-start-column="53" selection-end-line="103" selection-end-column="53" />
+            <state relative-caret-position="250">
+              <caret line="258" column="73" lean-forward="false" selection-start-line="258" selection-start-column="73" selection-end-line="258" selection-end-column="73" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DefaultGLCanvas.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="220">
+              <caret line="394" column="34" lean-forward="true" selection-start-line="394" selection-start-column="34" selection-end-line="394" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Quad3f.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="341">
+              <caret line="110" column="19" lean-forward="false" selection-start-line="110" selection-start-column="19" selection-end-line="110" selection-end-column="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -53,28 +74,18 @@
       <file leaf-file-name="RenderableGLAdapter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
+            <state relative-caret-position="32">
               <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RenderableGLList.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java">
+      <file leaf-file-name="PinholeCameraAbsorber.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RenderableGeometry.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="49" column="94" lean-forward="false" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
+            <state relative-caret-position="1185">
+              <caret line="105" column="30" lean-forward="false" selection-start-line="105" selection-start-column="30" selection-end-line="105" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -163,7 +174,6 @@
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/network/GtsSceneLoader.java" />
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/network/PlySceneLoader.java" />
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/network/RayTracingJob.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/Renderable.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableMesh.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/TextureManager.java" />
@@ -179,17 +189,18 @@
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/network/JobProducer.java" />
         <option value="$PROJECT_DIR$/engine/com/almostrealism/raytracer/RayTracingServer.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCamera.java" />
-        <option value="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DisplayList.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLList.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/GLMaterial.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/NurbsMoleHill.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
         <option value="$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java" />
-        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/RenderableGLAdapter.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLList.java" />
         <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGeometry.java" />
+        <option value="$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java" />
+        <option value="$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java" />
       </list>
     </option>
   </component>
@@ -199,11 +210,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="width" value="773" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -222,7 +231,9 @@
     </navigator>
     <panes>
       <pane id="AndroidView" />
+      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -331,14 +342,25 @@
             <path>
               <item name="rings" type="b2602c69:ProjectViewProjectNode" />
               <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="shading" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
+              <item name="shade" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rings" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rings" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="almostrealism" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -628,14 +650,8 @@
       <workItem from="1520065211952" duration="20362000" />
       <workItem from="1520214441890" duration="3319000" />
       <workItem from="1520413590067" duration="4121000" />
-      <workItem from="1520740221411" duration="12011000" />
-    </task>
-    <task id="LOCAL-00004" summary="Ray tracing test should emit a jpeg instead of a ppm.">
-      <created>1506116092182</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1506116092182</updated>
+      <workItem from="1520740221411" duration="12602000" />
+      <workItem from="1520983439706" duration="9624000" />
     </task>
     <task id="LOCAL-00005" summary="Default camera is a pinhole camera.">
       <created>1506545240517</created>
@@ -973,7 +989,14 @@
       <option name="project" value="LOCAL" />
       <updated>1520980298720</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Expanding OpenGL support, especially with methods in GLDriver.">
+      <created>1520981497224</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1520981497224</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -982,7 +1005,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="184281000" />
+    <option name="totallyTimeSpent" value="194496000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -1001,7 +1024,6 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37466666" sideWeight="0.49713877" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -1012,7 +1034,6 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31774417" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24394184" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1020,8 +1041,10 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933334" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1065,7 +1088,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Shaders are now using GeneratedColorProducer to record the shader that produced the color. This will allow the diagnostic view in the desktop application to inspect the color pipeline on a per-shader basis." />
     <MESSAGE value="Migrated rigid bodies into rings." />
     <MESSAGE value="PointLight implements Positioned." />
     <MESSAGE value="Modified to match new Light and Texture interface definitions." />
@@ -1090,7 +1112,8 @@
     <MESSAGE value="Added features to PinholeCameraAbsorber." />
     <MESSAGE value="Added GLMaterial to RenderableGLAdapter and RenderableGeometry." />
     <MESSAGE value="Added toString method to Gear." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added toString method to Gear." />
+    <MESSAGE value="Expanding OpenGL support, especially with methods in GLDriver." />
+    <option name="LAST_COMMIT_MESSAGE" value="Expanding OpenGL support, especially with methods in GLDriver." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1143,24 +1166,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GLLightingConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="58" lean-forward="false" selection-start-line="21" selection-start-column="58" selection-end-line="21" selection-end-column="58" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/GroundPlane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/AnimationTrack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1234,14 +1239,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="49" column="46" lean-forward="false" selection-start-line="49" selection-start-column="46" selection-end-line="49" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/VertexData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
@@ -1254,7 +1251,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-499">
           <caret line="18" column="27" lean-forward="true" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1273,7 +1269,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
           <caret line="162" column="21" lean-forward="false" selection-start-line="162" selection-start-column="21" selection-end-line="162" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1323,7 +1318,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="54" column="15" lean-forward="false" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1350,7 +1344,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-436">
           <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1358,7 +1351,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1398,7 +1390,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1407,23 +1398,6 @@
         <state relative-caret-position="103">
           <caret line="45" column="13" lean-forward="false" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-207">
-          <caret line="18" column="7" lean-forward="false" selection-start-line="18" selection-start-column="7" selection-end-line="18" selection-end-column="7" />
-          <folding>
-            <element signature="e#3281#3282#0" expanded="false" />
-            <element signature="e#3328#3329#0" expanded="false" />
-            <element signature="e#3368#3369#0" expanded="false" />
-            <element signature="e#3423#3424#0" expanded="false" />
-            <element signature="e#3464#3465#0" expanded="false" />
-            <element signature="e#3509#3510#0" expanded="false" />
-            <element signature="e#3544#3545#0" expanded="false" />
-            <element signature="e#3597#3598#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1448,18 +1422,18 @@
         <state relative-caret-position="585">
           <caret line="56" column="23" lean-forward="false" selection-start-line="56" selection-start-column="23" selection-end-line="56" selection-end-column="23" />
           <folding>
-            <element signature="e#1133#1134#0" expanded="true" />
-            <element signature="e#1170#1171#0" expanded="true" />
-            <element signature="e#1213#1214#0" expanded="true" />
-            <element signature="e#1260#1261#0" expanded="true" />
-            <element signature="e#1335#1336#0" expanded="true" />
-            <element signature="e#1373#1374#0" expanded="true" />
-            <element signature="e#1417#1418#0" expanded="true" />
-            <element signature="e#1465#1466#0" expanded="true" />
-            <element signature="e#1514#1515#0" expanded="true" />
-            <element signature="e#1551#1552#0" expanded="true" />
-            <element signature="e#1594#1595#0" expanded="true" />
-            <element signature="e#1641#1642#0" expanded="true" />
+            <element signature="e#1133#1134#0" expanded="false" />
+            <element signature="e#1170#1171#0" expanded="false" />
+            <element signature="e#1213#1214#0" expanded="false" />
+            <element signature="e#1260#1261#0" expanded="false" />
+            <element signature="e#1335#1336#0" expanded="false" />
+            <element signature="e#1373#1374#0" expanded="false" />
+            <element signature="e#1417#1418#0" expanded="false" />
+            <element signature="e#1465#1466#0" expanded="false" />
+            <element signature="e#1514#1515#0" expanded="false" />
+            <element signature="e#1551#1552#0" expanded="false" />
+            <element signature="e#1594#1595#0" expanded="false" />
+            <element signature="e#1641#1642#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1492,7 +1466,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
           <caret line="525" column="0" lean-forward="false" selection-start-line="525" selection-start-column="0" selection-end-line="525" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1500,7 +1473,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="123">
           <caret line="508" column="36" lean-forward="false" selection-start-line="508" selection-start-column="36" selection-end-line="508" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1528,34 +1500,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="349" column="74" lean-forward="false" selection-start-line="349" selection-start-column="74" selection-end-line="349" selection-end-column="74" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/gl/models/Gear.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
+        <state relative-caret-position="0">
           <caret line="149" column="5" lean-forward="false" selection-start-line="149" selection-start-column="5" selection-end-line="149" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="103" column="53" lean-forward="false" selection-start-line="103" selection-start-column="53" selection-end-line="103" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -1572,6 +1520,67 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="383">
           <caret line="49" column="94" lean-forward="false" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/almostrealism/Common/0.5-rc/Common-0.5-rc.jar!/org/almostrealism/algebra/VectorMath.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="11" column="27" lean-forward="false" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
+          <folding>
+            <element signature="e#247#248#0" expanded="true" />
+            <element signature="e#300#301#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometry/com/almostrealism/projection/PinholeCameraAbsorber.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1185">
+          <caret line="105" column="30" lean-forward="false" selection-start-line="105" selection-start-column="30" selection-end-line="105" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/RenderableGLAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/GLDriver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="258" column="73" lean-forward="false" selection-start-line="258" selection-start-column="73" selection-end-line="258" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/src.zip!/java/nio/Buffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="355" column="24" lean-forward="false" selection-start-line="355" selection-start-column="24" selection-end-line="355" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/renderable/Quad3f.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="110" column="19" lean-forward="false" selection-start-line="110" selection-start-column="19" selection-end-line="110" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shading/com/almostrealism/gl/DefaultGLCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="394" column="34" lean-forward="true" selection-start-line="394" selection-start-column="34" selection-end-line="394" selection-end-column="34" />
           <folding />
         </state>
       </provider>

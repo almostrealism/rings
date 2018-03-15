@@ -181,6 +181,14 @@ public class GLDriver {
 	}
 
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
+	public void glClearColor(RGBA c) { gl.glClearColor(c.r(), c.g(), c.b(), (float) c.a); }
+	public void glClearDepth(double d) {
+		if (enableDoublePrecision) {
+			gl.glClearDepth(d);
+		} else {
+			gl.glClearDepthf((float) d);
+		}
+	}
 
 	public void glClear(int bits) { gl.glClear(bits); }
 
@@ -247,6 +255,8 @@ public class GLDriver {
 	public void glEndList() { gl.glEndList(); }
 	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
 	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }
+
+	public void glHint(int param, int value) { gl.glHint(param, value); }
 
 	public void glutWireCube(double size) {
 		// TODO  Replace with our own cube code

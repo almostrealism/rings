@@ -51,9 +51,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 
 	protected PinholeCameraAbsorber(double fNum, double focalLength,
 								double norm[], double orient[]) {
-		this.plane = new AbsorptionPlane();
-		this.plane.setSurfaceNormal(VectorMath.clone(norm));
-		this.plane.setOrientation(VectorMath.clone(orient));
+		initPlane(norm, orient);
 		
 		this.pinhole = new Pinhole();
 		this.pinhole.setRadius(focalLength / (2.0 * fNum));
@@ -74,6 +72,14 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 		double norm[] = pinhole.getSurfaceNormal();
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
 	}
+
+	protected void initPlane(double norm[], double orient[]) {
+		if (this.plane == null) {
+			this.plane = new AbsorptionPlane();
+			this.plane.setSurfaceNormal(VectorMath.clone(norm));
+			this.plane.setOrientation(VectorMath.clone(orient));
+		}
+	}
 	
 	public void setWidth(int w) { this.plane.setWidth(w); }
 	public void setHeight(int h) { this.plane.setHeight(h); }
@@ -88,6 +94,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 	public Vector getLocation() { return this.location; }
 
 	public void setViewingDirection(Vector v) {
+		initPlane(v.toArray(), new double[3]);
 		this.plane.setSurfaceNormal(v.toArray());
 	}
 
@@ -96,6 +103,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 	}
 
 	public void setUpDirection(Vector v) {
+		initPlane(new double[3], v.toArray());
 		this.plane.setOrientation(v.toArray());
 	}
 
