@@ -40,7 +40,10 @@
 package com.almostrealism.renderable;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.GLBuffers;
 import org.almostrealism.algebra.Vector;
+
+import java.nio.FloatBuffer;
 
 /**
  * A quadrilateral in which the vertices are three-dimensional
@@ -50,14 +53,15 @@ import org.almostrealism.algebra.Vector;
  */
 // TODO  This should extend RenderableGeometry
 public class Quad3f implements Renderable {
-	private Vector[] vecs;
-
 	public static final int UPPER_LEFT = 0;
 	public static final int LOWER_LEFT = 1;
 	public static final int LOWER_RIGHT = 2;
 	public static final int UPPER_RIGHT = 3;
 
 	private static final int NUM_VECS = 4;
+
+	private Vector[] vecs;
+	private FloatBuffer vertBuf;
 
 	/**
 	 * Constructs a {@link Quad3f} in which all the {@link Vector}s are set to the
@@ -93,6 +97,21 @@ public class Quad3f implements Renderable {
 		return vecs[which];
 	}
 
+	public FloatBuffer getVertexBuffer() {
+		if (vertBuf == null) {
+			vertBuf = GLBuffers.newDirectFloatBuffer(12);
+			vertBuf.put(
+					new float[] {
+							(float) vecs[0].getX(), (float) vecs[0].getY(), (float) vecs[0].getZ(),
+							(float) vecs[1].getX(), (float) vecs[1].getY(), (float) vecs[1].getZ(),
+							(float) vecs[2].getX(), (float) vecs[2].getY(), (float) vecs[2].getZ(),
+							(float) vecs[3].getX(), (float) vecs[3].getY(), (float) vecs[3].getZ()
+					});
+		}
+
+		return vertBuf;
+	}
+
 	/** Sets all four points of this quadrilateral. */
 	public void set(Quad3f quad) {
 		for (int i = 0; i < NUM_VECS; i++) {
@@ -105,9 +124,9 @@ public class Quad3f implements Renderable {
 	public void display(GLDriver gl) {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glVertex(vecs[0]);
+		gl.glVertex(vecs[3]);
 		gl.glVertex(vecs[1]);
 		gl.glVertex(vecs[2]);
-		gl.glVertex(vecs[3]);
 		gl.glEnd();
 	}
 

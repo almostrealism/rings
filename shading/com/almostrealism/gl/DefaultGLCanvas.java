@@ -65,8 +65,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static long sNextCamTrackStartTick = 0x7fffffff;
 
 	private static GroundPlane sGroundPlane;
-
-	private static Quad3f sFadeQuad;
+	private static Quad3f sFadeQuad; // TODO  Use this quad instead of the buffer;
+	private static FloatBuffer quadBuf;
 
 	private GLLightingConfiguration lighting;
 
@@ -120,6 +120,16 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 								new Vector(-1.0, -1.0, 1.0),
 								new Vector(1.0, -1.0, 1.0),
 								new Vector(1.0,-1.0, 1.0));
+		quadBuf = GLBuffers.newDirectFloatBuffer(12);
+		quadBuf.put(new float[] {
+				-1.0f, -1.0f,
+				1.0f, -1.0f,
+				-1.0f, 1.0f,
+				1.0f, -1.0f,
+				1.0f, 1.0f,
+				-1.0f, 1.0f
+		});
+		quadBuf.flip();
 	}
 
 	@Override
@@ -391,8 +401,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 			gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 			gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-			gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-			sFadeQuad.display(gl);
+			gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+			gl.glVertexPointer(2, GL.GL_FLOAT, 0, quadBuf);
+			gl.glDrawArrays(GL.GL_TRIANGLES, 0, 6);
 			gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
 
 			gl.glModelView();
