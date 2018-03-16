@@ -34,25 +34,27 @@ import com.almostrealism.raytracer.primitives.Sphere;
 public class SurfaceCanvasTest {
 	@Test
 	public void test() {
-		PinholeCamera camera = new PinholeCamera();
-		camera.setLocation(new Vector(0.0, 0.0, -40.0));
-		
-		Scene<ShadableSurface> scene = new Scene<ShadableSurface>();
-		scene.setCamera(camera);
-		
-		Sphere s = new Sphere(2.0);
-		s.setColor(RGB.gray(0.8));
-		scene.add(new Sphere(2.0));
-		
+		Scene<ShadableSurface> scene = new Scene<>();
+		scene.setCamera(new PinholeCamera());
+
+//		scene.add(new Sphere(1.0));
+		scene.add(new Sphere(new Vector(-5, 0, 0), 1));
+		scene.add(new Sphere(new Vector(5, 0, 0), 3));
+//		scene.add(new Sphere(10));
+
 		SurfaceCanvas c = new SurfaceCanvas(scene);
+		c.autoPositionCamera();
 		
 		JFrame frame = new JFrame("Test");
-		frame.setSize(300, 300);
+		frame.setSize(400, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(c);
 		frame.setVisible(true);
 		
 		c.start();
 	}
 	
-	public static void main(String args[]) { new SurfaceCanvasTest().test(); }
+	public static void main(String args[]) {
+		new SurfaceCanvasTest().test();
+	}
 }

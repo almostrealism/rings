@@ -32,6 +32,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.SurfaceGroup;
@@ -93,7 +94,17 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	public boolean getShadeBack() {
 		return this.surface.getShadeBack();
 	}
-	
+
+	/**
+	 * Returns the value returned by the calculateBoundingSolid() method of the underlying AbstractSurface
+	 * stored by this AbstractSurfaceUI.
+	 */
+	@Override
+	public BoundingSolid calculateBoundingSolid()
+	{
+		return null;
+	}
+
 	/** Sets the name of this AbstractSurfaceUI to the specified String. */
 	public void setName(String name) {
 		this.name = name;
