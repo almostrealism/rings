@@ -40,6 +40,8 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	public SurfaceCanvas(Scene<ShadableSurface> scene) {
 		this.scene = scene;
 	}
+
+	public Scene<ShadableSurface> getScene() { return scene; }
 	
 	@Override
 	public PinholeCamera getCamera() { return (PinholeCamera) scene.getCamera(); }

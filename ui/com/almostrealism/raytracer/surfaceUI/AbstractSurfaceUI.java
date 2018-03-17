@@ -102,7 +102,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	@Override
 	public BoundingSolid calculateBoundingSolid()
 	{
-		return null;
+		return this.surface.calculateBoundingSolid();
 	}
 
 	/** Sets the name of this AbstractSurfaceUI to the specified String. */
