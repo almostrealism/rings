@@ -266,7 +266,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		doView(gl);
 
 		// Update the camera position and set the lookat.
-		camTrack(gl); // TODO  Restore camera tracking, but actually modify the camera
+//		camTrack(gl); // TODO  Restore camera tracking, but actually modify the camera
 
 		// Configure environment.
 		configureLightAndMaterial(gl, lighting);
