@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.almostrealism.renderable.GLDriver;
-import com.almostrealism.renderable.Quad3f;
+import com.almostrealism.renderable.Quad3;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 
@@ -65,7 +65,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static long sNextCamTrackStartTick = 0x7fffffff;
 
 	private static GroundPlane sGroundPlane;
-	private static Quad3f sFadeQuad; // TODO  Use this quad instead of the buffer;
+	private static Quad3 sFadeQuad; // TODO  Use this quad instead of the buffer;
 	private static FloatBuffer quadBuf;
 
 	private GLLightingConfiguration lighting;
@@ -89,7 +89,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		renderables = new ArrayList<>();
 
-		animator = new FPSAnimator(20);
+		animator = new FPSAnimator(200);
 		animator.add(this);
 		addGLEventListener(this);
 		addMouseListener(this);
@@ -116,7 +116,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static void sInit(GLDriver gl) {
 		cComps = gl.isGLES1() ? 4 : 3;
 		sGroundPlane = new GroundPlane(gl);
-		sFadeQuad = new Quad3f(new Vector(-1.0, -1.0, 1.0),
+		sFadeQuad = new Quad3(new Vector(-1.0, -1.0, 1.0),
 								new Vector(-1.0, -1.0, 1.0),
 								new Vector(1.0, -1.0, 1.0),
 								new Vector(1.0,-1.0, 1.0));
@@ -148,18 +148,24 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
 		System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
-		float pos[] = {5000.0f, 5000.0f, 5000.0f, 0.0f};
+		gl.glEnable(GL2ES1.GL_NORMALIZE);
+		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glDisable(GL.GL_CULL_FACE);
+		gl.glCullFace(GL.GL_BACK);
+		gl.glShadeModel(GL2.GL_FLAT);
 
-		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
-		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_LIGHT0);
-		gl.glEnable(GL2.GL_DEPTH_TEST);
-		gl.glEnable(GL2.GL_AUTO_NORMAL);
+		gl.glEnable(GL2.GL_LIGHT1);
+		gl.glEnable(GL2.GL_LIGHT2);
+
+		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+
+		DefaultGLCanvas.sStartTick = System.currentTimeMillis();
+		DefaultGLCanvas.frames = 0;
 
 		initRenderables(gl);
-
-		gl.glEnable(GL2.GL_NORMALIZE);
 	}
 
 	protected void initRenderables(GLDriver gl) {
@@ -260,7 +266,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		doView(gl);
 
 		// Update the camera position and set the lookat.
-//		camTrack(gl); TODO  Restore camera tracking, but actually modify the camera
+		camTrack(gl); // TODO  Restore camera tracking, but actually modify the camera
 
 		// Configure environment.
 		configureLightAndMaterial(gl, lighting);

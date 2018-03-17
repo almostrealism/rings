@@ -52,7 +52,7 @@ import java.nio.FloatBuffer;
  * @author Kenneth Russell
  */
 // TODO  This should extend RenderableGeometry
-public class Quad3f implements Renderable {
+public class Quad3 implements Renderable {
 	public static final int UPPER_LEFT = 0;
 	public static final int LOWER_LEFT = 1;
 	public static final int LOWER_RIGHT = 2;
@@ -64,10 +64,10 @@ public class Quad3f implements Renderable {
 	private FloatBuffer vertBuf;
 
 	/**
-	 * Constructs a {@link Quad3f} in which all the {@link Vector}s are set to the
+	 * Constructs a {@link Quad3} in which all the {@link Vector}s are set to the
 	 * origin.
 	 */
-	public Quad3f() {
+	public Quad3() {
 		vecs = new Vector[NUM_VECS];
 
 		for (int i = 0; i < NUM_VECS; i++) {
@@ -76,10 +76,10 @@ public class Quad3f implements Renderable {
 	}
 
 	/**
-	 * Constructs a {@link Quad3f} in which the {@link Vector}s are set to the
+	 * Constructs a {@link Quad3} in which the {@link Vector}s are set to the
 	 * specified values.
 	 */
-	public Quad3f(Vector upperLeft, Vector lowerLeft, Vector lowerRight, Vector upperRight) {
+	public Quad3(Vector upperLeft, Vector lowerLeft, Vector lowerRight, Vector upperRight) {
 		this();
 		setVec(0, upperLeft);
 		setVec(1, lowerLeft);
@@ -113,7 +113,7 @@ public class Quad3f implements Renderable {
 	}
 
 	/** Sets all four points of this quadrilateral. */
-	public void set(Quad3f quad) {
+	public void set(Quad3 quad) {
 		for (int i = 0; i < NUM_VECS; i++) {
 			setVec(i, quad.getVec(i));
 		}
@@ -134,8 +134,8 @@ public class Quad3f implements Renderable {
 	 * Returns a newly-constructed Quad2f in which all vertices have
 	 * been multiplied in scalar fashion by the passed value.
 	 */
-	public Quad3f times(float val) {
-		return new Quad3f(getVec(0).multiply(val),
+	public Quad3 times(float val) {
+		return new Quad3(getVec(0).multiply(val),
 				getVec(1).multiply(val),
 				getVec(2).multiply(val),
 				getVec(3).multiply(val));
@@ -145,8 +145,8 @@ public class Quad3f implements Renderable {
 	 * Returns a newly-constructed Quad2f in which the vertices are the
 	 * component-wise sums of this quad and the passed quad.
 	 */
-	public Quad3f plus(Quad3f val) {
-		return new Quad3f(getVec(0).add(val.getVec(0)),
+	public Quad3 plus(Quad3 val) {
+		return new Quad3(getVec(0).add(val.getVec(0)),
 				getVec(1).add(val.getVec(1)),
 				getVec(2).add(val.getVec(2)),
 				getVec(3).add(val.getVec(3)));

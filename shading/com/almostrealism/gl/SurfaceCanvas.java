@@ -58,8 +58,10 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	public void eventFired(Event event) {
 		// TODO  Handle light events
 
+		System.out.println("SurfaceCanvas.eventFired");
+
 		if (event instanceof SurfaceAddEvent) {
-			renderables.add(RenderableSurfaceFactory.createRenderableSurface(((SurfaceEvent) event).getTarget()));
+			add(RenderableSurfaceFactory.createRenderableSurface(((SurfaceEvent) event).getTarget()));
 		} else if (event instanceof SurfaceRemoveEvent) {
 			Iterator<Renderable> itr = renderables.iterator();
 

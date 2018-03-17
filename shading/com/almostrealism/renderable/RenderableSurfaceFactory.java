@@ -16,6 +16,7 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.raytracer.primitives.SurfaceUI;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
@@ -25,6 +26,8 @@ public class RenderableSurfaceFactory {
 	public static Renderable createRenderableSurface(ShadableSurface s) {
 		if (s instanceof Renderable) {
 			return (Renderable) s;
+		} else if (s instanceof SurfaceUI) {
+			return createRenderableSurface(((SurfaceUI) s).getSurface());
 		} else if (s instanceof Sphere) {
 			return new RenderableSphere((Sphere) s);
 		} else if (s instanceof Mesh) {

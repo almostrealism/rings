@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
 import org.almostrealism.algebra.Vector;
@@ -64,14 +65,14 @@ public class RayTracingTest {
 
 		Plane p = new Plane(Plane.XY);
 		p.setLocation(new Vector(0, 0, 1));
-		p.setShadeBack(true);
-		p.setShadeFront(true);
 //		scene.add(p);
 
 		for (ShadableSurface s : scene) {
 			if (s instanceof AbstractSurface) {
 				((AbstractSurface) s).setShadeFront(true);
 				((AbstractSurface) s).setShadeBack(true);
+				if (((AbstractSurface) s).getShaderSet().size() <= 0)
+					((AbstractSurface) s).addShader(new DiffuseShader());
 			}
 
 			if (s instanceof Plane) {
@@ -86,10 +87,14 @@ public class RayTracingTest {
 
 		scene.addLight(new PointLight(new Vector(00.0, 10.0, -1.0), 1.0, new RGB(0.8, 0.9, 0.7)));
 
-//		PinholeCamera c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
-//											new Vector(0.0, 1.0, 1.0),
-//											new Vector(0.0, 1.0, 0.0));
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
+		if (c == null) {
+			c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
+								new Vector(0.0, 1.0, 1.0),
+								new Vector(0.0, 1.0, 0.0));
+			scene.setCamera(c);
+		}
+
 		c.setViewDirection(new Vector(0.0, -0.05, 1.0));
 		c.setProjectionDimensions(50, 45);
 		c.setFocalLength(400);

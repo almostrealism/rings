@@ -48,8 +48,8 @@ public class LightingEngine {
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[],
-											   RGB fog, double fd, double fr, ShaderContext p) {
+	public ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces,
+										Light allLights[], RGB fog, double fd, double fr, ShaderContext p) {
 		fields.setParameter(Ray.class, r);
 		ContinuousField intersect = fields.construct();
 		

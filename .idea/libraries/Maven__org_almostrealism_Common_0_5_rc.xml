@@ -8,6 +8,8 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/almostrealism/Common/0.5-rc/Common-0.5-rc-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/../common/src" />
+      <root url="file://$PROJECT_DIR$/../common/src" />
     </SOURCES>
   </library>
 </component>

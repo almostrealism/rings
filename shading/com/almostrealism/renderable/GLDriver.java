@@ -250,6 +250,8 @@ public class GLDriver {
 		glu.gluPerspective(45f, width / height, ((PinholeCamera) c).getFocalLength(), (float) Math.pow(10, 9)); // TODO  Compute vertical fov from camera
 	}
 
+	public void glCullFace(int param) { gl.glCullFace(param); }
+
 	public void glFlush() { gl.glFlush(); }
 	public int glEnd() { gl.glEnd(); return begins.pop(); }
 	public void glEndList() { gl.glEndList(); }
