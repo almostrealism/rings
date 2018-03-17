@@ -16,6 +16,7 @@
 
 package com.almostrealism.gl;
 
+import com.almostrealism.projection.CameraPositioner;
 import com.almostrealism.raytracer.SurfaceAddEvent;
 import com.almostrealism.raytracer.SurfaceRemoveEvent;
 import com.almostrealism.raytracer.event.SurfaceEvent;
@@ -74,5 +75,11 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 				}
 			}
 		}
+	}
+
+	public void autoPositionCamera() {
+		CameraPositioner cameraPositioner = new CameraPositioner(getCamera(), scene);
+		getCamera().setLocation(cameraPositioner.getLocation());
+		getCamera().setViewingDirection(cameraPositioner.getViewingDirection());
 	}
 }

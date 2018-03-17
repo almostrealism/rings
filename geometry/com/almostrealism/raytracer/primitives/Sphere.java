@@ -25,6 +25,7 @@ import org.almostrealism.graph.Mesh;
 import org.almostrealism.relation.Constant;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 
@@ -173,5 +174,12 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	@Override
 	public Operator<Scalar> expect() {
 		return new Constant<>(new Scalar(1.0));
+	}
+
+	@Override
+	public BoundingSolid calculateBoundingSolid() {
+		Vector c = getLocation();
+		double r = getSize();
+		return new BoundingSolid(c.getX()-r, c.getX()+r, c.getY()-r, c.getY()+r, c.getZ()-r, c.getZ()+r);
 	}
 }

@@ -33,7 +33,7 @@ public class RenderableSphere extends RenderableGeometry {
 				super.init(gl);
 				gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 				initMaterial(gl);
-				gl.glutSolidSphere(1, 40, 40);
+				gl.glutSolidSphere(s.getSize(), 40, 40);
 				gl.glEndList();
 			}
 		};
