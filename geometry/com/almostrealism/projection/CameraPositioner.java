@@ -14,6 +14,7 @@ public class CameraPositioner {
     private final Scene scene;
 
     private Vector location;
+    private Vector direction;
 
     public CameraPositioner(PinholeCamera camera, Scene scene) {
         this.camera = camera;
@@ -26,8 +27,8 @@ public class CameraPositioner {
         BoundingSolid sceneBounds = scene.calculateBoundingSolid();
         Vector sceneMidpoint = (Vector) sceneBounds.center;
         double sceneBoundingRadius = Math.sqrt(Math.pow(sceneBounds.dx/2, 2) +
-                                               Math.pow(sceneBounds.dy/2, 2) +
-                                               Math.pow(sceneBounds.dz/2, 2));
+                Math.pow(sceneBounds.dy/2, 2) +
+                Math.pow(sceneBounds.dz/2, 2));
 
         // Buffer
         sceneBoundingRadius *= 1.5;
@@ -40,7 +41,11 @@ public class CameraPositioner {
         // Camera distance
         double distance = sceneBoundingRadius / Math.sin(Math.min(horizontalFov, verticalFov));
 
+        // I think this should be .add(), but camera axis moves seem to be opposite.
         location = new Vector(0, 0, distance).subtract(sceneMidpoint);
+
+        // Direction doesn't appear to have an effect at the moment.
+        direction = sceneMidpoint.add(location);    // Add instead of subtract due to the inverted axis.
     }
 
     public Vector getLocation() {
@@ -48,6 +53,6 @@ public class CameraPositioner {
     }
 
     public Vector getViewingDirection() {
-        return new Vector(0,0,1);
+        return direction;
     }
 }
