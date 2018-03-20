@@ -5,7 +5,7 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.Scene;
 
 /**
- * Auto position the camera along the z axis to view the whole scene.
+ * Auto positions the camera along the -z axis to view the whole scene.
  *
  * @author Dan Chivers
  */
@@ -29,9 +29,6 @@ public class CameraPositioner {
         double sceneBoundingRadius = Math.sqrt(Math.pow(sceneBounds.dx/2, 2) +
                 Math.pow(sceneBounds.dy/2, 2) +
                 Math.pow(sceneBounds.dz/2, 2));
-
-        // Buffer
-        sceneBoundingRadius *= 1.5;
 
         // FOVs
         double[] fovs = camera.getFOV();

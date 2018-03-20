@@ -34,13 +34,16 @@ import com.almostrealism.raytracer.primitives.Sphere;
 public class SurfaceCanvasTest {
 	@Test
 	public void test() {
+		PinholeCamera camera = new PinholeCamera();
 		Scene<ShadableSurface> scene = new Scene<>();
-		scene.setCamera(new PinholeCamera());
+		scene.setCamera(camera);
 
-//		scene.add(new Sphere(1.0));
-		scene.add(new Sphere(new Vector(-5, 0, 0), 1));
-		scene.add(new Sphere(new Vector(5, 0, 0), 3));
-//		scene.add(new Sphere(10));
+		// 36 x 24mm film & 50mm focal length.
+		camera.setProjectionDimensions(36, 24);
+		camera.setFocalLength(50);
+
+		scene.add(new Sphere(3000));
+		scene.add(new Sphere(new Vector(5067.08, 4135.99, 814.61), 1000));
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);
 		c.autoPositionCamera();
