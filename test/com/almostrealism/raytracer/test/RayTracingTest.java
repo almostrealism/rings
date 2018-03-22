@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
@@ -30,7 +31,7 @@ public class RayTracingTest {
 	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
 	public static boolean displaySpheres = true;
-	public static boolean displayDragon = false;
+	public static boolean displayDragon = true;
 
 	public static void main(String args[]) throws IOException {
  		Scene<ShadableSurface> scene = useCornellBox ?
@@ -101,6 +102,8 @@ public class RayTracingTest {
 		Vector l = c.getLocation();
 		l.setZ(-60);
 		c.setLocation(l);
+
+		new SurfaceCanvas(scene).autoPositionCamera();
 
 		RenderParameters params = new RenderParameters();
 		params.width = (int) (c.getProjectionWidth() * 10);

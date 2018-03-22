@@ -22,6 +22,7 @@ import com.almostrealism.raytracer.SurfaceRemoveEvent;
 import com.almostrealism.raytracer.event.SurfaceEvent;
 import com.almostrealism.renderable.GLDriver;
 import com.almostrealism.renderable.RenderableGeometry;
+import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -32,12 +33,24 @@ import com.jogamp.opengl.GL2;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
+import java.io.InputStream;
 import java.util.Iterator;
 
 public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	private Scene<ShadableSurface> scene;
 	
 	public SurfaceCanvas(Scene<ShadableSurface> scene) {
+		this.scene = scene;
+	}
+
+	public SurfaceCanvas(Scene<ShadableSurface> scene, Texture skydome) {
+		super(skydome);
+		this.scene = scene;
+	}
+
+	public SurfaceCanvas(Scene<ShadableSurface> scene, ClassLoader scope,
+						 String basename, String suffix, boolean mipmapped) {
+		super(scope, basename, suffix, mipmapped);
 		this.scene = scene;
 	}
 
@@ -60,8 +73,6 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	@Override
 	public void eventFired(Event event) {
 		// TODO  Handle light events
-
-		System.out.println("SurfaceCanvas.eventFired");
 
 		if (event instanceof SurfaceAddEvent) {
 			add(RenderableSurfaceFactory.createRenderableSurface(((SurfaceEvent) event).getTarget()));

@@ -18,8 +18,11 @@ package com.almostrealism.gl.test;
 
 import javax.swing.JFrame;
 
+import com.almostrealism.gl.DefaultGLCanvas;
+import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.graph.io.PlyResource;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.junit.Test;
@@ -28,21 +31,27 @@ import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.primitives.Sphere;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 /**
  * @author  Michael Murray
  */
 public class SurfaceCanvasTest {
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(new PinholeCamera());
 
-//		scene.add(new Sphere(1.0));
+		PlyResource p = new PlyResource(new File("dragon.ply"));
+		PlyResource.MeshReader t = new PlyResource.MeshReader();
+
+//		scene.add(t.transcode(p).getMesh());
 		scene.add(new Sphere(new Vector(-5, 0, 0), 1));
 		scene.add(new Sphere(new Vector(5, 0, 0), 3));
-//		scene.add(new Sphere(10));
 
-		SurfaceCanvas c = new SurfaceCanvas(scene);
+		SurfaceCanvas c = new SurfaceCanvas(scene, getClass().getClassLoader(),"uffizi_","png",true);
 		c.autoPositionCamera();
 		
 		JFrame frame = new JFrame("Test");
@@ -54,7 +63,7 @@ public class SurfaceCanvasTest {
 		c.start();
 	}
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		new SurfaceCanvasTest().test();
 	}
 }

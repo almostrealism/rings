@@ -107,9 +107,14 @@ public class GLDriver {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, buf);
 	}
 
+	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
+	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
+
 	public void enableTexture(Texture t) { t.enable(gl); }
 
 	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
+
+	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
 
 	public void glVertex(Vector v) {
 		if (enableDoublePrecision) {

@@ -22,17 +22,25 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.almostrealism.renderable.GLDriver;
 import com.almostrealism.renderable.Quad3;
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 
 import com.jogamp.opengl.math.FixedPoint;
 import com.jogamp.opengl.util.GLBuffers;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.BasicGeometry;
 
@@ -43,6 +51,14 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
 																MouseMotionListener, KeyListener {
+	private static final String[] suffixes = {"posx", "negx", "posy", "negy", "posz", "negz"};
+	private static final int[] targets = {GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+			GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+			GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+			GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+			GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+			GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+
 	public static final boolean enableProjection = false;
 	public static final boolean enableBlending = true;
 	public static final boolean enableCamTrackFade = false;
@@ -68,6 +84,12 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private static Quad3 sFadeQuad; // TODO  Use this quad instead of the buffer;
 	private static FloatBuffer quadBuf;
 
+	private Texture skydome;
+	private ClassLoader skydomeScope;
+	private String skydomeBasename;
+	private String skydomeSuffix;
+	private boolean skydomeMipmapped;
+
 	private GLLightingConfiguration lighting;
 
 	private int swapInterval;
@@ -78,6 +100,38 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int prevMouseX, prevMouseY;
 
 	public DefaultGLCanvas() {
+		this((Texture) null);
+	}
+
+	public DefaultGLCanvas(Texture skydome) {
+		this.skydome = skydome;
+		lighting = new GLLightingConfiguration();
+
+		seedRandom(15);
+
+		width = 0;
+		height = 0;
+		x = 0;
+		y = 0;
+
+		renderables = new ArrayList<>();
+
+		animator = new FPSAnimator(200);
+		animator.add(this);
+		addGLEventListener(this);
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addKeyListener(this);
+		swapInterval = 1;
+	}
+
+	public DefaultGLCanvas(ClassLoader scope,
+							String basename,
+							String suffix, boolean mipmapped) {
+		this.skydomeScope = scope;
+		this.skydomeBasename = basename;
+		this.skydomeSuffix = suffix;
+		this.skydomeMipmapped = mipmapped;
 		lighting = new GLLightingConfiguration();
 
 		seedRandom(15);
@@ -105,6 +159,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public void reset() { toReset = true; }
 
 	public void removeAll() { renderables.clear(); }
+
+	public List<Renderable> getRenderables() { return renderables; }
 
 	public abstract PinholeCamera getCamera();
 
@@ -164,6 +220,14 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		DefaultGLCanvas.sStartTick = System.currentTimeMillis();
 		DefaultGLCanvas.frames = 0;
+
+		if (this.skydomeBasename != null) {
+			try {
+				this.skydome = loadFromStreams(gl2, skydomeScope, skydomeBasename, skydomeSuffix, skydomeMipmapped);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		initRenderables(gl);
 	}
@@ -268,6 +332,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// Update the camera position and set the lookat.
 //		camTrack(gl); // TODO  Restore camera tracking, but actually modify the camera
 
+		drawSkydome(gl);
+
 		// Configure environment.
 		configureLightAndMaterial(gl, lighting);
 
@@ -361,6 +427,54 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			r.display(gl);
 			System.out.println("Done rendering " + r);
 		}
+	}
+
+	public void drawSkydome(GLDriver gl) {
+		if (skydome == null) return;
+
+		gl.glDisable(GL.GL_DEPTH_TEST);
+
+		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+		gl.glLoadIdentity();
+
+		gl.glActiveTexture(GL.GL_TEXTURE1);
+		gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
+
+		gl.glActiveTexture(GL.GL_TEXTURE0);
+		gl.bindTexture(skydome);
+		gl.enableTexture(skydome);
+
+		// This is a workaround for a driver bug on Mac OS X where the
+		// normals are not being sent down to the hardware in
+		// GL_NORMAL_MAP texgen mode. Temporarily enabling lighting
+		// causes the normals to be sent down. Thanks to Ken Dyke.
+		gl.glEnable(GL2ES1.GL_LIGHTING);
+
+		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+
+		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
+
+		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+
+		gl.glMatrixMode(GL.GL_TEXTURE);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+
+		gl.glutSolidSphere(5.0, 40, 20);
+
+		gl.glDisable(GL2ES1.GL_LIGHTING);
+
+		gl.glPopMatrix();
+		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+
+		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_T);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_R);
+		gl.glEnable(GL.GL_DEPTH_TEST);
 	}
 
 	public static void drawGroundPlane(GLDriver gl) {
@@ -502,5 +616,35 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static int randomUInt() {
 		sRandomSeed = sRandomSeed * 0x343fd + 0x269ec3;
 		return Math.abs((int) (sRandomSeed >> 16));
+	}
+
+	public static Texture loadFromStreams(GL gl,
+										  ClassLoader scope,
+										  String basename,
+										  String suffix, boolean mipmapped) throws IOException, GLException {
+		Texture cubemap = TextureIO.newTexture(GL.GL_TEXTURE_CUBE_MAP);
+
+		for (int i = 0; i < suffixes.length; i++) {
+			String resourceName = basename + suffixes[i] + "." + suffix;
+
+			URL r = scope.getResource(resourceName);
+
+			InputStream in;
+			if (r == null) {
+				in = new FileInputStream("resources/" + resourceName);
+			} else {
+				in = r.openStream();
+			}
+
+			TextureData data = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(),
+											in, mipmapped, IOUtil.getFileSuffix(resourceName));
+			if (data == null) {
+				throw new IOException("Unable to load texture " + resourceName);
+			}
+
+			cubemap.updateImage(gl, data, targets[i]);
+		}
+
+		return cubemap;
 	}
 }

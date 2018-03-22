@@ -53,6 +53,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		Future<ColorProducer> image[][] = new Future[p.dx][p.dy];
 		
 		for (int i = p.x; i < (p.x + p.dx); i++) {
+			System.out.println("RayTracedScene: Realizing col " + i);
 			for (int j = p.y; j < (p.y + p.dy); j++) {
 				for (int k = 0; k < p.ssWidth; k++)
 				for (int l = 0; l < p.ssHeight; l++) {
@@ -60,8 +61,6 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 					double q = j + ((double) l / (double) p.ssHeight);
 					
 					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-//					RGB color = LegacyRayTracingEngine.lightingCalculation(ray, data, data.getLights(),
-//										p.fogColor, p.fogDensity, p.fogRatio, null).evaluate(null);
 					
 					Future<ColorProducer> color = tracer.trace(ray.getOrigin(), ray.getDirection());
 					

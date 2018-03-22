@@ -46,6 +46,6 @@ public class RenderableMesh extends RenderableGeometry implements WebGLRenderabl
 	}
 	
 	private static TriangleDisplayList createDisplayList(Mesh m) {
-		return new TriangleDisplayList(m);
+		return new TriangleDisplayList(m.triangles());
 	}
 }
