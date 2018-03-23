@@ -18,11 +18,8 @@ package com.almostrealism.gl.test;
 
 import javax.swing.JFrame;
 
-import com.almostrealism.gl.DefaultGLCanvas;
-import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.graph.io.PlyResource;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.junit.Test;
@@ -31,39 +28,36 @@ import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.primitives.Sphere;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 /**
  * @author  Michael Murray
  */
 public class SurfaceCanvasTest {
 	@Test
-	public void test() throws IOException {
+	public void test() {
+		PinholeCamera camera = new PinholeCamera();
 		Scene<ShadableSurface> scene = new Scene<>();
-		scene.setCamera(new PinholeCamera());
+		scene.setCamera(camera);
 
-		PlyResource p = new PlyResource(new File("dragon.ply"));
-		PlyResource.MeshReader t = new PlyResource.MeshReader();
+		// 36 x 24mm film & 50mm focal length.
+		camera.setProjectionDimensions(36, 24);
+		camera.setFocalLength(50);
 
-//		scene.add(t.transcode(p).getMesh());
-		scene.add(new Sphere(new Vector(-5, 0, 0), 1));
-		scene.add(new Sphere(new Vector(5, 0, 0), 3));
+		scene.add(new Sphere(3000));
+		scene.add(new Sphere(new Vector(5067.08, 4135.99, 814.61), 1000));
 
-		SurfaceCanvas c = new SurfaceCanvas(scene, getClass().getClassLoader(),"uffizi_","png",true);
+		SurfaceCanvas c = new SurfaceCanvas(scene);
 		c.autoPositionCamera();
-		
+
 		JFrame frame = new JFrame("Test");
 		frame.setSize(400, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(c);
 		frame.setVisible(true);
-		
+
 		c.start();
 	}
-	
-	public static void main(String args[]) throws IOException {
+
+	public static void main(String args[]) {
 		new SurfaceCanvasTest().test();
 	}
 }
