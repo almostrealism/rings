@@ -23,6 +23,7 @@ import com.almostrealism.raytracer.event.SurfaceEvent;
 import com.almostrealism.renderable.GLDriver;
 import com.almostrealism.renderable.RenderableGeometry;
 import com.jogamp.opengl.util.texture.Texture;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -91,7 +92,11 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	}
 
 	public void autoPositionCamera() {
-		CameraPositioner cameraPositioner = new CameraPositioner(getCamera(), scene);
+		autoPositionCamera(new Vector(0,0,-1));
+	}
+
+	public void autoPositionCamera(Vector cameraDirection) {
+		CameraPositioner cameraPositioner = new CameraPositioner(getCamera(), scene, cameraDirection);
 		getCamera().setLocation(cameraPositioner.getLocation());
 		getCamera().setViewingDirection(cameraPositioner.getViewingDirection());
 	}

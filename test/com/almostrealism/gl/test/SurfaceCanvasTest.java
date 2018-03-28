@@ -42,14 +42,16 @@ public class SurfaceCanvasTest {
 		camera.setProjectionDimensions(36, 24);
 		camera.setFocalLength(50);
 
-		scene.add(new Sphere(3000));
-		scene.add(new Sphere(new Vector(5067.08, 4135.99, 814.61), 1000));
+		scene.add(new Sphere(new Vector(0, 1000, 0), 50));
+		scene.add(new Sphere(new Vector(200, 1000, 0), 50));
+		scene.add(new Sphere(new Vector(200, 1200, 0), 50));
+		scene.add(new Sphere(new Vector(200, 1200, 200), 50));
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);
-		c.autoPositionCamera();
+		c.autoPositionCamera(new Vector(-1,-0.5,-1));
 
 		JFrame frame = new JFrame("Test");
-		frame.setSize(400, 300);
+		frame.setSize(670, 480);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(c);
 		frame.setVisible(true);

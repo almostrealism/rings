@@ -239,20 +239,29 @@ public class GLDriver {
 	}
 
 	public void glProjection(Camera c) {
-		if (c instanceof OrthographicCamera == false) return;
-		Vector loc = ((OrthographicCamera) c).getLocation();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+
+		if (c instanceof PinholeCamera) {
+			PinholeCamera camera = (PinholeCamera) c;
+
+			float width = (float) camera.getProjectionWidth();
+			float height = (float) camera.getProjectionHeight();
+			glu.gluPerspective(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
+		}
+
+		if (c instanceof OrthographicCamera) {
+			OrthographicCamera camera = (OrthographicCamera) c;
+
+			Vector cameraLocation = camera.getLocation();
+			Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());
+			Vector up = camera.getUpDirection();
+
+			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
+		}
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		glTranslate(loc);
-
-		gl.glMatrixMode(GL2.GL_PROJECTION);
-		gl.glLoadIdentity();
-		if (c instanceof PinholeCamera == false) return;
-
-		float width = (float) ((OrthographicCamera) c).getProjectionWidth();
-		float height = (float) ((OrthographicCamera) c).getProjectionHeight();
-		glu.gluPerspective(45f, width / height, ((PinholeCamera) c).getFocalLength(), (float) Math.pow(10, 9)); // TODO  Compute vertical fov from camera
 	}
 
 	public void glCullFace(int param) { gl.glCullFace(param); }

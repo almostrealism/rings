@@ -60,7 +60,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
 
 	public static final boolean enableProjection = false;
-	public static final boolean enableBlending = true;
+	public static final boolean enableBlending = false;
 	public static final boolean enableCamTrackFade = false;
 
 	private static long sRandomSeed = 0;
