@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.3-rc</version>
+	<version>0.3</version>
 
 	<!-- Output to jar format -->
 	<packaging>jar</packaging>
@@ -35,7 +35,6 @@
 								<source>engine</source>
 								<source>geometry</source>
 								<source>shading</source>
-								<source>src</source>
 								<source>ui</source>
 							</sources>
 						</configuration>
@@ -62,7 +61,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>Common</artifactId>
-			<version>0.5-rc</version>
+			<version>0.5</version>
 		</dependency>
 
 		<dependency>

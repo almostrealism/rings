@@ -51,7 +51,7 @@ import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.io.FilePrintWriter;
+import com.almostrealism.raytracer.io.FilePrintWriter;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
