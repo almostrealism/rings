@@ -16,10 +16,10 @@
 
 package com.almostrealism.gl.models;
 
-import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
 
-import com.almostrealism.gl.DisplayList;
+import com.almostrealism.renderable.DisplayList;
 import org.almostrealism.algebra.Vector;
 
 public class Gear extends DisplayList {

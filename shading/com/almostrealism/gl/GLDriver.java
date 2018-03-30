@@ -1,9 +1,23 @@
-package com.almostrealism.renderable;
+/*
+ * Copyright 2018 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
-import com.almostrealism.gl.GLMaterial;
+package com.almostrealism.gl;
+
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.primitives.Pinhole;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;
@@ -26,11 +40,11 @@ import java.util.Stack;
 public class GLDriver {
 	public static final boolean enableDoublePrecision = false;
 
-	private GL2 gl;
-	private GLUT glut = new GLUT();
-	private GLU glu = new GLU();
+	protected GL2 gl;
+	protected GLUT glut = new GLUT();
+	protected GLU glu = new GLU();
 
-	private Stack<Integer> begins;
+	protected Stack<Integer> begins;
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
@@ -51,19 +65,36 @@ public class GLDriver {
 
 	public void glColor(RGBA color) {
 		if (enableDoublePrecision) {
-			gl.glColor4d(color.getRGB().getRed(), color.getRGB().getGreen(), color.getRGB().getBlue(), color.a);
+			gl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		} else {
-			gl.glColor4f((float) color.getRGB().getRed(),
-						(float) color.getRGB().getGreen(),
-						(float) color.getRGB().getBlue(),
-						(float) color.a);
+			gl.glColor4f((float) color.getRed(),
+						(float) color.getGreen(),
+						(float) color.getBlue(),
+						(float) color.getAlpha());
 		}
 	}
 
+	/**
+	 * Use {@link #glColor(RGBA)} instead.
+	 *
+	 * @param r  Red channel
+	 * @param g  Green channel
+	 * @param b  Blue channel
+	 * @param a  Alpha channel
+	 */
+	@Deprecated
 	public void glColor(double r, double g, double b, double a) {
 		gl.glColor4d(r, g, b, a);
 	}
 
+	/**
+	 * Use {@link #glColor(RGBA)} instead.
+	 *
+	 * @param r  Red channel
+	 * @param g  Green channel
+	 * @param b  Blue channel
+	 * @param a  Alpha channel
+	 */
 	@Deprecated
 	public void glColor4f(float r, float g, float b, float a) { gl.glColor4f(r, g, b, a); }
 
@@ -100,6 +131,7 @@ public class GLDriver {
 		}
 	}
 
+	public void glLoadName(int name) { gl.glLoadName(name); }
 	public void glGenTextures(int code, IntBuffer buf) { gl.glGenTextures(code, buf); }
 	public void bindTexture(Texture t) { t.bind(gl); }
 	public void glBindTexture(int code, int tex) { gl.glBindTexture(code, tex); }
@@ -109,6 +141,9 @@ public class GLDriver {
 
 	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
 	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
+	public void glTexEnvf(int a, int b, float f) { gl.glTexEnvf(a, b, f); }
+
+	public void glLineWidth(double width) { gl.glLineWidth((float) width); }
 
 	public void enableTexture(Texture t) { t.enable(gl); }
 
@@ -157,6 +192,8 @@ public class GLDriver {
 	public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
 	@Deprecated public void glLight(int light, int prop, float f[], int a) { gl.glLightfv(light, prop, f, a); }
 
+	public boolean isLightingOn() { return gl.glIsEnabled(GL2.GL_LIGHTING); }
+
 	public void glTranslate(Vector t) {
 		if (enableDoublePrecision) {
 			gl.glTranslated(t.getX(), t.getY(), t.getZ());
@@ -177,6 +214,10 @@ public class GLDriver {
 		}
 	}
 
+	public void glScale(double s) {
+		glScale(new Vector(s, s, s));
+	}
+
 	public void glRotate(double a, double b, double c, double d) {
 		if (enableDoublePrecision) {
 			gl.glRotated(a, b, c, d);
@@ -186,7 +227,7 @@ public class GLDriver {
 	}
 
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
-	public void glClearColor(RGBA c) { gl.glClearColor(c.r(), c.g(), c.b(), (float) c.a); }
+	public void glClearColor(RGBA c) { gl.glClearColor(c.r(), c.g(), c.b(), c.a()); }
 	public void glClearDepth(double d) {
 		if (enableDoublePrecision) {
 			gl.glClearDepth(d);

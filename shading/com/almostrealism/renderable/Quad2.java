@@ -16,8 +16,11 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.util.GLBuffers;
+import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Pair;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.FloatBuffer;
 
@@ -32,9 +35,11 @@ public class Quad2 implements Renderable {
 	private Pair vecs[];
 	private FloatBuffer vertBuf;
 
+	@Override
 	public void init(GLDriver gl) {
 	}
 
+	@Override
 	public void display(GLDriver gl) {
 		gl.glQuads();
 		gl.glVertex(vecs[0]);
@@ -42,6 +47,11 @@ public class Quad2 implements Renderable {
 		gl.glVertex(vecs[1]);
 		gl.glVertex(vecs[2]);
 		gl.glEnd();
+	}
+
+	@Override
+	public void write(String glMember, String name, CodePrintWriter p) {
+		throw new NotImplementedException("TODO");
 	}
 
 	public FloatBuffer getVertexBuffer() {

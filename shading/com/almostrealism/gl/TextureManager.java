@@ -20,9 +20,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 
-import com.almostrealism.renderable.GLDriver;
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
 
 import org.almostrealism.texture.ImageSource;
 

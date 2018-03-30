@@ -20,7 +20,6 @@ import com.almostrealism.projection.CameraPositioner;
 import com.almostrealism.raytracer.SurfaceAddEvent;
 import com.almostrealism.raytracer.SurfaceRemoveEvent;
 import com.almostrealism.raytracer.event.SurfaceEvent;
-import com.almostrealism.renderable.GLDriver;
 import com.almostrealism.renderable.RenderableGeometry;
 import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.Vector;
@@ -30,11 +29,9 @@ import org.almostrealism.space.ShadableSurface;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
-import com.jogamp.opengl.GL2;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventListener;
 
-import java.io.InputStream;
 import java.util.Iterator;
 
 public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
@@ -59,17 +56,6 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	
 	@Override
 	public PinholeCamera getCamera() { return (PinholeCamera) scene.getCamera(); }
-
-	@Override
-	protected void initRenderables(GLDriver gl) {
-		renderables.clear();
-		
-		for (ShadableSurface s : scene) {
-			renderables.add(RenderableSurfaceFactory.createRenderableSurface(s));
-		}
-		
-		for (Renderable r : renderables) r.init(gl);
-	}
 
 	@Override
 	public void eventFired(Event event) {

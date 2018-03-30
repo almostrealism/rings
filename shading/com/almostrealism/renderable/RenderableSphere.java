@@ -15,15 +15,19 @@
  */
 package com.almostrealism.renderable;
 
-import com.almostrealism.gl.DisplayList;
+import com.almostrealism.gl.GLCodePrintWriter;
+import com.almostrealism.gl.GLDriver;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.gl2.GLUT;
+import io.almostrealism.code.CodePrintWriter;
 
 /**
  * @author  Michael Murray
  */
 public class RenderableSphere extends RenderableGeometry {
+	public static final int SLICES = 40;
+	public static final int STACKS = 40;
+
 	protected DisplayList list;
 	
 	public RenderableSphere(Sphere s) {
@@ -33,7 +37,7 @@ public class RenderableSphere extends RenderableGeometry {
 				super.init(gl);
 				gl.glNewList(displayListIndex, GL2.GL_COMPILE);
 				initMaterial(gl);
-				gl.glutSolidSphere(s.getSize(), 40, 40);
+				gl.glutSolidSphere(s.getSize(), SLICES, STACKS);
 				gl.glEndList();
 			}
 		};
@@ -43,5 +47,13 @@ public class RenderableSphere extends RenderableGeometry {
 	public void init(GLDriver gl) { list.init(gl); }
 
 	@Override
-	public void render(GLDriver gl) { list.display(gl); }
+	public void render(GLDriver gl) {
+		if (gl instanceof GLCodePrintWriter) {
+			// Display lists are not supported by external OpenGL systems
+			list.initMaterial(gl);
+			gl.glutSolidSphere(getGeometry().getSize(), SLICES, STACKS);
+		} else {
+			list.display(gl);
+		}
+	}
 }

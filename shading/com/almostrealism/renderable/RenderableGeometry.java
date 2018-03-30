@@ -16,10 +16,11 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLCodePrintWriter;
+import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLMaterial;
+import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.space.BasicGeometry;
-
-import com.jogamp.opengl.GL2;
 
 public abstract class RenderableGeometry<T extends BasicGeometry> implements Renderable, RenderDelegate {
 	private T geo;
@@ -37,6 +38,11 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 		gl.glMaterial(mat);
 		render(gl);
 		gl.glPopMatrix();
+	}
+
+	@Override
+	public void write(String glMember, String name, CodePrintWriter p) {
+		display(new GLCodePrintWriter(glMember, name, p));
 	}
 
 	public void setMaterial(GLMaterial m) { this.mat = m; }

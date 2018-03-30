@@ -1,30 +1,23 @@
-/* San Angeles Observation OpenGL ES version example
- * Copyright 2004-2005 Jetro Lauha
- * All rights reserved.
- * Web: http://iki.fi/jetro/
+/*
+ * Copyright 2018 Michael Murray
  *
- * This source is free software; you can redistribute it and/or
- * modify it under the terms of EITHER:
- *   (1) The GNU Lesser General Public License as published by the Free
- *       Software Foundation; either version 2.1 of the License, or (at
- *       your option) any later version. The text of the GNU Lesser
- *       General Public License is included with this source in the
- *       file LICENSE-LGPL.txt.
- *   (2) The BSD-style license that is included with this source in
- *       the file LICENSE-BSD.txt.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * This source is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the files
- * LICENSE-LGPL.txt and LICENSE-BSD.txt for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * $Id$
- * $Revision$
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
-package com.almostrealism.gl;
+package com.almostrealism.renderable;
 
-import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.gl.DefaultGLCanvas;
+import com.almostrealism.gl.GLDriver;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 

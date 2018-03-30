@@ -19,5 +19,5 @@ package com.almostrealism.webgl;
 import org.almostrealism.html.HTMLContent;
 
 public interface WebGLExportable {
-	public HTMLContent getWebGLContent();
+	HTMLContent getWebGLContent();
 }

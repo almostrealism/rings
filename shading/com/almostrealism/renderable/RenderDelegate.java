@@ -16,6 +16,8 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLDriver;
+
 public interface RenderDelegate {
 	void render(GLDriver gl);
 }

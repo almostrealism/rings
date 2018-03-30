@@ -18,7 +18,8 @@ package com.almostrealism.renderable;
 
 import java.util.ArrayList;
 
-import com.jogamp.opengl.GL2;
+import com.almostrealism.gl.GLDriver;
+import io.almostrealism.code.CodePrintWriter;
 
 public class RenderableList extends ArrayList<Renderable> implements Renderable {
 	@Override
@@ -29,5 +30,11 @@ public class RenderableList extends ArrayList<Renderable> implements Renderable 
 	@Override
 	public void display(GLDriver gl) {
 		for (Renderable r : this) r.display(gl);
+	}
+
+	@Override
+	public void write(String glMember, String name, CodePrintWriter p) {
+		int index = 0;
+		for (Renderable r : this) r.write(glMember, name + (index++), p);
 	}
 }

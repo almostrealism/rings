@@ -16,13 +16,14 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLDriver;
+import io.almostrealism.code.CodePrintWriter;
+import io.almostrealism.code.ResourceVariable;
 import org.almostrealism.graph.Mesh;
 
-import com.almostrealism.webgl.WebGLExportable;
-import com.almostrealism.webgl.WebGLMeshGeometry;
-import com.almostrealism.webgl.WebGLRenderable;
+import org.almostrealism.graph.MeshResource;
 
-public class RenderableMesh extends RenderableGeometry implements WebGLRenderable {
+public class RenderableMesh extends RenderableGeometry<Mesh> {
 	protected TriangleDisplayList list;
 	
 	public RenderableMesh(Mesh m) {
@@ -35,16 +36,14 @@ public class RenderableMesh extends RenderableGeometry implements WebGLRenderabl
 
 	@Override
 	public void render(GLDriver gl) { list.display(gl); }
-	
-	public WebGLExportable getWebGLGeometry() {
-		return new WebGLMeshGeometry(((Mesh) getGeometry()).getVertexData());
-	}
-	
+
 	@Override
-	public WebGLExportable getWebGLMaterial() {
-		throw new RuntimeException("Not implemented");
+	public void write(String glMember, String name, CodePrintWriter p) {
+		ResourceVariable v = new ResourceVariable(name + "Mesh", new MeshResource(getGeometry()));
+		p.println(v);
+		// TODO  Render mesh
 	}
-	
+
 	private static TriangleDisplayList createDisplayList(Mesh m) {
 		return new TriangleDisplayList(m.triangles());
 	}

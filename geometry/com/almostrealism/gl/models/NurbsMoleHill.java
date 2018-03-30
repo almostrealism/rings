@@ -16,8 +16,7 @@
 
 package com.almostrealism.gl.models;
 
-import com.almostrealism.renderable.GLDriver;
-import com.jogamp.opengl.GL2;
+import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 import com.almostrealism.renderable.RenderableList;

@@ -16,19 +16,19 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLCodePrintWriter;
 import com.almostrealism.gl.GLMaterial;
 import com.almostrealism.gl.TextureManager;
-import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.gl.GLDriver;
 
+import com.almostrealism.shade.Colored;
+import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Oriented;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.texture.ImageSource;
-
-import com.almostrealism.renderable.Colored;
-import com.almostrealism.renderable.Renderable;
 
 public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored {
 	protected static final TextureManager textureManager = new TextureManager();
@@ -51,8 +51,24 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	public void initMaterial(GLDriver gl) { }
 
+	@Override
 	public void display(GLDriver gl) {
 		gl.glMaterial(mat);
+	}
+
+	/**
+	 * This default implementation of {@link #write(String, String, CodePrintWriter)}
+	 * uses a {@link GLCodePrintWriter} as the argument to {@link #display(GLDriver)}.
+	 * Most subclasses will want to override this to provide a way of encoding the
+	 * GL data that is sure to work properly in an external Open GL system.
+	 *
+	 * @param glMember  The name of the Open GL singleton Object.
+	 * @param name  The name of this {@link Renderable} as it should appear in the exported code.
+	 * @param p  The {@link CodePrintWriter} that will be wrapped by {@link GLCodePrintWriter}.
+	 */
+	@Override
+	public void write(String glMember, String name, CodePrintWriter p) {
+		display(new GLCodePrintWriter(glMember, name, p));
 	}
 	
 	public void push(GLDriver gl) {

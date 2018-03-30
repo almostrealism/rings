@@ -39,9 +39,12 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
+import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Vector;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.FloatBuffer;
 
@@ -130,9 +133,16 @@ public class Quad3 implements Renderable {
 		gl.glEnd();
 	}
 
+	@Override
+	public void write(String glMember, String name, CodePrintWriter p) {
+		throw new NotImplementedException("TODO");
+	}
+
 	/**
-	 * Returns a newly-constructed Quad2f in which all vertices have
-	 * been multiplied in scalar fashion by the passed value.
+	 * Returns a newly-constructed {@link Quad3} in which all vertices have
+	 * been multiplied by the specified floating point value.
+	 *
+	 * TODO  Accept Scalar?
 	 */
 	public Quad3 times(float val) {
 		return new Quad3(getVec(0).multiply(val),

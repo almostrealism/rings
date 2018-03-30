@@ -16,8 +16,13 @@
 
 package com.almostrealism.renderable;
 
+import com.almostrealism.gl.GLDriver;
+import io.almostrealism.code.CodePrintWriter;
+
 public interface Renderable {
 	void init(GLDriver gl);
 	
 	void display(GLDriver gl);
+
+	void write(String glMember, String name, CodePrintWriter p);
 }

@@ -27,10 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.almostrealism.renderable.GLDriver;
+import com.almostrealism.renderable.GroundPlane;
 import com.almostrealism.renderable.Quad3;
 import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.*;
@@ -48,6 +47,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
+import org.almostrealism.space.Scene;
 
 public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
 																MouseMotionListener, KeyListener {
@@ -81,7 +81,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static long sNextCamTrackStartTick = 0x7fffffff;
 
 	private static GroundPlane sGroundPlane;
-	private static Quad3 sFadeQuad; // TODO  Use this quad instead of the buffer;
+	private static Quad3 sFadeQuad; // TODO  Use this quad instead of the buffer
 	private static FloatBuffer quadBuf;
 
 	private Texture skydome;
@@ -95,7 +95,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int swapInterval;
 	private boolean toReset;
 
-	protected List<Renderable> renderables;
+	protected GLScene renderables;
 
 	private int prevMouseX, prevMouseY;
 
@@ -114,9 +114,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		x = 0;
 		y = 0;
 
-		renderables = new ArrayList<>();
+		renderables = new GLScene(new Scene());
 
-		animator = new FPSAnimator(200);
+		animator = new FPSAnimator(100);
 		animator.add(this);
 		addGLEventListener(this);
 		addMouseListener(this);
@@ -141,9 +141,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		x = 0;
 		y = 0;
 
-		renderables = new ArrayList<>();
+		renderables = new GLScene(new Scene());
 
-		animator = new FPSAnimator(200);
+		animator = new FPSAnimator(100);
 		animator.add(this);
 		addGLEventListener(this);
 		addMouseListener(this);
@@ -232,9 +232,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		initRenderables(gl);
 	}
 
-	protected void initRenderables(GLDriver gl) {
-		for (Renderable r : renderables) r.init(gl);
-	}
+	protected void initRenderables(GLDriver gl) { renderables.init(gl); }
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -421,12 +419,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	public void drawRenderables(GLDriver gl, double zScale) {
 		gl.glScale(new Vector(1.0, 1.0, zScale));
-
-		for (Renderable r : renderables) {
-			System.out.println("Rendering " + r);
-			r.display(gl);
-			System.out.println("Done rendering " + r);
-		}
+		renderables.display(gl);
 	}
 
 	public void drawSkydome(GLDriver gl) {
