@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.almostrealism;
 
 import java.io.File;
 import java.io.IOException;
 
+import com.almostrealism.raytracer.config.FogParameters;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
@@ -25,7 +27,7 @@ import org.almostrealism.texture.ImageCanvas;
 import com.almostrealism.raytracer.SceneFactory;
 import com.almostrealism.raytracer.engine.RayIntersectionEngine;
 import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.engine.RenderParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 
 /**
  * @author  Michael Murray
@@ -35,7 +37,7 @@ public class GenerateScene {
 	
 	public static void main(String args[]) throws IOException {
 		Scene<ShadableSurface> s = new SceneFactory().construct();
-		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s, p), s.getCamera());
+		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s, p, new FogParameters()), s.getCamera());
 		ImageCanvas.encodeImageFile(r.realize(p).evaluate(null),
 									new File(System.currentTimeMillis() + ".jpg"),
 									ImageCanvas.JPEGEncoding);

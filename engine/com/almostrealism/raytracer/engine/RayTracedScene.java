@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.ColorProducer;

@@ -9,7 +9,6 @@ import java.text.ParseException;
 import javax.swing.text.NumberFormatter;
 
 import com.almostrealism.lighting.PointLight;
-import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -21,8 +20,7 @@ import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.engine.RayMarchingEngine;
 import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.engine.RenderParameters;
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.texture.ImageCanvas;
 
 public class RayMarchingTest {

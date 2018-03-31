@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ package com.almostrealism.raytracer.engine;
 
 import java.util.Collection;
 
+import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.Light;
@@ -36,7 +38,7 @@ import com.almostrealism.raytracer.Settings;
 /**
  * The {@link LegacyRayTracingEngine} class provides static methods for rendering scenes.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class LegacyRayTracingEngine {
   /**
@@ -73,14 +75,14 @@ public class LegacyRayTracingEngine {
 								int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(0, 0, width, height, width, height, ssWidth, ssHeight);
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, monitor);
+		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
 	}
 	
 	public static RGB[][] render (Scene scene, int x, int y, int dx, int dy,
 								int width, int height, int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(x, y, dx, dy, width, height, ssWidth, ssHeight);
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, monitor);
+		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
 	}
 	
 	/**
@@ -92,7 +94,7 @@ public class LegacyRayTracingEngine {
 	 * @return  Rendered image data.
 	 */
 	public static RGB[][] render(Scene scene, RenderParameters p, ProgressDisplay prog) {
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, prog);
+		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), prog);
 	}
 	
 	/**
@@ -108,7 +110,7 @@ public class LegacyRayTracingEngine {
 	 * @param monitor  ProgressMonitor instance to use.
 	 * @return  Image data.
 	 */
-	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Light lights[], RenderParameters p, ProgressMonitor monitor) {
+	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Light lights[], RenderParameters p, FogParameters f, ProgressMonitor monitor) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.size() + " Surfaces");
 			Settings.rayEngineOut.println("Camera: " + camera.toString());
@@ -129,7 +131,7 @@ public class LegacyRayTracingEngine {
 					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
 					IntersectionalLightingEngine le = new IntersectionalLightingEngine(surfaces);
 					RGB color = le.lightingCalculation(ray, surfaces, lights,
-										p.fogColor, p.fogDensity, p.fogRatio, null).evaluate(null);
+										f.fogColor, f.fogDensity, f.fogRatio, null).evaluate(null);
 					
 					if (color == null) {
 						// System.out.println("null");

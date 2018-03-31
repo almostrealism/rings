@@ -16,6 +16,8 @@
 
 package com.almostrealism.raytracer.engine;
 
+import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -30,17 +32,19 @@ import org.almostrealism.space.ShadableSurface;
 public class RayIntersectionEngine implements RayTracer.Engine {
 	private Scene<ShadableSurface> scene;
 	private RenderParameters rparams;
+	private FogParameters fparams;
 	
-	public RayIntersectionEngine(Scene<ShadableSurface> s, RenderParameters rparams) {
+	public RayIntersectionEngine(Scene<ShadableSurface> s, RenderParameters rparams, FogParameters fparams) {
 		this.scene = s;
 		this.rparams = rparams;
+		this.fparams = fparams;
 	}
 	
 	public ColorProducer trace(Vector from, Vector direction) {
 		Ray r = new Ray(from, direction);
 
 		IntersectionalLightingEngine l = new IntersectionalLightingEngine(scene);
-		return l.lightingCalculation(r, scene, scene.getLights(), rparams.fogColor,
-									rparams.fogDensity, rparams.fogRatio, null);
+		return l.lightingCalculation(r, scene, scene.getLights(), fparams.fogColor,
+									fparams.fogDensity, fparams.fogRatio, null);
 	}
 }

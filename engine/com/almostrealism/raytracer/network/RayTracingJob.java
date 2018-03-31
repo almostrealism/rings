@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/*
- * Copyright (C) 2005-06  Mike Murray
- *
- *  All rights reserved.
- *  This document may not be reused without
- *  express written permission from Mike Murray.
- *
  */
 
 package com.almostrealism.raytracer.network;
@@ -41,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.almostrealism.raytracer.config.FogParameters;
 import io.flowtree.node.Client;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
@@ -56,17 +48,17 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
-import com.almostrealism.raytracer.engine.RenderParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.flowtree.job.Job;
 
 /**
- * A RayTracingJob object provides an implementation of
- * net.sf.j3d.network.Job that renders a section of an image.
+ * A RayTracingJob object provides an implementation of {@link Job}
+ * that renders a section of an image.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 public class RayTracingJob implements Job, SceneLoader {
 	public static final String htmlPre = "<html> <head> <title>Universe in a Box</title> </head> " +
@@ -783,7 +775,7 @@ public class RayTracingJob implements Job, SceneLoader {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RGB rgb[][] = LegacyRayTracingEngine.render(s, camera, s.getLights(), p, null);
+		RGB rgb[][] = LegacyRayTracingEngine.render(s, camera, s.getLights(), p, new FogParameters(), null);
 		
 		long time = System.currentTimeMillis() - start;
 		

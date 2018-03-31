@@ -26,9 +26,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 import com.almostrealism.raytracer.engine.*;
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
@@ -43,8 +44,6 @@ import com.almostrealism.raytracer.event.SceneCloseEvent;
 import com.almostrealism.raytracer.event.SceneOpenEvent;
 import com.almostrealism.raytracer.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
-import org.almostrealism.util.Factory;
-import sun.java2d.Surface;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and
@@ -135,7 +134,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				rparams.ssWidth = RenderPanel.this.ssWidth;
 				rparams.ssHeight = RenderPanel.this.ssHeight;
 
-				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, rparams), scene.getCamera());
+				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, rparams, new FogParameters()), scene.getCamera());
 				renderedImageData = r.realize(rparams).evaluate(null);
 
 				if (enableCompaction) {

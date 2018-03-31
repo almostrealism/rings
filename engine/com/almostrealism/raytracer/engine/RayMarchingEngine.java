@@ -19,6 +19,8 @@ package com.almostrealism.raytracer.engine;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
@@ -36,6 +38,8 @@ import org.almostrealism.space.DistanceEstimator;
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
 	private ShaderContext sparams;
 	private RenderParameters params;
+	private FogParameters fparams;
+
 	private DistanceEstimator estimator;
 	private Light lights[];
 	private ShaderSet shaders;
@@ -43,6 +47,7 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	public RayMarchingEngine(Light l, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
 		this.sparams = new ShaderContext(this, l);
 		this.params = new RenderParameters();
+		this.fparams = new FogParameters();
 		this.estimator = e;
 		this.lights = allLights;
 		this.shaders = shaders;
@@ -53,8 +58,8 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 
 		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders, this.sparams.getLight());
 		return l.lightingCalculation(r, new ArrayList<Callable<ColorProducer>>(),
-										this.lights, params.fogColor,
-										params.fogDensity, params.fogRatio, sparams);
+										this.lights, fparams.fogColor,
+										fparams.fogDensity, fparams.fogRatio, sparams);
 	}
 
 	@Override

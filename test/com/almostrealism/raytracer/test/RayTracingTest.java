@@ -23,7 +23,7 @@ import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytracer.engine.RayIntersectionEngine;
 import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.engine.RenderParameters;
+import com.almostrealism.raytracer.config.RenderParameters;
 import com.almostrealism.raytracer.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 
