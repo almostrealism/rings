@@ -34,7 +34,7 @@ import com.almostrealism.raytracer.Settings;
  * This value is by default aligned with the positive y axis or (0.0, 1.0, 0.0).
  * The projection dimensions of the camera are the dimensions of the viewing plane.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 @ModelEntity
 public class OrthographicCamera implements Camera, Positioned {
@@ -139,7 +139,7 @@ public class OrthographicCamera implements Camera, Positioned {
 	}
 	
 	/**
-	 * Sets the projection height of this OrthographicCamera object to the specified projection height.
+	 * Sets the projection height of this {@link OrthographicCamera} to the specified height.
 	 */
 	public void setProjectionHeight(double projectionY) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
@@ -148,6 +148,11 @@ public class OrthographicCamera implements Camera, Positioned {
 		
 		this.projectionY = projectionY;
 	}
+
+	/**
+	 * Returns the ratio of the projection width of this camera to the projection height of this camera.
+	 */
+	public double getAspectRatio() { return getProjectionWidth() / getProjectionHeight(); }
 	
 	/**
 	 * Updates the orthonormal vectors used to describe camera space for this OrthographicCamera object.

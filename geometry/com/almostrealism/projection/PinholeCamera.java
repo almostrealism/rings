@@ -43,8 +43,8 @@ import com.almostrealism.raytracer.Settings;
  */
 @ModelEntity
 public class PinholeCamera extends OrthographicCamera {
-  private double focalLength = 1.0;
-  private double blur = 0.0;
+  	private double focalLength = 1.0;
+  	private double blur = 0.0;
 
 	/**
 	 * Constructs a PinholeCamera object with all default values as described above.
@@ -118,8 +118,15 @@ public class PinholeCamera extends OrthographicCamera {
 	 * @return  {Horizontal FOV, Vertical FOV} Measured in radians.
 	 */
 	public double[] getFOV() {
-		return new double [] { 2.0 * Math.atan(super.getProjectionWidth() / (2.0 * this.focalLength)),
-								2.0 * Math.atan(super.getProjectionHeight() / (2.0 * this.focalLength)) };
+		return new double [] { getHorizontalFOV(), getVerticalFOV() };
+	}
+
+	public double getHorizontalFOV() {
+		return 2.0 * Math.atan(super.getProjectionWidth() / (2.0 * this.focalLength));
+	}
+
+	public double getVerticalFOV() {
+		return 2.0 * Math.atan(super.getProjectionHeight() / (2.0 * this.focalLength));
 	}
 	
 	public void setBlur(double blur) { this.blur = blur; }
