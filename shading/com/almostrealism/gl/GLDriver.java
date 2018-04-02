@@ -33,6 +33,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -463,6 +464,11 @@ public class GLDriver {
 		int matrixMode[] = new int[1];
 		gl.glGetIntegerv(GL2.GL_MATRIX_MODE, IntBuffer.wrap(matrixMode));
 		return matrixMode[0];
+	}
+
+	public void requestFocus() {
+		if (gl instanceof Component)
+			((Component) gl).requestFocus();
 	}
 
 	protected GLException exceptionHelper(GLException gle) {
