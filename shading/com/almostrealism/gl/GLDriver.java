@@ -127,6 +127,8 @@ public class GLDriver {
 	}
 
 	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
+	public void glTexGen(int a, int b, float f) { gl.glTexGenf(a, b, f); }
+	public void glTexGen(int a, int b, float f[], int index) { gl.glTexGenfv(a, b, f, index); }
 	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
 	public void glTexEnvf(int a, int b, float f) { gl.glTexEnvf(a, b, f); }
 	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
@@ -137,6 +139,7 @@ public class GLDriver {
 	public void glutBitmapCharacter(int font, char c) { glut.glutBitmapCharacter(font, c); }
 
 	public void enableTexture(Texture t) { t.enable(gl); }
+	public void disableTexture(Texture t) { t.disable(gl); }
 
 	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
 
