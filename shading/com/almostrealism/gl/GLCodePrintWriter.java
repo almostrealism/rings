@@ -549,6 +549,12 @@ public class GLCodePrintWriter extends GLDriver {
 	}
 
 	@Override
+	public void glPolygonMode(int param, int value) {
+		if (gl != null) super.glPolygonMode(param, value);
+		throw new NotImplementedException("glPolygonMode");
+	}
+
+	@Override
 	public void glBlendFunc(int c1, int c2) {
 		if (gl != null) super.glBlendFunc(c1, c2);
 		p.println(glMethod("glBlendFunc",

@@ -270,6 +270,7 @@ public class GLDriver {
 	}
 	public void glEnableClientState(int code) { gl.glEnableClientState(code); }
 
+	public void glPolygonMode(int param, int value) { gl.glPolygonMode(param, value); }
 	public void glBlendFunc(int c1, int c2) { gl.glBlendFunc(c1, c2); }
 	public void glShadeModel(int model) { gl.glShadeModel(model); }
 	public int glRenderMode(int mode) { return gl.glRenderMode(mode); }
