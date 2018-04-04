@@ -26,10 +26,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 
@@ -215,12 +212,8 @@ public class GLDriver {
 		glScale(new Vector(s, s, s));
 	}
 
-	public void glRotate(double a, double b, double c, double d) {
-		if (enableDoublePrecision) {
-			gl.glRotated(a, b, c, d);
-		} else {
-			gl.glRotatef((float) a, (float) b, (float) c, (float) d);
-		}
+	public void glRotate(double angle, Vector v) {
+		glMultMatrix(TransformMatrix.createRotateMatrix(Math.toRadians(angle), v));
 	}
 
 	public void glAccum(int param, double value) { gl.glAccum(param, (float) value); }
@@ -304,8 +297,13 @@ public class GLDriver {
 	public void glPopMatrix() { gl.glPopMatrix(); }
 	public void glLoadIdentity() { gl.glLoadIdentity(); }
 
-	/** It is recommended to use {@link org.almostrealism.algebra.TransformMatrix}. */
-	@Deprecated public void glMultMatrix(FloatBuffer mat) { gl.glMultMatrixf(mat); }
+	public void glMultMatrix(TransformMatrix m) {
+		if (enableDoublePrecision) {
+			gl.glMultMatrixd(DoubleBuffer.wrap(m.toArray()));
+		} else {
+			gl.glMultMatrixf(FloatBuffer.wrap(Scalar.toFloat(m.toArray())));
+		}
+	}
 
 	public void glRasterPos(Vector pos) {
 		if (enableDoublePrecision) {

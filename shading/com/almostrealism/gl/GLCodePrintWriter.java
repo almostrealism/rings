@@ -27,9 +27,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
@@ -424,12 +422,6 @@ public class GLCodePrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glRotate(double a, double b, double c, double d) {
-		if (gl != null) super.glRotate(a, b, c, d);
-		throw new NotImplementedException("glRotate");
-	}
-
-	@Override
 	public void glAccum(int param, double value) {
 		if (gl != null) super.glAccum(param, value);
 		throw new NotImplementedException("glAccum");
@@ -656,9 +648,14 @@ public class GLCodePrintWriter extends GLDriver {
 	}
 
 	@Override
-	@Deprecated public void glMultMatrix(FloatBuffer mat) {
-		if (gl != null) super.glMultMatrix(mat);
-		throw new NotImplementedException("glMultMatrix");
+	@Deprecated public void glMultMatrix(TransformMatrix m) {
+		if (gl != null) super.glMultMatrix(m);
+
+		if (enableDoublePrecision) {
+			p.println(glMethod("glMultMatrixd", Arrays.asList(new Variable<>("matrix", m.toArray()))));
+		} else {
+			p.println(glMethod("glMultMatrixf", Arrays.asList(new Variable<>("matrix", Scalar.toFloat(m.toArray())))));
+		}
 	}
 
 	@Override
