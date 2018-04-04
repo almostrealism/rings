@@ -240,6 +240,18 @@ public class GLCodePrintWriter extends GLDriver {
 	}
 
 	@Override
+	public void glTexGen(int a, int b, float f) {
+		if (gl != null) super.glTexGen(a, b, f);
+		throw new NotImplementedException("glTexGen");
+	}
+
+	@Override
+	public void glTexGen(int a, int b, float f[], int index) {
+		if (gl != null) super.glTexGen(a, b, f, index);
+		throw new NotImplementedException("glTexGen");
+	}
+
+	@Override
 	public void glTexEnvi(int a, int b, int c) {
 		if (gl != null) super.glTexEnvi(a, b, c);
 		throw new NotImplementedException("glTexEnvi");
@@ -282,6 +294,12 @@ public class GLCodePrintWriter extends GLDriver {
 	public void enableTexture(Texture t) {
 		if (gl != null) super.enableTexture(t);
 		throw new NotImplementedException("enableTexture");
+	}
+
+	@Override
+	public void disableTexture(Texture t) {
+		if (gl != null) super.disableTexture(t);
+		throw new NotImplementedException("disableTexture");
 	}
 
 	@Override
