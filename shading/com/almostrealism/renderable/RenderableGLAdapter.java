@@ -34,7 +34,8 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	protected static final TextureManager textureManager = new TextureManager();
 	
 	private Vector position = new Vector(0.0, 0.0, 0.0);
-	private float orientation[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	private double orientationAngle = 0.0;
+	private Vector orientationVector = Vector.Z_AXIS;
 	
 	private GLMaterial mat;
 	private ImageSource texture;
@@ -74,7 +75,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public void push(GLDriver gl) {
 		gl.glPushMatrix();
 		gl.glTranslate(position);
-		gl.glRotate(orientation[0], orientation[1], orientation[2], orientation[3]);
+		gl.glRotate(orientationAngle, orientationVector);
 		if (texture != null) textureManager.pushTexture(gl, texture);
 	}
 	
@@ -92,10 +93,18 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	public float[] getPosition() { return position.getPosition(); }
 	
 	@Override
-	public void setOrientation(float angle, float x, float y, float z) { orientation = new float[] { angle, x, y, z }; }
+	public void setOrientation(float angle, float x, float y, float z) {
+		orientationAngle = angle;
+		orientationVector.setPosition(x, y, z);
+	}
 
 	@Override
-	public float[] getOrientation() { return orientation; }
+	public float[] getOrientation() {
+		return new float[] { (float) orientationAngle,
+							(float) orientationVector.getX(),
+							(float) orientationVector.getY(),
+							(float) orientationVector.getZ() };
+	}
 	
 	public void setTexture(ImageSource tex) { this.texture = tex; }
 	

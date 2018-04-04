@@ -177,8 +177,8 @@ public class GLDriver {
 
 	public void glNormalPointer(GLArrayDataWrapper data) { gl.glNormalPointer(data); }
 
-	public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
-	public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
+	@Deprecated public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
+	@Deprecated public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
 	@Deprecated public void glLight(int light, int prop, float f[], int a) { gl.glLightfv(light, prop, f, a); }
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */

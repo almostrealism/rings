@@ -358,21 +358,21 @@ public class GLCodePrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glLight(int light, int prop, FloatBuffer buf) {
+	@Deprecated public void glLight(int light, int prop, FloatBuffer buf) {
 		if (gl != null) super.glLight(light, prop, buf);
-		throw new NotImplementedException("glLight");
+		throw new NotImplementedException("glLight is deprecated in OpenGL");
 	}
 
 	@Override
-	public void glLight(int light, int prop, float f) {
+	@Deprecated public void glLight(int light, int prop, float f) {
 		if (gl != null) super.glLight(light, prop, f);
-		throw new NotImplementedException("glLight");
+		throw new NotImplementedException("glLight is deprecated in OpenGL");
 	}
 
 	@Override
 	@Deprecated public void glLight(int light, int prop, float f[], int a) {
 		if (gl != null) super.glLight(light, prop, f, a);
-		throw new NotImplementedException("glLight");
+		throw new NotImplementedException("glLight is deprecated in OpenGL");
 	}
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
