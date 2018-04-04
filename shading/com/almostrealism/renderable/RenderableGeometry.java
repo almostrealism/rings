@@ -42,7 +42,7 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
-		display(new GLCodePrintWriter(glMember, name, p));
+		display(new GLCodePrintWriter(glMember, glMember + "u", glMember + "ut", name, p)); // TODO  These may not be the right member names
 	}
 
 	public void setMaterial(GLMaterial m) { this.mat = m; }

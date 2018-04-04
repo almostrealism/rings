@@ -41,6 +41,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RGBA;
 import org.almostrealism.space.BasicGeometry;
 
 import com.almostrealism.projection.PinholeCamera;
@@ -498,7 +499,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (minFade < 1024) {
 			final float fadeColor = FixedPoint.toFloat(minFade << 7);
-			gl.glColor4f(fadeColor, fadeColor, fadeColor, 0f);
+			gl.glColor(new RGBA(fadeColor, fadeColor, fadeColor, 0.0));
 
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glEnable(GL.GL_BLEND);

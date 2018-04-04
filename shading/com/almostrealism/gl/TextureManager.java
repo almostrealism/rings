@@ -69,10 +69,10 @@ public class TextureManager {
 		
 		if (s.isAlpha()) {
 			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, 128, 128,
-							0, GL.GL_RGBA,GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
+							0, GL.GL_RGBA,GL.GL_UNSIGNED_BYTE, data);
 		} else {
 			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 3, 128, 128,
-							0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
+							0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
 		}
 		
 		gl.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
@@ -80,12 +80,11 @@ public class TextureManager {
 	}
 
 	private int put(GLDriver gl, ImageSource s) {
-		IntBuffer buf = IntBuffer.allocate(1);
-		gl.glGenTextures(1, buf);
-		
-		int tex = buf.get(0);
-		textures.put(s, tex);
-		return tex;
+		int tex[] = new int[1];
+		gl.glGenTextures(1, tex);
+
+		textures.put(s, tex[0]);
+		return tex[0];
 	}
 	
 	public void pushTexture(GLDriver gl, ImageSource s) {

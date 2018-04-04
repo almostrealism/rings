@@ -68,7 +68,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	 */
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
-		display(new GLCodePrintWriter(glMember, name, p));
+		display(new GLCodePrintWriter(glMember, glMember + "u", glMember + "ut", name, p)); // TODO  These may not be the right member names
 	}
 	
 	public void push(GLDriver gl) {

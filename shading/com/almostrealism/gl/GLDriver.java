@@ -44,14 +44,20 @@ public class GLDriver {
 	public static final boolean enableDoublePrecision = false;
 
 	protected GL2 gl;
-	protected GLUT glut = new GLUT();
-	protected GLU glu = new GLU();
+	protected GLU glu;
+	protected GLUT glut;
 
 	protected Stack<Integer> begins;
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
-		this.begins = new Stack<Integer>();
+
+		if (gl != null) {
+			glu = new GLU();
+			glut = new GLUT();
+		}
+
+		this.begins = new Stack<>();
 	}
 
 	public boolean isGLES1() { return gl.isGLES1(); }
@@ -77,32 +83,8 @@ public class GLDriver {
 		}
 	}
 
-	/**
-	 * Use {@link #glColor(RGBA)} instead.
-	 *
-	 * @param r  Red channel
-	 * @param g  Green channel
-	 * @param b  Blue channel
-	 * @param a  Alpha channel
-	 */
-	@Deprecated
-	public void glColor(double r, double g, double b, double a) {
-		gl.glColor4d(r, g, b, a);
-	}
-
-	/**
-	 * Use {@link #glColor(RGBA)} instead.
-	 *
-	 * @param r  Red channel
-	 * @param g  Green channel
-	 * @param b  Blue channel
-	 * @param a  Alpha channel
-	 */
-	@Deprecated
-	public void glColor4f(float r, float g, float b, float a) { gl.glColor4f(r, g, b, a); }
-
 	/** It is recommended to use {@link #glColor(RGB)} instead. */
-	public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
+	@Deprecated public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
 
 	@Deprecated public void glMaterial(int code, int prop, FloatBuffer buf) {
 		if (buf == null) {
@@ -140,16 +122,17 @@ public class GLDriver {
 	public void glInitNames() { gl.glInitNames(); }
 	public void glLoadName(int name) { gl.glLoadName(name); }
 	public void glPushName(int name) { gl.glPushName(name); }
-	public void glGenTextures(int code, IntBuffer buf) { gl.glGenTextures(code, buf); }
+	public void glGenTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
 	public void bindTexture(Texture t) { t.bind(gl); }
 	public void glBindTexture(int code, int tex) { gl.glBindTexture(code, tex); }
-	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, ByteBuffer buf) {
-		gl.glTexImage2D(a, b, c, d, e, f, g, h, buf);
+	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
+		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
 
 	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
 	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
 	public void glTexEnvf(int a, int b, float f) { gl.glTexEnvf(a, b, f); }
+	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
 
 	public void glLineWidth(double width) { gl.glLineWidth((float) width); }
 	public void glPointSize(double size) { gl.glPointSize((float) size); }
@@ -157,8 +140,6 @@ public class GLDriver {
 	public void glutBitmapCharacter(int font, char c) { glut.glutBitmapCharacter(font, c); }
 
 	public void enableTexture(Texture t) { t.enable(gl); }
-
-	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
 
 	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
 
@@ -181,7 +162,7 @@ public class GLDriver {
 	}
 
 	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) { gl.glVertexPointer(a, b, c, f); }
-	public void glVertexPointer(GLArrayDataWrapper data) {
+	@Deprecated public void glVertexPointer(GLArrayDataWrapper data) {
 		try {
 			gl.glVertexPointer(data);
 		} catch (GLException gl) {
@@ -270,7 +251,7 @@ public class GLDriver {
 		gl.glClearStencil(param);
 	}
 
-	public void glClear(int bits) { gl.glClear(bits); }
+	@Deprecated public void glClear(int bits) { gl.glClear(bits); }
 
 	public void setFog(FogParameters f) {
 		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
@@ -318,12 +299,13 @@ public class GLDriver {
 	}
 
 	public void glMatrixMode(int code) { gl.glMatrixMode(code); }
-	public void glModelView() { glMatrixMode(GL2.GL_MODELVIEW);}
+	public void glModelView() { glMatrixMode(GL2.GL_MODELVIEW); }
 	public void glPushMatrix() { gl.glPushMatrix(); }
 	public void glPopMatrix() { gl.glPopMatrix(); }
 	public void glLoadIdentity() { gl.glLoadIdentity(); }
 
-	public void glMultMatrix(FloatBuffer mat) { gl.glMultMatrixf(mat); }
+	/** It is recommended to use {@link org.almostrealism.algebra.TransformMatrix}. */
+	@Deprecated public void glMultMatrix(FloatBuffer mat) { gl.glMultMatrixf(mat); }
 
 	public void glRasterPos(Vector pos) {
 		if (enableDoublePrecision) {

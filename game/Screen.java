@@ -16,27 +16,30 @@ public class Screen {
 	}
 	
 	public int[] update(Camera camera, int[] pixels) {
-		for(int n=0; n<pixels.length/2; n++) {
+		for(int n = 0; n < pixels.length / 2; n++) {
 			if(pixels[n] != Color.DARK_GRAY.getRGB()) pixels[n] = Color.DARK_GRAY.getRGB();
 		}
-		for(int i=pixels.length/2; i<pixels.length; i++){
+		for(int i = pixels.length / 2; i<pixels.length; i++){
 			if(pixels[i] != Color.gray.getRGB()) pixels[i] = Color.gray.getRGB();
 		}
 	    
-	    for(int x=0; x<width; x=x+1) {
+	    for (int x = 0; x < width; x = x + 1) {
 			double cameraX = 2 * x / (double)(width) -1;
 		    double rayDirX = camera.xDir + camera.xPlane * cameraX;
 		    double rayDirY = camera.yDir + camera.yPlane * cameraX;
+
 		    //Map position
 		    int mapX = (int)camera.xPos;
 		    int mapY = (int)camera.yPos;
 		    //length of ray from current position to next x or y-side
 		    double sideDistX;
 		    double sideDistY;
+
 		    //Length of ray from one side to next in map
 		    double deltaDistX = Math.sqrt(1 + (rayDirY*rayDirY) / (rayDirX*rayDirX));
 		    double deltaDistY = Math.sqrt(1 + (rayDirX*rayDirX) / (rayDirY*rayDirY));
 		    double perpWallDist;
+
 		    //Direction to go in x and y
 		    int stepX, stepY;
 		    boolean hit = false;//was a wall hit
@@ -119,6 +122,7 @@ public class Screen {
 		    	pixels[x + y*(width)] = color;
 		    }
 		}
+
 		return pixels;
 	}
 }

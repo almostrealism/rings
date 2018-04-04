@@ -1,8 +1,17 @@
+import com.almostrealism.lighting.AmbientLight;
+import com.almostrealism.lighting.PointLight;
+import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.algebra.Ray;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
+import org.almostrealism.space.ShadableIntersection;
+
 import java.applet.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 /***************************************************
 *
@@ -22,143 +31,6 @@ import java.util.*;
 *
 ****************************************************/
 
-// A simple vector class
-class Vector3D {
-    public float x, y, z;
-
-    // constructors
-    public Vector3D( ) {
-    }
-
-    public Vector3D(float x, float y, float z) {
-        this.x = x; this.y = y; this.z = z;
-    }
-
-    public Vector3D(Vector3D v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-    }
-
-    // methods
-    public final float dot(Vector3D B) {
-        return (x*B.x + y*B.y + z*B.z);
-    }
-
-    public final float dot(float Bx, float By, float Bz) {
-        return (x*Bx + y*By + z*Bz);
-    }
-
-    public static final float dot(Vector3D A, Vector3D B) {
-        return (A.x*B.x + A.y*B.y + A.z*B.z);
-    }
-
-    public final Vector3D cross(Vector3D B) {
-        return new Vector3D(y*B.z - z*B.y, z*B.x - x*B.z, x*B.y - y*B.x);
-    }
-
-    public final Vector3D cross(float Bx, float By, float Bz) {
-        return new Vector3D(y*Bz - z*By, z*Bx - x*Bz, x*By - y*Bx);
-    }
-
-    public final static Vector3D cross(Vector3D A, Vector3D B) {
-        return new Vector3D(A.y*B.z - A.z*B.y, A.z*B.x - A.x*B.z, A.x*B.y - A.y*B.x);
-    }
-
-    public final float length( ) {
-        return (float) Math.sqrt(x*x + y*y + z*z);
-    }
-
-    public final static float length(Vector3D A) {
-        return (float) Math.sqrt(A.x*A.x + A.y*A.y + A.z*A.z);
-    }
-
-    public final void normalize( ) {
-        float t = x*x + y*y + z*z;
-        if (t != 0 && t != 1) t = (float) (1 / Math.sqrt(t));
-        x *= t;
-        y *= t;
-        z *= t;
-    }
-
-    public final static Vector3D normalize(Vector3D A) {
-        float t = A.x*A.x + A.y*A.y + A.z*A.z;
-        if (t != 0 && t != 1) t = (float)(1 / Math.sqrt(t));
-        return new Vector3D(A.x*t, A.y*t, A.z*t);
-    }
-
-    public String toString() {
-        return new String("["+x+", "+y+", "+z+"]");
-    }
-}
-
-
-class Ray {
-    public static final float MAX_T = Float.MAX_VALUE;
-    Vector3D origin;
-    Vector3D direction;
-    float t;
-    Renderable object;
-
-    public Ray(Vector3D eye, Vector3D dir) {
-        origin = new Vector3D(eye);
-        direction = Vector3D.normalize(dir);
-    }
-
-    public boolean trace(Vector objects) {
-        Enumeration objList = objects.elements();
-        t = MAX_T;
-        object = null;
-        while (objList.hasMoreElements()) {
-            Renderable object = (Renderable) objList.nextElement();
-            object.intersect(this);
-        }
-        return (object != null);
-    }
-
-    // The following method is not strictly needed, and most likely
-    // adds unnecessary overhead, but I prefered the syntax
-    //
-    //            ray.Shade(...)
-    // to
-    //            ray.object.Shade(ray, ...)
-    //
-    public final Color Shade(Vector lights, Vector objects, Color bgnd) {
-        return object.Shade(this, lights, objects, bgnd);
-    }
-
-    public String toString() {
-        return ("ray origin = "+origin+"  direction = "+direction+"  t = "+t);
-    }
-}
-
-// All the public variables here are ugly, but I
-// wanted Lights and Surfaces to be "friends"
-class Light {
-    public static final int AMBIENT = 0;
-    public static final int DIRECTIONAL = 1;
-    public static final int POINT = 2;
-
-    public int lightType;
-    public Vector3D lvec;           // the position of a point light or
-                                    // the direction to a directional light
-    public float ir, ig, ib;        // intensity of the light source
-
-    public Light(int type, Vector3D v, float r, float g, float b) {
-        lightType = type;
-        ir = r;
-        ig = g;
-        ib = b;
-        if (type != AMBIENT) {
-            lvec = v;
-            if (type == DIRECTIONAL) {
-                lvec.normalize();
-            }
-        }
-    }
-}
-
-
 class Surface {
     public float ir, ig, ib;        // surface's intrinsic color
     public float ka, kd, ks, ns;    // constants for phong model
@@ -172,49 +44,56 @@ class Surface {
         kr = r*I255; kt = t; nt = index;
     }
 
-    public Color Shade(Vector3D p, Vector3D n, Vector3D v, Vector lights, Vector objects, Color bgnd) {
-        Enumeration lightSources = lights.elements();
+    public Color Shade(Vector p, Vector n, Vector v, List<Light> lights, Vector objects, Color bgnd) {
+        Iterator lightSources = lights.iterator();
 
         float r = 0;
         float g = 0;
         float b = 0;
-        while (lightSources.hasMoreElements()) {
-            Light light = (Light) lightSources.nextElement();
-            if (light.lightType == Light.AMBIENT) {
-                r += ka*ir*light.ir;
-                g += ka*ig*light.ig;
-                b += ka*ib*light.ib;
+
+        while (lightSources.hasNext()) {
+            Light light = lightSources.next();
+
+            if (light instanceof AmbientLight) {
+                r += ka * ir * light.getColor().getRed();
+                g += ka * ig * light.getColor().getGreen();
+                b += ka * ib * light.getColor().getBlue();
             } else {
-                Vector3D l;
-                if (light.lightType == Light.POINT) {
-                    l = new Vector3D(light.lvec.x - p.x, light.lvec.y - p.y, light.lvec.z - p.z);
+                Vector l;
+
+                if (light instanceof PointLight) {
+                    l = new Vector(light.lvec.x - p.x, light.lvec.y - p.y, light.lvec.z - p.z);
                     l.normalize();
                 } else {
-                    l = new Vector3D(-light.lvec.x, -light.lvec.y, -light.lvec.z);
+                    l = new Vector(-light.lvec.x, -light.lvec.y, -light.lvec.z);
                 }
 
                 // Check if the surface point is in shadow
-                Vector3D poffset = new Vector3D(p.x + TINY*l.x, p.y + TINY*l.y, p.z + TINY*l.z);
+                Vector poffset = new Vector(p.x + TINY * l.getX(), p.getY() + TINY * l.getY(), p.getZ() + TINY * l.getZ());
+
                 Ray shadowRay = new Ray(poffset, l);
                 if (shadowRay.trace(objects))
                     break;
 
-                float lambert = Vector3D.dot(n,l);
+                double lambert = n.dotProduct(l);
+
                 if (lambert > 0) {
                     if (kd > 0) {
-                        float diffuse = kd*lambert;
-                        r += diffuse*ir*light.ir;
-                        g += diffuse*ig*light.ig;
-                        b += diffuse*ib*light.ib;
+                        double diffuse = kd * lambert;
+                        r += diffuse * ir * light.getColor().getRed();
+                        g += diffuse * ig * light.getColor().getGreen();
+                        b += diffuse * ib * light.getColor().getBlue();
                     }
+
                     if (ks > 0) {
                         lambert *= 2;
-                        float spec = v.dot(lambert*n.x - l.x, lambert*n.y - l.y, lambert*n.z - l.z);
+                        double spec = v.dotProduct(n.multiply(lambert).subtract(l));
+
                         if (spec > 0) {
-                            spec = ks*((float) Math.pow((double) spec, (double) ns));
-                            r += spec*light.ir;
-                            g += spec*light.ig;
-                            b += spec*light.ib;
+                            spec = ks * Math.pow(spec, ns);
+                            r += spec * light.getColor().getRed();
+                            g += spec * light.getColor().getGreen();
+                            b += spec * light.getColor().getBlue();
                         }
                     }
                 }
@@ -223,21 +102,24 @@ class Surface {
 
         // Compute illumination due to reflection
         if (kr > 0) {
-            float t = v.dot(n);
+            double t = v.dotProduct(n);
+
             if (t > 0) {
                 t *= 2;
-                Vector3D reflect = new Vector3D(t*n.x - v.x, t*n.y - v.y, t*n.z - v.z);
-                Vector3D poffset = new Vector3D(p.x + TINY*reflect.x, p.y + TINY*reflect.y, p.z + TINY*reflect.z);
+                Vector reflect = n.multiply(t).subtract(v);
+                Vector poffset = p.add(reflect.multiply(TINY));
+
                 Ray reflectedRay = new Ray(poffset, reflect);
+
                 if (reflectedRay.trace(objects)) {
                     Color rcolor = reflectedRay.Shade(lights, objects, bgnd);
                     r += kr*rcolor.getRed();
                     g += kr*rcolor.getGreen();
                     b += kr*rcolor.getBlue();
                 } else {
-                    r += kr*bgnd.getRed();
-                    g += kr*bgnd.getGreen();
-                    b += kr*bgnd.getBlue();
+                    r += kr * bgnd.getRed();
+                    g += kr * bgnd.getGreen();
+                    b += kr * bgnd.getBlue();
                 }
             }
         }
@@ -251,24 +133,14 @@ class Surface {
     }
 }
 
-
-// An object must implement a Renderable interface in order to
-// be ray traced. Using this interface it is straight forward
-// to add new objects
-abstract interface Renderable {
-    public abstract boolean intersect(Ray r);
-    public abstract Color Shade(Ray r, Vector lights, Vector objects, Color bgnd);
-    public String toString();
-}
-
 // An example "Renderable" object
-class Sphere implements Renderable {
+class Sphere implements Intersectable<ShadableIntersection, ?> {
     Surface surface;
-    Vector3D center;
+    Vector center;
     float radius;
     float radSqr;
 
-    public Sphere(Surface s, Vector3D c, float r) {
+    public Sphere(Surface s, Vector c, float r) {
         surface = s;
         center = c;
         radius = r;
@@ -276,9 +148,9 @@ class Sphere implements Renderable {
     }
 
     public boolean intersect(Ray ray) {
-        float dx = center.x - ray.origin.x;
-        float dy = center.y - ray.origin.y;
-        float dz = center.z - ray.origin.z;
+        double dx = center.getX() - ray.getOrigin().getX();
+		double dy = center.getY() - ray.getOrigin().getY();
+		double dz = center.getZ() - ray.getOrigin().getZ();
         float v = ray.direction.dot(dx, dy, dz);
 
         // Do the following quick check to see if there is even a chance
@@ -287,7 +159,7 @@ class Sphere implements Renderable {
             return false;
 
         // Test if the ray actually intersects the sphere
-        float t = radSqr + v*v - dx*dx - dy*dy - dz*dz;
+		double t = radSqr + v*v - dx*dx - dy*dy - dz*dz;
         if (t < 0)
             return false;
 
@@ -311,13 +183,9 @@ class Sphere implements Renderable {
         //   2. a unit-length surface normal (n)
         //   3. a unit-length vector towards the ray's origin (v)
         //
-        float px = ray.origin.x + ray.t*ray.direction.x;
-        float py = ray.origin.y + ray.t*ray.direction.y;
-        float pz = ray.origin.z + ray.t*ray.direction.z;
-
-        Vector3D p = new Vector3D(px, py, pz);
-        Vector3D v = new Vector3D(-ray.direction.x, -ray.direction.y, -ray.direction.z);
-        Vector3D n = new Vector3D(px - center.x, py - center.y, pz - center.z);
+        Vector p = ray.pointAt(ray.t);
+        Vector v = new Vector3D(-ray.direction.x, -ray.direction.y, -ray.direction.z);
+        Vector n = p.subtract(center);
         n.normalize();
 
         // The illumination model is applied
@@ -341,8 +209,8 @@ public class RayTrace extends Applet implements Runnable {
     Vector lightList;
     Surface currentSurface;
 
-    Vector3D eye, lookat, up;
-    Vector3D Du, Dv, Vp;
+    Vector eye, lookat, up;
+    Vector Du, Dv, Vp;
     float fov;
 
     Color background;
@@ -381,21 +249,25 @@ public class RayTrace extends Applet implements Runnable {
         }
 
         // Initialize more defaults if they weren't specified
-        if (eye == null) eye = new Vector3D(0, 0, 10);
-        if (lookat == null) lookat = new Vector3D(0, 0, 0);
-        if (up  == null) up = new Vector3D(0, 1, 0);
+        if (eye == null) eye = new Vector(0, 0, 10);
+        if (lookat == null) lookat = new Vector(0, 0, 0);
+        if (up  == null) up = new Vector(0, 1, 0);
         if (background == null) background = new Color(0,0,0);
 
         // Compute viewing matrix that maps a
         // screen coordinate to a ray direction
-        Vector3D look = new Vector3D(lookat.x - eye.x, lookat.y - eye.y, lookat.z - eye.z);
-        Du = Vector3D.normalize(look.cross(up));
-        Dv = Vector3D.normalize(look.cross(Du));
+        Vector look = new Vector(lookat.x - eye.x, lookat.y - eye.y, lookat.z - eye.z);
+        Du = look.cross(up);
+        Du.normalize();
+        Dv = look.cross(Du);
+        Dv.normalize();
+
         float fl = (float)(width / (2*Math.tan((0.5*fov)*Math.PI/180)));
-        Vp = Vector3D.normalize(look);
-        Vp.x = Vp.x*fl - 0.5f*(width*Du.x + height*Dv.x);
-        Vp.y = Vp.y*fl - 0.5f*(width*Du.y + height*Dv.y);
-        Vp.z = Vp.z*fl - 0.5f*(width*Du.z + height*Dv.z);
+        Vp = (Vector) look.clone();
+        Vp.normalize();
+        Vp.x = Vp.x*fl - 0.5f*(width*Du.x + height * Dv.x);
+        Vp.y = Vp.y*fl - 0.5f*(width*Du.y + height * Dv.y);
+        Vp.z = Vp.z*fl - 0.5f*(width*Du.z + height * Dv.z);
     }
 
 
