@@ -16,12 +16,14 @@
 
 package com.almostrealism.raytracer.primitives;
 
+import io.almostrealism.code.Scope;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Intersection;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.Mesh;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
@@ -163,6 +165,15 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 
 			@Override
 			public void compact() { }
+
+
+			@Override
+			public Scope<Variable<Scalar>> getScope(String prefix) {
+				// TODO  Not sure this is correct
+				Scope s = new Scope();
+				s.getVariables().add(new Variable(prefix + "scalar", evaluate(new Object[0])));
+				return s;
+			}
 		};
 	}
 

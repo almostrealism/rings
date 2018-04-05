@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -39,7 +39,7 @@ import com.almostrealism.raytracer.Settings;
  * This is the camera coordinate system and is used for projection. These vectors are computed and updated
  * automatically based on the viewing direction and up direction vectors.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 @ModelEntity
 public class PinholeCamera extends OrthographicCamera {

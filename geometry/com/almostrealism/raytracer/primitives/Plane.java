@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.primitives;
 
-import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Volume;
 
 public class Plane implements Volume {
@@ -80,31 +80,31 @@ public class Plane implements Volume {
 	
 	public double[] getAcross() { 
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
 		return this.across;
 	}
 	
 	public boolean inside(double x[]) {
-		double d = Math.abs(VectorMath.dot(x, this.normal));
+		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
 		Plane.d = d;
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(VectorMath.dot(x, this.up));
+		double y = Math.abs(new Vector(x).dotProduct(new Vector(this.up)));
 		if (y > this.h / 2.0) return false;
 		
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
-		double z = Math.abs(VectorMath.dot(x, this.across));
+		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
 		if (z > this.w / 2.0) return false;
 		
 		return true;
 	}
 	
 	public double intersect(double p[], double d[]) {
-		double a = VectorMath.dot(p, this.normal);
-		double b = VectorMath.dot(d, this.normal);
+		double a = new Vector(p).dotProduct(new Vector(this.normal));
+		double b = new Vector(d).dotProduct(new Vector(this.normal));
 		
 		double d1 = (this.thick - a) / b;
 		double d2 = (-this.thick - a) / b;
@@ -112,16 +112,14 @@ public class Plane implements Volume {
 		if (d1 < 0.0) {
 			d1 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = VectorMath.multiply(d, d1 + this.thick / 2.0, true);
-			VectorMath.addTo(x, p);
+			double x[] = new Vector(d).multiply(d1 + this.thick / 2.0).add(new Vector(p)).toArray();
 			if (!this.inside(x)) d1 = Double.MAX_VALUE - 1.0;
 		}
 		
 		if (d2 < 0.0) {
 			d2 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = VectorMath.multiply(d, d2 - this.thick / 2.0, true);
-			VectorMath.addTo(x, p);
+			double x[] = new Vector(d).multiply(d2 - this.thick / 2.0).add(new Vector(p)).toArray();
 			if (!this.inside(x)) d2 = Double.MAX_VALUE - 1.0;
 		}
 		
@@ -130,21 +128,21 @@ public class Plane implements Volume {
 		return Math.min(d1, d2);
 	}
 	
-	public double[] getNormal(double x[]) { return VectorMath.clone(this.normal); }
+	public double[] getNormal(double x[]) { return ((Vector) new Vector(this.normal).clone()).toArray(); }
 
 	public double[] getSpatialCoords(double uv[]) {
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
-		double x[] = VectorMath.multiply(this.across, (uv[0] - 0.5) * this.w, true);
-		return VectorMath.addMultiple(x, this.up, (0.5 - uv[1]) * this.h);
+		return new Vector(this.across).multiply((uv[0] - 0.5) * this.w)
+				.add(new Vector(this.up).multiply((0.5 - uv[1]) * this.h)).toArray();
 	}
 
 	public double[] getSurfaceCoords(double xyz[]) {
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
-		return new double[] {0.5 + VectorMath.dot(this.across, xyz) / this.w,
-							0.5 - VectorMath.dot(this.up, xyz) / this.h};
+		return new double[] { 0.5 + new Vector(this.across).dotProduct(new Vector(xyz)) / this.w,
+							0.5 - new Vector(this.up).dotProduct(new Vector(xyz)) / this.h };
 	}
 }

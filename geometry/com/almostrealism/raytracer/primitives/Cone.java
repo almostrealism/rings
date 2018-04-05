@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;

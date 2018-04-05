@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -29,7 +29,7 @@ import com.almostrealism.raytracer.Settings;
  * Also, the focus distance is set to 1.0 and the radius of the lens is set to 0.005
  * (default focal length / 10 to produce an f-number of 5).
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
 @ModelEntity
 public class ThinLensCamera extends PinholeCamera {

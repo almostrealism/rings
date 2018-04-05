@@ -26,10 +26,12 @@ import java.util.concurrent.TimeoutException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
@@ -48,13 +50,13 @@ import com.almostrealism.raytracer.primitives.SurfaceUI;
  * by default.
  */
 public abstract class AbstractSurfaceUI implements SurfaceUI {
-  protected AbstractSurface surface;
+	protected AbstractSurface surface;
   
-  private String name;
+	private String name;
   
-  private Icon icon;
-  private RGB lastColor;
-  private Color background = Color.white;
+	private Icon icon;
+	private RGB lastColor;
+	private Color background = Color.white;
 
 	/** Sets all values to the default. */
 	public AbstractSurfaceUI() {
@@ -216,6 +218,11 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	@Override
 	public Vector operate(Triple triple) {
 		return getSurface().operate(triple);
+	}
+
+	@Override
+	public Scope getScope(String prefix) {
+		return getSurface().getScope(prefix);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
+import com.almostrealism.raytracer.config.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -111,7 +112,7 @@ public class RayTracingTest {
 		params.dx = (int) (c.getProjectionWidth() * 10);
 		params.dy = (int) (c.getProjectionHeight() * 10);
 		
-		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, params), c);
+		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, params, new FogParameters()), c);
 		
 		try {
 			ColorProducer im[][] = r.realize(params).evaluate(null);

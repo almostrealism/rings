@@ -1,22 +1,22 @@
 package com.almostrealism.raytracer.engine;
 
+import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.Shadable;
-import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.ParameterizedFactory;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 public class DistanceEstimationLightingEngine extends LightingEngine {
 	public static final int MAX_RAY_STEPS = 30;
@@ -64,7 +64,6 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	}
 
 	public static class Locus extends ArrayList<Callable<Ray>> implements ContinuousField, Callable<ColorProducer>, Shadable {
-
 		private ShaderSet shaders;
 		private ShaderContext params;
 
@@ -95,6 +94,9 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 
 			return null;
 		}
+
+		@Override
+		public Scope getScope(String prefix) { throw new NotImplementedException("getScope"); } // TODO
 
 		public ShaderSet getShaders() { return shaders; }
 

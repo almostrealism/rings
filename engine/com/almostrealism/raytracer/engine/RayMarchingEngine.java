@@ -21,8 +21,8 @@ import java.util.concurrent.Callable;
 
 import com.almostrealism.raytracer.config.FogParameters;
 import com.almostrealism.raytracer.config.RenderParameters;
+import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
@@ -33,6 +33,7 @@ import org.almostrealism.color.ShadableCurve;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
@@ -74,6 +75,9 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 
 	@Override
 	public Vector operate(Triple in) { return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())); }
+
+	@Override
+	public Scope getScope(String prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
 
 	@Override
 	public ColorProducer call() throws Exception {

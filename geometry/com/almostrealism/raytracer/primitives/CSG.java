@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.algebra.*;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
@@ -77,7 +78,7 @@ public class CSG extends AbstractSurface {
     /**
      * This method calls intersectAt to determine the value to return.
      * 
-     * @see org.almostrealism.space.ShadableSurface#intersect(org.almostrealism.algebra.Ray)
+     * @see org.almostrealism.space.ShadableSurface#intersect(org.almostrealism.geometry.Ray)
      */
     public boolean intersect(Ray ray) {
 		if (this.intersectAt(ray).getIntersections().length <= 0)
@@ -87,7 +88,7 @@ public class CSG extends AbstractSurface {
     }
 
     /**
-     * @see  ShadableSurface#intersectAt(org.almostrealism.algebra.Ray)
+     * @see  ShadableSurface#intersectAt(org.almostrealism.geometry.Ray)
      */
     public ShadableIntersection intersectAt(Ray ray) {
         ray.transform(this.getTransform(true).getInverse());

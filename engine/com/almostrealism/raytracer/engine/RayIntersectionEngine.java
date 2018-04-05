@@ -18,9 +18,9 @@ package com.almostrealism.raytracer.engine;
 
 import com.almostrealism.raytracer.config.FogParameters;
 import com.almostrealism.raytracer.config.RenderParameters;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 

@@ -1,9 +1,9 @@
 import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.PointLight;
 import org.almostrealism.algebra.Intersectable;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableIntersection;
 
 import java.applet.*;
@@ -205,8 +205,8 @@ public class RayTrace extends Applet implements Runnable {
     final static int CHUNKSIZE = 100;
     Image screen;
     Graphics gc;
-    Vector objectList;
-    Vector lightList;
+    List objectList;
+	List lightList;
     Surface currentSurface;
 
     Vector eye, lookat, up;
@@ -229,8 +229,8 @@ public class RayTrace extends Applet implements Runnable {
         fov = 30;               // default horizonal field of view
 
         // Initialize various lists
-        objectList = new Vector(CHUNKSIZE, CHUNKSIZE);
-        lightList = new Vector(CHUNKSIZE, CHUNKSIZE);
+        objectList = new ArrayList(CHUNKSIZE);
+        lightList = new ArrayList(CHUNKSIZE);
         currentSurface = new Surface(0.8f, 0.2f, 0.9f, 0.2f, 0.4f, 0.4f, 10.0f, 0f, 0f, 1f);
 
         // Parse the scene file

@@ -22,7 +22,6 @@ import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Intersections;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
@@ -30,6 +29,7 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.ParameterizedFactory;
 

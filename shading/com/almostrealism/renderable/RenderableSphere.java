@@ -19,7 +19,6 @@ import com.almostrealism.gl.GLCodePrintWriter;
 import com.almostrealism.gl.GLDriver;
 import com.almostrealism.raytracer.primitives.Sphere;
 import com.jogamp.opengl.GL2;
-import io.almostrealism.code.CodePrintWriter;
 
 /**
  * @author  Michael Murray

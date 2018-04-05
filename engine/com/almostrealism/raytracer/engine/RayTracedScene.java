@@ -22,12 +22,12 @@ import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
+import org.almostrealism.geometry.Ray;
 
 import io.almostrealism.lambda.Realization;
 

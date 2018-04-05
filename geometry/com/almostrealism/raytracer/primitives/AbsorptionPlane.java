@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
-import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
@@ -118,7 +118,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	public void setOrigPosition(double x[]) { }
 	
 	public boolean absorb(double x[], double p[], double energy) {
-		double d = Math.abs(VectorMath.dot(x, this.normal));
+		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
 		double r = 1.0;
 //		if (AbsorptionPlane.verbose > 0.0) r = Math.random();
 //
@@ -131,7 +131,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 			this.energy = new double[this.w][this.h];
 		
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
 		if (this.image == null) {
 			this.image = new RGB[this.w][this.h];
@@ -142,8 +142,8 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 					this.image[i][j] = new RGB(0.0, 0.0, 0.0);
 		}
 		
-		double a = VectorMath.dot(x, this.across) / this.pixel;
-		double b = VectorMath.dot(x, this.up) / this.pixel;
+		double a = new Vector(x).dotProduct(new Vector(this.across)) / this.pixel;
+		double b = new Vector(x).dotProduct(new Vector(this.up)) / this.pixel;
 		a = (this.h / 2.0) - a;
 		b = (this.w / 2.0) + b;
 		

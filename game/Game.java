@@ -1,3 +1,5 @@
+import org.almostrealism.texture.ImageTexture;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
@@ -15,7 +17,7 @@ public class Game extends JFrame implements Runnable{
 	private boolean running;
 	private BufferedImage image;
 	public int[] pixels;
-	public ArrayList<Texture> textures;
+	public ArrayList<ImageTexture> textures;
 	public Camera camera;
 	public Screen screen;
 	public static int[][] map = 
@@ -39,12 +41,13 @@ public class Game extends JFrame implements Runnable{
 	public Game() {
 		thread = new Thread(this);
 		image = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
-		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-		textures = new ArrayList<Texture>();
-		textures.add(Texture.wood);
-		textures.add(Texture.brick);
-		textures.add(Texture.bluestone);
-		textures.add(Texture.stone);
+		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		textures = new ArrayList<>();
+//		TODO  Add textures
+//		textures.add(Texture.wood);
+//		textures.add(Texture.brick);
+//		textures.add(Texture.bluestone);
+//		textures.add(Texture.stone);
 		camera = new Camera(4.5, 4.5, 1, 0, 0, -.66);
 		screen = new Screen(map, mapWidth, mapHeight, textures, 640, 480);
 		addKeyListener(camera);

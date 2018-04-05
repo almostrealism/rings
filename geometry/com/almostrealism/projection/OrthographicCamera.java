@@ -17,10 +17,10 @@
 package com.almostrealism.projection;
 
 import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;

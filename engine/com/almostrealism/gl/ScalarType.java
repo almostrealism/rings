@@ -14,32 +14,16 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.renderable;
-
-import com.almostrealism.gl.GLDriver;
+package com.almostrealism.gl;
 
 /**
- * @see  GLDriver#glCallList(int)
+ *
+ * @author jezek2
  */
-public class DisplayList extends RenderableGLAdapter {
-	protected int displayListIndex;
-	
-	protected DisplayList() { }
-	
-	public DisplayList(int displayListIndex) {
-		this.displayListIndex = displayListIndex;
-	}
-	
-	public void init(GLDriver gl) {
-		super.init(gl);
-		displayListIndex = gl.glGenLists(1);
-	}
-	
-	@Override
-	public void display(GLDriver gl) {
-		push(gl);
-		super.display(gl);
-		gl.glCallList(displayListIndex);
-		pop(gl);
-	}
+public enum ScalarType {
+	PHY_FLOAT,
+	PHY_DOUBLE,
+	PHY_INTEGER,
+	PHY_SHORT,
+	PHY_FIXEDPOINT88
 }

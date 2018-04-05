@@ -14,32 +14,9 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.renderable;
-
-import com.almostrealism.gl.GLDriver;
-
 /**
- * @see  GLDriver#glCallList(int)
+ * Primitives which support intersection computation.
+ * 
+ * @author  Michael Murray
  */
-public class DisplayList extends RenderableGLAdapter {
-	protected int displayListIndex;
-	
-	protected DisplayList() { }
-	
-	public DisplayList(int displayListIndex) {
-		this.displayListIndex = displayListIndex;
-	}
-	
-	public void init(GLDriver gl) {
-		super.init(gl);
-		displayListIndex = gl.glGenLists(1);
-	}
-	
-	@Override
-	public void display(GLDriver gl) {
-		push(gl);
-		super.display(gl);
-		gl.glCallList(displayListIndex);
-		pop(gl);
-	}
-}
+package com.almostrealism.raytracer.primitives;

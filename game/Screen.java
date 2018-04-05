@@ -1,12 +1,14 @@
+import org.almostrealism.texture.ImageTexture;
+
 import java.util.ArrayList;
 import java.awt.Color;
 
 public class Screen {
 	public int[][] map;
 	public int mapWidth, mapHeight, width, height;
-	public ArrayList<Texture> textures;
+	public ArrayList<ImageTexture> textures;
 	
-	public Screen(int[][] m, int mapW, int mapH, ArrayList<Texture> tex, int w, int h) {
+	public Screen(int[][] m, int mapW, int mapH, ArrayList<ImageTexture> tex, int w, int h) {
 		map = m;
 		mapWidth = mapW;
 		mapHeight = mapH;
@@ -43,28 +45,25 @@ public class Screen {
 		    //Direction to go in x and y
 		    int stepX, stepY;
 		    boolean hit = false;//was a wall hit
-		    int side=0;//was the wall vertical or horizontal
+		    int side = 0;//was the wall vertical or horizontal
+
 		    //Figure out the step direction and initial distance to a side
-		    if (rayDirX < 0)
-		    {
+		    if (rayDirX < 0) {
 		    	stepX = -1;
 		    	sideDistX = (camera.xPos - mapX) * deltaDistX;
-		    }
-		    else
-		    {
+		    } else {
 		    	stepX = 1;
 		    	sideDistX = (mapX + 1.0 - camera.xPos) * deltaDistX;
 		    }
-		    if (rayDirY < 0)
-		    {
+
+		    if (rayDirY < 0) {
 		    	stepY = -1;
 		        sideDistY = (camera.yPos - mapY) * deltaDistY;
-		    }
-		    else
-		    {
+		    } else {
 		    	stepY = 1;
 		        sideDistY = (mapY + 1.0 - camera.yPos) * deltaDistY;
 		    }
+
 		    //Loop to find where the ray hits a wall
 		    while(!hit) {
 		    	//Jump to next square

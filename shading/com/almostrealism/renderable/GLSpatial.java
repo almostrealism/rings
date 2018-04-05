@@ -18,7 +18,6 @@ package com.almostrealism.renderable;
 
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.gl.GLDriver;
-import com.almostrealism.renderable.RenderableGeometry;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLArrayDataWrapper;

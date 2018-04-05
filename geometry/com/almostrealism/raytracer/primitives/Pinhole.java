@@ -16,7 +16,7 @@
 
 package com.almostrealism.raytracer.primitives;
 
-import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.time.Clock;
@@ -46,15 +46,15 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	public double getRadius() { return this.radius; }
 	
 	public boolean absorb(double[] x, double[] p, double energy) {
-		double d = Math.abs(VectorMath.dot(x, this.normal));
+		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(VectorMath.dot(x, this.up));
+		double y = Math.abs(new Vector(x).dotProduct(new Vector(this.up)));
 		
 		if (this.across == null)
-			this.across = VectorMath.cross(this.up, this.normal);
+			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
-		double z = Math.abs(VectorMath.dot(x, this.across));
+		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
 		
 		if (Math.sqrt(y * y + z * z) > this.radius)
 			return true;

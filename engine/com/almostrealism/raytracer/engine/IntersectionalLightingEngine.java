@@ -2,8 +2,8 @@ package com.almostrealism.raytracer.engine;
 
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersections;
-import org.almostrealism.algebra.Ray;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.ParameterizedFactory;
 

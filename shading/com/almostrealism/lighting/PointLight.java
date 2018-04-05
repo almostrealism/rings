@@ -19,6 +19,8 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import io.almostrealism.code.Scope;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
@@ -26,6 +28,8 @@ import org.almostrealism.color.*;
 import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.engine.RayTracedScene;
+import org.almostrealism.relation.TripleFunction;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -42,13 +46,21 @@ public class PointLight implements Light, Positioned {
 
 	private double da, db, dc;
 
-	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, (t) -> {
-		double d = ((Vector) t).subtract(location).lengthSq();
+	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, new TripleFunction<RGB>() {
+		@Override
+		public RGB operate(Triple t) {
+			double d = ((Vector) t).subtract(location).lengthSq();
 
-		RGB color = getColor().multiply(getIntensity());
-		color.divideBy(da * d + db * Math.sqrt(d) + dc);
+			RGB color = getColor().multiply(getIntensity());
+			color.divideBy(da * d + db * Math.sqrt(d) + dc);
 
-		return color;
+			return color;
+		}
+
+		@Override
+		public Scope<? extends Variable> getScope(String s) {
+			throw new NotImplementedException("getScope"); // TODO
+		}
 	});
 
 	/** Constructs a PointLight object with the default intensity and color at the origin. */
