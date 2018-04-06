@@ -16,7 +16,7 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.gl.GLCodePrintWriter;
+import com.almostrealism.gl.GLPrintWriter;
 import com.almostrealism.gl.GLMaterial;
 import com.almostrealism.gl.TextureManager;
 import com.almostrealism.gl.GLDriver;
@@ -59,17 +59,17 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 
 	/**
 	 * This default implementation of {@link #write(String, String, CodePrintWriter)}
-	 * uses a {@link GLCodePrintWriter} as the argument to {@link #display(GLDriver)}.
+	 * uses a {@link GLPrintWriter} as the argument to {@link #display(GLDriver)}.
 	 * Most subclasses will want to override this to provide a way of encoding the
 	 * GL data that is sure to work properly in an external Open GL system.
 	 *
 	 * @param glMember  The name of the Open GL singleton Object.
 	 * @param name  The name of this {@link Renderable} as it should appear in the exported code.
-	 * @param p  The {@link CodePrintWriter} that will be wrapped by {@link GLCodePrintWriter}.
+	 * @param p  The {@link CodePrintWriter} that will be wrapped by {@link GLPrintWriter}.
 	 */
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
-		display(new GLCodePrintWriter(glMember, glMember + "u", glMember + "ut", name, p)); // TODO  These may not be the right member names
+		display(new GLPrintWriter(glMember, glMember + "u", glMember + "ut", name, p)); // TODO  These may not be the right member names
 	}
 	
 	public void push(GLDriver gl) {

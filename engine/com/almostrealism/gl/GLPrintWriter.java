@@ -40,18 +40,18 @@ import java.nio.IntBuffer;
 import java.util.*;
 
 /**
- * {@link GLCodePrintWriter} allows for convenient encoding of GL variables and methods using
+ * {@link GLPrintWriter} allows for convenient encoding of GL variables and methods using
  * the same methods that {@link com.almostrealism.renderable.Renderable#display(GLDriver)} uses
- * to display GL content. In many cases this means that passing a {@link GLCodePrintWriter} to
+ * to display GL content. In many cases this means that passing a {@link GLPrintWriter} to
  * the {@link com.almostrealism.renderable.Renderable#display(GLDriver)} method will correctly
  * encode the GL content to the {@link CodePrintWriter} that is wrapped by this
- * {@link GLCodePrintWriter}.
+ * {@link GLPrintWriter}.
  */
-public class GLCodePrintWriter extends GLDriver {
+public class GLPrintWriter extends GLDriver {
 	private String glMember, gluMember, glutMember, name;
 	private CodePrintWriter p;
 
-	public GLCodePrintWriter(String glMember, String gluMember, String glutMember, String name, CodePrintWriter p) {
+	public GLPrintWriter(String glMember, String gluMember, String glutMember, String name, CodePrintWriter p) {
 		super(null);
 		this.glMember = glMember;
 		this.gluMember = gluMember;
@@ -771,7 +771,7 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glClipPlane(int plane, DoubleBuffer eqn) {
 		if (gl != null) super.glClipPlane(plane, eqn);
-		System.out.println("GLCodePrintWriter[WARN]: glClipPlane is deprecated and will not be included");
+		System.out.println("GLPrintWriter[WARN]: glClipPlane is deprecated and will not be included");
 	}
 
 	@Override
