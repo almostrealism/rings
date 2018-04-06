@@ -15,44 +15,25 @@
  */
 package com.almostrealism.renderable;
 
-import com.almostrealism.gl.GLCodePrintWriter;
 import com.almostrealism.gl.GLDriver;
 import com.almostrealism.raytracer.primitives.Sphere;
-import com.jogamp.opengl.GL2;
 
 /**
  * @author  Michael Murray
  */
-public class RenderableSphere extends RenderableGeometry {
+// TODO  Remove SLICES and STACKS values so they are filled in by GLDriver
+public class RenderableSphere extends RenderableGeometry<Sphere> {
 	public static final int SLICES = 40;
 	public static final int STACKS = 40;
 
-	protected GLDisplayList list;
-	
-	public RenderableSphere(Sphere s) {
-		super(s);
-		list = new GLDisplayList() {
-			public void init(GLDriver gl) {
-				super.init(gl);
-				gl.glNewList(displayListIndex, GL2.GL_COMPILE);
-				initMaterial(gl);
-				gl.glutSolidSphere(s.getSize(), SLICES, STACKS);
-				gl.glEndList();
-			}
-		};
-	}
+	public RenderableSphere(Sphere s) { super(s); }
 	
 	@Override
-	public void init(GLDriver gl) { list.init(gl); }
+	public void init(GLDriver gl) { }
 
+	/** Delegates to {@link GLDriver#glutSolidSphere(double, int, int)}. */
 	@Override
 	public void render(GLDriver gl) {
-		if (gl instanceof GLCodePrintWriter) {
-			// Display lists are not supported by external OpenGL systems
-			list.initMaterial(gl);
-			gl.glutSolidSphere(getGeometry().getSize(), SLICES, STACKS);
-		} else {
-			list.display(gl);
-		}
+		gl.glutSolidSphere(getGeometry().getSize(), SLICES, STACKS);
 	}
 }
