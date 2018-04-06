@@ -17,29 +17,30 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
-import io.almostrealism.code.CodePrintWriter;
 
-public class RenderableGLList extends RenderableGLAdapter {
-	private RenderableList renderables;
+/**
+ * @see  GLDriver#glCallList(int)
+ */
+@Deprecated
+public class GLDisplayList extends RenderableGLAdapter {
+	protected int displayListIndex;
 	
-	public RenderableGLList() { this(new RenderableList()); }
+	protected GLDisplayList() { }
 	
-	public RenderableGLList(RenderableList r) { this.renderables = r; }
+	public GLDisplayList(int displayListIndex) {
+		this.displayListIndex = displayListIndex;
+	}
 	
-	@Override
-	public void init(GLDriver gl) { super.init(gl); renderables.init(gl); }
+	public void init(GLDriver gl) {
+		super.init(gl);
+		displayListIndex = gl.glGenLists(1);
+	}
 	
 	@Override
 	public void display(GLDriver gl) {
 		push(gl);
 		super.display(gl);
-		renderables.display(gl);
+		gl.glCallList(displayListIndex);
 		pop(gl);
-	}
-
-	@Override
-	public void write(String glMember, String name, CodePrintWriter p) {
-		super.write(glMember, name, p);
-		renderables.write(glMember, name, p);
 	}
 }

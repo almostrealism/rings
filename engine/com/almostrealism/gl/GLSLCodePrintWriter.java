@@ -16,82 +16,20 @@
 
 package com.almostrealism.gl;
 
+import io.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
-import io.almostrealism.code.Method;
-import io.almostrealism.code.ResourceVariable;
-import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Vector;
 
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@link GLSLCodePrintWriter} is a {@link CodePrintWriter} implementation for writing GLSL,
  * a shading language similar to C.
  */
-public class GLSLCodePrintWriter implements CodePrintWriter {
+public class GLSLCodePrintWriter extends CPrintWriter {
 	private PrintWriter p;
 
 	/**
 	 * Constructs a new {@link GLSLCodePrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
-	public GLSLCodePrintWriter(PrintWriter p) {
-		this.p = p;
-	}
-
-	@Override
-	public void println(Variable variable) {
-		this.p.println(variable.getName() + " = " + encode(variable.getData()) + ";");
-	}
-
-	@Override
-	public void println(Method method) {
-		this.p.println(method.getName());
-	}
-
-	@Override
-	public void beginScope(String name) {
-		if (name == null) {
-			this.p.println("{");
-		} else {
-			this.p.println("void " + name + "() {");
-		}
-	}
-
-	@Override
-	public void endScope() {
-		this.p.println("}");
-	}
-
-	protected static String encode(Object data) {
-		if (data instanceof Vector) {
-			Vector v = (Vector) data;
-			return "vec3(" + v.getX() + ", " + v.getY() + ", " + v.getZ() + ")";
-		} else if (data instanceof Pair) {
-			Pair v = (Pair) data;
-			return "vec2(" + v.getX() + ", " + v.getY() + ")";
-		} else {
-			throw new IllegalArgumentException("Unable to encode " + data);
-		}
-	}
-
-	protected static String toString(Map<String, Variable> args, List<String> argumentOrder) {
-		StringBuffer buf = new StringBuffer();
-
-		i: for (int i = 0; i < argumentOrder.size(); i++) {
-			Variable v = args.get(argumentOrder.get(i));
-
-			if (v instanceof ResourceVariable) {
-				buf.append(encode(v.getData()));
-			}
-
-			if (i < (argumentOrder.size() - 1)) {
-				buf.append(", ");
-			}
-		}
-
-		return buf.toString();
-	}
+	public GLSLCodePrintWriter(PrintWriter p) { super(p); }
 }

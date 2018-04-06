@@ -26,6 +26,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Variable;
+import io.almostrealism.js.JavaScriptPrintWriter;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
@@ -64,27 +65,15 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glColor(color);
 
 		if (enableDoublePrecision) {
-			Variable<Double> r = new Variable<>("r", color.getRed());
-			Variable<Double> g = new Variable<>("g", color.getGreen());
-			Variable<Double> b = new Variable<>("b", color.getBlue());
-
-			HashMap args = new HashMap<String, Variable<Double>>();
-			args.put("red", r);
-			args.put("green", g);
-			args.put("blue", b);
-
-			p.println(new Method(glMember, "glColor3d", Arrays.asList("red", "green", "blue"), args));
+			p.println(glMethod("color3d",
+								new Variable<>("r", color.getRed()),
+								new Variable<>("g", color.getGreen()),
+								new Variable<>("b", color.getBlue())));
 		} else {
-			Variable<Float> r = new Variable<>("r", (float) color.getRed());
-			Variable<Float> g = new Variable<>("g", (float) color.getGreen());
-			Variable<Float> b = new Variable<>("b", (float) color.getBlue());
-
-			HashMap args = new HashMap<String, Variable<Double>>();
-			args.put("red", r);
-			args.put("green", g);
-			args.put("blue", b);
-
-			p.println(new Method(glMember, "glColor3f", Arrays.asList("red", "green", "blue"), args));
+			p.println(glMethod("color3f",
+								new Variable<>("r", (float) color.getRed()),
+								new Variable<>("g", (float) color.getGreen()),
+								new Variable<>("b", (float) color.getBlue())));
 		}
 	}
 
@@ -93,31 +82,17 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glColor(color);
 
 		if (enableDoublePrecision) {
-			Variable<Double> r = new Variable<>("r", color.getRed());
-			Variable<Double> g = new Variable<>("g", color.getGreen());
-			Variable<Double> b = new Variable<>("b", color.getBlue());
-			Variable<Double> a = new Variable<>("a", color.getAlpha());
-
-			HashMap args = new HashMap<String, Variable<Double>>();
-			args.put("red", r);
-			args.put("green", g);
-			args.put("blue", b);
-			args.put("alpha", a);
-
-			p.println(new Method(glMember, "glColor4d", Arrays.asList("red", "green", "blue", "alpha"), args));
+			p.println(glMethod("color4d",
+								new Variable<>("r", color.getRed()),
+								new Variable<>("g", color.getGreen()),
+								new Variable<>("b", color.getBlue()),
+								new Variable<>("a", color.getAlpha())));
 		} else {
-			Variable<Float> r = new Variable<>("r", (float) color.getRed());
-			Variable<Float> g = new Variable<>("g", (float) color.getGreen());
-			Variable<Float> b = new Variable<>("b", (float) color.getBlue());
-			Variable<Float> a = new Variable<>("a", (float) color.getAlpha());
-
-			HashMap args = new HashMap<String, Variable<Double>>();
-			args.put("red", r);
-			args.put("green", g);
-			args.put("blue", b);
-			args.put("alpha", a);
-
-			p.println(new Method(glMember, "glColor4f", Arrays.asList("red", "green", "blue", "alpha"), args));
+			p.println(glMethod("color4f",
+								new Variable<>("r", (float) color.getRed()),
+								new Variable<>("g", (float) color.getGreen()),
+								new Variable<>("b", (float) color.getBlue()),
+								new Variable<>("a", (float) color.getAlpha())));
 		}
 	}
 
@@ -150,22 +125,22 @@ public class GLCodePrintWriter extends GLDriver {
 	public void glMaterial(GLMaterial mat) {
 		if (gl != null) super.glMaterial(mat);
 
-		p.println(glMethod("glMaterialfv",
+		p.println(glMethod("materialfv",
 				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
 								new Variable<>("GL_AMBIENT", GL2.GL_AMBIENT),
 								new Variable<>("ambient", Scalar.toFloat(mat.ambient.toArray())),
 								new Variable<>("zero", 0))));
-		p.println(glMethod("glMaterialfv",
+		p.println(glMethod("materialfv",
 				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
 								new Variable<>("GL_DIFFUSE", GL2.GL_DIFFUSE),
 								new Variable<>("diffuse", Scalar.toFloat(mat.diffuse.toArray())),
 								new Variable<>("zero", 0))));
-		p.println(glMethod("glMaterialfv",
+		p.println(glMethod("materialfv",
 				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
 								new Variable<>("GL_SPECULAR", GL2.GL_SPECULAR),
 								new Variable("specular", Scalar.toFloat(mat.specular.toArray())),
 								new Variable("zero", 0))));
-		p.println(glMethod("glMaterialfv",
+		p.println(glMethod("materialfv",
 				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
 								new Variable("GL_SHININESS", GL2.GL_SHININESS),
 								new Variable("shininess", new float[] { (float) mat.shininess.getValue() }),
@@ -200,7 +175,7 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glGenTextures(int code, int textures[]) {
 		if (gl != null) super.glGenTextures(code, textures);
-		p.println(glMethod("glGenTextures",
+		p.println(glMethod("genTextures",
 				Arrays.asList(new Variable<>("code", code), new Variable<>("textures", textures))));
 	}
 
@@ -213,14 +188,14 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glBindTexture(int code, int tex) {
 		if (gl != null) super.glBindTexture(code, tex);
-		p.println(glMethod("glBindTexture",
+		p.println(glMethod("bindTexture",
 				Arrays.asList(new Variable<>("code", code), new Variable<>("tex", tex))));
 	}
 
 	@Override
 	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
 		if (gl != null) super.glTexImage2D(a, b, c, d, e, f, g, h, buf);
-		p.println(glMethod("glTexImage2D",
+		p.println(glMethod("texImage2D",
 				Arrays.asList(new Variable<>("a", a),
 								new Variable<>("b", b),
 								new Variable<>("c", c),
@@ -235,37 +210,37 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glTexGeni(int a, int b, int c) {
 		if (gl != null) super.glTexGeni(a, b, c);
-		throw new NotImplementedException("glTexGeni");
+		throw new NotImplementedException("texGeni");
 	}
 
 	@Override
 	public void glTexGen(int a, int b, float f) {
 		if (gl != null) super.glTexGen(a, b, f);
-		throw new NotImplementedException("glTexGen");
+		throw new NotImplementedException("texGen");
 	}
 
 	@Override
 	public void glTexGen(int a, int b, float f[], int index) {
 		if (gl != null) super.glTexGen(a, b, f, index);
-		throw new NotImplementedException("glTexGen");
+		throw new NotImplementedException("texGen");
 	}
 
 	@Override
 	public void glTexEnvi(int a, int b, int c) {
 		if (gl != null) super.glTexEnvi(a, b, c);
-		throw new NotImplementedException("glTexEnvi");
+		throw new NotImplementedException("texEnvi");
 	}
 
 	@Override
 	public void glTexEnvf(int a, int b, float f) {
 		if (gl != null) super.glTexEnvf(a, b, f);
-		throw new NotImplementedException("glTexEnvf");
+		throw new NotImplementedException("texEnvf");
 	}
 
 	@Override
 	public void glTexParameter(int code, int param, int value) {
 		if (gl != null) super.glTexParameter(code, param, value);
-		p.println(glMethod("glTexParameter",
+		p.println(glMethod("texParameter",
 				Arrays.asList(new Variable<>("code", code),
 								new Variable<>("param", param),
 								new Variable<>("value", value))));
@@ -274,19 +249,19 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glLineWidth(double width) {
 		if (gl != null) super.glLineWidth(width);
-		throw new NotImplementedException("glLineWidth");
+		throw new NotImplementedException("lineWidth");
 	}
 
 	@Override
 	public void glPointSize(double size) {
 		if (gl != null) super.glPointSize(size);
-		throw new NotImplementedException("glPointSize");
+		throw new NotImplementedException("pointSize");
 	}
 
 	@Override
 	public void glutBitmapCharacter(int font, char c) {
 		if (glut != null) super.glutBitmapCharacter(font, c);
-		throw new NotImplementedException("glutBitmapCharacter");
+		throw new NotImplementedException("bitmapCharacter");
 	}
 
 	@Override
@@ -304,7 +279,7 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glActiveTexture(int code) {
 		if (gl != null) super.glActiveTexture(code);
-		throw new NotImplementedException("glActiveTexture");
+		throw new NotImplementedException("activeTexture");
 	}
 
 	@Override
@@ -312,12 +287,12 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glVertex(v);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glVertex3d",
+			p.println(glMethod("vertex3d",
 					Arrays.asList(new Variable<>("x", v.getX()),
 								new Variable<>("y", v.getY()),
 								new Variable<>("z", v.getZ()))));
 		} else {
-			p.println(glMethod("glVertex3f",
+			p.println(glMethod("vertex3f",
 					Arrays.asList(new Variable<>("x", (float) v.getX()),
 								new Variable<>("y", (float) v.getY()),
 								new Variable<>("z", (float) v.getZ()))));
@@ -329,11 +304,11 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glVertex(p);
 
 		if (enableDoublePrecision) {
-			this.p.println(glMethod("glVertex2d",
+			this.p.println(glMethod("vertex2d",
 					Arrays.asList(new Variable<>("x", p.getX()),
 							new Variable<>("y", p.getY()))));
 		} else {
-			this.p.println(glMethod("glVertex2f",
+			this.p.println(glMethod("vertex2f",
 					Arrays.asList(new Variable<>("x", (float) p.getX()),
 							new Variable<>("y", (float) p.getY()))));
 		}
@@ -342,13 +317,13 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) {
 		if (gl != null) super.glVertexPointer(a, b, c, f);
-		throw new NotImplementedException("glVertexPointer");
+		throw new NotImplementedException("vertexPointer");
 	}
 
 	@Override
 	@Deprecated public void glVertexPointer(GLArrayDataWrapper data) {
 		if (gl != null) super.glVertexPointer(data);
-		throw new NotImplementedException("glVertexPointer");
+		throw new NotImplementedException("vertexPointer");
 	}
 
 	@Override
@@ -356,12 +331,12 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glNormal(n);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glNormal3d",
+			p.println(glMethod("normal3d",
 					Arrays.asList(new Variable<>("x", n.getX()),
 							new Variable<>("y", n.getY()),
 							new Variable<>("z", n.getZ()))));
 		} else {
-			p.println(glMethod("glNormal3f",
+			p.println(glMethod("normal3f",
 					Arrays.asList(new Variable<>("x", (float) n.getX()),
 							new Variable<>("y", (float) n.getY()),
 							new Variable<>("z", (float) n.getZ()))));
@@ -404,12 +379,12 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glTranslate(t);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glTranslated",
+			p.println(glMethod("translated",
 					Arrays.asList(new Variable<>("x", t.getX()),
 							new Variable<>("y", t.getY()),
 							new Variable<>("z", t.getZ()))));
 		} else {
-			p.println(glMethod("glTranslatef",
+			p.println(glMethod("translatef",
 					Arrays.asList(new Variable<>("x", (float) t.getX()),
 							new Variable<>("y", (float) t.getY()),
 							new Variable<>("z", (float) t.getZ()))));
@@ -421,12 +396,12 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glScale(s);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glScaled",
+			p.println(glMethod("scaled",
 					Arrays.asList(new Variable<>("x", s.getX()),
 							new Variable<>("y", s.getY()),
 							new Variable<>("z", s.getZ()))));
 		} else {
-			p.println(glMethod("glScalef",
+			p.println(glMethod("scalef",
 					Arrays.asList(new Variable<>("x", (float) s.getX()),
 							new Variable<>("y", (float) s.getY()),
 							new Variable<>("z", (float) s.getZ()))));
@@ -441,13 +416,13 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glAccum(int param, double value) {
 		if (gl != null) super.glAccum(param, value);
-		throw new NotImplementedException("glAccum");
+		throw new NotImplementedException("accum");
 	}
 
 	@Override
 	public void glColorMask(boolean r, boolean g, boolean b, boolean a) {
 		if (gl != null) super.glColorMask(r, g, b, a);
-		p.println(glMethod("glColorMask",
+		p.println(glMethod("colorMask",
 						new Variable<>("r", r),
 						new Variable<>("g", g),
 						new Variable<>("b", b),
@@ -463,7 +438,7 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glClearColor(RGBA c) {
 		if (gl != null) super.glClearColor(c);
-		p.println(glMethod("glClearColor",
+		p.println(glMethod("clearColor",
 						Arrays.asList(new Variable("r", c.r()),
 									new Variable("g", c.g()),
 									new Variable("b", c.b()),
@@ -473,19 +448,19 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glClearAccum(RGBA c) {
 		if (gl != null) super.glClearAccum(c);
-		throw new NotImplementedException("glClearAccum");
+		throw new NotImplementedException("clearAccum");
 	}
 
 	@Override
 	public void glDepthFunc(int code) {
 		if (gl != null) super.glDepthFunc(code);
-		p.println(glMethod("glDepthFunc", Arrays.asList(new Variable<>("code", code))));
+		p.println(glMethod("depthFunc", Arrays.asList(new Variable<>("code", code))));
 	}
 
 	@Override
 	public void glStencilFunc(int func, int ref, int mask) {
 		if (gl != null) super.glStencilFunc(func, ref, mask);
-		p.println(glMethod("glStencilFunc",
+		p.println(glMethod("stencilFunc",
 							new Variable<>("func", func),
 							new Variable<>("ref", ref),
 							new Variable<>("mask", mask)));
@@ -494,7 +469,7 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glStencilOp(int sfail, int dpfail, int dppass) {
 		if (gl != null) super.glStencilOp(sfail, dpfail, dppass);
-		p.println(glMethod("glStencilOp",
+		p.println(glMethod("sStencilOp",
 							new Variable<>("sfail", sfail),
 							new Variable<>("dpfail", dpfail),
 							new Variable<>("dppass", dppass)));
@@ -505,16 +480,16 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glClearDepth(d);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glClearDepth", Arrays.asList(new Variable<>("d", d))));
+			p.println(glMethod("clearDepth", Arrays.asList(new Variable<>("d", d))));
 		} else {
-			p.println(glMethod("glClearDepthf", Arrays.asList(new Variable<>("d", d))));
+			p.println(glMethod("clearDepthf", Arrays.asList(new Variable<>("d", d))));
 		}
 	}
 
 	@Override
 	public void glClearStencil(int param) {
 		if (gl != null) super.glClearStencil(param);
-		p.println(glMethod("glClearStencil", Arrays.asList(new Variable<>("param", param))));
+		p.println(glMethod("clearStencil", Arrays.asList(new Variable<>("param", param))));
 	}
 
 	@Override
@@ -525,13 +500,21 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void setFog(FogParameters f) {
 		if (gl != null) super.setFog(f);
+
+//		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
+//		gl.glFogfv(GL2.GL_FOG_COLOR, FloatBuffer.wrap(Scalar.toFloat(f.fogColor.toArray())));
+//		gl.glFogf(GL2.GL_FOG_DENSITY, (float) f.fogDensity);
+//		gl.glFogf(GL2.GL_FOG_START, 0.0f);
+//		gl.glFogf(GL2.GL_FOG_END, Float.MAX_VALUE);
+		glEnable(GL2.GL_FOG);
+
 		throw new NotImplementedException("setFog");
 	}
 
 	@Override
 	public void glQuads() {
 		if (gl != null) super.glQuads();
-		throw new NotImplementedException("glQuads");
+		throw new NotImplementedException("quads");
 	}
 
 	@Override
@@ -542,108 +525,108 @@ public class GLCodePrintWriter extends GLDriver {
 			begins.push(code);
 		}
 
-		p.println(glMethod("glBegin", new Variable<>("code", code)));
+		p.println(glMethod("begin", new Variable<>("code", code)));
 	}
 
 	@Override
 	public void glEnable(int code) {
 		if (gl != null) super.glEnable(code);
-		p.println(glMethod("glEnable", Arrays.asList(new Variable<>("code", code))));
+		p.println(glMethod("enable", Arrays.asList(new Variable<>("code", code))));
 	}
 
 	@Override
 	public void glEnableClientState(int code) {
 		if (gl != null) super.glEnableClientState(code);
-		throw new NotImplementedException("glEnableClientState");
+		throw new NotImplementedException("enableClientState");
 	}
 
 	@Override
 	public void glPolygonMode(int param, int value) {
 		if (gl != null) super.glPolygonMode(param, value);
-		throw new NotImplementedException("glPolygonMode");
+		throw new NotImplementedException("polygonMode");
 	}
 
 	@Override
 	public void glBlendFunc(int c1, int c2) {
 		if (gl != null) super.glBlendFunc(c1, c2);
-		p.println(glMethod("glBlendFunc",
+		p.println(glMethod("blendFunc",
 				Arrays.asList(new Variable<>("c1", c1), new Variable<>("c2", c2))));
 	}
 
 	@Override
 	public void glShadeModel(int model) {
 		if (gl != null) super.glShadeModel(model);
-		throw new NotImplementedException("glShadeModel");
+		throw new NotImplementedException("shadeModel");
 	}
 
 	@Override
 	public int glRenderMode(int mode) {
 		if (gl != null) super.glRenderMode(mode);
-		throw new NotImplementedException("glRenderMode");
+		throw new NotImplementedException("renderMode");
 	}
 
 	@Override
 	public void glPushAttrib(int attrib) {
 		if (gl != null) super.glPushAttrib(attrib);
-		throw new NotImplementedException("glPushAttrib");
+		throw new NotImplementedException("pushAttrib");
 	}
 
 	@Override
 	public void glPopAttrib() {
 		if (gl != null) super.glPopAttrib();
-		throw new NotImplementedException("glPopAttrib");
+		throw new NotImplementedException("popAttrib");
 	}
 
 	@Override
 	public void glGenBuffers(int a, int b[], int c) {
 		if (gl != null) super.glGenBuffers(a, b, c);
-		throw new NotImplementedException("glGenBuffers");
+		throw new NotImplementedException("genBuffers");
 	}
 
 	@Override
 	public void glBindBuffer(int code, int v) {
 		if (gl != null) super.glBindBuffer(code, v);
-		throw new NotImplementedException("glBindBuffer");
+		throw new NotImplementedException("bindBuffer");
 	}
 
 	@Override
 	public void glBufferData(int code, int l, ByteBuffer buf, int d) {
 		if (gl != null) super.glBufferData(code, l, buf, d);
-		throw new NotImplementedException("glBufferData");
+		throw new NotImplementedException("bufferData");
 	}
 
 	@Override
 	public void glSelectBuffer(int size, IntBuffer buf) {
 		if (gl != null) super.glSelectBuffer(size, buf);
-		throw new NotImplementedException("glSelectBuffer");
+		throw new NotImplementedException("selectBuffer");
 	}
 
 	@Override
 	public int glGenLists(int code) {
 		if (gl != null) super.glGenLists(code);
-		throw new NotImplementedException("glGenLists");
+		throw new NotImplementedException("genLists");
 	}
 
 	@Override
 	public void glCallList(int list) {
 		if (gl != null) super.glCallList(list);
-		throw new NotImplementedException("glCallList");
+		throw new NotImplementedException("callList");
 	}
 
 	@Override
 	public void glNewList(int list, int code) {
 		if (gl != null) super.glNewList(list, code);
-		throw new NotImplementedException("glNewList");
+		throw new NotImplementedException("newList");
 	}
 
 	@Override
 	public void uv(Pair texCoord) {
 		if (enableDoublePrecision) {
-			p.println(glMethod("glTexCoord2d",
+			p.println(glMethod("texCoord2d",
 						Arrays.asList(new Variable<>("u", texCoord.getA()),
 									new Variable<>("v", texCoord.getB()))));
 		} else {
-			p.println(glMethod("glTexCoord2f",
+			p.println(glMethod("texCoord2f",
 					Arrays.asList(new Variable<>("u", (float) texCoord.getA()),
 									new Variable<>("v", (float) texCoord.getB()))));
 		}
@@ -652,32 +635,25 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public void glMatrixMode(int code) {
 		if (gl != null) super.glMatrixMode(code);
-		p.println(glMethod("glMatrixMode", Arrays.asList(new Variable<>("code", code))));
-	}
-
-	@Override
-	public void glModelView() {
-		if (gl != null) super.glModelView();
-		p.println(glMethod("glMatrixMode",
-					Arrays.asList(new Variable<>("GL_MODELVIEW", GL2.GL_MODELVIEW))));
+		p.println(glMethod("matrixMode", Arrays.asList(new Variable<>("code", code))));
 	}
 
 	@Override
 	public void glPushMatrix() {
 		if (gl != null) super.glPushMatrix();
-		p.println(glMethod("glPushMatrix", Arrays.asList()));
+		p.println(glMethod("pushMatrix", Arrays.asList()));
 	}
 
 	@Override
 	public void glPopMatrix() {
 		if (gl != null) super.glPopMatrix();
-		p.println(glMethod("glPopMatrix", Arrays.asList()));
+		p.println(glMethod("popMatrix", Arrays.asList()));
 	}
 
 	@Override
 	public void glLoadIdentity() {
 		if (gl != null) super.glLoadIdentity();
-		p.println(glMethod("glLoadIdentity", Arrays.asList()));
+		p.println(glMethod("loadIdentity", Arrays.asList()));
 	}
 
 	@Override
@@ -685,48 +661,48 @@ public class GLCodePrintWriter extends GLDriver {
 		if (gl != null) super.glMultMatrix(m);
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("glMultMatrixd", Arrays.asList(new Variable<>("matrix", m.toArray()))));
+			p.println(glMethod("multMatrixd", Arrays.asList(new Variable<>("matrix", m.toArray()))));
 		} else {
-			p.println(glMethod("glMultMatrixf", Arrays.asList(new Variable<>("matrix", Scalar.toFloat(m.toArray())))));
+			p.println(glMethod("multMatrixf", Arrays.asList(new Variable<>("matrix", Scalar.toFloat(m.toArray())))));
 		}
 	}
 
 	@Override
 	public void glRasterPos(Vector pos) {
 		if (gl != null) super.glRasterPos(pos);
-		throw new NotImplementedException("glRasterPos");
+		throw new NotImplementedException("rasterPos");
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	@Override
-	@Deprecated public void glViewport(int x, int y, int w, int h) {
-		if (gl != null) super.glViewport(x, y, w, h);
-		throw new NotImplementedException("glViewport");
+	@Deprecated public void setViewport(int x, int y, int w, int h) {
+		if (gl != null) super.setViewport(x, y, w, h);
+		throw new NotImplementedException("setViewport");
 	}
 
 	/** It is recommended to use a {@link PinholeCamera} instead. */
 	@Override
-	@Deprecated public void gluPerspective(double d1, double d2, double d3, double d4) {
-		if (glu != null) super.gluPerspective(d1, d2, d3, d4);
-		p.println(gluMethod("gluPerspective",
-					Arrays.asList(new Variable<>("d1", d1),
-								new Variable<>("d2", d2),
-								new Variable<>("d3", d3),
-								new Variable<>("d4", d4))));
+	@Deprecated public void setPerspective(double fovy, double aspect, double zNear, double zFar) {
+		if (glu != null) super.setPerspective(fovy, aspect, zNear, zFar);
+		p.println(gluMethod("perspective",
+					Arrays.asList(new Variable<>("fovy", fovy),
+								new Variable<>("aspect", aspect),
+								new Variable<>("zNear", zNear),
+								new Variable<>("zFar", zFar))));
 	}
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Override
 	@Deprecated public void gluOrtho2D(double a, double b, double c, double d) {
 		if (glu != null) super.gluOrtho2D(a, b, c, d);
-		throw new NotImplementedException("gluOrtho2D");
+		throw new NotImplementedException("ortho2D");
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	@Override
 	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
 		if (glu != null) super.gluLookAt(e, c, var13, var15, var17);
-		p.println(gluMethod("gluLookAt",
+		p.println(gluMethod("lookAt",
 							Arrays.asList(new Variable<>("ex", (float) e.getX()),
 										new Variable<>("ey", (float) e.getY()),
 										new Variable("ez", (float) e.getZ()),
@@ -741,35 +717,35 @@ public class GLCodePrintWriter extends GLDriver {
 	@Override
 	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
 		if (glu != null) super.gluUnProject(w, modelview, projection, viewport, worldpos);
-		throw new NotImplementedException("gluUnProject");
+		throw new NotImplementedException("unProject");
 	}
 
 	@Override
 	public boolean gluUnProject(Vector w, Vector worldpos) {
 		if (glu != null) super.gluUnProject(w, worldpos);
-		throw new NotImplementedException("gluUnProject");
+		throw new NotImplementedException("unProject");
 	}
 
 	@Override
 	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
 		if (glu != null) super.gluPickMatrix(x, y, w, h, viewport);
-		throw new NotImplementedException("gluPickMatrix");
+		throw new NotImplementedException("pickMatrix");
 	}
 
 	@Override
 	public void glProjection(Camera c) {
 		if (gl != null) super.glProjection(c);
 
-		p.println(glMethod("glMatrixMode",
+		p.println(glMethod("matrixMode",
 						Arrays.asList(new Variable<>("GL_PROJECTION", GL2.GL_PROJECTION))));
-		p.println(glMethod("glLoadIdentity"));
+		p.println(glMethod("loadIdentity"));
 
 		if (c instanceof PinholeCamera) {
 			PinholeCamera camera = (PinholeCamera) c;
 
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
-			p.println(gluMethod("gluPerspective",
+			p.println(gluMethod("perspective",
 					Arrays.asList(new Variable<>("fov", Math.toDegrees(camera.getFOV()[0])),
 								new Variable<>("aspect",width / height),
 								new Variable<>("min", 1),
@@ -786,33 +762,33 @@ public class GLCodePrintWriter extends GLDriver {
 			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
 		}
 
-		p.println(glMethod("glMatrixMode",
+		p.println(glMethod("matrixMode",
 						Arrays.asList(new Variable<>("GL_MODELVIEW", GL2.GL_MODELVIEW))));
-		p.println(glMethod("glLoadIdentity"));
+		p.println(glMethod("loadIdentity"));
 	}
 
 	@Override
 	public void glClipPlane(int plane, DoubleBuffer eqn) {
 		if (gl != null) super.glClipPlane(plane, eqn);
-		throw new NotImplementedException("glClipPlane");
+		System.out.println("GLCodePrintWriter[WARN]: glClipPlane is deprecated and will not be included");
 	}
 
 	@Override
 	public void glCullFace(int param) {
 		if (gl != null) super.glCullFace(param);
-		p.println(glMethod("glCullFace", new Variable<>("param", param)));
+		p.println(glMethod("cullFace", new Variable<>("param", param)));
 	}
 
 	@Override
 	public void glFrontFace(int param) {
 		if (gl != null) super.glFrontFace(param);
-		p.println(glMethod("glFrontFace", new Variable<>("param", param)));
+		p.println(glMethod("frontFace", new Variable<>("param", param)));
 	}
 
 	@Override
 	public void glFlush() {
 		if (gl != null) super.glFlush();
-		throw new NotImplementedException("glFlush");
+		throw new NotImplementedException("flush");
 	}
 
 	@Override
@@ -825,74 +801,81 @@ public class GLCodePrintWriter extends GLDriver {
 			begins.pop();
 		}
 
-		p.println(glMethod("glBegin"));
+		p.println(glMethod("begin"));
 		return v;
 	}
 
 	@Override
-	public void glEndList() {
-		if (gl != null) super.glEndList();
-		throw new NotImplementedException("glEndList");
+	public void endList() {
+		if (gl != null) super.endList();
+		throw new NotImplementedException("endList");
 	}
 
 	@Override
 	@Deprecated public void glDisable(int code) {
 		if (gl != null) super.glDisable(code);
-		p.println(glMethod("glDisable", new Variable<>("code", code)));
+		p.println(glMethod("disable", new Variable<>("code", code)));
 	}
 
 	@Override
 	@Deprecated public void glDisableClientState(int code) {
 		if (gl != null) super.glDisableClientState(code);
-		throw new NotImplementedException("glDisableClientState");
+		throw new NotImplementedException("disableClientState");
 	}
 
 	@Override
 	public void glHint(int param, int value) {
 		if (gl != null) super.glHint(param, value);
-		p.println(glMethod("glHint",
+		p.println(glMethod("hint",
 				Arrays.asList(new Variable("param", param), new Variable("value", value))));
 	}
 
 	@Override
-	public void glutWireCube(double size) {
-		if (glut != null) super.glutWireCube(size);
-		throw new NotImplementedException("glutWireCube");
+	public void wireCube(double size) {
+		if (glut != null) super.wireCube(size);
+		throw new NotImplementedException("wireCube");
 	}
 
 	@Override
 	public void glutSolidSphere(double radius, int slices, int stacks) {
 		if (glut != null) super.glutSolidSphere(radius, slices, stacks);
-		throw new NotImplementedException("glutSolidSphere");
+		p.println(glutMethod("solidSphere",
+								new Variable<>("radius", radius),
+								new Variable<>("slices", slices),
+								new Variable<>("stacks", stacks)));
 	}
 
 	@Override
 	public void glDrawArrays(int code, int a, int b) {
 		if (gl != null) super.glDrawArrays(code, a, b);
-		throw new NotImplementedException("glDrawArrays");
-	}
-
-	protected Method glMethod(String name) {
-		return glMethod(glMember, name, new ArrayList<>());
+		throw new NotImplementedException("drawArrays");
 	}
 
 	protected Method glMethod(String name, Variable... args) {
-		return glMethod(glMember, name, Arrays.asList(args));
+		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, Arrays.asList(args));
 	}
 
 	protected Method glMethod(String name, List<Variable> args) {
-		return glMethod(glMember, name, args);
+		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, args);
 	}
 
 	protected Method gluMethod(String name, List<Variable> args) {
-		return glMethod(gluMember, name, args);
+		return glMethod(gluMember, p instanceof JavaScriptPrintWriter, name, args);
+	}
+
+	protected Method glutMethod(String name, Variable... args) {
+		return glutMethod(name, Arrays.asList(args));
 	}
 
 	protected Method glutMethod(String name, List<Variable> args) {
-		return glMethod(glutMember, name, args);
+		return glMethod(glutMember, p instanceof JavaScriptPrintWriter, name, args);
 	}
 
-	protected static Method glMethod(String glMember, String name, List<Variable> args) {
+	protected static Method glMethod(String glMember, boolean isWebGL, String name, List<Variable> args) {
+		if (!isWebGL) {
+			name = glMember + name.substring(0, 1).toUpperCase() + name.substring(1);
+		}
+
 		List<String> argList = new ArrayList<>();
 		for (int i = 0; i < args.size(); i++) {
 			argList.add(String.valueOf(i));

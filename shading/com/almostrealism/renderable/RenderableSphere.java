@@ -27,11 +27,11 @@ public class RenderableSphere extends RenderableGeometry {
 	public static final int SLICES = 40;
 	public static final int STACKS = 40;
 
-	protected DisplayList list;
+	protected GLDisplayList list;
 	
 	public RenderableSphere(Sphere s) {
 		super(s);
-		list = new DisplayList() {
+		list = new GLDisplayList() {
 			public void init(GLDriver gl) {
 				super.init(gl);
 				gl.glNewList(displayListIndex, GL2.GL_COMPILE);

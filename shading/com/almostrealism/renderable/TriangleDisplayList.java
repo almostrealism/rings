@@ -23,7 +23,8 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.Triangle;
 
-public class TriangleDisplayList extends DisplayList {
+@Deprecated
+public class TriangleDisplayList extends GLDisplayList {
 	private Iterable<Triangle> triangles;
 	
 	public TriangleDisplayList(Iterable<Triangle> t) { triangles = t; }
@@ -50,6 +51,6 @@ public class TriangleDisplayList extends DisplayList {
 		}
 		
 		gl.glEnd();
-		gl.glEndList();
+		gl.endList();
 	}
 }

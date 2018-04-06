@@ -316,10 +316,10 @@ public class GLDriver {
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
-	@Deprecated public void glViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
+	@Deprecated public void setViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
 
 	/** It is recommended to use a {@link PinholeCamera} instead. */
-	@Deprecated public void gluPerspective(double d1, double d2, double d3, double d4) { glu.gluPerspective(d1, d2, d3, d4); }
+	@Deprecated public void setPerspective(double fovy, double aspect, double zNear, double zFar) { glu.gluPerspective(fovy, aspect, zNear, zFar); }
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Deprecated public void gluOrtho2D(double a, double b, double c, double d) { glu.gluOrtho2D(a, b, c, d); }
@@ -380,14 +380,14 @@ public class GLDriver {
 
 	public void glFlush() { gl.glFlush(); }
 	public int glEnd() { gl.glEnd(); return begins.pop(); }
-	public void glEndList() { gl.glEndList(); }
+	@Deprecated public void endList() { gl.glEndList(); }
 	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
 	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }
 
 	public void glHint(int param, int value) { gl.glHint(param, value); }
 
-	public void glutWireCube(double size) {
-		// TODO  Replace with our own cube code
+	public void wireCube(double size) {
+		// TODO  Replace with RenderableCube
 		glut.glutWireCube((float) size);
 	}
 

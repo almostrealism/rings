@@ -1,28 +1,27 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
-package com.almostrealism.gl.models;
+package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
 
-import com.almostrealism.renderable.DisplayList;
 import org.almostrealism.algebra.Vector;
 
-public class Gear extends DisplayList {
+public class Gear extends RenderableGLAdapter {
 	private float innerRadius, outerRadius;
 	private float width, toothDepth;
 	private int teeth;
@@ -34,25 +33,16 @@ public class Gear extends DisplayList {
 		this.teeth = teeth;
 		this.toothDepth = toothDepth;
 	}
-	
-	public void init(GLDriver gl) {
-		super.init(gl);
-		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
-		initMaterial(gl);
-		gear(gl, innerRadius, outerRadius, width, teeth, toothDepth);
-		gl.glEndList();
-	}
-	
-	private static void gear(GLDriver gl, float inner_radius, float outer_radius,
-							float width, int teeth, float tooth_depth) {
+
+	public void display(GLDriver gl) {
 		int i;
 		float r0, r1, r2;
 		float angle, da;
 		float u, v, len;
 
-		r0 = inner_radius;
-		r1 = outer_radius - tooth_depth / 2.0f;
-		r2 = outer_radius + tooth_depth / 2.0f;
+		r0 = innerRadius;
+		r1 = outerRadius - toothDepth / 2.0f;
+		r2 = outerRadius + toothDepth / 2.0f;
 
 		da = 2.0f * (float) Math.PI / teeth / 4.0f;
 

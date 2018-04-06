@@ -22,7 +22,7 @@ import org.almostrealism.algebra.Vector;
 import org.junit.Test;
 
 import com.almostrealism.gl.DefaultGLCanvas;
-import com.almostrealism.gl.models.Gear;
+import com.almostrealism.renderable.Gear;
 import com.almostrealism.projection.PinholeCamera;
 
 /**
