@@ -38,7 +38,7 @@ import java.nio.IntBuffer;
 import java.util.Stack;
 
 public class GLDriver {
-	public static final boolean enableDoublePrecision = false;
+	protected boolean enableDoublePrecision = false;
 
 	protected GL2 gl;
 	protected GLU glu;

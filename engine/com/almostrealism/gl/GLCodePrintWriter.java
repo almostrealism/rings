@@ -58,6 +58,7 @@ public class GLCodePrintWriter extends GLDriver {
 		this.glutMember = glutMember;
 		this.name = name;
 		this.p = p;
+		this.enableDoublePrecision = p instanceof JavaScriptPrintWriter;
 	}
 
 	@Override
