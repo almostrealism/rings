@@ -48,7 +48,8 @@ import java.util.*;
  * {@link GLPrintWriter}.
  */
 public class GLPrintWriter extends GLDriver {
-	private String glMember, gluMember, glutMember, name;
+	private String glMember, gluMember, glutMember;
+	private String name; // TODO Use name
 	private CodePrintWriter p;
 
 	public GLPrintWriter(String glMember, String gluMember, String glutMember, String name, CodePrintWriter p) {

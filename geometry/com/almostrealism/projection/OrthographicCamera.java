@@ -24,6 +24,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * The OrthographicCamera class provides an orthographic porjection camera.
@@ -118,7 +119,7 @@ public class OrthographicCamera implements Camera, Positioned {
 		
 		this.updateUVW();
 	}
-	
+
 	/**
 	 * Sets the projection dimensions to the specified projection dimensions.
 	 */
