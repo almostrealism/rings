@@ -13,7 +13,6 @@
           <root url="file://$MODULE_DIR$/engine" />
           <root url="file://$MODULE_DIR$/geometry" />
           <root url="file://$MODULE_DIR$/shading" />
-          <root url="file://$MODULE_DIR$/src" />
           <root url="file://$MODULE_DIR$/ui" />
         </sourceRoots>
       </configuration>
