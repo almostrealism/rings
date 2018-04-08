@@ -68,8 +68,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	private FPSAnimator animator;
 	public static int frames;
-	public static int x, y;
-	public static int width, height;
+	public int x, y;
+	public int width, height;
 
 	public static int cComps;
 
@@ -257,7 +257,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glMatrixMode(gl.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
-		gl.glClearColor(0.1f, 0.2f, 0.3f, 1.0f); // TODO  What is this for?
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		gl.glShadeModel(gl.GL_FLAT);
 		gl.glDisable(GL.GL_DITHER);

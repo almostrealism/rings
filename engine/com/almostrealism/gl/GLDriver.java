@@ -346,6 +346,11 @@ public class GLDriver {
 		glu.gluPickMatrix(x, y, w, h, IntBuffer.wrap(viewport));
 	}
 
+	public void setCamera(Camera c) {
+		this.glProjection(c);
+		// TODO  Update projection when camera is updated?
+	}
+
 	public void glProjection(Camera c) {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();

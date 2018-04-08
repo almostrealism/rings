@@ -18,18 +18,19 @@ package com.almostrealism.gl;
 
 import io.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
+import org.almostrealism.relation.Computation;
 
 import java.io.PrintWriter;
 
 /**
- * {@link GLSLCodePrintWriter} is a {@link CodePrintWriter} implementation for writing GLSL,
+ * {@link GLSLPrintWriter} is a {@link CodePrintWriter} implementation for writing GLSL,
  * a shading language similar to C.
  */
-public class GLSLCodePrintWriter extends CPrintWriter {
+public class GLSLPrintWriter extends CPrintWriter {
 	private PrintWriter p;
 
 	/**
-	 * Constructs a new {@link GLSLCodePrintWriter} for writing GLSL to the specified {@link PrintWriter}.
+	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
-	public GLSLCodePrintWriter(PrintWriter p) { super(p); }
+	public GLSLPrintWriter(PrintWriter p) { super(p); }
 }
