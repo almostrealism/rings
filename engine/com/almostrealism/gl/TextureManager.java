@@ -88,7 +88,7 @@ public class TextureManager {
 	public void pushTexture(GLDriver gl, ImageSource s) {
 		addTexture(gl, s);
 		
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.enable(GL.GL_TEXTURE_2D);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textures.get(s));
 	}
 	

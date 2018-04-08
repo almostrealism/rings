@@ -24,6 +24,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
+import io.almostrealism.code.InstanceReference;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Variable;
 import io.almostrealism.js.JavaScriptPrintWriter;
@@ -478,8 +479,8 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glClearDepth(double d) {
-		if (gl != null) super.glClearDepth(d);
+	public void clearDepth(double d) {
+		if (gl != null) super.clearDepth(d);
 
 		if (enableDoublePrecision) {
 			p.println(glMethod("clearDepth", Arrays.asList(new Variable<>("d", d))));
@@ -508,7 +509,7 @@ public class GLPrintWriter extends GLDriver {
 //		gl.glFogf(GL2.GL_FOG_DENSITY, (float) f.fogDensity);
 //		gl.glFogf(GL2.GL_FOG_START, 0.0f);
 //		gl.glFogf(GL2.GL_FOG_END, Float.MAX_VALUE);
-		glEnable(GL2.GL_FOG);
+		enable(GL2.GL_FOG);
 
 		throw new NotImplementedException("setFog");
 	}
@@ -531,9 +532,16 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glEnable(int code) {
-		if (gl != null) super.glEnable(code);
-		p.println(glMethod("enable", Arrays.asList(new Variable<>("code", code))));
+	@Deprecated
+	public void enable(int code) {
+		if (gl != null) super.enable(code);
+		throw new NotImplementedException("enable");
+	}
+
+	@Override
+	public void enable(String code) {
+		if (gl != null) super.enable(code);
+		p.println(glMethod("enable", new InstanceReference(glMember + "." + code)));
 	}
 
 	@Override
@@ -826,10 +834,18 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glHint(int param, int value) {
-		if (gl != null) super.glHint(param, value);
+	@Deprecated
+	public void hint(int param, int value) {
+		if (gl != null) super.hint(param, value);
+		throw new NotImplementedException("hint");
+	}
+
+	@Override
+	public void hint(String param, String value) throws NoSuchFieldException, IllegalAccessException {
+		if (gl != null) super.hint(param, value);
 		p.println(glMethod("hint",
-				Arrays.asList(new Variable("param", param), new Variable("value", value))));
+						new InstanceReference(glMember + "." + param),
+						new InstanceReference(glMember + "." + value)));
 	}
 
 	@Override
@@ -876,6 +892,17 @@ public class GLPrintWriter extends GLDriver {
 	protected static Method glMethod(String glMember, boolean isWebGL, String name, List<Variable> args) {
 		if (!isWebGL) {
 			name = glMember + name.substring(0, 1).toUpperCase() + name.substring(1);
+		} else {
+			for (Variable v : args) {
+				if (v instanceof InstanceReference) {
+					if (((InstanceReference) v).getData().startsWith("GL_")) {
+						((InstanceReference) v).setData(((InstanceReference) v).getData().substring(3));
+					} else if (((InstanceReference) v).getData().startsWith(glMember + ".GL_")) {
+						((InstanceReference) v).setData(glMember + "." +
+								((InstanceReference) v).getData().substring(glMember.length() + 4));
+					}
+				}
+			}
 		}
 
 		List<String> argList = new ArrayList<>();

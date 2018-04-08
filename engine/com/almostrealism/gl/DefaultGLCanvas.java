@@ -205,16 +205,16 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
 		System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
-		gl.glEnable(GL2ES1.GL_NORMALIZE);
-		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.enable(GL2ES1.GL_NORMALIZE);
+		gl.enable(GL.GL_DEPTH_TEST);
 		gl.glDisable(GL.GL_CULL_FACE);
 		gl.glCullFace(GL.GL_BACK);
 		gl.glShadeModel(GL2.GL_FLAT);
 
-		gl.glEnable(GL2.GL_LIGHTING);
-		gl.glEnable(GL2.GL_LIGHT0);
-		gl.glEnable(GL2.GL_LIGHT1);
-		gl.glEnable(GL2.GL_LIGHT2);
+		gl.enable(GL2.GL_LIGHTING);
+		gl.enable(GL2.GL_LIGHT0);
+		gl.enable(GL2.GL_LIGHT1);
+		gl.enable(GL2.GL_LIGHT2);
 
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
@@ -337,7 +337,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		configureLightAndMaterial(gl, lighting);
 
 		if (enableBlending) {
-			gl.glEnable(GL.GL_CULL_FACE);
+			gl.enable(GL.GL_CULL_FACE);
 
 			// Draw the reflection by drawing models with negated Z-axis.
 			gl.glPushMatrix();
@@ -415,7 +415,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glLight(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
 		gl.glLight(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
 		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
-		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		gl.enable(GL2.GL_COLOR_MATERIAL);
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
@@ -442,15 +442,15 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// normals are not being sent down to the hardware in
 		// GL_NORMAL_MAP texgen mode. Temporarily enabling lighting
 		// causes the normals to be sent down. Thanks to Ken Dyke.
-		gl.glEnable(GL2ES1.GL_LIGHTING);
+		gl.enable(GL2ES1.GL_LIGHTING);
 
 		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
 		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
 		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
 
-		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
-		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
-		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
+		gl.enable(GL2.GL_TEXTURE_GEN_S);
+		gl.enable(GL2.GL_TEXTURE_GEN_T);
+		gl.enable(GL2.GL_TEXTURE_GEN_R);
 
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 
@@ -468,7 +468,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
 		gl.glDisable(GL2.GL_TEXTURE_GEN_T);
 		gl.glDisable(GL2.GL_TEXTURE_GEN_R);
-		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.enable(GL.GL_DEPTH_TEST);
 	}
 
 	public static void drawGroundPlane(GLDriver gl) {
@@ -477,7 +477,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glDisable(GL.GL_DEPTH_TEST);
 
 		if (enableBlending) {
-			gl.glEnable(GL.GL_BLEND);
+			gl.enable(GL.GL_BLEND);
 			gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
 		}
 
@@ -488,8 +488,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		}
 
 		// Restore lighting and depth test
-		gl.glEnable(GL.GL_DEPTH_TEST);
-		gl.glEnable(GL2.GL_LIGHTING);
+		gl.enable(GL.GL_DEPTH_TEST);
+		gl.enable(GL2.GL_LIGHTING);
 	}
 
 	public static void drawFadeQuad(GLDriver gl) {
@@ -502,7 +502,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glColor(new RGBA(fadeColor, fadeColor, fadeColor, 0.0));
 
 			gl.glDisable(GL.GL_DEPTH_TEST);
-			gl.glEnable(GL.GL_BLEND);
+			gl.enable(GL.GL_BLEND);
 			gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
 			gl.glDisable(GL2.GL_LIGHTING);
 
@@ -522,9 +522,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 			gl.glModelView();
 
-			gl.glEnable(GL2.GL_LIGHTING);
+			gl.enable(GL2.GL_LIGHTING);
 			gl.glDisable(GL.GL_BLEND);
-			gl.glEnable(GL.GL_DEPTH_TEST);
+			gl.enable(GL.GL_DEPTH_TEST);
 		}
 	}
 

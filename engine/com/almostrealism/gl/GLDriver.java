@@ -31,6 +31,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -233,7 +234,7 @@ public class GLDriver {
 	public void glStencilFunc(int func, int ref, int mask) { gl.glStencilFunc(func, ref, mask); }
 	public void glStencilOp(int sfail, int dpfail, int dppass) { gl.glStencilOp(sfail, dpfail, dppass); }
 
-	public void glClearDepth(double d) {
+	public void clearDepth(double d) {
 		if (enableDoublePrecision) {
 			gl.glClearDepth(d);
 		} else {
@@ -263,9 +264,16 @@ public class GLDriver {
 		begins.push(code);
 	}
 
-	public void glEnable(int code) {
-		gl.glEnable(code);
+	@Deprecated public void enable(int code) { gl.glEnable(code); }
+
+	public void enable(String code) {
+		try {
+			gl.glEnable(GL2.class.getField(code).getInt(gl));
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
 	}
+
 	public void glEnableClientState(int code) { gl.glEnableClientState(code); }
 
 	public void glPolygonMode(int param, int value) { gl.glPolygonMode(param, value); }
@@ -389,7 +397,11 @@ public class GLDriver {
 	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
 	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }
 
-	public void glHint(int param, int value) { gl.glHint(param, value); }
+	@Deprecated public void hint(int param, int value) { gl.glHint(param, value); }
+
+	public void hint(String param, String value) throws NoSuchFieldException, IllegalAccessException {
+		gl.glHint(GL2.class.getField(param).getInt(gl), GL2.class.getField(value).getInt(gl));
+	}
 
 	public void wireCube(double size) {
 		// TODO  Replace with RenderableCube
