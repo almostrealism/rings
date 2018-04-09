@@ -194,9 +194,11 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void bindTexture(String code, int tex) {
 		if (gl != null) super.bindTexture(code, tex);
-		p.println(glMethod("bindTexture",
-						new InstanceReference(glMember + "." + code),
-						new Variable<>("tex", tex)));
+//		p.println(glMethod("bindTexture",
+//						new InstanceReference(glMember + "." + code),
+//						new Variable<>("tex", tex)));
+		System.out.println("GLPrintWriter[WARN]: bindTexture is not supported by some versions of OpenGL. Use Texture type instead.");
+		// TODO  This should be an exception
 	}
 
 	@Override

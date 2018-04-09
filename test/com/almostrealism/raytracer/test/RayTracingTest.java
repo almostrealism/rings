@@ -32,7 +32,7 @@ public class RayTracingTest {
 	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
 	public static boolean displaySpheres = true;
-	public static boolean displayDragon = true;
+	public static boolean displayDragon = false;
 
 	public static RayTracedScene generateScene() throws IOException {
 		Scene<ShadableSurface> scene = useCornellBox ?

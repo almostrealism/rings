@@ -148,10 +148,8 @@ class Sphere implements Intersectable<ShadableIntersection, ?> {
     }
 
     public boolean intersect(Ray ray) {
-        double dx = center.getX() - ray.getOrigin().getX();
-		double dy = center.getY() - ray.getOrigin().getY();
-		double dz = center.getZ() - ray.getOrigin().getZ();
-        float v = ray.direction.dot(dx, dy, dz);
+    	Vector d = center.subtract(ray.getOrigin());
+        float v = ray.getDirection().dotProduct(d);
 
         // Do the following quick check to see if there is even a chance
         // that an intersection here might be closer than a previous one
@@ -159,7 +157,7 @@ class Sphere implements Intersectable<ShadableIntersection, ?> {
             return false;
 
         // Test if the ray actually intersects the sphere
-		double t = radSqr + v*v - dx*dx - dy*dy - dz*dz;
+		double t = radSqr + v*v - d.getX() * d.getX() - d.getY() * d.getY() - d.getZ() * d.getZ();
         if (t < 0)
             return false;
 
