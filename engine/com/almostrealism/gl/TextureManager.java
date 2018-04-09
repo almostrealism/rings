@@ -63,7 +63,7 @@ public class TextureManager {
 			}
 		}
 		
-		gl.glBindTexture(GL.GL_TEXTURE_2D, tex);
+		gl.bindTexture("GL_TEXTURE_2D", tex);
 		
 		if (s.isAlpha()) {
 			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, 128, 128,
@@ -79,7 +79,7 @@ public class TextureManager {
 
 	private int put(GLDriver gl, ImageSource s) {
 		int tex[] = new int[1];
-		gl.glGenTextures(1, tex);
+		gl.genTextures(1, tex);
 
 		textures.put(s, tex[0]);
 		return tex[0];
@@ -89,7 +89,7 @@ public class TextureManager {
 		addTexture(gl, s);
 		
         gl.enable(GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures.get(s));
+        gl.bindTexture("GL_TEXTURE_2D", textures.get(s));
 	}
 	
 	public void popTexture(GLDriver gl) {

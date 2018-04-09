@@ -478,7 +478,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (enableBlending) {
 			gl.enable(GL.GL_BLEND);
-			gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
+			gl.blendFunc("GL_ZERO", "GL_SRC_COLOR");
 		}
 
 		sGroundPlane.render(gl);
@@ -503,7 +503,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.enable(GL.GL_BLEND);
-			gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
+			gl.blendFunc("GL_ZERO", "GL_SRC_COLOR");
 			gl.glDisable(GL2.GL_LIGHTING);
 
 			gl.glMatrixMode(GL2.GL_MODELVIEW);

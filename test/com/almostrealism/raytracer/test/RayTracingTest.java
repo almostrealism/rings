@@ -34,20 +34,20 @@ public class RayTracingTest {
 	public static boolean displaySpheres = true;
 	public static boolean displayDragon = true;
 
-	public static void main(String args[]) throws IOException {
- 		Scene<ShadableSurface> scene = useCornellBox ?
+	public static RayTracedScene generateScene() throws IOException {
+		Scene<ShadableSurface> scene = useCornellBox ?
 				FileDecoder.decodeScene(new FileInputStream(new File("CornellBox.xml")),
-											FileDecoder.XMLEncoding,
-											false, (e) -> { e.printStackTrace(); }) : new Scene<>();
+						FileDecoder.XMLEncoding,
+						false, (e) -> e.printStackTrace()) : new Scene<>();
 
- 		if (useStripedFloor) {
- 			Plane p = new Plane(Plane.XZ);
- 			p.setLocation(new Vector(0.0, -10, 0.0));
- 			p.addTexture(new StripeTexture());
- 			scene.add(p);
+		if (useStripedFloor) {
+			Plane p = new Plane(Plane.XZ);
+			p.setLocation(new Vector(0.0, -10, 0.0));
+			p.addTexture(new StripeTexture());
+			scene.add(p);
 		}
 
- 		if (displaySpheres) {
+		if (displaySpheres) {
 			Sphere s1 = new Sphere(new Vector(-1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
 			s1.getShaderSet().clear();
 			s1.addShader(new RefractionShader());
@@ -61,8 +61,8 @@ public class RayTracingTest {
 		}
 
 		if (displayDragon) {
- 			scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("dragon.ply")),
-									FileDecoder.PLYEncoding, false, null)).get(0));
+			scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("dragon.ply")),
+					FileDecoder.PLYEncoding, false, null)).get(0));
 		}
 
 		Plane p = new Plane(Plane.XY);
@@ -92,8 +92,8 @@ public class RayTracingTest {
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
 		if (c == null) {
 			c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
-								new Vector(0.0, 1.0, 1.0),
-								new Vector(0.0, 1.0, 0.0));
+					new Vector(0.0, 1.0, 1.0),
+					new Vector(0.0, 1.0, 0.0));
 			scene.setCamera(c);
 		}
 
@@ -111,11 +111,15 @@ public class RayTracingTest {
 		params.height = (int) (c.getProjectionHeight() * 10);
 		params.dx = (int) (c.getProjectionWidth() * 10);
 		params.dy = (int) (c.getProjectionHeight() * 10);
-		
-		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, params, new FogParameters()), c);
-		
+
+		return new RayTracedScene(new RayIntersectionEngine(scene, params, new FogParameters()), c);
+	}
+
+	public static void main(String args[]) throws IOException {
+ 		RayTracedScene r = generateScene();
+
 		try {
-			ColorProducer im[][] = r.realize(params).evaluate(null);
+			ColorProducer im[][] = r.realize(r.getRenderParameters()).evaluate(null);
 			ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
 										ImageCanvas.JPEGEncoding);
 		} catch (FileNotFoundException fnf) {

@@ -20,6 +20,7 @@ import io.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.relation.Computation;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 /**
@@ -28,6 +29,11 @@ import java.io.PrintWriter;
  */
 public class GLSLPrintWriter extends CPrintWriter {
 	private PrintWriter p;
+
+	public GLSLPrintWriter(OutputStream out) {
+		this(new PrintWriter(out));
+		// TODO  Move this to super class
+	}
 
 	/**
 	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.

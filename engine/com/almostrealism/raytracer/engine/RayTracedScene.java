@@ -22,6 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.raytracer.config.RenderParameters;
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
@@ -30,10 +31,12 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 
 import io.almostrealism.lambda.Realization;
+import org.almostrealism.relation.PairFunction;
 
-public class RayTracedScene implements Realization<RealizableImage, RenderParameters> {
+public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, PairFunction<Future<ColorProducer>> {
 	private RayTracer tracer;
 	private Camera camera;
+	private RenderParameters p;
 	
 	/**
 	 * Controls whether the color of a point light source will be adjusted based on the
@@ -43,51 +46,71 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	public static boolean premultiplyIntensity = true;
 	
 	public static RGB black = new RGB(0.0, 0.0, 0.0);
-	
+
 	public RayTracedScene(RayTracer.Engine t, Camera c) {
+		this(t, c, null);
+	}
+
+	public RayTracedScene(RayTracer.Engine t, Camera c, RenderParameters p) {
 		this.tracer = new RayTracer(t);
 		this.camera = c;
+		this.p = p;
 	}
-	
+
+	public RenderParameters getRenderParameters() { return p; }
+
+	@Override
+	public Future<ColorProducer> operate(Pair uv) {
+		double r = uv.a();
+		double q = uv.b();
+
+		Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
+
+		Future<ColorProducer> color = tracer.trace(ray.getOrigin(), ray.getDirection());
+
+		if (color == null) {
+			color = new Future<ColorProducer>() {
+				@Override
+				public ColorProducer get() {
+					return RayTracedScene.black;
+				}
+
+				@Override
+				public boolean cancel(boolean mayInterruptIfRunning) { return false; }
+
+				@Override
+				public boolean isCancelled() { return false; }
+
+				@Override
+				public boolean isDone() { return true; }
+
+				@Override
+				public ColorProducer get(long timeout, TimeUnit unit)
+						throws InterruptedException, ExecutionException, TimeoutException {
+					return get();
+				}
+			};
+		}
+
+		return color;
+	}
+
 	@Override
 	public RealizableImage realize(RenderParameters p) {
+		this.p = p;
+
 		Future<ColorProducer> image[][] = new Future[p.dx][p.dy];
 		
 		for (int i = p.x; i < (p.x + p.dx); i++) {
 			System.out.println("RayTracedScene: Realizing col " + i);
+
 			for (int j = p.y; j < (p.y + p.dy); j++) {
 				for (int k = 0; k < p.ssWidth; k++)
 				for (int l = 0; l < p.ssHeight; l++) {
 					double r = i + ((double) k / (double) p.ssWidth);
 					double q = j + ((double) l / (double) p.ssHeight);
-					
-					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-					
-					Future<ColorProducer> color = tracer.trace(ray.getOrigin(), ray.getDirection());
-					
-					if (color == null) {
-						color = new Future<ColorProducer>() {
-							@Override
-							public ColorProducer get() {
-								return RayTracedScene.black;
-							}
 
-							@Override
-							public boolean cancel(boolean mayInterruptIfRunning) { return false; }
-
-							@Override
-							public boolean isCancelled() { return false; }
-
-							@Override
-							public boolean isDone() { return true; }
-
-							@Override
-							public ColorProducer get(long timeout, TimeUnit unit)
-									throws InterruptedException, ExecutionException, TimeoutException {
-								return get();
-							}
-						};
-					}
+					Future<ColorProducer> color = operate(new Pair(r, q));
 					
 					if (image[i - p.x][j - p.y] == null) {
 						if (p.ssWidth > 1 || p.ssHeight > 1) {

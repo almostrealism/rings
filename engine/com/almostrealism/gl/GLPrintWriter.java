@@ -176,10 +176,13 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glGenTextures(int code, int textures[]) {
-		if (gl != null) super.glGenTextures(code, textures);
-		p.println(glMethod("genTextures",
-				Arrays.asList(new Variable<>("code", code), new Variable<>("textures", textures))));
+	public void genTextures(int count, int textures[]) {
+		if (gl != null) super.genTextures(count, textures);
+//		p.println(glMethod("genTextures",
+//							new Variable<>("count", count),
+//							new Variable<>("textures", textures)));
+		System.out.println("GLPrintWriter[WARN]: genTextures is not supported by some versions of OpenGL. Use Texture type instead.");
+		// TODO  This should be an exception
 	}
 
 	@Override
@@ -189,10 +192,11 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glBindTexture(int code, int tex) {
-		if (gl != null) super.glBindTexture(code, tex);
+	public void bindTexture(String code, int tex) {
+		if (gl != null) super.bindTexture(code, tex);
 		p.println(glMethod("bindTexture",
-				Arrays.asList(new Variable<>("code", code), new Variable<>("tex", tex))));
+						new InstanceReference(glMember + "." + code),
+						new Variable<>("tex", tex)));
 	}
 
 	@Override
@@ -557,10 +561,11 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glBlendFunc(int c1, int c2) {
-		if (gl != null) super.glBlendFunc(c1, c2);
+	public void blendFunc(String sfactor, String dfactor) {
+		if (gl != null) super.blendFunc(sfactor, dfactor);
 		p.println(glMethod("blendFunc",
-				Arrays.asList(new Variable<>("c1", c1), new Variable<>("c2", c2))));
+							new InstanceReference(glMember + "." + sfactor),
+							new InstanceReference(glMember + "." + dfactor)));
 	}
 
 	@Override

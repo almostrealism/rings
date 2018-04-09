@@ -120,9 +120,20 @@ public class GLDriver {
 	public void glInitNames() { gl.glInitNames(); }
 	public void glLoadName(int name) { gl.glLoadName(name); }
 	public void glPushName(int name) { gl.glPushName(name); }
-	public void glGenTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
+
+	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
+	@Deprecated public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
+
 	public void bindTexture(Texture t) { t.bind(gl); }
-	public void glBindTexture(int code, int tex) { gl.glBindTexture(code, tex); }
+
+	public void bindTexture(String code, int tex) {
+		try {
+			gl.glBindTexture(GL2.class.getField(code).getInt(gl), tex);
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
@@ -277,7 +288,16 @@ public class GLDriver {
 	public void glEnableClientState(int code) { gl.glEnableClientState(code); }
 
 	public void glPolygonMode(int param, int value) { gl.glPolygonMode(param, value); }
-	public void glBlendFunc(int c1, int c2) { gl.glBlendFunc(c1, c2); }
+
+	public void blendFunc(String sfactor, String dfactor) {
+		try {
+			gl.glBlendFunc(GL2.class.getField(sfactor).getInt(gl),
+							GL2.class.getField(dfactor).getInt(gl));
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void glShadeModel(int model) { gl.glShadeModel(model); }
 	public int glRenderMode(int mode) { return gl.glRenderMode(mode); }
 
