@@ -16,6 +16,8 @@
 
 package com.almostrealism.projection;
 
+import io.almostrealism.code.Scope;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
@@ -39,12 +41,12 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 @ModelEntity
 public class OrthographicCamera implements Camera, Positioned {
-  private Vector location = new Vector(0.0, 0.0, 0.0);
-  private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
-  private Vector upDirection = new Vector(0.0, 1.0, 0.0);
-  private double projectionX, projectionY;
+	private Vector location = new Vector(0.0, 0.0, 0.0);
+	private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
+	private Vector upDirection = new Vector(0.0, 1.0, 0.0);
+	private double projectionX, projectionY;
   
-  protected Vector u, v, w;
+	protected Vector u, v, w;
   
 	/**
 	 * Constructs a new OrthographicCamera object with the defaults described above.
@@ -87,9 +89,7 @@ public class OrthographicCamera implements Camera, Positioned {
 	 */
 	public void setLocation(Vector location) { this.location = location; }
 	
-	/**
-	 * Calls the setViewingDirection() method.
-	 */
+	/** Calls the setViewingDirection() method. */
 	public void setViewDirection(Vector viewDirection) { this.setViewingDirection(viewDirection); }
 	
 	/**
@@ -220,5 +220,9 @@ public class OrthographicCamera implements Camera, Positioned {
 		this.getRotationMatrix().getInverse().transform(o, TransformMatrix.TRANSFORM_AS_LOCATION);
 		
 		return new Ray(o, this.viewDirection);
+	}
+
+	public Scope<Variable<?>> getScope(String prefix) {
+		throw new NotImplementedException("getScope");
 	}
 }
