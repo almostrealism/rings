@@ -36,7 +36,6 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 public class GLDriver {
@@ -48,6 +47,10 @@ public class GLDriver {
 	protected GLUT glut;
 
 	protected Stack<Integer> begins;
+
+	protected Camera camera;
+	protected Stack<Camera> cameraStack;
+
 	protected ArrayList<TransformMatrix> transforms;
 	protected Stack<ArrayList<TransformMatrix>> matrixStack;
 
@@ -60,6 +63,7 @@ public class GLDriver {
 		}
 
 		this.begins = new Stack<>();
+		this.cameraStack = new Stack<>();
 		this.transforms = new ArrayList<>();
 		this.matrixStack = new Stack<>();
 	}
@@ -258,9 +262,9 @@ public class GLDriver {
 		gl.glEnable(GL2.GL_FOG);
 	}
 
-	public void glQuads() { glBegin(GL2.GL_QUADS); }
+	@Deprecated public void glQuads() { glBegin(GL2.GL_QUADS); }
 
-	public void glBegin(int code) {
+	@Deprecated public void glBegin(int code) {
 		gl.glBegin(code);
 		begins.push(code);
 	}
@@ -341,6 +345,7 @@ public class GLDriver {
 		}
 	}
 
+	// TODO  Implement using uniformMatrix4fv (loadIdentity is deprecated)
 	public void glLoadIdentity() { gl.glLoadIdentity(); transforms.clear(); }
 
 	public void glMultMatrix(TransformMatrix m) {
@@ -375,9 +380,6 @@ public class GLDriver {
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	@Deprecated public void setViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
 
-	/** It is recommended to use a {@link PinholeCamera} instead. */
-	@Deprecated public void setPerspective(double fovy, double aspect, double zNear, double zFar) { glu.gluPerspective(fovy, aspect, zNear, zFar); }
-
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Deprecated public void gluOrtho2D(double a, double b, double c, double d) { glu.gluOrtho2D(a, b, c, d); }
 
@@ -403,12 +405,45 @@ public class GLDriver {
 		glu.gluPickMatrix(x, y, w, h, IntBuffer.wrap(viewport));
 	}
 
+	/**
+	 * If {@link Camera} is null, load the identity matrix into the projection stack
+	 * and modelview stack, otherwise delegate to {@link #glProjection(Camera)}.
+	 *
+	 * @param c  Camera to use for projection, or null to reset matrices.
+	 */
 	public void setCamera(Camera c) {
-		this.glProjection(c);
-		// TODO  Update projection when camera is updated?
+		if (c == null) {
+			glMatrixMode(GL2.GL_PROJECTION);
+			glLoadIdentity();
+			glMatrixMode(GL2.GL_MODELVIEW);
+			glLoadIdentity();
+		} else {
+			this.glProjection(c);
+			// TODO  Update projection when camera is updated?
+		}
+
+		this.camera = c;
 	}
 
-	public void glProjection(Camera c) {
+	/** Returns the {@link Camera} assigned via {@link #setCamera(Camera)}. */
+	public Camera getCamera() { return camera; }
+
+	/**
+	 * Saves the current {@link Camera} (see {@link #setCamera(Camera)}) so that
+	 * it can be restored with {@link #popCamera()}.
+	 */
+	public void pushCamera() { this.cameraStack.push(camera); }
+
+	/**
+	 * Restores the projection matrix to match the {@link Camera} saved with the
+	 * {@link #pushCamera()} method.
+	 */
+	public void popCamera() { this.camera = cameraStack.pop(); glProjection(camera); }
+
+	/** Delegates to {@link #setCamera(Camera)} with null {@link Camera}. */
+	public void resetProjection() { setCamera(null); }
+
+	protected void glProjection(Camera c) {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 
@@ -441,7 +476,7 @@ public class GLDriver {
 	public void glFrontFace(int param) { gl.glFrontFace(param); }
 
 	public void glFlush() { gl.glFlush(); }
-	public int glEnd() { gl.glEnd(); return begins.pop(); }
+	@Deprecated public int glEnd() { gl.glEnd(); return begins.pop(); }
 	@Deprecated public void endList() { gl.glEndList(); }
 	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
 	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }

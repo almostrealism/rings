@@ -46,9 +46,7 @@ public class PinholeCamera extends OrthographicCamera {
   	private double focalLength = 1.0;
   	private double blur = 0.0;
 
-	/**
-	 * Constructs a PinholeCamera object with all default values as described above.
-	 */
+	/** Constructs a {@link PinholeCamera} with all default values as described above. */
 	public PinholeCamera() {
 		super();
 		
@@ -57,8 +55,8 @@ public class PinholeCamera extends OrthographicCamera {
 	}
 	
 	/**
-	 * Constructs a PinholeCamera object with the specified location, viewing direction, and up direction,
-	 * but with default focal length and projection dimensions as specified above.
+	 * Constructs a {@link PinholeCamera} with the specified location, viewing direction,
+	 * and up direction, but with default focal length and projection dimensions as specified above.
 	 */
 	public PinholeCamera(Vector location, Vector viewDirection, Vector upDirection) {
 		super(location, viewDirection, upDirection);
@@ -104,25 +102,31 @@ public class PinholeCamera extends OrthographicCamera {
 		this.setProjectionDimensions(2 * focalLength * Math.tan(fov[0] / 2), 2 * focalLength * Math.tan(fov[1] / 2));
 	}
 	
-	/**
-	 * Sets the focal length of this PinholeCamera object to the specified focal length.
-	 */
+	/** Sets the focal length of this {@link PinholeCamera} to the specified focal length. */
 	public void setFocalLength(double focalLength) { this.focalLength = focalLength; }
 	
-	/**
-	 * Returns the focal length of this PinholeCamera object as a double value.
-	 */
+	/** Returns the focal length of this {@link PinholeCamera} as a double value. */
 	public double getFocalLength() { return this.focalLength; }
 	
-	/**
-	 * @return  {Horizontal FOV, Vertical FOV} Measured in radians.
-	 */
+	/** @return  { Horizontal FOV, Vertical FOV }, measured in radians. */
 	public double[] getFOV() {
 		return new double [] { getHorizontalFOV(), getVerticalFOV() };
 	}
 
 	public double getHorizontalFOV() {
 		return 2.0 * Math.atan(super.getProjectionWidth() / (2.0 * this.focalLength));
+	}
+
+	/**
+	 * Assigns the projection height based on the specified fov and the focal length of
+	 * the camera, then updates the projection width to preserve the aspect ratio.
+	 *
+	 * @param fov  Vertical field of view.
+	 */
+	public void setVerticalFOV(double fov) {
+		double aspect = getAspectRatio();
+		setProjectionHeight(2 * focalLength * Math.tan(fov / 2));
+		setProjectionWidth(aspect * getProjectionHeight());
 	}
 
 	public double getVerticalFOV() {

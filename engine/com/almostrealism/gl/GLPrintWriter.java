@@ -627,7 +627,9 @@ public class GLPrintWriter extends GLDriver {
 			transforms.clear();
 		}
 
-		p.println(glMethod("loadIdentity", Arrays.asList()));
+		// TODO  This is not the right signature for uniformMatrix4fv
+		p.println(glMethod("uniformMatrix4fv",
+				new Variable<>("matrix", Scalar.toFloat(new TransformMatrix().toArray()))));
 	}
 
 	@Override
@@ -639,9 +641,9 @@ public class GLPrintWriter extends GLDriver {
 		}
 
 		if (enableDoublePrecision) {
-			p.println(glMethod("multMatrixd", Arrays.asList(new Variable<>("matrix", m.toArray()))));
+			p.println(glMethod("multMatrixd", new Variable<>("matrix", m.toArray())));
 		} else {
-			p.println(glMethod("multMatrixf", Arrays.asList(new Variable<>("matrix", Scalar.toFloat(m.toArray())))));
+			p.println(glMethod("multMatrixf", new Variable<>("matrix", Scalar.toFloat(m.toArray()))));
 		}
 	}
 
@@ -656,17 +658,6 @@ public class GLPrintWriter extends GLDriver {
 	@Deprecated public void setViewport(int x, int y, int w, int h) {
 		if (gl != null) super.setViewport(x, y, w, h);
 		throw new NotImplementedException("setViewport");
-	}
-
-	/** It is recommended to use a {@link PinholeCamera} instead. */
-	@Override
-	@Deprecated public void setPerspective(double fovy, double aspect, double zNear, double zFar) {
-		if (glu != null) super.setPerspective(fovy, aspect, zNear, zFar);
-		p.println(gluMethod("perspective",
-					Arrays.asList(new Variable<>("fovy", fovy),
-								new Variable<>("aspect", aspect),
-								new Variable<>("zNear", zNear),
-								new Variable<>("zFar", zFar))));
 	}
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
@@ -711,7 +702,7 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glProjection(Camera c) {
+	protected void glProjection(Camera c) {
 		if (gl != null) super.glProjection(c);
 
 		// TODO  Do not use matrixMode
