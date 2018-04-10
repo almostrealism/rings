@@ -31,21 +31,25 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 
 import java.awt.*;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class GLDriver {
 	protected boolean enableDoublePrecision = false;
+	protected boolean useGlMatrixStack = false;
 
 	protected GL2 gl;
 	protected GLU glu;
 	protected GLUT glut;
 
 	protected Stack<Integer> begins;
+	protected ArrayList<TransformMatrix> transforms;
+	protected Stack<ArrayList<TransformMatrix>> matrixStack;
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
@@ -56,6 +60,8 @@ public class GLDriver {
 		}
 
 		this.begins = new Stack<>();
+		this.transforms = new ArrayList<>();
+		this.matrixStack = new Stack<>();
 	}
 
 	public boolean isGLES1() { return gl.isGLES1(); }
@@ -203,25 +209,9 @@ public class GLDriver {
 
 	public boolean isLightingOn() { return gl.glIsEnabled(GL2.GL_LIGHTING); }
 
-	public void glTranslate(Vector t) {
-		if (enableDoublePrecision) {
-			gl.glTranslated(t.getX(), t.getY(), t.getZ());
-		} else {
-			gl.glTranslatef((float) t.getX(),
-							(float) t.getY(),
-							(float) t.getZ());
-		}
-	}
+	public void glTranslate(Vector t) { glMultMatrix(TransformMatrix.createTranslationMatrix(t)); }
 
-	public void glScale(Vector s) {
-		if (enableDoublePrecision) {
-			gl.glScaled(s.getX(), s.getY(), s.getZ());
-		} else {
-			gl.glScalef((float) s.getX(),
-					(float) s.getY(),
-					(float) s.getZ());
-		}
-	}
+	public void glScale(Vector s) { glMultMatrix(TransformMatrix.createScaleMatrix(s)); }
 
 	public void glScale(double s) {
 		glScale(new Vector(s, s, s));
@@ -323,9 +313,28 @@ public class GLDriver {
 
 	public void glMatrixMode(int code) { gl.glMatrixMode(code); }
 	public void glModelView() { glMatrixMode(GL2.GL_MODELVIEW); }
-	public void glPushMatrix() { gl.glPushMatrix(); }
-	public void glPopMatrix() { gl.glPopMatrix(); }
-	public void glLoadIdentity() { gl.glLoadIdentity(); }
+
+	public void pushMatrix() {
+		if (useGlMatrixStack) {
+			gl.glPushMatrix();
+		} else {
+			matrixStack.push((ArrayList<TransformMatrix>) transforms.clone());
+		}
+	}
+	public void popMatrix() {
+		if (useGlMatrixStack) {
+			gl.glPopMatrix();
+		} else {
+			transforms = matrixStack.pop();
+
+			glLoadIdentity();
+			for (TransformMatrix t : transforms) {
+				glMultMatrix(t);
+			}
+		}
+	}
+
+	public void glLoadIdentity() { gl.glLoadIdentity(); transforms.clear(); }
 
 	public void glMultMatrix(TransformMatrix m) {
 		if (enableDoublePrecision) {
@@ -333,6 +342,19 @@ public class GLDriver {
 		} else {
 			gl.glMultMatrixf(FloatBuffer.wrap(Scalar.toFloat(m.toArray())));
 		}
+
+		transforms.add(m);
+	}
+
+	/**
+	 * Loads the identity matrix, then multiplies by the specified matrix.
+	 *
+	 * @see  #glLoadIdentity()
+	 * @see  #glMultMatrix(TransformMatrix)
+	 */
+	public void setMatrix(TransformMatrix m) {
+		glLoadIdentity();
+		glMultMatrix(m);
 	}
 
 	public void glRasterPos(Vector pos) {

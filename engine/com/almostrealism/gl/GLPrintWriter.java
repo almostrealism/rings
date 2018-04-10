@@ -204,16 +204,18 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
 		if (gl != null) super.glTexImage2D(a, b, c, d, e, f, g, h, buf);
-		p.println(glMethod("texImage2D",
-				Arrays.asList(new Variable<>("a", a),
-								new Variable<>("b", b),
-								new Variable<>("c", c),
-								new Variable<>("d", d),
-								new Variable<>("e", e),
-								new Variable<>("f", f),
-								new Variable<>("g", g),
-								new Variable<>("h", h),
-								new Variable<>("buf", buf))));
+//		p.println(glMethod("texImage2D",
+//				Arrays.asList(new Variable<>("a", a),
+//								new Variable<>("b", b),
+//								new Variable<>("c", c),
+//								new Variable<>("d", d),
+//								new Variable<>("e", e),
+//								new Variable<>("f", f),
+//								new Variable<>("g", g),
+//								new Variable<>("h", h),
+//								new Variable<>("buf", buf))));
+		System.out.println("GLPrintWriter[WARN]: glTexImage2D is not supported by some versions of OpenGL. Use Texture type instead.");
+		// TODO  This should be an exception
 	}
 
 	@Override
@@ -249,7 +251,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glTexParameter(int code, int param, int value) {
 		if (gl != null) super.glTexParameter(code, param, value);
-		p.println(glMethod("texParameter",
+		p.println(glMethod("texParameteri",
 				Arrays.asList(new Variable<>("code", code),
 								new Variable<>("param", param),
 								new Variable<>("value", value))));
@@ -381,45 +383,6 @@ public class GLPrintWriter extends GLDriver {
 	@Deprecated public void glLightModel(int code, RGBA color) {
 		if (gl != null) super.glLightModel(code, color);
 		throw new NotImplementedException("glLightModel is deprecated in OpenGL");
-	}
-
-	@Override
-	public void glTranslate(Vector t) {
-		if (gl != null) super.glTranslate(t);
-
-		if (enableDoublePrecision) {
-			p.println(glMethod("translated",
-					Arrays.asList(new Variable<>("x", t.getX()),
-							new Variable<>("y", t.getY()),
-							new Variable<>("z", t.getZ()))));
-		} else {
-			p.println(glMethod("translatef",
-					Arrays.asList(new Variable<>("x", (float) t.getX()),
-							new Variable<>("y", (float) t.getY()),
-							new Variable<>("z", (float) t.getZ()))));
-		}
-	}
-
-	@Override
-	public void glScale(Vector s) {
-		if (gl != null) super.glScale(s);
-
-		if (enableDoublePrecision) {
-			p.println(glMethod("scaled",
-					Arrays.asList(new Variable<>("x", s.getX()),
-							new Variable<>("y", s.getY()),
-							new Variable<>("z", s.getZ()))));
-		} else {
-			p.println(glMethod("scalef",
-					Arrays.asList(new Variable<>("x", (float) s.getX()),
-							new Variable<>("y", (float) s.getY()),
-							new Variable<>("z", (float) s.getZ()))));
-		}
-	}
-
-	@Override
-	public void glScale(double s) {
-		glScale(new Vector(s, s, s));
 	}
 
 	@Override
@@ -656,26 +619,23 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glPushMatrix() {
-		if (gl != null) super.glPushMatrix();
-		p.println(glMethod("pushMatrix", Arrays.asList()));
-	}
-
-	@Override
-	public void glPopMatrix() {
-		if (gl != null) super.glPopMatrix();
-		p.println(glMethod("popMatrix", Arrays.asList()));
-	}
-
-	@Override
 	public void glLoadIdentity() {
-		if (gl != null) super.glLoadIdentity();
+		if (gl != null) {
+			super.glLoadIdentity();
+		} else {
+			transforms.clear();
+		}
+
 		p.println(glMethod("loadIdentity", Arrays.asList()));
 	}
 
 	@Override
-	@Deprecated public void glMultMatrix(TransformMatrix m) {
-		if (gl != null) super.glMultMatrix(m);
+	public void glMultMatrix(TransformMatrix m) {
+		if (gl != null) {
+			super.glMultMatrix(m);
+		} else {
+			transforms.add(m);
+		}
 
 		if (enableDoublePrecision) {
 			p.println(glMethod("multMatrixd", Arrays.asList(new Variable<>("matrix", m.toArray()))));

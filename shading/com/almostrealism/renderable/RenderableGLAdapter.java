@@ -73,7 +73,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	}
 	
 	public void push(GLDriver gl) {
-		gl.glPushMatrix();
+		gl.pushMatrix();
 		gl.glTranslate(position);
 		gl.glRotate(orientationAngle, orientationVector);
 		if (texture != null) textureManager.pushTexture(gl, texture);
@@ -81,7 +81,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	public void pop(GLDriver gl) {
 		if (texture != null) textureManager.popTexture(gl);
-		gl.glPopMatrix();
+		gl.popMatrix();
 	}
 	
 	@Override

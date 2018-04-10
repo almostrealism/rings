@@ -33,11 +33,11 @@ public abstract class RenderableGeometry<T extends BasicGeometry> implements Ren
 
 	@Override
 	public void display(GLDriver gl) {
-		gl.glPushMatrix();
+		gl.pushMatrix();
 		applyTransform(gl, geo);
 		gl.glMaterial(mat);
 		render(gl);
-		gl.glPopMatrix();
+		gl.popMatrix();
 	}
 
 	@Override

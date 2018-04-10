@@ -305,7 +305,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		// Rotate the entire assembly based on how the user
 		// dragged the mouse around
-		gl.glPushMatrix();
+		gl.pushMatrix();
 		gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 		gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 		gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
@@ -314,7 +314,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			r.display(gl);
 		}
 
-		gl.glPopMatrix();
+		gl.popMatrix();
 		*/
 
 		long tick = System.currentTimeMillis();
@@ -340,9 +340,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.enable(GL.GL_CULL_FACE);
 
 			// Draw the reflection by drawing models with negated Z-axis.
-			gl.glPushMatrix();
+			gl.pushMatrix();
 			drawRenderables(gl,-1.0);
-			gl.glPopMatrix();
+			gl.popMatrix();
 		}
 
 		// Draw the ground plane to the window. (opt. blending)
@@ -455,14 +455,14 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 
 		gl.glMatrixMode(GL.GL_TEXTURE);
-		gl.glPushMatrix();
+		gl.pushMatrix();
 		gl.glLoadIdentity();
 
 		gl.glutSolidSphere(5.0, 40, 20);
 
 		gl.glDisable(GL2ES1.GL_LIGHTING);
 
-		gl.glPopMatrix();
+		gl.popMatrix();
 		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
 		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
