@@ -613,9 +613,10 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
+	@Deprecated
 	public void glMatrixMode(int code) {
 		if (gl != null) super.glMatrixMode(code);
-		p.println(glMethod("matrixMode", Arrays.asList(new Variable<>("code", code))));
+		// TODO  Throw exception
 	}
 
 	@Override
@@ -712,6 +713,8 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glProjection(Camera c) {
 		if (gl != null) super.glProjection(c);
+
+		// TODO  Do not use matrixMode
 
 		p.println(glMethod("matrixMode",
 						Arrays.asList(new Variable<>("GL_PROJECTION", GL2.GL_PROJECTION))));

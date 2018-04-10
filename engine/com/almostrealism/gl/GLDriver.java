@@ -311,7 +311,14 @@ public class GLDriver {
 		}
 	}
 
-	public void glMatrixMode(int code) { gl.glMatrixMode(code); }
+	@Deprecated public void glMatrixMode(int code) {
+		if (code == GL2.GL_PROJECTION) {
+			System.out.println("GLDriver[WARN]: Projection matrix is not supported in later versions of OpenGL. Use setCamera instead.");
+		}
+
+		gl.glMatrixMode(code);
+	}
+
 	public void glModelView() { glMatrixMode(GL2.GL_MODELVIEW); }
 
 	public void pushMatrix() {
