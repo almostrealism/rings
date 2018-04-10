@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.raytracer.config.RenderParameters;
+import io.almostrealism.code.Scope;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.ColorProducer;
@@ -93,6 +95,13 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		}
 
 		return color;
+	}
+
+	@Override
+	public Scope<Variable<?>> getScope(String prefix) {
+		Scope<Variable<?>> s = new Scope<>();
+		// TODO  Add Ray produced by camera to the Scope (Camera should implement Computation).
+		return s;
 	}
 
 	@Override
