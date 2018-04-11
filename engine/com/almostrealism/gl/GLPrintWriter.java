@@ -627,9 +627,11 @@ public class GLPrintWriter extends GLDriver {
 			transforms.clear();
 		}
 
+		System.out.println("GLPrintWriter[WARN]: glLoadIdentity not implemented.");
+
 		// TODO  This is not the right signature for uniformMatrix4fv
-		p.println(glMethod("uniformMatrix4fv",
-				new Variable<>("matrix", Scalar.toFloat(new TransformMatrix().toArray()))));
+//		p.println(glMethod("uniformMatrix4fv",
+//				new Variable<>("matrix", Scalar.toFloat(new TransformMatrix().toArray()))));
 	}
 
 	@Override
