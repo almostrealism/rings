@@ -16,9 +16,11 @@
 
 package com.almostrealism.gl;
 
+import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.code.CodePrintWriter;
+import org.almostrealism.algebra.Camera;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -35,6 +37,10 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 	public GLScene(Scene<ShadableSurface> s) {
 		this.scene = s;
 	}
+
+	public Scene<ShadableSurface> getScene() { return scene; }
+
+	public OrthographicCamera getCamera() { return (OrthographicCamera) getScene().getCamera(); }
 
 	@Override
 	public void init(GLDriver gl) {

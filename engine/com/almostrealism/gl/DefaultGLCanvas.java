@@ -29,6 +29,7 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.GroundPlane;
 import com.almostrealism.renderable.Quad3;
 import com.jogamp.common.util.IOUtil;
@@ -49,6 +50,7 @@ import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
 import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 
 public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
 																MouseMotionListener, KeyListener {
@@ -93,18 +95,18 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	private GLLightingConfiguration lighting;
 
-	private int swapInterval;
 	private boolean toReset;
 
 	protected GLScene renderables;
+	protected GLDriver gl;
 
 	private int prevMouseX, prevMouseY;
 
 	public DefaultGLCanvas() {
-		this((Texture) null);
+		this(new GLScene(new Scene()), (Texture) null);
 	}
 
-	public DefaultGLCanvas(Texture skydome) {
+	public DefaultGLCanvas(GLScene s, Texture skydome) {
 		this.skydome = skydome;
 		lighting = new GLLightingConfiguration();
 
@@ -115,7 +117,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		x = 0;
 		y = 0;
 
-		renderables = new GLScene(new Scene());
+		renderables = s;
 
 		animator = new FPSAnimator(100);
 		animator.add(this);
@@ -123,12 +125,11 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
-		swapInterval = 1;
 	}
 
-	public DefaultGLCanvas(ClassLoader scope,
-							String basename,
-							String suffix, boolean mipmapped) {
+	public DefaultGLCanvas(GLScene s, ClassLoader scope,
+						   String basename, String suffix,
+						   boolean mipmapped) {
 		this.skydomeScope = scope;
 		this.skydomeBasename = basename;
 		this.skydomeSuffix = suffix;
@@ -142,7 +143,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		x = 0;
 		y = 0;
 
-		renderables = new GLScene(new Scene());
+		renderables = s;
 
 		animator = new FPSAnimator(100);
 		animator.add(this);
@@ -150,7 +151,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
-		swapInterval = 1;
 	}
 
 	public void add(Renderable r) { if (r != null) renderables.add(r); }
@@ -163,7 +163,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	public List<Renderable> getRenderables() { return renderables; }
 
-	public abstract PinholeCamera getCamera();
+	public Scene<ShadableSurface> getScene() { return renderables.getScene(); }
+
+	public PinholeCamera getCamera() { return (PinholeCamera) renderables.getCamera(); }
 
 	public void lookAt(BasicGeometry g) {
 		float f[] = g.getPosition();
@@ -195,7 +197,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// drawable.setGL(new DebugGL(drawable.getGL()));
 
 		GL2 gl2 = drawable.getGL().getGL2();
-		GLDriver gl = new GLDriver(gl2);
+		this.gl = new GLDriver(gl2);
 
 		sInit(gl);
 
@@ -237,29 +239,20 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-		GL2 gl = drawable.getGL().getGL2();
-
-		gl.setSwapInterval(swapInterval);
-
-		float h = (float) height / (float) width;
-
-		if (enableProjection) {
-			gl.glMatrixMode(GL2.GL_PROJECTION);
-			gl.glLoadIdentity();
-			gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
-		}
-
 		this.width = width;
 		this.height = height;
 		this.x = x;
 		this.y = y;
 
-		gl.glMatrixMode(gl.GL_MODELVIEW);
-		gl.glLoadIdentity();
+		if (renderables == null || gl == null) return; // TODO  Display a warning?
 
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		OrthographicCamera c = renderables.getCamera();
+		c.setProjectionHeight(c.getProjectionWidth() / c.getAspectRatio());
 
-		gl.glShadeModel(gl.GL_FLAT);
+		gl.setCamera(c);
+		gl.glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
+
+		gl.glShadeModel(GL2.GL_FLAT);
 		gl.glDisable(GL.GL_DITHER);
 	}
 
@@ -318,8 +311,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		*/
 
 		long tick = System.currentTimeMillis();
-
-		GLDriver gl = new GLDriver((GL2) drawable.getGL());
 
 		// Actual tick value is "blurred" a little bit.
 		sTick = (sTick + tick - sStartTick) >> 1;
@@ -493,6 +484,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void drawFadeQuad(GLDriver gl) {
+		/*
 		final int beginFade = (int) (sTick - sCurrentCamTrackStartTick);
 		final int endFade = (int) (sNextCamTrackStartTick - sTick);
 		final int minFade = beginFade < endFade ? beginFade : endFade;
@@ -526,6 +518,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 			gl.glDisable(GL.GL_BLEND);
 			gl.enable(GL.GL_DEPTH_TEST);
 		}
+		*/
 	}
 
 	@Override

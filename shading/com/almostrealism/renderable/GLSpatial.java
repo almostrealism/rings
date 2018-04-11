@@ -23,11 +23,11 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.GLBuffers;
 import org.almostrealism.space.BasicGeometry;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-// Definition of one GL object in this demo.
 public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 	/* Vertex array and color array are enabled for all objects, so their
 		 * pointers must always be valid and non-null. Normal array is not
@@ -133,7 +133,18 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 		}
 	}
 
+	private boolean first = true;
+
 	public void render(GLDriver gl) {
+		if (true) {
+			if (first) {
+				System.out.println("GLSpatial[WARN]: Need to upgrade to avoid vertex buffers.");
+				first = false;
+			}
+
+			return;
+		}
+
 		seal(gl);
 
 		if (nComps > 0) {
@@ -142,11 +153,11 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName);
 
-		gl.glVertexPointer(vArrayData);
+//		gl.glVertexPointer(vArrayData);  TODO
 		gl.glColorPointer(cArrayData);
 
 		if (nComps > 0) {
-			gl.glNormalPointer(nArrayData);
+//			gl.glNormalPointer(nArrayData); TODO
 		}
 
 		gl.glDrawArrays(GL.GL_TRIANGLES, 0, count);
@@ -155,5 +166,7 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 		if (nComps > 0) {
 			gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
 		}
+
+		throw new NotImplementedException("Need a replacement for glNormalPointer");
 	}
 }

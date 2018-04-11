@@ -35,27 +35,18 @@ import org.almostrealism.swing.EventListener;
 import java.util.Iterator;
 
 public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
-	private Scene<ShadableSurface> scene;
-	
 	public SurfaceCanvas(Scene<ShadableSurface> scene) {
-		this.scene = scene;
+		super(new GLScene(scene), null);
 	}
 
 	public SurfaceCanvas(Scene<ShadableSurface> scene, Texture skydome) {
-		super(skydome);
-		this.scene = scene;
+		super(new GLScene(scene), skydome);
 	}
 
 	public SurfaceCanvas(Scene<ShadableSurface> scene, ClassLoader scope,
 						 String basename, String suffix, boolean mipmapped) {
-		super(scope, basename, suffix, mipmapped);
-		this.scene = scene;
+		super(new GLScene(scene), scope, basename, suffix, mipmapped);
 	}
-
-	public Scene<ShadableSurface> getScene() { return scene; }
-	
-	@Override
-	public PinholeCamera getCamera() { return (PinholeCamera) scene.getCamera(); }
 
 	@Override
 	public void eventFired(Event event) {
@@ -82,8 +73,9 @@ public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
 	}
 
 	public void autoPositionCamera(Vector cameraDirection) {
-		CameraPositioner cameraPositioner = new CameraPositioner(getCamera(), scene, cameraDirection);
+		CameraPositioner cameraPositioner = new CameraPositioner(getCamera(), getScene(), cameraDirection);
 		getCamera().setLocation(cameraPositioner.getLocation());
 		getCamera().setViewingDirection(cameraPositioner.getViewingDirection());
+		if (gl != null) { gl.setCamera(getCamera()); }
 	}
 }

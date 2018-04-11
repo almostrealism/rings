@@ -50,9 +50,10 @@ public class GLDriver {
 
 	protected Camera camera;
 	protected Stack<Camera> cameraStack;
+	protected TransformMatrix projection;
 
-	protected ArrayList<TransformMatrix> transforms;
-	protected Stack<ArrayList<TransformMatrix>> matrixStack;
+	protected TransformMatrix transform;
+	protected Stack<TransformMatrix> matrixStack;
 
 	public GLDriver(GL2 gl) {
 		this.gl = gl;
@@ -63,8 +64,11 @@ public class GLDriver {
 		}
 
 		this.begins = new Stack<>();
+
 		this.cameraStack = new Stack<>();
-		this.transforms = new ArrayList<>();
+		this.projection = new TransformMatrix();
+
+		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
 	}
 
@@ -166,6 +170,8 @@ public class GLDriver {
 	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
 
 	public void glVertex(Vector v) {
+		v = transformPosition(v);
+
 		if (enableDoublePrecision) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
 		} else {
@@ -176,6 +182,8 @@ public class GLDriver {
 	}
 
 	public void glVertex(Pair p) {
+		// TODO  What about transform matrices?
+
 		if (enableDoublePrecision) {
 			gl.glVertex2d(p.getX(), p.getY());
 		} else {
@@ -183,24 +191,15 @@ public class GLDriver {
 		}
 	}
 
-	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) { gl.glVertexPointer(a, b, c, f); }
-	@Deprecated public void glVertexPointer(GLArrayDataWrapper data) {
-		try {
-			gl.glVertexPointer(data);
-		} catch (GLException gl) {
-			throw exceptionHelper(gl);
-		}
-	}
-
 	public void glNormal(Vector n) {
+		n = transformDirection(n);
+
 		if (enableDoublePrecision) {
 			gl.glNormal3d(n.getX(), n.getY(), n.getZ());
 		} else {
 			gl.glNormal3f((float) n.getX(), (float) n.getY(), (float) n.getZ());
 		}
 	}
-
-	public void glNormalPointer(GLArrayDataWrapper data) { gl.glNormalPointer(data); }
 
 	@Deprecated public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
 	@Deprecated public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
@@ -329,45 +328,24 @@ public class GLDriver {
 		if (useGlMatrixStack) {
 			gl.glPushMatrix();
 		} else {
-			matrixStack.push((ArrayList<TransformMatrix>) transforms.clone());
+			TransformMatrix t = new TransformMatrix();
+			t.setMatrix(transform.getMatrix());
+			matrixStack.push(t);
 		}
 	}
 	public void popMatrix() {
 		if (useGlMatrixStack) {
 			gl.glPopMatrix();
 		} else {
-			transforms = matrixStack.pop();
-
-			glLoadIdentity();
-			for (TransformMatrix t : transforms) {
-				glMultMatrix(t);
-			}
+			transform = matrixStack.pop();
 		}
 	}
 
-	// TODO  Implement using uniformMatrix4fv (loadIdentity is deprecated)
-	public void glLoadIdentity() { gl.glLoadIdentity(); transforms.clear(); }
+	public void glLoadIdentity() { transform = new TransformMatrix(); }
 
-	public void glMultMatrix(TransformMatrix m) {
-		if (enableDoublePrecision) {
-			gl.glMultMatrixd(DoubleBuffer.wrap(m.toArray()));
-		} else {
-			gl.glMultMatrixf(FloatBuffer.wrap(Scalar.toFloat(m.toArray())));
-		}
+	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
 
-		transforms.add(m);
-	}
-
-	/**
-	 * Loads the identity matrix, then multiplies by the specified matrix.
-	 *
-	 * @see  #glLoadIdentity()
-	 * @see  #glMultMatrix(TransformMatrix)
-	 */
-	public void setMatrix(TransformMatrix m) {
-		glLoadIdentity();
-		glMultMatrix(m);
-	}
+	public void setMatrix(TransformMatrix m) { transform = m; }
 
 	public void glRasterPos(Vector pos) {
 		if (enableDoublePrecision) {
@@ -405,6 +383,14 @@ public class GLDriver {
 		glu.gluPickMatrix(x, y, w, h, IntBuffer.wrap(viewport));
 	}
 
+	protected Vector transformPosition(Vector in) {
+		return this.projection.multiply(this.transform).transformAsLocation(in);
+	}
+
+	protected Vector transformDirection(Vector in) {
+		return this.projection.multiply(this.transform).transformAsOffset(in);
+	}
+
 	/**
 	 * If {@link Camera} is null, load the identity matrix into the projection stack
 	 * and modelview stack, otherwise delegate to {@link #glProjection(Camera)}.
@@ -413,10 +399,8 @@ public class GLDriver {
 	 */
 	public void setCamera(Camera c) {
 		if (c == null) {
-			glMatrixMode(GL2.GL_PROJECTION);
-			glLoadIdentity();
-			glMatrixMode(GL2.GL_MODELVIEW);
-			glLoadIdentity();
+			this.projection = new TransformMatrix();
+			this.transform = new TransformMatrix();
 		} else {
 			this.glProjection(c);
 			// TODO  Update projection when camera is updated?
@@ -444,15 +428,14 @@ public class GLDriver {
 	public void resetProjection() { setCamera(null); }
 
 	protected void glProjection(Camera c) {
-		gl.glMatrixMode(GL2.GL_PROJECTION);
-		gl.glLoadIdentity();
+		this.projection = new TransformMatrix();
 
 		if (c instanceof PinholeCamera) {
 			PinholeCamera camera = (PinholeCamera) c;
 
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
-			glu.gluPerspective(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
+			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
 		}
 
 		if (c instanceof OrthographicCamera) {
@@ -465,8 +448,31 @@ public class GLDriver {
 			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
 		}
 
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
-		gl.glLoadIdentity();
+		glLoadIdentity();
+	}
+
+	protected TransformMatrix getPerspectiveMatrix(double fovyInDegrees, double aspectRatio, double near, double far) {
+		double ymax, xmax;
+		ymax = near * Math.tan(fovyInDegrees * Math.PI / 360.0);
+		// ymin = -ymax;
+		// xmin = -ymax * aspectRatio;
+		xmax = ymax * aspectRatio;
+		return getFrustum(-xmax, xmax, -ymax, ymax, near, far);
+	}
+
+	private TransformMatrix getFrustum(double left, double right, double bottom, double top, double near, double far) {
+		double temp, temp2, temp3, temp4;
+		temp = 2.0 * near;
+		temp2 = right - left;
+		temp3 = top - bottom;
+		temp4 = far - near;
+
+		TransformMatrix t = new TransformMatrix(
+				new double[][] {{ temp / temp2, 0.0, 			(right + left) / temp2, 0.0 				  },
+								{ 0.0, 			temp / temp3, 	(top + bottom) / temp3, 0.0 				  },
+								{ 0.0, 			0.0, 			(-far - near) / temp4, 	(-temp * far) / temp4 },
+								{ 0.0, 			0.0, 			-1.0, 					0.0 				  }});
+		return t;
 	}
 
 	// TODO  Should accept Plane instance

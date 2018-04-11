@@ -297,6 +297,8 @@ public class GLPrintWriter extends GLDriver {
 	public void glVertex(Vector v) {
 		if (gl != null) super.glVertex(v);
 
+		v = transformPosition(v);
+
 		if (enableDoublePrecision) {
 			p.println(glMethod("vertex3d",
 					Arrays.asList(new Variable<>("x", v.getX()),
@@ -326,20 +328,10 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	@Deprecated public void glVertexPointer(int a, int b, int c, FloatBuffer f) {
-		if (gl != null) super.glVertexPointer(a, b, c, f);
-		throw new NotImplementedException("vertexPointer");
-	}
-
-	@Override
-	@Deprecated public void glVertexPointer(GLArrayDataWrapper data) {
-		if (gl != null) super.glVertexPointer(data);
-		throw new NotImplementedException("vertexPointer");
-	}
-
-	@Override
 	public void glNormal(Vector n) {
 		if (gl != null) super.glNormal(n);
+
+		n = transformDirection(n);
 
 		if (enableDoublePrecision) {
 			p.println(glMethod("normal3d",
@@ -352,12 +344,6 @@ public class GLPrintWriter extends GLDriver {
 							new Variable<>("y", (float) n.getY()),
 							new Variable<>("z", (float) n.getZ()))));
 		}
-	}
-
-	@Override
-	public void glNormalPointer(GLArrayDataWrapper data) {
-		if (gl != null) super.glNormalPointer(data);
-		throw new NotImplementedException("glNormalPointer");
 	}
 
 	@Override
@@ -620,36 +606,6 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glLoadIdentity() {
-		if (gl != null) {
-			super.glLoadIdentity();
-		} else {
-			transforms.clear();
-		}
-
-		System.out.println("GLPrintWriter[WARN]: glLoadIdentity not implemented.");
-
-		// TODO  This is not the right signature for uniformMatrix4fv
-//		p.println(glMethod("uniformMatrix4fv",
-//				new Variable<>("matrix", Scalar.toFloat(new TransformMatrix().toArray()))));
-	}
-
-	@Override
-	public void glMultMatrix(TransformMatrix m) {
-		if (gl != null) {
-			super.glMultMatrix(m);
-		} else {
-			transforms.add(m);
-		}
-
-		if (enableDoublePrecision) {
-			p.println(glMethod("multMatrixd", new Variable<>("matrix", m.toArray())));
-		} else {
-			p.println(glMethod("multMatrixf", new Variable<>("matrix", Scalar.toFloat(m.toArray()))));
-		}
-	}
-
-	@Override
 	public void glRasterPos(Vector pos) {
 		if (gl != null) super.glRasterPos(pos);
 		throw new NotImplementedException("rasterPos");
@@ -701,43 +657,6 @@ public class GLPrintWriter extends GLDriver {
 	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
 		if (glu != null) super.gluPickMatrix(x, y, w, h, viewport);
 		throw new NotImplementedException("pickMatrix");
-	}
-
-	@Override
-	protected void glProjection(Camera c) {
-		if (gl != null) super.glProjection(c);
-
-		// TODO  Do not use matrixMode
-
-		p.println(glMethod("matrixMode",
-						Arrays.asList(new Variable<>("GL_PROJECTION", GL2.GL_PROJECTION))));
-		p.println(glMethod("loadIdentity"));
-
-		if (c instanceof PinholeCamera) {
-			PinholeCamera camera = (PinholeCamera) c;
-
-			float width = (float) camera.getProjectionWidth();
-			float height = (float) camera.getProjectionHeight();
-			p.println(gluMethod("perspective",
-					Arrays.asList(new Variable<>("fov", Math.toDegrees(camera.getFOV()[0])),
-								new Variable<>("aspect",width / height),
-								new Variable<>("min", 1),
-								new Variable<>("max", 1e9))));
-		}
-
-		if (c instanceof OrthographicCamera) {
-			OrthographicCamera camera = (OrthographicCamera) c;
-
-			Vector cameraLocation = camera.getLocation();
-			Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());
-			Vector up = camera.getUpDirection();
-
-			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
-		}
-
-		p.println(glMethod("matrixMode",
-						Arrays.asList(new Variable<>("GL_MODELVIEW", GL2.GL_MODELVIEW))));
-		p.println(glMethod("loadIdentity"));
 	}
 
 	@Override
