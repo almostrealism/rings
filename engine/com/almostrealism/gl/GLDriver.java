@@ -29,6 +29,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
+import org.almostrealism.graph.Triangle;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -87,8 +88,8 @@ public class GLDriver {
 			gl.glColor3d(color.getRed(), color.getGreen(), color.getBlue());
 		} else {
 			gl.glColor3f((float) color.getRed(),
-						(float) color.getGreen(),
-						(float) color.getBlue());
+					(float) color.getGreen(),
+					(float) color.getBlue());
 		}
 	}
 
@@ -97,16 +98,18 @@ public class GLDriver {
 			gl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		} else {
 			gl.glColor4f((float) color.getRed(),
-						(float) color.getGreen(),
-						(float) color.getBlue(),
-						(float) color.getAlpha());
+					(float) color.getGreen(),
+					(float) color.getBlue(),
+					(float) color.getAlpha());
 		}
 	}
 
 	/** It is recommended to use {@link #glColor(RGB)} instead. */
-	@Deprecated public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
+	@Deprecated
+	public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
 
-	@Deprecated public void glMaterial(int code, int prop, FloatBuffer buf) {
+	@Deprecated
+	public void glMaterial(int code, int prop, FloatBuffer buf) {
 		if (buf == null) {
 			throw new IllegalArgumentException("FloatBuffer is null");
 		}
@@ -114,11 +117,13 @@ public class GLDriver {
 		gl.glMaterialfv(code, prop, buf);
 	}
 
-	@Deprecated public void glMaterial(int code, int param, float f[], int i) {
+	@Deprecated
+	public void glMaterial(int code, int param, float f[], int i) {
 		gl.glMaterialfv(code, param, f, i);
 	}
 
-	@Deprecated public void glMaterial(int code, int param, double f) {
+	@Deprecated
+	public void glMaterial(int code, int param, double f) {
 		gl.glMaterialf(code, param, (float) f);
 	}
 
@@ -127,24 +132,28 @@ public class GLDriver {
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[] { (float) mat.shininess.getValue() }, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
 		} else {
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{ (float) mat.shininess.getValue() }, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
 		}
 	}
 
 	/** It is recommended to use {@link #glMaterial(GLMaterial)}. */
-	@Deprecated public void glColorMaterial(int param, int value) { gl.glColorMaterial(param, value); }
+	@Deprecated
+	public void glColorMaterial(int param, int value) { gl.glColorMaterial(param, value); }
 
 	public void glInitNames() { gl.glInitNames(); }
+
 	public void glLoadName(int name) { gl.glLoadName(name); }
+
 	public void glPushName(int name) { gl.glPushName(name); }
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
-	@Deprecated public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
+	@Deprecated
+	public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
 
 	public void bindTexture(Texture t) { t.bind(gl); }
 
@@ -161,18 +170,25 @@ public class GLDriver {
 	}
 
 	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
+
 	public void glTexGen(int a, int b, float f) { gl.glTexGenf(a, b, f); }
+
 	public void glTexGen(int a, int b, float f[], int index) { gl.glTexGenfv(a, b, f, index); }
+
 	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
+
 	public void glTexEnvf(int a, int b, float f) { gl.glTexEnvf(a, b, f); }
+
 	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
 
 	public void glLineWidth(double width) { gl.glLineWidth((float) width); }
+
 	public void glPointSize(double size) { gl.glPointSize((float) size); }
 
 	public void glutBitmapCharacter(int font, char c) { glut.glutBitmapCharacter(font, c); }
 
 	public void enableTexture(Texture t) { t.enable(gl); }
+
 	public void disableTexture(Texture t) { t.disable(gl); }
 
 	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
@@ -184,8 +200,8 @@ public class GLDriver {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
 		} else {
 			gl.glVertex3f((float) v.getX(),
-						(float) v.getY(),
-						(float) v.getZ());
+					(float) v.getY(),
+					(float) v.getZ());
 		}
 	}
 
@@ -210,7 +226,8 @@ public class GLDriver {
 	}
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
-	@Deprecated public void glLightModel(int code, RGBA color) {
+	@Deprecated
+	public void glLightModel(int code, RGBA color) {
 		gl.glLightModelfv(code, FloatBuffer.wrap(Scalar.toFloat(color.toArray())));
 	}
 
@@ -228,18 +245,34 @@ public class GLDriver {
 		glMultMatrix(TransformMatrix.createRotateMatrix(Math.toRadians(angle), v));
 	}
 
+	public void triangle(Triangle t) {
+		Vector v[] = t.getVertices();
+		float tex[][] = t.getTextureCoordinates();
+
+		glVertex(v[0]);
+		uv(new Pair(tex[0][0], tex[0][1]));
+		glVertex(v[1]);
+		uv(new Pair(tex[1][0], tex[1][1]));
+		glVertex(v[2]);
+		uv(new Pair(tex[2][0], tex[2][1]));
+	}
+
 	public void glAccum(int param, double value) { gl.glAccum(param, (float) value); }
 
 	public void glColorMask(boolean r, boolean g, boolean b, boolean a) { gl.glColorMask(r, g, b, a); }
 
 	public void clearColorBuffer() { gl.glClear(GL.GL_COLOR_BUFFER_BIT); }
+
 	public void glClearColor(RGBA c) { gl.glClearColor(c.r(), c.g(), c.b(), c.a()); }
+
 	public void glClearAccum(RGBA c) {
 		gl.glClearAccum((float) c.getRed(), (float) c.getGreen(), (float) c.getBlue(), (float) c.getAlpha());
 	}
 
 	public void glDepthFunc(int code) { gl.glDepthFunc(code); }
+
 	public void glStencilFunc(int func, int ref, int mask) { gl.glStencilFunc(func, ref, mask); }
+
 	public void glStencilOp(int sfail, int dpfail, int dppass) { gl.glStencilOp(sfail, dpfail, dppass); }
 
 	public void clearDepth(double d) {
@@ -254,7 +287,8 @@ public class GLDriver {
 		gl.glClearStencil(param);
 	}
 
-	@Deprecated public void glClear(int bits) { gl.glClear(bits); }
+	@Deprecated
+	public void glClear(int bits) { gl.glClear(bits); }
 
 	public void setFog(FogParameters f) {
 		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
@@ -265,14 +299,17 @@ public class GLDriver {
 		gl.glEnable(GL2.GL_FOG);
 	}
 
-	@Deprecated public void glQuads() { glBegin(GL2.GL_QUADS); }
+	@Deprecated
+	public void glQuads() { glBegin(GL2.GL_QUADS); }
 
-	@Deprecated public void glBegin(int code) {
+	@Deprecated
+	public void glBegin(int code) {
 		gl.glBegin(code);
 		begins.push(code);
 	}
 
-	@Deprecated public void enable(int code) { gl.glEnable(code); }
+	@Deprecated
+	public void enable(int code) { gl.glEnable(code); }
 
 	public void enable(String code) {
 		try {
@@ -289,26 +326,27 @@ public class GLDriver {
 	public void blendFunc(String sfactor, String dfactor) {
 		try {
 			gl.glBlendFunc(GL2.class.getField(sfactor).getInt(gl),
-							GL2.class.getField(dfactor).getInt(gl));
+					GL2.class.getField(dfactor).getInt(gl));
 		} catch (IllegalAccessException | NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public void glShadeModel(int model) { gl.glShadeModel(model); }
+
 	public int glRenderMode(int mode) { return gl.glRenderMode(mode); }
 
 	public void glPushAttrib(int attrib) { gl.glPushAttrib(attrib); }
+
 	public void glPopAttrib() { gl.glPopAttrib(); }
 
 	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
-	public void glBindBuffer(int code, int v) { gl.glBindBuffer(code, v); }
-	public void glBufferData(int code, int l, ByteBuffer buf, int d) { gl.glBufferData(code, l, buf, d); }
-	public void glSelectBuffer(int size, IntBuffer buf) { gl.glSelectBuffer(size, buf); }
 
-	public int glGenLists(int code) { return gl.glGenLists(code); }
-	public void glCallList(int list) { gl.glCallList(list); }
-	public void glNewList(int list, int code) { gl.glNewList(list, code); }
+	public void glBindBuffer(int code, int v) { gl.glBindBuffer(code, v); }
+
+	public void glBufferData(int code, int l, ByteBuffer buf, int d) { gl.glBufferData(code, l, buf, d); }
+
+	public void glSelectBuffer(int size, IntBuffer buf) { gl.glSelectBuffer(size, buf); }
 
 	public void uv(Pair texCoord) {
 		if (enableDoublePrecision) {
@@ -317,16 +355,6 @@ public class GLDriver {
 			gl.glTexCoord2f((float) texCoord.getA(), (float) texCoord.getB());
 		}
 	}
-
-	@Deprecated public void glMatrixMode(int code) {
-		if (code == GL2.GL_PROJECTION) {
-			System.out.println("GLDriver[WARN]: Projection matrix is not supported in later versions of OpenGL. Use setCamera instead.");
-		}
-
-		gl.glMatrixMode(code);
-	}
-
-	public void glModelView() { glMatrixMode(GL2.GL_MODELVIEW); }
 
 	public void pushMatrix() {
 		if (useGlMatrixStack) {
@@ -337,6 +365,7 @@ public class GLDriver {
 			matrixStack.push(t);
 		}
 	}
+
 	public void popMatrix() {
 		if (useGlMatrixStack) {
 			gl.glPopMatrix();
@@ -360,10 +389,12 @@ public class GLDriver {
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
-	@Deprecated public void setViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
+	@Deprecated
+	public void setViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
-	@Deprecated public void gluOrtho2D(double a, double b, double c, double d) { glu.gluOrtho2D(a, b, c, d); }
+	@Deprecated
+	public void gluOrtho2D(double a, double b, double c, double d) { glu.gluOrtho2D(a, b, c, d); }
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
@@ -372,8 +403,8 @@ public class GLDriver {
 
 	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
 		return glu.gluUnProject((float) w.getX(), (float) w.getY(), (float) w.getZ(),
-								FloatBuffer.wrap(Scalar.toFloat(modelview)), FloatBuffer.wrap(Scalar.toFloat(projection)),
-								IntBuffer.wrap(viewport), FloatBuffer.wrap(Scalar.toFloat(worldpos.toArray())));
+				FloatBuffer.wrap(Scalar.toFloat(modelview)), FloatBuffer.wrap(Scalar.toFloat(projection)),
+				IntBuffer.wrap(viewport), FloatBuffer.wrap(Scalar.toFloat(worldpos.toArray())));
 	}
 
 	public boolean gluUnProject(Vector w, Vector worldpos) {
@@ -399,7 +430,7 @@ public class GLDriver {
 	 * If {@link Camera} is null, load the identity matrix into the projection stack
 	 * and modelview stack, otherwise delegate to {@link #glProjection(Camera)}.
 	 *
-	 * @param c  Camera to use for projection, or null to reset matrices.
+	 * @param c Camera to use for projection, or null to reset matrices.
 	 */
 	public void setCamera(Camera c) {
 		if (c == null) {
@@ -426,7 +457,10 @@ public class GLDriver {
 	 * Restores the projection matrix to match the {@link Camera} saved with the
 	 * {@link #pushCamera()} method.
 	 */
-	public void popCamera() { this.camera = cameraStack.pop(); glProjection(camera); }
+	public void popCamera() {
+		this.camera = cameraStack.pop();
+		glProjection(camera);
+	}
 
 	/** Delegates to {@link #setCamera(Camera)} with null {@link Camera}. */
 	public void resetProjection() { setCamera(null); }
@@ -455,7 +489,8 @@ public class GLDriver {
 		glLoadIdentity();
 	}
 
-	@Deprecated public void setPerspective(double fovyInDegrees, double aspectRatio, double near, double far) {
+	@Deprecated
+	public void setPerspective(double fovyInDegrees, double aspectRatio, double near, double far) {
 		resetProjection();
 		projection = getPerspectiveMatrix(fovyInDegrees, aspectRatio, near, far);
 	}
@@ -477,10 +512,10 @@ public class GLDriver {
 		temp4 = far - near;
 
 		TransformMatrix t = new TransformMatrix(
-				new double[][] {{ temp / temp2, 0.0, 			(right + left) / temp2, 0.0 				  },
-								{ 0.0, 			temp / temp3, 	(top + bottom) / temp3, 0.0 				  },
-								{ 0.0, 			0.0, 			(-far - near) / temp4, 	(-temp * far) / temp4 },
-								{ 0.0, 			0.0, 			-1.0, 					0.0 				  }});
+				new double[][]{{temp / temp2, 0.0, (right + left) / temp2, 0.0},
+						{0.0, temp / temp3, (top + bottom) / temp3, 0.0},
+						{0.0, 0.0, (-far - near) / temp4, (-temp * far) / temp4},
+						{0.0, 0.0, -1.0, 0.0}});
 		return t;
 	}
 
@@ -488,15 +523,28 @@ public class GLDriver {
 	public void glClipPlane(int plane, DoubleBuffer eqn) { gl.glClipPlane(plane, eqn); }
 
 	public void glCullFace(int param) { gl.glCullFace(param); }
+
 	public void glFrontFace(int param) { gl.glFrontFace(param); }
 
 	public void glFlush() { gl.glFlush(); }
-	@Deprecated public int glEnd() { gl.glEnd(); return begins.pop(); }
-	@Deprecated public void endList() { gl.glEndList(); }
-	@Deprecated public void glDisable(int code) { gl.glDisable(code); }
-	@Deprecated public void glDisableClientState(int code) { gl.glDisableClientState(code); }
 
-	@Deprecated public void hint(int param, int value) { gl.glHint(param, value); }
+	@Deprecated
+	public int glEnd() {
+		gl.glEnd();
+		return begins.pop();
+	}
+
+	@Deprecated
+	public void endList() { gl.glEndList(); }
+
+	@Deprecated
+	public void glDisable(int code) { gl.glDisable(code); }
+
+	@Deprecated
+	public void glDisableClientState(int code) { gl.glDisableClientState(code); }
+
+	@Deprecated
+	public void hint(int param, int value) { gl.glHint(param, value); }
 
 	public void hint(String param, String value) throws NoSuchFieldException, IllegalAccessException {
 		gl.glHint(GL2.class.getField(param).getInt(gl), GL2.class.getField(value).getInt(gl));
@@ -508,8 +556,81 @@ public class GLDriver {
 	}
 
 	public void glutSolidSphere(double radius, int slices, int stacks) {
-		// TODO  Replace with our own sphere code
-		glut.glutSolidSphere(radius, slices, stacks);
+		int i, j;
+
+    	/* Adjust z and radius as stacks are drawn. */
+		double z1;
+		double r1;
+
+		int n = -slices;
+		int size = Math.abs(n);
+		double angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
+		double sint1[] = new double[size + 1];
+		double cost1[] = new double[size + 1];
+		circleTable(sint1, cost1, size, angle);
+
+		n = stacks * 2;
+		size = Math.abs(n);
+		angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
+		double sint2[] = new double[size + 1];
+		double cost2[] = new double[size + 1];
+		circleTable(sint2, cost2, size, angle);
+
+    	/* The top stack is covered with a triangle fan */
+
+		double z0 = 1.0;
+		z1 = cost2[(stacks > 0) ? 1 : 0];
+		double r0 = 0.0;
+		r1 = sint2[(stacks > 0) ? 1 : 0];
+
+		glBegin(GL2.GL_TRIANGLE_FAN);
+
+		glNormal(new Vector(0, 0, 1));
+		glVertex(new Vector(0, 0, radius));
+
+		for (j = slices; j >= 0; j--) {
+			glNormal(new Vector(cost1[j] * r1, sint1[j] * r1, z1));
+			glVertex(new Vector(cost1[j] * r1 * radius, sint1[j] * r1 * radius, z1 * radius));
+		}
+
+		glEnd();
+
+    	/* Cover each stack with a quad strip, except the top and bottom stacks */
+
+		for (i = 1; i < stacks - 1; i++) {
+			z0 = z1;
+			z1 = cost2[i + 1];
+			r0 = r1;
+			r1 = sint2[i + 1];
+
+			glBegin(GL2.GL_QUAD_STRIP);
+
+			for (j = 0; j <= slices; j++) {
+				glNormal(new Vector(cost1[j] * r1, sint1[j] * r1, z1));
+				glVertex(new Vector(cost1[j] * r1 * radius, sint1[j] * r1 * radius, z1 * radius));
+				glNormal(new Vector(cost1[j] * r0, sint1[j] * r0, z0));
+				glVertex(new Vector(cost1[j] * r0 * radius, sint1[j] * r0 * radius, z0 * radius));
+			}
+
+			glEnd();
+		}
+
+    	/* The bottom stack is covered with a triangle fan */
+
+		z0 = z1;
+		r0 = r1;
+
+		glBegin(GL2.GL_TRIANGLE_FAN);
+
+		glNormal(new Vector(0, 0, -1));
+		glVertex(new Vector(0, 0, -radius));
+
+		for (j = 0; j <= slices; j++) {
+			glNormal(new Vector(cost1[j] * r0, sint1[j] * r0, z0));
+			glVertex(new Vector(cost1[j] * r0 * radius, sint1[j] * r0 * radius, z0 * radius));
+		}
+
+		glEnd();
 	}
 
 	public void glDrawArrays(int code, int a, int b) { gl.glDrawArrays(code, a, b); }
@@ -576,5 +697,22 @@ public class GLDriver {
 		}
 
 		return gle;
+	}
+
+	private static void circleTable(double sint[], double cost[], int size, double angle) {
+		int i;
+
+    	/* Compute cos and sin around the circle */
+		sint[0] = 0.0;
+		cost[0] = 1.0;
+
+		for (i = 1; i < size; i++) {
+			sint[i] = Math.sin(angle * i);
+			cost[i] = Math.cos(angle * i);
+		}
+
+    	/* Last sample is duplicate of the first */
+		sint[size] = sint[0];
+		cost[size] =cost[0];
 	}
 }

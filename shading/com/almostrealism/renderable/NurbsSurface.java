@@ -21,8 +21,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
-// TODO  GLDisplayList is deprecated
-public class NurbsSurface extends GLDisplayList {
+public class NurbsSurface extends RenderableGLAdapter {
 	private float knots[];
 	private float pts[][][];
 	private GLUgl2 glu;
@@ -38,8 +37,7 @@ public class NurbsSurface extends GLDisplayList {
 	@Override
 	public void init(GLDriver gl) {
 		super.init(gl);
-		
-		if (pts != null) { buildSurface(gl); }
+		initMaterial(gl);
 	}
 	
 	public int getWidth() { return pts.length; }
@@ -47,9 +45,8 @@ public class NurbsSurface extends GLDisplayList {
 	
 	public float[][][] getPoints() { return pts; }
 	
-	protected void buildSurface(GLDriver gl) {
-		gl.glNewList(displayListIndex, GL2.GL_COMPILE);
-		initMaterial(gl);
+	public void display(GLDriver gl) {
+		super.display(gl);
 		glu.gluBeginSurface(nurbs);
 		glu.gluNurbsSurface(nurbs, knots.length, knots,
 							knots.length, knots,
@@ -57,7 +54,6 @@ public class NurbsSurface extends GLDisplayList {
 							getWidth(), getHeight(),
 							GL2.GL_MAP2_VERTEX_3);
 		glu.gluEndSurface(nurbs);
-		gl.endList();
 	}
 	
 	protected float[] flatten(float f[][][]) {

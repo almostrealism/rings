@@ -414,7 +414,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		gl.glDisable(GL.GL_DEPTH_TEST);
 
-		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
 		gl.glActiveTexture(GL.GL_TEXTURE1);
@@ -440,16 +439,16 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 
-		gl.glMatrixMode(GL.GL_TEXTURE);
-		gl.pushMatrix();
-		gl.glLoadIdentity();
+//		gl.glMatrixMode(GL.GL_TEXTURE);  TODO  There must be a modern way of disabling the texture transformation
+//		gl.pushMatrix();
+//		gl.glLoadIdentity();
 
 		gl.glutSolidSphere(5.0, 40, 20);
 
 		gl.glDisable(GL2ES1.GL_LIGHTING);
 
-		gl.popMatrix();
-		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+//		gl.popMatrix();
+//		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
 		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
 		gl.glDisable(GL2.GL_TEXTURE_GEN_T);

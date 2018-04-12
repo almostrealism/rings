@@ -16,7 +16,6 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
@@ -49,12 +48,7 @@ public class AnimatedNurbsSurface extends NurbsSurface {
 			}
 		}
 	}
-	
-	public void display(GLDriver gl) {
-		buildSurface(gl);
-		super.display(gl);
-	}
-	
+
 	public int getWidth() { return width; }
 	
 	public int getHeight() { return height; }

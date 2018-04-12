@@ -17,34 +17,38 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
+import com.almostrealism.gl.GLMaterial;
+import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.ResourceVariable;
 import org.almostrealism.graph.Mesh;
 
 import org.almostrealism.graph.MeshResource;
+import org.almostrealism.graph.Triangle;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> {
-	protected TriangleDisplayList list;
-	
-	public RenderableMesh(Mesh m) {
-		super(m);
-		list = createDisplayList(m);
-	}
+	public RenderableMesh(Mesh m) { super(m); }
 	
 	@Override
-	public void init(GLDriver gl) { list.init(gl); }
+	public void init(GLDriver gl) { } // TODO  Load mesh vertices into a vertex buffer object
 
 	@Override
-	public void render(GLDriver gl) { list.display(gl); }
+	public void render(GLDriver gl) {
+		gl.glMaterial(getMaterial());
+
+		gl.glBegin(GL2.GL_TRIANGLES);
+
+		for (Triangle t : getGeometry().triangles()) {
+			gl.triangle(t);
+		}
+
+		gl.glEnd();
+	}
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
 		ResourceVariable v = new ResourceVariable(name + "Mesh", new MeshResource(getGeometry()));
 		p.println(v);
 		// TODO  Render mesh
-	}
-
-	private static TriangleDisplayList createDisplayList(Mesh m) {
-		return new TriangleDisplayList(m.triangles());
 	}
 }

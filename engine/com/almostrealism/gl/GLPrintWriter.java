@@ -556,24 +556,6 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public int glGenLists(int code) {
-		if (gl != null) super.glGenLists(code);
-		throw new NotImplementedException("genLists");
-	}
-
-	@Override
-	public void glCallList(int list) {
-		if (gl != null) super.glCallList(list);
-		throw new NotImplementedException("callList");
-	}
-
-	@Override
-	public void glNewList(int list, int code) {
-		if (gl != null) super.glNewList(list, code);
-		throw new NotImplementedException("newList");
-	}
-
-	@Override
 	public void uv(Pair texCoord) {
 		if (enableDoublePrecision) {
 			p.println(glMethod("texCoord2d",
@@ -584,13 +566,6 @@ public class GLPrintWriter extends GLDriver {
 					Arrays.asList(new Variable<>("u", (float) texCoord.getA()),
 									new Variable<>("v", (float) texCoord.getB()))));
 		}
-	}
-
-	@Override
-	@Deprecated
-	public void glMatrixMode(int code) {
-		if (gl != null) super.glMatrixMode(code);
-		// TODO  Throw exception
 	}
 
 	@Override
