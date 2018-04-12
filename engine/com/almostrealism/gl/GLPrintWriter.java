@@ -105,31 +105,6 @@ public class GLPrintWriter extends GLDriver {
 		}
 	}
 
-	/** It is recommended to use {@link #glColor(RGB)} instead. */
-	@Override
-	public void glColorPointer(GLArrayDataWrapper data) {
-		if (gl != null) super.glColorPointer(data);
-		throw new NotImplementedException("glColorPointer");
-	}
-
-	@Override
-	@Deprecated public void glMaterial(int code, int prop, FloatBuffer buf) {
-		if (gl != null) super.glMaterial(code, prop, buf);
-		throw new NotImplementedException("glMaterial");
-	}
-
-	@Override
-	@Deprecated public void glMaterial(int code, int param, float f[], int i) {
-		if (gl != null) super.glMaterial(code, param, f, i);
-		throw new NotImplementedException("glMaterial");
-	}
-
-	@Override
-	@Deprecated public void glMaterial(int code, int param, double f) {
-		if (gl != null) super.glMaterial(code, param, f);
-		throw new NotImplementedException("glMaterial");
-	}
-
 	@Override
 	public void glMaterial(GLMaterial mat) {
 		if (gl != null) super.glMaterial(mat);
@@ -154,13 +129,6 @@ public class GLPrintWriter extends GLDriver {
 								new Variable("GL_SHININESS", GL2.GL_SHININESS),
 								new Variable("shininess", new float[] { (float) mat.shininess.getValue() }),
 								new Variable("zero", 0))));
-	}
-
-	/** It is recommended to use {@link #glMaterial(GLMaterial)}. */
-	@Override
-	@Deprecated public void glColorMaterial(int param, int value) {
-		if (gl != null) super.glColorMaterial(param, value);
-		throw new NotImplementedException("glColorMaterial");
 	}
 
 	@Override
@@ -222,24 +190,6 @@ public class GLPrintWriter extends GLDriver {
 //								new Variable<>("buf", buf))));
 		System.out.println("GLPrintWriter[WARN]: glTexImage2D is not supported by some versions of OpenGL. Use Texture type instead.");
 		// TODO  This should be an exception
-	}
-
-	@Override
-	public void glTexGeni(int a, int b, int c) {
-		if (gl != null) super.glTexGeni(a, b, c);
-		throw new NotImplementedException("texGeni");
-	}
-
-	@Override
-	public void glTexGen(int a, int b, float f) {
-		if (gl != null) super.glTexGen(a, b, f);
-		throw new NotImplementedException("texGen");
-	}
-
-	@Override
-	public void glTexGen(int a, int b, float f[], int index) {
-		if (gl != null) super.glTexGen(a, b, f, index);
-		throw new NotImplementedException("texGen");
 	}
 
 	@Override

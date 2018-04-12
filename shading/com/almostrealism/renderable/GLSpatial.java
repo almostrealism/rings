@@ -154,7 +154,7 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName);
 
 //		gl.glVertexPointer(vArrayData);  TODO
-		gl.glColorPointer(cArrayData);
+//		gl.glColorPointer(cArrayData);  TODO
 
 		if (nComps > 0) {
 //			gl.glNormalPointer(nArrayData); TODO

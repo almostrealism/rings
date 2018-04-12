@@ -423,15 +423,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.bindTexture(skydome);
 		gl.enableTexture(skydome);
 
-		// This is a workaround for a driver bug on Mac OS X where the
-		// normals are not being sent down to the hardware in
-		// GL_NORMAL_MAP texgen mode. Temporarily enabling lighting
-		// causes the normals to be sent down. Thanks to Ken Dyke.
-		gl.enable(GL2ES1.GL_LIGHTING);
-
-		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
-		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
-		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+//		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);  TODO
+//		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);  TODO
+//		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);  TODO
 
 		gl.enable(GL2.GL_TEXTURE_GEN_S);
 		gl.enable(GL2.GL_TEXTURE_GEN_T);

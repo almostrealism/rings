@@ -104,29 +104,6 @@ public class GLDriver {
 		}
 	}
 
-	/** It is recommended to use {@link #glColor(RGB)} instead. */
-	@Deprecated
-	public void glColorPointer(GLArrayDataWrapper data) { gl.glColorPointer(data); }
-
-	@Deprecated
-	public void glMaterial(int code, int prop, FloatBuffer buf) {
-		if (buf == null) {
-			throw new IllegalArgumentException("FloatBuffer is null");
-		}
-
-		gl.glMaterialfv(code, prop, buf);
-	}
-
-	@Deprecated
-	public void glMaterial(int code, int param, float f[], int i) {
-		gl.glMaterialfv(code, param, f, i);
-	}
-
-	@Deprecated
-	public void glMaterial(int code, int param, double f) {
-		gl.glMaterialf(code, param, (float) f);
-	}
-
 	public void glMaterial(GLMaterial mat) {
 		if (enableDoublePrecision) {
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
@@ -140,10 +117,6 @@ public class GLDriver {
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
 		}
 	}
-
-	/** It is recommended to use {@link #glMaterial(GLMaterial)}. */
-	@Deprecated
-	public void glColorMaterial(int param, int value) { gl.glColorMaterial(param, value); }
 
 	public void glInitNames() { gl.glInitNames(); }
 
@@ -168,12 +141,6 @@ public class GLDriver {
 	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
-
-	public void glTexGeni(int a, int b, int c) { gl.glTexGeni(a, b, c); }
-
-	public void glTexGen(int a, int b, float f) { gl.glTexGenf(a, b, f); }
-
-	public void glTexGen(int a, int b, float f[], int index) { gl.glTexGenfv(a, b, f, index); }
 
 	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
 
