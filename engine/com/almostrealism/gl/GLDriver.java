@@ -35,7 +35,6 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class GLDriver {
@@ -73,6 +72,15 @@ public class GLDriver {
 	}
 
 	public boolean isGLES1() { return gl.isGLES1(); }
+
+	public void setLighting(GLLightingConfiguration lighting) {
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
+	}
 
 	public void glColor(RGB color) {
 		if (enableDoublePrecision) {
@@ -200,10 +208,6 @@ public class GLDriver {
 			gl.glNormal3f((float) n.getX(), (float) n.getY(), (float) n.getZ());
 		}
 	}
-
-	@Deprecated public void glLight(int light, int prop, FloatBuffer buf) { gl.glLightfv(light, prop, buf); }
-	@Deprecated public void glLight(int light, int prop, float f) { gl.glLightf(light, prop, f); }
-	@Deprecated public void glLight(int light, int prop, float f[], int a) { gl.glLightfv(light, prop, f, a); }
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
 	@Deprecated public void glLightModel(int code, RGBA color) {

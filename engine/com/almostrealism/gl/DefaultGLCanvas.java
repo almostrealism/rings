@@ -400,12 +400,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void configureLightAndMaterial(GLDriver gl, GLLightingConfiguration lighting) {
-		gl.glLight(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
-		gl.glLight(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
-		gl.glLight(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
-		gl.glLight(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
-		gl.glLight(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
-		gl.glLight(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
+		gl.setLighting(lighting);
 		gl.enable(GL2.GL_COLOR_MATERIAL);
 	}
 

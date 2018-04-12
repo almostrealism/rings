@@ -64,6 +64,12 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
+	public void setLighting(GLLightingConfiguration lighting) {
+		if (gl != null) super.setLighting(lighting);
+		throw new NotImplementedException("setLighting");
+	}
+
+	@Override
 	public void glColor(RGB color) {
 		if (gl != null) super.glColor(color);
 
@@ -344,24 +350,6 @@ public class GLPrintWriter extends GLDriver {
 							new Variable<>("y", (float) n.getY()),
 							new Variable<>("z", (float) n.getZ()))));
 		}
-	}
-
-	@Override
-	@Deprecated public void glLight(int light, int prop, FloatBuffer buf) {
-		if (gl != null) super.glLight(light, prop, buf);
-		throw new NotImplementedException("glLight is deprecated in OpenGL");
-	}
-
-	@Override
-	@Deprecated public void glLight(int light, int prop, float f) {
-		if (gl != null) super.glLight(light, prop, f);
-		throw new NotImplementedException("glLight is deprecated in OpenGL");
-	}
-
-	@Override
-	@Deprecated public void glLight(int light, int prop, float f[], int a) {
-		if (gl != null) super.glLight(light, prop, f, a);
-		throw new NotImplementedException("glLight is deprecated in OpenGL");
 	}
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
