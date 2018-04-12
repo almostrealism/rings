@@ -455,6 +455,11 @@ public class GLDriver {
 		glLoadIdentity();
 	}
 
+	@Deprecated public void setPerspective(double fovyInDegrees, double aspectRatio, double near, double far) {
+		resetProjection();
+		projection = getPerspectiveMatrix(fovyInDegrees, aspectRatio, near, far);
+	}
+
 	protected TransformMatrix getPerspectiveMatrix(double fovyInDegrees, double aspectRatio, double near, double far) {
 		double ymax, xmax;
 		ymax = near * Math.tan(fovyInDegrees * Math.PI / 360.0);
