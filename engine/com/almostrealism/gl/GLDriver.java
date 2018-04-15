@@ -168,7 +168,7 @@ public class GLDriver {
 	public void glVertex(Pair p) { glVertex(new Vector(p.getX(), p.getY(), 0.0)); }
 
 	public void glNormal(Vector n) {
-		n = transformDirection(n);
+		n = transformNormal(n);
 
 		if (enableDoublePrecision) {
 			gl.glNormal3d(n.getX(), n.getY(), n.getZ());
