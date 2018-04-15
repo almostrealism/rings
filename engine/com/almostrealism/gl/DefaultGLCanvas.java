@@ -65,6 +65,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static final boolean enableProjection = false;
 	public static final boolean enableBlending = false;
 	public static final boolean enableCamTrackFade = false;
+	public static final boolean enableCameraReshape = false;
 
 	private static long sRandomSeed = 0;
 
@@ -75,8 +76,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	public static int cComps;
 
-	private float view_rotx = 20.0f, view_roty = 30.0f;
-	private final float view_rotz = 0.0f;
+	private float viewRotx = 20.0f, viewRoty = 30.0f;
+	private final float viewRotz = 0.0f;
 	public static long sTick, sStartTick;
 
 	public static int sCurrentCamTrack = 0;
@@ -145,7 +146,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		renderables = s;
 
-		animator = new FPSAnimator(100);
+		animator = new FPSAnimator(s.getFPS());
 		animator.add(this);
 		addGLEventListener(this);
 		addMouseListener(this);
@@ -197,7 +198,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// drawable.setGL(new DebugGL(drawable.getGL()));
 
 		GL2 gl2 = drawable.getGL().getGL2();
-		this.gl = new GLDriver(gl2);
+		gl = new GLDriver(gl2);
 
 		sInit(gl);
 
@@ -246,12 +247,13 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		if (renderables == null || gl == null) return; // TODO  Display a warning?
 
-		OrthographicCamera c = renderables.getCamera();
-		c.setProjectionHeight(c.getProjectionWidth() / c.getAspectRatio());
+		if (enableCameraReshape) {
+			OrthographicCamera c = renderables.getCamera();
+			c.setProjectionHeight(c.getProjectionWidth() / c.getAspectRatio());
+			gl.setCamera(c);
+		}
 
-		gl.setCamera(c);
 		gl.glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
-
 		gl.glShadeModel(GL2.GL_FLAT);
 		gl.glDisable(GL.GL_DITHER);
 	}
@@ -522,7 +524,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public void mouseDragged(MouseEvent e) {
 		final int x = e.getX();
 		final int y = e.getY();
-		float width = 0, height = 0;
+		float width, height;
 		Object source = e.getSource();
 
 		if (source instanceof Window) {
@@ -547,8 +549,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		prevMouseX = x;
 		prevMouseY = y;
 
-		view_rotx += thetaX;
-		view_roty += thetaY;
+		viewRotx += thetaX;
+		viewRoty += thetaY;
 	}
 
 	@Override
@@ -556,13 +558,13 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		int kc = e.getKeyCode();
 
 		if (KeyEvent.VK_LEFT == kc) {
-			view_roty -= 1;
+			viewRoty -= 1;
 		} else if (KeyEvent.VK_RIGHT == kc) {
-			view_roty += 1;
+			viewRoty += 1;
 		} else if (KeyEvent.VK_UP == kc) {
-			view_rotx -= 1;
+			viewRotx -= 1;
 		} else if (KeyEvent.VK_DOWN == kc) {
-			view_rotx += 1;
+			viewRotx += 1;
 		}
 	}
 

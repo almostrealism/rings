@@ -21,6 +21,9 @@ import com.almostrealism.gl.GLMaterial;
 import com.almostrealism.gl.TextureManager;
 import com.almostrealism.gl.GLDriver;
 
+import com.almostrealism.gl.shaders.FragmentShader;
+import com.almostrealism.gl.shaders.GLDiffuseShader;
+import com.almostrealism.gl.shaders.VertexShader;
 import com.almostrealism.shade.Colored;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Scalar;
@@ -39,11 +42,20 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	private GLMaterial mat;
 	private ImageSource texture;
+
+	private VertexShader vShader;
+	private FragmentShader fShader;
 	
-	public RenderableGLAdapter() { mat = new GLMaterial(); }
+	public RenderableGLAdapter() {
+		mat = new GLMaterial();
+		vShader = new GLDiffuseShader();
+	}
 	
 	@Override
-	public void init(GLDriver gl) { initTexture(gl); }
+	public void init(GLDriver gl) {
+		initTexture(gl);
+		// TODO  Compile shaders
+	}
 
 	public void initTexture(GLDriver gl) {
 		if (texture == null) return;
@@ -52,9 +64,15 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	public void initMaterial(GLDriver gl) { }
 
+	public void setVertexShader(VertexShader s) { this.vShader = s; }
+	public void setFragmentShader(FragmentShader s) { this.fShader = s; }
+	public VertexShader getVertexShader() { return vShader; }
+	public FragmentShader getFragmentShader() { return fShader; }
+
 	@Override
 	public void display(GLDriver gl) {
 		gl.glMaterial(mat);
+		// TODO  Apply shaders
 	}
 
 	/**

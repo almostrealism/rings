@@ -47,8 +47,8 @@ public class GLDriver {
 
 	protected Stack<Integer> begins;
 
-	protected Camera camera;
-	protected Stack<Camera> cameraStack;
+	protected OrthographicCamera camera;
+	protected Stack<OrthographicCamera> cameraStack;
 	protected TransformMatrix projection;
 
 	protected TransformMatrix transform;
@@ -157,7 +157,7 @@ public class GLDriver {
 
 	public void glVertex(Vector v) {
 		v = transformPosition(v);
-		v.setZ(-v.getZ());
+		System.out.println(v);
 
 		if (enableDoublePrecision) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
@@ -168,15 +168,7 @@ public class GLDriver {
 		}
 	}
 
-	public void glVertex(Pair p) {
-		// TODO  What about transform matrices?
-
-		if (enableDoublePrecision) {
-			gl.glVertex2d(p.getX(), p.getY());
-		} else {
-			gl.glVertex2f((float) p.getX(), (float) p.getY());
-		}
-	}
+	public void glVertex(Pair p) { glVertex(new Vector(p.getX(), p.getY(), 0.0)); }
 
 	public void glNormal(Vector n) {
 		n = transformDirection(n);
@@ -337,7 +329,7 @@ public class GLDriver {
 		}
 	}
 
-	public void glLoadIdentity() { transform = new TransformMatrix(); }
+	public void glLoadIdentity() { transform = new TransformMatrix(); gl.glLoadIdentity(); }
 
 	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
 
@@ -353,14 +345,20 @@ public class GLDriver {
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	@Deprecated
-	public void setViewport(int x, int y, int w, int h) { gl.glViewport(x, y, w, h); }
+	public void setViewport(int x, int y, int w, int h) {
+		System.out.println("Setting viewport to [" + x + ", " + y + "][" + w + ", " + h + "]");
+		gl.glViewport(x, y, w, h);
+	}
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Deprecated
-	public void gluOrtho2D(double a, double b, double c, double d) { glu.gluOrtho2D(a, b, c, d); }
+	public void gluOrtho2D(double left, double right, double bottom, double top) {
+		System.out.println("gluOrtho(" + left + ", " + right + ", " + bottom + ", " + top + ")");
+		glu.gluOrtho2D(left, right, bottom, top);
+	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
-	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
+	@Deprecated public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
 		glu.gluLookAt(e.getX(), e.getY(), e.getZ(), c.getX(), c.getY(), c.getZ(), var13, var15, var17);
 	}
 
@@ -389,6 +387,10 @@ public class GLDriver {
 		return this.projection.multiply(this.transform).transformAsOffset(in);
 	}
 
+	protected Vector transformNormal(Vector in) {
+		return this.projection.multiply(this.transform).transformAsNormal(in);
+	}
+
 	/**
 	 * If {@link Camera} is null, load the identity matrix into the projection stack
 	 * and modelview stack, otherwise delegate to {@link #glProjection(Camera)}.
@@ -396,15 +398,8 @@ public class GLDriver {
 	 * @param c Camera to use for projection, or null to reset matrices.
 	 */
 	public void setCamera(Camera c) {
-		if (c == null) {
-			this.projection = new TransformMatrix();
-			this.transform = new TransformMatrix();
-		} else {
-			this.glProjection(c);
-			// TODO  Update projection when camera is updated?
-		}
-
-		this.camera = c;
+		this.glProjection(c);
+		this.camera = (OrthographicCamera) c;
 	}
 
 	/** Returns the {@link Camera} assigned via {@link #setCamera(Camera)}. */
@@ -437,9 +432,7 @@ public class GLDriver {
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
 			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
-		}
-
-		if (c instanceof OrthographicCamera) {
+		} else if (c instanceof OrthographicCamera) {
 			OrthographicCamera camera = (OrthographicCamera) c;
 
 			Vector cameraLocation = camera.getLocation();
@@ -447,6 +440,17 @@ public class GLDriver {
 			Vector up = camera.getUpDirection();
 
 			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
+		}
+
+		if (c instanceof OrthographicCamera) {
+			int w2 = (int) ((OrthographicCamera) c).getProjectionWidth() / 2;
+			int h2 = (int) ((OrthographicCamera) c).getProjectionHeight() / 2;
+
+			gluOrtho2D(-w2, w2, -h2, h2);
+			setViewport(0,0, w2, h2);
+		} else {
+			gluOrtho2D(-1, 1, -1, 1);
+			setViewport(0, 0, 1, 1);
 		}
 
 		glLoadIdentity();

@@ -40,6 +40,8 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	public Scene<ShadableSurface> getScene() { return scene; }
 
+	public int getFPS() { return 80; } // TODO  Should be assignable
+
 	public OrthographicCamera getCamera() { return (OrthographicCamera) getScene().getCamera(); }
 
 	@Override

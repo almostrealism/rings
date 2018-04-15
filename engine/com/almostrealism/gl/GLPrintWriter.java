@@ -527,8 +527,8 @@ public class GLPrintWriter extends GLDriver {
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Override
-	@Deprecated public void gluOrtho2D(double a, double b, double c, double d) {
-		if (glu != null) super.gluOrtho2D(a, b, c, d);
+	@Deprecated public void gluOrtho2D(double left, double right, double bottom, double top) {
+		if (glu != null) super.gluOrtho2D(left, right, bottom, top);
 		throw new NotImplementedException("ortho2D");
 	}
 
