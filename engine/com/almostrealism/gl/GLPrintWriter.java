@@ -193,12 +193,6 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glTexEnvi(int a, int b, int c) {
-		if (gl != null) super.glTexEnvi(a, b, c);
-		throw new NotImplementedException("texEnvi");
-	}
-
-	@Override
 	public void glTexEnvf(int a, int b, float f) {
 		if (gl != null) super.glTexEnvf(a, b, f);
 		throw new NotImplementedException("texEnvf");

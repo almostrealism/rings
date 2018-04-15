@@ -23,7 +23,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.*;
@@ -71,8 +70,6 @@ public class GLDriver {
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
 	}
-
-	public boolean isGLES1() { return gl.isGLES1(); }
 
 	public void setLighting(GLLightingConfiguration lighting) {
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
@@ -142,8 +139,6 @@ public class GLDriver {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
 
-	public void glTexEnvi(int a, int b, int c) { gl.glTexEnvi(a, b, c); }
-
 	public void glTexEnvf(int a, int b, float f) { gl.glTexEnvf(a, b, f); }
 
 	public void glTexParameter(int code, int param, int value) { gl.glTexParameteri(code, param, value); }
@@ -162,6 +157,7 @@ public class GLDriver {
 
 	public void glVertex(Vector v) {
 		v = transformPosition(v);
+		v.setZ(-v.getZ());
 
 		if (enableDoublePrecision) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
@@ -202,10 +198,10 @@ public class GLDriver {
 
 	public void glTranslate(Vector t) { glMultMatrix(TransformMatrix.createTranslationMatrix(t)); }
 
-	public void glScale(Vector s) { glMultMatrix(TransformMatrix.createScaleMatrix(s)); }
+	public void scale(Vector s) { glMultMatrix(TransformMatrix.createScaleMatrix(s)); }
 
-	public void glScale(double s) {
-		glScale(new Vector(s, s, s));
+	public void scale(double s) {
+		scale(new Vector(s, s, s));
 	}
 
 	public void glRotate(double angle, Vector v) {

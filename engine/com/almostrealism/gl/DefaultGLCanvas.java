@@ -173,7 +173,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void sInit(GLDriver gl) {
-		cComps = gl.isGLES1() ? 4 : 3;
+		cComps = 4;
 		sGroundPlane = new GroundPlane(gl);
 		sFadeQuad = new Quad3(new Vector(-1.0, -1.0, 1.0),
 								new Vector(-1.0, -1.0, 1.0),
@@ -405,7 +405,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
-		gl.glScale(new Vector(1.0, 1.0, zScale));
+		gl.scale(new Vector(1.0, 1.0, zScale));
 		renderables.display(gl);
 	}
 
@@ -431,7 +431,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		gl.enable(GL2.GL_TEXTURE_GEN_T);
 		gl.enable(GL2.GL_TEXTURE_GEN_R);
 
-		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+//		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);  TODO
 
 //		gl.glMatrixMode(GL.GL_TEXTURE);  TODO  There must be a modern way of disabling the texture transformation
 //		gl.pushMatrix();
