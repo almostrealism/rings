@@ -157,14 +157,11 @@ public class GLDriver {
 
 	public void glVertex(Vector v) {
 		v = transformPosition(v);
-		System.out.println(v);
 
 		if (enableDoublePrecision) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
 		} else {
-			gl.glVertex3f((float) v.getX(),
-					(float) v.getY(),
-					(float) v.getZ());
+			gl.glVertex3f((float) v.getX(), (float) v.getY(), (float) v.getZ());
 		}
 	}
 
