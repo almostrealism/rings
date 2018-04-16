@@ -18,7 +18,11 @@ package com.almostrealism.gl.test;
 
 import javax.swing.JFrame;
 
+import com.almostrealism.lighting.AmbientLight;
+import com.almostrealism.lighting.PointLight;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.junit.Test;
@@ -37,17 +41,25 @@ public class SurfaceCanvasTest {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(camera);
 
+		scene.addLight(new AmbientLight(1000));
+
 		// 36 x 24mm film & 50mm focal length.
 		camera.setProjectionDimensions(36, 24);
 		camera.setFocalLength(50);
 
-		scene.add(new Sphere(new Vector(0, 1000, 0), 50));
-		scene.add(new Sphere(new Vector(200, 1000, 0), 50));
-		scene.add(new Sphere(new Vector(200, 1200, 0), 50));
-		scene.add(new Sphere(new Vector(200, 1200, 200), 50));
+		// move the z value and you'll see it disappears at around -3
+		Sphere s = new Sphere(new Vector(0, 0, 0), 1);
+
+
+		scene.add(s);
+
+//		scene.add(new Sphere(new Vector(200, 0, 0), 50));
+//		scene.add(new Sphere(new Vector(200, 200, 0), 50));
+//		scene.add(new Sphere(new Vector(200, 200, 200), 50));
+
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);
-		c.autoPositionCamera(new Vector(-1,-0.5,-1));
+//		c.autoPositionCamera(new Vector(-1,-0.5,-1));
 
 		JFrame frame = new JFrame("Test");
 		frame.setSize(670, 480);

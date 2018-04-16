@@ -452,13 +452,14 @@ public class GLDriver {
 			int w2 = (int) ((OrthographicCamera) c).getProjectionWidth() / 2;
 			int h2 = (int) ((OrthographicCamera) c).getProjectionHeight() / 2;
 
-			setViewport(0,0, w2, h2);
+//			setViewport(0,0, w2, h2);
+
 		} else {
-			setViewport(0, 0, 1, 1);
+//			setViewport(0, 0, 1, 1);
 		}
 
-		gluOrtho2D(0.0, 1.0, 0.0, 1.0);
-		glLoadIdentity();
+//		gluOrtho2D(0.0, 1.0, 0.0, 1.0);
+//		glLoadIdentity();
 	}
 
 	@Deprecated
@@ -486,7 +487,7 @@ public class GLDriver {
 		TransformMatrix t = new TransformMatrix(
 				new double[][]{{temp / temp2, 0.0, (right + left) / temp2, 0.0},
 						{0.0, temp / temp3, (top + bottom) / temp3, 0.0},
-						{0.0, 0.0, (-far - near) / temp4, (-temp * far) / temp4},
+						{0.0, 0.0, -((far + near) / temp4), -((temp * far) / temp4)},
 						{0.0, 0.0, -1.0, 0.0}});
 		return t;
 	}
@@ -525,6 +526,16 @@ public class GLDriver {
 	public void wireCube(double size) {
 		// TODO  Replace with RenderableCube
 		glut.glutWireCube((float) size);
+	}
+
+	public void renderTriangle() {
+		glBegin(GL2.GL_TRIANGLES);
+
+		glVertex(new Vector(-0.50f, -0.50f, 0));
+		glVertex(new Vector(0.50f, -0.50f, 0));
+		glVertex(new Vector(0f, 0.50f, 0));
+
+		glEnd();
 	}
 
 	public void glutSolidSphere(double radius, int slices, int stacks) {
