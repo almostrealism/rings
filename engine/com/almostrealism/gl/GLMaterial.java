@@ -22,7 +22,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.color.RGBA;
 
 public class GLMaterial implements Diffuse, Specular {
-	public RGBA ambient = new RGBA(0.0, 0.0, 0.0, 0.15);
+	public RGBA ambient = new RGBA(1.0, 1.0, 1.0, 0.15);
 	public RGBA diffuse = new RGBA(1.0, 1.0, 1.0, 0.15);
 	public RGBA specular = new RGBA(1.0, 1.0, 1.0, 0.15);
 	public Scalar shininess = new Scalar(15.0);

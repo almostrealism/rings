@@ -345,6 +345,12 @@ public class GLDriver {
 	public void setViewport(int x, int y, int w, int h) {
 		System.out.println("Setting viewport to [" + x + ", " + y + "][" + w + ", " + h + "]");
 		gl.glViewport(x, y, w, h);
+
+		// Since GLDriver maintains projection matrix internally,
+		// the gl projection matrix is identity
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
 	}
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */

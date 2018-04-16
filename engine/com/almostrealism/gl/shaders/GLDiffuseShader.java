@@ -22,6 +22,7 @@ import io.almostrealism.code.Variable;
 public class GLDiffuseShader extends VertexShader {
 	@Override
 	public Scope<? extends Variable> getScope(String prefix) {
-		return new Scope();
+		Scope s = new Scope();
+		return s;
 	}
 }
