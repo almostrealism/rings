@@ -326,7 +326,11 @@ public class GLDriver {
 		}
 	}
 
-	public void glLoadIdentity() { transform = new TransformMatrix(); gl.glLoadIdentity(); }
+	public void glLoadIdentity() {
+		transform = new TransformMatrix();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
+	}
 
 	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
 
@@ -356,7 +360,6 @@ public class GLDriver {
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Deprecated
 	public void gluOrtho2D(double left, double right, double bottom, double top) {
-		System.out.println("gluOrtho(" + left + ", " + right + ", " + bottom + ", " + top + ")");
 		glu.gluOrtho2D(left, right, bottom, top);
 	}
 
@@ -449,13 +452,12 @@ public class GLDriver {
 			int w2 = (int) ((OrthographicCamera) c).getProjectionWidth() / 2;
 			int h2 = (int) ((OrthographicCamera) c).getProjectionHeight() / 2;
 
-			gluOrtho2D(-w2, w2, -h2, h2);
 			setViewport(0,0, w2, h2);
 		} else {
-			gluOrtho2D(-1, 1, -1, 1);
 			setViewport(0, 0, 1, 1);
 		}
 
+		gluOrtho2D(0.0, 1.0, 0.0, 1.0);
 		glLoadIdentity();
 	}
 

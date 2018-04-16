@@ -407,7 +407,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
-		gl.scale(new Vector(1.0, 1.0, zScale));
+//		gl.scale(new Vector(1.0, 1.0, zScale));
 		renderables.display(gl);
 	}
 
