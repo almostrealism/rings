@@ -21,6 +21,7 @@ import org.almostrealism.graph.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
 import com.almostrealism.raytracer.primitives.Sphere;
+import org.almostrealism.space.SurfaceGroup;
 
 public class RenderableSurfaceFactory {
 	public static Renderable createRenderableSurface(ShadableSurface s) {
@@ -32,6 +33,14 @@ public class RenderableSurfaceFactory {
 			return new RenderableSphere((Sphere) s);
 		} else if (s instanceof Mesh) {
 			return new RenderableMesh((Mesh) s);
+		} else if (s instanceof SurfaceGroup) {
+			GLRenderableList l = new GLRenderableList();
+
+			for (ShadableSurface sh : ((SurfaceGroup) s).getSurfaces()) {
+				l.getRenderables().add(createRenderableSurface(sh));
+			}
+
+			return l;
 		} else {
 			System.err.println("Returning null for " + s);
 		}

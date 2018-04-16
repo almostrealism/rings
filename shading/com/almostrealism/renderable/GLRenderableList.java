@@ -19,13 +19,14 @@ package com.almostrealism.renderable;
 import com.almostrealism.gl.GLDriver;
 import io.almostrealism.code.CodePrintWriter;
 
-@Deprecated
 public class GLRenderableList extends RenderableGLAdapter {
 	private RenderableList renderables;
 	
 	public GLRenderableList() { this(new RenderableList()); }
 	
 	public GLRenderableList(RenderableList r) { this.renderables = r; }
+
+	public RenderableList getRenderables() { return renderables; }
 	
 	@Override
 	public void init(GLDriver gl) { super.init(gl); renderables.init(gl); }
