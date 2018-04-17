@@ -18,6 +18,7 @@ package com.almostrealism.gl;
 
 import com.jogamp.opengl.math.FixedPoint;
 import com.jogamp.opengl.util.GLBuffers;
+import org.almostrealism.color.Light;
 
 import java.nio.FloatBuffer;
 
@@ -29,7 +30,8 @@ public class GLLightingConfiguration {
 	public FloatBuffer light2Position;
 	public FloatBuffer light2Diffuse;
 
-	public GLLightingConfiguration() {
+	public GLLightingConfiguration(Light l[]) {
+		// TODO  For every point light, specify a light here
 		light0Position = GLBuffers.newDirectFloatBuffer(4);
 		light0Diffuse = GLBuffers.newDirectFloatBuffer(4);
 		light1Position = GLBuffers.newDirectFloatBuffer(4);

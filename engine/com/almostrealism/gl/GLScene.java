@@ -60,8 +60,11 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 		for (Renderable r : this) {
 			if (verbose) System.out.println("Rendering " + r);
 			gl.pushCamera();
+			gl.pushLighting();
+			gl.setLighting(new GLLightingConfiguration(getScene().getLights()));
 			gl.setCamera(getCamera());
 			r.display(gl);
+			gl.popLighting();
 			gl.popCamera();
 			if (verbose) System.out.println("Done rendering " + r);
 		}

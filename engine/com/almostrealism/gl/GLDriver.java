@@ -49,6 +49,13 @@ public class GLDriver {
 
 	protected OrthographicCamera camera;
 	protected Stack<OrthographicCamera> cameraStack;
+
+	protected GLLightingConfiguration lighting;
+	protected Stack<GLLightingConfiguration> lightingStack;
+
+	protected GLMaterial material;
+	protected Stack<GLMaterial> materialStack;
+
 	protected TransformMatrix projection;
 
 	protected TransformMatrix transform;
@@ -69,9 +76,15 @@ public class GLDriver {
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
+		this.lightingStack = new Stack<>();
+		this.materialStack = new Stack<>();
 	}
 
+	public void pushLighting() { this.lightingStack.push(this.lighting); }
+	public void popLighting() { this.setLighting(this.lightingStack.pop()); }
+
 	public void setLighting(GLLightingConfiguration lighting) {
+		this.lighting = lighting;
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
