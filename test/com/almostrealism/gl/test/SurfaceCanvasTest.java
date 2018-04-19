@@ -41,7 +41,11 @@ public class SurfaceCanvasTest {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(camera);
 
-		scene.addLight(new AmbientLight(1000));
+		scene.addLight(new PointLight(new Vector(0.0, 1.0, 0.0), 1.0,
+									new RGB(0.8, 0.2, 0.1)));
+
+		scene.addLight(new PointLight(new Vector(1.0, 1.0, -3.0), 1.0,
+									new RGB(0.3, 0.9, 0.2)));
 
 		// 36 x 24mm film & 50mm focal length.
 		camera.setProjectionDimensions(36, 24);

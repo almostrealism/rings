@@ -85,12 +85,22 @@ public class GLDriver {
 
 	public void setLighting(GLLightingConfiguration lighting) {
 		this.lighting = lighting;
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.light0Position);
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lighting.light0Diffuse);
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lighting.light1Position);
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lighting.light1Diffuse);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lighting.light2Position);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lighting.light2Diffuse);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Diffuse().toArray())));
 	}
 
 	public void glColor(RGB color) {

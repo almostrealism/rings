@@ -109,7 +109,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	public DefaultGLCanvas(GLScene s, Texture skydome) {
 		this.skydome = skydome;
-		lighting = new GLLightingConfiguration();
+		lighting = new GLLightingConfiguration(s.getScene().getLights());
 
 		seedRandom(15);
 
@@ -135,7 +135,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		this.skydomeBasename = basename;
 		this.skydomeSuffix = suffix;
 		this.skydomeMipmapped = mipmapped;
-		lighting = new GLLightingConfiguration();
+		lighting = new GLLightingConfiguration(s.getScene().getLights());
 
 		seedRandom(15);
 

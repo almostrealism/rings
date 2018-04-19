@@ -16,41 +16,192 @@
 
 package com.almostrealism.gl;
 
-import com.jogamp.opengl.math.FixedPoint;
-import com.jogamp.opengl.util.GLBuffers;
+import com.almostrealism.lighting.PointLight;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
-
-import java.nio.FloatBuffer;
+import org.almostrealism.color.RGB;
 
 public class GLLightingConfiguration {
-	public FloatBuffer light0Position;
-	public FloatBuffer light0Diffuse;
-	public FloatBuffer light1Position;
-	public FloatBuffer light1Diffuse;
-	public FloatBuffer light2Position;
-	public FloatBuffer light2Diffuse;
+	private Vector light0Position = new Vector();
+	private RGB light0Diffuse = new RGB();
 
-	public GLLightingConfiguration(Light l[]) {
-		// TODO  For every point light, specify a light here
-		light0Position = GLBuffers.newDirectFloatBuffer(4);
-		light0Diffuse = GLBuffers.newDirectFloatBuffer(4);
-		light1Position = GLBuffers.newDirectFloatBuffer(4);
-		light1Diffuse = GLBuffers.newDirectFloatBuffer(4);
-		light2Position = GLBuffers.newDirectFloatBuffer(4);
-		light2Diffuse = GLBuffers.newDirectFloatBuffer(4);
+	private Vector light1Position = new Vector();
+	private RGB light1Diffuse = new RGB();
 
-		light0Position.put(new float[]{FixedPoint.toFloat(-0x40000), 1.0f, 1.0f, 0.0f});
-		light0Diffuse.put(new float[]{1.0f, FixedPoint.toFloat(0x6666), 0.0f, 1.0f});
-		light1Position.put(new float[]{1.0f, FixedPoint.toFloat(-0x20000), -1.0f, 0.0f});
-		light1Diffuse.put(new float[]{FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x23d7), FixedPoint.toFloat(0x5999), 1.0f});
-		light2Position.put(new float[]{-1.0f, 0.0f, FixedPoint.toFloat(-0x40000), 0.0f});
-		light2Diffuse.put(new float[]{FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x2b85), FixedPoint.toFloat(0x23d7), 1.0f});
+	private Vector light2Position = new Vector();
+	private RGB light2Diffuse = new RGB();
 
-		light0Position.flip();
-		light0Diffuse.flip();
-		light1Position.flip();
-		light1Diffuse.flip();
-		light2Position.flip();
-		light2Diffuse.flip();
+	private Vector light3Position = new Vector();
+	private RGB light3Diffuse = new RGB();
+
+	private Vector light4Position = new Vector();
+	private RGB light4Diffuse = new RGB();
+
+	private Vector light5Position = new Vector();
+	private RGB light5Diffuse = new RGB();
+
+	private Vector light6Position = new Vector();
+	private RGB light6Diffuse = new RGB();
+
+	private Vector light7Position = new Vector();
+	private RGB light7Diffuse = new RGB();
+
+	public GLLightingConfiguration(Light lights[]) {
+		int index = 0;
+
+		for (Light l : lights) {
+			if (l instanceof PointLight == false) return;
+			set(index, ((PointLight) l).getLocation());
+			set(index, l.getColor().multiply(l.getIntensity()));
+			index++;
+		}
+	}
+
+	public void set(int i, Vector v) {
+		switch (i) {
+			case 0: light0Position = v; return;
+			case 1: light1Position = v; return;
+			case 2: light2Position = v; return;
+			case 3: light3Position = v; return;
+			case 4: light4Position = v; return;
+			case 5: light5Position = v; return;
+			case 6: light6Position = v; return;
+			case 7: light7Position = v; return;
+		}
+	}
+
+	public void set(int i, RGB c) {
+		switch (i) {
+			case 0: light0Diffuse = c; return;
+			case 1: light1Diffuse = c; return;
+			case 2: light2Diffuse = c; return;
+			case 3: light3Diffuse = c; return;
+			case 4: light4Diffuse = c; return;
+			case 5: light5Diffuse = c; return;
+			case 6: light6Diffuse = c; return;
+			case 7: light7Diffuse = c; return;
+		}
+	}
+
+	public Vector getLight0Position() {
+		return light0Position;
+	}
+
+	public void setLight0Position(Vector light0Position) {
+		this.light0Position = light0Position;
+	}
+
+	public RGB getLight0Diffuse() {
+		return light0Diffuse;
+	}
+
+	public void setLight0Diffuse(RGB light0Diffuse) {
+		this.light0Diffuse = light0Diffuse;
+	}
+
+	public Vector getLight1Position() {
+		return light1Position;
+	}
+
+	public void setLight1Position(Vector light1Position) {
+		this.light1Position = light1Position;
+	}
+
+	public RGB getLight1Diffuse() {
+		return light1Diffuse;
+	}
+
+	public void setLight1Diffuse(RGB light1Diffuse) {
+		this.light1Diffuse = light1Diffuse;
+	}
+
+	public Vector getLight2Position() {
+		return light2Position;
+	}
+
+	public void setLight2Position(Vector light2Position) {
+		this.light2Position = light2Position;
+	}
+
+	public RGB getLight2Diffuse() {
+		return light2Diffuse;
+	}
+
+	public void setLight2Diffuse(RGB light2Diffuse) {
+		this.light2Diffuse = light2Diffuse;
+	}
+
+	public Vector getLight3Position() {
+		return light3Position;
+	}
+
+	public void setLight3Position(Vector light3Position) {
+		this.light3Position = light3Position;
+	}
+
+	public RGB getLight3Diffuse() {
+		return light3Diffuse;
+	}
+
+	public void setLight3Diffuse(RGB light3Diffuse) {
+		this.light3Diffuse = light3Diffuse;
+	}
+
+	public Vector getLight4Position() { return light4Position; }
+
+	public void setLight4Position(Vector light4Position) {
+		this.light4Position = light4Position;
+	}
+
+	public RGB getLight4Diffuse() {
+		return light4Diffuse;
+	}
+
+	public void setLight4Diffuse(RGB light3Diffuse) {
+		this.light4Diffuse = light3Diffuse;
+	}
+
+	public Vector getLight5Position() {
+		return light5Position;
+	}
+
+	public void setLight5Position(Vector light5Position) {
+		this.light5Position = light5Position;
+	}
+
+	public RGB getLight5Diffuse() {
+		return light5Diffuse;
+	}
+
+	public void setLight5Diffuse(RGB light5Diffuse) {
+		this.light5Diffuse = light5Diffuse;
+	}
+
+	public Vector getLight6Position() {
+		return light6Position;
+	}
+
+	public void setLight6Position(Vector light6Position) {
+		this.light6Position = light6Position;
+	}
+
+	public RGB getLight6Diffuse() {
+		return light6Diffuse;
+	}
+
+	public void setLight6Diffuse(RGB light16iffuse) {
+		this.light6Diffuse = light16iffuse;
+	}
+
+	public Vector getLight7Position() { return light7Position; }
+
+	public void setLight7Position(Vector light7Position) {
+		this.light7Position = light7Position;
+	}
+
+	public RGB getLight7Diffuse() { return this.light7Diffuse; }
+
+	public void setLight7Diffuse(RGB light7Diffuse) {
+		this.light7Diffuse = light7Diffuse;
 	}
 }
