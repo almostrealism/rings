@@ -17,11 +17,9 @@
 package com.almostrealism.gl;
 
 import com.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.InstanceReference;
@@ -36,7 +34,6 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
 

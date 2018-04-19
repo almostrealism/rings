@@ -20,7 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.IntersectionalLightingEngine;
+import com.almostrealism.LightingEngine;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Vector;

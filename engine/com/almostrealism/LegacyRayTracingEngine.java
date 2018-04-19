@@ -1,29 +1,29 @@
 /*
  * Copyright 2018 Michael Murray
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 // TODO  Make this class use fewer method calls for calculation.
 // TODO  Add iterative sampling at increasing resolutions.
 // TODO  Add support for brightness histograms (randomly sample pixels).
 
-package com.almostrealism.raytracer.engine;
+package com.almostrealism;
 
 import java.util.Collection;
 
-import com.almostrealism.raytracer.config.FogParameters;
-import com.almostrealism.raytracer.config.RenderParameters;
+import com.almostrealism.raytracer.RayTracedScene;
+import com.almostrealism.raytracer.Settings;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -32,8 +32,6 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
-
-import com.almostrealism.raytracer.Settings;
 
 /**
  * The {@link LegacyRayTracingEngine} class provides static methods for rendering scenes.

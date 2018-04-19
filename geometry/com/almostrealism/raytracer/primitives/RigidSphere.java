@@ -19,14 +19,12 @@ package com.almostrealism.raytracer.primitives;
 import com.almostrealism.lighting.SphericalLight;
 import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.graphics.ParticleGroupRenderer;
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.gl.ParticleGroupRenderer;
 
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.ParticleGroup;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.physics.RigidBody;
 

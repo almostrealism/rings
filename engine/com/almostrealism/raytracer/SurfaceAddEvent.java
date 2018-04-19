@@ -20,8 +20,8 @@ package com.almostrealism.raytracer;
 
 import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.raytracer.event.SceneEditEvent;
-import com.almostrealism.raytracer.event.SurfaceEvent;
+import com.almostrealism.event.SceneEditEvent;
+import com.almostrealism.event.SurfaceEvent;
 
 /** A SurfaceAddEvent object represents the event of adding a new surface to the current scene. */
 public class SurfaceAddEvent extends SceneEditEvent implements SurfaceEvent {

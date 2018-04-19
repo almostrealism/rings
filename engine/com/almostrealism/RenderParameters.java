@@ -14,9 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer.config;
-
-import org.almostrealism.color.RGB;
+package com.almostrealism;
 
 /**
  * A {@link RenderParameters} instance stores parameters related to the image that will

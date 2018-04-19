@@ -26,9 +26,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.almostrealism.raytracer.config.FogParameters;
-import com.almostrealism.raytracer.config.RenderParameters;
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.FogParameters;
+import com.almostrealism.LegacyRayTracingEngine;
+import com.almostrealism.RayIntersectionEngine;
+import com.almostrealism.RenderParameters;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -40,9 +41,9 @@ import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.raytracer.event.SceneCloseEvent;
-import com.almostrealism.raytracer.event.SceneOpenEvent;
-import com.almostrealism.raytracer.event.SurfaceEditEvent;
+import com.almostrealism.event.SceneCloseEvent;
+import com.almostrealism.event.SceneOpenEvent;
+import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.raytracer.primitives.SurfaceUI;
 
 /**

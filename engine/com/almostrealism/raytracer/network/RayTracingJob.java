@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.FogParameters;
 import io.flowtree.node.Client;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
@@ -47,8 +47,8 @@ import com.almostrealism.raytracer.io.FilePrintWriter;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.raytracer.engine.LegacyRayTracingEngine;
-import com.almostrealism.raytracer.config.RenderParameters;
+import com.almostrealism.LegacyRayTracingEngine;
+import com.almostrealism.RenderParameters;
 
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;

@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;

@@ -9,7 +9,7 @@ import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
-import com.almostrealism.raytracer.config.FogParameters;
+import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
@@ -22,9 +22,9 @@ import org.almostrealism.texture.ImageCanvas;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.engine.RayIntersectionEngine;
-import com.almostrealism.raytracer.engine.RayTracedScene;
-import com.almostrealism.raytracer.config.RenderParameters;
+import com.almostrealism.RayIntersectionEngine;
+import com.almostrealism.raytracer.RayTracedScene;
+import com.almostrealism.RenderParameters;
 import com.almostrealism.raytracer.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 

@@ -22,7 +22,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.almostrealism.raytracer.engine.*;
+import com.almostrealism.IntersectionalLightingEngine;
+import com.almostrealism.LightingEngine;
+import com.almostrealism.raytracer.RayTracer;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;

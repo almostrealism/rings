@@ -16,11 +16,7 @@
 
 package com.almostrealism.rayshade;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import javax.security.auth.callback.Callback;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
@@ -29,7 +25,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
-import com.almostrealism.raytracer.engine.RayTracer;
+import com.almostrealism.raytracer.RayTracer;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.

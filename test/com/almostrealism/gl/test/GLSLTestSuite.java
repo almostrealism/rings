@@ -17,7 +17,7 @@
 package com.almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
-import com.almostrealism.raytracer.engine.RayTracedScene;
+import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.test.RayTracingTest;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.relation.Computation;

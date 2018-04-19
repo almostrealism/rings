@@ -27,7 +27,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.geometry.Positioned;
 
-import com.almostrealism.raytracer.engine.RayTracedScene;
+import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.relation.TripleFunction;
 import org.apache.commons.lang3.NotImplementedException;
 

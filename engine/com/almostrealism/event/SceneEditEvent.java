@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer.config;
-
-import org.almostrealism.color.RGBA;
+package com.almostrealism.event;
 
 /**
- * A {@link FogParameters} instance stores configuration parameters for fog.
+ * A {@link SceneEditEvent} represents the event of editing an element of the current scene.
  */
-public class FogParameters {
-	public RGBA fogColor;
-	public double fogDensity = 0.0, fogRatio = 0.5;
+public abstract class SceneEditEvent extends SceneEvent {
+	/** Returns "SceneEditEvent". */
+	public String toString() {
+		return "SceneEditEvent";
+	}
 }

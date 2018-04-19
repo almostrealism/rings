@@ -1,5 +1,22 @@
-package com.almostrealism.raytracer.engine;
+/*
+ * Copyright 2018 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
+package com.almostrealism.raytracer;
+
+import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.SphericalLight;
 import com.almostrealism.projection.PinholeCamera;
@@ -7,8 +24,6 @@ import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RigidBodyStateShader;
-import com.almostrealism.raytracer.DebugOutputPanel;
-import com.almostrealism.raytracer.Settings;
 import com.almostrealism.raytracer.primitives.RigidSphere;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
