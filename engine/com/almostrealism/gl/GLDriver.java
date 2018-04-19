@@ -467,29 +467,35 @@ public class GLDriver {
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
 			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
-		} else if (c instanceof OrthographicCamera) {
+
+            Vector cameraLocation = camera.getLocation();
+            Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());
+            TransformMatrix cameraMatrix = cameraMatrix(cameraLocation, cameraTarget);
+            projection = projection.multiply(cameraMatrix);
+		}
+		else if (c instanceof OrthographicCamera) {
 			OrthographicCamera camera = (OrthographicCamera) c;
 
-			Vector cameraLocation = camera.getLocation();
-			Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());
-			Vector up = camera.getUpDirection();
-
-			gluLookAt(cameraLocation, cameraTarget, up.getX(), up.getY(), up.getZ());
+			// TODO: Orthographic projection matrix.
 		}
-
-		if (c instanceof OrthographicCamera) {
-			int w2 = (int) ((OrthographicCamera) c).getProjectionWidth() / 2;
-			int h2 = (int) ((OrthographicCamera) c).getProjectionHeight() / 2;
-
-//			setViewport(0,0, w2, h2);
-
-		} else {
-//			setViewport(0, 0, 1, 1);
-		}
-
-//		gluOrtho2D(0.0, 1.0, 0.0, 1.0);
-//		glLoadIdentity();
 	}
+
+	private TransformMatrix cameraMatrix(Vector cameraLocation, Vector cameraTarget) {
+        TransformMatrix translation = new TransformMatrix(
+                                        new double[][]{{1, 0, 0, -cameraLocation.getX()},
+                                                       {0, 1, 0, -cameraLocation.getY()},
+                                                       {0, 0, 1, -cameraLocation.getZ()},
+                                                       {0, 0, 0, 1}});
+
+        // TODO - Identity at the moment.
+        TransformMatrix rotation = new TransformMatrix(
+                                        new double[][]{{1, 0, 0, 0},
+                                                       {0, 1, 0, 0},
+                                                       {0, 0, 1, 0},
+                                                       {0, 0, 0, 1}});
+
+        return rotation.multiply(translation);
+    }
 
 	@Deprecated
 	public void setPerspective(double fovyInDegrees, double aspectRatio, double near, double far) {

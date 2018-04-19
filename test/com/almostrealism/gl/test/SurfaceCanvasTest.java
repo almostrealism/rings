@@ -52,7 +52,7 @@ public class SurfaceCanvasTest {
 		camera.setFocalLength(50);
 
 		// Test Sphere
-		Sphere s = new Sphere(new Vector(0.5, 0, -0), 0.5);
+		Sphere s = new Sphere(new Vector(0, 0, 0), 0.5);
 		scene.add(s);
 
 //		scene.add(new Sphere(new Vector(0, 0, 0), 0.1));
@@ -62,6 +62,7 @@ public class SurfaceCanvasTest {
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);
 //		c.autoPositionCamera(new Vector(-1,-0.5,-1));
+		c.autoPositionCamera();
 
 		JFrame frame = new JFrame("Test");
 		frame.setSize(670, 480);
