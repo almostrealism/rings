@@ -28,10 +28,10 @@ import org.almostrealism.space.Plane;
 import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
 
-import com.almostrealism.raytracer.primitives.Cone;
-import com.almostrealism.raytracer.primitives.Cylinder;
-import com.almostrealism.raytracer.primitives.Sphere;
-import com.almostrealism.raytracer.primitives.SurfaceUI;
+import com.almostrealism.primitives.Cone;
+import com.almostrealism.primitives.Cylinder;
+import com.almostrealism.primitives.Sphere;
+import com.almostrealism.primitives.SurfaceUI;
 
 
 // TODO  Add Mesh dialog that allows user to configure space partition.

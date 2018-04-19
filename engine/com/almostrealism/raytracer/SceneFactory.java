@@ -34,7 +34,7 @@ import org.almostrealism.util.ProbabilisticFactory;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.primitives.Sphere;
 
 /**
  * The {@link SceneFactory} class provides static utility methods for getting commonly

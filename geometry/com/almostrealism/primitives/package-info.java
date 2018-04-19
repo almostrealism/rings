@@ -19,4 +19,4 @@
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.raytracer.primitives;
+package com.almostrealism.primitives;

@@ -44,7 +44,7 @@ import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.event.SceneCloseEvent;
 import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
-import com.almostrealism.raytracer.primitives.SurfaceUI;
+import com.almostrealism.primitives.SurfaceUI;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and

@@ -18,10 +18,8 @@ package com.almostrealism.gl.test;
 
 import javax.swing.JFrame;
 
-import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.PointLight;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -29,7 +27,7 @@ import org.junit.Test;
 
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.primitives.Sphere;
 
 /**
  * @author  Michael Murray

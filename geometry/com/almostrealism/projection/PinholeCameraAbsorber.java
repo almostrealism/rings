@@ -16,8 +16,8 @@
 
 package com.almostrealism.projection;
 
-import com.almostrealism.raytracer.primitives.AbsorptionPlane;
-import com.almostrealism.raytracer.primitives.Pinhole;
+import com.almostrealism.primitives.AbsorptionPlane;
+import com.almostrealism.primitives.Pinhole;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;

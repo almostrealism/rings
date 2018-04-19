@@ -16,11 +16,11 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.raytracer.primitives.SurfaceUI;
+import com.almostrealism.primitives.SurfaceUI;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.primitives.Sphere;
 import org.almostrealism.space.SurfaceGroup;
 
 public class RenderableSurfaceFactory {

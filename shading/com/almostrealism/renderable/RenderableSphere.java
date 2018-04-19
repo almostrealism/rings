@@ -16,7 +16,7 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.primitives.Sphere;
 
 /**
  * @author  Michael Murray

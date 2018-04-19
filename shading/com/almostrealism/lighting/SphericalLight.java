@@ -20,9 +20,8 @@ import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
 
-import com.almostrealism.raytracer.primitives.Sphere;
+import com.almostrealism.primitives.Sphere;
 
 /**
  * A SphericalLight object provides PointLight samples that are randomly distributed

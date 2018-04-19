@@ -41,7 +41,7 @@ import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
-import com.almostrealism.raytracer.primitives.SurfaceUI;
+import com.almostrealism.primitives.SurfaceUI;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface

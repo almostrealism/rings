@@ -24,7 +24,7 @@ import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RigidBodyStateShader;
-import com.almostrealism.raytracer.primitives.RigidSphere;
+import com.almostrealism.primitives.RigidSphere;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
