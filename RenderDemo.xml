@@ -2,7 +2,7 @@
 <java version="1.8.0_45" class="java.beans.XMLDecoder">
  <object class="com.almostrealism.raytracer.Scene" id="Scene0">
   <void method="add">
-   <object class="com.almostrealism.raytracer.primitives.Sphere" id="Sphere0">
+   <object class="com.almostrealism.primitives.Sphere" id="Sphere0">
     <void method="calculateTransform"/>
     <void property="shaders">
      <array class="com.almostrealism.rayshade.Shader" length="1">

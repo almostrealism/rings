@@ -26,9 +26,9 @@
   <void property="surfaces"> 
    <array class="com.almostrealism.raytracer.engine.ShadableSurface" length="5"> 
     <void index="0"> 
-     <object class="com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+     <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane0" class="com.almostrealism.raytracer.primitives.Plane"> 
+       <object id="Plane0" class="com.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -80,9 +80,9 @@
      </object> 
     </void> 
     <void index="1"> 
-     <object class="com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+     <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane1" class="com.almostrealism.raytracer.primitives.Plane"> 
+       <object id="Plane1" class="com.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -137,9 +137,9 @@
      </object> 
     </void> 
     <void index="2"> 
-     <object class="com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+     <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane2" class="com.almostrealism.raytracer.primitives.Plane"> 
+       <object id="Plane2" class="com.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -188,9 +188,9 @@
      </object> 
     </void> 
     <void index="3"> 
-     <object class="com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+     <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane3" class="com.almostrealism.raytracer.primitives.Plane"> 
+       <object id="Plane3" class="com.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -239,9 +239,9 @@
      </object> 
     </void> 
     <void index="4"> 
-     <object class="com.almostrealism.raytracer.surfaceUI.SurfaceUIFactory$SurfaceUIImpl"> 
+     <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane4" class="com.almostrealism.raytracer.primitives.Plane"> 
+       <object id="Plane4" class="com.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -266,7 +266,7 @@
         <void property="transforms">
          <array class="org.almostrealism.algebra.TransformMatrix" length="2">
           <void index="0"> 
-           <object class="com.almostrealism.raytracer.surfaceUI.TransformMatrixUI"> 
+           <object class="com.almostrealism.surfaceui.TransformMatrixUI">
             <void property="matrix"> 
              <void index="1"> 
               <void index="1"> 
@@ -294,7 +294,7 @@
            </object> 
           </void> 
           <void index="1"> 
-           <object class="com.almostrealism.raytracer.surfaceUI.TransformMatrixUI"> 
+           <object class="com.almostrealism.surfaceui.TransformMatrixUI">
             <void property="matrix"> 
              <void index="1"> 
               <void index="3"> 

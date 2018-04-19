@@ -39,18 +39,17 @@ public class DirectionalAmbientLight extends AmbientLight {
   private Vector direction;
 
 	/**
-	  Constructs a DirectionalAmbientLight object with the default direction, intensity, and color.
-	*/
-	
+	 * Constructs a DirectionalAmbientLight object with the default direction, intensity, and color.
+	 */
 	public DirectionalAmbientLight() {
 		super(1.0, new RGB(1.0, 1.0, 1.0));
 		this.setDirection(new Vector(0.0, -1.0, 0.0));
 	}
 	
 	/**
-	  Constructs a DirectionalAmbientLight object with default intensity and color and the direction represented by the specified Vector object.
-	*/
-	
+	 * Constructs a {@link DirectionalAmbientLight} with default intensity and color and the direction
+	 * represented by the specified {@link Vector}.
+	 */
 	public DirectionalAmbientLight(Vector direction) {
 		super(1.0, new RGB(1.0, 1.0, 1.0));
 		this.setDirection(direction);
