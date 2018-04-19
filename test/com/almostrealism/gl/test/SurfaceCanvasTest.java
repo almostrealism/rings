@@ -51,15 +51,13 @@ public class SurfaceCanvasTest {
 		camera.setProjectionDimensions(36, 24);
 		camera.setFocalLength(50);
 
-		// move the z value and you'll see it disappears at around -3
-		Sphere s = new Sphere(new Vector(0, 0, -2), 0.1);
-
-
+		// Test Sphere
+		Sphere s = new Sphere(new Vector(0.5, 0, -0), 0.5);
 		scene.add(s);
 
-//		scene.add(new Sphere(new Vector(200, 0, 0), 50));
-//		scene.add(new Sphere(new Vector(200, 200, 0), 50));
-//		scene.add(new Sphere(new Vector(200, 200, 200), 50));
+//		scene.add(new Sphere(new Vector(0, 0, 0), 0.1));
+//		scene.add(new Sphere(new Vector(1, 0, 0), 0.5));
+//		scene.add(new Sphere(new Vector(-0.5, -0.50, -10), 0.2));
 
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);

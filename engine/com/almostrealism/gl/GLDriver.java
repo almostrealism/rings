@@ -409,7 +409,13 @@ public class GLDriver {
 	}
 
 	protected Vector transformPosition(Vector in) {
-		return this.projection.multiply(this.transform).transformAsLocation(in);
+		Vector pos = this.projection.multiply(this.transform).transformAsLocation(in);
+
+		// Transformed vertices are in projective space.
+		// Divide by w (-z) to convert to cartesian coordinates for screen projection.
+		pos.divideBy(-pos.getZ());
+
+		return pos;
 	}
 
 	protected Vector transformDirection(Vector in) {
@@ -549,16 +555,6 @@ public class GLDriver {
 	public void wireCube(double size) {
 		// TODO  Replace with RenderableCube
 		glut.glutWireCube((float) size);
-	}
-
-	public void renderTriangle() {
-		glBegin(GL2.GL_TRIANGLES);
-
-		glVertex(new Vector(-0.50f, -0.50f, 0));
-		glVertex(new Vector(0.50f, -0.50f, 0));
-		glVertex(new Vector(0f, 0.50f, 0));
-
-		glEnd();
 	}
 
 	public void glutSolidSphere(double radius, int slices, int stacks) {
