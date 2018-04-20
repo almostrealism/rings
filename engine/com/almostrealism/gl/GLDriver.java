@@ -412,8 +412,10 @@ public class GLDriver {
 		Vector pos = this.projection.multiply(this.transform).transformAsLocation(in);
 
 		// Transformed vertices are in projective space.
-		// Divide by w (-z) to convert to cartesian coordinates for screen projection.
-		pos.divideBy(-pos.getZ());
+		// Divide by w (z) to convert to cartesian coordinates for screen projection.
+		// Invert z (inverted in projective space).
+		pos.divideBy(pos.getZ());
+		pos.setZ(-pos.getZ());
 
 		return pos;
 	}
@@ -466,7 +468,7 @@ public class GLDriver {
 
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
-			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 1, 1e9);
+			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 0.1, 1000);
 
             Vector cameraLocation = camera.getLocation();
             Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());

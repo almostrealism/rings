@@ -39,24 +39,34 @@ public class SurfaceCanvasTest {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(camera);
 
-		scene.addLight(new PointLight(new Vector(0.0, 1.0, 0.0), 1.0,
-									new RGB(0.8, 0.2, 0.1)));
-
-		scene.addLight(new PointLight(new Vector(1.0, 1.0, -3.0), 1.0,
-									new RGB(0.3, 0.9, 0.2)));
-
 		// 36 x 24mm film & 50mm focal length.
 		camera.setProjectionDimensions(36, 24);
 		camera.setFocalLength(50);
 
-		// Test Sphere
-		Sphere s = new Sphere(new Vector(0, 0, 0), 0.5);
+//		scene.addLight(new PointLight(new Vector(0.0, 1.0, 0.0), 1.0, new RGB(0.8, 0.2, 0.1)));
+//		scene.addLight(new PointLight(new Vector(1.0, 1.0, -3.0), 1.0, new RGB(0.3, 0.9, 0.2)));
+		scene.addLight(new PointLight(new Vector(10, 10, -10), 1, new RGB(1, 1, 1)));
+
+		// Test Spheres
+		Sphere s0 = new Sphere(new Vector(10, 10, 10), 1);
+		s0.setColor(new RGB(1, 1, 1));
+		scene.add(s0);
+
+		Sphere s = new Sphere(new Vector(0, 0, 0), 5);
+		s.setColor(new RGB(1, 0, 0));
 		scene.add(s);
 
-//		scene.add(new Sphere(new Vector(0, 0, 0), 0.1));
-//		scene.add(new Sphere(new Vector(1, 0, 0), 0.5));
-//		scene.add(new Sphere(new Vector(-0.5, -0.50, -10), 0.2));
+		Sphere s2 = new Sphere(new Vector(20, 0, 0), 5);
+		s2.setColor(new RGB(0, 1, 0));
+		scene.add(s2);
 
+		Sphere s3 = new Sphere(new Vector(20, 20, 0), 5);
+		s3.setColor(new RGB(0, 0, 1));
+		scene.add(s3);
+
+		Sphere s4 = new Sphere(new Vector(20, 0, 20), 5);
+		s4.setColor(new RGB(1, 1, 0));
+		scene.add(s4);
 
 		SurfaceCanvas c = new SurfaceCanvas(scene);
 //		c.autoPositionCamera(new Vector(-1,-0.5,-1));

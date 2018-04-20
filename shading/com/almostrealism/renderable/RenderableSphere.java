@@ -34,6 +34,7 @@ public class RenderableSphere extends RenderableGeometry<Sphere> {
 	/** Delegates to {@link GLDriver#glutSolidSphere(double, int, int)}. */
 	@Override
 	public void render(GLDriver gl) {
+		gl.glColor(getGeometry().getColor());
 		gl.glutSolidSphere(getGeometry().getSize(), SLICES, STACKS);
 	}
 }
