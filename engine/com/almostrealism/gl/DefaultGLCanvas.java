@@ -88,6 +88,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private static Quad3 sFadeQuad; // TODO  Use this quad instead of the buffer
 	private static FloatBuffer quadBuf;
 
+	// TODO  Move skydome into GLScene
 	private Texture skydome;
 	private ClassLoader skydomeScope;
 	private String skydomeBasename;
@@ -317,7 +318,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		// Actual tick value is "blurred" a little bit.
 		sTick = (sTick + tick - sStartTick) >> 1;
 
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
+		gl.glClearColorAndDepth();
 
 		doView(gl);
 

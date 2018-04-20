@@ -26,9 +26,11 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import org.almostrealism.algebra.*;
+import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.graph.Triangle;
+import org.almostrealism.texture.ImageTexture;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -73,6 +75,7 @@ public class GLDriver {
 
 		this.cameraStack = new Stack<>();
 		this.projection = new TransformMatrix();
+		this.lighting = new GLLightingConfiguration(new Light[0]);
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
@@ -149,6 +152,8 @@ public class GLDriver {
 	public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
 
 	public void bindTexture(Texture t) { t.bind(gl); }
+
+	public void bindTexture(ImageTexture t) { System.out.println("GLDriver[WARN]: Bind texture not yet implemented."); }
 
 	public void bindTexture(String code, int tex) {
 		try {
@@ -261,9 +266,10 @@ public class GLDriver {
 	public void glClearStencil(int param) {
 		gl.glClearStencil(param);
 	}
+	public void glClearColorAndDepth() { glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT); }
 
 	@Deprecated
-	public void glClear(int bits) { gl.glClear(bits); }
+	public void glClear(int bits) { gl.glClear(bits); }  // TODO  Make protected
 
 	public void setFog(FogParameters f) {
 		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
@@ -278,7 +284,7 @@ public class GLDriver {
 	public void glQuads() { glBegin(GL2.GL_QUADS); }
 
 	@Deprecated
-	public void glBegin(int code) {
+	public void glBegin(int code) {  // TODO  Make protected
 		gl.glBegin(code);
 		begins.push(code);
 	}

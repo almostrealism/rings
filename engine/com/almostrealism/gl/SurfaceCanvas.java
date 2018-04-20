@@ -34,6 +34,8 @@ import org.almostrealism.swing.EventListener;
 import java.util.Iterator;
 
 public class SurfaceCanvas extends DefaultGLCanvas implements EventListener {
+	public SurfaceCanvas(GLScene s) { super(s, null);}
+
 	public SurfaceCanvas(Scene<ShadableSurface> scene) {
 		super(new GLScene(scene), null);
 	}
