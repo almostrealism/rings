@@ -38,6 +38,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 
 public class GLDriver {
 	protected boolean enableDoublePrecision = false;
@@ -141,6 +142,21 @@ public class GLDriver {
 		}
 	}
 
+	public interface Runnable { boolean run(GLDriver gl); }
+
+	/**
+	 * {@link #pushMatrix()}
+	 * {@link Runnable#run(GLDriver)}
+	 * {@link #popMatrix()}
+	 * @return  The value returned by {@link Runnable#run(GLDriver)}.
+	 */
+	public boolean run(Runnable r) {
+		pushMatrix();
+		boolean b = r.run(this);
+		popMatrix();
+		return b;
+	}
+
 	public void glInitNames() { gl.glInitNames(); }
 
 	public void glLoadName(int name) { gl.glLoadName(name); }
@@ -155,7 +171,8 @@ public class GLDriver {
 
 	public void bindTexture(ImageTexture t) { System.out.println("GLDriver[WARN]: Bind texture not yet implemented."); }
 
-	public void bindTexture(String code, int tex) {
+	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
+	@Deprecated public void bindTexture(String code, int tex) {
 		try {
 			gl.glBindTexture(GL2.class.getField(code).getInt(gl), tex);
 		} catch (IllegalAccessException | NoSuchFieldException e) {
@@ -163,7 +180,8 @@ public class GLDriver {
 		}
 	}
 
-	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
+	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
+	@Deprecated public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
 
