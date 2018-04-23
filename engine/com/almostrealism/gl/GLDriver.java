@@ -38,6 +38,7 @@ import org.joml.Vector3d;
 import org.joml.Vector4d;
 
 import java.awt.*;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -176,8 +177,12 @@ public class GLDriver {
 	public void bindTexture(Texture t) { t.bind(gl); }  // TODO Make protected
 
 	public void bindTexture(ImageTexture t) {
-		Texture tx = TextureIO.newTexture(t.getURL(), true, null);
-		bindTexture(tx);
+		try {
+			Texture tx = TextureIO.newTexture(t.getURL(), true, null);
+			bindTexture(tx);
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
