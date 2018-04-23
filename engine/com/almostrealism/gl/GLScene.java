@@ -55,7 +55,10 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 			added.add(s);
 		}
 
-		for (Renderable r : this) r.init(gl);
+		List<Renderable> rs = new ArrayList<>();
+		rs.addAll(this);
+
+		for (Renderable r : rs) r.init(gl);
 	}
 
 	@Override
