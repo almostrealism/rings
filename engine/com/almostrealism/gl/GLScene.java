@@ -25,6 +25,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO  It may be unnecessary to have this class and {@link com.almostrealism.renderable.RenderableList}
@@ -33,9 +34,11 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 	public static final boolean verbose = false;
 
 	private Scene<ShadableSurface> scene;
+	private List<ShadableSurface> added;
 
 	public GLScene(Scene<ShadableSurface> s) {
 		this.scene = s;
+		this.added = new ArrayList<>();
 	}
 
 	public Scene<ShadableSurface> getScene() { return scene; }
@@ -46,10 +49,10 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	@Override
 	public void init(GLDriver gl) {
-		clear();
-
-		for (ShadableSurface s : this.scene) {
+		s: for (ShadableSurface s : this.scene) {
+			if (this.added.contains(s)) continue s;
 			add(RenderableSurfaceFactory.createRenderableSurface(s));
+			added.add(s);
 		}
 
 		for (Renderable r : this) r.init(gl);

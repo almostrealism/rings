@@ -195,9 +195,6 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		// Use debug pipeline
-		// drawable.setGL(new DebugGL(drawable.getGL()));
-
 		GL2 gl2 = drawable.getGL().getGL2();
 		gl = new GLDriver(gl2);
 
@@ -312,6 +309,8 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 		gl.popMatrix();
 		*/
+
+		if (gl == null) return;
 
 		long tick = System.currentTimeMillis();
 
