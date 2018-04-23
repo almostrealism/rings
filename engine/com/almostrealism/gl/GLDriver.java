@@ -31,6 +31,9 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.graph.Triangle;
 import org.almostrealism.texture.ImageTexture;
+import org.joml.Matrix4d;
+import org.joml.Vector3d;
+import org.joml.Vector4d;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -59,9 +62,9 @@ public class GLDriver {
 	protected GLMaterial material;
 	protected Stack<GLMaterial> materialStack;
 
-	protected TransformMatrix projection;
+	protected Matrix4d projection_joml;
 
-	protected TransformMatrix transform;
+    protected TransformMatrix transform;
 	protected Stack<TransformMatrix> matrixStack;
 
 	public GLDriver(GL2 gl) {
@@ -74,8 +77,8 @@ public class GLDriver {
 
 		this.begins = new Stack<>();
 
-		this.cameraStack = new Stack<>();
-		this.projection = new TransformMatrix();
+        this.cameraStack = new Stack<>();
+        this.projection_joml = new Matrix4d();
 		this.lighting = new GLLightingConfiguration(new Light[0]);
 
 		this.transform = new TransformMatrix();
@@ -433,24 +436,31 @@ public class GLDriver {
 	}
 
 	protected Vector transformPosition(Vector in) {
-		Vector pos = this.projection.multiply(this.transform).transformAsLocation(in);
+        Vector worldSpace = transform.transformAsLocation(in);
+		Vector4d worldSpace_joml = new Vector4d(worldSpace.getX(), worldSpace.getY(), worldSpace.getZ(), 1d);
+		Vector4d clipSpace_joml = projection_joml.transform(worldSpace_joml);
 
-		// Transformed vertices are in projective space.
-		// Divide by w (z) to convert to cartesian coordinates for screen projection.
-		// Invert z (inverted in projective space).
-		pos.divideBy(pos.getZ());
-		pos.setZ(-pos.getZ());
+		clipSpace_joml.div(clipSpace_joml.w);
 
-		return pos;
+		return new Vector(clipSpace_joml.x, clipSpace_joml.y, clipSpace_joml.z);
 	}
 
 	protected Vector transformDirection(Vector in) {
-		return this.projection.multiply(this.transform).transformAsOffset(in);
+		return new TransformMatrix().multiply(this.transform).transformAsOffset(in);
 	}
 
 	protected Vector transformNormal(Vector in) {
-		return this.projection.multiply(this.transform).transformAsNormal(in);
+		return new TransformMatrix().multiply(this.transform).transformAsNormal(in);
 	}
+
+    private TransformMatrix jomlToTransformMatrix(Matrix4d m) {
+        return new TransformMatrix(new double[][]{
+                {m.m00(), m.m10(), m.m20(), m.m30()},
+                {m.m01(), m.m11(), m.m21(), m.m31()},
+                {m.m02(), m.m12(), m.m22(), m.m32()},
+                {m.m03(), m.m13(), m.m23(), m.m33()}
+        });
+    }
 
 	/**
 	 * If {@link Camera} is null, load the identity matrix into the projection stack
@@ -485,19 +495,21 @@ public class GLDriver {
 	public void resetProjection() { setCamera(null); }
 
 	protected void glProjection(Camera c) {
-		this.projection = new TransformMatrix();
+		projection_joml = new Matrix4d();
 
 		if (c instanceof PinholeCamera) {
 			PinholeCamera camera = (PinholeCamera) c;
 
+			Vector eye = camera.getLocation();
+			Vector center = eye.add(camera.getViewingDirection());
 			float width = (float) camera.getProjectionWidth();
 			float height = (float) camera.getProjectionHeight();
-			projection = getPerspectiveMatrix(Math.toDegrees(camera.getFOV()[0]), width / height, 0.1, 1000);
 
-            Vector cameraLocation = camera.getLocation();
-            Vector cameraTarget = cameraLocation.add(camera.getViewingDirection());
-            TransformMatrix cameraMatrix = cameraMatrix(cameraLocation, cameraTarget);
-            projection = projection.multiply(cameraMatrix);
+			projection_joml = new Matrix4d()
+					.perspective(camera.getVerticalFOV(), width / height, 0.1, 1e9)
+					.lookAt(new Vector3d(eye.getX(), eye.getY(), eye.getZ()),
+							new Vector3d(center.getX(), center.getY(), center.getZ()),
+							new Vector3d(0, 1, 0));
 		}
 		else if (c instanceof OrthographicCamera) {
 			OrthographicCamera camera = (OrthographicCamera) c;
@@ -506,34 +518,9 @@ public class GLDriver {
 		}
 	}
 
-	private TransformMatrix cameraMatrix(Vector cameraLocation, Vector cameraTarget) {
-        TransformMatrix translation = new TransformMatrix(
-                                        new double[][]{{1, 0, 0, -cameraLocation.getX()},
-                                                       {0, 1, 0, -cameraLocation.getY()},
-                                                       {0, 0, 1, -cameraLocation.getZ()},
-                                                       {0, 0, 0, 1}});
-
-        // TODO - Identity at the moment.
-        TransformMatrix rotation = new TransformMatrix(
-                                        new double[][]{{1, 0, 0, 0},
-                                                       {0, 1, 0, 0},
-                                                       {0, 0, 1, 0},
-                                                       {0, 0, 0, 1}});
-
-        return rotation.multiply(translation);
-    }
-
-	@Deprecated
-	public void setPerspective(double fovyInDegrees, double aspectRatio, double near, double far) {
-		resetProjection();
-		projection = getPerspectiveMatrix(fovyInDegrees, aspectRatio, near, far);
-	}
-
 	protected TransformMatrix getPerspectiveMatrix(double fovyInDegrees, double aspectRatio, double near, double far) {
 		double ymax, xmax;
 		ymax = near * Math.tan(fovyInDegrees * Math.PI / 360.0);
-		// ymin = -ymax;
-		// xmin = -ymax * aspectRatio;
 		xmax = ymax * aspectRatio;
 		return getFrustum(-xmax, xmax, -ymax, ymax, near, far);
 	}
