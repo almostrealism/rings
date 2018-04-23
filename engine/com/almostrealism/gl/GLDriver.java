@@ -25,6 +25,8 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -170,9 +172,13 @@ public class GLDriver {
 	@Deprecated
 	public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
 
-	public void bindTexture(Texture t) { t.bind(gl); }
+	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
+	public void bindTexture(Texture t) { t.bind(gl); }  // TODO Make protected
 
-	public void bindTexture(ImageTexture t) { System.out.println("GLDriver[WARN]: Bind texture not yet implemented."); }
+	public void bindTexture(ImageTexture t) {
+		Texture tx = TextureIO.newTexture(t.getURL(), true, null);
+		bindTexture(tx);
+	}
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
 	@Deprecated public void bindTexture(String code, int tex) {
