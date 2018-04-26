@@ -63,7 +63,10 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	@Override
 	public void display(GLDriver gl) {
-		r: for (Renderable r : this) {
+		List<Renderable> rs = new ArrayList<>();
+		rs.addAll(this);
+
+		r: for (Renderable r : rs) {
 			if (r == null) continue r;
 			if (verbose) System.out.println("Rendering " + r);
 			gl.pushCamera();

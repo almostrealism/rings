@@ -318,6 +318,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		sTick = (sTick + tick - sStartTick) >> 1;
 
 		gl.glClearColorAndDepth();
+		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT);
 
 		doView(gl);
 

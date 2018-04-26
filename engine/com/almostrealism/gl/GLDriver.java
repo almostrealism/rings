@@ -583,7 +583,7 @@ public class GLDriver {
 	}
 
 	public void wireCube(double size) {
-		// TODO  Replace with RenderableCube
+		// TODO  Replace with code for rendering cube
 		glut.glutWireCube((float) size);
 	}
 
