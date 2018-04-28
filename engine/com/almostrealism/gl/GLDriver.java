@@ -16,6 +16,8 @@
 
 package com.almostrealism.gl;
 
+import com.almostrealism.gl.shaders.FragmentShader;
+import com.almostrealism.gl.shaders.VertexShader;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.FogParameters;
@@ -65,6 +67,12 @@ public class GLDriver {
 	protected GLMaterial material;
 	protected Stack<GLMaterial> materialStack;
 
+	protected VertexShader vertexShader;
+	protected Stack<VertexShader> vertexShaderStack;
+
+	protected FragmentShader fragmentShader;
+	protected Stack<FragmentShader> fragmentShaderStack;
+
 	protected Matrix4d projection_joml;
 
     protected TransformMatrix transform;
@@ -88,6 +96,9 @@ public class GLDriver {
 		this.matrixStack = new Stack<>();
 		this.lightingStack = new Stack<>();
 		this.materialStack = new Stack<>();
+
+		this.vertexShaderStack = new Stack<>();
+		this.fragmentShaderStack = new Stack<>();
 	}
 
 	public void pushLighting() { this.lightingStack.push(this.lighting); }
@@ -345,9 +356,27 @@ public class GLDriver {
 		}
 	}
 
-	public void glShadeModel(int model) { gl.glShadeModel(model); }
+	public void setVertexShader(VertexShader s) {
+		this.vertexShader = s;
+	}
 
-	public int glRenderMode(int mode) { return gl.glRenderMode(mode); }
+	public void setFragmentShader(FragmentShader s) {
+		this.fragmentShader = s;
+	}
+
+	public void pushShaders() {
+		this.vertexShaderStack.push(this.vertexShader);
+		this.fragmentShaderStack.push(this.fragmentShader);
+	}
+
+	public void popShaders() {
+		this.setVertexShader(vertexShaderStack.pop());
+		this.setFragmentShader(fragmentShaderStack.pop());
+	}
+
+	@Deprecated public void glShadeModel(int model) { gl.glShadeModel(model); }
+
+	@Deprecated public int glRenderMode(int mode) { return gl.glRenderMode(mode); }
 
 	public void glPushAttrib(int attrib) { gl.glPushAttrib(attrib); }
 
