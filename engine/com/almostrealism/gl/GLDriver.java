@@ -517,7 +517,7 @@ public class GLDriver {
 			float height = (float) camera.getProjectionHeight();
 
 			projection_joml = new Matrix4d()
-					.perspective(camera.getVerticalFOV(), width / height, 0.1, 1e9)
+					.perspective(camera.getHorizontalFOV(), width / height, 0.1, 1e9)
 					.lookAt(new Vector3d(eye.getX(), eye.getY(), eye.getZ()),
 							new Vector3d(center.getX(), center.getY(), center.getZ()),
 							new Vector3d(0, 1, 0));
