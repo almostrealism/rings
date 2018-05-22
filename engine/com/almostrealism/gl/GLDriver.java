@@ -444,9 +444,8 @@ public class GLDriver {
 		if (useGlMatrixStack) {
 			gl.glPushMatrix();
 		} else {
-			TransformMatrix t = new TransformMatrix();
-			t.setMatrix(transform.getMatrix());
-			matrixStack.push(t);
+			matrixStack.push(transform);
+			transform = new TransformMatrix();
 		}
 	}
 
@@ -459,9 +458,12 @@ public class GLDriver {
 	}
 
 	public void glLoadIdentity() {
-		transform = new TransformMatrix();
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
-		gl.glLoadIdentity();
+		if (useGlMatrixStack) {
+			gl.glMatrixMode(GL2.GL_MODELVIEW);
+			gl.glLoadIdentity();
+		} else {
+			transform = new TransformMatrix();
+		}
 	}
 
 	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
@@ -528,11 +530,11 @@ public class GLDriver {
 	}
 
 	protected Vector transformDirection(Vector in) {
-		return new TransformMatrix().multiply(this.transform).transformAsOffset(in);
+		return transform.transformAsOffset(in);
 	}
 
 	protected Vector transformNormal(Vector in) {
-		return new TransformMatrix().multiply(this.transform).transformAsNormal(in);
+		return transform.transformAsNormal(in);
 	}
 
     private TransformMatrix jomlToTransformMatrix(Matrix4d m) {
@@ -588,7 +590,7 @@ public class GLDriver {
 			float height = (float) camera.getProjectionHeight();
 
 			projection_joml = new Matrix4d()
-					.perspective(camera.getVerticalFOV(), width / height, 0.1, 1e9)
+					.perspective(camera.getHorizontalFOV(), width / height, 0.1, 1e9)
 					.lookAt(new Vector3d(eye.getX(), eye.getY(), eye.getZ()),
 							new Vector3d(center.getX(), center.getY(), center.getZ()),
 							new Vector3d(0, 1, 0));

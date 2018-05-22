@@ -36,7 +36,6 @@ import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 
-import com.jogamp.opengl.math.FixedPoint;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
@@ -73,6 +72,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public static int frames;
 	public int x, y;
 	public int width, height;
+
+	private static final boolean LOG_FPS = true;
+	private int framesThisSecond = 0;
+	private long startOfSecond = System.currentTimeMillis();
 
 	public static int cComps;
 
@@ -272,6 +275,10 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		if (LOG_FPS) {
+			logFps();
+		}
+
 		/*
 		// Get the GL corresponding to the drawable we are animating
 		GL2 gl = drawable.getGL().getGL2();
@@ -358,6 +365,21 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		tick = System.currentTimeMillis();
 	}
 
+	private void logFps() {
+		long sinceStartofSecond = System.currentTimeMillis() - startOfSecond;
+		if (sinceStartofSecond > 1000) {
+			if (framesThisSecond > 0) {
+				System.out.println("FPS: " + framesThisSecond);
+			} else {
+				System.err.println("WARNING: The current frame took " + sinceStartofSecond/1000d + "s to display!");
+			}
+			framesThisSecond = 0;
+			startOfSecond = System.currentTimeMillis();
+		} else {
+			framesThisSecond++;
+		}
+	}
+
 	public static void camTrack(GLDriver gl) {
 		float lerp[] = new float[5];
 		float eX, eY, eZ, cX, cY, cZ;
@@ -408,7 +430,9 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
-		gl.scale(new Vector(1.0, 1.0, zScale));
+		if (zScale != 1d) {
+			gl.scale(new Vector(1.0, 1.0, zScale));
+		}
 		renderables.display(gl);
 	}
 
