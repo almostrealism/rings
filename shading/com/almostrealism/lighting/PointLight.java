@@ -29,7 +29,6 @@ import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.relation.TripleFunction;
-import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -59,7 +58,7 @@ public class PointLight implements Light, Positioned {
 
 		@Override
 		public Scope<? extends Variable> getScope(String s) {
-			throw new NotImplementedException("getScope"); // TODO
+			throw new RuntimeException("getScope not implemented"); // TODO
 		}
 	});
 

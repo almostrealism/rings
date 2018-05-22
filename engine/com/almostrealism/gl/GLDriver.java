@@ -27,8 +27,8 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
+import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -40,13 +40,13 @@ import org.joml.Vector3d;
 import org.joml.Vector4d;
 
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Stack;
-import java.util.concurrent.Callable;
 
 public class GLDriver {
 	protected boolean enableDoublePrecision = false;
@@ -72,6 +72,8 @@ public class GLDriver {
 
 	protected FragmentShader fragmentShader;
 	protected Stack<FragmentShader> fragmentShaderStack;
+
+	private int currentProgram = -1;
 
 	protected Matrix4d projection_joml;
 
@@ -181,16 +183,14 @@ public class GLDriver {
 	public void glPushName(int name) { gl.glPushName(name); }
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
-	@Deprecated
-	public void genTextures(int code, int textures[]) { gl.glGenTextures(code, IntBuffer.wrap(textures)); }
-
-	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
 	public void bindTexture(Texture t) { t.bind(gl); }  // TODO Make protected
 
-	public void bindTexture(ImageTexture t) {
+	public Texture bindTexture(ImageTexture t) {
 		try {
-			Texture tx = TextureIO.newTexture(t.getURL(), true, null);
+			String s = t.getURL().toString();
+			Texture tx = TextureIO.newTexture(t.getURL(), false, s.substring(s.lastIndexOf(".")));
 			bindTexture(tx);
+			return tx;
 		} catch (IOException ioe) {
 			throw new RuntimeException(ioe);
 		}
@@ -220,9 +220,9 @@ public class GLDriver {
 
 	public void glutBitmapCharacter(int font, char c) { glut.glutBitmapCharacter(font, c); }
 
-	public void enableTexture(Texture t) { t.enable(gl); }
+	@Deprecated public void enableTexture(Texture t) { t.enable(gl); }
 
-	public void disableTexture(Texture t) { t.disable(gl); }
+	@Deprecated public void disableTexture(Texture t) { t.disable(gl); }
 
 	public void glActiveTexture(int code) { gl.glActiveTexture(code); }
 
@@ -358,10 +358,26 @@ public class GLDriver {
 
 	public void setVertexShader(VertexShader s) {
 		this.vertexShader = s;
+
+		if (this.vertexShader == null) return;
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		GLSLPrintWriter p = new GLSLPrintWriter(out);
+		this.vertexShader.getScope("vshade").write(p);
+		String shader = new String(out.toByteArray());
+		compileShader("GL_VERTEX_SHADER", shader);
 	}
 
 	public void setFragmentShader(FragmentShader s) {
 		this.fragmentShader = s;
+
+		if (this.fragmentShader == null) return;
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		GLSLPrintWriter p = new GLSLPrintWriter(out);
+		this.fragmentShader.getScope("fshade").write(p);
+		String shader = new String(out.toByteArray());
+		compileShader("GL_FRAGMENT_SHADER", shader);
 	}
 
 	public void pushShaders() {
@@ -372,6 +388,32 @@ public class GLDriver {
 	public void popShaders() {
 		this.setVertexShader(vertexShaderStack.pop());
 		this.setFragmentShader(fragmentShaderStack.pop());
+	}
+
+	/**
+	 * Compile the shader, attach to the current program, use the current program.
+	 */
+	protected boolean compileShader(String shaderType, String shaderSource) {
+		try {
+			System.out.println(shaderType + ":");
+			System.out.println(shaderSource);
+
+			int s = gl.glCreateShader(GL2.class.getField(shaderType).getInt(gl));
+			gl.glShaderSource(s, 1, new String[] { shaderSource },
+								IntBuffer.wrap(new int[] { shaderSource.length() }));
+			gl.glCompileShader(s);
+
+			if (currentProgram < 0) {
+				currentProgram = gl.glCreateProgram();
+			}
+
+			gl.glAttachShader(currentProgram, s);
+			gl.glUseProgram(currentProgram);
+
+			return true;
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Deprecated public void glShadeModel(int model) { gl.glShadeModel(model); }

@@ -47,7 +47,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>FlowTree</artifactId>
+			<artifactId>FlowTreeAPI</artifactId>
 			<version>0.3-rc</version>
 		</dependency>
 
@@ -59,8 +59,8 @@
 
 		<dependency>
 			<groupId>io.almostrealism</groupId>
-			<artifactId>MatrixView</artifactId>
-			<version>0.3-rc</version>
+			<artifactId>GraphPersist</artifactId>
+			<version>0.2-rc</version>
 		</dependency>
 
 		<dependency>

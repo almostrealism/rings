@@ -29,7 +29,6 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.ParameterizedFactory;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -112,7 +111,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Scope getScope(String prefix) { throw new NotImplementedException("getScope"); } // TODO
+		public Scope getScope(String prefix) { throw new RuntimeException("getScope not implemented"); } // TODO
 
 		public ShaderSet getShaders() { return shaders; }
 

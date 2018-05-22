@@ -72,7 +72,8 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	@Override
 	public void display(GLDriver gl) {
 		gl.glMaterial(mat);
-		// TODO  Apply shaders
+		gl.setVertexShader(getVertexShader());
+		gl.setFragmentShader(getFragmentShader());
 	}
 
 	/**

@@ -19,11 +19,9 @@ package com.almostrealism.lighting;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Triple;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.space.ShadableSurface;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.concurrent.Callable;
 
@@ -45,7 +43,7 @@ public class AmbientLight implements Light {
 
 		@Override
 		public Scope<? extends Variable> getScope(String s) {
-			throw new NotImplementedException("getScope");
+			throw new RuntimeException("getScope not implemented");
 		}
 	});
 

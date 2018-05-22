@@ -17,14 +17,8 @@
 package com.almostrealism.network;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
-import io.flowtree.node.Client;
-import io.flowtree.node.Server;
-
-import io.almostrealism.db.Query;
 import io.flowtree.job.Job;
 import io.flowtree.job.JobFactory;
 
@@ -44,7 +38,7 @@ public class RayTracingJobFactory implements JobFactory {
   private long taskId;
   private int totalJobs, nullCount;
   
-  private List jobs;
+  private List<Job> jobs;
 
 	/**
 	 * Constructs a new RayTracingJobFactory object.
@@ -104,8 +98,9 @@ public class RayTracingJobFactory implements JobFactory {
 	 */
 	public Job nextJob() {
 		if (i >= this.totalJobs) {
-			if (this.jobs.size() > 0) return (Job)this.jobs.remove(0);
-			
+			if (this.jobs.size() > 0) return this.jobs.remove(0);
+
+			/* TODO
 			if (this.nullCount > 300 && this.nullCount % 10 == 0) {
 				Client c = Client.getCurrentClient();
 				if (c == null) return null;
@@ -143,6 +138,7 @@ public class RayTracingJobFactory implements JobFactory {
 				this.nullCount++;
 				return null;
 			}
+			*/
 		}
 		
 		int l = this.i * this.dx;
@@ -181,12 +177,14 @@ public class RayTracingJobFactory implements JobFactory {
 	 * @see io.flowtree.job.JobFactory#createJob(java.lang.String)
 	 */
 	public Job createJob(String data) {
-		Client c = Client.getCurrentClient();
-		
-		if (c != null && c.getServer() != null)
-			return c.getServer().createJob(data);
-		else
-			return Server.instantiateJobClass(data);
+//		TODO
+//		Client c = Client.getCurrentClient();
+//
+//		if (c != null && c.getServer() != null)
+//			return c.getServer().createJob(data);
+//		else
+//			return Server.instantiateJobClass(data);
+		return null;
 	}
 	
 	/**

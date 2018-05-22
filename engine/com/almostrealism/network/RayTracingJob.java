@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,13 +31,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.almostrealism.FogParameters;
-import io.flowtree.node.Client;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
-import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
-import org.almostrealism.io.SpatialData;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -60,7 +55,7 @@ import io.flowtree.job.Job;
  * 
  * @author  Michael Murray
  */
-public class RayTracingJob implements Job, SceneLoader {
+public class RayTracingJob implements Job {
 	public static final String htmlPre = "<html> <head> <title>Universe in a Box</title> </head> " +
 										"<body bgcolor=\"#000000\" text=\"#ffffff\"> <center> " +
 										"<h1>Universe in a Box</h1> <img src=\"images/NetworkRender-";
@@ -490,6 +485,8 @@ public class RayTracingJob implements Job, SceneLoader {
 										" seconds for " + this.sceneUri);
 				} catch (InterruptedException ie) {}
 			} else if (s == null) {
+				/*
+				TODO
 				try {
 					this.loading.add(this.sceneUri);
 					
@@ -529,6 +526,8 @@ public class RayTracingJob implements Job, SceneLoader {
 				
 				this.loading.remove(this.sceneUri);
 				break i;
+				*/
+				break i;
 			} else {
 				this.loading.remove(this.sceneUri);
 				return s;
@@ -537,20 +536,7 @@ public class RayTracingJob implements Job, SceneLoader {
 		
 		return s;
 	}
-	
-	public Scene loadScene(String uri) throws IOException {
-		if (this.local) {
-			try (InputStream in = (new URL(uri)).openStream()) {
-				return SpatialData.decodeScene(in, FileDecoder.XMLEncoding, false, null);
-			}
-		} else {
-			try (InputStream in =
-					Client.getCurrentClient().getServer().loadResource(uri).getInputStream()) {
-				return SpatialData.decodeScene(in, FileDecoder.XMLEncoding, false, null);
-			}
-		}
-	}
-	
+
 	public void setSceneLoader(String loader) { this.sLoader = loader; }
 	public void setProjectionWidth(double w) { this.pw = w; }
 	public void setProjectionHeight(double h) { this.ph = h; }
@@ -702,7 +688,6 @@ public class RayTracingJob implements Job, SceneLoader {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		Client c = Client.getCurrentClient();
 		Scene<ShadableSurface> s = this.getScene();
 		
 		if (RayTracingJob.verboseRender)
@@ -783,11 +768,12 @@ public class RayTracingJob implements Job, SceneLoader {
 			System.out.println("Done");
 		
 		String user = "", passwd = "";
-		
-		if (c != null) {
-			user = c.getUser();
-			passwd = c.getPassword();
-		}
+
+//		TODO
+//		if (c != null) {
+//			user = c.getUser();
+//			passwd = c.getPassword();
+//		}
 		
 		RayTracingJobOutput jo = new RayTracingJobOutput(
 									user, passwd,
@@ -801,21 +787,23 @@ public class RayTracingJob implements Job, SceneLoader {
 					jo.addRGB(rgb[j][i]);
 			}
 		}
-		
+
+		/* TODO  Need to write image data
 		if (c == null || RayTracingJob.verboseRender) {
 			File file = new File(this.jobId + "-" +
 								this.x + "-" + this.y + "-" +
 								this.w + "-" + this.h + "-" +
 								this.ssw + "-" + this.ssh + ".jpg");
-//			TODO  Need to write image data
-//			try {
-//				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
-//			} catch (IOException e) {
-//				System.out.println("RayTracingJob: IO Error");
-//			}
+
+			try {
+				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
+			} catch (IOException e) {
+				System.out.println("RayTracingJob: IO Error");
+			}
 		}
-		
+
 		if (c != null) c.writeOutput(jo);
+		*/
 	}
 	
 

@@ -23,7 +23,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.GLBuffers;
 import org.almostrealism.space.BasicGeometry;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -167,6 +166,6 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 			gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
 		}
 
-		throw new NotImplementedException("Need a replacement for glNormalPointer");
+		throw new RuntimeException("Need a replacement for glNormalPointer");
 	}
 }

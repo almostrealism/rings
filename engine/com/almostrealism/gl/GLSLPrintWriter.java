@@ -18,6 +18,7 @@ package com.almostrealism.gl;
 
 import io.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
+import io.almostrealism.code.Variable;
 import org.almostrealism.relation.Computation;
 
 import java.io.OutputStream;
@@ -28,8 +29,6 @@ import java.io.PrintWriter;
  * a shading language similar to C.
  */
 public class GLSLPrintWriter extends CPrintWriter {
-	private PrintWriter p;
-
 	public GLSLPrintWriter(OutputStream out) {
 		this(new PrintWriter(out));
 		// TODO  Move this to super class
@@ -39,4 +38,12 @@ public class GLSLPrintWriter extends CPrintWriter {
 	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
 	public GLSLPrintWriter(PrintWriter p) { super(p); }
+
+	public void println(Variable v) {
+		if (v.getAnnotation() != null) {
+			v = new Variable(v.getAnnotation() + " " + v.getName(), v.getType(), v.getData());
+		}
+
+		super.println(v);
+	}
 }

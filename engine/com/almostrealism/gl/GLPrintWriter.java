@@ -30,7 +30,6 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -63,7 +62,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void setLighting(GLLightingConfiguration lighting) {
 		if (gl != null) super.setLighting(lighting);
-		throw new NotImplementedException("setLighting");
+		throw new RuntimeException("setLighting not implemented");
 	}
 
 	@Override
@@ -131,35 +130,25 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glInitNames() {
 		if (gl != null) super.glInitNames();
-		throw new NotImplementedException("glInitNames");
+		throw new RuntimeException("glInitNames");
 	}
 
 	@Override
 	public void glLoadName(int name) {
 		if (gl != null) super.glLoadName(name);
-		throw new NotImplementedException("glLoadName");
+		throw new RuntimeException("glLoadName");
 	}
 
 	@Override
 	public void glPushName(int name) {
 		if (gl != null) super.glPushName(name);
-		throw new NotImplementedException("glPushName");
-	}
-
-	@Override
-	public void genTextures(int count, int textures[]) {
-		if (gl != null) super.genTextures(count, textures);
-//		p.println(glMethod("genTextures",
-//							new Variable<>("count", count),
-//							new Variable<>("textures", textures)));
-		System.out.println("GLPrintWriter[WARN]: genTextures is not supported by some versions of OpenGL. Use Texture type instead.");
-		// TODO  This should be an exception
+		throw new RuntimeException("glPushName");
 	}
 
 	@Override
 	public void bindTexture(Texture t) {
 		if (gl != null) super.bindTexture(t);
-		throw new NotImplementedException("bindTextures");
+		throw new RuntimeException("bindTextures");
 	}
 
 	@Override
@@ -192,7 +181,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glTexEnvf(int a, int b, float f) {
 		if (gl != null) super.glTexEnvf(a, b, f);
-		throw new NotImplementedException("texEnvf");
+		throw new RuntimeException("texEnvf");
 	}
 
 	@Override
@@ -207,37 +196,37 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glLineWidth(double width) {
 		if (gl != null) super.glLineWidth(width);
-		throw new NotImplementedException("lineWidth");
+		throw new RuntimeException("lineWidth");
 	}
 
 	@Override
 	public void glPointSize(double size) {
 		if (gl != null) super.glPointSize(size);
-		throw new NotImplementedException("pointSize");
+		throw new RuntimeException("pointSize");
 	}
 
 	@Override
 	public void glutBitmapCharacter(int font, char c) {
 		if (glut != null) super.glutBitmapCharacter(font, c);
-		throw new NotImplementedException("bitmapCharacter");
+		throw new RuntimeException("bitmapCharacter");
 	}
 
 	@Override
 	public void enableTexture(Texture t) {
 		if (gl != null) super.enableTexture(t);
-		throw new NotImplementedException("enableTexture");
+		throw new RuntimeException("enableTexture");
 	}
 
 	@Override
 	public void disableTexture(Texture t) {
 		if (gl != null) super.disableTexture(t);
-		throw new NotImplementedException("disableTexture");
+		throw new RuntimeException("disableTexture");
 	}
 
 	@Override
 	public void glActiveTexture(int code) {
 		if (gl != null) super.glActiveTexture(code);
-		throw new NotImplementedException("activeTexture");
+		throw new RuntimeException("activeTexture");
 	}
 
 	@Override
@@ -297,13 +286,13 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	@Deprecated public void glLightModel(int code, RGBA color) {
 		if (gl != null) super.glLightModel(code, color);
-		throw new NotImplementedException("glLightModel is deprecated in OpenGL");
+		throw new RuntimeException("glLightModel is deprecated in OpenGL");
 	}
 
 	@Override
 	public void glAccum(int param, double value) {
 		if (gl != null) super.glAccum(param, value);
-		throw new NotImplementedException("accum");
+		throw new RuntimeException("accum");
 	}
 
 	@Override
@@ -319,7 +308,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void clearColorBuffer() {
 		if (gl != null) super.clearColorBuffer();
-		throw new NotImplementedException("clearColorBuffer");
+		throw new RuntimeException("clearColorBuffer");
 	}
 
 	@Override
@@ -335,7 +324,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glClearAccum(RGBA c) {
 		if (gl != null) super.glClearAccum(c);
-		throw new NotImplementedException("clearAccum");
+		throw new RuntimeException("clearAccum");
 	}
 
 	@Override
@@ -395,13 +384,13 @@ public class GLPrintWriter extends GLDriver {
 //		gl.glFogf(GL2.GL_FOG_END, Float.MAX_VALUE);
 		enable(GL2.GL_FOG);
 
-		throw new NotImplementedException("setFog");
+		throw new RuntimeException("setFog");
 	}
 
 	@Override
 	public void glQuads() {
 		if (gl != null) super.glQuads();
-		throw new NotImplementedException("quads");
+		throw new RuntimeException("quads");
 	}
 
 	@Override
@@ -419,7 +408,7 @@ public class GLPrintWriter extends GLDriver {
 	@Deprecated
 	public void enable(int code) {
 		if (gl != null) super.enable(code);
-		throw new NotImplementedException("enable");
+		throw new RuntimeException("enable");
 	}
 
 	@Override
@@ -431,13 +420,13 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glEnableClientState(int code) {
 		if (gl != null) super.glEnableClientState(code);
-		throw new NotImplementedException("enableClientState");
+		throw new RuntimeException("enableClientState");
 	}
 
 	@Override
 	public void glPolygonMode(int param, int value) {
 		if (gl != null) super.glPolygonMode(param, value);
-		throw new NotImplementedException("polygonMode");
+		throw new RuntimeException("polygonMode");
 	}
 
 	@Override
@@ -451,49 +440,49 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glShadeModel(int model) {
 		if (gl != null) super.glShadeModel(model);
-		throw new NotImplementedException("shadeModel");
+		throw new RuntimeException("shadeModel");
 	}
 
 	@Override
 	public int glRenderMode(int mode) {
 		if (gl != null) super.glRenderMode(mode);
-		throw new NotImplementedException("renderMode");
+		throw new RuntimeException("renderMode");
 	}
 
 	@Override
 	public void glPushAttrib(int attrib) {
 		if (gl != null) super.glPushAttrib(attrib);
-		throw new NotImplementedException("pushAttrib");
+		throw new RuntimeException("pushAttrib");
 	}
 
 	@Override
 	public void glPopAttrib() {
 		if (gl != null) super.glPopAttrib();
-		throw new NotImplementedException("popAttrib");
+		throw new RuntimeException("popAttrib");
 	}
 
 	@Override
 	public void glGenBuffers(int a, int b[], int c) {
 		if (gl != null) super.glGenBuffers(a, b, c);
-		throw new NotImplementedException("genBuffers");
+		throw new RuntimeException("genBuffers");
 	}
 
 	@Override
 	public void glBindBuffer(int code, int v) {
 		if (gl != null) super.glBindBuffer(code, v);
-		throw new NotImplementedException("bindBuffer");
+		throw new RuntimeException("bindBuffer");
 	}
 
 	@Override
 	public void glBufferData(int code, int l, ByteBuffer buf, int d) {
 		if (gl != null) super.glBufferData(code, l, buf, d);
-		throw new NotImplementedException("bufferData");
+		throw new RuntimeException("bufferData");
 	}
 
 	@Override
 	public void glSelectBuffer(int size, IntBuffer buf) {
 		if (gl != null) super.glSelectBuffer(size, buf);
-		throw new NotImplementedException("selectBuffer");
+		throw new RuntimeException("selectBuffer");
 	}
 
 	@Override
@@ -512,21 +501,21 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glRasterPos(Vector pos) {
 		if (gl != null) super.glRasterPos(pos);
-		throw new NotImplementedException("rasterPos");
+		throw new RuntimeException("rasterPos");
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
 	@Override
 	@Deprecated public void setViewport(int x, int y, int w, int h) {
 		if (gl != null) super.setViewport(x, y, w, h);
-		throw new NotImplementedException("setViewport");
+		throw new RuntimeException("setViewport");
 	}
 
 	/** It is recommended to use an {@link OrthographicCamera} instead. */
 	@Override
 	@Deprecated public void gluOrtho2D(double left, double right, double bottom, double top) {
 		if (glu != null) super.gluOrtho2D(left, right, bottom, top);
-		throw new NotImplementedException("ortho2D");
+		throw new RuntimeException("ortho2D");
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
@@ -548,19 +537,19 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
 		if (glu != null) super.gluUnProject(w, modelview, projection, viewport, worldpos);
-		throw new NotImplementedException("unProject");
+		throw new RuntimeException("unProject");
 	}
 
 	@Override
 	public boolean gluUnProject(Vector w, Vector worldpos) {
 		if (glu != null) super.gluUnProject(w, worldpos);
-		throw new NotImplementedException("unProject");
+		throw new RuntimeException("unProject");
 	}
 
 	@Override
 	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
 		if (glu != null) super.gluPickMatrix(x, y, w, h, viewport);
-		throw new NotImplementedException("pickMatrix");
+		throw new RuntimeException("pickMatrix");
 	}
 
 	@Override
@@ -584,7 +573,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glFlush() {
 		if (gl != null) super.glFlush();
-		throw new NotImplementedException("flush");
+		throw new RuntimeException("flush");
 	}
 
 	@Override
@@ -604,7 +593,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void endList() {
 		if (gl != null) super.endList();
-		throw new NotImplementedException("endList");
+		throw new RuntimeException("endList");
 	}
 
 	@Override
@@ -616,14 +605,14 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	@Deprecated public void glDisableClientState(int code) {
 		if (gl != null) super.glDisableClientState(code);
-		throw new NotImplementedException("disableClientState");
+		throw new RuntimeException("disableClientState");
 	}
 
 	@Override
 	@Deprecated
 	public void hint(int param, int value) {
 		if (gl != null) super.hint(param, value);
-		throw new NotImplementedException("hint");
+		throw new RuntimeException("hint");
 	}
 
 	@Override
@@ -637,7 +626,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void wireCube(double size) {
 		if (glut != null) super.wireCube(size);
-		throw new NotImplementedException("wireCube");
+		throw new RuntimeException("wireCube");
 	}
 
 	@Override
@@ -652,7 +641,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glDrawArrays(int code, int a, int b) {
 		if (gl != null) super.glDrawArrays(code, a, b);
-		throw new NotImplementedException("drawArrays");
+		throw new RuntimeException("drawArrays");
 	}
 
 	protected Method glMethod(String name, Variable... args) {

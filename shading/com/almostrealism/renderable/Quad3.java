@@ -44,7 +44,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Vector;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.nio.FloatBuffer;
 
@@ -135,7 +134,7 @@ public class Quad3 implements Renderable {
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
-		throw new NotImplementedException("TODO");
+		throw new RuntimeException("TODO");
 	}
 
 	/**

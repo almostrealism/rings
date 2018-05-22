@@ -20,19 +20,23 @@ import java.util.HashMap;
 
 import com.jogamp.opengl.GL;
 
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.texture.ImageSource;
 
+@Deprecated
 public class TextureManager {
-	private HashMap<ImageSource, Integer> textures;
+	private HashMap<ImageSource, Texture> textures;
 	
 	public TextureManager() {
-		this.textures = new HashMap<ImageSource, Integer>();
+		this.textures = new HashMap<>();
 	}
 	
 	public void addTexture(GLDriver gl, ImageSource s) {
 		if (textures.containsKey(s)) return;
 
-		int tex = put(gl, s);
+		Texture tex = put(gl, s);
 
 		int pixels[] = s.getPixels();
 		int width = s.getWidth();
@@ -63,7 +67,7 @@ public class TextureManager {
 			}
 		}
 		
-		gl.bindTexture("GL_TEXTURE_2D", tex);
+		gl.bindTexture(tex);
 		
 		if (s.isAlpha()) {
 			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, 128, 128,
@@ -77,19 +81,16 @@ public class TextureManager {
 		gl.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 	}
 
-	private int put(GLDriver gl, ImageSource s) {
-		int tex[] = new int[1];
-		gl.genTextures(1, tex);
-
-		textures.put(s, tex[0]);
-		return tex[0];
+	private Texture put(GLDriver gl, ImageSource s) {
+//		textures.put(s, TextureIO.newTexture(new TextureData())); TODO
+		return null;
 	}
 	
 	public void pushTexture(GLDriver gl, ImageSource s) {
 		addTexture(gl, s);
-		
-        gl.enable(GL.GL_TEXTURE_2D);
-        gl.bindTexture("GL_TEXTURE_2D", textures.get(s));
+
+        gl.bindTexture(textures.get(s));
+		gl.enableTexture(textures.get(s));
 	}
 	
 	public void popTexture(GLDriver gl) {

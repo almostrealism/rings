@@ -18,27 +18,10 @@ package com.almostrealism.gl.shaders;
 
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProduct;
-import org.almostrealism.relation.Computation;
 
-public class GLDiffuseShader extends VertexShader {
+public class BaseFragmentShader extends FragmentShader {
 	@Override
-	public Scope<? extends Variable> getScope(String prefix) {
-		Scope<Variable> s = new Scope<>();
-
-		Variable pos = new Variable("position", Vector.class, null);
-		pos.setAnnotation("attribute");
-		Variable tex = new Variable("texcoord", Pair.class, null);
-		pos.setAnnotation("varying");
-		s.getVariables().add(tex);
-
-		Scope<Variable> main = new Scope();
-		s.add(main);
-
-//		main.add(new Variable("texcoord", null, new VectorProduct(pos))); TODO
-
-		return s;
+	public Scope<? extends Variable> getScope(String s) {
+		return new Scope();
 	}
 }
