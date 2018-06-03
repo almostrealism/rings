@@ -101,7 +101,8 @@ public class Plane implements Volume {
 		
 		return true;
 	}
-	
+
+	@Override
 	public double intersect(Vector p, Vector d) {
 		double a = p.dotProduct(new Vector(this.normal));
 		double b = d.dotProduct(new Vector(this.normal));

@@ -195,7 +195,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double[] getNormal(double x[]) { return plane.getNormal(x); }
 
 	@Override
-	public double intersect(double x[], double p[]) {
+	public double intersect(Vector x, Vector p) {
 		return Math.min(pinhole.intersect(x, p), plane.intersect(x, p));
 	}
 
