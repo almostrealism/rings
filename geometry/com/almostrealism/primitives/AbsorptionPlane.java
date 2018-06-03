@@ -190,8 +190,8 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	public Clock getClock() { return this.clock; }
 	
 	public void drawImage(Graphics g) {
-		g.drawImage(GraphicsConverter.convertToAWTImage(
-				this.getImage()), 0, 0, this.display);
+		System.out.println("AbsorptionPlane.drawImage");
+		g.drawImage(GraphicsConverter.convertToAWTImage(getImage()), 0, 0, display);
 	}
 	
 	public void writeImage(OutputStream out) throws IOException {

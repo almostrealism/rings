@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.almostrealism.raytracer.RayTracer;
  * 
  * @author Michael Murray
  */
-public class DiffuseShader implements Shader, Editable {
+public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
 	public static boolean produceOutput = false;
 

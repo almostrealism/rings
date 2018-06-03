@@ -18,6 +18,7 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.*;
+import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
@@ -25,9 +26,9 @@ import org.almostrealism.util.Producer;
  * A SilhouetteShader object can be used to shade a surface with one color value
  * for all parts of the surface.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
-public class SilhouetteShader implements Editable, Shader {
+public class SilhouetteShader implements Editable, Shader<LightingContext> {
   private ColorProducer color;
   
   private String names[] = {"Color"};
@@ -48,9 +49,9 @@ public class SilhouetteShader implements Editable, Shader {
 	public SilhouetteShader(ColorProducer color) { this.color = color; }
 	
 	/**
-	 * @see  Shader#shade(ShaderContext, DiscreteField)
+	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
-	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
+	public ColorProducer shade(LightingContext p, DiscreteField normals) {
 		return GeneratedColorProducer.fromFunction(this, color);
 	}
 

@@ -25,21 +25,22 @@ import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 
 import org.almostrealism.physics.RigidBody;
+import org.almostrealism.space.LightingContext;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property
  * of the state of a RigidBody object. A RigidBodyStateShader modifies the light direction and intensity
  * based on the direction and intensity of either the velocity or force experienced by a rigid body.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
-public class RigidBodyStateShader implements Shader {
+public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> {
 	public static final int VELOCITY = 1;
 	public static final int FORCE = 2;
 	
 	private int type;
 	private double min, max;
-	private Shader shader;
+	private Shader<T> shader;
 	
 	/**
 	 * Constructs a new RigidBodyStateShader object that shades based on the
@@ -50,7 +51,7 @@ public class RigidBodyStateShader implements Shader {
 	 * @param max  Maximum value of state property.
 	 * @param s  Shader instance to use for shading.
 	 */
-	public RigidBodyStateShader(int type, double min, double max, Shader s) {
+	public RigidBodyStateShader(int type, double min, double max, Shader<T> s) {
 		if (type > 2 || type < 1) throw new IllegalArgumentException("Invalid type code: " + type);
 		
 		this.type = type;
@@ -69,12 +70,12 @@ public class RigidBodyStateShader implements Shader {
 	/**
 	 * @return  The Shader object stored by this RigidBodyStateShader object.
 	 */
-	public Shader getShader() { return this.shader; }
+	public Shader<T> getShader() { return this.shader; }
 	
 	/**
-	 * @see org.almostrealism.color.Shader#shade(ShaderContext, DiscreteField)
+	 * @see org.almostrealism.color.Shader#shade(LightingContext, DiscreteField)
 	 */
-	public ColorProducer shade(ShaderContext p, DiscreteField f) {
+	public ColorProducer shade(T p, DiscreteField f) {
 		if (p.getSurface() instanceof RigidBody == false) return new RGB(1.0, 1.0, 1.0);
 		
 		RigidBody.State state = ((RigidBody)p.getSurface()).getState();

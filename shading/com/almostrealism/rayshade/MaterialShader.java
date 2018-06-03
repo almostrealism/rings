@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.almostrealism.rayshade;
 
+import com.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.chem.Material;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Shader;
-import org.almostrealism.color.ShaderContext;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.physics.PhotonFieldContext;
 
 /**
  * @author  Michael Murray
  */
-public class MaterialShader implements Shader {
+public class MaterialShader<T extends PhotonField> implements Shader<PhotonFieldContext<T, AbsorptionPlane>> {
 	private Material m;
 	
 	public MaterialShader(Material m) {
@@ -32,8 +35,8 @@ public class MaterialShader implements Shader {
 	}
 	
 	@Override
-	public ColorProducer shade(ShaderContext parameters, DiscreteField normals) {
-		// TODO Auto-generated method stub
+	public ColorProducer shade(PhotonFieldContext<T, AbsorptionPlane> parameters, DiscreteField normals) {
+//		parameters.getFilm(). TODO
 		return null;
 	}
 }

@@ -19,6 +19,7 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
@@ -29,7 +30,7 @@ import org.almostrealism.util.Producer;
  * 
  * @author  Michael Murray
  */
-public class BlendingShader implements Shader, Editable {
+public class BlendingShader implements Shader<LightingContext>, Editable {
   private static final String names[] = {"Hot color", "Cold color"};
   private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
   private static final Class types[] = {ColorProducer.class, ColorProducer.class};
@@ -57,9 +58,9 @@ public class BlendingShader implements Shader, Editable {
 	}
 	
 	/**
-	 * @see  Shader#shade(ShaderContext, DiscreteField)
+	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
-	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
+	public ColorProducer shade(LightingContext p, DiscreteField normals) {
 		Vector n;
 		
 		try {
@@ -73,8 +74,8 @@ public class BlendingShader implements Shader, Editable {
 		
 		double k = (1.0 + n.dotProduct(l));
 		
-		RGB hc = this.hotColor.evaluate(new Object[] {p});
-		RGB cc = this.coldColor.evaluate(new Object[] {p});
+		RGB hc = this.hotColor.evaluate(new Object[] { p });
+		RGB cc = this.coldColor.evaluate(new Object[] { p });
 		
 		RGB c = hc.multiply(k);
 		c.addTo(cc.multiply(1 - k));

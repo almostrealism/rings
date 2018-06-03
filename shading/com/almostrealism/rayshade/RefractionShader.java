@@ -36,29 +36,29 @@ import org.almostrealism.util.Producer;
 // TODO  Fix refraction algorithm.
 
 /**
- * A RefractionShader object provides a shading method for dielectric surfaces.
+ * A {@link RefractionShader} provides a shading method for dielectric surfaces.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
-public class RefractionShader implements Shader, Editable {
+public class RefractionShader implements Shader<ShaderContext>, Editable {
 	public static Vector lastRay;
 	
-  public static boolean produceOutput = false;
+	public static boolean produceOutput = false;
   
-  private static final String propNames[] = {"Index of refraction", "Red attenuation", "Green attenuation", "Blue attenuation"};
-  private static final String propDesc[] = {"The index of refraction of the medium",
+	private static final String propNames[] = {"Index of refraction", "Red attenuation", "Green attenuation", "Blue attenuation"};
+	private static final String propDesc[] = {"The index of refraction of the medium",
 						"The attenuation factor for the red channel",
 						"The attenuation factor for the green channel",
 						"The attenuation factor for the blue channel"};
-  private static final Class propTypes[] = {Double.class, Double.class, Double.class, Double.class};
+	private static final Class propTypes[] = {Double.class, Double.class, Double.class, Double.class};
   
-  private double indexOfRefraction;
-  private double ra, ga, ba;
-  private double sampleDistance = 0.01;
-  private int sampleCount = 1;
-  private double lra, lga, lba;
+	private double indexOfRefraction;
+	private double ra, ga, ba;
+	private double sampleDistance = 0.01;
+	private int sampleCount = 1;
+	private double lra, lga, lba;
   
-  private int entered, exited;
+	private int entered, exited;
 
 	/** Constructs a new RefractionShader object. */
 	public RefractionShader() {}

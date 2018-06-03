@@ -29,7 +29,7 @@ import org.almostrealism.util.Producer;
  * 
  * @author  Michael Murray
  */
-public class HighlightShader extends ShaderSet implements Shader, Editable {
+public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable {
   private static final String propNames[] = {"Highlight Color", "Highlight Exponent"};
   private static final String propDesc[] = {"The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)"};
   private static final Class propTypes[] = {ColorProducer.class, Double.class};

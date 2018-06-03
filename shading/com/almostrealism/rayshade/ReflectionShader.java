@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2018 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,9 @@ import org.almostrealism.util.Producer;
  * The ReflectionShader class uses a shading algorithm based on Shlick's
  * approximation to the Fresnel equations.
  * 
- * @author Mike Murray
+ * @author  Michael Murray
  */
-public class ReflectionShader extends ShaderSet implements Shader, Editable {
+public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable {
   public static int maxReflections = 4;
   
   private static final String propNames[] = {"Reflectivity", "Reflective Color",

@@ -24,11 +24,15 @@ import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.space.Volume;
 import org.almostrealism.time.Clock;
 
 import org.almostrealism.util.PriorityQueue;
 
-public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
+/**
+ * @author  Michael Murray
+ */
+public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Volume {
 	private Clock clock;
 	
 	private Pinhole pinhole;
@@ -178,9 +182,30 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 		return new Ray(vx, vd);
 	}
 
+	@Override
 	public void setClock(Clock c) { this.clock = c; }
+
+	@Override
 	public Clock getClock() { return this.clock; }
-	
+
+	@Override
+	public boolean inside(double x[]) { return pinhole.inside(x) || plane.inside(x); }
+
+	@Override
+	public double[] getNormal(double x[]) { return plane.getNormal(x); }
+
+	@Override
+	public double intersect(double x[], double p[]) {
+		return Math.min(pinhole.intersect(x, p), plane.intersect(x, p));
+	}
+
+	@Override
+	public double[] getSurfaceCoords(double xyz[]) { return plane.getSurfaceCoords(xyz); }
+
+	@Override
+	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }
+
+	@Override
 	public boolean absorb(double x[], double p[], double energy) {
 		if (this.pinhole.absorb(x, p, energy))
 			return true;
@@ -190,8 +215,16 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber {
 			return false;
 	}
 
+	@Override
 	public double[] emit() { return null; }
+
+	@Override
 	public double getEmitEnergy() { return 0.0; }
+
+	@Override
 	public double[] getEmitPosition() { return null; }
+
+	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
+
 }
