@@ -102,9 +102,9 @@ public class Plane implements Volume {
 		return true;
 	}
 	
-	public double intersect(double p[], double d[]) {
-		double a = new Vector(p).dotProduct(new Vector(this.normal));
-		double b = new Vector(d).dotProduct(new Vector(this.normal));
+	public double intersect(Vector p, Vector d) {
+		double a = p.dotProduct(new Vector(this.normal));
+		double b = d.dotProduct(new Vector(this.normal));
 		
 		double d1 = (this.thick - a) / b;
 		double d2 = (-this.thick - a) / b;
@@ -112,14 +112,14 @@ public class Plane implements Volume {
 		if (d1 < 0.0) {
 			d1 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = new Vector(d).multiply(d1 + this.thick / 2.0).add(new Vector(p)).toArray();
+			double x[] = d.multiply(d1 + this.thick / 2.0).add(p).toArray();
 			if (!this.inside(x)) d1 = Double.MAX_VALUE - 1.0;
 		}
 		
 		if (d2 < 0.0) {
 			d2 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = new Vector(d).multiply(d2 - this.thick / 2.0).add(new Vector(p)).toArray();
+			double x[] = d.multiply(d2 - this.thick / 2.0).add(p).toArray();
 			if (!this.inside(x)) d2 = Double.MAX_VALUE - 1.0;
 		}
 		
