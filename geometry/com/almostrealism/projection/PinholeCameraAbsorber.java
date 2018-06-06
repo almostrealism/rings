@@ -18,6 +18,7 @@ package com.almostrealism.projection;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;
@@ -192,7 +193,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public boolean inside(double x[]) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
-	public double[] getNormal(double x[]) { return plane.getNormal(x); }
+	public Vector getNormalAt(Vector x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {
@@ -206,10 +207,10 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }
 
 	@Override
-	public boolean absorb(double x[], double p[], double energy) {
+	public boolean absorb(Vector x, Vector p, double energy) {
 		if (this.pinhole.absorb(x, p, energy))
 			return true;
-		else if (this.plane.absorb(VectorMath.subtract(x, this.planePos), p, energy))
+		else if (this.plane.absorb(x.subtract(new Vector(planePos)), p, energy))
 			return true;
 		else
 			return false;
@@ -222,9 +223,18 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getEmitEnergy() { return 0.0; }
 
 	@Override
-	public double[] getEmitPosition() { return null; }
+	public Vector getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
 
+	@Override
+	public Object call() throws Exception {
+		return null;
+	}
+
+	@Override
+	public Vector operate(Triple triple) {
+		return null;
+	}
 }

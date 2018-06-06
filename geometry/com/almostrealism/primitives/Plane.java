@@ -16,6 +16,9 @@
 
 package com.almostrealism.primitives;
 
+import io.almostrealism.code.Scope;
+import io.almostrealism.code.Variable;
+import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Volume;
 
@@ -128,9 +131,11 @@ public class Plane implements Volume {
 		
 		return Math.min(d1, d2);
 	}
-	
-	public double[] getNormal(double x[]) { return ((Vector) new Vector(this.normal).clone()).toArray(); }
 
+	@Override
+	public Vector getNormalAt(Vector x) { return new Vector(this.normal); }
+
+	@Override
 	public double[] getSpatialCoords(double uv[]) {
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
@@ -139,11 +144,27 @@ public class Plane implements Volume {
 				.add(new Vector(this.up).multiply((0.5 - uv[1]) * this.h)).toArray();
 	}
 
+	@Override
 	public double[] getSurfaceCoords(double xyz[]) {
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
 		return new double[] { 0.5 + new Vector(this.across).dotProduct(new Vector(xyz)) / this.w,
 							0.5 - new Vector(this.up).dotProduct(new Vector(xyz)) / this.h };
+	}
+
+	@Override
+	public Object call() throws Exception {
+		return null;
+	}
+
+	@Override
+	public Vector operate(Triple triple) {
+		return null;
+	}
+
+	@Override
+	public Scope<? extends Variable> getScope(String s) {
+		return null;
 	}
 }

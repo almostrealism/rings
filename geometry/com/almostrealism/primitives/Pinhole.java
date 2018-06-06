@@ -45,30 +45,44 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	 */
 	public double getRadius() { return this.radius; }
 	
-	public boolean absorb(double[] x, double[] p, double energy) {
-		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
+	public boolean absorb(Vector x, Vector p, double energy) {
+		double d = Math.abs(x.dotProduct(new Vector(this.normal)));
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(new Vector(x).dotProduct(new Vector(this.up)));
+		double y = Math.abs(x.dotProduct(new Vector(this.up)));
 		
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
 		
-		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
+		double z = Math.abs(x.dotProduct(new Vector(this.across)));
 		
 		if (Math.sqrt(y * y + z * z) > this.radius)
 			return true;
 		else
 			return false;
 	}
-	
+
+	@Override
 	public void setAbsorbDelay(double t) { }
+
+	@Override
 	public void setOrigPosition(double[] x) { }
-	
+
+	@Override
 	public double[] emit() { return null; }
+
+	@Override
 	public void setClock(Clock c) { this.clock = c; }
+
+	@Override
 	public Clock getClock() { return this.clock; }
+
+	@Override
 	public double getEmitEnergy() { return 0.0; }
-	public double[] getEmitPosition() { return null; }
+
+	@Override
+	public Vector getEmitPosition() { return null; }
+
+	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
 }

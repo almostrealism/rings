@@ -112,13 +112,16 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	 *           absorption plane.
 	 */
 	public double[] getOrientation() { return this.up; }
-	
+
+	@Override
 	public void setAbsorbDelay(double t) { }
-	
+
+	@Override
 	public void setOrigPosition(double x[]) { }
-	
-	public boolean absorb(double x[], double p[], double energy) {
-		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
+
+	@Override
+	public boolean absorb(Vector x, Vector p, double energy) {
+		double d = Math.abs(x.dotProduct(new Vector(this.normal)));
 		double r = 1.0;
 //		if (AbsorptionPlane.verbose > 0.0) r = Math.random();
 //
@@ -142,8 +145,8 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 					this.image[i][j] = new RGB(0.0, 0.0, 0.0);
 		}
 		
-		double a = new Vector(x).dotProduct(new Vector(this.across)) / this.pixel;
-		double b = new Vector(x).dotProduct(new Vector(this.up)) / this.pixel;
+		double a = x.dotProduct(new Vector(this.across)) / this.pixel;
+		double b = x.dotProduct(new Vector(this.up)) / this.pixel;
 		a = (this.h / 2.0) - a;
 		b = (this.w / 2.0) + b;
 		
@@ -181,12 +184,22 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 		return true;
 	}
 
+	@Override
 	public double[] emit() { return null; }
+
+	@Override
 	public double getEmitEnergy() { return 0; }
-	public double[] getEmitPosition() { return null; }
+
+	@Override
+	public Vector getEmitPosition() { return null; }
+
+	@Override
 	public double getNextEmit() { return Double.MAX_VALUE; }
-	
+
+	@Override
 	public void setClock(Clock c) { this.clock = c; }
+
+	@Override
 	public Clock getClock() { return this.clock; }
 	
 	public void drawImage(Graphics g) {
