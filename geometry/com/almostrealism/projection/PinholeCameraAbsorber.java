@@ -21,6 +21,7 @@ import com.almostrealism.primitives.Pinhole;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
@@ -223,7 +224,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getEmitEnergy() { return 0.0; }
 
 	@Override
-	public Vector getEmitPosition() { return null; }
+	public VectorProducer getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
