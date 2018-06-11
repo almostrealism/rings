@@ -18,8 +18,10 @@ package com.almostrealism.primitives;
 
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
+import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.space.Volume;
 
 public class Plane implements Volume {
@@ -27,26 +29,19 @@ public class Plane implements Volume {
 	
 	protected double w, h;
 	protected double thick = 0.5;
-	protected double normal[], up[], across[];
+	protected double up[], across[];
+	protected ImmutableVector normal;
 	
-	/**
-	 * @param t  The thickness of the plane (usually measured in micrometers).
-	 */
+	/** @param t  The thickness of the plane (usually measured in micrometers). */
 	public void setThickness(double t) { this.thick = t; }
 	
-	/**
-	 * @return  The thickness of the plane (usually measured in micrometers).
-	 */
+	/** @return  The thickness of the plane (usually measured in micrometers). */
 	public double getThickness() { return this.thick; }
 	
-	/**
-	 * @param w  The width of the plane (usually measured in micrometers).
-	 */
+	/** @param w  The width of the plane (usually measured in micrometers). */
 	public void setWidth(double w) { this.w = w; }
 	
-	/**
-	 * Returns the width of the plane (usually measured in micrometers).
-	 */
+	/** Returns the width of the plane (usually measured in micrometers). */
 	public double getWidth() { return this.w; }
 	
 	/**
@@ -58,16 +53,16 @@ public class Plane implements Volume {
 	 * Returns the height of the plane (usually measured in micrometers).
 	 */
 	public double getHeight() { return this.h; }
-	
+
 	/**
-	 * @param p  {x, y, z} - The vector normal to the plane.
+	 * @param p  {x, y, z} - The vector normal to the absorption plane.
 	 */
-	public void setSurfaceNormal(double p[]) { this.normal = p;	this.across = null; }
-	
+	public void setSurfaceNormal(double p[]) { this.normal = new ImmutableVector(p[0], p[1], p[2]);	this.across = null; }
+
 	/**
 	 * @return  {x, y, z} - The vector normal to the plane.
 	 */
-	public double[] getSurfaceNormal() { return this.normal; }
+	public ImmutableVector getSurfaceNormal() { return this.normal; }
 	
 	/**
 	 * @param p  {x, y, z} - The vector pointing upwards across the surface of this
@@ -83,13 +78,13 @@ public class Plane implements Volume {
 	
 	public double[] getAcross() { 
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		return this.across;
 	}
 	
 	public boolean inside(double x[]) {
-		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
+		double d = Math.abs(new Vector(x).dotProduct(normal.evaluate(new Object[0])));
 		Plane.d = d;
 		if (d > this.thick) return false;
 		
@@ -97,7 +92,7 @@ public class Plane implements Volume {
 		if (y > this.h / 2.0) return false;
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
 		if (z > this.w / 2.0) return false;
@@ -107,8 +102,8 @@ public class Plane implements Volume {
 
 	@Override
 	public double intersect(Vector p, Vector d) {
-		double a = p.dotProduct(new Vector(this.normal));
-		double b = d.dotProduct(new Vector(this.normal));
+		double a = p.dotProduct(normal.evaluate(new Object[0]));
+		double b = d.dotProduct(normal.evaluate(new Object[0]));
 		
 		double d1 = (this.thick - a) / b;
 		double d2 = (-this.thick - a) / b;
@@ -133,21 +128,23 @@ public class Plane implements Volume {
 	}
 
 	@Override
-	public Vector getNormalAt(Vector x) { return new Vector(this.normal); }
+	public VectorProducer getNormalAt(Vector x) { return normal; }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) {
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		return new Vector(this.across).multiply((uv[0] - 0.5) * this.w)
 				.add(new Vector(this.up).multiply((0.5 - uv[1]) * this.h)).toArray();
 	}
 
 	@Override
-	public double[] getSurfaceCoords(double xyz[]) {
+	public double[] getSurfaceCoords(VectorProducer v) {
+		double xyz[] = v.evaluate(new Object[0]).toArray();
+
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		return new double[] { 0.5 + new Vector(this.across).dotProduct(new Vector(xyz)) / this.w,
 							0.5 - new Vector(this.up).dotProduct(new Vector(xyz)) / this.h };

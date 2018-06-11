@@ -172,18 +172,10 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 		this.surface = surface;
 	}
 	
-	/**
-	 * Returns the underlying AbstractSurface object stored by this AbstractSurfaceUI.
-	 */
+	/** Returns the underlying {@link AbstractSurface} stored by this {@link AbstractSurfaceUI}. */
+	@Override
 	public ShadableSurface getSurface() {
 		return this.surface;
-	}
-	
-	/**
-	 * Returns the name of this AbstractSurfaceUI as a String object.
-	 */
-	public String toString() {
-		return this.getName();
 	}
 	
 	/** Returns the {@link ColorProducer} for this AbstractSurfaceUI. */
@@ -191,15 +183,18 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	public ColorProducer getColorAt() { return getSurface().getColorAt(); }
 	
 	/**
-	 * Returns a Vector object that represents the vector normal to this surface at the point represented by the specified Vector object.
+	 * Returns a Vector object that represents the vector normal to this surface
+	 * at the point represented by the specified {@link Vector}.
 	 */
-	public Vector getNormalAt(Vector point) {
+	@Override
+	public VectorProducer getNormalAt(Vector point) {
 		return getSurface().getNormalAt(point);
 	}
 	
 	/**
 	 * Returns true if the ray represented by the specified Ray object intersects the surface represented by this AbstractSurfaceUI in real space.
 	 */
+	@Override
 	public boolean intersect(Ray ray) {
 		return getSurface().intersect(ray);
 	}
@@ -208,6 +203,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * Returns an Intersection object representing the point along the ray represented by the specified Ray object
 	 * that intersection between the ray and the surface represented by this AbstractSurfaceUI occurs.
 	 */
+	@Override
 	public ShadableIntersection intersectAt(Ray ray) {
 		return getSurface().intersectAt(ray);
 	}
@@ -258,7 +254,14 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	/**
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
+	@Override
 	public ColorProducer shade(ShaderContext parameters) {
 		return this.surface.shade(parameters);
+	}
+
+	/** Returns the name of this AbstractSurfaceUI as a String object. */
+	@Override
+	public String toString() {
+		return this.getName();
 	}
 }

@@ -102,7 +102,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 				return null;
 			}
 			
-			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point),
+			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
 										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 										p.getOtherSurfaces(), n, p);
 			if (c != null) color.add(c);
@@ -118,7 +118,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 				return null;
 			}
 			
-			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point),
+			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
 										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 										p.getOtherSurfaces(), n.minus(), p);
 			if (c != null) color.add(c);

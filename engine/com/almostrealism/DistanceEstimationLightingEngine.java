@@ -17,9 +17,8 @@
 package com.almostrealism;
 
 import io.almostrealism.code.Scope;
-import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Triple;
-import org.almostrealism.algebra.Vector;
+import io.almostrealism.code.Variable;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
@@ -29,6 +28,7 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.ParameterizedFactory;
+import org.almostrealism.util.Producer;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -89,14 +89,30 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Vector getNormalAt(Vector vector) {
-			try {
-				return get(0).call().getDirection();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		public VectorProducer getNormalAt(Vector vector) {
+			final Callable<Ray> c = get(0);
 
-			return null;
+			return new VectorFutureAdapter() {
+				@Override
+				public Vector evaluate(Object[] objects) {
+					try {
+						return c.call().getDirection();
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+
+				@Override
+				public Producer<Scalar> dotProduct(VectorProducer vectorProducer) {
+					return null;  // TODO
+				}
+
+				@Override
+				public Scope<? extends Variable> getScope(String s) {
+					return null;  // TODO
+				}
+			};
 		}
 
 		@Override

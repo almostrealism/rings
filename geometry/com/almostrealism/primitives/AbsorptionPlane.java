@@ -22,6 +22,7 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
+import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.RGB;
@@ -72,36 +73,30 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	 * @param w  The width of the absorption plane measured as a number of cells. The size
 	 *           of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public void setWidth(double w) { this.w = (int) w; super.setWidth(this.w * this.pixel); }
 	
 	/**
 	 * @return  The width of the absorption plane measured as a number of cells. The size
 	 *          of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public double getWidth() { return this.w; }
 	
 	/**
 	 * @param h  The height of the absorption plane measured as a number of cells. The size
 	 *           of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public void setHeight(double h) { this.h = (int) h; super.setHeight(this.h * this.pixel); }
 	
 	/**
 	 * @return  The height of the absorption plane measured as a number of cells. The size
 	 *          of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public double getHeight() { return this.h; }
-	
-	/**
-	 * @param p  {x, y, z} - The vector normal to the absorption plane.
-	 */
-	public void setSurfaceNormal(double p[]) { this.normal = p;	this.across = null; }
-	
-	/**
-	 * @return  {x, y, z} - The vector normal to the absorption plane.
-	 */
-	public double[] getSurfaceNormal() { return this.normal; }
-	
+
 	/**
 	 * @param p  {x, y, z} - The vector pointing upwards across the surface of this
 	 *           absorption plane. This vector must be orthagonal to the surface normal.
@@ -122,7 +117,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 
 	@Override
 	public boolean absorb(Vector x, Vector p, double energy) {
-		double d = Math.abs(x.dotProduct(new Vector(this.normal)));
+		double d = Math.abs(x.dotProduct(normal.evaluate(new Object[0])));
 		double r = 1.0;
 //		if (AbsorptionPlane.verbose > 0.0) r = Math.random();
 //
@@ -135,7 +130,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 			this.energy = new double[this.w][this.h];
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		if (this.image == null) {
 			this.image = new RGB[this.w][this.h];

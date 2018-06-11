@@ -139,7 +139,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
 		
 		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point), n);
+			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point).evaluate(new Object[0]), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -183,7 +183,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 					color = this.eMap.getColorAt(null).operate(ref);
 			}
 			
-			Vector nor = p.getIntersection().getNormalAt(point);
+			Vector nor = p.getIntersection().getNormalAt(point).evaluate(new Object[0]);
 			double c = 1 - nor.minus().dotProduct(n) / (nor.minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
@@ -194,7 +194,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = n.minus();
 			
-			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point), n);
+			Vector ref = LightingEngine.reflect(p.getIntersection().getNormalAt(point).evaluate(new Object[0]), n);
 			
 			if (this.blur != 0.0) {
 				double a = this.blur * (-0.5 + Math.random());
@@ -224,7 +224,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				ref.divideBy(ref.length());
 			}
 			
-			Ray reflectedRay = new Ray(p.getIntersection().getNormalAt(point), ref);
+			Ray reflectedRay = new Ray(p.getIntersection().getNormalAt(point).evaluate(new Object[0]), ref);
 
 			IntersectionalLightingEngine l = new IntersectionalLightingEngine(allSurfaces);
 			ColorProducer color = l.lightingCalculation(reflectedRay, allSurfaces, allLights,
@@ -237,9 +237,11 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 					color = this.eMap.getColorAt(null).operate(ref);
 				}
 			}
-			
-			double c = 1 - p.getIntersection().getNormalAt(point).minus().dotProduct(n) /
-					(p.getIntersection().getNormalAt(point).minus().length() * n.length());
+
+			Vector no = p.getIntersection().getNormalAt(point).evaluate(new Object[0]);
+
+			double c = 1 - n.minus().dotProduct(no) /
+					(no.minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
 			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
 			

@@ -75,7 +75,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 		this.pinhole = pinhole;
 		this.plane = plane;
 		
-		double norm[] = pinhole.getSurfaceNormal();
+		double norm[] = pinhole.getSurfaceNormal().evaluate(new Object[0]).toArray();
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
 	}
 
@@ -105,7 +105,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	public Vector getViewingDirection() {
-		return new Vector(this.plane.getSurfaceNormal());
+		return plane.getSurfaceNormal().evaluate(new Object[0]);
 	}
 
 	public void setUpDirection(Vector v) {
@@ -194,7 +194,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public boolean inside(double x[]) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
-	public Vector getNormalAt(Vector x) { return plane.getNormalAt(x); }
+	public VectorProducer getNormalAt(Vector x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {
@@ -202,7 +202,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public double[] getSurfaceCoords(double xyz[]) { return plane.getSurfaceCoords(xyz); }
+	public double[] getSurfaceCoords(VectorProducer xyz) { return plane.getSurfaceCoords(xyz); }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }

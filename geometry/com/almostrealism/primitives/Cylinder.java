@@ -16,9 +16,7 @@
 
 package com.almostrealism.primitives;
 
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.TransformMatrix;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -62,12 +60,14 @@ public class Cylinder extends AbstractSurface {
 	 * @return  A Vector object that represents the vector normal to this cylinder
 	 *          at the point represented by the specified Vector object.
 	 */
-	public Vector getNormalAt(Vector point) {
+	public VectorProducer getNormalAt(Vector point) {
+		// TODO  Perform computation within VectorProducer
+
 		Vector normal = point.subtract(super.getLocation());
 		super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		normal.setY(0.0);
 		
-		return normal;
+		return new ImmutableVector(normal);
 	}
 	
 	/**

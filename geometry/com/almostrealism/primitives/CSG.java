@@ -73,13 +73,15 @@ public class CSG extends AbstractSurface {
     /**
      * @return  null.
      */
-    public Vector getNormalAt(Vector point) { return null; }
+    @Override
+    public VectorProducer getNormalAt(Vector point) { return null; }
 
     /**
      * This method calls intersectAt to determine the value to return.
      * 
      * @see org.almostrealism.space.ShadableSurface#intersect(org.almostrealism.geometry.Ray)
      */
+    @Override
     public boolean intersect(Ray ray) {
 		if (this.intersectAt(ray).getIntersections().length <= 0)
 		    return false;
@@ -90,6 +92,7 @@ public class CSG extends AbstractSurface {
     /**
      * @see  ShadableSurface#intersectAt(org.almostrealism.geometry.Ray)
      */
+    @Override
     public ShadableIntersection intersectAt(Ray ray) {
         ray.transform(this.getTransform(true).getInverse());
         

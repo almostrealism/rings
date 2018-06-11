@@ -58,20 +58,22 @@ public class Cone extends AbstractSurface {
 	public Cone(Vector location, double radius, RGB color) { super(location, radius, color); }
 	
 	/**
-	 * Returns a Vector object that represents the vector normal to this cone at the point represented by the specified Vector object.
+	 * Returns a Vector object that represents the vector normal to this cone at the
+	 * point represented by the specified Vector object.
 	 */
-	public Vector getNormalAt(Vector point) {
+	@Override
+	public VectorProducer getNormalAt(Vector point) {
+		// TODO  Perform computation within VectorProducer
 		Vector normal = new Vector(point.getX(), -1.0 * point.getY(), point.getZ());
-		
 		super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
-		
-		return normal;
+		return new ImmutableVector(normal);
 	}
 	
 	/**
 	 * @return  True if the ray represented by the specified Ray object intersects the cone
 	 *          represented by this Cone object.
 	 */
+	@Override
 	public boolean intersect(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
@@ -121,9 +123,10 @@ public class Cone extends AbstractSurface {
 	}
 	
 	/**
-	 * @return  An Intersection object storing the locations along the ray represented by
-	 *          the specified Ray object that intersection between the ray and the cone occurs.
+	 * @return  An {@link Intersection} storing the locations along the ray represented by
+	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
+	@Override
 	public ShadableIntersection intersectAt(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
