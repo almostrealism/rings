@@ -218,7 +218,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public double[] emit() { return null; }
+	public VectorProducer emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0.0; }

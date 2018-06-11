@@ -70,7 +70,7 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	public void setOrigPosition(double[] x) { }
 
 	@Override
-	public double[] emit() { return null; }
+	public VectorProducer emit() { return null; }
 
 	@Override
 	public void setClock(Clock c) { this.clock = c; }
