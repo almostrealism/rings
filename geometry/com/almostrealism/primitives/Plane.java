@@ -82,19 +82,20 @@ public class Plane implements Volume {
 		
 		return this.across;
 	}
-	
-	public boolean inside(double x[]) {
-		double d = Math.abs(new Vector(x).dotProduct(normal.evaluate(new Object[0])));
+
+	@Override
+	public boolean inside(VectorProducer x) {
+		double d = Math.abs(x.dotProduct(normal).evaluate(new Object[0]).getValue());
 		Plane.d = d;
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(new Vector(x).dotProduct(new Vector(this.up)));
+		double y = Math.abs(x.dotProduct(new ImmutableVector(up[0], up[1], up[2])).evaluate(new Object[0]).getValue());
 		if (y > this.h / 2.0) return false;
 		
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
-		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
+		double z = Math.abs(x.dotProduct(new ImmutableVector(across[0], across[1], across[2])).evaluate(new Object[0]).getValue());
 		if (z > this.w / 2.0) return false;
 		
 		return true;
@@ -111,15 +112,15 @@ public class Plane implements Volume {
 		if (d1 < 0.0) {
 			d1 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = d.multiply(d1 + this.thick / 2.0).add(p).toArray();
-			if (!this.inside(x)) d1 = Double.MAX_VALUE - 1.0;
+			Vector x = d.multiply(d1 + this.thick / 2.0).add(p);
+			if (!this.inside(new ImmutableVector(x))) d1 = Double.MAX_VALUE - 1.0;
 		}
 		
 		if (d2 < 0.0) {
 			d2 = Double.MAX_VALUE - 1.0;
 		} else {
-			double x[] = d.multiply(d2 - this.thick / 2.0).add(p).toArray();
-			if (!this.inside(x)) d2 = Double.MAX_VALUE - 1.0;
+			Vector x = d.multiply(d2 - this.thick / 2.0).add(p);
+			if (!this.inside(new ImmutableVector(x))) d2 = Double.MAX_VALUE - 1.0;
 		}
 		
 		

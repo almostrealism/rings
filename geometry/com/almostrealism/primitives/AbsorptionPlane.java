@@ -22,7 +22,6 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.RGB;
@@ -102,12 +101,6 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	 *           absorption plane. This vector must be orthagonal to the surface normal.
 	 */
 	public void setOrientation(double p[]) { this.up = p; this.across = null; }
-	
-	/**
-	 * @return  {x, y, z} - The vector pointing upwards across the surface of this
-	 *           absorption plane.
-	 */
-	public double[] getOrientation() { return this.up; }
 
 	@Override
 	public void setAbsorbDelay(double t) { }

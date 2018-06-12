@@ -191,7 +191,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Clock getClock() { return this.clock; }
 
 	@Override
-	public boolean inside(double x[]) { return pinhole.inside(x) || plane.inside(x); }
+	public boolean inside(VectorProducer x) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
 	public VectorProducer getNormalAt(Vector x) { return plane.getNormalAt(x); }
