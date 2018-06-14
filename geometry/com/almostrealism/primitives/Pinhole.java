@@ -17,6 +17,7 @@
 package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.time.Clock;
@@ -45,30 +46,44 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	 */
 	public double getRadius() { return this.radius; }
 	
-	public boolean absorb(double[] x, double[] p, double energy) {
-		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
+	public boolean absorb(Vector x, Vector p, double energy) {
+		double d = Math.abs(x.dotProduct(this.normal.evaluate(new Object[0])));
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(new Vector(x).dotProduct(new Vector(this.up)));
+		double y = Math.abs(x.dotProduct(new Vector(this.up)));
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(this.normal.evaluate(new Object[0])).toArray();
 		
-		double z = Math.abs(new Vector(x).dotProduct(new Vector(this.across)));
+		double z = Math.abs(x.dotProduct(new Vector(this.across)));
 		
 		if (Math.sqrt(y * y + z * z) > this.radius)
 			return true;
 		else
 			return false;
 	}
-	
+
+	@Override
 	public void setAbsorbDelay(double t) { }
+
+	@Override
 	public void setOrigPosition(double[] x) { }
-	
-	public double[] emit() { return null; }
+
+	@Override
+	public VectorProducer emit() { return null; }
+
+	@Override
 	public void setClock(Clock c) { this.clock = c; }
+
+	@Override
 	public Clock getClock() { return this.clock; }
+
+	@Override
 	public double getEmitEnergy() { return 0.0; }
-	public double[] getEmitPosition() { return null; }
+
+	@Override
+	public VectorProducer getEmitPosition() { return null; }
+
+	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
 }

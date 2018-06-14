@@ -18,9 +18,7 @@ package com.almostrealism.primitives;
 
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.Intersection;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
@@ -102,11 +100,13 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * Returns a Vector object that represents the vector normal to this sphere at the point represented
 	 * by the specified Vector object.
 	 */
-	public Vector getNormalAt(Vector point) {
+	public VectorProducer getNormalAt(Vector point) {
+		// TODO  Perform computation within VectorProducer
+
 		Vector normal = point.subtract(super.getLocation());
 		normal = super.getTransform(true).transformAsNormal(normal);
 		
-		return normal;
+		return new ImmutableVector(normal);
 	}
 	
 	/**

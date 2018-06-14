@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import javax.swing.JPanel;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
@@ -71,54 +72,45 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	 * @param w  The width of the absorption plane measured as a number of cells. The size
 	 *           of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public void setWidth(double w) { this.w = (int) w; super.setWidth(this.w * this.pixel); }
 	
 	/**
 	 * @return  The width of the absorption plane measured as a number of cells. The size
 	 *          of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public double getWidth() { return this.w; }
 	
 	/**
 	 * @param h  The height of the absorption plane measured as a number of cells. The size
 	 *           of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public void setHeight(double h) { this.h = (int) h; super.setHeight(this.h * this.pixel); }
 	
 	/**
 	 * @return  The height of the absorption plane measured as a number of cells. The size
 	 *          of a cell is given by the getPixelSize method.
 	 */
+	@Override
 	public double getHeight() { return this.h; }
-	
-	/**
-	 * @param p  {x, y, z} - The vector normal to the absorption plane.
-	 */
-	public void setSurfaceNormal(double p[]) { this.normal = p;	this.across = null; }
-	
-	/**
-	 * @return  {x, y, z} - The vector normal to the absorption plane.
-	 */
-	public double[] getSurfaceNormal() { return this.normal; }
-	
+
 	/**
 	 * @param p  {x, y, z} - The vector pointing upwards across the surface of this
 	 *           absorption plane. This vector must be orthagonal to the surface normal.
 	 */
 	public void setOrientation(double p[]) { this.up = p; this.across = null; }
-	
-	/**
-	 * @return  {x, y, z} - The vector pointing upwards across the surface of this
-	 *           absorption plane.
-	 */
-	public double[] getOrientation() { return this.up; }
-	
+
+	@Override
 	public void setAbsorbDelay(double t) { }
-	
+
+	@Override
 	public void setOrigPosition(double x[]) { }
-	
-	public boolean absorb(double x[], double p[], double energy) {
-		double d = Math.abs(new Vector(x).dotProduct(new Vector(this.normal)));
+
+	@Override
+	public boolean absorb(Vector x, Vector p, double energy) {
+		double d = Math.abs(x.dotProduct(normal.evaluate(new Object[0])));
 		double r = 1.0;
 //		if (AbsorptionPlane.verbose > 0.0) r = Math.random();
 //
@@ -131,7 +123,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 			this.energy = new double[this.w][this.h];
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(new Vector(this.normal)).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
 		
 		if (this.image == null) {
 			this.image = new RGB[this.w][this.h];
@@ -142,8 +134,8 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 					this.image[i][j] = new RGB(0.0, 0.0, 0.0);
 		}
 		
-		double a = new Vector(x).dotProduct(new Vector(this.across)) / this.pixel;
-		double b = new Vector(x).dotProduct(new Vector(this.up)) / this.pixel;
+		double a = x.dotProduct(new Vector(this.across)) / this.pixel;
+		double b = x.dotProduct(new Vector(this.up)) / this.pixel;
 		a = (this.h / 2.0) - a;
 		b = (this.w / 2.0) + b;
 		
@@ -181,12 +173,22 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 		return true;
 	}
 
-	public double[] emit() { return null; }
+	@Override
+	public VectorProducer emit() { return null; }
+
+	@Override
 	public double getEmitEnergy() { return 0; }
-	public double[] getEmitPosition() { return null; }
+
+	@Override
+	public VectorProducer getEmitPosition() { return null; }
+
+	@Override
 	public double getNextEmit() { return Double.MAX_VALUE; }
-	
+
+	@Override
 	public void setClock(Clock c) { this.clock = c; }
+
+	@Override
 	public Clock getClock() { return this.clock; }
 	
 	public void drawImage(Graphics g) {

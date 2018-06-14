@@ -66,7 +66,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			return null;
 		}
 		
-		RGB lightColor = p.getLight().getColorAt().operate(p.getIntersection().getNormalAt(point));
+		RGB lightColor = p.getLight().getColorAt().operate(p.getIntersection().getNormalAt(point).evaluate(new Object[0]));
 		
 		Vector n;
 		
@@ -78,7 +78,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n.divideBy(n.length());
-		Vector h = p.getIntersection().getNormalAt(point).add(p.getLightDirection());
+		Vector h = p.getIntersection().getNormalAt(point).evaluate(new Object[0]).add(p.getLightDirection());
 		h = h.divide(h.length());
 		
 		ColorSum color = new ColorSum();

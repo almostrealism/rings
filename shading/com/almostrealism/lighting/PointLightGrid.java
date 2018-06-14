@@ -18,6 +18,8 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
@@ -122,8 +124,8 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	public PointLight[] getLights() { return this.lights; }
 	
 	/** Returns a zero vector. */
-	public Vector getNormalAt(Vector point) {
-		return new Vector(0.0, 0.0, 0.0);
+	public VectorProducer getNormalAt(Vector point) {
+		return ZeroVector.getInstance();
 	}
 
 	/** Returns false. */

@@ -21,9 +21,8 @@ import java.util.concurrent.Callable;
 
 import com.almostrealism.raytracer.RayTracer;
 import io.almostrealism.code.Scope;
-import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.Triple;
-import org.almostrealism.algebra.Vector;
+import io.almostrealism.code.Variable;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
@@ -35,6 +34,7 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.Producer;
 
 public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
 	private ShaderContext sparams;
@@ -58,23 +58,42 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 		Ray r = new Ray(from, direction);
 
 		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders, this.sparams.getLight());
-		return l.lightingCalculation(r, new ArrayList<Callable<ColorProducer>>(),
+		return l.lightingCalculation(r, new ArrayList<>(),
 										this.lights, fparams.fogColor,
 										fparams.fogDensity, fparams.fogRatio, sparams);
 	}
 
 	@Override
-	public Vector getNormalAt(Vector point) {
-		try {
-			return iterator().next().call().getDirection();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public VectorProducer getNormalAt(Vector point) {
+		final Callable<Ray> c = iterator().next();
+
+		return new VectorFutureAdapter() {
+			@Override
+			public Vector evaluate(Object[] objects) {
+				try {
+					return c.call().getDirection();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			@Override
+			public Producer<Scalar> dotProduct(VectorProducer vectorProducer) {
+				return null;  // TODO
+			}
+
+			@Override
+			public Scope<? extends Variable> getScope(String s) {
+				return null;  // TODO
+			}
+		};
 	}
 
 	@Override
-	public Vector operate(Triple in) { return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())); }
+	public Vector operate(Triple in) {
+		return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())).evaluate(new Object[0]);
+	}
 
 	@Override
 	public Scope getScope(String prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
