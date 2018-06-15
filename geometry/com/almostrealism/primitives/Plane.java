@@ -57,7 +57,9 @@ public class Plane implements Volume {
 	/**
 	 * @param p  {x, y, z} - The vector normal to the absorption plane.
 	 */
-	public void setSurfaceNormal(double p[]) { this.normal = new ImmutableVector(p[0], p[1], p[2]);	this.across = null; }
+	public void setSurfaceNormal(ImmutableVector p) {
+		this.normal = p; this.across = null;
+	}
 
 	/**
 	 * @return  {x, y, z} - The vector normal to the plane.

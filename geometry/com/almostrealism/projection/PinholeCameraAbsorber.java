@@ -95,7 +95,14 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getPixelSize() { return this.plane.getPixelSize(); }
 	
 	public AbsorptionPlane getAbsorptionPlane() { return this.plane; }
-	
+	public void setAbsorptionPlane(AbsorptionPlane plane) { this.plane = plane; }
+	public Pinhole getPinhole() { return pinhole; }
+	public void setPinhole(Pinhole pinhole) { this.pinhole = pinhole; }
+	public double[] getPlanePosition() { return planePos; }
+	public void setPlanePosition(double[] planePos) { this.planePos = planePos; }
+	public Colorable getColorable() { return colorable; }
+	public void setColorable(Colorable c) { this.colorable = c; }
+
 	public void setLocation(Vector p) { this.location = p; }
 	public Vector getLocation() { return this.location; }
 
@@ -118,9 +125,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
-	
-	public void setColorable(Colorable c) { this.colorable = c; }
-	
+
 	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
 		double u = i / (screenWidth);
 		double v = (j / screenHeight);
