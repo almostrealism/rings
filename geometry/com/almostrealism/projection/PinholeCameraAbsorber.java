@@ -18,10 +18,7 @@ package com.almostrealism.projection;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
-import org.almostrealism.algebra.Triple;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorMath;
-import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.*;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
@@ -61,7 +58,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 		
 		this.pinhole = new Pinhole();
 		this.pinhole.setRadius(focalLength / (2.0 * fNum));
-		this.pinhole.setSurfaceNormal(VectorMath.clone(norm));
+		this.pinhole.setSurfaceNormal(new ImmutableVector(norm[0], norm[1], norm[2]));
 		this.pinhole.setOrientation(orient);
 		
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
@@ -82,7 +79,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	protected void initPlane(double norm[], double orient[]) {
 		if (this.plane == null) {
 			this.plane = new AbsorptionPlane();
-			this.plane.setSurfaceNormal(VectorMath.clone(norm));
+			this.plane.setSurfaceNormal(new ImmutableVector(norm[0], norm[1], norm[2]));
 			this.plane.setOrientation(VectorMath.clone(orient));
 		}
 	}
@@ -108,7 +105,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 
 	public void setViewingDirection(Vector v) {
 		initPlane(v.toArray(), new double[3]);
-		this.plane.setSurfaceNormal(v.toArray());
+		this.plane.setSurfaceNormal(new ImmutableVector(v));
 	}
 
 	public Vector getViewingDirection() {

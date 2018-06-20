@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>Common</artifactId>
-			<version>0.6</version>
+			<version>0.7-rc</version>
 		</dependency>
 
 		<dependency>

@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -37,7 +36,6 @@ import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
-import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.projection.OrthographicCamera;
@@ -45,6 +43,7 @@ import com.almostrealism.event.SceneCloseEvent;
 import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
+import org.almostrealism.util.Pipeline;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and
@@ -52,13 +51,11 @@ import com.almostrealism.primitives.SurfaceUI;
  * 
  * @author  Michael Murray
  */
-public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator {
+public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Pipeline {
 	public static final boolean enableCompaction = true;
 
 	private T scene;
 	private EventHandler handler;
-
-	private boolean showProgressWindow;
 
 	private int width, height, ssWidth, ssHeight;
 
@@ -81,8 +78,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		this.setImageHeight((int)(ph * (w / pw)));
 		this.setSupersampleWidth(2);
 		this.setSupersampleHeight(2);
-		
-		this.setShowProgressWindow(true);
 	}
 	
 	/**
@@ -103,28 +98,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			return;
 		}
 
-		final ProgressDisplay display = new ProgressDisplay(totalPixels / 100, totalPixels);
-		final JButton cancelButton = new JButton("Cancel");
-		
 		JFrame frame = null;
-		
-		if (this.showProgressWindow == true) {
-			frame = new JFrame("Rendering...");
-			frame.setSize(300, 80);
-			
-			frame.getContentPane().setLayout(new java.awt.FlowLayout());
-			frame.getContentPane().add(display);
-			frame.getContentPane().add(cancelButton);
-		} else {
-			this.clearRenderedImage();
-			
-			display.setRemoveOnCompletion(true);
-			this.add(display);
-			this.add(cancelButton);
-		}
 
-		final JFrame fframe = frame;
-		
 		final Thread renderThread = new Thread(new Runnable() {
 			public void run() {
 				RenderParameters rparams = new RenderParameters();
@@ -152,27 +127,9 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 					System.out.println(" Done");
 				}
 
-				if (fframe != null) fframe.setVisible(false);
-
 				evaluateImage();
 			}
 		});
-		
-		cancelButton.addActionListener((e) -> {
-			renderThread.stop();
-			System.gc();
-
-			if (renderThread.isInterrupted()) {
-				if (fframe != null) fframe.setVisible(false);
-				RenderPanel.this.removeAll();
-				RenderPanel.this.revalidate();
-				RenderPanel.this.repaint();
-			}
-		});
-		
-		if (this.showProgressWindow) {
-			frame.setVisible(true);
-		}
 		
 		renderThread.start();
 	}
@@ -185,21 +142,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		if (evaluationThread != null) return;
 
 		evaluationThread = new Thread(() -> {
-			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData);
-
+			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData, this);
 			evaluationThread = null;
-
-			try {
-				SwingUtilities.invokeAndWait(() -> {
-					RenderPanel.this.removeAll();
-					revalidate();
-					repaint();
-				});
-			} catch(InterruptedException ie) {
-				System.out.println("Swing Utilities Interruption: " + ie.toString());
-			} catch(java.lang.reflect.InvocationTargetException ite) {
-				System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
-			}
 		});
 
 		evaluationThread.start();
@@ -293,14 +237,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		else
 			return 0.0;
 	}
-	
-	/**
-	 * When set to true, rendering progress will be displayed in a new window.
-	 * Otherwise, the progress will be displayed within this RenderPanel's window.
-	 *
-	 * TODO  With live rendering, this does not function properly if set to false
-	 */
-	protected void setShowProgressWindow(boolean show) { this.showProgressWindow = show; }
 		
 	/**
 	 * Returns the width, in pixels, of the image that will be rendered by this RenderPanel object.
@@ -321,12 +257,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 * Returns the supersampling height of the image that will be rendered by this RenderPanel object.
 	 */
 	public int getSupersampleHeight() { return this.ssHeight; }
-	
-	/**
-	 * Returns true if rendering progress will be displayed in a new window.
-	 * Otherwise, false is returned and the progress will be displayed within this RenderPanel's window.
-	 */
-	public boolean getShowProgressWindow() { return this.showProgressWindow; }
 	
 	/**
 	 * Return the image rendered by this RenderPanel as an array of RGB objects.
@@ -368,4 +298,28 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			super.paint(g);
 		}
 	}
+
+	/** Update the displayed image to the first element of the specified argument. */
+	@Override
+	public Object evaluate(Object[] images) {
+		renderedImage = (Image) images[0];
+
+		try {
+			SwingUtilities.invokeAndWait(() -> {
+				RenderPanel.this.removeAll();
+				revalidate();
+				repaint();
+			});
+		} catch(InterruptedException ie) {
+			System.out.println("Swing Utilities Interruption: " + ie.toString());
+		} catch(java.lang.reflect.InvocationTargetException ite) {
+			System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
+		}
+
+		return renderedImage;
+	}
+
+	/** Does nothing. */
+	@Override
+	public void compact() { }
 }
