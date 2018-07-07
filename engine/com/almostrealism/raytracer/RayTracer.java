@@ -19,13 +19,17 @@ package com.almostrealism.raytracer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 
-public class RayTracer {
-	private static final ExecutorService pool = Executors.newFixedThreadPool(10);
-	
+public class RayTracer implements ThreadFactory {
+	private static long threadCount = 0;
+
+	private static final ExecutorService pool = Executors.newFixedThreadPool(10,
+						(r) -> new Thread(r, "RayTracer Thread " + (threadCount++)));
+
 	private Engine engine;
 	
 	public RayTracer(Engine e) {
@@ -35,7 +39,12 @@ public class RayTracer {
 	public Future<ColorProducer> trace(Vector from, Vector direction) {
 		return pool.submit(() -> engine.trace(from, direction));
 	}
-	
+
+	@Override
+	public Thread newThread(Runnable r) {
+		return new Thread(r, "RayTracer Thread " + (threadCount++));
+	}
+
 	public interface Engine {
 		ColorProducer trace(Vector from, Vector direction);
 	}

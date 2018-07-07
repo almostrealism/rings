@@ -32,12 +32,10 @@ import org.almostrealism.space.ShadableSurface;
 public class RayIntersectionEngine implements RayTracer.Engine {
 	private Scene<ShadableSurface> scene;
 	private ShaderContext sparams;
-	private RenderParameters rparams;
 	private FogParameters fparams;
 	
-	public RayIntersectionEngine(Scene<ShadableSurface> s, RenderParameters rparams, FogParameters fparams) {
+	public RayIntersectionEngine(Scene<ShadableSurface> s, FogParameters fparams) {
 		this.scene = s;
-		this.rparams = rparams;
 		this.fparams = fparams;
 	}
 	

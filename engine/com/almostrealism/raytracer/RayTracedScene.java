@@ -26,8 +26,6 @@ import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorProduct;
-import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
@@ -108,53 +106,33 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	public RealizableImage realize(RenderParameters p) {
 		this.p = p;
 
-		Future<ColorProducer> image[][] = new Future[p.dx][p.dy];
-		
-		for (int i = p.x; i < (p.x + p.dx); i++) {
-			System.out.println("RayTracedScene: Realizing col " + i);
+		Pixel image[][] = new Pixel[p.dx][p.dy];
 
-			for (int j = p.y; j < (p.y + p.dy); j++) {
-				for (int k = 0; k < p.ssWidth; k++)
-				for (int l = 0; l < p.ssHeight; l++) {
-					double r = i + ((double) k / (double) p.ssWidth);
-					double q = j + ((double) l / (double) p.ssHeight);
+		Thread t = new Thread(() -> {
+			for (int i = p.x; i < (p.x + p.dx); i++) {
+				System.out.println("RayTracedScene: Submitting col " + i);
 
-					Future<ColorProducer> color = operate(new Pair(r, q));
-					
-					if (image[i - p.x][j - p.y] == null) {
-						if (p.ssWidth > 1 || p.ssHeight > 1) {
-							double scale = 1.0 / (p.ssWidth * p.ssHeight);
+				long start = System.nanoTime();
 
-							try {
-								color = new ColorProduct(color.get());
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							} catch (ExecutionException e) {
-								e.printStackTrace();
-							}
+				for (int j = p.y; j < (p.y + p.dy); j++) {
+					Pixel px = new Pixel();
 
-							((ColorProduct) color).add(new RGB(scale, scale, scale));
+					for (int k = 0; k < p.ssWidth; k++) {
+						for (int l = 0; l < p.ssHeight; l++) {
+							double r = i + ((double) k / (double) p.ssWidth);
+							double q = j + ((double) l / (double) p.ssHeight);
+							px.addSample(operate(new Pair(r, q)));
 						}
-						
-						image[i - p.x][j - p.y] = color;
-					} else {
-						double scale = 1.0 / (p.ssWidth * p.ssHeight);
-
-						try {
-							color = new ColorProduct(color.get());
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						}
-
-						((ColorProduct) color).add(new RGB(scale, scale, scale));
-						
-						image[i - p.x][j - p.y] = new ColorSum(image[i - p.x][j - p.y], color);
 					}
+
+					image[i - p.x][j - p.y] = px;
 				}
+
+				System.out.println("Submitted after " + (System.nanoTime() - start) + " nanoseconds");
 			}
-		}
+		});
+
+		t.start();
 
 		return new RealizableImage(image);
 	}

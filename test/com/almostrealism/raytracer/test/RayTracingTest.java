@@ -13,6 +13,7 @@ import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RealizableImage;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
@@ -112,20 +113,31 @@ public class RayTracingTest {
 		params.dx = (int) (c.getProjectionWidth() * 10);
 		params.dy = (int) (c.getProjectionHeight() * 10);
 
-		return new RayTracedScene(new RayIntersectionEngine(scene, params, new FogParameters()), c);
+		return new RayTracedScene(new RayIntersectionEngine(scene, new FogParameters()), c, params);
 	}
 
 	public static void main(String args[]) throws IOException {
  		RayTracedScene r = generateScene();
 
-		try {
-			ColorProducer im[][] = r.realize(r.getRenderParameters()).evaluate(null);
-			ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
-										ImageCanvas.JPEGEncoding);
-		} catch (FileNotFoundException fnf) {
-			System.out.println("ERROR: Output file not found");
-		} catch (IOException ioe) {
-			System.out.println("IO ERROR");
+		RealizableImage img = r.realize(r.getRenderParameters());
+
+		while (!img.isComplete()) {
+			try {
+				ColorProducer im[][] = img.evaluate(new Object[0]);
+				ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
+						ImageCanvas.JPEGEncoding);
+				System.out.println("Wrote image (" + (img.getCompleted() * 100) + "%)");
+			} catch (FileNotFoundException fnf) {
+				System.out.println("ERROR: Output file not found");
+			} catch (IOException ioe) {
+				System.out.println("IO ERROR");
+			}
+
+			try {
+				Thread.sleep(10000); // Wait 10 seconds before trying again
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		System.exit(0);

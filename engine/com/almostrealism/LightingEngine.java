@@ -378,7 +378,7 @@ public class LightingEngine {
 
 		// Vector refracted = ((vector.subtract(normal.multiply(p))).multiply(r)).subtract(normal.multiply(s));
 
-		if (refracted.subtract(vector).length() > 0.001) System.out.println("!!");
+//		if (refracted.subtract(vector).length() > 0.001) System.out.println("!!"); TODO
 
 		return refracted.minus();
 	}

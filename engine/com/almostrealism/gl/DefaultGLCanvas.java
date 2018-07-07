@@ -104,6 +104,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	protected GLScene renderables;
 	protected GLDriver gl;
+	protected GLRenderingEngine engine;
 
 	private int prevMouseX, prevMouseY;
 
@@ -114,6 +115,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public DefaultGLCanvas(GLScene s, Texture skydome) {
 		this.skydome = skydome;
 		lighting = new GLLightingConfiguration(s.getScene().getLights());
+		engine = new DefaultGLRenderingEngine();
 
 		seedRandom(15);
 
@@ -140,6 +142,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		this.skydomeSuffix = suffix;
 		this.skydomeMipmapped = mipmapped;
 		lighting = new GLLightingConfiguration(s.getScene().getLights());
+		engine = new DefaultGLRenderingEngine();
 
 		seedRandom(15);
 
@@ -430,10 +433,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public void drawRenderables(GLDriver gl, double zScale) {
-		if (zScale != 1d) {
-			gl.scale(new Vector(1.0, 1.0, zScale));
-		}
-		renderables.display(gl);
+		engine.drawRenderables(gl, renderables, zScale);
 	}
 
 	public void drawSkydome(GLDriver gl) {

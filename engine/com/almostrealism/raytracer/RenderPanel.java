@@ -110,7 +110,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				rparams.ssWidth = RenderPanel.this.ssWidth;
 				rparams.ssHeight = RenderPanel.this.ssHeight;
 
-				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, rparams, new FogParameters()), scene.getCamera());
+				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, new FogParameters()), scene.getCamera(), rparams);
 				renderedImageData = r.realize(rparams).evaluate(null);
 
 				if (enableCompaction) {
@@ -304,6 +304,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	public Object evaluate(Object[] images) {
 		renderedImage = (Image) images[0];
 
+		System.out.println("Repainting RenderPanel with " + renderedImage);
+
 		try {
 			SwingUtilities.invokeAndWait(() -> {
 				RenderPanel.this.removeAll();
@@ -315,6 +317,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		} catch(java.lang.reflect.InvocationTargetException ite) {
 			System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
 		}
+
+		System.out.println("Repainted RenderPanel");
 
 		return renderedImage;
 	}
