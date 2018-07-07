@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.5</version>
+	<version>0.6-rc</version>
 
 	<!-- Output to jar format -->
 	<packaging>jar</packaging>
