@@ -394,6 +394,8 @@ public class GLDriver {
 	 * Compile the shader, attach to the current program, use the current program.
 	 */
 	protected boolean compileShader(String shaderType, String shaderSource) {
+		if (gl == null) return false; // TODO
+		
 		try {
 			System.out.println(shaderType + ":");
 			System.out.println(shaderSource);

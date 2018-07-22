@@ -17,6 +17,7 @@
 package com.almostrealism.gl;
 
 import com.almostrealism.projection.OrthographicCamera;
+import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -30,6 +31,8 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
+import org.joml.Matrix4d;
+import org.joml.Vector3d;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -62,7 +65,42 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void setLighting(GLLightingConfiguration lighting) {
 		if (gl != null) super.setLighting(lighting);
-		throw new RuntimeException("setLighting not implemented");
+		// TODO
+	}
+	
+	@Override
+	protected void glProjection(Camera c) {
+		//DO NOT DO THIS...instead follow advice at https://webglfundamentals.org/webgl/lessons/webgl-3d-camera.html
+//		projection_joml = new Matrix4d();
+//
+//		if (c instanceof PinholeCamera) {
+//			PinholeCamera camera = (PinholeCamera) c;
+//
+//			Vector eye = camera.getLocation();
+//			Vector center = eye.add(camera.getViewingDirection());
+//			float width = (float) camera.getProjectionWidth();
+//			float height = (float) camera.getProjectionHeight();
+//
+//			projection_joml = new Matrix4d()
+//					.perspective(camera.getHorizontalFOV(), width / height, 0.1, 1e9)
+//					.lookAt(new Vector3d(eye.getX(), eye.getY(), eye.getZ()),
+//							new Vector3d(center.getX(), center.getY(), center.getZ()),
+//							new Vector3d(0, 1, 0));
+//		}
+//		else if (c instanceof OrthographicCamera) {
+//			OrthographicCamera camera = (OrthographicCamera) c;
+//
+//			// TODO: Orthographic projection matrix.
+//		}
+		if (c==null) return; // TODO  Set to a "default" projection
+		PinholeCamera pinCam = (PinholeCamera)c;
+		//System.out.println("Cast to PinholeCamera");
+		
+		
+		
+		Variable aspect = new Variable("aspect", Double.class, pinCam.getAspectRatio());
+		
+		p.println(aspect);
 	}
 
 	@Override
