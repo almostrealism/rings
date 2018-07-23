@@ -42,6 +42,7 @@ import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.primitives.SurfaceUI;
+import org.almostrealism.util.Producer;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface
@@ -200,11 +201,11 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 	
 	/**
-	 * Returns an Intersection object representing the point along the ray represented by the specified Ray object
-	 * that intersection between the ray and the surface represented by this AbstractSurfaceUI occurs.
+	 * Returns a {@link Producer} for a {@link ShadableIntersection} representing the point along the ray produced by
+	 * the specified {@link Ray} {@link Producer} that intersection between the ray and the surface occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Ray ray) {
+	public Producer<ShadableIntersection> intersectAt(Producer ray) {
 		return getSurface().intersectAt(ray);
 	}
 

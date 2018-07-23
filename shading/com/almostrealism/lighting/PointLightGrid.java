@@ -26,6 +26,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.Producer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +34,10 @@ import java.util.concurrent.TimeoutException;
 
 /** A {@link PointLightGrid} object stores a grid of {@link PointLight}s. */
 public class PointLightGrid extends AbstractSurface implements Light {
-  private double intensity;
-  private RGB color;
-  
-  private PointLight lights[];
+	private double intensity;
+	private RGB color;
+
+	private PointLight lights[];
 
 	/**
 	  Constructs a new PointLightGrid object with the specified width, height,
@@ -90,7 +91,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	  Sets the total intensity of this PointLightGrid object (the sum of intensities of
 	  all lights in the grid) to the specified double value.
 	*/
-	
+	@Override
 	public void setIntensity(double intensity) {
 		this.intensity = intensity;
 		
@@ -103,6 +104,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	  Sets the color of the PointLight objects stored by this PointLightGrid object
 	  to the color represented by the specified RGB object.
 	*/
+	@Override
 	public void setColor(RGB color) {
 		super.setColor(color);
 		
@@ -118,23 +120,27 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	 * Returns the total intensity of this PointLightGrid
 	 * (the sum of the intensities of all lights in the grid).
 	 */
+	@Override
 	public double getIntensity() { return this.intensity; }
 	
 	/** Returns the array of {@link PointLight}s stored by this {@link PointLightGrid}. */
 	public PointLight[] getLights() { return this.lights; }
 	
 	/** Returns a zero vector. */
+	@Override
 	public VectorProducer getNormalAt(Vector point) {
 		return ZeroVector.getInstance();
 	}
 
 	/** Returns false. */
+	@Override
 	public boolean intersect(Ray ray) {
 		return false;
 	}
 	
 	/** Returns null. */
-	public ShadableIntersection intersectAt(Ray ray) {
+	@Override
+	public Producer<ShadableIntersection> intersectAt(Producer ray) {
 		return null;
 	}
 

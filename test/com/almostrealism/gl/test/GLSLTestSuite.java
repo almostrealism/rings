@@ -29,10 +29,10 @@ import java.util.concurrent.Future;
 
 public class GLSLTestSuite {
 	@Test
-	public void encodePairFunctionTest1() {
+	public void encodeComputations() {
 		try {
 			RayTracedScene s = RayTracingTest.generateScene();
-			encodePairFunction(s);
+//			encodePairFunction(s); TODO
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -44,11 +44,11 @@ public class GLSLTestSuite {
 		}
 
 		GLSLPrintWriter p = new GLSLPrintWriter(System.out);
-		p.println((Computation) f);
+		p.println(f);
 	}
 
 	public static void main(String args[]) {
-		new GLSLTestSuite().encodePairFunctionTest1();
+		new GLSLTestSuite().encodeComputations();
 //		System.exit(0); TODO
 	}
 }

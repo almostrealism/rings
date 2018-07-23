@@ -27,6 +27,7 @@ import org.almostrealism.space.Volume;
 import org.almostrealism.time.Clock;
 
 import org.almostrealism.util.PriorityQueue;
+import org.almostrealism.util.Producer;
 
 /**
  * @author  Michael Murray
@@ -100,90 +101,111 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Colorable getColorable() { return colorable; }
 	public void setColorable(Colorable c) { this.colorable = c; }
 
+	@Override
 	public void setLocation(Vector p) { this.location = p; }
+
+	@Override
 	public Vector getLocation() { return this.location; }
 
+	@Override
 	public void setViewingDirection(Vector v) {
 		initPlane(v.toArray(), new double[3]);
 		this.plane.setSurfaceNormal(new ImmutableVector(v));
 	}
 
+	@Override
 	public Vector getViewingDirection() {
 		return plane.getSurfaceNormal().evaluate(new Object[0]);
 	}
 
+	@Override
 	public void setUpDirection(Vector v) {
 		initPlane(new double[3], v.toArray());
 		this.plane.setOrientation(v.toArray());
 	}
 
+	@Override
 	public Vector getUpDirection() {
 		return new Vector(this.plane.getOrientation());
 	}
 
 	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
 
-	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
-		double u = i / (screenWidth);
-		double v = (j / screenHeight);
-		// v = 1.0 - v;
-		
-		if (this.colorable != null) {
-			int tot = 6;
-			RGB c = new RGB(0.0, 0.0, 0.0);
-			
-			if (this.plane.imageAvailable()) {
-				RGB im[][] = this.plane.getImage();
-				int a = (int) (u * im.length);
-				if (a == im.length) a = im.length -1;
-				int b = (int) (v * im[a].length);
-				
-				int x0 = a - 4;
-				int y0 = b - 4;
-				int x1 = a + 4;
-				int y1 = b + 4;
-				
-				PriorityQueue q = new PriorityQueue();
-				
-				i: for (int ai = x0; ai < x1; ai++) {
-					if (ai < 0 || ai >= im.length) continue i;
-					
-					j: for (int aj = y0; aj < y1; aj++) {
-						if (aj < 0 || aj >= im[ai].length) continue j;
-						if (c.equals(im[ai][aj])) continue j;
-						
-						double d = (ai - a) * (ai - a) + (aj - b) * (aj - b);
-						if (d == 0)
-							d = 1.0;
-						else
-							d = 1 / Math.sqrt(d);
-						
-						if (q.peek() < d || q.size() < tot) q.put(im[ai][aj], d);
-						if (q.size() > tot) q.next();
+	@Override
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+		return new Producer<Ray>() {
+			@Override
+			public Ray evaluate(Object[] args) {
+				Pair ij = pos.evaluate(args);
+				Pair screenDim = sd.evaluate(args);
+
+				double u = ij.getX() / (screenDim.getX());
+				double v = (ij.getY() / screenDim.getY());
+				// v = 1.0 - v;
+
+				if (colorable != null) {
+					int tot = 6;
+					RGB c = new RGB(0.0, 0.0, 0.0);
+
+					if (plane.imageAvailable()) {
+						RGB im[][] = plane.getImage();
+						int a = (int) (u * im.length);
+						if (a == im.length) a = im.length -1;
+						int b = (int) (v * im[a].length);
+
+						int x0 = a - 4;
+						int y0 = b - 4;
+						int x1 = a + 4;
+						int y1 = b + 4;
+
+						PriorityQueue q = new PriorityQueue();
+
+						i: for (int ai = x0; ai < x1; ai++) {
+							if (ai < 0 || ai >= im.length) continue i;
+
+							j: for (int aj = y0; aj < y1; aj++) {
+								if (aj < 0 || aj >= im[ai].length) continue j;
+								if (c.equals(im[ai][aj])) continue j;
+
+								double d = (ai - a) * (ai - a) + (aj - b) * (aj - b);
+								if (d == 0)
+									d = 1.0;
+								else
+									d = 1 / Math.sqrt(d);
+
+								if (q.peek() < d || q.size() < tot) q.put(im[ai][aj], d);
+								if (q.size() > tot) q.next();
+							}
+						}
+
+						while (q.size() > 0) {
+							double p = q.peek();
+							RGB cl = (RGB) q.next();
+							c.addTo(cl.multiply(p / tot));
+						}
+
+						// c = im[a][b];
 					}
+
+					colorable.setColor(c.getRed(), c.getGreen(), c.getBlue());
 				}
-				
-				while (q.size() > 0) {
-					double p = q.peek();
-					RGB cl = (RGB) q.next();
-					c.addTo(cl.multiply(p / tot));
-				}
-				
-				// c = im[a][b];
+
+				double x[] = plane.getSpatialCoords(new double[] {u, v});
+				VectorMath.addTo(x, planePos);
+				double d[] = VectorMath.multiply(x, -1.0 / VectorMath.length(x), true);
+
+				Vector vx = new Vector(x[0], x[1], x[2]);
+				Vector vd = new Vector(d[0], d[1], d[2]);
+				vx.addTo(location);
+
+				return new Ray(vx, vd);
 			}
-			
-			this.colorable.setColor(c.getRed(), c.getGreen(), c.getBlue());
-		}
-		
-		double x[] = this.plane.getSpatialCoords(new double[] {u, v});
-		VectorMath.addTo(x, this.planePos);
-		double d[] = VectorMath.multiply(x, -1.0 / VectorMath.length(x), true);
-		
-		Vector vx = new Vector(x[0], x[1], x[2]);
-		Vector vd = new Vector(d[0], d[1], d[2]);
-		vx.addTo(this.location);
-		
-		return new Ray(vx, vd);
+
+			@Override
+			public void compact() {
+				// TODO
+			}
+		};
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.Producer;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 
@@ -47,7 +47,7 @@ public class CSG extends AbstractSurface {
   public static final int INTERSECTION = 3;
   
   private int type;
-  private AbstractSurface sa, sb;
+  private AbstractSurface<ShadableIntersection> sa, sb;
   
   private boolean inverted;
 
@@ -70,9 +70,7 @@ public class CSG extends AbstractSurface {
 		this.inverted = false;
 	}
 	
-    /**
-     * @return  null.
-     */
+    /** @return  null. */
     @Override
     public VectorProducer getNormalAt(Vector point) { return null; }
 
@@ -83,98 +81,92 @@ public class CSG extends AbstractSurface {
      */
     @Override
     public boolean intersect(Ray ray) {
-		if (this.intersectAt(ray).getIntersections().length <= 0)
-		    return false;
-		else
-		    return true;
+		throw new RuntimeException("Not implemented");
     }
 
     /**
-     * @see  ShadableSurface#intersectAt(org.almostrealism.geometry.Ray)
+     * @see  Intersectable#intersectAt(Producer)
      */
     @Override
-    public ShadableIntersection intersectAt(Ray ray) {
-        ray.transform(this.getTransform(true).getInverse());
+    public Producer<ShadableIntersection> intersectAt(Producer r) {
+        TransformMatrix m  = getTransform(true);
+        if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+
+        final Producer<Ray> fr = r;
         
         if (this.type == CSG.UNION) {
-            return Intersections.closestIntersection(ray,
-                    Arrays.asList((Intersectable<ShadableIntersection, ?>) this.sa,
-                                    (Intersectable<ShadableIntersection, ?>) this.sb));
+            return new ClosestIntersection<>(r, Arrays.asList(this.sa, this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
-            if (this.inverted) {
-                double scale[] = this.sb.getScaleCoefficients();
-                this.sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
-                this.inverted = false;
-            }
-            
-            if (!this.sa.intersect((Ray)ray.clone()))
-                return new ShadableIntersection(ray, this, new double[0]);
-            
-            double a[] = this.sa.intersectAt((Ray)ray.clone()).getIntersections();
-            if (a.length <= 0)
-                return new ShadableIntersection(ray, this, new double[0]);
-            
-            double b[] = null;
-            
-            if (this.sb.intersect((Ray)ray.clone()))
-                b = this.sb.intersectAt((Ray)ray.clone()).getIntersections();
-            else
-                b = new double[0];
-            
-            StringBuffer sta = new StringBuffer("a = [");
-            for (int i = 0; i < a.length - 1; i++) sta.append(a[i] + ", ");
-            sta.append(a[a.length - 1] + "]");
-            System.out.println(sta);
-            
-            if (b.length > 0) {
-                StringBuffer stb = new StringBuffer("b = [");
-            	for (int i = 0; i < b.length - 1; i++) stb.append(b[i] + ", ");
-            	if (b.length > 0) stb.append(b[b.length - 1] + "]");
-            	System.out.println(stb);
-            }
-            
-            double i[][] = null;
-            
-            if (b.length > 0)
-                i = this.intervalDifference(this.interval(a), this.interval(b));
-            else
-                i = new double[][] {this.interval(a), {0.0, 0.0}};
-            
-            AbstractSurface s = null;
-            double intersect[];
-            
-            if (i[0][1] - i[0][0] > Intersection.e) {
-                if (i[1][1] - i[1][0] > Intersection.e) {
-                    intersect = new double[] {i[0][0], i[0][1], i[1][0], i[1][0]};
-                } else {
-                    intersect = i[0];
-                }
-                
-                s = this.sa;
-                
-                if (this.inverted) {
-                    double scale[] = this.sb.getScaleCoefficients();
-                    this.sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
-                    this.inverted = false;
-                }
-            } else {
-                if (i[1][1] - i[1][0] > Intersection.e) {
-                    intersect = i[1];
-                } else {
-                    intersect = new double[0];
-                }
-                
-                s = this.sb;
-                
-                if (!this.inverted) {
-                    double scale[] = this.sb.getScaleCoefficients();
-                    this.sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
-                    this.inverted = true;
-                }
-            }
-            
-            return new ShadableIntersection(ray, s, intersect);
+			throw new RuntimeException("Not implemented");
+        	/* TODO
+        	return new Producer<ShadableIntersection>() {
+				@Override
+				public ShadableIntersection evaluate(Object[] args) {
+					Ray ray = fr.evaluate(args);
+
+					if (inverted) {
+						double scale[] = sb.getScaleCoefficients();
+						sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
+						inverted = false;
+					}
+
+					ShadableIntersection a = sa.intersectAt(fr).evaluate(args); // TODO  Move intersectAt call outside of inner class
+					if (a == null) return null;
+
+					ShadableIntersection b = sb.intersectAt(fr).evaluate(args); // TODO  Move intersectAt call outside of inner class
+
+					double i[][] = null;
+
+					if (b.length > 0)
+						i = intervalDifference(interval(a), interval(b));
+					else
+						i = new double[][] {interval(a), {0.0, 0.0}};
+
+					AbstractSurface s = null;
+					double intersect[];
+
+					if (i[0][1] - i[0][0] > Intersection.e) {
+						if (i[1][1] - i[1][0] > Intersection.e) {
+							intersect = new double[] {i[0][0], i[0][1], i[1][0], i[1][0]};
+						} else {
+							intersect = i[0];
+						}
+
+						s = this.sa;
+
+						if (this.inverted) {
+							double scale[] = this.sb.getScaleCoefficients();
+							this.sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
+							this.inverted = false;
+						}
+					} else {
+						if (i[1][1] - i[1][0] > Intersection.e) {
+							intersect = i[1];
+						} else {
+							intersect = new double[0];
+						}
+
+						s = this.sb;
+
+						if (!this.inverted) {
+							double scale[] = this.sb.getScaleCoefficients();
+							this.sb.setScaleCoefficients(-1.0 * scale[0], -1.0 * scale[1], -1.0 * scale[2]);
+							this.inverted = true;
+						}
+					}
+
+					return new ShadableIntersection(ray, s, intersect);
+				}
+
+				@Override
+				public void compact() {
+					// TODO
+				}
+			};
+			*/
         } else if (this.type == CSG.INTERSECTION) {
+        	throw new RuntimeException("Not implemented");
+        	/* TODO
             double a[] = this.sa.intersectAt((Ray)ray.clone()).getIntersections();
             if (a.length < 0) return new ShadableIntersection(ray, this, new double[0]);
             double b[] = this.sb.intersectAt((Ray)ray.clone()).getIntersections();
@@ -195,6 +187,7 @@ public class CSG extends AbstractSurface {
                 return new ShadableIntersection(ray, s, i);
             else
                 return new ShadableIntersection(ray, s, new double[0]);
+            */
         } else {
             return null;
         }

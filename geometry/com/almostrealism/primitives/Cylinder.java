@@ -22,6 +22,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.Producer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -115,42 +116,58 @@ public class Cylinder extends AbstractSurface {
 	 * represented by the specified {@link Ray} that intersection between the ray
 	 * and the cylinder represented by this {@link Cylinder} occurs.
 	 */
-	public ShadableIntersection intersectAt(Ray ray) {
-		ray.transform(this.getTransform(true).getInverse());
-		
-		Vector a = (Vector) ray.getOrigin();
-		Vector d = (Vector) ray.getDirection();
-		
-		double al = a.length();
-		double dl = d.length();
-		
-		a.setY(0.0);
-		d.setY(0.0);
-		
-		a.multiplyBy(al / a.length());
-		d.multiplyBy(dl / d.length());
-		
-		double b = d.dotProduct(a);
-		double c = a.dotProduct(a);
-		double g = d.dotProduct(d);
-		
-		double discriminant = (b * b) - (g) * (c - 1);
-		double discriminantSqrt = Math.sqrt(discriminant) / g;
-		
-		double t0 = 0.0, t1 = 0.0;
-		
-		t0 = (-b / g) + discriminantSqrt;
-		t1 = (-b / g) - discriminantSqrt;
-		
-		double l0 = ray.pointAt(t0).getY();
-		double l1 = ray.pointAt(t1).getY();
-		
-		if (l0 >= 0 && l0 <= 1.0)
-			return new ShadableIntersection(ray, this, new double[] { l0 });
-		else if (l1 >= 0 && l1 <= 1.0)
-			return new ShadableIntersection(ray, this, new double[] { l1 });
-		else
-			return new ShadableIntersection(ray, this, new double[0]);
+	@Override
+	public Producer<ShadableIntersection> intersectAt(Producer r) {
+		TransformMatrix m = getTransform(true);
+		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+
+		final Producer<Ray> fr = r;
+
+		return new Producer<ShadableIntersection>() {
+			@Override
+			public ShadableIntersection evaluate(Object[] args) {
+				Ray ray = fr.evaluate(args);
+
+				Vector a = ray.getOrigin();
+				Vector d = ray.getDirection();
+
+				double al = a.length();
+				double dl = d.length();
+
+				a.setY(0.0);
+				d.setY(0.0);
+
+				a.multiplyBy(al / a.length());
+				d.multiplyBy(dl / d.length());
+
+				double b = d.dotProduct(a);
+				double c = a.dotProduct(a);
+				double g = d.dotProduct(d);
+
+				double discriminant = (b * b) - (g) * (c - 1);
+				double discriminantSqrt = Math.sqrt(discriminant) / g;
+
+				double t0 = 0.0, t1 = 0.0;
+
+				t0 = (-b / g) + discriminantSqrt;
+				t1 = (-b / g) - discriminantSqrt;
+
+				double l0 = ray.pointAt(t0).getY();
+				double l1 = ray.pointAt(t1).getY();
+
+				if (l0 >= 0 && l0 <= 1.0)
+					return new ShadableIntersection(ray, Cylinder.this, new Scalar(l0));
+				else if (l1 >= 0 && l1 <= 1.0)
+					return new ShadableIntersection(ray, Cylinder.this, new Scalar(l1));
+				else
+					return null;
+			}
+
+			@Override
+			public void compact() {
+				// TODO
+			}
+		};
 	}
 
 	@Override

@@ -19,6 +19,7 @@ package com.almostrealism.projection;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
@@ -26,15 +27,18 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.Producer;
 
 /**
- * The OrthographicCamera class provides an orthographic porjection camera.
- * The camera location is, as expected, the location from which the camera views, represented as a vector.
- * This value is by default at the origin. The viewing direction is a vector that represents
- * the direction the camera is viewing. This value is by default aligned to the positive Z axis,
- * or (0.0, 0.0, 1.0). The up direction is a vector that represents the orientation of the camera's "up."
- * This value is by default aligned with the positive y axis or (0.0, 1.0, 0.0).
- * The projection dimensions of the camera are the dimensions of the viewing plane.
+ * The {@link OrthographicCamera} provides an orthographic projection camera.
+ * The camera location is, as expected, the location from which the camera
+ * views, represented as a vector. This value is by default at the origin.
+ * The viewing direction is a vector that represents the direction the camera
+ * is viewing. This value is by default aligned to the positive Z axis, or
+ * (0.0, 0.0, 1.0). The up direction is a vector that represents the
+ * orientation of the camera's "up." This value is by default aligned with
+ * the positive y axis or (0.0, 1.0, 0.0). The projection dimensions of the
+ * camera are the dimensions of the viewing plane.
  * 
  * @author  Michael Murray
  */
@@ -43,7 +47,7 @@ public class OrthographicCamera implements Camera, Positioned {
 	private Vector location = new Vector(0.0, 0.0, 0.0);
 	private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
 	private Vector upDirection = new Vector(0.0, 1.0, 0.0);
-	private double projectionX, projectionY;
+	private Pair projectionDimensions = new Pair();
   
 	protected Vector u, v, w;
   
@@ -123,9 +127,11 @@ public class OrthographicCamera implements Camera, Positioned {
 	 * Sets the projection dimensions to the specified projection dimensions.
 	 */
 	public void setProjectionDimensions(double projectionX, double projectionY) {
-		this.projectionX = projectionX;
-		this.projectionY = projectionY;
+		this.projectionDimensions.setX(projectionX);
+		this.projectionDimensions.setY(projectionY);
 	}
+
+	public Pair getProjectionDimensions() { return projectionDimensions; }
 	
 	/**
 	 * Sets the projection width of this OrthographicCamera object to the specified projection width.
@@ -135,7 +141,7 @@ public class OrthographicCamera implements Camera, Positioned {
 			Settings.cameraOut.println("CAMERA: Projection width being set to " + projectionX);
 		}
 		
-		this.projectionX = projectionX;
+		this.projectionDimensions.setX(projectionX);
 	}
 	
 	/**
@@ -146,17 +152,13 @@ public class OrthographicCamera implements Camera, Positioned {
 			Settings.cameraOut.println("CAMERA: Projection height being set to " + projectionY);
 		}
 		
-		this.projectionY = projectionY;
+		this.projectionDimensions.setY(projectionY);
 	}
 
-	/**
-	 * Returns the ratio of the projection width of this camera to the projection height of this camera.
-	 */
+	/** Returns the ratio of the projection width of this camera to the projection height of this camera. */
 	public double getAspectRatio() { return getProjectionWidth() / getProjectionHeight(); }
 	
-	/**
-	 * Updates the orthonormal vectors used to describe camera space for this OrthographicCamera object.
-	 */
+	/** Updates the orthonormal vectors used to describe camera space for this {@link OrthographicCamera}. */
 	public void updateUVW() {
 		this.w = (this.viewDirection.divide(this.viewDirection.length())).minus();
 		
@@ -191,10 +193,10 @@ public class OrthographicCamera implements Camera, Positioned {
 	public Vector getUpDirection() { return this.upDirection; }
 	
 	/** Returns the projection width of this {@link OrthographicCamera} object as a double value. */
-	public double getProjectionWidth() { return this.projectionX; }
+	public double getProjectionWidth() { return projectionDimensions.getX(); }
 	
 	/** Returns the projection height of this {@link OrthographicCamera} object as a double value. */
-	public double getProjectionHeight() { return this.projectionY; }
+	public double getProjectionHeight() { return projectionDimensions.getY(); }
 	
 	/**
 	 * @return  A {@link TransformMatrix} object that can be used to convert coordinates in the
@@ -208,19 +210,32 @@ public class OrthographicCamera implements Camera, Positioned {
 	    return new TransformMatrix(matrix);
 	}
 	
-	/**
-	 * @see org.almostrealism.algebra.Camera#rayAt(double, double, int, int)
-	 */
-	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
-		double x = this.projectionX * ((i / screenWidth) - 0.5);
-		double y = this.projectionY * ((j / screenHeight) - 0.5);
-		
-		Vector o = new Vector(x, y, 0.0);
-		this.getRotationMatrix().getInverse().transform(o, TransformMatrix.TRANSFORM_AS_LOCATION);
-		
-		return new Ray(o, this.viewDirection);
+	/** @see org.almostrealism.algebra.Camera#rayAt(Producer, Producer) */
+	@Override
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+		return new Producer<Ray>() {
+			@Override
+			public Ray evaluate(Object[] args) {
+				Pair p = pos.evaluate(args);
+				Pair screenDim = sd.evaluate(args);
+
+				double x = getProjectionWidth() * ((p.getX() / screenDim.getX()) - 0.5);
+				double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
+
+				Vector o = new Vector(x, y, 0.0);
+				getRotationMatrix().getInverse().transform(o, TransformMatrix.TRANSFORM_AS_LOCATION);
+
+				return new Ray(o, viewDirection);
+			}
+
+			@Override
+			public void compact() {
+				// TODO
+			}
+		};
 	}
 
+	@Override
 	public Scope<Variable<?>> getScope(String prefix) {
 		throw new RuntimeException("getScope not implemented");
 	}

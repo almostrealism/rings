@@ -21,19 +21,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.RenderParameters;
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
-import org.almostrealism.geometry.Ray;
 
 import io.almostrealism.lambda.Realization;
-import org.almostrealism.relation.PairFunction;
+import org.almostrealism.util.PassThroughProducer;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
-public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, PairFunction<Future<ColorProducer>> {
+public class RayTracedScene implements Realization<RealizableImage, RenderParameters> {
 	private RayTracer tracer;
 	private Camera camera;
 	private RenderParameters p;
@@ -59,19 +58,13 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 	public RenderParameters getRenderParameters() { return p; }
 
-	@Override
-	public Future<ColorProducer> operate(Pair uv) {
-		double r = uv.a();
-		double q = uv.b();
-
-		Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-
-		Future<ColorProducer> color = tracer.trace(ray.getOrigin(), ray.getDirection());
+	public Future<Producer<RGB>> operate(Producer<Pair> uv, Producer<Pair> sd) {
+		Future<Producer<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
 
 		if (color == null) {
-			color = new Future<ColorProducer>() {
+			color = new Future<Producer<RGB>>() {
 				@Override
-				public ColorProducer get() {
+				public RGB get() {
 					return RayTracedScene.black;
 				}
 
@@ -96,44 +89,22 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	}
 
 	@Override
-	public Scope<Variable<?>> getScope(String prefix) {
-		Scope<Variable<?>> s = new Scope<>();
-		// TODO  Add Ray produced by camera to the Scope (Camera should implement Computation).
-		return s;
-	}
-
-	@Override
 	public RealizableImage realize(RenderParameters p) {
 		this.p = p;
 
-		Pixel image[][] = new Pixel[p.dx][p.dy];
+		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
 
-		Thread t = new Thread(() -> {
-			for (int i = p.x; i < (p.x + p.dx); i++) {
-				System.out.println("RayTracedScene: Submitting col " + i);
+		long start = System.nanoTime();
 
-				long start = System.nanoTime();
-
-				for (int j = p.y; j < (p.y + p.dy); j++) {
-					Pixel px = new Pixel();
-
-					for (int k = 0; k < p.ssWidth; k++) {
-						for (int l = 0; l < p.ssHeight; l++) {
-							double r = i + ((double) k / (double) p.ssWidth);
-							double q = j + ((double) l / (double) p.ssHeight);
-							px.addSample(operate(new Pair(r, q)));
-						}
-					}
-
-					image[i - p.x][j - p.y] = px;
-				}
-
-				System.out.println("Submitted after " + (System.nanoTime() - start) + " nanoseconds");
+		for (int i = 0; i < p.ssWidth; i++) {
+			for (int j = 0; j < p.ssHeight; j++) {
+				px.setSample(i, j, operate(new PassThroughProducer<>(0),
+											new StaticProducer<>(new Pair(p.width, p.height))));
 			}
-		});
+		}
 
-		t.start();
+		System.out.println("Generated pixel template after " + (System.nanoTime() - start) + " nanoseconds");
 
-		return new RealizableImage(image);
+		return new RealizableImage(px, new Pair(p.width, p.height));
 	}
 }

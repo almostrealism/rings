@@ -18,10 +18,10 @@ package com.almostrealism;
 
 import com.almostrealism.lighting.*;
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.algebra.ClosestIntersection;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Intersection;
-import org.almostrealism.algebra.Intersections;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
@@ -31,16 +31,23 @@ import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.ParameterizedFactory;
+import org.almostrealism.util.Producer;
 
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public class LightingEngine {
-	private ParameterizedFactory<Ray, ContinuousField> fields;
+public class LightingEngine implements Producer<RGB> {
+	private Producer<? extends ContinuousField> intersections;
+	private Iterable<? extends Callable<ColorProducer>> allSurfaces;
+	private Light allLights[];
+	private ShaderContext p;
 
-	public LightingEngine(ParameterizedFactory<Ray, ContinuousField> fields) {
-		this.fields = fields;
+	public LightingEngine(Producer<? extends ContinuousField> intersections, Iterable<? extends Callable<ColorProducer>> allSurfaces,
+						  Light allLights[], ShaderContext p) {
+		this.intersections = intersections;
+		this.allSurfaces = allSurfaces;
+		this.allLights = allLights;
+		this.p = p;
 	}
 
 	/**
@@ -48,10 +55,8 @@ public class LightingEngine {
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
 	 * (or "nothing").
 	 */
-	public ColorSum lightingCalculation(Ray r, Iterable<? extends Callable<ColorProducer>> allSurfaces,
-										Light allLights[], RGB fog, double fd, double fr, ShaderContext p) {
-		fields.setParameter(Ray.class, r);
-		ContinuousField intersect = fields.construct();
+	public RGB evaluate(Object args[]) {
+		ContinuousField intersect = intersections.evaluate(args);
 		
 		ColorSum color = new ColorSum();
 
@@ -82,8 +87,8 @@ public class LightingEngine {
 				try {
 					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
 							shadowCalculation(intersect.get(0).call().getOrigin(),
-									Intersections.filterIntersectables(allSurfaces), allLights[i]))
-						return new ColorSum();
+									IntersectionalLightingEngine.filterIntersectables(allSurfaces), allLights[i]))
+						return null;
 				} catch (Exception e) {
 					e.printStackTrace();
 					return null;
@@ -91,7 +96,7 @@ public class LightingEngine {
 
 				if (allLights[i] instanceof SurfaceLight) {
 					try {
-						c = lightingCalculation(intersect, intersect.get(0).call().getOrigin(), r.getDirection(),
+						c = lightingCalculation(intersect, intersect.get(0).call().getOrigin(),
 												surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -157,7 +162,7 @@ public class LightingEngine {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput)
 			Settings.rayEngineOut.println();
 
-		return color;
+		return color.evaluate(args);
 
 //		Intersection intersect = RayTracingEngine.closestIntersection(ray, surfaces);
 //
@@ -216,6 +221,12 @@ public class LightingEngine {
 //		}
 	}
 
+	@Override
+	public void compact() {
+		// TODO Hardware acceleration
+		intersections.compact();
+	}
+
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of intersection
 	 * on that surface using the lighting data from the specified Light objects and returns an RGB object
@@ -223,7 +234,7 @@ public class LightingEngine {
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static ColorSum lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
+	public static ColorSum lightingCalculation(ContinuousField intersection, Vector point,
 											   Callable<ColorProducer> surface, Collection<Callable<ColorProducer>> otherSurfaces,
 											   Light lights[], ShaderContext p) {
 		ColorSum color = new ColorSum();
@@ -236,8 +247,8 @@ public class LightingEngine {
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 
-			ColorProducer c = lightingCalculation(intersection, point, rayDirection, surface,
-					otherSurfaces, lights[i], otherLights, p);
+			ColorProducer c = lightingCalculation(intersection, point, surface,
+										otherSurfaces, lights[i], otherLights, p);
 			if (c != null) color.add(c);
 		}
 
@@ -251,30 +262,28 @@ public class LightingEngine {
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer lightingCalculation(ContinuousField intersection, Vector point, Vector rayDirection,
+	public static ColorProducer lightingCalculation(ContinuousField intersection, Vector point,
 													Callable<ColorProducer> surface,
 													Collection<Callable<ColorProducer>> otherSurfaces, Light light,
 													Light otherLights[], ShaderContext p) {
-		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
+		List<Callable<ColorProducer>> allSurfaces = new ArrayList<>();
 		for (Callable<ColorProducer> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
 
 		if (LegacyRayTracingEngine.castShadows && light.castShadows &&
-				shadowCalculation(point, Intersections.filterIntersectables(allSurfaces), light))
+				shadowCalculation(point, IntersectionalLightingEngine.filterIntersectables(allSurfaces), light))
 			return new RGB(0.0, 0.0, 0.0);
 
 		if (light instanceof SurfaceLight) {
 			Light l[] = ((SurfaceLight) light).getSamples();
-			return   lightingCalculation(intersection, point, rayDirection,
+			return   lightingCalculation(intersection, point,
 					surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
 			return PointLight.pointLightingCalculation(intersection, point,
-					rayDirection, surface,
-					otherSurfaces, (PointLight) light, otherLights, p);
+					surface, otherSurfaces, (PointLight) light, otherLights, p);
 		} else if (light instanceof DirectionalAmbientLight) {
 			return DirectionalAmbientLight.directionalAmbientLightingCalculation(
-					intersection, point,
-					rayDirection, surface,
+					intersection, surface,
 					otherSurfaces,
 					(DirectionalAmbientLight) light, otherLights, p);
 		} else if (light instanceof AmbientLight) {
@@ -289,7 +298,7 @@ public class LightingEngine {
 	 * Performs the shadow calculations for the specified surfaces at the specified point using the data
 	 * from the specified Light object. Returns true if the point has a shadow cast on it.
 	 */
-	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterator<Intersectable<T, ?>> surfaces, Light light) {
+	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterable<Intersectable<T, ?>> surfaces, Light light) {
 		double maxDistance = -1.0;
 		Vector direction = null;
 
@@ -303,12 +312,23 @@ public class LightingEngine {
 			return false;
 		}
 
-		Ray shadowRay = new Ray(point, direction);
+		final Vector fdirection = direction;
 
-		T closestIntersectedSurface = Intersections.closestIntersection(shadowRay, surfaces);
+		Producer<Ray> shadowRay = new Producer() {
+			@Override
+			public Ray evaluate(Object[] objects) {
+				return new Ray(point, fdirection);
+			}
+
+			@Override
+			public void compact() { }
+		};
+
+		ClosestIntersection<T> intersection = new ClosestIntersection<>(shadowRay, surfaces);
+		T closestIntersectedSurface = intersection.evaluate(new Object[0]);
 		double intersect = 0.0;
 		if (closestIntersectedSurface != null)
-			intersect = closestIntersectedSurface.getClosestIntersection();
+			intersect = closestIntersectedSurface.getIntersection().getValue();
 
 		if (closestIntersectedSurface == null || intersect <= Intersection.e || (maxDistance >= 0.0 && intersect > maxDistance)) {
 			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
@@ -329,7 +349,7 @@ public class LightingEngine {
 	 * Reflects the specified {@link Vector} across the normal vector represented by the
 	 * second specified {@link Vector} and returns the result.
 	 */
-	public static Vector reflect(Vector vector, Vector normal) {
+	public static Vector reflect(Vector vector, Vector normal) { // TODO  Should return Producer
 		vector = vector.minus();
 		return vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
 	}
