@@ -28,6 +28,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.Producer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,9 +36,7 @@ import java.util.concurrent.TimeoutException;
 
 // TODO Add ParticleGroup implementation.
 
-/**
- * A Sphere represents a primitive sphere in 3d space.
- */
+/** A {@link Sphere} represents a primitive sphere in 3d space. */
 public class Sphere extends AbstractSurface implements DistanceEstimator {
 	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
 	public Sphere() { }
@@ -132,22 +131,50 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * by the specified Ray object that intersection between the ray and the sphere
 	 * represented by this Sphere object occurs.
 	 */
-	public ShadableIntersection intersectAt(Ray ray) {
-		ray.transform(this.getTransform(true).getInverse());
-		
-		double b = ray.oDotd();
-		double c = ray.oDoto();
-		double g = ray.dDotd();
-		
-		double discriminant = (b * b) - (g) * (c - 1);
-		double discriminantSqrt = Math.sqrt(discriminant);
-		
-		double t[] = new double[2];
-		
-		t[0] = (-b + discriminantSqrt) / (g);
-		t[1] = (-b - discriminantSqrt) / (g);
-		
-		return new ShadableIntersection(ray, this, t);
+	@Override
+	public Producer<ShadableIntersection> intersectAt(Producer r) {
+		TransformMatrix m = getTransform(true);
+		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+
+		final Producer<Ray> fr = r;
+
+		return new Producer<ShadableIntersection>() {
+			@Override
+			public ShadableIntersection evaluate(Object[] args) {
+				Ray ray = fr.evaluate(args);
+
+				double b = ray.oDotd();
+				double c = ray.oDoto();
+				double g = ray.dDotd();
+
+				double discriminant = (b * b) - (g) * (c - 1);
+				double discriminantSqrt = Math.sqrt(discriminant);
+
+				double t[] = new double[2];
+
+				t[0] = (-b + discriminantSqrt) / (g);
+				t[1] = (-b - discriminantSqrt) / (g);
+
+				if (t[0] > 0 && t[1] > 0) {
+					if (t[0] < t[1]) {
+						return new ShadableIntersection(ray, Sphere.this, new Scalar(t[0]));
+					} else {
+						return new ShadableIntersection(ray, Sphere.this, new Scalar(t[1]));
+					}
+				} else if (t[0] > 0) {
+					return new ShadableIntersection(ray, Sphere.this, new Scalar(t[0]));
+				} else if (t[1] > 0) {
+					return new ShadableIntersection(ray, Sphere.this, new Scalar(t[1]));
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			public void compact() {
+
+			}
+		};
 	}
 	
 	@Override

@@ -25,13 +25,15 @@ import java.util.Collection;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
+import org.almostrealism.util.PassThroughProducer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * The {@link LegacyRayTracingEngine} class provides static methods for rendering scenes.
@@ -125,11 +127,12 @@ public class LegacyRayTracingEngine {
 				for (int l = 0; l < p.ssHeight; l++) {
 					double r = i + ((double)k / (double)p.ssWidth);
 					double q = j + ((double)l / (double)p.ssHeight);
-					
-					Ray ray = camera.rayAt(r, p.height - q, p.width, p.height);
-					IntersectionalLightingEngine le = new IntersectionalLightingEngine(surfaces);
-					RGB color = le.lightingCalculation(ray, surfaces, lights,
-										f.fogColor, f.fogDensity, f.fogRatio, null).evaluate(null);
+
+					IntersectionalLightingEngine le = new IntersectionalLightingEngine(
+														camera.rayAt(new PassThroughProducer<>(0),
+																	new StaticProducer<>(new Pair(p.width, p.height))),
+																	surfaces, lights, null);
+					RGB color = le.evaluate(new Object[] { new Pair(r, p.height - q) });
 					
 					if (color == null) {
 						// System.out.println("null");

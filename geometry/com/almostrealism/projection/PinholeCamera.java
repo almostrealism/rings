@@ -16,11 +16,17 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.math.AcceleratedProducer;
+import org.almostrealism.math.Hardware;
+import org.almostrealism.math.HardwareOperator;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.Producer;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the location, viewing direction,
@@ -43,6 +49,8 @@ import com.almostrealism.raytracer.Settings;
  */
 @ModelEntity
 public class PinholeCamera extends OrthographicCamera {
+	public static boolean enableHardwareAcceleration = true;
+
   	private double focalLength = 1.0;
   	private double blur = 0.0;
 
@@ -139,75 +147,106 @@ public class PinholeCamera extends OrthographicCamera {
 	
 	/**
 	 * Returns a Ray object that represents a line of sight from the camera represented by this PinholeCamera object.
-	 * The first two parameters are the coordinates across the camera. These coordinates corespond to the pixels on the rendered image.
-	 * The second two parameters specifiy the total integer width and height of the screen.
-	 * Although the pixels on the screen must be in integer coordinates, this method provides the ability to create super high resolution images
-	 * by allowing you to devote a single pixel to only a fraction of the theoretical camera surface. This effect can be used to produce large images
-	 * from small scenes while retaining acuracy.
+	 * The first two parameters are the coordinates across the camera. These coordinates correspond to the pixels on
+	 * the rendered image. The second pair of parameters specify the total integer width and height of the screen.
+	 * Although the pixels on the screen must be in integer coordinates, this method provides the ability to create
+	 * super high resolution images by allowing you to devote a single pixel to only a fraction of the theoretical
+	 * camera surface. This effect can be used to produce large images from small scenes while retaining accuracy.
 	 */
-	public Ray rayAt(double i, double j, int screenWidth, int screenHeight) {
+	@Override
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
 			Settings.cameraOut.println("CAMERA: U = " + this.u.toString() + ", V = " + this.v.toString() + ", W = " + this.w.toString());
 		}
-		
-		double au = -(super.getProjectionWidth() / 2);
-		double av = -(super.getProjectionHeight() / 2);
-		double bu = super.getProjectionWidth() / 2;
-		double bv = super.getProjectionHeight() / 2;
-		
-		Vector p = super.u.multiply((au + (bu - au) * (i / (screenWidth - 1))));
-		Vector q = super.v.multiply((av + (bv - av) * (j / (screenHeight - 1))));
-		Vector r = super.w.multiply(-this.focalLength);
-		
-		Vector rayDirection = p;
-		rayDirection.addTo(q);
-		rayDirection.addTo(r);
-		
-		double l = rayDirection.length();
-		
-		if (this.blur != 0.0) {
-			double a = this.blur * (-0.5 + Math.random());
-			double b = this.blur * (-0.5 + Math.random());
-			
-			Vector u, v, w = (Vector) rayDirection.clone();
-			
-			Vector t = (Vector) rayDirection.clone();
-			
-			if (t.getX() < t.getY() && t.getY() < t.getZ()) {
-				t.setX(1.0);
-			} else if (t.getY() < t.getX() && t.getY() < t.getZ()) {
-				t.setY(1.0);
-			} else {
-				t.setZ(1.0);
-			}
-			
-			w.divideBy(w.length());
-			
-			u = t.crossProduct(w);
-			u.divideBy(u.length());
-			
-			v = w.crossProduct(u);
-			
-			rayDirection.addTo(u.multiply(a));
-			rayDirection.addTo(v.multiply(b));
-			rayDirection.multiplyBy(l / rayDirection.length());
+
+		if (enableHardwareAcceleration) {
+			Producer<Ray> newRay = new Producer<Ray>() {
+				@Override
+				public Ray evaluate(Object[] args) { return new Ray(); }
+
+				@Override
+				public void compact() { }
+			};
+
+			return new AcceleratedProducer<>("pinholeCameraRayAt", false, false,
+											new Producer[] { newRay, pos, sd },
+											new Object[] { getLocation(), getProjectionDimensions(),
+															new Pair(blur * (Math.random() - 0.5), blur * (Math.random() - 0.5)),
+															new Scalar(focalLength),
+															u, v, w });
+		} else {
+			return new Producer<Ray>() {
+				@Override
+				public Ray evaluate(Object[] args) {
+					Pair pos = (Pair) args[0];
+					Pair screenDim = (Pair) args[1];
+
+					double au = -(getProjectionWidth() / 2);
+					double av = -(getProjectionHeight() / 2);
+					double bu = getProjectionWidth() / 2;
+					double bv = getProjectionHeight() / 2;
+
+					Vector p = u.multiply((au + (bu - au) * (pos.getX() / (screenDim.getX() - 1))));
+					Vector q = v.multiply((av + (bv - av) * (pos.getY() / (screenDim.getY() - 1))));
+					Vector r = w.multiply(-focalLength);
+
+					Vector rayDirection = p;
+					rayDirection.addTo(q);
+					rayDirection.addTo(r);
+
+					double l = rayDirection.length();
+
+					if (blur != 0.0) {
+						double a = blur * (-0.5 + Math.random());
+						double b = blur * (-0.5 + Math.random());
+
+						Vector u, v, w = (Vector) rayDirection.clone();
+
+						Vector t = (Vector) rayDirection.clone();
+
+						if (t.getX() < t.getY() && t.getY() < t.getZ()) {
+							t.setX(1.0);
+						} else if (t.getY() < t.getX() && t.getY() < t.getZ()) {
+							t.setY(1.0);
+						} else {
+							t.setZ(1.0);
+						}
+
+						w.divideBy(w.length());
+
+						u = t.crossProduct(w);
+						u.divideBy(u.length());
+
+						v = w.crossProduct(u);
+
+						rayDirection.addTo(u.multiply(a));
+						rayDirection.addTo(v.multiply(b));
+						rayDirection.multiplyBy(l / rayDirection.length());
+					}
+
+					Ray ray = new Ray(getLocation(), rayDirection);
+
+					if (Settings.produceOutput && Settings.produceCameraOutput) {
+						Settings.cameraOut.println("CAMERA (" + this.toString() + ") : Ray at (" + pos + ", " + screenDim + ") = " + ray.toString());
+					}
+
+					return ray;
+				}
+
+				@Override
+				public void compact() {
+					// TODO
+				}
+			};
 		}
-		
-		Ray ray = new Ray(super.getLocation(), rayDirection);
-		
-		if (Settings.produceOutput && Settings.produceCameraOutput) {
-			Settings.cameraOut.println("CAMERA (" + this.toString() + ") : Ray at (" + i + ", " + j + ", " + screenWidth + ", " + screenHeight + ") = " + ray.toString());
-		}
-		
-		return ray;
 	}
 	
 	public String toString() {
 		return "PinholeCamera - " +
-				super.getLocation() + " " +
-				super.getViewDirection() + " " +
-				super.getProjectionWidth() + "x" +
-				super.getProjectionHeight();
+				getLocation() + " " +
+				getViewDirection() + " " +
+				getProjectionWidth() + "x" +
+				getProjectionHeight();
 	}
 }
 

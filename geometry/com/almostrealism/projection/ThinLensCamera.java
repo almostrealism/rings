@@ -16,11 +16,13 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.Producer;
 
 /**
  * A ThinLensCamera object provides a camera with viewing rays that originate
@@ -144,40 +146,53 @@ public class ThinLensCamera extends PinholeCamera {
 	 * by the PinholeCamera, but with a position that is a random sample
 	 * from a disk.
 	 */
-	public Ray rayAt(double i, double j, int screenW, int screenH) {
+	@Override
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
 		// super.setProjectionDimensions(w * u, h * u);
-		Ray ray = super.rayAt(i, j, screenW, screenH);
-		// uper.setProjectionDimensions(w, h);
-		
-		double r = Math.random() * this.radius;
-		double theta = Math.random() * Math.PI * 2;
-		Vector v = new Vector(r, Math.PI / 2.0, theta, Vector.SPHERICAL_COORDINATES);
-		v.addTo(super.getLocation());
-		
-		Vector d = ray.getOrigin();
-		d.subtractFrom(v);
-		
-		Vector rd = ray.getDirection();
-		double rdl = rd.length();
-		
-		if (Settings.produceCameraOutput) {
-			Settings.cameraOut.println("ThinLensCamera: " + w + " X " + h + " U = " + u);
-			Settings.cameraOut.println("ThinLensCamera: Lens sample = " + v);
-			Settings.cameraOut.println("ThinLensCamera: Ray origin = " + ray.getOrigin() +
-										" direction = " + ray.getDirection());
-		}
-		
-		ray.setOrigin(v);
-		
-		rd.addTo(d);
-		rd.multiplyBy(rd.length() / rdl);
-		ray.setDirection(rd);
-		
-		if (Settings.produceCameraOutput) {
-			Settings.cameraOut.println("ThinLensCamera: New ray origin = " + ray.getOrigin() +
-										" direction = " + ray.getDirection());
-		}
-		
-		return ray;
+		Producer<Ray> sray = super.rayAt(pos, sd);
+		// super.setProjectionDimensions(w, h);
+
+		return new Producer<Ray>() {
+			@Override
+			public Ray evaluate(Object[] args) {
+				Ray ray = sray.evaluate(args);
+
+				double r = Math.random() * radius;
+				double theta = Math.random() * Math.PI * 2;
+				Vector v = new Vector(r, Math.PI / 2.0, theta, Vector.SPHERICAL_COORDINATES);
+				v.addTo(getLocation());
+
+				Vector d = ray.getOrigin();
+				d.subtractFrom(v);
+
+				Vector rd = ray.getDirection();
+				double rdl = rd.length();
+
+				if (Settings.produceCameraOutput) {
+					Settings.cameraOut.println("ThinLensCamera: " + w + " X " + h + " U = " + u);
+					Settings.cameraOut.println("ThinLensCamera: Lens sample = " + v);
+					Settings.cameraOut.println("ThinLensCamera: Ray origin = " + ray.getOrigin() +
+							" direction = " + ray.getDirection());
+				}
+
+				ray.setOrigin(v);
+
+				rd.addTo(d);
+				rd.multiplyBy(rd.length() / rdl);
+				ray.setDirection(rd);
+
+				if (Settings.produceCameraOutput) {
+					Settings.cameraOut.println("ThinLensCamera: New ray origin = " + ray.getOrigin() +
+							" direction = " + ray.getDirection());
+				}
+
+				return ray;
+			}
+
+			@Override
+			public void compact() {
+				// TODO
+			}
+		};
 	}
 }

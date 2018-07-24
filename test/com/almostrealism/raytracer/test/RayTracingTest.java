@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
@@ -30,10 +29,11 @@ import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 
 public class RayTracingTest {
+	public static boolean waitUntilComplete = false;
 	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
 	public static boolean displaySpheres = true;
-	public static boolean displayDragon = false;
+	public static boolean displayDragon = true;
 
 	public static RayTracedScene generateScene() throws IOException {
 		Scene<ShadableSurface> scene = useCornellBox ?
@@ -62,13 +62,13 @@ public class RayTracingTest {
 		}
 
 		if (displayDragon) {
-			scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("dragon.ply")),
+			scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("resources/dragon.ply")),
 					FileDecoder.PLYEncoding, false, null)).get(0));
 		}
 
 		Plane p = new Plane(Plane.XY);
-		p.setLocation(new Vector(0, 0, 1));
-//		scene.add(p);
+		p.setLocation(new Vector(0, 0, -10));
+		scene.add(p);
 
 		for (ShadableSurface s : scene) {
 			if (s instanceof AbstractSurface) {
@@ -92,20 +92,17 @@ public class RayTracingTest {
 
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
 		if (c == null) {
-			c = new PinholeCamera(new Vector(0.0, -1.0, -1.0),
-					new Vector(0.0, 1.0, 1.0),
+			c = new PinholeCamera(new Vector(0.0, 0.0, -1.0),
+					new Vector(0.0, 0.0, 1.0),
 					new Vector(0.0, 1.0, 0.0));
 			scene.setCamera(c);
 		}
 
-		c.setViewDirection(new Vector(0.0, -0.05, 1.0));
+		c.setViewDirection(new Vector(0.0, -0.05, -1.0));
 		c.setProjectionDimensions(50, 45);
 		c.setFocalLength(400);
-		Vector l = c.getLocation();
-		l.setZ(-60);
-		c.setLocation(l);
 
-		new SurfaceCanvas(scene).autoPositionCamera();
+//		new SurfaceCanvas(scene).autoPositionCamera();
 
 		RenderParameters params = new RenderParameters();
 		params.width = (int) (c.getProjectionWidth() * 10);
@@ -121,7 +118,17 @@ public class RayTracingTest {
 
 		RealizableImage img = r.realize(r.getRenderParameters());
 
-		while (!img.isComplete()) {
+		if (waitUntilComplete) {
+			while (!img.isComplete()) {
+				try {
+					Thread.sleep(30000); // Wait 30 seconds before trying again
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		while (true) {
 			try {
 				ColorProducer im[][] = img.evaluate(new Object[0]);
 				ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
@@ -133,13 +140,15 @@ public class RayTracingTest {
 				System.out.println("IO ERROR");
 			}
 
+			if (img.isComplete()) {
+				System.exit(0);
+			}
+
 			try {
-				Thread.sleep(10000); // Wait 10 seconds before trying again
+				Thread.sleep(30000); // Wait 30 seconds before trying again
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-
-		System.exit(0);
 	}
 }

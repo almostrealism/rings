@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.swing.text.NumberFormatter;
 
@@ -71,7 +72,7 @@ public class RayMarchingTest {
 		Light l = new PointLight(new Vector(10.0, 10.0, -10.0),
 								0.8, new RGB(0.8, 0.9, 0.7));
 
-		RayMarchingEngine mandel = new RayMarchingEngine(l, estimator, new Light[] {l}, s);
+		RayMarchingEngine mandel = new RayMarchingEngine(new ArrayList<>(), new Light[] {l}, l, estimator, s);
 
 //		Sphere sphere = new Sphere(new Vector(0.0, 0.0, 0.0), 1.0,
 //										new RGB(0.8, 0.8, 0.8));

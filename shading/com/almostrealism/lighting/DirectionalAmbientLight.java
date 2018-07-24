@@ -26,15 +26,13 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.space.ShadableSurface;
 
 /**
-  A DirectionAmbientLight object represents an ambient light source that always comes from a particular direction.
-  The direction is a vector that represents the direction from which the light enters the scene.
-  By default the light comes from the top, parallel to the yz plane.
-*/
-
+ * A DirectionAmbientLight object represents an ambient light source that always
+ * comes from a particular direction. The direction is a vector that represents
+ * the direction from which the light enters the scene. By default the light
+ * comes from the top, parallel to the yz plane.
+ */
 public class DirectionalAmbientLight extends AmbientLight {
   private Vector direction;
 
@@ -96,19 +94,14 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 * the lighting calculations are to be done.
 	 * 
 	 * @param intersection  The intersection point on the surface to be shaded.
-	 * @param point  The intersection point on the surface to be shaded.
-	 * @param rayDirection  Direction of the ray that intersected the surface to be shaded.
 	 * @param surface  The Surface object to use for shading calculations.
 	 * @param otherSurfaces  An array of Surface objects that are also in the scene.
 	 * @param light  The DirectionalAmbientLight instance to use for shading calculations.
-	 * @param p  A ShaderParameters object that stores all parameters that are persisted
-	 *           during a single set of ray casting events (reflections, refractions, etc.)
-	 *           (null accepted).
-	 * 
-	 * @param otherLights[]  An array of Light objects that are also in the scene.
+	 * @param p  A {@link ShaderContext} that stores all parameters that are persisted
+	 *           during a single set of ray casting events (reflections, refractions,
+	 *           etc.) (null is accepted).
 	 */
-	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Vector point,
-														Vector rayDirection, Callable<ColorProducer> surface,
+	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Callable<ColorProducer> surface,
 														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
 														Light otherLights[], ShaderContext p) {
 		ColorProducer color = null;

@@ -25,8 +25,6 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 
-import com.almostrealism.raytracer.RayTracer;
-
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
  * The {@link DiffuseShader} class uses a lambertian shading algorithm.
@@ -68,14 +66,12 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 			throw new NullPointerException();
 		}
 
-		Future<ColorProducer> surfaceColor = RayTracer.getExecutorService().submit(p.getSurface());
-		
 		ColorProducer realized = null;
 		
 		try {
 			point = normals.get(0).call().getOrigin();
-			if (surfaceColor != null) {
-				ColorProducer pr = surfaceColor.get();
+			if (p.getSurface() != null) {
+				ColorProducer pr = p.getSurface().call();
 				realized = pr == null ? null : pr.operate(point);
 			}
 		} catch (Exception e) {
@@ -93,7 +89,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
 		}
 		
-		return GeneratedColorProducer.fromFunction(this, color);
+		return GeneratedColorProducer.fromProducer(this, color);
 	}
 	
 	/** Returns a zero length array. */	

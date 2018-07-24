@@ -200,8 +200,7 @@ public class PointLight implements Light, Positioned {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point,
-											Vector rayDirection, Callable<ColorProducer> surface,
+	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point, Callable<ColorProducer> surface,
 											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
 											Light otherLights[], ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
@@ -217,8 +216,7 @@ public class PointLight implements Light, Positioned {
 		}
 		
 		return DirectionalAmbientLight.directionalAmbientLightingCalculation(
-											intersection, point,
-											rayDirection, surface,
+											intersection, surface,
 											otherSurfaces, dLight, otherLights, p);
 	}
 

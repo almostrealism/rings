@@ -176,7 +176,15 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		// d = dv.minus();
 		
 		// if (entering) d.multiplyBy(-1.0);
-		Ray r = new Ray(point, d);
+		Producer<Ray> r = new Producer<Ray>() {
+			@Override
+			public Ray evaluate(Object[] objects) {
+				return new Ray(point, d);
+			}
+
+			@Override
+			public void compact() { }
+		};
 		
 		List<Callable<ColorProducer>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
@@ -185,11 +193,10 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		allLights[allLights.length - 1] = p.getLight();
 		
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
-		RefractionShader.lastRay = r.getDirection();
+		RefractionShader.lastRay = d;
 
-		IntersectionalLightingEngine l = new IntersectionalLightingEngine(allSurfaces);
-		ColorProducer color = l.lightingCalculation(r, allSurfaces, allLights,
-													p.fogColor, p.fogDensity, p.fogRatio, p);
+		IntersectionalLightingEngine l = new IntersectionalLightingEngine(r, allSurfaces, allLights, p);
+		ColorProducer color = l.evaluate(new Object[0]);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));
 		
@@ -227,14 +234,23 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 				d.multiplyBy(-1.0);
 			}
 			
-			Ray r = new Ray(p, d);
-			Intersection inter = s.intersectAt(r);
+			Producer<Ray> r = new Producer<Ray>(){
+				@Override
+				public Ray evaluate(Object[] args) {
+					return new Ray(p, d);
+				}
+
+				@Override
+				public void compact() { }
+			};
+
+			Intersection inter = (Intersection) s.intersectAt(r).evaluate(new Object[0]);
 			
-			if (inter == null || inter.getIntersections().length <= 0) {
+			if (inter == null || inter.getIntersection().getValue() < 0) {
 				totalR += 1.0;
 			} else {
-				double id = inter.getClosestIntersection();
-				totalR += s.getIndexOfRefraction(r.pointAt(id));
+				double id = inter.getIntersection().getValue();
+				totalR += s.getIndexOfRefraction(r.evaluate(new Object[0]).pointAt(id));
 			}
 		}
 		

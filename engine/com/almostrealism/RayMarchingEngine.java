@@ -42,10 +42,16 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	private FogParameters fparams;
 
 	private DistanceEstimator estimator;
+	private Iterable<? extends Callable<ColorProducer>> allSurfaces;
+	private Light allLights[];
+
 	private Light lights[];
 	private ShaderSet<? extends LightingContext> shaders;
 	
-	public RayMarchingEngine(Light l, DistanceEstimator e, Light allLights[], ShaderSet shaders) {
+	public RayMarchingEngine(Iterable<? extends Callable<ColorProducer>> allSurfaces,
+							 Light allLights[], Light l, DistanceEstimator e, ShaderSet shaders) {
+		this.allSurfaces = allSurfaces;
+		this.allLights = allLights;
 		this.sparams = new ShaderContext(this, l);
 		this.params = new RenderParameters();
 		this.fparams = new FogParameters();
@@ -53,14 +59,10 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 		this.lights = allLights;
 		this.shaders = shaders;
 	}
-	
-	public ColorProducer trace(Vector from, Vector direction) {
-		Ray r = new Ray(from, direction);
 
-		DistanceEstimationLightingEngine l = new DistanceEstimationLightingEngine(estimator, shaders, this.sparams.getLight());
-		return l.lightingCalculation(r, new ArrayList<>(),
-										this.lights, fparams.fogColor,
-										fparams.fogDensity, fparams.fogRatio, sparams);
+	@Override
+	public Producer<RGB> trace(Producer<Ray> r) {
+		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
 	}
 
 	@Override

@@ -17,12 +17,13 @@
 package com.almostrealism;
 
 import com.almostrealism.raytracer.RayTracer;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.Producer;
 
 /**
  * TODO  This does not need {@link RenderParameters}, but rather it needs Fog Parameters.
@@ -39,11 +40,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		this.fparams = fparams;
 	}
 	
-	public ColorProducer trace(Vector from, Vector direction) {
-		Ray r = new Ray(from, direction);
-
-		IntersectionalLightingEngine l = new IntersectionalLightingEngine(scene);
-		return l.lightingCalculation(r, scene, scene.getLights(), fparams.fogColor,
-									fparams.fogDensity, fparams.fogRatio, sparams);
+	public Producer<RGB> trace(Producer<Ray> r) {
+		return new IntersectionalLightingEngine(r, scene, scene.getLights(), sparams);
 	}
 }

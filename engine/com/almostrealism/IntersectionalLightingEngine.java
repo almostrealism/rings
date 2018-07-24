@@ -16,30 +16,32 @@
 
 package com.almostrealism;
 
-import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Intersections;
+import org.almostrealism.algebra.ClosestIntersection;
+import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.util.ParameterizedFactory;
+import org.almostrealism.util.Producer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class IntersectionalLightingEngine extends LightingEngine {
-    public IntersectionalLightingEngine(Iterable<? extends Callable<ColorProducer>> allSurfaces) {
-        super(new ParameterizedFactory<Ray, ContinuousField>() {
-            private Ray r;
-
-            @Override
-            public <T extends Ray> void setParameter(Class<T> aClass, T a) {
-                this.r = a;
-            }
-
-            @Override
-            public ContinuousField construct() {
-                return (ShadableIntersection) Intersections.closestIntersection(r,
-                                    Intersections.filterIntersectables(allSurfaces));
-            }
-        });
+    public IntersectionalLightingEngine(Producer<Ray> ray, Iterable<? extends Callable<ColorProducer>> allSurfaces, Light allLights[], ShaderContext p) {
+        super(new ClosestIntersection<>(ray, filterIntersectables(allSurfaces)), allSurfaces, allLights, p);
     }
+
+    public static List<Intersectable<ShadableIntersection, ?>> filterIntersectables(Iterable<? extends Callable<ColorProducer>> allSurfaces) {
+		List<Intersectable<ShadableIntersection, ?>> l = new ArrayList<>();
+		for (Callable<ColorProducer> p : allSurfaces) {
+			if (p instanceof Intersectable) {
+				l.add((Intersectable<ShadableIntersection, ?>) p);
+			}
+		}
+
+		return l;
+	}
 }

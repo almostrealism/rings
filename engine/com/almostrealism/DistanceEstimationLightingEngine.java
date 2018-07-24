@@ -27,7 +27,6 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.util.ParameterizedFactory;
 import org.almostrealism.util.Producer;
 
 import java.util.ArrayList;
@@ -39,17 +38,13 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	private DistanceEstimator estimator;
 	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(DistanceEstimator estimator, ShaderSet shaders, Light l) {
-		super(new ParameterizedFactory<Ray, ContinuousField>() {
-			private Ray r;
-
+	public DistanceEstimationLightingEngine(Producer<Ray> ray, Iterable<? extends Callable<ColorProducer>> allSurfaces,
+											Light allLights[], ShaderContext p, DistanceEstimator estimator, ShaderSet shaders) {
+		super(new Producer<ContinuousField>() {
 			@Override
-			public <T extends Ray> void setParameter(Class<T> aClass, T a) {
-				this.r = a;
-			}
+			public ContinuousField evaluate(Object args[]) {
+				Ray r = ray.evaluate(args);
 
-			@Override
-			public ContinuousField construct() {
 				double totalDistance = 0.0;
 
 				int steps;
@@ -70,9 +65,14 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 
 				return new Locus(r.getOrigin(), r.getDirection(), shaders,
 						new ShaderContext(estimator instanceof Callable ?
-											((Callable) estimator) : null, l));
+											((Callable) estimator) : null, p.getLight()));
 			}
-		});
+
+			@Override
+			public void compact() {
+				// TODO  Hardware acceleration
+			}
+		}, allSurfaces, allLights, p);
 
 		this.estimator = estimator;
 		this.shaders = shaders;

@@ -29,6 +29,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.Producer;
 
 
 // TODO Add ParticleGroup implementation.
@@ -37,7 +38,7 @@ import org.almostrealism.space.ShadableIntersection;
  * A Cone object represents a cone in 3d space.
  */
 public class Cone extends AbstractSurface {
-  private static final double nsq = 1.0 / 2.0;
+	private static final double nsq = 1.0 / 2.0;
 
 	/**
 	 * Constructs a Cone object that represents a cone with a base radius of 1.0,
@@ -46,8 +47,8 @@ public class Cone extends AbstractSurface {
 	public Cone() { super(); }
 	
 	/**
-	 * Constructs a Cone object that represents a cone with the specified base radius,
-	 * and the specified location, that is black.
+	 * Constructs a Cone object that represents a cone with the specified base
+	 * radius, and the specified location, that is black.
 	 */
 	public Cone(Vector location, double radius) { super(location, radius); }
 	
@@ -127,61 +128,81 @@ public class Cone extends AbstractSurface {
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Ray ray) {
-		ray.transform(this.getTransform(true).getInverse());
-		
-		Vector d = ray.getDirection().divide(ray.getDirection().length());
-		Vector o = ray.getOrigin().divide(ray.getOrigin().length());
-		
-		double ry = d.getY();
-		double oy = o.getY();
-		double od = d.dotProduct(o);
-		double oo = o.dotProduct(o);
-		
-		double c2 = ry * ry - Cone.nsq;
-		double c1 = ry * oy - Cone.nsq * od;
-		double c0 = oy * oy - Cone.nsq * oo;
-		
-		List inter = new ArrayList();
-		
-		if (Math.abs(c2) >= Intersection.e) {
-			double discr = c1*c1 - c0*c2;
-			
-			if (discr < 0.0) {
-				return new ShadableIntersection(ray, this, new double[0]);
-			} else if (discr > Intersection.e) {
-				double root = Math.sqrt(discr);
-				double invC2 = 1.0 / c2;
-				
-				double t = (-c1 - root) * invC2;
-				Vector p = ray.pointAt(t);
-				if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
-				
-				t = (-c1 + root) * invC2;
-				p = ray.pointAt(t);
-				if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
-			} else {
-				double t = -c1 / c2;
-				Vector p = ray.pointAt(t);
-				
-				if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+	public Producer<ShadableIntersection> intersectAt(Producer r) {
+		TransformMatrix m = getTransform(true);
+		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+
+		final Producer<Ray> fr = r;
+
+		return new Producer<ShadableIntersection>() {
+			@Override
+			public ShadableIntersection evaluate(Object[] args) {
+				Ray ray = fr.evaluate(args);
+
+				Vector d = ray.getDirection().divide(ray.getDirection().length());
+				Vector o = ray.getOrigin().divide(ray.getOrigin().length());
+
+				double ry = d.getY();
+				double oy = o.getY();
+				double od = d.dotProduct(o);
+				double oo = o.dotProduct(o);
+
+				double c2 = ry * ry - Cone.nsq;
+				double c1 = ry * oy - Cone.nsq * od;
+				double c0 = oy * oy - Cone.nsq * oo;
+
+				List inter = new ArrayList();
+
+				if (Math.abs(c2) >= Intersection.e) {
+					double discr = c1 * c1 - c0 * c2;
+
+					if (discr < 0.0) {
+						return null;
+					} else if (discr > Intersection.e) {
+						double root = Math.sqrt(discr);
+						double invC2 = 1.0 / c2;
+
+						double t = (-c1 - root) * invC2;
+						Vector p = ray.pointAt(t);
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+
+						t = (-c1 + root) * invC2;
+						p = ray.pointAt(t);
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+					} else {
+						double t = -c1 / c2;
+						Vector p = ray.pointAt(t);
+
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+					}
+				} else if (Math.abs(c1) >= Intersection.e) {
+					double t = -0.5 * c0 / c1;
+					Vector p = ray.pointAt(t);
+					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+				} else if (Math.abs(c0) < Intersection.e) {
+					inter.add(new Double(0.0));
+					inter.add(new Double(1.0));
+				}
+
+				double t = Double.MAX_VALUE;
+				int i = 0;
+
+				Iterator itr = inter.iterator();
+				while (itr.hasNext()) {
+					double n = ((Number) itr.next()).doubleValue();
+					if (n >= 0.0 && n < t) t = n;
+				}
+
+				if (t == Double.MAX_VALUE) {
+					return null;
+				} else {
+					return new ShadableIntersection(ray, Cone.this, new Scalar(t));
+				}
 			}
-		} else if (Math.abs(c1) >= Intersection.e) {
-			double t = -0.5 * c0 / c1;
-			Vector p = ray.pointAt(t);
-			if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
-		} else if (Math.abs(c0) < Intersection.e) {
-			inter.add(new Double(0.0));
-			inter.add(new Double(1.0));
-		}
-		
-		double t[] = new double[inter.size()];
-		int i = 0;
-		
-		Iterator itr = inter.iterator();
-		while(itr.hasNext()) t[i++] = ((Number)itr.next()).doubleValue();
-		
-		return new ShadableIntersection(ray, this, t);
+
+			@Override
+			public void compact() { }
+		};
 	}
 
 	@Override
