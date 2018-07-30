@@ -21,8 +21,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.AcceleratedProducer;
-import org.almostrealism.math.Hardware;
-import org.almostrealism.math.HardwareOperator;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -168,7 +166,7 @@ public class PinholeCamera extends OrthographicCamera {
 				public void compact() { }
 			};
 
-			return new AcceleratedProducer<>("pinholeCameraRayAt", false, false,
+			return new AcceleratedProducer<>("pinholeCameraRayAt", false,
 											new Producer[] { newRay, pos, sd },
 											new Object[] { getLocation(), getProjectionDimensions(),
 															new Pair(blur * (Math.random() - 0.5), blur * (Math.random() - 0.5)),

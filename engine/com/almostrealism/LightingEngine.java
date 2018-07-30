@@ -27,6 +27,7 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBAdd;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
@@ -58,7 +59,7 @@ public class LightingEngine implements Producer<RGB> {
 	public RGB evaluate(Object args[]) {
 		ContinuousField intersect = intersections.evaluate(args);
 		
-		ColorSum color = new ColorSum();
+		Producer<RGB> color = null;
 
 		// TODO  Figure out what this is for.
 		ShadableSurface surface = null;
@@ -82,11 +83,11 @@ public class LightingEngine implements Producer<RGB> {
 				for (int j = 0; j < i; j++) { otherL[j] = allLights[j]; }
 				for (int j = i + 1; j < allLights.length; j++) { otherL[j - 1] = allLights[j]; }
 
-				ColorProducer c;
+				Producer<RGB> c;
 
 				try {
 					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
-							shadowCalculation(intersect.get(0).call().getOrigin(),
+							shadowCalculation(intersect.get(0).evaluate(args).getOrigin(),
 									IntersectionalLightingEngine.filterIntersectables(allSurfaces), allLights[i]))
 						return null;
 				} catch (Exception e) {
@@ -96,7 +97,7 @@ public class LightingEngine implements Producer<RGB> {
 
 				if (allLights[i] instanceof SurfaceLight) {
 					try {
-						c = lightingCalculation(intersect, intersect.get(0).call().getOrigin(),
+						c = lightingCalculation(intersect, intersect.get(0).evaluate(args).getOrigin(),
 												surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -104,9 +105,9 @@ public class LightingEngine implements Producer<RGB> {
 					}
 				} else if (allLights[i] instanceof PointLight) {
 					try {
-						Vector direction = intersect.get(0).call().getOrigin().subtract(((PointLight) allLights[i]).getLocation());
+						Vector direction = intersect.get(0).evaluate(args).getOrigin().subtract(((PointLight) allLights[i]).getLocation());
 						DirectionalAmbientLight directionalLight =
-								new DirectionalAmbientLight(1.0, allLights[i].getColorAt().operate(intersect.get(0).call().getOrigin()), direction);
+								new DirectionalAmbientLight(1.0, allLights[i].getColorAt().operate(intersect.get(0).evaluate(args).getOrigin()), direction);
 
 						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 
@@ -146,7 +147,7 @@ public class LightingEngine implements Producer<RGB> {
 				} else if (allLights[i] instanceof AmbientLight) {
 					try {
 						c = AmbientLight.ambientLightingCalculation(surf, (AmbientLight) allLights[i])
-											.operate(intersect.get(0).call().getOrigin());
+											.operate(intersect.get(0).evaluate(args).getOrigin());
 					} catch (Exception e) {
 						e.printStackTrace();
 						return null;
@@ -155,14 +156,20 @@ public class LightingEngine implements Producer<RGB> {
 					c = new RGB(0.0, 0.0, 0.0);
 				}
 
-				if (c != null) color.add(c);
+				if (c != null) {
+					if (color == null) {
+						color = c;
+					} else {
+						color = new RGBAdd(color, c);
+					}
+				}
 			}
 		}
 
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput)
 			Settings.rayEngineOut.println();
 
-		return color.evaluate(args);
+		return color == null ? new RGB(0.0, 0.0, 0.0) : color.evaluate(args);
 
 //		Intersection intersect = RayTracingEngine.closestIntersection(ray, surfaces);
 //
@@ -328,7 +335,7 @@ public class LightingEngine implements Producer<RGB> {
 		T closestIntersectedSurface = intersection.evaluate(new Object[0]);
 		double intersect = 0.0;
 		if (closestIntersectedSurface != null)
-			intersect = closestIntersectedSurface.getIntersection().getValue();
+			intersect = closestIntersectedSurface.getDistance().getValue();
 
 		if (closestIntersectedSurface == null || intersect <= Intersection.e || (maxDistance >= 0.0 && intersect > maxDistance)) {
 			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
