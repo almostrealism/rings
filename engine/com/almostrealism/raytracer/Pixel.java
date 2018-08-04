@@ -16,113 +16,19 @@
 
 package com.almostrealism.raytracer;
 
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.util.Producer;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-public class Pixel implements Future<ColorProducer> {
-	private int size;
-	private Future<Producer<RGB>> samples[][];
-
+public class Pixel extends SuperSampler {
 	public Pixel(int ssWidth, int ssHeight) {
-		size = ssWidth * ssHeight;
-		samples = new Future[ssWidth][ssHeight];
+		super(new Producer[ssWidth][ssHeight]);
 	}
 
-	public synchronized void setSample(int sx, int sy, Future<Producer<RGB>> s) {
+	public synchronized void setSample(int sx, int sy, Producer<RGB> s) {
 		if (s == null) {
 			throw new IllegalArgumentException("Null sample not supported");
 		}
 
 		samples[sx][sy] = s;
-	}
-
-	@Override
-	public synchronized boolean cancel(boolean mayInterruptIfRunning) {
-		// TODO  If any samples are done or running and mayInterruptIfRunning is false, don't cancel any other samples
-
-		boolean cannotCancel = false;
-
-		for (int i = 0; i < samples.length; i++) {
-			j: for (int j = 0; j < samples[i].length; j++) {
-				if (samples[i][j] == null) {
-					cannotCancel = true;
-					continue j;
-				}
-
-				if (!samples[i][j].cancel(mayInterruptIfRunning)) {
-					cannotCancel = true;
-				}
-			}
-		}
-
-		return !cannotCancel;
-	}
-
-	@Override
-	public synchronized boolean isCancelled() {
-		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
-				if (samples[i][j] == null) return false;
-				if (!samples[i][j].isCancelled()) return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public synchronized boolean isDone() {
-		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
-				if (samples[i][j] == null) return false;
-				if (!samples[i][j].isDone()) return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public synchronized ColorProducer get() throws InterruptedException, ExecutionException {
-		Producer<RGB> p[][] = new Producer[samples.length][samples[0].length];
-
-		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
-				try {
-					p[i][j] = samples[i][j].get();
-				} catch (ExecutionException e) {
-					e.getCause().printStackTrace();
-				}
-			}
-		}
-
-		return compile(p);
-	}
-
-	@Override
-	public synchronized ColorProducer get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		Producer<RGB> p[][] = new Producer[samples.length][samples[0].length];
-
-		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
-				try {
-					p[i][j] = samples[i][j].get(timeout, unit);
-				} catch (ExecutionException e) {
-					e.getCause().printStackTrace();
-				}
-			}
-		}
-
-		return compile(p);
-	}
-
-	public static ColorProducer compile(Producer<RGB> pr[][]) {
-		return new SuperSampler(pr);
 	}
 }

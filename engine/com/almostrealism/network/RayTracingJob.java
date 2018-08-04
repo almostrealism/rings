@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
@@ -50,7 +49,7 @@ import io.almostrealism.db.QueryHandler;
 import io.flowtree.job.Job;
 
 /**
- * A RayTracingJob object provides an implementation of {@link Job}
+ * A {@link RayTracingJob} provides an implementation of {@link Job}
  * that renders a section of an image.
  * 
  * @author  Michael Murray
@@ -760,7 +759,7 @@ public class RayTracingJob implements Job {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RGB rgb[][] = LegacyRayTracingEngine.render(s, camera, s.getLights(), p, new FogParameters(), null);
+		RGB rgb[][] = null; // LegacyRayTracingEngine.render(s, camera, s.getLights(), p, new FogParameters(), null); TODO
 		
 		long time = System.currentTimeMillis() - start;
 		

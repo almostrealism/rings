@@ -19,10 +19,13 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayDirection;
+import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -75,41 +78,7 @@ public class Cylinder extends AbstractSurface {
 	 * @return  True if the ray represented by the specified Ray object intersects the cylinder
 	 *          represented by this Cylinder object.
 	 */
-	public boolean intersect(Ray ray) {
-		ray.transform(this.getTransform(true).getInverse());
-		
-		Vector a = (Vector) ray.getOrigin();
-		Vector d = (Vector) ray.getDirection();
-		
-		double al = a.length();
-		double dl = d.length();
-		
-		a.setY(0.0);
-		d.setY(0.0);
-		
-		a.multiplyBy(al / a.length());
-		d.multiplyBy(dl / d.length());
-		
-		double b = d.dotProduct(a);
-		double c = a.dotProduct(a);
-		double g = d.dotProduct(d);
-		
-		double discriminant = (b * b) - (g) * (c - 1);
-		double discriminantSqrt = Math.sqrt(discriminant) / g;
-		
-		double t0 = 0.0, t1 = 0.0;
-		
-		t0 = (-b / g) + discriminantSqrt;
-		t1 = (-b / g) - discriminantSqrt;
-		
-		double l0 = ray.pointAt(t0).getY();
-		double l1 = ray.pointAt(t1).getY();
-		
-		if ((l0 >= 0 && l0 <= 1.0) || (l1 >= 0 && l1 <= 1.0))
-			return true;
-		else
-			return false;
-	}
+	public boolean intersect(Ray ray) { throw new RuntimeException("Not implemented"); }
 	
 	/**
 	 * Returns a {@link ShadableIntersection} representing the points along the ray
@@ -152,15 +121,21 @@ public class Cylinder extends AbstractSurface {
 				t0 = (-b / g) + discriminantSqrt;
 				t1 = (-b / g) - discriminantSqrt;
 
-				double l0 = ray.pointAt(t0).getY();
-				double l1 = ray.pointAt(t1).getY();
+				double l0 = ray.pointAt(new StaticProducer<>(new Scalar(t0))).evaluate(args).getY();
+				double l1 = ray.pointAt(new StaticProducer<>(new Scalar(t1))).evaluate(args).getY();
+
+				Scalar s;
 
 				if (l0 >= 0 && l0 <= 1.0)
-					return new ShadableIntersection(ray, Cylinder.this, new Scalar(l0));
+					s = new Scalar(l0);
 				else if (l1 >= 0 && l1 <= 1.0)
-					return new ShadableIntersection(ray, Cylinder.this, new Scalar(l1));
+					s = new Scalar(l1);
 				else
 					return null;
+
+				StaticProducer sp = new StaticProducer(s);
+
+				return new ShadableIntersection(Cylinder.this, new RayPointAt(fr, sp), new RayDirection(fr), s);
 			}
 
 			@Override

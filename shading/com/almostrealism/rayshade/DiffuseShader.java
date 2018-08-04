@@ -74,8 +74,8 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 				try {
 					point = normals.get(0).evaluate(args).getOrigin();
 					if (p.getSurface() != null) {
-						ColorProducer pr = p.getSurface().call();
-						realized = pr == null ? null : pr.operate(point);
+						Producer<RGB> pr = p.getSurface().call();
+						realized = pr == null ? null : pr.evaluate(new Object[] { point });
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -84,12 +84,16 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 					double scale = n.dotProduct(p.getLightDirection());
-					color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					if (scale > 0) {
+						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					}
 				}
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 					double scale = n.minus().dotProduct(p.getLightDirection());
-					color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					if (scale > 0) {
+						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					}
 				}
 
 				return color.evaluate(args);

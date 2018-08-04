@@ -16,14 +16,15 @@
 
 package com.almostrealism.rayshade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import com.almostrealism.IntersectionalLightingEngine;
 import com.almostrealism.LightingEngine;
+import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Intersection;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.geometry.Ray;
@@ -32,6 +33,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 // TODO  Fix refraction algorithm.
 
@@ -66,12 +68,12 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		p.addReflection();
-		
-		ColorSum color = new ColorSum();
+
+		Producer<RGB> color = null;
 
 		Vector po;
 		try {
-			po = p.getIntersection().get(0).call().getOrigin();
+			po = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -84,7 +86,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		Vector n;
 		
 		try {
-			n = normals.iterator().next().call().getDirection();
+			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -96,40 +98,54 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 			Vector point;
 			
 			try {
-				point = p.getIntersection().get(0).call().getOrigin();
+				point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
-			
-			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
+
+			Producer<RGB> c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
 										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 										p.getOtherSurfaces(), n, p);
-			if (c != null) color.add(c);
+
+			if (c != null) {
+				if (color == null) {
+					color = c;
+				} else {
+					color = new RGBAdd(color, c);
+				}
+			}
 		}
 		
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			Vector point;
 			
 			try {
-				point = p.getIntersection().get(0).call().getOrigin();
+				point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
 			
-			ColorProducer c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
+			Producer<RGB> c = this.shade(point, p.getIntersection().getNormalAt(point).evaluate(new Object[0]),
 										p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 										p.getOtherSurfaces(), n.minus(), p);
-			if (c != null) color.add(c);
+
+			if (c != null) {
+				if (color == null) {
+					color = c;
+				} else {
+					color = new RGBAdd(color, c);
+				}
+			}
 		}
 		
-		return GeneratedColorProducer.fromFunction(this, color);
+		return GeneratedColorProducer.fromProducer(this, color);
 	}
 	
-	protected ColorProducer shade(Vector point, Vector viewerDirection, Vector lightDirection,
-								Light light, Light otherLights[], Callable<ColorProducer> surface,
-								Callable<ColorProducer> otherSurfaces[], Vector n, ShaderContext p) {
+	protected Producer<RGB> shade(Vector point, Vector viewerDirection, Vector lightDirection,
+								Light light, Iterable<Light> otherLights, Producer<RGB> surface,
+								Producer<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
 			return new RGB(0.0, 0.0, 0.0);
@@ -186,17 +202,16 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 			public void compact() { }
 		};
 		
-		List<Callable<ColorProducer>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
+		List<Producer<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
-		Light allLights[] = new Light[p.getOtherLights().length + 1];
-		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
-		allLights[allLights.length - 1] = p.getLight();
+		List<Light> allLights = new ArrayList<>();
+		allLights.add(p.getLight());
+		for (Light l : p.getOtherLights()) { allLights.add(l); }
 		
 //		if (Math.random() < 0.00001 && !entering) System.out.println(r.getDirection() + " " + lastRay);
 		RefractionShader.lastRay = d;
 
-		IntersectionalLightingEngine l = new IntersectionalLightingEngine(r, allSurfaces, allLights, p);
-		ColorProducer color = l.evaluate(new Object[0]);
+		Producer<RGB> color = new LightingEngineAggregator(r, allSurfaces, allLights, p);
 		
 //		if (color.equals(new RGB()) && Math.random() < 0.01) System.out.println(d.dotProduct(dv));
 		
@@ -246,11 +261,11 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 
 			Intersection inter = (Intersection) s.intersectAt(r).evaluate(new Object[0]);
 			
-			if (inter == null || inter.getIntersection().getValue() < 0) {
+			if (inter == null || inter.getDistance().getValue() < 0) {
 				totalR += 1.0;
 			} else {
-				double id = inter.getIntersection().getValue();
-				totalR += s.getIndexOfRefraction(r.evaluate(new Object[0]).pointAt(id));
+				Scalar id = inter.getDistance();
+				totalR += s.getIndexOfRefraction(r.evaluate(new Object[0]).pointAt(new StaticProducer<>(id)).evaluate(new Object[0]));
 			}
 		}
 		

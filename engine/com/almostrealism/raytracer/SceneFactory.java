@@ -87,13 +87,13 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 		return s;
 	}
 	
-	public static Light[] getStandard3PointLightRig(double scale) {
+	public static List<Light> getStandard3PointLightRig(double scale) {
 		Light l[] = new Light[3];
 		
 		l[0] = new PointLight(new Vector(scale, scale, scale));
 		l[1] = new PointLight(new Vector(-scale, scale, scale));
 		l[2] = new PointLight(new Vector(0.0, scale, -scale));
 		
-		return l;
+		return Arrays.asList(l);
 	}
 }

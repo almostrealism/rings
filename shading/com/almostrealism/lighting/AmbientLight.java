@@ -22,6 +22,7 @@ import org.almostrealism.algebra.Triple;
 import org.almostrealism.color.*;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.Producer;
 
 import java.util.concurrent.Callable;
 
@@ -101,7 +102,7 @@ public class AmbientLight implements Light {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer ambientLightingCalculation(Callable<ColorProducer> surface, AmbientLight light) {
+	public static ColorProducer ambientLightingCalculation(Producer<RGB> surface, AmbientLight light) {
 		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
 		if (surface instanceof ShadableSurface)
 			color = new ColorProduct(color, ((ShadableSurface) surface).getColorAt());

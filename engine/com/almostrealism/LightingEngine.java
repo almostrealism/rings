@@ -17,159 +17,88 @@
 package com.almostrealism;
 
 import com.almostrealism.lighting.*;
-import com.almostrealism.raytracer.Settings;
-import org.almostrealism.algebra.ClosestIntersection;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
-import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBAdd;
+import org.almostrealism.color.RGBMultiply;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayOrigin;
+import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 
-public class LightingEngine implements Producer<RGB> {
-	private Producer<? extends ContinuousField> intersections;
-	private Iterable<? extends Callable<ColorProducer>> allSurfaces;
-	private Light allLights[];
+public class LightingEngine<T extends ContinuousField> implements PathElement<Ray, RGB>, Producer<RGB> {
+	private T intersections;
+	private Producer<RGB> surface;
+	private Collection<Producer<RGB>> otherSurfaces;
+	private List<Intersectable> allSurfaces;
+	private Light light;
+	private Iterable<Light> otherLights;
 	private ShaderContext p;
 
-	public LightingEngine(Producer<? extends ContinuousField> intersections, Iterable<? extends Callable<ColorProducer>> allSurfaces,
-						  Light allLights[], ShaderContext p) {
+	private Producer<RGB> shadow;
+	private Producer<RGB> shade;
+
+	public LightingEngine(T intersections,
+						  Producer<RGB> surface,
+						  Collection<Producer<RGB>> otherSurfaces,
+						  Light light, Iterable<Light> otherLights, ShaderContext p) {
 		this.intersections = intersections;
-		this.allSurfaces = allSurfaces;
-		this.allLights = allLights;
+		this.surface = surface;
+		this.otherSurfaces = otherSurfaces;
+		this.light = light;
+		this.otherLights = otherLights;
 		this.p = p;
+
+		allSurfaces = new ArrayList<>();
+		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
+		for (Producer pr : otherSurfaces) if (pr instanceof Intersectable) allSurfaces.add((Intersectable) pr);
+
+		init();
 	}
 
-	/**
-	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
-	 * and {@link Light}s. This method may return null, which should be interpreted as black
-	 * (or "nothing").
-	 */
-	public RGB evaluate(Object args[]) {
-		ContinuousField intersect = intersections.evaluate(args);
-		
-		Producer<RGB> color = null;
-
-		// TODO  Figure out what this is for.
-		ShadableSurface surface = null;
-
-		if (intersect != null) {
-			Callable<ColorProducer> surf = intersect instanceof Intersection ? (Callable<ColorProducer>) ((Intersection) intersect).getSurface() : null;
-			if (surf == null && intersect instanceof DistanceEstimationLightingEngine.Locus)
-				surf = (DistanceEstimationLightingEngine.Locus) intersect;
-
-			List<Callable<ColorProducer>> otherSurf = new ArrayList<Callable<ColorProducer>>();
-
-			for (Callable<ColorProducer> s : allSurfaces) {
-				if (surface != s) otherSurf.add(s);
-			}
-
-			for (int i = 0; i < allLights.length; i++) {
-				// See RayTracingEngine.separateLights method
-
-				Light otherL[] = new Light[allLights.length - 1];
-
-				for (int j = 0; j < i; j++) { otherL[j] = allLights[j]; }
-				for (int j = i + 1; j < allLights.length; j++) { otherL[j - 1] = allLights[j]; }
-
-				Producer<RGB> c;
-
-				try {
-					if (LegacyRayTracingEngine.castShadows && allLights[i].castShadows &&
-							shadowCalculation(intersect.get(0).evaluate(args).getOrigin(),
-									IntersectionalLightingEngine.filterIntersectables(allSurfaces), allLights[i]))
-						return null;
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-
-				if (allLights[i] instanceof SurfaceLight) {
-					try {
-						c = lightingCalculation(intersect, intersect.get(0).evaluate(args).getOrigin(),
-												surf, otherSurf, ((SurfaceLight) allLights[i]).getSamples(), p);
-					} catch (Exception e) {
-						e.printStackTrace();
-						return null;
-					}
-				} else if (allLights[i] instanceof PointLight) {
-					try {
-						Vector direction = intersect.get(0).evaluate(args).getOrigin().subtract(((PointLight) allLights[i]).getLocation());
-						DirectionalAmbientLight directionalLight =
-								new DirectionalAmbientLight(1.0, allLights[i].getColorAt().operate(intersect.get(0).evaluate(args).getOrigin()), direction);
-
-						Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
-
-						if (p == null) {
-							c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderContext(intersect, l, directionalLight,
-																		otherL, surf, otherSurf.toArray(new Callable[0]))) : null;
-						} else {
-							p.setIntersection(intersect);
-							p.setLightDirection(l);
-							p.setLight(directionalLight);
-							p.setOtherLights(otherL);
-							p.setOtherSurfaces(otherSurf);
-
-							c = surf instanceof Shadable ? ((Shadable) surf).shade(p) : null;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();;
-						return null;
-					}
-				} else if (allLights[i] instanceof DirectionalAmbientLight) {
-					DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) allLights[i];
-
-					Vector l = (directionalLight.getDirection().divide(
-							directionalLight.getDirection().length())).minus();
-
-					if (p == null) {
-						c = surf instanceof Shadable ? ((Shadable) surf).shade(new ShaderContext(intersect, l, directionalLight, otherL, otherSurf)) : null;
-					} else {
-						p.setIntersection(intersect);
-						p.setLightDirection(l);
-						p.setLight(directionalLight);
-						p.setOtherLights(otherL);
-						p.setOtherSurfaces(otherSurf);
-
-						c = surf instanceof Shadable ? ((Shadable) surf).shade(p) : null;
-					}
-				} else if (allLights[i] instanceof AmbientLight) {
-					try {
-						c = AmbientLight.ambientLightingCalculation(surf, (AmbientLight) allLights[i])
-											.operate(intersect.get(0).evaluate(args).getOrigin());
-					} catch (Exception e) {
-						e.printStackTrace();
-						return null;
-					}
-				} else {
-					c = new RGB(0.0, 0.0, 0.0);
-				}
-
-				if (c != null) {
-					if (color == null) {
-						color = c;
-					} else {
-						color = new RGBAdd(color, c);
-					}
-				}
-			}
+	protected void init() {
+		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
+			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)));
 		}
 
-		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput)
-			Settings.rayEngineOut.println();
+		ShaderContext context = p.clone();
+		context.setLight(light);
+		context.setIntersection(intersections);
+		context.setOtherLights(otherLights);
+		context.setOtherSurfaces(otherSurfaces);
 
-		return color == null ? new RGB(0.0, 0.0, 0.0) : color.evaluate(args);
+		if (light instanceof SurfaceLight) {
+			try {
+				shade = lightingCalculation(intersections, new RayOrigin(intersections.get(0)),
+											surface, otherSurfaces,
+											((SurfaceLight) light).getSamples(), p);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (light instanceof PointLight) {
+			shade = surface instanceof Shadable ? new PointLightCalculation((Shadable) surface, (PointLight) light, intersections.get(0), context) : null;
+		} else if (light instanceof DirectionalAmbientLight) {
+			DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) light;
+
+			Vector l = (directionalLight.getDirection().divide(
+					directionalLight.getDirection().length())).minus();
+
+			context.setLightDirection(l);
+
+			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
+		} else if (light instanceof AmbientLight) {
+			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light);
+		} else {
+			shade = new RGB(0.0, 0.0, 0.0);
+		}
 
 //		Intersection intersect = RayTracingEngine.closestIntersection(ray, surfaces);
 //
@@ -229,9 +158,22 @@ public class LightingEngine implements Producer<RGB> {
 	}
 
 	@Override
+	public Iterable<Producer<Ray>> getDependencies() {
+		return intersections;
+	}
+
+	/**
+	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
+	 * and {@link Light}s. This method may return null, which should be interpreted as black
+	 * (or "nothing").
+	 */
+	public RGB evaluate(Object args[]) {
+		return new RGBMultiply(shadow, shade).evaluate(args);
+	}
+
+	@Override
 	public void compact() {
 		// TODO Hardware acceleration
-		intersections.compact();
 	}
 
 	/**
@@ -241,12 +183,12 @@ public class LightingEngine implements Producer<RGB> {
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static ColorSum lightingCalculation(ContinuousField intersection, Vector point,
-											   Callable<ColorProducer> surface, Collection<Callable<ColorProducer>> otherSurfaces,
-											   Light lights[], ShaderContext p) {
-		ColorSum color = new ColorSum();
+	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
+													Producer<RGB> surface, Iterable<Producer<RGB>> otherSurfaces,
+											   		Light lights[], ShaderContext p) {
+		Producer<RGB> color = null;
 
-		for(int i = 0; i < lights.length; i++) {
+		for (int i = 0; i < lights.length; i++) {
 			// See RayTracingEngine.seperateLights method
 
 			Light otherLights[] = new Light[lights.length - 1];
@@ -254,9 +196,15 @@ public class LightingEngine implements Producer<RGB> {
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 
-			ColorProducer c = lightingCalculation(intersection, point, surface,
+			Producer<RGB> c = lightingCalculation(intersection, point, surface,
 										otherSurfaces, lights[i], otherLights, p);
-			if (c != null) color.add(c);
+			if (c != null) {
+				if (color == null) {
+					color = c;
+				} else {
+					color = new RGBAdd(color, c);
+				}
+			}
 		}
 
 		return color;
@@ -269,86 +217,28 @@ public class LightingEngine implements Producer<RGB> {
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer lightingCalculation(ContinuousField intersection, Vector point,
-													Callable<ColorProducer> surface,
-													Collection<Callable<ColorProducer>> otherSurfaces, Light light,
+	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
+													Producer<RGB> surface,
+													Iterable<Producer<RGB>> otherSurfaces, Light light,
 													Light otherLights[], ShaderContext p) {
-		List<Callable<ColorProducer>> allSurfaces = new ArrayList<>();
-		for (Callable<ColorProducer> s : otherSurfaces) allSurfaces.add(s);
+		List<Producer<RGB>> allSurfaces = new ArrayList<>();
+		for (Producer<RGB> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
 
-		if (LegacyRayTracingEngine.castShadows && light.castShadows &&
-				shadowCalculation(point, IntersectionalLightingEngine.filterIntersectables(allSurfaces), light))
-			return new RGB(0.0, 0.0, 0.0);
+		// TODO  Shadow calculation
 
 		if (light instanceof SurfaceLight) {
 			Light l[] = ((SurfaceLight) light).getSamples();
-			return   lightingCalculation(intersection, point,
+			return lightingCalculation(intersection, point,
 					surface, otherSurfaces, l, p);
 		} else if (light instanceof PointLight) {
-			return PointLight.pointLightingCalculation(intersection, point,
-					surface, otherSurfaces, (PointLight) light, otherLights, p);
+			throw new IllegalArgumentException("Migrated elsewhere");
 		} else if (light instanceof DirectionalAmbientLight) {
-			return DirectionalAmbientLight.directionalAmbientLightingCalculation(
-					intersection, surface,
-					otherSurfaces,
-					(DirectionalAmbientLight) light, otherLights, p);
+			throw new IllegalArgumentException("Migrated elsewhere");
 		} else if (light instanceof AmbientLight) {
-			return AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light)
-									.operate(point);
+			throw new IllegalArgumentException("Migrated elsewhere");
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
-		}
-	}
-
-	/**
-	 * Performs the shadow calculations for the specified surfaces at the specified point using the data
-	 * from the specified Light object. Returns true if the point has a shadow cast on it.
-	 */
-	public static <T extends Intersection> boolean shadowCalculation(Vector point, Iterable<Intersectable<T, ?>> surfaces, Light light) {
-		double maxDistance = -1.0;
-		Vector direction = null;
-
-		if (light instanceof PointLight) {
-			direction = ((PointLight) light).getLocation().subtract(point);
-			direction = direction.divide(direction.length());
-			maxDistance = direction.length();
-		} else if (light instanceof DirectionalAmbientLight) {
-			direction = ((DirectionalAmbientLight) light).getDirection().minus();
-		} else {
-			return false;
-		}
-
-		final Vector fdirection = direction;
-
-		Producer<Ray> shadowRay = new Producer() {
-			@Override
-			public Ray evaluate(Object[] objects) {
-				return new Ray(point, fdirection);
-			}
-
-			@Override
-			public void compact() { }
-		};
-
-		ClosestIntersection<T> intersection = new ClosestIntersection<>(shadowRay, surfaces);
-		T closestIntersectedSurface = intersection.evaluate(new Object[0]);
-		double intersect = 0.0;
-		if (closestIntersectedSurface != null)
-			intersect = closestIntersectedSurface.getDistance().getValue();
-
-		if (closestIntersectedSurface == null || intersect <= Intersection.e || (maxDistance >= 0.0 && intersect > maxDistance)) {
-			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-				Settings.rayEngineOut.print(" False }");
-			}
-
-			return false;
-		} else {
-			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-				Settings.rayEngineOut.print(" True }");
-			}
-
-			return true;
 		}
 	}
 

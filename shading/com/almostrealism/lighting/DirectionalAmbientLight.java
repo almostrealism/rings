@@ -21,11 +21,11 @@ import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.util.Producer;
 
 /**
  * A DirectionAmbientLight object represents an ambient light source that always
@@ -101,10 +101,10 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 *           during a single set of ray casting events (reflections, refractions,
 	 *           etc.) (null is accepted).
 	 */
-	public static ColorProducer directionalAmbientLightingCalculation(ContinuousField intersection, Callable<ColorProducer> surface,
-														Collection<Callable<ColorProducer>> otherSurfaces, DirectionalAmbientLight light,
-														Light otherLights[], ShaderContext p) {
-		ColorProducer color = null;
+	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Callable<Producer<RGB>> surface,
+																	  Collection<Producer<RGB>> otherSurfaces, DirectionalAmbientLight light,
+																	  Light otherLights[], ShaderContext p) {
+		Producer<RGB> color = null;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		

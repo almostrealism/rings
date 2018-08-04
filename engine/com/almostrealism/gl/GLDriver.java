@@ -28,9 +28,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
-import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.graph.Triangle;
@@ -46,6 +44,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class GLDriver {
@@ -92,7 +91,7 @@ public class GLDriver {
 
         this.cameraStack = new Stack<>();
         this.projection_joml = new Matrix4d();
-		this.lighting = new GLLightingConfiguration(new Light[0]);
+		this.lighting = new GLLightingConfiguration(new ArrayList<>());
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();

@@ -32,7 +32,7 @@ import org.almostrealism.uml.ModelEntity;
  * @author  Michael Murray
  */
 @ModelEntity
-public class PathCache<V extends Intersection> extends Hashtable<ImageCoordinates, PathElement<V>> {
+public class PathCache<V extends Intersection> extends Hashtable<ImageCoordinates, PathElement<V, ?>> {
 	public PathCache() {
 		
 	}

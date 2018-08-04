@@ -60,11 +60,13 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
-	public ColorProducer shade(LightingContext p, DiscreteField normals) {
+	public Producer<RGB> shade(LightingContext p, DiscreteField normals) {
+		// TODO  Put evaluation into producer
+
 		Vector n;
 		
 		try {
-			n = normals.iterator().next().call().getDirection();
+			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -10,7 +10,6 @@ import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
 import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.io.FileDecoder;
@@ -27,6 +26,7 @@ import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.RenderParameters;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
+import org.almostrealism.util.Producer;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
@@ -113,10 +113,13 @@ public class RayTracingTest {
 		return new RayTracedScene(new RayIntersectionEngine(scene, new FogParameters()), c, params);
 	}
 
-	public static void main(String args[]) throws IOException {
- 		RayTracedScene r = generateScene();
+	public static RealizableImage generateImage() throws IOException {
+		RayTracedScene r = generateScene();
+		return r.realize(r.getRenderParameters());
+	}
 
-		RealizableImage img = r.realize(r.getRenderParameters());
+	public static void main(String args[]) throws IOException {
+		RealizableImage img = generateImage();
 
 		if (waitUntilComplete) {
 			while (!img.isComplete()) {
@@ -130,7 +133,7 @@ public class RayTracingTest {
 
 		while (true) {
 			try {
-				ColorProducer im[][] = img.evaluate(new Object[0]);
+				Producer<RGB> im[][] = img.evaluate(new Object[0]);
 				ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
 						ImageCanvas.JPEGEncoding);
 				System.out.println("Wrote image (" + (img.getCompleted() * 100) + "%)");
