@@ -35,7 +35,6 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
-import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.SurfaceGroup;
 import org.almostrealism.swing.Dialog;
@@ -201,11 +200,12 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 	
 	/**
-	 * Returns a {@link Producer} for a {@link ShadableIntersection} representing the point along the ray produced by
-	 * the specified {@link Ray} {@link Producer} that intersection between the ray and the surface occurs.
+	 * Returns a {@link ContinuousField} representing the point along the ray produced by
+	 * the specified {@link Ray} {@link Producer} that intersection between the ray and
+	 * the surface occurs.
 	 */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer ray) {
+	public ContinuousField intersectAt(Producer ray) {
 		return getSurface().intersectAt(ray);
 	}
 
@@ -216,6 +216,12 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	public Vector operate(Triple triple) {
 		return getSurface().operate(triple);
 	}
+
+	@Override
+	public RGB evaluate(Object args[]) { return getSurface().evaluate(args); }
+
+	@Override
+	public void compact() { getSurface().compact(); }
 
 	@Override
 	public Scope getScope(String prefix) {

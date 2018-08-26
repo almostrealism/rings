@@ -154,11 +154,6 @@ public class Plane implements Volume {
 	}
 
 	@Override
-	public Object call() throws Exception {
-		return null;
-	}
-
-	@Override
 	public Vector operate(Triple triple) {
 		return null;
 	}
@@ -167,4 +162,10 @@ public class Plane implements Volume {
 	public Scope<? extends Variable> getScope(String s) {
 		return null;
 	}
+
+	@Override
+	public Object evaluate(Object[] objects) { return null; }
+
+	@Override
+	public void compact() { }
 }

@@ -26,7 +26,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
 
 public class ShadowMask implements Producer<RGB> {
@@ -43,6 +42,7 @@ public class ShadowMask implements Producer<RGB> {
 	@Override
 	public RGB evaluate(Object[] args) {
 		Vector p = point.evaluate(args);
+		if (p == null) return new RGB(1.0, 1.0, 1.0);
 
 		double maxDistance = -1.0;
 		Vector direction = null;
@@ -69,7 +69,7 @@ public class ShadowMask implements Producer<RGB> {
 			public void compact() { }
 		};
 
-		ClosestIntersection<ShadableIntersection> intersection = new ClosestIntersection(shadowRay, surfaces);
+		ClosestIntersection intersection = new ClosestIntersection(shadowRay, surfaces);
 		Ray r = intersection.get(0).evaluate(args);
 		double intersect = 0.0;
 		if (r != null)

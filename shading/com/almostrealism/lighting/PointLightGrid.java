@@ -140,7 +140,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	
 	/** Returns null. */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer ray) {
+	public ShadableIntersection intersectAt(Producer ray) {
 		return null;
 	}
 

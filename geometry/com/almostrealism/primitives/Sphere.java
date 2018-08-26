@@ -20,8 +20,6 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
-import org.almostrealism.geometry.RayDirection;
-import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
@@ -31,7 +29,6 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +103,8 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 		// TODO  Perform computation within VectorProducer
 
 		Vector normal = point.subtract(super.getLocation());
-		normal = super.getTransform(true).transformAsNormal(normal);
+		if (getTransform(true) != null)
+			normal = getTransform(true).transformAsNormal(normal);
 		
 		return new ImmutableVector(normal);
 	}
@@ -135,15 +133,15 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * represented by this Sphere object occurs.
 	 */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
 		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 
 		final Producer<Ray> fr = r;
 
-		return new Producer<ShadableIntersection>() {
+		Producer<Scalar> s = new Producer<Scalar>() {
 			@Override
-			public ShadableIntersection evaluate(Object[] args) {
+			public Scalar evaluate(Object[] args) {
 				Ray ray = fr.evaluate(args);
 
 				double b = ray.oDotd().evaluate(args).getValue();
@@ -174,16 +172,16 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 					return null;
 				}
 
-				return new ShadableIntersection(Sphere.this,
-											new RayPointAt(fr, new StaticProducer<>(st)),
-											new RayDirection(fr), st);
+				return st;
 			}
 
 			@Override
 			public void compact() {
-
+				// TODO
 			}
 		};
+
+		return new ShadableIntersection(this, r, s);
 	}
 	
 	@Override

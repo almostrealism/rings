@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.almostrealism.code.Scope;
@@ -203,7 +204,7 @@ public class PointLight implements Light, Positioned {
 	 */
 	public static Producer<RGB> pointLightingCalculation(ContinuousField intersection, Vector point, Callable<Producer<RGB>> surface,
 														 Collection<Producer<RGB>> otherSurfaces, PointLight light,
-														 Light otherLights[], ShaderContext p) {
+														 List<Light> otherLights, ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight;
 		

@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.ContinuousField;
@@ -103,7 +104,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 */
 	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Callable<Producer<RGB>> surface,
 																	  Collection<Producer<RGB>> otherSurfaces, DirectionalAmbientLight light,
-																	  Light otherLights[], ShaderContext p) {
+																	  List<Light> otherLights, ShaderContext p) {
 		Producer<RGB> color = null;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();

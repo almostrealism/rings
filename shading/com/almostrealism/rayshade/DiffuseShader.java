@@ -57,7 +57,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 				Vector n;
 
 				try {
-					n = normals.iterator().next().evaluate(args).getDirection();
+					n = normals.get(0).evaluate(args).getDirection();
 				} catch (Exception e) {
 					e.printStackTrace();
 					return null;
@@ -65,21 +65,11 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 
 				ColorSum color = new ColorSum();
 
-				if (p.getSurface() == null) {
-					throw new NullPointerException();
-				}
-
 				ColorProducer realized = null;
 
-				try {
-					point = normals.get(0).evaluate(args).getOrigin();
-					if (p.getSurface() != null) {
-						Producer<RGB> pr = p.getSurface().call();
-						realized = pr == null ? null : pr.evaluate(new Object[] { point });
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					return color.evaluate(args);
+				point = normals.get(0).evaluate(args).getOrigin();
+				if (p.getSurface() != null) {
+					realized = p.getSurface().evaluate(new Object[] { point });
 				}
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {

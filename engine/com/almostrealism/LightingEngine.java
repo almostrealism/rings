@@ -168,6 +168,7 @@ public class LightingEngine<T extends ContinuousField> implements PathElement<Ra
 	 * (or "nothing").
 	 */
 	public RGB evaluate(Object args[]) {
+		if (shade == null) return new RGB(0.0, 0.0, 0.0);
 		return new RGBMultiply(shadow, shade).evaluate(args);
 	}
 

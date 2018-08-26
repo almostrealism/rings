@@ -19,8 +19,6 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayDirection;
-import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
@@ -86,15 +84,15 @@ public class Cylinder extends AbstractSurface {
 	 * and the cylinder represented by this {@link Cylinder} occurs.
 	 */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
 		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 
 		final Producer<Ray> fr = r;
 
-		return new Producer<ShadableIntersection>() {
+		Producer<Scalar> s = new Producer<Scalar>() {
 			@Override
-			public ShadableIntersection evaluate(Object[] args) {
+			public Scalar evaluate(Object[] args) {
 				Ray ray = fr.evaluate(args);
 
 				Vector a = ray.getOrigin();
@@ -133,9 +131,7 @@ public class Cylinder extends AbstractSurface {
 				else
 					return null;
 
-				StaticProducer sp = new StaticProducer(s);
-
-				return new ShadableIntersection(Cylinder.this, new RayPointAt(fr, sp), new RayDirection(fr), s);
+				return s;
 			}
 
 			@Override
@@ -143,6 +139,8 @@ public class Cylinder extends AbstractSurface {
 				// TODO
 			}
 		};
+
+		return new ShadableIntersection(this, r, s);
 	}
 
 	@Override
