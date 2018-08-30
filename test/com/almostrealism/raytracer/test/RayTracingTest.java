@@ -29,10 +29,10 @@ import org.almostrealism.util.Producer;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
-	public static boolean useStripedFloor = false;
+	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
-	public static boolean displaySpheres = true;
-	public static boolean displayDragon = false;
+	public static boolean displaySpheres = false;
+	public static boolean displayDragon = true;
 
 	public static RayTracedScene generateScene() throws IOException {
 		Scene<ShadableSurface> scene = useCornellBox ?
@@ -46,21 +46,24 @@ public class RayTracingTest {
 			p.getShaderSet().add(new DiffuseShader());
 			p.setLocation(new Vector(0.0, -10, 0.0));
 			StripeTexture t = new StripeTexture();
-			t.setPropertyValue(0.1, 0);
+			t.setPropertyValue(1.0, 0);
 			t.setPropertyValue(true, 1);
 			p.addTexture(t);
 			scene.add(p);
 		}
 
 		if (displaySpheres) {
-			Sphere s1 = new Sphere(new Vector(-1.0, -2.25, -2), 0.8, new RGB(0.3, 0.3, 0.3));
-			s1.addShader(new RefractionShader());
+			Sphere s1 = new Sphere(new Vector(-0.3, 0, -2), 0.15, new RGB(0.3, 0.3, 0.3));
+			RefractionShader r = new RefractionShader();
+			r.setIndexOfRefraction(1.5);
+			s1.addShader(r);
 
-			Sphere s2 = new Sphere(new Vector(0.0, 0, -2), 0.8, new RGB(0.3, 0.4, 0.6));
+			Sphere s2 = new Sphere(new Vector(0.3, 0, -2), 0.15, new RGB(0.3, 0.4, 0.6));
+			s2.setShadeBack(true);
 //			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
 			s2.addShader(new DiffuseShader());
 
-//			scene.add(s1);
+			scene.add(s1);
 			scene.add(s2);
 		}
 
@@ -76,7 +79,8 @@ public class RayTracingTest {
 		p.setColor(new RGB(0.5, 0.8, 0.7));
 		p.setLocation(new Vector(0, 0, -10));
 		p.getShaderSet().add(new DiffuseShader());
-//		scene.add(p);
+		p.setShadeBack(true);
+		scene.add(p);
 
 //		for (ShadableSurface s : scene) {
 //			if (s instanceof AbstractSurface) {
@@ -100,8 +104,8 @@ public class RayTracingTest {
 
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
 		if (c == null) {
-			c = new PinholeCamera(new Vector(0.0, 0.0, 1.0),
-					new Vector(0.0, 0.0, -1.0),
+			c = new PinholeCamera(new Vector(0.0, 0.0, -1.0),
+					new Vector(0.0, 0.0, 1.0),
 					new Vector(0.0, 1.0, 0.0));
 			scene.setCamera(c);
 		}
