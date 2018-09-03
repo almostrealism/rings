@@ -292,7 +292,13 @@ public class GLDriver {
 		gl.glClearAccum((float) c.getRed(), (float) c.getGreen(), (float) c.getBlue(), (float) c.getAlpha());
 	}
 
-	public void glDepthFunc(int code) { gl.glDepthFunc(code); }
+	public void glDepthFunc(String code) {
+		try {
+			gl.glDepthFunc(GL2.class.getField(code).getInt(gl));
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void glStencilFunc(int func, int ref, int mask) { gl.glStencilFunc(func, ref, mask); }
 
@@ -610,6 +616,9 @@ public class GLDriver {
 		xmax = ymax * aspectRatio;
 		return getFrustum(-xmax, xmax, -ymax, ymax, near, far);
 	}
+	
+	
+	
 
 	private TransformMatrix getFrustum(double left, double right, double bottom, double top, double near, double far) {
 		double temp, temp2, temp3, temp4;
@@ -775,9 +784,12 @@ public class GLDriver {
 	}
 
 	public double[] getProjectionMatrix() {
-		double projection[] = new double[16];
-		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
-		return projection;
+	
+			double projection[] = new double[16];
+			gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
+			return projection;
+	
+		
 	}
 
 	public int[] getViewport() {

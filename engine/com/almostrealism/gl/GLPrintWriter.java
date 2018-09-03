@@ -25,6 +25,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.InstanceReference;
 import io.almostrealism.code.Method;
+import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import io.almostrealism.js.JavaScriptPrintWriter;
 import org.almostrealism.algebra.*;
@@ -49,6 +50,10 @@ import java.util.*;
  */
 public class GLPrintWriter extends GLDriver {
 	private String glMember, gluMember, glutMember;
+	
+	//TODO ask
+	private String matrixMember="mat4";
+	
 	private String name; // TODO Use name
 	private CodePrintWriter p;
 
@@ -107,17 +112,18 @@ public class GLPrintWriter extends GLDriver {
 	public void glColor(RGB color) {
 		if (gl != null) super.glColor(color);
 
-		if (enableDoublePrecision) {
-			p.println(glMethod("color3d",
-								new Variable<>("r", color.getRed()),
-								new Variable<>("g", color.getGreen()),
-								new Variable<>("b", color.getBlue())));
-		} else {
-			p.println(glMethod("color3f",
-								new Variable<>("r", (float) color.getRed()),
-								new Variable<>("g", (float) color.getGreen()),
-								new Variable<>("b", (float) color.getBlue())));
-		}
+//		TODO Replace these with something supported by WebGL
+//		if (enableDoublePrecision) {
+//			p.println(glMethod("color3d",
+//								new Variable<>("r", color.getRed()),
+//								new Variable<>("g", color.getGreen()),
+//								new Variable<>("b", color.getBlue())));
+//		} else {
+//			p.println(glMethod("color3f",
+//								new Variable<>("r", (float) color.getRed()),
+//								new Variable<>("g", (float) color.getGreen()),
+//								new Variable<>("b", (float) color.getBlue())));
+//		}
 	}
 
 	@Override
@@ -143,26 +149,27 @@ public class GLPrintWriter extends GLDriver {
 	public void glMaterial(GLMaterial mat) {
 		if (gl != null) super.glMaterial(mat);
 
-		p.println(glMethod("materialfv",
-				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
-								new Variable<>("GL_AMBIENT", GL2.GL_AMBIENT),
-								new Variable<>("ambient", Scalar.toFloat(mat.ambient.toArray())),
-								new Variable<>("zero", 0))));
-		p.println(glMethod("materialfv",
-				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
-								new Variable<>("GL_DIFFUSE", GL2.GL_DIFFUSE),
-								new Variable<>("diffuse", Scalar.toFloat(mat.diffuse.toArray())),
-								new Variable<>("zero", 0))));
-		p.println(glMethod("materialfv",
-				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
-								new Variable<>("GL_SPECULAR", GL2.GL_SPECULAR),
-								new Variable("specular", Scalar.toFloat(mat.specular.toArray())),
-								new Variable("zero", 0))));
-		p.println(glMethod("materialfv",
-				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
-								new Variable("GL_SHININESS", GL2.GL_SHININESS),
-								new Variable("shininess", new float[] { (float) mat.shininess.getValue() }),
-								new Variable("zero", 0))));
+//		TODO  Replace these with methods that work for WebGL
+//		p.println(glMethod("materialfv",
+//				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
+//								new Variable<>("GL_AMBIENT", GL2.GL_AMBIENT),
+//								new Variable<>("ambient", Scalar.toFloat(mat.ambient.toArray())),
+//								new Variable<>("zero", 0))));
+//		p.println(glMethod("materialfv",
+//				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
+//								new Variable<>("GL_DIFFUSE", GL2.GL_DIFFUSE),
+//								new Variable<>("diffuse", Scalar.toFloat(mat.diffuse.toArray())),
+//								new Variable<>("zero", 0))));
+//		p.println(glMethod("materialfv",
+//				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
+//								new Variable<>("GL_SPECULAR", GL2.GL_SPECULAR),
+//								new Variable("specular", Scalar.toFloat(mat.specular.toArray())),
+//								new Variable("zero", 0))));
+//		p.println(glMethod("materialfv",
+//				Arrays.asList(new Variable<>("GL_FRONT", GL.GL_FRONT),
+//								new Variable("GL_SHININESS", GL2.GL_SHININESS),
+//								new Variable("shininess", new float[] { (float) mat.shininess.getValue() }),
+//								new Variable("zero", 0))));
 	}
 
 	@Override
@@ -343,10 +350,19 @@ public class GLPrintWriter extends GLDriver {
 						new Variable<>("a", a)));
 	}
 
+
 	@Override
 	public void clearColorBuffer() {
 		if (gl != null) super.clearColorBuffer();
-		throw new RuntimeException("clearColorBuffer");
+		//throw new RuntimeException("clearColorBuffer");
+		p.println(glMethod("clear", new InstanceReference(glMember + ".COLOR_BUFFER_BIT")));
+		
+	}
+	
+	@Override
+	public void glClearColorAndDepth() {
+		if (gl !=null) super.glClearColorAndDepth();
+		p.println(glMethod("clear", new InstanceReference(glMember + ".COLOR_BUFFER_BIT  | " + glMember + ".DEPTH_BUFFER_BIT")));
 	}
 
 	@Override
@@ -366,9 +382,9 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public void glDepthFunc(int code) {
+	public void glDepthFunc(String code) {
 		if (gl != null) super.glDepthFunc(code);
-		p.println(glMethod("depthFunc", Arrays.asList(new Variable<>("code", code))));
+		p.println(glMethod("depthFunc", new InstanceReference(glMember + "." + code)));
 	}
 
 	@Override
@@ -515,6 +531,7 @@ public class GLPrintWriter extends GLDriver {
 	public void glBufferData(int code, int l, ByteBuffer buf, int d) {
 		if (gl != null) super.glBufferData(code, l, buf, d);
 		throw new RuntimeException("bufferData");
+
 	}
 
 	@Override
@@ -660,20 +677,102 @@ public class GLPrintWriter extends GLDriver {
 						new InstanceReference(glMember + "." + param),
 						new InstanceReference(glMember + "." + value)));
 	}
+	
+	//TODO: revise to correctly render a sphere.  For now, we experiment here.
+	public void glutSolidSphere(double radius, int slices, int stacks) {
+		glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
+		clearDepth(1.0);
+		enable("DEPTH_TEST");
+		glDepthFunc("LEQUAL");
+		glClearColorAndDepth();
+		Variable projectionMatrix = new Variable("projectionMatrix", String.class, matrixMember+".create()");
+		p.println(projectionMatrix);
+		List<Variable> arguments = new ArrayList<Variable>();
+		Variable projMatrix = new InstanceReference("projectionMatrix");
+		double pi=Math.PI;
+		Variable fieldOfView = new Variable("fieldOfView",Float.class,(45 * pi / 180));
+		Variable clientWidth = new Variable("clientWidth",String.class,"gl.canvas.clientWidth");
+		Variable clientHeight = new Variable("clientHeight",String.class,"gl.canvas.clientHeight");
+		p.println(clientWidth);
+		p.println(clientHeight);
+		Variable aspect = new InstanceReference("clientWidth / clientHeight");
+		Variable zNear= new Variable ("zNear", Float.class, 0.1);
+		Variable zFar = new Variable("zFar", Float.class, 100.0);
+		arguments.add(projMatrix);
+		arguments.add(fieldOfView);
+		arguments.add(aspect);
+		arguments.add(zNear);
+		arguments.add(zFar);
+		
+		String[] order = {"projMatrix","fieldOfView","aspect","zNear","zFar"};
+		Map<String,Variable> argMap = new HashMap<String,Variable>();
+		argMap.put("projMatrix", projMatrix);
+		argMap.put("fieldOfView", fieldOfView);
+		argMap.put("aspect", aspect);
+		argMap.put("zNear", zNear);
+		argMap.put("zFar", zFar);
+		Method persp = new Method("mat4","perspective",Arrays.asList(order), argMap);
+		p.println(persp);
+		
+		Variable modelViewMatrix = new Variable("modelViewMatrix", String.class, matrixMember+".create()");
+		p.println(modelViewMatrix);
+		Variable amtToTranslate = new Variable("amountToTranslate", String.class, "[-0.0,0.0,-6.0]");
+		p.println(amtToTranslate);
+		
+		Variable positionBuffer = new Variable("positionBuffer",String.class, new Method(glMember,"createBuffer",null,null));
+		
+		p.println(positionBuffer);
+		
+		List<Variable> bindArgs = new ArrayList<Variable>();
+		bindArgs.add(new InstanceReference("gl.ARRAY_BUFFER"));
+		bindArgs.add(new InstanceReference("positionBuffer"));
+		
+		Method bindBuf = glMethod("bindBuffer",bindArgs);
+		
+		p.println(bindBuf);
+
+
+		 //gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+		
+		Variable positions = new Variable("positions", String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]");
+		p.println(positions);
+		
+		
+		
+		p.println(glMethod("bufferData",new InstanceReference("gl.ARRAY_BUFFER"),new InstanceReference(
+				"new Float32Array(positions)"),new InstanceReference("gl.STATIC_DRAW")));
+		
+		Scope<Variable> bufferBinding= new Scope<Variable>();
+		List<Variable> vars=bufferBinding.getVariables();
+		Variable numC = new Variable("numComponents", Integer.class, 2);
+		vars.add(numC);
+		Variable typ = new Variable("type",String.class,"gl.FLOAT");
+		vars.add(typ);
+		Variable norm = new Variable("normalize",Boolean.class,false);
+		vars.add(norm);
+		Variable strd = new Variable("stride",Integer.class,0);
+		vars.add(strd);
+		Variable offs = new Variable("offset",Integer.class,0);
+		vars.add(offs);
+		List<Method> methods = bufferBinding.getMethods();
+		methods.add(glMethod("bindBuffer",new InstanceReference("gl.ARRAY_BUFFER"), new InstanceReference("buffers.position")));
+		methods.add(glMethod("vertexAttribPointer",new InstanceReference("programInfo.attribLocations.vertexPosition"), numC, typ, norm, strd,offs));
+		
+		for (Iterator it = vars.iterator(); it.hasNext();) {
+			Variable v = (Variable) it.next();
+			p.println(v);
+		}
+		for (Iterator iterator = methods.iterator(); iterator.hasNext();) {
+			Method method = (Method) iterator.next();
+			p.println(method);
+		}
+		
+	}
 
 	@Override
 	public void wireCube(double size) {
 		if (glut != null) super.wireCube(size);
 		throw new RuntimeException("wireCube");
-	}
-
-	@Override
-	public void glutSolidSphere(double radius, int slices, int stacks) {
-		if (glut != null) super.glutSolidSphere(radius, slices, stacks);
-		p.println(glutMethod("solidSphere",
-								new Variable<>("radius", radius),
-								new Variable<>("slices", slices),
-								new Variable<>("stacks", stacks)));
 	}
 
 	@Override
