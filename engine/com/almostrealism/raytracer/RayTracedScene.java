@@ -58,7 +58,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 	public RenderParameters getRenderParameters() { return p; }
 
-	public Future<Producer<RGB>> operate(Producer<Pair> uv, Producer<Pair> sd) {
+	public Producer<RGB> operate(Producer<Pair> uv, Producer<Pair> sd) {
 		Future<Producer<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
 
 		if (color == null) {
@@ -85,7 +85,12 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 			};
 		}
 
-		return color;
+		try {
+			return color.get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

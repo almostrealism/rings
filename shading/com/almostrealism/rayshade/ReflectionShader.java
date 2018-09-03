@@ -18,10 +18,9 @@ package com.almostrealism.rayshade;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import com.almostrealism.IntersectionalLightingEngine;
 import com.almostrealism.LightingEngine;
+import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
@@ -30,6 +29,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.
@@ -75,41 +75,33 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	/** Method specified by the Shader interface. */
 	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
-			ColorProducer prod;
-
-			try {
-				// TODO  Should be submitted to an executor service
-				prod = p.getSurface().call();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-
 			Vector point;
 			
 			try {
-				point = p.getIntersection().get(0).call().getOrigin();
+				point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
 			
-			return this.reflectiveColor.evaluate(new Object[] {p}).multiply(prod.operate(point).evaluate(null));
+			return this.reflectiveColor.evaluate(new Object[] { p })
+							.multiply(p.getSurface().evaluate(new Object[] { point } ).evaluate(null));
 		}
 		
 		p.addReflection();
 		
-		List<Callable<ColorProducer>> allSurfaces = new ArrayList<Callable<ColorProducer>>();
-		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces.add(p.getOtherSurfaces()[i]); }
+		List<Producer<RGB>> allSurfaces = new ArrayList<>();
 		allSurfaces.add(p.getSurface());
+		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces.add(p.getOtherSurfaces()[i]); }
 		
-		Light allLights[] = new Light[p.getOtherLights().length + 1];
-		for (int i = 0; i < p.getOtherLights().length; i++) { allLights[i] = p.getOtherLights()[i]; }
-		allLights[allLights.length - 1] = p.getLight();
+		List<Light> allLights = new ArrayList<>();
+		allLights.add(p.getLight());
+		for (Light l : p.getOtherLights()) { allLights.add(l); }
 
 		Vector point;
 		
 		try {
-			point = p.getIntersection().get(0).call().getOrigin();
+			point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -119,16 +111,18 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
-		
-		ColorSum totalColor = new ColorSum();
-		
-		ColorProducer r = this.getReflectiveColor();
-		if (super.size() > 0) r = new ColorMultiplier(r, super.shade(p, normals));
+
+		Producer<RGB> totalColor = null;
+
+		Producer<RGB> r = this.getReflectiveColor();
+		if (super.size() > 0) {
+			r = new RGBMultiply(r, super.shade(p, normals));
+		}
 
 		Vector n;
 
 		try {
-			n = normals.iterator().next().call().getDirection();
+			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -179,8 +173,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				}
 			};
 
-			LightingEngine l = new IntersectionalLightingEngine(reflectedRay, allSurfaces, allLights, p);
-			ColorProducer color = l.evaluate(new Object[0]);
+			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
 			
 			if (color == null) {
 				if (this.eMap == null)
@@ -192,9 +185,14 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Vector nor = p.getIntersection().getNormalAt(point).evaluate(new Object[0]);
 			double c = 1 - nor.minus().dotProduct(n) / (nor.minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
+			color = new RGBMultiply(color, new RGBMultiply(r,
+						new StaticProducer<>(new RGB(reflectivity, reflectivity, reflectivity))));
 			
-			totalColor.add(color);
+			if (totalColor == null) {
+				totalColor = color;
+			} else {
+				totalColor = new RGBAdd(totalColor, color);
+			}
 		}
 		
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
@@ -244,8 +242,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				}
 			};
 
-			IntersectionalLightingEngine l = new IntersectionalLightingEngine(reflectedRay, allSurfaces, allLights, p);
-			ColorProducer color = l.evaluate(new Object[0]);
+			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
 			
 			if (color == null) {
 				if (this.eMap == null) {
@@ -260,12 +257,16 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			double c = 1 - n.minus().dotProduct(no) /
 					(no.minus().length() * n.length());
 			double reflectivity = this.reflectivity + (1 - this.reflectivity) * Math.pow(c, 5.0);
-			color = new ColorMultiplier(color, new ColorMultiplier(r, reflectivity));
-			
-			totalColor.add(color);
+			color = new RGBMultiply(color, new RGBMultiply(r, new RGB(reflectivity, reflectivity, reflectivity)));
+
+			if (totalColor == null) {
+				totalColor = color;
+			} else {
+				totalColor = new RGBAdd(totalColor, color);
+			}
 		}
 		
-		return GeneratedColorProducer.fromFunction(this, new ColorMultiplier(totalColor, lightColor));
+		return GeneratedColorProducer.fromProducer(this, new RGBMultiply(totalColor, lightColor));
 	}
 	
 	/**

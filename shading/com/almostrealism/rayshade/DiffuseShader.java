@@ -39,57 +39,73 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	public DiffuseShader() { }
 	
 	/** Method specified by the {@link Shader} interface. */
-	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
-		Vector point;
-		
-		try {
-			point = normals.get(0).call().getOrigin();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-		
-		ColorProducer lightColor = p.getLight().getColorAt().operate(point);
-		
-		Vector n;
-		
-		try {
-			n = normals.iterator().next().call().getDirection();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		ColorSum color = new ColorSum();
+	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
+		Producer<RGB> pr = new Producer<RGB>() {
+			@Override
+			public RGB evaluate(Object[] args) {
+				Vector point;
 
-		if (p.getSurface() == null) {
-			throw new NullPointerException();
-		}
+				try {
+					point = normals.get(0).evaluate(args).getOrigin();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return null;
+				}
 
-		ColorProducer realized = null;
-		
-		try {
-			point = normals.get(0).call().getOrigin();
-			if (p.getSurface() != null) {
-				ColorProducer pr = p.getSurface().call();
-				realized = pr == null ? null : pr.operate(point);
+				ColorProducer lightColor = p.getLight().getColorAt().operate(point);
+
+				Vector n;
+
+				try {
+					n = normals.iterator().next().evaluate(args).getDirection();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+
+				ColorSum color = new ColorSum();
+
+				if (p.getSurface() == null) {
+					throw new NullPointerException();
+				}
+
+				ColorProducer realized = null;
+
+				try {
+					point = normals.get(0).evaluate(args).getOrigin();
+					if (p.getSurface() != null) {
+						Producer<RGB> pr = p.getSurface().call();
+						realized = pr == null ? null : pr.evaluate(new Object[] { point });
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					return color.evaluate(args);
+				}
+
+				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+					double scale = n.dotProduct(p.getLightDirection());
+					if (scale > 0) {
+						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					}
+				}
+
+				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
+					double scale = n.minus().dotProduct(p.getLightDirection());
+					if (scale > 0) {
+						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
+					}
+				}
+
+				return color.evaluate(args);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return color;
-		}
+
+			@Override
+			public void compact() {
+				// TODO
+			}
+		};
 		
-		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			double scale = n.dotProduct(p.getLightDirection());
-			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
-		}
-		
-		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-			double scale = n.minus().dotProduct(p.getLightDirection());
-			color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
-		}
-		
-		return GeneratedColorProducer.fromProducer(this, color);
+		return GeneratedColorProducer.fromProducer(this, pr);
 	}
 	
 	/** Returns a zero length array. */	

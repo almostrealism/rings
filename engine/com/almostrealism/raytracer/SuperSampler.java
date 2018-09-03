@@ -16,16 +16,15 @@
 
 package com.almostrealism.raytracer;
 
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Triple;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.graph.PathElement;
 import org.almostrealism.util.Producer;
 
-public class SuperSampler implements ColorProducer {
-	private Producer<RGB> samples[][];
+import java.util.ArrayList;
+
+public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
+	protected Producer<RGB> samples[][];
 	private double scale;
 
 	public SuperSampler(Producer<RGB> samples[][]) {
@@ -43,7 +42,10 @@ public class SuperSampler implements ColorProducer {
 			for (int j = 0; j < samples[i].length; j++) {
 				double r = pos.getX() + ((double) i / (double) samples.length);
 				double q = pos.getY() + ((double) j / (double) samples[i].length);
-				c.addTo(samples[i][j].evaluate(new Object[] { new Pair(r, q) }).multiply(scale));
+
+				RGB rgb = samples[i][j].evaluate(new Object[] { new Pair(r, q) });
+				rgb.multiplyBy(scale);
+				c.addTo(rgb);
 			}
 		}
 
@@ -61,14 +63,15 @@ public class SuperSampler implements ColorProducer {
 	}
 
 	@Override
-	public RGB operate(Triple triple) {
-		// TODO  This should not be a triple function, but that needs to be resolved via the type hierarchy
-		return null;
-	}
+	public Iterable<Producer<RGB>> getDependencies() {
+		ArrayList<Producer<RGB>> l = new ArrayList<>();
 
-	@Override
-	public Scope<? extends Variable> getScope(String s) {
-		// TODO
-		return null;
+		for (int i = 0; i < samples.length; i++) {
+			for (int j = 0; j < samples[i].length; j++) {
+				l.add(samples[i][j]);
+			}
+		}
+
+		return l;
 	}
 }

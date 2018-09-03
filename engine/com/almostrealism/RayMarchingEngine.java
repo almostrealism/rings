@@ -17,16 +17,14 @@
 package com.almostrealism;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 import com.almostrealism.raytracer.RayTracer;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBAdd;
 import org.almostrealism.color.ShadableCurve;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
@@ -36,19 +34,19 @@ import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Producer;
 
-public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
+public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;
 
 	private DistanceEstimator estimator;
-	private Iterable<? extends Callable<ColorProducer>> allSurfaces;
+	private Iterable<? extends Producer<RGB>> allSurfaces;
 	private Light allLights[];
 
 	private Light lights[];
 	private ShaderSet<? extends LightingContext> shaders;
 	
-	public RayMarchingEngine(Iterable<? extends Callable<ColorProducer>> allSurfaces,
+	public RayMarchingEngine(Iterable<? extends Producer<RGB>> allSurfaces,
 							 Light allLights[], Light l, DistanceEstimator e, ShaderSet shaders) {
 		this.allSurfaces = allSurfaces;
 		this.allLights = allLights;
@@ -62,18 +60,20 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 
 	@Override
 	public Producer<RGB> trace(Producer<Ray> r) {
-		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
+		// TODO
+//		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
+		return null;
 	}
 
 	@Override
 	public VectorProducer getNormalAt(Vector point) {
-		final Callable<Ray> c = iterator().next();
+		final Producer<Ray> c = iterator().next();
 
 		return new VectorFutureAdapter() {
 			@Override
-			public Vector evaluate(Object[] objects) {
+			public Vector evaluate(Object[] args) {
 				try {
-					return c.call().getDirection();
+					return c.evaluate(args).getDirection();
 				} catch (Exception e) {
 					e.printStackTrace();
 					return null;
@@ -101,16 +101,25 @@ public class RayMarchingEngine extends ArrayList<Callable<Ray>> implements RayTr
 	public Scope getScope(String prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
 
 	@Override
-	public ColorProducer call() throws Exception {
+	public RGB evaluate(Object args[]) {
 		return new RGB(0.8, 0.8, 0.8);  // TODO  Support colors
 	}
+
+	@Override
+	public void compact() { }
+
+	public Producer<RGB> call() { return evaluate(new Object[0]); }
 	
 	@Override
-	public ColorProducer shade(ShaderContext parameters) {
-		ColorSum c = new ColorSum();
+	public Producer<RGB> shade(ShaderContext parameters) {
+		Producer<RGB> c = null;
 		
 		for (Shader s : shaders) {
-			c.add(s.shade(parameters, this));
+			if (c == null) {
+				c = s.shade(parameters, this);
+			} else {
+				c = new RGBAdd(c, s.shade(parameters, this));
+			}
 		}
 		
 		return c;

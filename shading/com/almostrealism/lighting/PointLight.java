@@ -29,6 +29,7 @@ import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.relation.TripleFunction;
+import org.almostrealism.util.Producer;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -200,9 +201,9 @@ public class PointLight implements Light, Positioned {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static ColorProducer pointLightingCalculation(ContinuousField intersection, Vector point, Callable<ColorProducer> surface,
-											Collection<Callable<ColorProducer>> otherSurfaces, PointLight light,
-											Light otherLights[], ShaderContext p) {
+	public static Producer<RGB> pointLightingCalculation(ContinuousField intersection, Vector point, Callable<Producer<RGB>> surface,
+														 Collection<Producer<RGB>> otherSurfaces, PointLight light,
+														 Light otherLights[], ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight;
 		

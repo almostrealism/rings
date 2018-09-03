@@ -46,6 +46,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class GLDriver {
@@ -92,7 +93,7 @@ public class GLDriver {
 
         this.cameraStack = new Stack<>();
         this.projection_joml = new Matrix4d();
-		this.lighting = new GLLightingConfiguration(new Light[0]);
+		this.lighting = new GLLightingConfiguration(Arrays.asList());
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();

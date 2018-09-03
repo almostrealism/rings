@@ -20,6 +20,8 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
+import org.almostrealism.geometry.RayDirection;
+import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
@@ -29,6 +31,7 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -115,7 +118,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	public boolean intersect(Ray ray) {
 		ray.transform(this.getTransform(true).getInverse());
 		
-		double b = ray.oDotd();
+		double b = ray.oDotd().evaluate(new Object[0]).getValue();
 		double c = ray.oDoto();
 		
 		double discriminant = (b * b) - (ray.dDotd()) * (c - 1);
@@ -143,7 +146,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 			public ShadableIntersection evaluate(Object[] args) {
 				Ray ray = fr.evaluate(args);
 
-				double b = ray.oDotd();
+				double b = ray.oDotd().evaluate(args).getValue();
 				double c = ray.oDoto();
 				double g = ray.dDotd();
 
@@ -155,19 +158,25 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 				t[0] = (-b + discriminantSqrt) / (g);
 				t[1] = (-b - discriminantSqrt) / (g);
 
+				Scalar st;
+
 				if (t[0] > 0 && t[1] > 0) {
 					if (t[0] < t[1]) {
-						return new ShadableIntersection(ray, Sphere.this, new Scalar(t[0]));
+						st = new Scalar(t[0]);
 					} else {
-						return new ShadableIntersection(ray, Sphere.this, new Scalar(t[1]));
+						st = new Scalar(t[1]);
 					}
 				} else if (t[0] > 0) {
-					return new ShadableIntersection(ray, Sphere.this, new Scalar(t[0]));
+					st = new Scalar(t[0]);
 				} else if (t[1] > 0) {
-					return new ShadableIntersection(ray, Sphere.this, new Scalar(t[1]));
+					st = new Scalar(t[1]);
 				} else {
 					return null;
 				}
+
+				return new ShadableIntersection(Sphere.this,
+											new RayPointAt(fr, new StaticProducer<>(st)),
+											new RayDirection(fr), st);
 			}
 
 			@Override

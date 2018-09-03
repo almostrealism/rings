@@ -188,7 +188,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * at the point represented by the specified {@link Vector}.
 	 */
 	@Override
-	public VectorProducer getNormalAt(Vector point) {
+	public Producer<Vector> getNormalAt(Vector point) {
 		return getSurface().getNormalAt(point);
 	}
 	
@@ -210,7 +210,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	@Override
-	public ColorProducer call() throws Exception { return getSurface().call();  }
+	public Producer<RGB> call() throws Exception { return getSurface().call();  }
 
 	@Override
 	public Vector operate(Triple triple) {
@@ -256,7 +256,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
 	@Override
-	public ColorProducer shade(ShaderContext parameters) {
+	public Producer<RGB> shade(ShaderContext parameters) {
 		return this.surface.shade(parameters);
 	}
 

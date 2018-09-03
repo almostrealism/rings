@@ -60,6 +60,12 @@
 
 		<dependency>
 			<groupId>io.almostrealism</groupId>
+			<artifactId>TreeView</artifactId>
+			<version>0.2-rc</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.almostrealism</groupId>
 			<artifactId>GraphPersist</artifactId>
 			<version>0.2-rc</version>
 		</dependency>

@@ -18,14 +18,15 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorMultiplier;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBMultiply;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property
@@ -75,7 +76,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 	/**
 	 * @see org.almostrealism.color.Shader#shade(LightingContext, DiscreteField)
 	 */
-	public ColorProducer shade(T p, DiscreteField f) {
+	public Producer<RGB> shade(T p, DiscreteField f) {
 		if (p.getSurface() instanceof RigidBody == false) return new RGB(1.0, 1.0, 1.0);
 		
 		RigidBody.State state = ((RigidBody)p.getSurface()).getState();
@@ -94,6 +95,6 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 		d.divideBy(d.length());
 		p.setLightDirection(d);
 		
-		return new ColorMultiplier(this.shader.shade(p, f), m);
+		return new RGBMultiply(this.shader.shade(p, f), new StaticProducer<>(new RGB(m, m, m)));
 	}
 }

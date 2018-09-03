@@ -60,7 +60,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		Vector point;
 		
 		try {
-			point = p.getIntersection().get(0).call().getOrigin();
+			point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -71,7 +71,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		Vector n;
 		
 		try {
-			n = normals.iterator().next().call().getDirection();
+			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -80,27 +80,39 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		n.divideBy(n.length());
 		Vector h = p.getIntersection().getNormalAt(point).evaluate(new Object[0]).add(p.getLightDirection());
 		h = h.divide(h.length());
+
+		Producer<RGB> color = null;
+
+		Producer<RGB> hc = this.getHighlightColor().evaluate(new Object[] {p});
+		if (super.size() > 0) hc = new RGBMultiply(hc, super.shade(p, normals));
 		
-		ColorSum color = new ColorSum();
-		
-		ColorProducer hc = this.getHighlightColor().evaluate(new Object[] {p});
-		if (super.size() > 0) hc = new ColorMultiplier(hc, super.shade(p, normals));
-		
-		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			double c = h.dotProduct(n);
+			if (c < 0) break f;
 			c = Math.pow(c, this.getHighlightExponent());
 			
-			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
+			Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, hc), new RGB(c, c, c));
+			if (color == null) {
+				color = pr;
+			} else {
+				color = new RGBAdd(color, pr);
+			}
 		}
 		
-		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
+		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			double c = h.dotProduct(n.minus());
+			if (c < 0) break f;
 			c = Math.pow(c, this.getHighlightExponent());
-			
-			color.add(new ColorMultiplier(new ColorMultiplier(lightColor, hc), c));
+
+			Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, hc), new RGB(c, c, c));
+			if (color == null) {
+				color = pr;
+			} else {
+				color = new RGBAdd(color, pr);
+			}
 		}
 		
-		return GeneratedColorProducer.fromFunction(this, color);
+		return GeneratedColorProducer.fromProducer(this, color);
 	}
 	
 	/**

@@ -30,6 +30,7 @@ import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
 import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
@@ -44,6 +45,7 @@ import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
 import org.almostrealism.util.Pipeline;
+import org.almostrealism.util.Producer;
 
 /**
  * A {@link RenderPanel} object allows display of scene previews and
@@ -59,7 +61,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	private int width, height, ssWidth, ssHeight;
 
-	private ColorProducer renderedImageData[][];
+	private Producer<RGB> renderedImageData[][];
 	private Image renderedImage;
 
 	private Thread evaluationThread;
@@ -258,10 +260,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 */
 	public int getSupersampleHeight() { return this.ssHeight; }
 	
-	/**
-	 * Return the image rendered by this RenderPanel as an array of RGB objects.
-	 */
-	public ColorProducer[][] getRenderedImageData() { return this.renderedImageData; }
+	/** Returns the image rendered by this {@link RenderPanel} as an array of {@link RGB}s. */
+	public Producer<RGB>[][] getRenderedImageData() { return this.renderedImageData; }
 	
 	/**
 	 * Sets the EventHandler object used by this RenderPanel object. Setting this to null will deactivae event reporting.

@@ -46,7 +46,7 @@ public class GLLightingConfiguration {
 	private Vector light7Position = new Vector();
 	private RGB light7Diffuse = new RGB();
 
-	public GLLightingConfiguration(Light lights[]) {
+	public GLLightingConfiguration(Iterable<Light> lights) {
 		int index = 0;
 
 		for (Light l : lights) {

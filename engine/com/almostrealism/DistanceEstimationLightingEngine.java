@@ -19,17 +19,18 @@ package com.almostrealism;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorSum;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public class DistanceEstimationLightingEngine extends LightingEngine {
@@ -38,9 +39,14 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	private DistanceEstimator estimator;
 	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(Producer<Ray> ray, Iterable<? extends Callable<ColorProducer>> allSurfaces,
-											Light allLights[], ShaderContext p, DistanceEstimator estimator, ShaderSet shaders) {
-		super(new Producer<ContinuousField>() {
+	public DistanceEstimationLightingEngine(Producer<Ray> ray, Producer<RGB> surface,
+											Collection<? extends Producer<RGB>> otherSurfaces,
+											Light light, Iterable<Light> otherLights,
+											ShaderContext p, DistanceEstimator estimator, ShaderSet shaders) {
+		// TODO
+		super(
+				/*
+				new Producer<ContinuousField>() {
 			@Override
 			public ContinuousField evaluate(Object args[]) {
 				Ray r = ray.evaluate(args);
@@ -64,39 +70,41 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 //	 				System.out.println("Total distance = " + totalDistance);
 
 				return new Locus(r.getOrigin(), r.getDirection(), shaders,
-						new ShaderContext(estimator instanceof Callable ?
-											((Callable) estimator) : null, p.getLight()));
+						new ShaderContext(estimator instanceof Producer ?
+											((Producer) estimator) : null, p.getLight()));
 			}
 
 			@Override
 			public void compact() {
 				// TODO  Hardware acceleration
 			}
-		}, allSurfaces, allLights, p);
+		},*/
+				null,
+				surface, otherSurfaces, light, otherLights, p);
 
 		this.estimator = estimator;
 		this.shaders = shaders;
 	}
 
-	public static class Locus extends ArrayList<Callable<Ray>> implements ContinuousField, Callable<ColorProducer>, Shadable {
+	public static class Locus extends ArrayList<Producer<Ray>> implements ContinuousField, Callable<Producer<RGB>>, Shadable {
 		private ShaderSet shaders;
 		private ShaderContext params;
 
 		public Locus(Vector location, Vector normal, ShaderSet s, ShaderContext p) {
-			this.add(() -> { return new Ray(location, normal); });
+			this.add(new StaticProducer<>(new Ray(location, normal)));
 			shaders = s;
 			params = p;
 		}
 
 		@Override
 		public VectorProducer getNormalAt(Vector vector) {
-			final Callable<Ray> c = get(0);
+			final Producer<Ray> c = get(0);
 
 			return new VectorFutureAdapter() {
 				@Override
-				public Vector evaluate(Object[] objects) {
+				public Vector evaluate(Object[] args) {
 					try {
-						return c.call().getDirection();
+						return c.evaluate(args).getDirection();
 					} catch (Exception e) {
 						e.printStackTrace();
 						return null;
@@ -118,7 +126,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		@Override
 		public Vector operate(Triple triple) {
 			try {
-				return get(0).call().getOrigin();
+				return get(0).evaluate(new Object[] { triple }).getOrigin();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -133,7 +141,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 
 		public String toString() {
 			try {
-				return String.valueOf(get(0).call());
+				return String.valueOf(get(0));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -142,12 +150,12 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public ColorProducer shade(ShaderContext parameters) {
+		public Producer<RGB> shade(ShaderContext parameters) {
 			try {
-				ColorSum color = new ColorSum();
+				Producer<RGB> color = null;
 
 				if (shaders != null)
-					color.add(shaders.shade(parameters, this));
+					color = shaders.shade(parameters, this);
 
 				return color;
 			} catch (Exception e) {
@@ -157,7 +165,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public ColorProducer call() throws Exception {
+		public Producer<RGB> call() throws Exception {
 			return shade(params);
 		}
 	}

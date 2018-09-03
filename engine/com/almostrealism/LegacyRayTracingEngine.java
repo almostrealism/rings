@@ -32,8 +32,6 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
-import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.StaticProducer;
 
 /**
  * The {@link LegacyRayTracingEngine} class provides static methods for rendering scenes.
@@ -75,14 +73,14 @@ public class LegacyRayTracingEngine {
 								int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(0, 0, width, height, width, height, ssWidth, ssHeight);
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
+		return null; // TODO LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
 	}
 	
 	public static RGB[][] render (Scene scene, int x, int y, int dx, int dy,
 								int width, int height, int ssWidth, int ssHeight,
 								ProgressMonitor monitor) {
 		RenderParameters p = new RenderParameters(x, y, dx, dy, width, height, ssWidth, ssHeight);
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
+		return null; // TODO LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), monitor);
 	}
 	
 	/**
@@ -94,7 +92,7 @@ public class LegacyRayTracingEngine {
 	 * @return  Rendered image data.
 	 */
 	public static RGB[][] render(Scene scene, RenderParameters p, ProgressDisplay prog) {
-		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), prog);
+		return null; // TODO LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), prog);
 	}
 	
 	/**
@@ -108,6 +106,7 @@ public class LegacyRayTracingEngine {
 	 * @param camera  Camera object for scene.
 	 * @param lights  Light objects in scene.
 	 * @param monitor  ProgressMonitor instance to use.
+	 *
 	 * @return  Image data.
 	 */
 	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Light lights[], RenderParameters p, FogParameters f, ProgressMonitor monitor) {
@@ -128,10 +127,11 @@ public class LegacyRayTracingEngine {
 					double r = i + ((double)k / (double)p.ssWidth);
 					double q = j + ((double)l / (double)p.ssHeight);
 
-					IntersectionalLightingEngine le = new IntersectionalLightingEngine(
-														camera.rayAt(new PassThroughProducer<>(0),
-																	new StaticProducer<>(new Pair(p.width, p.height))),
-																	surfaces, lights, null);
+					// TODO  Restore
+					IntersectionalLightingEngine le = null; //new IntersectionalLightingEngine(
+													//	camera.rayAt(new PassThroughProducer<>(0),
+													//				new StaticProducer<>(new Pair(p.width, p.height))),
+													//				surfaces, lights, null);
 					RGB color = le.evaluate(new Object[] { new Pair(r, p.height - q) });
 					
 					if (color == null) {
