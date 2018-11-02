@@ -29,10 +29,15 @@ public class GLRenderableList extends RenderableGLAdapter {
 	public RenderableList getRenderables() { return renderables; }
 	
 	@Override
-	public void init(GLDriver gl) { super.init(gl); renderables.init(gl); }
+	public void init(GLDriver gl) { 
+		
+		super.init(gl); 
+		renderables.init(gl); 
+	}
 	
 	@Override
 	public void display(GLDriver gl) {
+		
 		push(gl);
 		super.display(gl);
 		renderables.display(gl);
@@ -41,6 +46,7 @@ public class GLRenderableList extends RenderableGLAdapter {
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
+		
 		super.write(glMember, name, p);
 		renderables.write(glMember, name, p);
 	}

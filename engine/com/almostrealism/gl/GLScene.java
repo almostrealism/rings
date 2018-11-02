@@ -21,6 +21,7 @@ import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.color.RGBA;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -31,7 +32,8 @@ import java.util.List;
  * TODO  It may be unnecessary to have this class and {@link com.almostrealism.renderable.RenderableList}
  */
 public class GLScene extends ArrayList<Renderable> implements Renderable {
-	public static final boolean verbose = false;
+	//public static final boolean verbose = false;
+	public static final boolean verbose = true;
 
 	private Scene<ShadableSurface> scene;
 	private List<ShadableSurface> added;
@@ -63,6 +65,13 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	@Override
 	public void display(GLDriver gl) {
+		
+		gl.glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
+		gl.clearDepth(1.0);
+		gl.enable("DEPTH_TEST");
+		gl.glDepthFunc("LEQUAL");
+		gl.glClearColorAndDepth();
+		
 		List<Renderable> rs = new ArrayList<>();
 		rs.addAll(this);
 
@@ -82,6 +91,7 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
+
 		int index = 0;
 		for (Renderable r : this) { r.write(glMember, name + (index++), p); }
 	}

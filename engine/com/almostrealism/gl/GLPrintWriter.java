@@ -32,6 +32,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
+import org.almostrealism.graph.Triangle;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 
@@ -49,19 +50,26 @@ import java.util.*;
  * {@link GLPrintWriter}.
  */
 public class GLPrintWriter extends GLDriver {
-	private String glMember, gluMember, glutMember;
+	private String glMember;
 	
-	//TODO ask
+	//private String gluMember, glutMember; not used in webgl?
+	
 	private String matrixMember="mat4";
 	
 	private String name; // TODO Use name
 	private CodePrintWriter p;
 
-	public GLPrintWriter(String glMember, String gluMember, String glutMember, String name, CodePrintWriter p) {
+	//Kristen added for an experiment - should probably remove it
+	public CodePrintWriter getPrintWriter() {
+		return p;
+	}
+	
+	public GLPrintWriter(String glMember, String matMember, String name, CodePrintWriter p) {
 		super(null);
 		this.glMember = glMember;
-		this.gluMember = gluMember;
-		this.glutMember = glutMember;
+		if (matMember !=null && matMember.length()>0) {
+			this.matrixMember=matMember;
+		}
 		this.name = name;
 		this.p = p;
 		this.enableDoublePrecision = p instanceof JavaScriptPrintWriter;
@@ -73,6 +81,9 @@ public class GLPrintWriter extends GLDriver {
 		// TODO
 	}
 	
+
+	
+	//TODO
 	@Override
 	protected void glProjection(Camera c) {
 		//DO NOT DO THIS...instead follow advice at https://webglfundamentals.org/webgl/lessons/webgl-3d-camera.html
@@ -454,8 +465,8 @@ public class GLPrintWriter extends GLDriver {
 		} else {
 			begins.push(code);
 		}
-
-		p.println(glMethod("begin", new Variable<>("code", code)));
+		
+		//p.println(glMethod("begin", new Variable<>("code", code)));
 	}
 
 	@Override
@@ -574,20 +585,20 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
-	@Override
-	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
-		if (glu != null) super.gluLookAt(e, c, var13, var15, var17);
-		p.println(gluMethod("lookAt",
-							Arrays.asList(new Variable<>("ex", (float) e.getX()),
-										new Variable<>("ey", (float) e.getY()),
-										new Variable("ez", (float) e.getZ()),
-										new Variable("cx", (float) c.getX()),
-										new Variable("cy", (float) c.getY()),
-										new Variable("cz", (float) c.getZ()),
-										new Variable("var13", (float) var13),
-										new Variable("var15", (float) var15),
-										new Variable("var17", (float) var17))));
-	}
+//	@Override
+//	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
+//		if (glu != null) super.gluLookAt(e, c, var13, var15, var17);
+//		p.println(gluMethod("lookAt",
+//							Arrays.asList(new Variable<>("ex", (float) e.getX()),
+//										new Variable<>("ey", (float) e.getY()),
+//										new Variable("ez", (float) e.getZ()),
+//										new Variable("cx", (float) c.getX()),
+//										new Variable("cy", (float) c.getY()),
+//										new Variable("cz", (float) c.getZ()),
+//										new Variable("var13", (float) var13),
+//										new Variable("var15", (float) var15),
+//										new Variable("var17", (float) var17))));
+//	}
 
 	@Override
 	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
@@ -641,7 +652,7 @@ public class GLPrintWriter extends GLDriver {
 			begins.pop();
 		}
 
-		p.println(glMethod("begin"));
+		//p.println(glMethod("begin"));
 		return v;
 	}
 
@@ -678,8 +689,13 @@ public class GLPrintWriter extends GLDriver {
 						new InstanceReference(glMember + "." + value)));
 	}
 	
-	//TODO: revise to correctly render a sphere.  For now, we experiment here.
+	//TODO: revise to correctly render a sphere.
 	public void glutSolidSphere(double radius, int slices, int stacks) {
+		super.glutSolidSphere(radius, slices, stacks);
+	}
+	
+	//This was an experiment - does not render sphere obviously
+	public void glutSolidSphere_experiment(double radius, int slices, int stacks) {
 		glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
 		clearDepth(1.0);
 		enable("DEPTH_TEST");
@@ -719,7 +735,21 @@ public class GLPrintWriter extends GLDriver {
 		Variable amtToTranslate = new Variable("amountToTranslate", String.class, "[-0.0,0.0,-6.0]");
 		p.println(amtToTranslate);
 		
-		Variable positionBuffer = new Variable("positionBuffer",String.class, new Method(glMember,"createBuffer",null,null));
+		String[] tranArgOrder = {"modelViewMatrix", "modelViewMatrix","amountToTranslate"};
+		Map<String, Variable> tranArgMap = new HashMap<String,Variable>();
+		tranArgMap.put("modelViewMatrix", new InstanceReference("modelViewMatrix"));
+		tranArgMap.put("amountToTranslate", new InstanceReference("amountToTranslate"));
+		Method transl = new Method("mat4","translate",Arrays.asList(tranArgOrder), tranArgMap);
+		
+		p.println(transl);
+//		mat4.translate(modelViewMatrix,     // destination matrix
+//	               modelViewMatrix,     // matrix to translate
+//	               [-0.0, 0.0, -6.0]);  // amount to translate
+		
+		List<String> emptyList = new ArrayList<String>();
+		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
+		
+		Variable positionBuffer = new Variable("positionBuffer",String.class, new Method(glMember,"createBuffer",emptyList,emptyMap));
 		
 		p.println(positionBuffer);
 		
@@ -731,8 +761,6 @@ public class GLPrintWriter extends GLDriver {
 		
 		p.println(bindBuf);
 
-
-		 //gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 		
 		Variable positions = new Variable("positions", String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]");
 		p.println(positions);
@@ -742,12 +770,15 @@ public class GLPrintWriter extends GLDriver {
 		p.println(glMethod("bufferData",new InstanceReference("gl.ARRAY_BUFFER"),new InstanceReference(
 				"new Float32Array(positions)"),new InstanceReference("gl.STATIC_DRAW")));
 		
+		//var buffers = { position: positionBuffer, };
+		
+		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
+		p.println(buffers);
 		Scope<Variable> bufferBinding= new Scope<Variable>();
 		List<Variable> vars=bufferBinding.getVariables();
 		Variable numC = new Variable("numComponents", Integer.class, 2);
 		vars.add(numC);
-		Variable typ = new Variable("type",String.class,"gl.FLOAT");
-		vars.add(typ);
+
 		Variable norm = new Variable("normalize",Boolean.class,false);
 		vars.add(norm);
 		Variable strd = new Variable("stride",Integer.class,0);
@@ -756,7 +787,13 @@ public class GLPrintWriter extends GLDriver {
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glMethod("bindBuffer",new InstanceReference("gl.ARRAY_BUFFER"), new InstanceReference("buffers.position")));
-		methods.add(glMethod("vertexAttribPointer",new InstanceReference("programInfo.attribLocations.vertexPosition"), numC, typ, norm, strd,offs));
+		methods.add(glMethod("vertexAttribPointer",new InstanceReference("programInfo.attribLocations.vertexPosition"), numC, 
+				new InstanceReference("gl.FLOAT"), norm, strd,offs));
+		
+		//add
+//		gl.enableVertexAttribArray(
+//		        programInfo.attribLocations.vertexPosition);
+		methods.add(glMethod("enableVertexAttribArray",new InstanceReference("programInfo.attribLocations.vertexPosition")));
 		
 		for (Iterator it = vars.iterator(); it.hasNext();) {
 			Variable v = (Variable) it.next();
@@ -766,6 +803,42 @@ public class GLPrintWriter extends GLDriver {
 			Method method = (Method) iterator.next();
 			p.println(method);
 		}
+		
+		Method useP= glMethod("useProgram", new InstanceReference("programInfo.program"));
+		p.println(useP);
+		
+		Method m4fv= glMethod("uniformMatrix4fv", new InstanceReference("programInfo.uniformLocations.projectionMatrix"),
+				norm, new InstanceReference("projectionMatrix"));
+		Method m4fvModel= glMethod("uniformMatrix4fv", new InstanceReference("programInfo.uniformLocations.modelViewMatrix"),norm,
+				new InstanceReference("modelViewMatrix"));
+		
+		p.println(m4fv);
+		p.println(m4fvModel);
+		
+		Variable vCount = new Variable("vertexCount",Integer.class,4);
+		Method drawIt = glMethod("drawArrays",new InstanceReference("gl.TRIANGLE_STRIP"),offs,vCount);
+		p.println(vCount);
+		p.println(drawIt);
+		
+		//NEXT
+//		  gl.useProgram(programInfo.program);
+//
+//		  // Set the shader uniforms
+//
+//		  gl.uniformMatrix4fv(
+//		      programInfo.uniformLocations.projectionMatrix,
+//		      false,
+//		      projectionMatrix);
+//		  gl.uniformMatrix4fv(
+//		      programInfo.uniformLocations.modelViewMatrix,
+//		      false,
+//		      modelViewMatrix);
+//
+//		  {
+//		    const offset = 0;
+//		    const vertexCount = 4;
+//		    gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+//		  }
 		
 	}
 
@@ -781,25 +854,26 @@ public class GLPrintWriter extends GLDriver {
 		throw new RuntimeException("drawArrays");
 	}
 
-	protected Method glMethod(String name, Variable... args) {
+	public Method glMethod(String name, Variable... args) {
 		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, Arrays.asList(args));
 	}
 
-	protected Method glMethod(String name, List<Variable> args) {
+	//should be protected - Kristen changed for experiment
+	public Method glMethod(String name, List<Variable> args) {
 		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, args);
 	}
 
-	protected Method gluMethod(String name, List<Variable> args) {
-		return glMethod(gluMember, p instanceof JavaScriptPrintWriter, name, args);
-	}
+//	protected Method gluMethod(String name, List<Variable> args) {
+//		return glMethod(gluMember, p instanceof JavaScriptPrintWriter, name, args);
+//	}
 
-	protected Method glutMethod(String name, Variable... args) {
-		return glutMethod(name, Arrays.asList(args));
-	}
+//	protected Method glutMethod(String name, Variable... args) {
+//		return glutMethod(name, Arrays.asList(args));
+//	}
 
-	protected Method glutMethod(String name, List<Variable> args) {
-		return glMethod(glutMember, p instanceof JavaScriptPrintWriter, name, args);
-	}
+//	protected Method glutMethod(String name, List<Variable> args) {
+//		return glMethod(glutMember, p instanceof JavaScriptPrintWriter, name, args);
+//	}
 
 	protected static Method glMethod(String glMember, boolean isWebGL, String name, List<Variable> args) {
 		if (!isWebGL) {

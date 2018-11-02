@@ -20,7 +20,7 @@ public class RenderableTriangle extends RenderableGeometry<Triangle> {
 	}
 
 	@Override
-	public void init(GLDriver gl) { }
+	public void init(GLDriver gl) { }  //load triangle vertices here?
 
 	@Override
 	public void render(GLDriver gl) {
