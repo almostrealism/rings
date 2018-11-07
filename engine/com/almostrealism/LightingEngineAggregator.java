@@ -25,21 +25,19 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.Scene;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.ProducerWithRank;
+import org.almostrealism.util.RankedChoiceProducer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LightingEngineAggregator implements Producer<RGB>, PathElement<RGB, RGB> {
-	private List<Producer<RGB>> engines;
-
+public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB> {
 	public LightingEngineAggregator(Producer<Ray> r, Iterable<Producer<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		init(r, surfaces, lights, context);
 	}
 
 	protected void init(Producer<Ray> r, Iterable<Producer<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
-		engines = new ArrayList<>();
-
 		for (Producer<RGB> s : surfaces) {
 			for (Light l : lights) {
 				Collection<Producer<RGB>> otherSurfaces = Scene.separate(s, surfaces);
@@ -60,7 +58,7 @@ public class LightingEngineAggregator implements Producer<RGB>, PathElement<RGB,
 				}
 
 				// TODO Choose which engine dynamically
-				engines.add(new IntersectionalLightingEngine(r, (Intersectable) s,
+				this.add(new IntersectionalLightingEngine(r, (Intersectable) s,
 															otherSurfaces,
 															l, otherLights,
 															c));
@@ -69,21 +67,9 @@ public class LightingEngineAggregator implements Producer<RGB>, PathElement<RGB,
 	}
 
 	@Override
-	public RGB evaluate(Object[] args) {
-		Producer<RGB> total = null;
-
-		for (Producer<RGB> p : engines) {
-			total = total == null ? p : new RGBAdd(total, p);
-		}
-
-		return total.evaluate(args);
+	public Iterable<Producer<RGB>> getDependencies() {
+		List<Producer<RGB>> p = new ArrayList<>();
+		p.addAll(this);
+		return p;
 	}
-
-	@Override
-	public void compact() {
-		for (Producer<RGB> p : engines) p.compact();
-	}
-
-	@Override
-	public Iterable<Producer<RGB>> getDependencies() { return engines; }
 }

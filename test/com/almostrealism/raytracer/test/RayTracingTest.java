@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.almostrealism.rayshade.DiffuseShader;
+import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
 import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
@@ -31,8 +32,8 @@ public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
 	public static boolean useStripedFloor = true;
 	public static boolean useCornellBox = false;
-	public static boolean displaySpheres = false;
-	public static boolean displayDragon = true;
+	public static boolean displaySpheres = true;
+	public static boolean displayDragon = false;
 
 	public static RayTracedScene generateScene() throws IOException {
 		Scene<ShadableSurface> scene = useCornellBox ?
@@ -44,9 +45,9 @@ public class RayTracingTest {
 			Plane p = new Plane(Plane.XZ);
 			p.setColor(new RGB(1.0, 1.0, 1.0));
 			p.getShaderSet().add(new DiffuseShader());
-			p.setLocation(new Vector(0.0, -10, 0.0));
+			p.setLocation(new Vector(0.0, -0.12, 0.0));
 			StripeTexture t = new StripeTexture();
-			t.setPropertyValue(1.0, 0);
+			t.setPropertyValue(0.05, 0);
 			t.setPropertyValue(true, 1);
 			p.addTexture(t);
 			scene.add(p);
@@ -56,12 +57,15 @@ public class RayTracingTest {
 			Sphere s1 = new Sphere(new Vector(-0.3, 0, -2), 0.15, new RGB(0.3, 0.3, 0.3));
 			RefractionShader r = new RefractionShader();
 			r.setIndexOfRefraction(1.5);
-			s1.addShader(r);
+//			s1.addShader(r);
+//			s1.addShader(new DiffuseShader());
+			s1.addShader(new ReflectionShader(1.0, new RGB(1.0, 1.0, 1.0)));
 
 			Sphere s2 = new Sphere(new Vector(0.3, 0, -2), 0.15, new RGB(0.3, 0.4, 0.6));
 			s2.setShadeBack(true);
 //			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
-			s2.addShader(new DiffuseShader());
+//			s2.addShader(new DiffuseShader());
+			s2.addShader(r);
 
 			scene.add(s1);
 			scene.add(s2);
@@ -80,7 +84,7 @@ public class RayTracingTest {
 		p.setLocation(new Vector(0, 0, -10));
 		p.getShaderSet().add(new DiffuseShader());
 		p.setShadeBack(true);
-		scene.add(p);
+//		scene.add(p);
 
 //		for (ShadableSurface s : scene) {
 //			if (s instanceof AbstractSurface) {

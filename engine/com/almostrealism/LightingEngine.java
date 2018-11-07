@@ -29,12 +29,15 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayOrigin;
 import org.almostrealism.graph.PathElement;
+import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.ProducerWithRank;
 
 import java.util.*;
 
-public class LightingEngine<T extends ContinuousField> implements PathElement<Ray, RGB>, Producer<RGB> {
+// TODO  T must extend ShadableIntersection so that distance can be used as the rank
+public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<RGB> implements PathElement<Ray, RGB> {
 	private T intersections;
 	private Producer<RGB> surface;
 	private Collection<Producer<RGB>> otherSurfaces;
@@ -50,6 +53,7 @@ public class LightingEngine<T extends ContinuousField> implements PathElement<Ra
 						  Producer<RGB> surface,
 						  Collection<Producer<RGB>> otherSurfaces,
 						  Light light, Iterable<Light> otherLights, ShaderContext p) {
+		super(((ShadableIntersection) intersections).getDistance());
 		this.intersections = intersections;
 		this.surface = surface;
 		this.otherSurfaces = otherSurfaces;
@@ -99,62 +103,6 @@ public class LightingEngine<T extends ContinuousField> implements PathElement<Ra
 		} else {
 			shade = new RGB(0.0, 0.0, 0.0);
 		}
-
-//		Intersection intersect = RayTracingEngine.closestIntersection(ray, surfaces);
-//
-//		if (intersect == null) {
-//			if (fog != null) {
-//				double rd = Math.random();
-//
-//				if (!RayTracingEngine.useRouletteFogSamples ||
-//						rd < fd * RayTracingEngine.dropOffDistance)
-//					return fog.multiply(fr + fd * rd);
-//			}
-//
-//			return null;
-//		} else {
-//			double intersection = intersect.getClosestIntersection();
-//
-//			Surface surface = intersect.getSurface();
-//			Surface otherSurfaces[] = surfaces;
-//
-//			for (int i = 0; i < surfaces.length; i++) {
-//				if (surface == surfaces[i]) {
-//					// See separateSurfaces method.
-//
-//					otherSurfaces = new Surface[surfaces.length - 1];
-//
-//					for (int j = 0; j < i; j++) { otherSurfaces[j] = surfaces[j]; }
-//					for (int j = i + 1; j < surfaces.length; j++) { otherSurfaces[j - 1] = surfaces[j]; }
-//				}
-//			}
-//
-//			 if (Math.random() < 0.00001 && RefractionShader.lastRay != null)
-//			 	System.out.println("lightingCalculation3: " + RefractionShader.lastRay + " " + ray.getDirection());
-//
-//			RGB rgb = RayTracingEngine.lightingCalculation(ray.pointAt(intersection), ray.getDirection(), intersect.getSurface(), otherSurfaces, lights, p);
-//
-//			// System.out.println(fog + " " + fd + " " + intersection);
-//
-//			if (fog != null && Math.random() < fd * intersection) {
-//				if (fr > RayTracingEngine.e) {
-//					if (fr >= 1.0) {
-//						rgb = (RGB) fog.clone();
-//					} else if (rgb != null){
-//						rgb.multiplyBy(1.0 - fr);
-//						rgb.addTo(fog.multiply(fr));
-//					} else {
-//						rgb = fog.multiply(fr);
-//					}
-//				}
-//			}
-//
-//			if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
-//				Settings.rayEngineOut.println();
-//			}
-//
-//			return rgb;
-//		}
 	}
 
 	@Override
@@ -226,8 +174,6 @@ public class LightingEngine<T extends ContinuousField> implements PathElement<Ra
 		for (Producer<RGB> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
 
-		// TODO  Shadow calculation
-
 		if (light instanceof SurfaceLight) {
 			Light l[] = ((SurfaceLight) light).getSamples();
 			return lightingCalculation(intersection, point,
@@ -241,15 +187,6 @@ public class LightingEngine<T extends ContinuousField> implements PathElement<Ra
 		} else {
 			return new RGB(0.0, 0.0, 0.0);
 		}
-	}
-
-	/**
-	 * Reflects the specified {@link Vector} across the normal vector represented by the
-	 * second specified {@link Vector} and returns the result.
-	 */
-	public static Vector reflect(Vector vector, Vector normal) { // TODO  Should return Producer
-		vector = vector.minus();
-		return vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
 	}
 
 	/**
