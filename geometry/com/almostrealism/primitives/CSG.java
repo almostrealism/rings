@@ -17,6 +17,7 @@
 package com.almostrealism.primitives;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -88,14 +89,14 @@ public class CSG extends AbstractSurface {
      * @see  Intersectable#intersectAt(Producer)
      */
     @Override
-    public Producer<ShadableIntersection> intersectAt(Producer r) {
+    public ContinuousField intersectAt(Producer r) {
         TransformMatrix m  = getTransform(true);
         if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 
         final Producer<Ray> fr = r;
         
         if (this.type == CSG.UNION) {
-            return new ClosestIntersection<>(r, Arrays.asList(this.sa, this.sb));
+            return new ClosestIntersection(r, Arrays.asList(this.sa, this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
 			throw new RuntimeException("Not implemented");
         	/* TODO

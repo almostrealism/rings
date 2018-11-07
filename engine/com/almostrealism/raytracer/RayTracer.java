@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.util.Producer;

@@ -26,19 +26,16 @@ import java.util.concurrent.TimeoutException;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayDirection;
-import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
-
 // TODO Add ParticleGroup implementation.
 
 /**
- * A Cone object represents a cone in 3d space.
+ * A {@link Cone} instance represents a cone in 3d space.
  */
 public class Cone extends AbstractSurface {
 	private static final double nsq = 1.0 / 2.0;
@@ -87,15 +84,15 @@ public class Cone extends AbstractSurface {
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
 		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 
 		final Producer<Ray> fr = r;
 
-		return new Producer<ShadableIntersection>() {
+		Producer<Scalar> s = new Producer<Scalar>() {
 			@Override
-			public ShadableIntersection evaluate(Object[] args) {
+			public Scalar evaluate(Object[] args) {
 				Ray ray = fr.evaluate(args);
 
 				Vector d = ray.getDirection().divide(ray.getDirection().length());
@@ -156,14 +153,15 @@ public class Cone extends AbstractSurface {
 					return null;
 				} else {
 					Scalar ts = new Scalar(t);
-					StaticProducer sp = new StaticProducer<>(ts);
-					return new ShadableIntersection(Cone.this, new RayPointAt(fr, sp), new RayDirection(fr), ts);
+					return ts;
 				}
 			}
 
 			@Override
 			public void compact() { }
 		};
+
+		return new ShadableIntersection(this, fr, s);
 	}
 
 	@Override

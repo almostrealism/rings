@@ -20,8 +20,6 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
-import org.almostrealism.geometry.RayDirection;
-import org.almostrealism.geometry.RayPointAt;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
@@ -31,7 +29,6 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +62,8 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	public Sphere(Vector location, double radius, RGB color) {
 		super(location, radius, color);
 	}
-	
+
+	@Override
 	public Mesh triangulate() {
 		Mesh m = super.triangulate();
 		
@@ -87,7 +85,8 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 		
 		return m;
 	}
-	
+
+	@Override
 	public double getIndexOfRefraction(Vector p) {
 		double s = this.getSize();
 		
@@ -102,11 +101,13 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * Returns a Vector object that represents the vector normal to this sphere at the point represented
 	 * by the specified Vector object.
 	 */
+	@Override
 	public VectorProducer getNormalAt(Vector point) {
 		// TODO  Perform computation within VectorProducer
 
 		Vector normal = point.subtract(super.getLocation());
-		normal = super.getTransform(true).transformAsNormal(normal);
+		if (getTransform(true) != null)
+			normal = getTransform(true).transformAsNormal(normal);
 		
 		return new ImmutableVector(normal);
 	}
@@ -115,75 +116,22 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * Returns true if the ray represented by the specified Ray object intersects the sphere
 	 * represented by this Sphere object in real space.
 	 */
+	@Override
 	public boolean intersect(Ray ray) {
-		ray.transform(this.getTransform(true).getInverse());
-		
-		double b = ray.oDotd().evaluate(new Object[0]).getValue();
-		double c = ray.oDoto();
-		
-		double discriminant = (b * b) - (ray.dDotd()) * (c - 1);
-		
-		if (discriminant < 0)
-			return false;
-		else
-			return true;
+		throw new RuntimeException("Not implemented");
 	}
 	
 	/**
-	 * Returns an Intersection object representing the points along the ray represented
-	 * by the specified Ray object that intersection between the ray and the sphere
-	 * represented by this Sphere object occurs.
+	 * Returns a {@link ShadableIntersection} representing the nearest postive point
+	 * along the the specified {@link Ray} that intersection between the ray and
+	 * this {@link Sphere} occurs.
 	 */
 	@Override
-	public Producer<ShadableIntersection> intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
-
-		final Producer<Ray> fr = r;
-
-		return new Producer<ShadableIntersection>() {
-			@Override
-			public ShadableIntersection evaluate(Object[] args) {
-				Ray ray = fr.evaluate(args);
-
-				double b = ray.oDotd().evaluate(args).getValue();
-				double c = ray.oDoto();
-				double g = ray.dDotd();
-
-				double discriminant = (b * b) - (g) * (c - 1);
-				double discriminantSqrt = Math.sqrt(discriminant);
-
-				double t[] = new double[2];
-
-				t[0] = (-b + discriminantSqrt) / (g);
-				t[1] = (-b - discriminantSqrt) / (g);
-
-				Scalar st;
-
-				if (t[0] > 0 && t[1] > 0) {
-					if (t[0] < t[1]) {
-						st = new Scalar(t[0]);
-					} else {
-						st = new Scalar(t[1]);
-					}
-				} else if (t[0] > 0) {
-					st = new Scalar(t[0]);
-				} else if (t[1] > 0) {
-					st = new Scalar(t[1]);
-				} else {
-					return null;
-				}
-
-				return new ShadableIntersection(Sphere.this,
-											new RayPointAt(fr, new StaticProducer<>(st)),
-											new RayDirection(fr), st);
-			}
-
-			@Override
-			public void compact() {
-
-			}
-		};
+		Producer<Ray> tr = r;
+		if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
+		return new ShadableIntersection(this, tr, new SphereIntersectAt(tr));
 	}
 	
 	@Override

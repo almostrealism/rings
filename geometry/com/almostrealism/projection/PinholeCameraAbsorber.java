@@ -254,12 +254,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getNextEmit() { return Integer.MAX_VALUE; }
 
 	@Override
-	public Object call() throws Exception {
+	public Vector operate(Triple triple) {
 		return null;
 	}
 
 	@Override
-	public Vector operate(Triple triple) {
-		return null;
-	}
+	public Object evaluate(Object[] args) { return null; }
+
+	@Override
+	public void compact() { }
 }

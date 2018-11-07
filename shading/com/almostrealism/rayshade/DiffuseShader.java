@@ -16,14 +16,21 @@
 
 package com.almostrealism.rayshade;
 
-import java.util.concurrent.Future;
-
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
+import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.ColorProduct;
+import org.almostrealism.color.ColorSum;
+import org.almostrealism.color.GeneratedColorProducer;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+
+import java.util.concurrent.Future;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -43,43 +50,19 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		Producer<RGB> pr = new Producer<RGB>() {
 			@Override
 			public RGB evaluate(Object[] args) {
-				Vector point;
-
-				try {
-					point = normals.get(0).evaluate(args).getOrigin();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					return null;
-				}
+				Ray l = normals.get(0).evaluate(args);
+				Vector point = l.getOrigin();
+				Vector n = l.getDirection();
+				n.normalize();
 
 				ColorProducer lightColor = p.getLight().getColorAt().operate(point);
 
-				Vector n;
-
-				try {
-					n = normals.iterator().next().evaluate(args).getDirection();
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-
 				ColorSum color = new ColorSum();
-
-				if (p.getSurface() == null) {
-					throw new NullPointerException();
-				}
 
 				ColorProducer realized = null;
 
-				try {
-					point = normals.get(0).evaluate(args).getOrigin();
-					if (p.getSurface() != null) {
-						Producer<RGB> pr = p.getSurface().call();
-						realized = pr == null ? null : pr.evaluate(new Object[] { point });
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					return color.evaluate(args);
+				if (p.getSurface() != null) {
+					realized = p.getSurface().evaluate(new Object[] { point });
 				}
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {

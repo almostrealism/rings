@@ -40,18 +40,26 @@ public class PointLightCalculation implements Producer<RGB> {
 	@Override
 	public RGB evaluate(Object[] args) {
 		Vector origin = new RayOrigin(intersection).evaluate(args);
+		if (origin == null) return new RGB(0.0, 0.0, 0.0);
 
 		// TODO  Move call to shade to initialization
 		Vector direction = origin.subtract(light.getLocation());
 
 		DirectionalAmbientLight directionalLight =
 				new DirectionalAmbientLight(1.0, light.getColorAt().operate(origin), direction);
-
 		Vector l = (directionalLight.getDirection().divide(directionalLight.getDirection().length())).minus();
 
 		ShaderContext c = context.clone();
 		c.setLightDirection(l);
-		return surface.shade(context).evaluate(args);
+
+		Producer<RGB> s = surface.shade(c);
+
+		if (s == null) {
+			surface.shade(c); // TODO  Remove
+			throw new NullPointerException();
+		}
+
+		return s.evaluate(args);
 	}
 
 	@Override
