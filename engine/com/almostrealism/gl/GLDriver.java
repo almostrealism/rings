@@ -28,9 +28,9 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import io.almostrealism.code.Scope;
+import io.almostrealism.code.Method;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
-import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.graph.Triangle;
@@ -39,7 +39,7 @@ import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
-import java.awt.*;
+import java.awt.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -47,6 +47,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
 public class GLDriver {
@@ -434,6 +435,54 @@ public class GLDriver {
 	public void glPopAttrib() { gl.glPopAttrib(); }
 
 	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
+
+	public Variable createProgram() {
+		return null; // TODO
+	}
+
+	public void linkProgram(Variable program) {
+		// TODO
+	}
+
+	public void useProgram(Variable program) {
+		// TODO
+	}
+
+	public void mapProgramAttributes(Variable program) {
+		// TODO
+	}
+
+	public Variable createShader(String type) {
+		return null; // TODO
+	}
+
+	public void shaderSource(Variable shader, String source) {
+		// TODO
+	}
+
+	public void compileShader(Variable shader) {
+		// TODO
+	}
+
+	public void attachShader(Variable program, Variable shader) {
+		// TODO
+	}
+
+	public void deleteShader(Variable shader) {
+		// TODO
+	}
+
+	public Variable<String> createBuffer() {
+		return null; // TODO
+	}
+
+	public void bindBuffer(String code, Variable buffer) {
+		// TODO
+	}
+
+	public void bufferData(Variable buffer, List<Double> data) {
+		// TODO
+	}
 
 	public void glBindBuffer(int code, int v) { gl.glBindBuffer(code, v); }
 

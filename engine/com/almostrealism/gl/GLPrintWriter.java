@@ -19,7 +19,6 @@ package com.almostrealism.gl;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.FogParameters;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import io.almostrealism.code.CodePrintWriter;
@@ -32,9 +31,6 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
-import org.almostrealism.graph.Triangle;
-import org.joml.Matrix4d;
-import org.joml.Vector3d;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -51,15 +47,15 @@ import java.util.*;
  */
 public class GLPrintWriter extends GLDriver {
 	private String glMember;
-	
-	//private String gluMember, glutMember; not used in webgl?
-	
+
 	private String matrixMember="mat4";
 	
 	private String name; // TODO Use name
 	private CodePrintWriter p;
 
-	//Kristen added for an experiment - should probably remove it
+	private int varIndex = 0;
+
+	// TODO Kristen added for an experiment - should probably remove it
 	public CodePrintWriter getPrintWriter() {
 		return p;
 	}
@@ -524,6 +520,160 @@ public class GLPrintWriter extends GLDriver {
 	public void glPopAttrib() {
 		if (gl != null) super.glPopAttrib();
 		throw new RuntimeException("popAttrib");
+	}
+
+	@Override
+	public Variable createProgram() {
+		String name = "program" + (varIndex++);
+		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createProgram",
+				new ArrayList<>(), new HashMap<>()));
+		p.println(v);
+		return v;
+	}
+
+	@Override
+	public void linkProgram(Variable program) {
+		List<String> args = new ArrayList<>();
+		args.add("program");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("program", new InstanceReference(program));
+
+		p.println(new Method(glMember, "linkProgram", args, values));
+	}
+
+	@Override
+	public void useProgram(Variable program) {
+		p.println(new Method(glMember, "useProgram", new InstanceReference(program)));
+	}
+
+	public void mapProgramAttributes(Variable program) {
+		Variable pos = new Variable(program.getName() + ".positionAttribute", String.class,
+									new Method<String>(glMember, "getAttribLocation",
+														new InstanceReference(program),
+														new Variable("pos", String.class, "pos")));
+		p.println(pos, false);
+
+		p.println(new Method(glMember, "enableVertexAttribArray",
+							new InstanceReference(new Variable(program.getName() + ".positionAttribute", ""))));
+
+		Variable norm = new Variable(program.getName() + ".normalAttribute", String.class,
+				new Method<String>(glMember, "getAttribLocation",
+						new InstanceReference(program),
+						new Variable("normal", String.class, "normal")));
+		p.println(norm, false);
+
+		p.println(new Method(glMember, "enableVertexAttribArray",
+				new InstanceReference(new Variable(program.getName() + ".normalAttribute", ""))));
+	}
+
+	@Override
+	public Variable createShader(String type) {
+		List<String> args = new ArrayList<>();
+		args.add("type");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("type", new InstanceReference(new Variable(glMember + "." + type, String.class, null)));
+
+		String name = "shader" + (varIndex++);
+		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createShader", args, values));
+		p.println(v);
+		return v;
+	}
+
+	@Override
+	public void shaderSource(Variable shader, String source) {
+		List<String> args = new ArrayList<>();
+		args.add("shader");
+		args.add("source");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("shader", new InstanceReference(shader));
+		values.put("source", new Variable("source", String.class, source));
+
+		p.println(new Method(glMember, "shaderSource", args, values));
+	}
+
+	@Override
+	public void compileShader(Variable shader) {
+		List<String> args = new ArrayList<>();
+		args.add("shader");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("shader", new InstanceReference(shader));
+
+		p.println(new Method(glMember, "compileShader", args, values));
+	}
+
+	@Override
+	public void attachShader(Variable program, Variable shader) {
+		List<String> args = new ArrayList<>();
+		args.add("program");
+		args.add("shader");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("program", new InstanceReference(program));
+		values.put("shader", new InstanceReference(shader));
+
+		p.println(new Method(glMember, "attachShader", args, values));
+	}
+
+	@Override
+	public void deleteShader(Variable shader) {
+		List<String> args = new ArrayList<>();
+		args.add("shader");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("shader", new InstanceReference(shader));
+
+		p.println(new Method(glMember, "deleteShader", args, values));
+	}
+
+	@Override
+	public Variable<String> createBuffer() {
+		String name = "buffer" + (varIndex++);
+		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createBuffer",
+									new ArrayList<>(), new HashMap<>()));
+		p.println(v);
+		return v;
+	}
+
+	public void bindBuffer(String code, Variable v) {
+		List<String> args = new ArrayList<>();
+		args.add("code");
+		args.add("buffer");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("code", new InstanceReference(new Variable(glMember + "." + code, String.class,null)));
+		values.put("buffer", new InstanceReference(v));
+
+		p.println(new Method(glMember, "bindBuffer", args, values));
+	}
+
+	public void bufferData(Variable buffer, List<Double> data) {
+		Variable v = new Variable("vertices" + (varIndex++), List.class, data);
+
+		p.println(v);
+
+		List<String> nargs = new ArrayList<>();
+		nargs.add("v");
+
+		HashMap<String, Variable> nvalues = new HashMap<>();
+		nvalues.put("v", new InstanceReference(v));
+
+		Method n = new Method("new Float32Array", nargs, nvalues);
+
+		List<String> args = new ArrayList<>();
+		args.add("target");
+		args.add("source");
+		args.add("usage");
+
+		HashMap<String, Variable> values = new HashMap<>();
+		values.put("target", new InstanceReference(new Variable(glMember + ".ARRAY_BUFFER", String.class,null)));
+		values.put("source", new Variable("source", String.class, n));
+		values.put("usage", new InstanceReference(new Variable(glMember + ".STATIC_DRAW", String.class,null)));
+
+		p.println(new Method(glMember, "bufferData", args, values));
 	}
 
 	@Override

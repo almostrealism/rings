@@ -45,7 +45,7 @@ public class RayTracingTest {
 			Plane p = new Plane(Plane.XZ);
 			p.setColor(new RGB(1.0, 1.0, 1.0));
 			p.getShaderSet().add(new DiffuseShader());
-			p.setLocation(new Vector(0.0, -0.12, 0.0));
+			p.setLocation(new Vector(0.0, -0.3, 0.0));
 			StripeTexture t = new StripeTexture();
 			t.setPropertyValue(0.05, 0);
 			t.setPropertyValue(true, 1);
@@ -54,18 +54,27 @@ public class RayTracingTest {
 		}
 
 		if (displaySpheres) {
-			Sphere s1 = new Sphere(new Vector(-0.3, 0, -2), 0.15, new RGB(0.3, 0.3, 0.3));
+			/* Sphere 1 */
+			Sphere s1 = new Sphere(new Vector(-0.3, 0, 0), 0.3, new RGB(0.3, 0.3, 0.3));
+//			s1.setShadeBack(true);
+
+			/* Shaders */
 			RefractionShader r = new RefractionShader();
 			r.setIndexOfRefraction(1.5);
 //			s1.addShader(r);
 //			s1.addShader(new DiffuseShader());
 			s1.addShader(new ReflectionShader(1.0, new RGB(1.0, 1.0, 1.0)));
 
-			Sphere s2 = new Sphere(new Vector(0.3, 0, -2), 0.15, new RGB(0.3, 0.4, 0.6));
-			s2.setShadeBack(true);
+
+			/* Sphere 2 */
+//			Sphere s2 = new Sphere(new Vector(0.3, 0, -2), 0.15, new RGB(0.3, 0.4, 0.6));
+			Sphere s2 = new Sphere(new Vector(0.3, 0, 0), 0.3, new RGB(0.3, 0.4, 0.6));
+//			s2.setShadeBack(true);
+
+			/* Shaders */
 //			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
-//			s2.addShader(new DiffuseShader());
-			s2.addShader(r);
+			s2.addShader(new DiffuseShader());
+//			s2.addShader(r);
 
 			scene.add(s1);
 			scene.add(s2);
@@ -105,16 +114,17 @@ public class RayTracingTest {
 //		}
 
 		scene.addLight(new PointLight(new Vector(0.0, 10.0, -1.0), 0.5, new RGB(0.8, 0.9, 0.7)));
+		scene.addLight(new PointLight(new Vector(0.0, 0.0, -2.0), 1.0, new RGB(0.8, 0.8, 0.8)));
 
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
 		if (c == null) {
-			c = new PinholeCamera(new Vector(0.0, 0.0, -1.0),
+			c = new PinholeCamera(new Vector(0.0, 0.0, -2.0),
 					new Vector(0.0, 0.0, 1.0),
 					new Vector(0.0, 1.0, 0.0));
 			scene.setCamera(c);
 		}
 
-		c.setViewDirection(new Vector(0.0, -0.05, -1.0));
+		c.setViewDirection(new Vector(0.0, -0.05, 1.0));
 		c.setProjectionDimensions(500, 450);
 		c.setFocalLength(400);
 

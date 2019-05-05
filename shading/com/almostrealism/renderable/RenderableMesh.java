@@ -17,13 +17,11 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
-import com.almostrealism.gl.GLMaterial;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
 import io.almostrealism.code.InstanceReference;
 import io.almostrealism.code.Method;
-import io.almostrealism.code.ResourceVariable;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 
@@ -33,24 +31,51 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.Mesh;
 
-import org.almostrealism.graph.MeshResource;
 import org.almostrealism.graph.Triangle;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> {
-
-
 	public RenderableMesh(Mesh m) { super(m); }
 	
 	@Override
 	public void init(GLDriver gl) {
-		
+		List<Double> vertices = new ArrayList<>();
+		for (Triangle t : getGeometry().triangles()) {
+			Vector v[] = t.getVertices();
+			Vector n[] = new Vector[] {
+						t.getNormalAt(v[0]).evaluate(null),
+						t.getNormalAt(v[1]).evaluate(null),
+						t.getNormalAt(v[2]).evaluate(null)};
 
+			vertices.add(v[0].getX());
+			vertices.add(v[0].getY());
+			vertices.add(v[0].getZ());
+			vertices.add(n[0].getX());
+			vertices.add(n[0].getY());
+			vertices.add(n[0].getZ());
+			vertices.add(v[1].getX());
+			vertices.add(v[1].getY());
+			vertices.add(v[1].getZ());
+			vertices.add(n[1].getX());
+			vertices.add(n[1].getY());
+			vertices.add(n[1].getZ());
+			vertices.add(v[2].getX());
+			vertices.add(v[2].getY());
+			vertices.add(v[2].getZ());
+			vertices.add(n[2].getX());
+			vertices.add(n[2].getY());
+			vertices.add(n[2].getZ());
+		}
+
+		Variable buffer = gl.createBuffer();
+		gl.bindBuffer("ARRAY_BUFFER", buffer);
+		gl.bufferData(buffer, vertices);
 	} 
 
 	@Override
-	public void render(GLDriver gl) {  // TODO  Load mesh vertices into a vertex buffer object
+	public void render(GLDriver gl) {
 
 		
 		gl.glMaterial(getMaterial());

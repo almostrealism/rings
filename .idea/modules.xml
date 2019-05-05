@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../common/Common.iml" filepath="$PROJECT_DIR$/../common/Common.iml" />
       <module fileurl="file://$PROJECT_DIR$/Rings.iml" filepath="$PROJECT_DIR$/Rings.iml" />
     </modules>
   </component>

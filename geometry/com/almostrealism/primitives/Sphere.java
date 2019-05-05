@@ -38,6 +38,8 @@ import java.util.concurrent.TimeoutException;
 
 /** A {@link Sphere} represents a primitive sphere in 3d space. */
 public class Sphere extends AbstractSurface implements DistanceEstimator {
+	private static boolean enableHardwareAcceleration = true;
+
 	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
 	public Sphere() { }
 	
@@ -108,7 +110,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 		Vector normal = point.subtract(super.getLocation());
 		if (getTransform(true) != null)
 			normal = getTransform(true).transformAsNormal(normal);
-		
+
 		return new ImmutableVector(normal);
 	}
 	
@@ -128,12 +130,64 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 */
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
-		TransformMatrix m = getTransform(true);
-		Producer<Ray> tr = r;
-		if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
-		return new ShadableIntersection(this, tr, new SphereIntersectAt(tr));
+		if (enableHardwareAcceleration) {
+			TransformMatrix m = getTransform(true);
+			Producer<Ray> tr = r;
+			if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
+			return new ShadableIntersection(this, tr, new SphereIntersectAt(tr));
+		} else {
+			TransformMatrix m = getTransform(true);
+			if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+
+			final Producer<Ray> fr = r;
+
+			Producer<Scalar> s = new Producer<Scalar>() {
+				@Override
+				public Scalar evaluate(Object[] args) {
+					Ray ray = fr.evaluate(args);
+
+					double b = ray.oDotd().evaluate(args).getValue();
+					double c = ray.oDoto().evaluate(args).getValue();
+					double g = ray.dDotd().evaluate(args).getValue();
+
+					double discriminant = (b * b) - (g) * (c - 1);
+					double discriminantSqrt = Math.sqrt(discriminant);
+
+					double t[] = new double[2];
+
+					t[0] = (-b + discriminantSqrt) / (g);
+					t[1] = (-b - discriminantSqrt) / (g);
+
+					Scalar st;
+
+					if (t[0] > 0 && t[1] > 0) {
+						if (t[0] < t[1]) {
+							st = new Scalar(t[0]);
+						} else {
+							st = new Scalar(t[1]);
+						}
+					} else if (t[0] > 0) {
+						st = new Scalar(t[0]);
+					} else if (t[1] > 0) {
+						st = new Scalar(t[1]);
+					} else {
+						return new Scalar(-1);
+						// return null;
+					}
+
+					return st;
+				}
+
+				@Override
+				public void compact() {
+					// TODO
+				}
+			};
+
+			return new ShadableIntersection(this, r, s);
+		}
 	}
-	
+
 	@Override
 	public double estimateDistance(Ray r) {
 		return r.getOrigin().subtract(getLocation()).length() - getSize();

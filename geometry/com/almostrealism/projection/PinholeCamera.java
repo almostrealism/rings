@@ -152,7 +152,7 @@ public class PinholeCamera extends OrthographicCamera {
 	 * camera surface. This effect can be used to produce large images from small scenes while retaining accuracy.
 	 */
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+	public Producer<Ray> rayAt(Producer<Pair> posP, Producer<Pair> sdP) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
 			Settings.cameraOut.println("CAMERA: U = " + this.u.toString() + ", V = " + this.v.toString() + ", W = " + this.w.toString());
 		}
@@ -167,7 +167,7 @@ public class PinholeCamera extends OrthographicCamera {
 			};
 
 			return new AcceleratedProducer<>("pinholeCameraRayAt", false,
-											new Producer[] { newRay, pos, sd },
+											new Producer[] { newRay, posP, sdP },
 											new Object[] { getLocation(), getProjectionDimensions(),
 															new Pair(blur * (Math.random() - 0.5), blur * (Math.random() - 0.5)),
 															new Scalar(focalLength),
@@ -176,8 +176,11 @@ public class PinholeCamera extends OrthographicCamera {
 			return new Producer<Ray>() {
 				@Override
 				public Ray evaluate(Object[] args) {
-					Pair pos = (Pair) args[0];
-					Pair screenDim = (Pair) args[1];
+//					Pair pos = (Pair) args[0];
+//					Pair screenDim = (Pair) args[1];
+
+					Pair pos = posP.evaluate(args);
+					Pair screenDim = sdP.evaluate(args);
 
 					double au = -(getProjectionWidth() / 2);
 					double av = -(getProjectionHeight() / 2);

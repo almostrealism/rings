@@ -27,17 +27,23 @@ sphereIntersectAt(__global double *res, __global const double *r,
     t[0] = (-b[0] + discriminantSqrt) / (g[0]);
     t[1] = (-b[0] - discriminantSqrt) / (g[0]);
 
+//    printf("t[0] = %f and t[1] = %f\n", t[0], t[1]);
+
     if (t[0] > 0 && t[1] > 0) {
         if (t[0] < t[1]) {
             res[resOffset] = t[0];
+//            printf("returning %f\n", t[0]);
         } else {
             res[resOffset] = t[1];
+//            printf("returning %f\n", t[1]);
         }
     } else if (t[0] > 0) {
         res[resOffset] = t[0];
+//        printf("returning %f\n", t[0]);
     } else if (t[1] > 0) {
         res[resOffset] = t[1];
     } else {
         res[resOffset] = -1;
+//        printf("returning %f\n", -1);
     }
 }

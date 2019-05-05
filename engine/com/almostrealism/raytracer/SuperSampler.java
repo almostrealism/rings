@@ -39,11 +39,13 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 		RGB c = new RGB(0.0, 0.0, 0.0);
 
 		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
+			j: for (int j = 0; j < samples[i].length; j++) {
 				double r = pos.getX() + ((double) i / (double) samples.length);
 				double q = pos.getY() + ((double) j / (double) samples[i].length);
 
 				RGB rgb = samples[i][j].evaluate(new Object[] { new Pair(r, q) });
+				if (rgb == null) continue j;
+
 				rgb.multiplyBy(scale);
 				c.addTo(rgb);
 			}

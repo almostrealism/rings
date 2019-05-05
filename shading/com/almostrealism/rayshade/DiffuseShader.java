@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2019 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	public DiffuseShader() { }
 	
 	/** Method specified by the {@link Shader} interface. */
+	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		Producer<RGB> pr = new Producer<RGB>() {
 			@Override
@@ -91,19 +92,24 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		return GeneratedColorProducer.fromProducer(this, pr);
 	}
 	
-	/** Returns a zero length array. */	
+	/** Returns a zero length array. */
+	@Override
 	public String[] getPropertyNames() { return new String[0]; }
 	
 	/** Returns a zero length array. */
+	@Override
 	public String[] getPropertyDescriptions() { return new String[0]; }
 	
 	/** Returns a zero length array. */
+	@Override
 	public Class[] getPropertyTypes() { return new Class[0]; }
 	
 	/** Returns a zero length array. */
+	@Override
 	public Object[] getPropertyValues() { return new Object[0]; }
 	
 	/** @throws IndexOutOfBoundsException */
+	@Override
 	public void setPropertyValue(Object value, int index) {
 		throw new IndexOutOfBoundsException("Index out of bounds: " + index);
 	}
@@ -111,16 +117,20 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	/**
 	 * Does nothing.
 	 */
+	@Override
 	public void setPropertyValues(Object values[]) {}
 	
 	/**
 	 * @return  An empty array.
 	 */
+	@Override
 	public Producer[] getInputPropertyValues() { return new Producer[0]; }
 	
 	/** Does nothing. */
+	@Override
 	public void setInputPropertyValue(int index, Producer p) {}
 	
 	/** Returns "Diffuse Shader". */
+	@Override
 	public String toString() { return "Diffuse Shader"; }
 }

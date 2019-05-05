@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2019 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	}
 	
 	/** Method specified by the Shader interface. */
+	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			return new Producer<RGB>() {

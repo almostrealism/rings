@@ -20,7 +20,7 @@ import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.code.CodePrintWriter;
-import org.almostrealism.algebra.Camera;
+import io.almostrealism.code.Variable;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -32,8 +32,48 @@ import java.util.List;
  * TODO  It may be unnecessary to have this class and {@link com.almostrealism.renderable.RenderableList}
  */
 public class GLScene extends ArrayList<Renderable> implements Renderable {
-	//public static final boolean verbose = false;
-	public static final boolean verbose = true;
+	public static final boolean verbose = false;
+
+	private static String VERTEX_SHADER = "    precision mediump float;\n" +
+			"\n" +
+			"    attribute vec3 pos;\n" +
+			"    attribute vec3 normal;\n" +
+			"\n" +
+			"    varying vec3 col;\n" +
+			"\n" +
+			"    uniform mat4 projectionMatrix, viewMatrix, modelMatrix;\n" +
+			"    uniform mat3 normalMatrix;\n" +
+			"\n" +
+			"    uniform vec3 ambientLightColour, directionalLight, materialSpecular;\n" +
+			"    uniform float materialAmbient, materialDiffuse, shininess;\n" +
+			"\n" +
+			"    /* A function to determine the colour of a vertex, accounting\n" +
+			"       for ambient and directional light */\n" +
+			"    vec3 ads( vec4 position, vec3 norm )\n" +
+			"    {\n" +
+			"      vec3 s = normalize(vec3(vec4(directionalLight,1.0) - position));\n" +
+			"      vec3 v = normalize(vec3(-position));\n" +
+			"      vec3 r = reflect(-s, norm);\n" +
+			"      return ambientLightColour +\n" +
+			"        materialDiffuse * max(dot(s,norm), 0.0) +\n" +
+			"        materialSpecular * pow(max(dot(r,v), 0.0), shininess);\n" +
+			"    }\n" +
+			"\n" +
+			"    void main() {\n" +
+			"      vec3 eyeNormal = normalize(normalMatrix * normal);\n" +
+			"      vec4 eyePosition =  viewMatrix * modelMatrix * vec4(pos, 1.0);\n" +
+			"      col = min(vec3(0.0) + ads(eyePosition, eyeNormal), 1.0);\n" +
+			"      gl_Position = projectionMatrix * viewMatrix * modelMatrix *\n" +
+			"        vec4(pos, 1.0);\n" +
+			"    }";
+
+	public static String FRAGMENT_SHADER = "    precision mediump float;\n" +
+			"\n" +
+			"    varying vec3 col;\n" +
+			"\n" +
+			"    void main() {\n" +
+			"      gl_FragColor = vec4(col, 1.0);\n" +
+			"    }";
 
 	private Scene<ShadableSurface> scene;
 	private List<ShadableSurface> added;
@@ -57,6 +97,25 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 			added.add(s);
 		}
 
+		Variable program = gl.createProgram();
+		Variable shader = gl.createShader("VERTEX_SHADER");
+
+		gl.shaderSource(shader, VERTEX_SHADER.replaceAll("\n", " "));
+		gl.compileShader(shader);
+		gl.attachShader(program, shader);
+		gl.deleteShader(shader);
+
+		shader = gl.createShader("FRAGMENT_SHADER");
+		gl.shaderSource(shader, FRAGMENT_SHADER.replaceAll("\n", " "));
+		gl.compileShader(shader);
+		gl.attachShader(program, shader);
+		gl.deleteShader(shader);
+
+		gl.linkProgram(program);
+		gl.useProgram(program);
+
+		gl.mapProgramAttributes(program);
+
 		List<Renderable> rs = new ArrayList<>();
 		rs.addAll(this);
 
@@ -65,7 +124,6 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 
 	@Override
 	public void display(GLDriver gl) {
-		
 		gl.glClearColor(new RGBA(0.0, 0.0, 0.0, 1.0));
 		gl.clearDepth(1.0);
 		gl.enable("DEPTH_TEST");

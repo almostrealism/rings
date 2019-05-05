@@ -37,7 +37,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.almostrealism:FlowTreeAPI:0.3-rc" level="project" />
-    <orderEntry type="library" name="Maven: org.almostrealism:Common:0.8-rc" level="project" />
+    <orderEntry type="module" module-name="Common" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
