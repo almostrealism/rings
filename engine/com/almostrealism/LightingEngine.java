@@ -17,6 +17,7 @@
 package com.almostrealism;
 
 import com.almostrealism.lighting.*;
+import com.almostrealism.rayshade.ReflectionShader;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Vector;
@@ -29,6 +30,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayOrigin;
 import org.almostrealism.graph.PathElement;
+import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
@@ -110,6 +112,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		return intersections;
 	}
 
+	public Producer<RGB> getSurface() { return surface; }
+
 	/**
 	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
@@ -117,6 +121,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	 */
 	public RGB evaluate(Object args[]) {
 		if (shade == null) return new RGB(0.0, 0.0, 0.0);
+
 		return new RGBMultiply(shadow, shade).evaluate(args);
 	}
 

@@ -45,7 +45,7 @@ public class ShadowMask implements Producer<RGB> {
 		if (p == null) return new RGB(1.0, 1.0, 1.0);
 
 		double maxDistance = -1.0;
-		Vector direction = null;
+		Vector direction;
 
 		if (light instanceof PointLight) {
 			direction = ((PointLight) light).getLocation().subtract(p);

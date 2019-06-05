@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.almostrealism.LightingEngineAggregator;
@@ -130,9 +131,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 					Vector nor = p.getIntersection().getNormalAt(point).evaluate(args);
 					Producer<Ray> reflectedRay = new ReflectedRay(loc, new StaticProducer<>(nor), new StaticProducer<>(n), blur);
 
-					Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
-
-					if (color == null) {
+					Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p);
+					if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
 						if (eMap == null)
 							break f;
 						else
@@ -143,6 +143,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 					double reflective = reflectivity + (1 - reflectivity) * Math.pow(c, 5.0);
 					color = new RGBMultiply(color, new RGBMultiply(fr,
 							new StaticProducer<>(new RGB(reflective, reflective, reflective))));
+
+					if (color.evaluate(args) == null)
+						throw new NullPointerException(); // TODO  Remove
 
 					if (tc == null) {
 						tc = color;
