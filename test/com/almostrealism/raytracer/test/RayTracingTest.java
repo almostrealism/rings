@@ -73,9 +73,6 @@ public class RayTracingTest {
 			Sphere s1 = new Sphere(new Vector(-0.3, 0.0, 0), 0.3, new RGB(0.3, 0.3, 0.3));
 
 			/* Shaders */
-			RefractionShader r = new RefractionShader();
-			r.setIndexOfRefraction(1.5);
-//			s1.addShader(r);
 			s1.addShader(new DiffuseShader());
 			s1.addShader(new ReflectionShader(1.0, new RGB(1.0, 1.0, 1.0)));
 
@@ -85,9 +82,10 @@ public class RayTracingTest {
 			Sphere s2 = new Sphere(new Vector(0.3, 0.0, 0), 0.3, new RGB(0.3, 0.4, 0.6));
 
 			/* Shaders */
-//			s2.addShader(new ReflectionShader(0.8, new RGB(0.8, 0.8, 0.8)));
-			s2.addShader(new DiffuseShader());
+			RefractionShader r = new RefractionShader();
+			r.setIndexOfRefraction(1.5);
 //			s2.addShader(r);
+			s2.addShader(new DiffuseShader());
 
 			scene.add(s1);
 			scene.add(s2);
@@ -131,7 +129,7 @@ public class RayTracingTest {
 
 		PinholeCamera c = (PinholeCamera) scene.getCamera();
 		if (c == null) {
-			c = new PinholeCamera(new Vector(0.0, 0.0, -2.0),
+			c = new PinholeCamera(new Vector(0.0, 0.5, -2.0),
 					new Vector(0.0, 0.0, 1.0),
 					new Vector(0.0, 1.0, 0.0));
 			scene.setCamera(c);

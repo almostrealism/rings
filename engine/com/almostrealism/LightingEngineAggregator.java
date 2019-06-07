@@ -17,6 +17,7 @@
 package com.almostrealism;
 
 import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.algebra.Intersection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB> {
 	public LightingEngineAggregator(Producer<Ray> r, Iterable<Producer<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+		super(Intersection.e);
 		init(r, surfaces, lights, context);
 	}
 

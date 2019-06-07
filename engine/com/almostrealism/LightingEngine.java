@@ -17,7 +17,6 @@
 package com.almostrealism;
 
 import com.almostrealism.lighting.*;
-import com.almostrealism.rayshade.ReflectionShader;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Vector;
@@ -25,12 +24,12 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBAdd;
 import org.almostrealism.color.RGBMultiply;
+import org.almostrealism.color.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayOrigin;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
@@ -73,6 +72,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	protected void init() {
 		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
 			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)));
+		} else {
+			shadow = RGBWhite.getInstance();
 		}
 
 		ShaderContext context = p.clone();
