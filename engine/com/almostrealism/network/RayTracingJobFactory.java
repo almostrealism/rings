@@ -18,6 +18,7 @@ package com.almostrealism.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import io.flowtree.job.Job;
 import io.flowtree.job.JobFactory;
@@ -39,6 +40,8 @@ public class RayTracingJobFactory implements JobFactory {
   private int totalJobs, nullCount;
   
   private List<Job> jobs;
+
+  private CompletableFuture<Void> future = new CompletableFuture<>();
 
 	/**
 	 * Constructs a new RayTracingJobFactory object.
@@ -169,6 +172,7 @@ public class RayTracingJobFactory implements JobFactory {
 		j.set("cdz", String.valueOf(this.cdz));
 		
 		this.i++;
+		if (this.i >= this.totalJobs) future.complete(null);
 		
 		return j;
 	}
@@ -361,7 +365,10 @@ public class RayTracingJobFactory implements JobFactory {
 			return this.pri;
 		}
 	}
-	
+
+	@Override
+	public CompletableFuture<Void> getCompletableFuture() { return future; }
+
 	public String toString() {
 		return "RayTracingJobFactory: " + this.taskId + " " + this.getCompleteness() +
 				"  " + this.uri + " " + this.width + "x" + this.height + " " +
