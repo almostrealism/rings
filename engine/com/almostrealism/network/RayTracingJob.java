@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
@@ -373,6 +374,8 @@ public class RayTracingJob implements Job {
   private double clx, cly, clz;
   private double cdx, cdy, cdz;
 
+  private CompletableFuture<Void> future = new CompletableFuture<>();
+
 	/**
 	 * Constructs a new RayTracingJob object.
 	 */
@@ -694,6 +697,7 @@ public class RayTracingJob implements Job {
 		
 		if (s == null) {
 			System.out.println("RayTracingJob: No scene data available.");
+			future.completeExceptionally(new RuntimeException("No scene data available"));
 			return;
 		}
 		
@@ -803,6 +807,8 @@ public class RayTracingJob implements Job {
 
 		if (c != null) c.writeOutput(jo);
 		*/
+
+		future.complete(null);
 	}
 	
 
@@ -818,7 +824,10 @@ public class RayTracingJob implements Job {
 			" " + this.fl + " " + this.clx + "," + this.cly + "," + this.clz +
 			" " + this.cdx + "," + this.cdy + "," + this.cdz;
 	}
-	
+
+	@Override
+	public CompletableFuture<Void> getCompletableFuture() { return future; }
+
 	public int hashcode() {
 		return (int) ((this.jobId + this.x + this.y) % Integer.MAX_VALUE);
 	}
