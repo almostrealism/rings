@@ -828,10 +828,12 @@ public class RayTracingJob implements Job {
 	@Override
 	public CompletableFuture<Void> getCompletableFuture() { return future; }
 
-	public int hashcode() {
+	@Override
+	public int hashCode() {
 		return (int) ((this.jobId + this.x + this.y) % Integer.MAX_VALUE);
 	}
-	
+
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RayTracingJob == false) return false;
 		
