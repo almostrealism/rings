@@ -18,8 +18,8 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: org.jocl:jocl:2.0.1" level="project" />
-    <orderEntry type="library" name="Maven: io.almostrealism:TreeView:0.2-rc" level="project" />
-    <orderEntry type="library" name="Maven: io.almostrealism:GraphPersist:0.2-rc" level="project" />
+    <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="module" module-name="GraphPersist" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
