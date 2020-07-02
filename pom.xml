@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>FlowTreeAPI</artifactId>
-			<version>0.7</version>
+			<version>0.8</version>
 		</dependency>
 
 		<dependency>

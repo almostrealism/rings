@@ -76,16 +76,6 @@ public class CSG extends AbstractSurface {
     public VectorProducer getNormalAt(Vector point) { return null; }
 
     /**
-     * This method calls intersectAt to determine the value to return.
-     * 
-     * @see org.almostrealism.space.ShadableSurface#intersect(org.almostrealism.geometry.Ray)
-     */
-    @Override
-    public boolean intersect(Ray ray) {
-		throw new RuntimeException("Not implemented");
-    }
-
-    /**
      * @see  Intersectable#intersectAt(Producer)
      */
     @Override

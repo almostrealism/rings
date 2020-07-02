@@ -49,8 +49,18 @@ public class FileEncoder {
 			}
 		}
 
-		FileOutputStream fileOut = new FileOutputStream(file);
+		try (FileOutputStream fileOut = new FileOutputStream(file)) {
+			encodeSceneFile(scene, fileOut, encoding);
+		}
+	}
 
+	/**
+	 * Encodes the specified Scene object using the encoding specified by the
+	 * integer encoding code and saves the encoded data in the file represented by
+	 * the specified File object. If the encoding code is not recognized, the method
+	 * returns.
+	 */
+	public static void encodeSceneFile(Scene scene, OutputStream fileOut, int encoding) throws IOException {
 		if (encoding == FileEncoder.XMLEncoding) {
 			try (XMLEncoder encoder = new XMLEncoder(fileOut)) {
 				encoder.writeObject(scene);

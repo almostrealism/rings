@@ -190,15 +190,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	public Producer<Vector> getNormalAt(Vector point) {
 		return getSurface().getNormalAt(point);
 	}
-	
-	/**
-	 * Returns true if the ray represented by the specified Ray object intersects the surface represented by this AbstractSurfaceUI in real space.
-	 */
-	@Override
-	public boolean intersect(Ray ray) {
-		return getSurface().intersect(ray);
-	}
-	
+
 	/**
 	 * Returns a {@link ContinuousField} representing the point along the ray produced by
 	 * the specified {@link Ray} {@link Producer} that intersection between the ray and

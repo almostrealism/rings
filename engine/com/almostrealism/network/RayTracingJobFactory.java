@@ -22,26 +22,31 @@ import java.util.concurrent.CompletableFuture;
 
 import io.flowtree.job.Job;
 import io.flowtree.job.JobFactory;
+import org.almostrealism.io.OutputHandler;
+import org.almostrealism.util.KeyUtils;
 
 /**
  * @author  Michael Murray
  */
 public class RayTracingJobFactory implements JobFactory {
-  private String uri, sLoader;
-  private double pri = 1.0;
-  private int dx = 1, dy = 1;
-  private int i;
-  private int width, height, ssWidth, ssHeight, jobSize;
-  private double pw = -1.0, ph = -1.0;
-  private double fl = -1.0;
-  private double clx, cly, clz;
-  private double cdx, cdy, cdz;
-  private long taskId;
-  private int totalJobs, nullCount;
-  
-  private List<Job> jobs;
+	private String uri, sLoader;
+	private double pri = 1.0;
+	private int dx = 1, dy = 1;
+	private int i;
+	private int width, height, ssWidth, ssHeight, jobSize;
+	private double pw = -1.0, ph = -1.0;
+	private double fl = -1.0;
+	private double clx, cly, clz;
+	private double cdx, cdy, cdz;
+	private String taskId;
+	private int totalJobs, nullCount;
 
-  private CompletableFuture<Void> future = new CompletableFuture<>();
+	private String outputHost;
+	private int outputPort;
+
+	private List<Job> jobs;
+
+	private CompletableFuture<Void> future = new CompletableFuture<>();
 
 	/**
 	 * Constructs a new RayTracingJobFactory object.
@@ -57,14 +62,14 @@ public class RayTracingJobFactory implements JobFactory {
 	 * @param ssHeight  Super sample height.
 	 * @param jobSize  Job size.
 	 */
-	public RayTracingJobFactory(String uri, int width, int height, int ssWidth, int ssHeight, int jobSize, long taskId) {
+	public RayTracingJobFactory(String uri, int width, int height, int ssWidth, int ssHeight, int jobSize) {
 		this.uri = uri;
 		this.width = width;
 		this.height = height;
 		this.ssWidth = ssWidth;
 		this.ssHeight = ssHeight;
 		this.jobSize = jobSize;
-		this.taskId = taskId;
+		this.taskId = KeyUtils.generateKey();
 		
 		int l = (int)Math.ceil(Math.sqrt(jobSize));
 		
@@ -75,11 +80,18 @@ public class RayTracingJobFactory implements JobFactory {
 		
 		this.jobs = new ArrayList();
 	}
-	
-	public long getTaskId() { return this.taskId; }
+
+	@Override
+	public String getTaskId() { return this.taskId; }
 	
 	public void setSceneLoader(String loader) { this.sLoader = loader; }
-	
+
+	public void setOutputHost(String host) { this.outputHost = host; }
+	public String getOutputHost() { return outputHost; }
+
+	public void setOutputPort(int port) { this.outputPort = port; }
+	public int getOutputPort() { return this.outputPort; }
+
 	public void setProjectionWidth(double pw) { this.pw = pw; }
 	public void setProjectionHeight(double ph) { this.ph = ph; }
 	public void setFocalLength(double fl) { this.fl = fl; }
@@ -99,9 +111,12 @@ public class RayTracingJobFactory implements JobFactory {
 	/**
 	 * @see io.flowtree.job.JobFactory#nextJob()
 	 */
+	@Override
 	public Job nextJob() {
 		if (i >= this.totalJobs) {
 			if (this.jobs.size() > 0) return this.jobs.remove(0);
+
+			return null;
 
 			/* TODO
 			if (this.nullCount > 300 && this.nullCount % 10 == 0) {
@@ -153,6 +168,10 @@ public class RayTracingJobFactory implements JobFactory {
 		
 		if (this.width - x < dx) dx = this.width - x;
 		if (this.height - y < dy) dy = this.height - y;
+
+		if (dy < 0) {
+			System.out.println("dy is " + dy);
+		}
 		
 		RayTracingJob j = new RayTracingJob(this.uri, x, y, dx, dy,
 												this.width, this.height,
@@ -160,6 +179,8 @@ public class RayTracingJobFactory implements JobFactory {
 												this.taskId);
 		
 		if (this.sLoader != null) j.setSceneLoader(this.sLoader);
+		j.setOutputHost(outputHost);
+		j.setOutputPort(outputPort);
 		
 		j.set("pw", String.valueOf(this.pw));
 		j.set("ph", String.valueOf(this.ph));
@@ -172,14 +193,18 @@ public class RayTracingJobFactory implements JobFactory {
 		j.set("cdz", String.valueOf(this.cdz));
 		
 		this.i++;
-		if (this.i >= this.totalJobs) future.complete(null);
-		
+		if (this.i >= this.totalJobs) {
+			System.out.println("RayTracingJobFactory: Emitted " + this.i + " job, marking complete");
+			future.complete(null);
+		}
+
 		return j;
 	}
 
 	/**
 	 * @see io.flowtree.job.JobFactory#createJob(java.lang.String)
 	 */
+	@Override
 	public Job createJob(String data) {
 //		TODO
 //		Client c = Client.getCurrentClient();
@@ -194,6 +219,7 @@ public class RayTracingJobFactory implements JobFactory {
 	/**
 	 * @return  A String encoding of this RayTracingJobFactory object.
 	 */
+	@Override
 	public String encode() {
 		StringBuffer buf = new StringBuffer();
 		
@@ -270,6 +296,7 @@ public class RayTracingJobFactory implements JobFactory {
 	/**
 	 * @see io.flowtree.job.JobFactory#set(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void set(String key, String value) {
 		if (key.equals("uri")) {
 			this.uri = value;
@@ -313,10 +340,11 @@ public class RayTracingJobFactory implements JobFactory {
 			
 			this.totalJobs = ((this.width * this.height) / (this.dx * this.dy));
 		} else if (key.equals("id")) {
-			this.taskId = Long.parseLong(value);
+			this.taskId = value;
 		}
 	}
-	
+
+	@Override
 	public String getName() {
 		StringBuffer b = new StringBuffer();
 		
@@ -342,9 +370,11 @@ public class RayTracingJobFactory implements JobFactory {
 		
 		return b.toString();
 	}
-	
+
+	@Override
 	public double getCompleteness() { return ((double)this.i) / ((double)this.totalJobs); }
-	
+
+	@Override
 	public boolean isComplete() {
 		if (this.nullCount > 360) {
 			System.out.println("RayTracingJobFactory (" + this.taskId + "): Declaring completeness.");
@@ -353,9 +383,11 @@ public class RayTracingJobFactory implements JobFactory {
 			return false;
 		}
 	}
-	
+
+	@Override
 	public void setPriority(double p) { this.pri = p; }
-	
+
+	@Override
 	public double getPriority() {
 		double c = this.getCompleteness();
 		
@@ -369,6 +401,13 @@ public class RayTracingJobFactory implements JobFactory {
 	@Override
 	public CompletableFuture<Void> getCompletableFuture() { return future; }
 
+	@Override
+	public OutputHandler getOutputHandler() {
+		// return new RayTracingOutputHandler(taskId, width, height);
+		return null;
+	}
+
+	@Override
 	public String toString() {
 		return "RayTracingJobFactory: " + this.taskId + " " + this.getCompleteness() +
 				"  " + this.uri + " " + this.width + "x" + this.height + " " +

@@ -17,11 +17,16 @@
 package com.almostrealism.projection;
 
 import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.RandomRay;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.UniformSphericalRandom;
+import org.almostrealism.math.AcceleratedProducer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Producer;
 
 /**
@@ -35,7 +40,7 @@ import org.almostrealism.util.Producer;
  */
 @ModelEntity
 public class ThinLensCamera extends PinholeCamera {
-	private double focalLength, radius, w, h;
+	private double focalLength, radius, width, height;
 
 	/**
 	 * Constructs a new ThinLensCamera object.
@@ -51,15 +56,15 @@ public class ThinLensCamera extends PinholeCamera {
 	
 	protected void updateProjectionDimensions() {
 		double u = (super.getFocalLength() - this.focalLength) / this.focalLength;
-		super.setProjectionDimensions(this.w * u, this.h * u);
+		super.setProjectionDimensions(this.width * u, this.height * u);
 	}
 	
 	/**
 	 * Sets the projection dimensions used by this ThinLensCamera object to the specified values.
 	 */
 	public void setProjectionDimensions(double w, double h) {
-		this.w = w;
-		this.h = h;
+		this.width = w;
+		this.height = h;
 		this.updateProjectionDimensions();
 	}
 	
@@ -67,7 +72,7 @@ public class ThinLensCamera extends PinholeCamera {
 	 * Sets the projection width of this ThinLensCamera object to the specified projection width.
 	 */
 	public void setProjectionWidth(double w) {
-		this.w = w;
+		this.width = w;
 		this.updateProjectionDimensions();
 	}
 	
@@ -75,19 +80,19 @@ public class ThinLensCamera extends PinholeCamera {
 	 * Sets the projection height of this ThinLensCamera object to the specified projection height.
 	 */
 	public void setProjectionHeight(double h) {
-		this.h = h;
+		this.height = h;
 		this.updateProjectionDimensions();
 	}
 	
 	/**
 	 * Returns the projection width of this ThinLensCamera object as a double value.
 	 */
-	public double getProjectionWidth() { return this.w; }
+	public double getProjectionWidth() { return this.width; }
 	
 	/**
 	 * Returns the projection height of this ThinLensCamera object as a double value.
 	 */
-	public double getProjectionHeight() { return this.h; }
+	public double getProjectionHeight() { return this.height; }
 	
 	/**
 	 * Sets the distance at which this ThinLensCamera object is focused.
@@ -137,8 +142,8 @@ public class ThinLensCamera extends PinholeCamera {
 	public double[] getFOV() {
 		double u = (super.getFocalLength() - this.focalLength) / this.focalLength;
 		
-		return new double [] { 2.0 * Math.atan((u * w) / (2.0 * super.getFocalLength())),
-								2.0 * Math.atan((u * h) / (2.0 * super.getFocalLength())) };
+		return new double [] { 2.0 * Math.atan((u * width) / (2.0 * super.getFocalLength())),
+								2.0 * Math.atan((u * height) / (2.0 * super.getFocalLength())) };
 	}
 	
 	/**
@@ -146,53 +151,64 @@ public class ThinLensCamera extends PinholeCamera {
 	 * by the PinholeCamera, but with a position that is a random sample
 	 * from a disk.
 	 */
+	/*
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
-		// super.setProjectionDimensions(w * u, h * u);
-		Producer<Ray> sray = super.rayAt(pos, sd);
-		// super.setProjectionDimensions(w, h);
+	public Producer<Ray> rayAt(Producer<Pair> posP, Producer<Pair> sdP) {
+		if (enableHardwareAcceleration) {
+			Producer<Ray> newRay = new DynamicProducer<>(args -> new Ray());
 
-		return new Producer<Ray>() {
-			@Override
-			public Ray evaluate(Object[] args) {
-				Ray ray = sray.evaluate(args);
+			return new AcceleratedProducer<>("pinholeCameraRayAt", false,
+					new Producer[] { newRay, posP, sdP, new RandomRay() },
+					new Object[] { getLocation(), getProjectionDimensions(),
+							new Pair(getBlur(), getBlur()),
+							new Scalar(focalLength),
+							u, v, w});
+		} else {
+			Producer<Ray> sray = super.rayAt(posP, sdP);
 
-				double r = Math.random() * radius;
-				double theta = Math.random() * Math.PI * 2;
-				Vector v = new Vector(r, Math.PI / 2.0, theta, Vector.SPHERICAL_COORDINATES);
-				v.addTo(getLocation());
+			return new Producer<Ray>() {
+				@Override
+				public Ray evaluate(Object[] args) {
+					Ray ray = sray.evaluate(args);
 
-				Vector d = ray.getOrigin();
-				d.subtractFrom(v);
+					double r = Math.random() * radius;
+					double theta = Math.random() * Math.PI * 2;
+					Vector v = new Vector(r, Math.PI / 2.0, theta, Vector.SPHERICAL_COORDINATES);
+					v.addTo(getLocation());
 
-				Vector rd = ray.getDirection();
-				double rdl = rd.length();
+					Vector d = ray.getOrigin();
+					d.subtractFrom(v);
 
-				if (Settings.produceCameraOutput) {
-					Settings.cameraOut.println("ThinLensCamera: " + w + " X " + h + " U = " + u);
-					Settings.cameraOut.println("ThinLensCamera: Lens sample = " + v);
-					Settings.cameraOut.println("ThinLensCamera: Ray origin = " + ray.getOrigin() +
-							" direction = " + ray.getDirection());
+					Vector rd = ray.getDirection();
+					double rdl = rd.length();
+
+					if (Settings.produceCameraOutput) {
+						Settings.cameraOut.println("ThinLensCamera: " + width + " X " + height + " U = " + u);
+						Settings.cameraOut.println("ThinLensCamera: Lens sample = " + v);
+						Settings.cameraOut.println("ThinLensCamera: Ray origin = " + ray.getOrigin() +
+								" direction = " + ray.getDirection());
+					}
+
+					ray.setOrigin(v);
+
+					rd.addTo(d);
+					rd.multiplyBy(rd.length() / rdl);
+					ray.setDirection(rd);
+
+					if (Settings.produceCameraOutput) {
+						Settings.cameraOut.println("ThinLensCamera: New ray origin = " + ray.getOrigin() +
+								" direction = " + ray.getDirection());
+					}
+
+					return ray;
 				}
 
-				ray.setOrigin(v);
-
-				rd.addTo(d);
-				rd.multiplyBy(rd.length() / rdl);
-				ray.setDirection(rd);
-
-				if (Settings.produceCameraOutput) {
-					Settings.cameraOut.println("ThinLensCamera: New ray origin = " + ray.getOrigin() +
-							" direction = " + ray.getDirection());
+				@Override
+				public void compact() {
+					// TODO
 				}
-
-				return ray;
-			}
-
-			@Override
-			public void compact() {
-				// TODO
-			}
-		};
+			};
+		}
 	}
+	*/
 }

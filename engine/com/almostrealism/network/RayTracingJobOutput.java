@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,14 +29,13 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 
 /**
- * A RayTracingJobOutput object stores 
+ * A {@link RayTracingJobOutput} stores
  * 
  * @author Mike Murray
  */
 public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	private List data;
-	
-	private long taskId = -1;
+
 	private int x, y, dx, dy;
 	
 	/**
@@ -45,14 +44,15 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	public RayTracingJobOutput() { this.data = new ArrayList(); }
 	
 	/**
-	 * Constructs a new RayTracingJobOutput object using the specified username and password.
+	 * Constructs a new {@link RayTracingJobOutput} using the specified username and password.
 	 * 
 	 * @param user  Username to use.
 	 * @param passwd  Password to use.
 	 * @param data  A string of the form "jobId:x:y:dx:dy".
 	 */
-	public RayTracingJobOutput(String user, String passwd, String data) {
-		super(user, passwd, data);
+	// TODO  Now that the ID is part of the parent, there is no need for it to be embedded in the data
+	public RayTracingJobOutput(String taskId, String user, String passwd, String data) {
+		super(taskId, user, passwd, data);
 		
 		this.data = new ArrayList();
 	}
@@ -68,11 +68,6 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	public int getDy() { return dy; }
 	
 	/**
-	 * @return Returns the taskId.
-	 */
-	public long getTaskId() { return taskId; }
-	
-	/**
 	 * @return Returns the x.
 	 */
 	public int getX() { return x; }
@@ -81,8 +76,13 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	 * @return Returns the y.
 	 */
 	public int getY() { return y; }
-	
+
+	@Override
 	public void setOutput(String data) {
+		super.setOutput(data);
+
+		String originalData = data;
+
 		int index = data.indexOf(":");
 		
 		String value = null;
@@ -100,7 +100,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			if (value.length() <= 0) break j;
 			
 			if (j == 0) {
-				this.taskId = Long.parseLong(value);
+				setTaskId(value);
 			} else if (j == 1) {
 				this.x = Integer.parseInt(value);
 			} else if (j == 2) {
@@ -118,8 +118,13 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			data = data.substring(index + 1);
 			index = data.indexOf(":");
 		}
+
+		if (dx == 0 || dy == 0) {
+			throw new IllegalArgumentException("Invalid dx/dy for " + originalData);
+		}
 	}
-	
+
+	@Override
 	public String getOutput() {
 		StringBuffer b = new StringBuffer();
 		b.append(super.getOutput());
@@ -132,7 +137,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	
 	/**
 	 * Adds the specified RGB object to the list of color data stored by this
-	 * RayTracingJobOutput object.
+	 * {@link RayTracingJobOutput}.
 	 * 
 	 * @param rgb  RGB object to add.
 	 * @return  True if the object was added, false otherwise.
@@ -140,9 +145,14 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	public boolean addRGB(RGB rgb) { return this.data.add(rgb); }
 	
 	/**
-	 * @return  An Iterator object for the RGB objects stored by this RayTracingJobOutput object.
+	 * @return  An Iterator object for the RGB objects stored by this {@link RayTracingJobOutput}.
 	 */
 	public Iterator iterator() { return this.data.iterator(); }
+
+	/**
+	 * @return  The number of {@link RGB}s stored by this {@link RayTracingJobOutput}.
+	 */
+	public int size() { return this.data.size(); }
 	
 	/** 
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
@@ -185,7 +195,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			} catch (EOFException eof) { break w; }
 		}
 		
-		String d = data.toString();
+		String originalData = data.toString();
 		
 		int index = data.indexOf(":");
 		
@@ -202,7 +212,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			if (value.length() <= 0) break j;
 			
 			if (j == 0) {
-				this.taskId = Long.parseLong(value);
+				this.setTaskId(value);
 			} else if (j == 1) {
 				this.x = Integer.parseInt(value);
 			} else if (j == 2) {
@@ -217,6 +227,10 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			
 			data = data.substring(index + 1);
 			index = data.indexOf(":");
+		}
+
+		if (dx == 0 || dy == 0) {
+			throw new IllegalArgumentException("Invalid dx/dy for " + originalData);
 		}
 		
 //		int t = this.x * this.y;

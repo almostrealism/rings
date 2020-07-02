@@ -113,16 +113,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 
 		return new ImmutableVector(normal);
 	}
-	
-	/**
-	 * Returns true if the ray represented by the specified Ray object intersects the sphere
-	 * represented by this Sphere object in real space.
-	 */
-	@Override
-	public boolean intersect(Ray ray) {
-		throw new RuntimeException("Not implemented");
-	}
-	
+
 	/**
 	 * Returns a {@link ShadableIntersection} representing the nearest postive point
 	 * along the the specified {@link Ray} that intersection between the ray and
@@ -151,6 +142,11 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 					double g = ray.dDotd().evaluate(args).getValue();
 
 					double discriminant = (b * b) - (g) * (c - 1);
+
+					if (discriminant < 0) {
+						return new Scalar(-1);
+					}
+
 					double discriminantSqrt = Math.sqrt(discriminant);
 
 					double t[] = new double[2];

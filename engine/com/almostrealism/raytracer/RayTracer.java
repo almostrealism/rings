@@ -26,24 +26,24 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.util.Producer;
 
-public class RayTracer implements ThreadFactory {
-	private ExecutorService pool = Executors.newFixedThreadPool(10, this);
-	private long threadCount = 0;
+public class RayTracer {
+	private ExecutorService pool;
+	private static long threadCount = 0;
 
 	private Engine engine;
 	
-	public RayTracer(Engine e) {
-		this.engine = e;
+	public RayTracer(Engine engine) {
+		this(engine, Executors.newFixedThreadPool(10, r -> new Thread(r, "RayTracer Thread " + (threadCount++))));
 	}
-	
+
+	public RayTracer(Engine engine, ExecutorService pool) {
+		this.engine = engine;
+		this.pool = pool;
+	}
+
 	public Future<Producer<RGB>> trace(Producer<Ray> r) {
 		Callable<Producer<RGB>> c = () -> engine.trace(r);
 		return pool.submit(c);
-	}
-
-	@Override
-	public Thread newThread(Runnable r) {
-		return new Thread(r, "RayTracer Thread " + (threadCount++));
 	}
 
 	public interface Engine {

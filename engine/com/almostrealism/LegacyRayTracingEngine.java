@@ -38,6 +38,7 @@ import org.almostrealism.swing.displays.ProgressDisplay;
  * 
  * @author  Michael Murray
  */
+@Deprecated
 public class LegacyRayTracingEngine {
   /**
    * Controls whether or not shadow casting will be done during rendering.
@@ -92,7 +93,7 @@ public class LegacyRayTracingEngine {
 	 * @return  Rendered image data.
 	 */
 	public static RGB[][] render(Scene scene, RenderParameters p, ProgressDisplay prog) {
-		return null; // TODO LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), prog);
+		return LegacyRayTracingEngine.render(scene, scene.getCamera(), scene.getLights(), p, new FogParameters(), prog);
 	}
 	
 	/**
@@ -109,7 +110,7 @@ public class LegacyRayTracingEngine {
 	 *
 	 * @return  Image data.
 	 */
-	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Light lights[], RenderParameters p, FogParameters f, ProgressMonitor monitor) {
+	public static RGB[][] render(Collection<ShadableSurface> surfaces, Camera camera, Collection<Light> lights, RenderParameters p, FogParameters f, ProgressMonitor monitor) {
 		if (Settings.produceOutput && Settings.produceRayTracingEngineOutput) {
 			Settings.rayEngineOut.println("Entering RayTracingEngine (" + p.width + " X " + p.ssWidth + ", " + p.height + " X " + p.ssHeight + ") : " + surfaces.size() + " Surfaces");
 			Settings.rayEngineOut.println("Camera: " + camera.toString());

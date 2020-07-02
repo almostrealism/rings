@@ -21,6 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,9 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
+import com.almostrealism.FogParameters;
+import com.almostrealism.RayIntersectionEngine;
+import com.almostrealism.raytracer.RayTracedScene;
+import io.flowtree.job.Output;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
+import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.space.Scene;
@@ -48,6 +60,9 @@ import com.almostrealism.RenderParameters;
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
 import io.flowtree.job.Job;
+import org.almostrealism.texture.GraphicsConverter;
+import org.almostrealism.texture.ImageCanvas;
+import org.almostrealism.util.Producer;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}
@@ -62,322 +77,34 @@ public class RayTracingJob implements Job {
 	public static final String htmlPost = ".jpg\"/> </center> </body> </html>";
 	
 	public static boolean verboseRender = false;
+	public static boolean enableCompaction = true;
+
 	public boolean local = false;
 	
-	private static RayTracingOutputHandler defaultOutputHandler;
-	
-	public static class RayTracingOutputHandler implements OutputHandler,
-														QueryHandler {
-		private static List completedTasks;
-		
-		private RGB image[][];
-		private long taskId;
-		
-		private Set children;
-		private long lastTaskId, currentTaskId;
-		private boolean recievedQuery;
-		
-		public RayTracingOutputHandler() { this(-1, 0, 0); }
-		
-		public RayTracingOutputHandler(long id, int w, int h) {
-			System.out.println("Constructing RayTracingOutputHandler " + this.hashCode() + ": " + id + " " + w + " " + h);
-			
-			if (RayTracingOutputHandler.completedTasks == null)
-				RayTracingOutputHandler.completedTasks = new ArrayList();
-			
-			this.taskId = id;
-			
-			if (this.taskId == -1) {
-				this.children = new HashSet();
-				RayTracingJob.defaultOutputHandler = this;
-			} else {
-				this.image = new RGB[w][h];
-				
-				Thread t = new Thread(new Runnable() {
-					public void run() {
-						if (RayTracingOutputHandler.this.taskId == -1) return;
-						
-						System.out.println("RayTracingJobOutputHandler: Started file output thread for " +
-											RayTracingOutputHandler.this.taskId + ".");
-						
-						w: while (!RayTracingOutputHandler.this.isComplete()) {
-							try {
-								Thread.sleep(1200000);
-								
-								if (RayTracingOutputHandler.this.image.length <= 0) continue w;
-								
-								System.out.println("RayTracingJobOutputHandler: Writing image for task " +
-													RayTracingOutputHandler.this.taskId + " (" + 
-													RayTracingOutputHandler.this.image.length + ", " + 
-													RayTracingOutputHandler.this.image[0].length + ")...");
-								
-								try (PrintStream p = new PrintStream(new FileOutputStream(
-											"images/NetworkRender-" +
-											RayTracingOutputHandler.this.taskId + ".raw"))) {
-									for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
-										for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
-											p.println("[" + i + ", " + j + "]: " +
-													RayTracingOutputHandler.this.image[i][j]);
-										}
-									}
-								}
-								
-//								TODO  Need to write image
-//								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
-//										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-//										ImageCanvas.JPEGEncoding);
-							} catch (InterruptedException ie) {
-								System.out.println("RayTracingOutputHandler: " + ie);
-							} catch (IOException ioe) {
-								System.out.println("RayTracingOutputHandler: " + ioe);
-							}
-						}
-						
-						if (RayTracingJob.defaultOutputHandler.children.remove(
-								RayTracingOutputHandler.this))
-							System.out.println("RayTracingOutputHandler (" +
-									RayTracingOutputHandler.this.taskId +
-									" Task is complete.");
-						
-						RayTracingOutputHandler.completedTasks.add(
-								new Long(RayTracingOutputHandler.this.taskId));
-					}
-				});
-				
-				t.setName("Ray Tracing Output Handler Thread for " + this.taskId);
-				
-				t.start();
-			}
-		}
-		
-		public void writeImage() {
-			if (RayTracingOutputHandler.this.image.length <= 0) return;
-			
-			System.out.println("RayTracingOutputHandler: Writing image for task " +
-								RayTracingOutputHandler.this.taskId + " (" + 
-								RayTracingOutputHandler.this.image.length + ", " + 
-								RayTracingOutputHandler.this.image[0].length + ")...");
-			
-			try (PrintStream p = new PrintStream(new FileOutputStream(
-							"NetworkRender-" + RayTracingOutputHandler.this.taskId + ".raw"))) {
-				for (int i = 0; i < RayTracingOutputHandler.this.image.length; i++) {
-					for (int j = 0; j < RayTracingOutputHandler.this.image[i].length; j++) {
-						p.println("[" + i + ", " + j + "]: " + RayTracingOutputHandler.this.image[i][j]);
-					}
-				}
-				
-//				TODO  Need to write image data
-//				ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
-//						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-//						ImageCanvas.JPEGEncoding);
-			} catch (IOException ioe) {
-				System.out.println("RayTracingJobOutputHandler: " + ioe);
-			}
-		}
-		
-		public RayTracingOutputHandler getHandler(long task) {
-			if (this.taskId == task) return this;
-			if (this.children == null) return null;
-			
-			Iterator itr = this.children.iterator();
-			while (itr.hasNext()) {
-				RayTracingOutputHandler h = ((RayTracingOutputHandler)itr.next()).getHandler(task);
-				if (h != null) return h;
-			}
-			
-			return null;
-		}
-		
-		public long getId() { return this.taskId; }
-		
-		public boolean isComplete() {
-			if (this.taskId == -1 || !this.recievedQuery) return false;
-			
-			for (int i = 0; i < this.image.length; i++) {
-				for (int j = 0; j < this.image[i].length; j++) {
-					if (this.image[i][j] == null) return false;
-				}
-			}
-			
-			return true;
-		}
-		
-		public void storeOutput(long time, int uid, JobOutput data) {
-			if (data instanceof RayTracingJobOutput == false) {
-				System.out.println("RayTracingOutputHandler (" + this.taskId + ") recieved: " + data);
-				return;
-			}
-			
-			RayTracingJobOutput output = (RayTracingJobOutput) data;
-			
-			if (output.getTaskId() <= 0) {
-				System.out.println("RayTracingOutputHandler (" + this.taskId + ") recieved: " + data);
-				return;
-			}
-			
-			t: if (this.taskId == -1) {
-				Iterator itr = this.children.iterator();
-				
-				long id = output.getTaskId();
-				
-				while (itr.hasNext()) {
-					RayTracingOutputHandler h = (RayTracingOutputHandler) itr.next();
-					
-					if (h.isComplete()) itr.remove();
-					
-					if (h.getId() == id) {
-						h.storeOutput(time, uid, data);
-						break t;
-					}
-				}
-				
-				System.out.println("RayTracingOutputHandler: Recieved " + output);
-				System.out.println("RayTracingOutputHandler: Spawning Output Handler for job " + id + "...");
-				
-				RayTracingOutputHandler h = new RayTracingOutputHandler(id, output.getDx(), output.getDy());
-				h.storeOutput(time, uid, data);
-				
-				this.children.add(h);
-				
-				this.lastTaskId = this.currentTaskId;
-				this.currentTaskId = id;
-				
-				System.out.println("RayTracingJob: Writing index.html");
-				
-				String s = RayTracingJob.htmlPre + this.lastTaskId + RayTracingJob.htmlPost;
-				
-				try (PrintStream out = new PrintStream(new FileOutputStream("index.html"))) {
-					out.println(s);
-				} catch (IOException ioe) {
-					System.out.println("RayTracingOutputHandler: IO error writing index.html (" +
-										ioe.getMessage() + ")");
-				}
-			}
-			
-			this.addToImage(output, output.getX(), output.getY(), output.getDx(), output.getDy());
-		}
-		
-		public Hashtable executeQuery(Query q) {
-			if (this.taskId == -1) {
-				Iterator itr = RayTracingOutputHandler.completedTasks.iterator();
-				
-				while (itr.hasNext()) {
-					if (q.getTable().equals("image-" + itr.next()))
-						return new Hashtable();
-				}
-				
-				itr = this.children.iterator();
-				
-				while (itr.hasNext()) {
-					Hashtable h = ((RayTracingOutputHandler)itr.next()).executeQuery(q);
-					if (h != null) return h;
-				}
-				
-				System.out.println("RayTracingJobOutputHandler: Recieved query for " +
-						q.getTable() + " (" + q.getCondition() + ")");
-			}
-			
-			if (!q.getTable().equals("image-" + this.taskId)) return null;
-			
-			System.out.println("RayTracingJobOutputHandler: Recieved query for " +
-					q.getTable() + " (" + q.getCondition() + ")");
-			
-			Hashtable result = new Hashtable();
-			
-			int n = 0;
-			
-			int index = q.getCondition().indexOf("x");
-			int w = Integer.parseInt(q.getCondition().substring(0, index));
-			int h = Integer.parseInt(q.getCondition().substring(index + 1));
-			
-			this.expandImageBuffer(w, h);
-			
-			for (int i = 0; i < w; i++) {
-				for (int j = 0; j < h; j++) {
-					try {
-						if (this.image[i][j] == null) {
-							result.put(new Integer(n++), i + ":" + j);
-						}
-					} catch (ArrayIndexOutOfBoundsException oob) {
-						System.out.println("RayTracingJobOutputHandler (" + this.taskId + "): " + oob);
-						oob.printStackTrace(System.out);
-						result.put(new Integer(n++), i + ":" + j);
-					}
-				}
-			}
-			
-			System.out.println("RayTracingJobOutputHandler (" + this.taskId +
-					"): Found " + n + " null pixels.");
-			
-			this.recievedQuery = true;
-			
-			return result;
-		}
-		
-		public void expandImageBuffer(int w, int h) {
-			if (w != this.image.length || this.image.length <= 0 || h != this.image[0].length) {
-				RGB copy[][] = new RGB[w][h];
-				
-				for (int i = 0; i < this.image.length; i++)
-					for (int j = 0; j < this.image[i].length; j++)
-						copy[i][j] = this.image[i][j];
-				
-				this.image = copy;
-				
-				// System.out.println("RayTracingOutputHandler (" + this.taskId + ") expanded image buffer to: " + w + " " + h);
-			}
-		}
-		
-		protected synchronized void addToImage(RayTracingJobOutput data, int x, int y, int dx, int dy) {
-			if (this.taskId == -1) return;
-			if (this.image == null) this.image = new RGB[0][0];
-			
-			int w = this.image.length, h;
-			
-			if (w <= 0)
-				h = 0;
-			else
-				h = this.image[0].length;
-			
-			if (x >= w) w = x + dx;
-			if (y >= h) h = y + dy;
-			
-			this.expandImageBuffer(w, h);
-			
-			this.image = RayTracingJob.processOutput(data, this.image, x, y, dx, dy);
-		}
-		
-		public synchronized RGB[][] getImage() {
-			RGB copy[][] = new RGB[this.image.length][this.image[0].length];
-			
-			for (int i = 0; i < copy.length; i++) {
-				for (int j = 0; j < copy[i].length; j++) {
-					if (this.image[i][j] == null)
-						copy[i][j] = new RGB(0.0, 0.0, 0.0);
-					else
-						copy[i][j] = (RGB) this.image[i][j].clone();
-				}
-			}
-			
-			return copy;
-		}
-	}
-	
-  private static Map scenes;
-  private static List loading;
-  
-  private String sceneUri, sLoader;
-  private int x, y, dx, dy, w, h, ssw, ssh;
-  private long jobId;
-  private double pw = -1.0, ph = -1.0;
-  private double fl = -1.0;
-  private double clx, cly, clz;
-  private double cdx, cdy, cdz;
+	protected static RayTracingOutputHandler defaultOutputHandler;
 
-  private CompletableFuture<Void> future = new CompletableFuture<>();
+	private static Map scenes;
+	private static List loading;
+
+	private String sceneUri, sLoader;
+	private int x, y, dx, dy, w, h, ssw, ssh;
+
+	private String outputHost;
+	private int outputPort = 7788;
+
+	private String jobId;
+
+	private double pw = -1.0, ph = -1.0;
+	private double fl = -1.0;
+	private double clx, cly, clz;
+	private double cdx, cdy, cdz;
+
+	private ExecutorService pool;
+	private CompletableFuture<Void> future = new CompletableFuture<>();
+	private Consumer<JobOutput> outputConsumer;
 
 	/**
-	 * Constructs a new RayTracingJob object.
+	 * Constructs a new {@link RayTracingJob}.
 	 */
 	public RayTracingJob() {
 	    if (RayTracingJob.scenes == null)
@@ -389,7 +116,7 @@ public class RayTracingJob implements Job {
 	}
 	
 	/**
-	 * Constructs a new RayTracingJob object.
+	 * Constructs a new {@link RayTracingJob}.
 	 * 
 	 * @param sceneUri  URI pointing to XML scene data.
 	 * @param x  X coordinate of upper left corner of the section to be rendered.
@@ -403,9 +130,17 @@ public class RayTracingJob implements Job {
 	 * @param jobId  Unique id for this job (often the time in ms is used)
 	 */
 	public RayTracingJob(String sceneUri, int x, int y, int dx, int dy, int w, int h,
-						int ssw, int ssh, long jobId) {
+						int ssw, int ssh, String jobId) {
 		if (RayTracingJob.scenes == null) RayTracingJob.scenes = new Hashtable();
 		if (RayTracingJob.loading == null) RayTracingJob.loading = new ArrayList();
+
+		if (dx == 0 || dy == 0) {
+			throw new IllegalArgumentException("Invalid dx/dy");
+		}
+
+		if (x + dx > w || y + dy > h) {
+			throw new IllegalArgumentException("Invalid position in image");
+		}
 		
 		this.sceneUri = sceneUri;
 		this.x = x;
@@ -425,6 +160,10 @@ public class RayTracingJob implements Job {
 	
 	public static RGB[][] processOutput(RayTracingJobOutput data, RGB image[][], int x, int y, int dx, int dy) {
 		Iterator itr = data.iterator();
+
+		if (x + dx > image.length || y + dy > image[x].length) {
+			throw new IllegalArgumentException(x + "," + y + ":" + dx + "x" + dy + " is not contained in the image");
+		}
 		
 		j: for (int j = 0; itr.hasNext() ; j++) {
 			int ax = x + j % dx;
@@ -452,7 +191,7 @@ public class RayTracingJob implements Job {
 	public static boolean removeSceneCache(String s) { return(RayTracingJob.scenes.remove(s) != null); }
 	
 	/**
-	 * @return  The scene referenced by this RayTracingJob object.
+	 * @return  The scene referenced by this {@link RayTracingJob}.
 	 */
 	public Scene<ShadableSurface> getScene() {
 		Scene<ShadableSurface> s = null;
@@ -487,32 +226,40 @@ public class RayTracingJob implements Job {
 										" seconds for " + this.sceneUri);
 				} catch (InterruptedException ie) {}
 			} else if (s == null) {
-				/*
-				TODO
 				try {
 					this.loading.add(this.sceneUri);
-					
-					SceneLoader loader = this;
-					
+
+					SceneLoader loader = (uri) -> {
+						try {
+							return FileDecoder.decodeScene(new URL(uri).openStream(), FileDecoder.XMLEncoding,
+									false, Exception::printStackTrace);
+						} catch (IOException e) {
+							e.printStackTrace();
+							return null;
+						}
+					};
+
 					if (this.sLoader != null) {
-						Object l = Class.forName(this.sLoader).newInstance();
-						
+						Object l = Class.forName(this.sLoader).getConstructor().newInstance();
+
 						if (l instanceof SceneLoader)
 							loader = (SceneLoader) l;
 						else
 							System.out.println("RayTracingJob: " + this.sLoader +
-												" is not a valid SceneLoader.");
+									" is not a valid SceneLoader.");
 					}
-					
+
 					System.out.println("RayTracingJob: Loading scene from " +
-										this.sceneUri + " via " + loader);
-					
-					s = loader.loadScene(this.sceneUri);
+							this.sceneUri + " via " + loader);
+
+					s = loader.apply(this.sceneUri);
 					if (s == null) throw new IOException();
-					
+
 					System.out.println("RayTracingJob: Scene loaded.");
-					
+
 					RayTracingJob.scenes.put(this.sceneUri, s);
+				} catch (NoSuchMethodException | InvocationTargetException m) {
+					System.out.println("RayTracingJob: Error creating SceneLoader - " + m);
 				} catch (IOException ioe) {
 					System.out.println("RayTracingJob: Error loading scene - " + ioe);
 				} catch (InstantiationException e) {
@@ -528,8 +275,6 @@ public class RayTracingJob implements Job {
 				
 				this.loading.remove(this.sceneUri);
 				break i;
-				*/
-				break i;
 			} else {
 				this.loading.remove(this.sceneUri);
 				return s;
@@ -537,6 +282,11 @@ public class RayTracingJob implements Job {
 		}
 		
 		return s;
+	}
+
+	@Override
+	public void setOutputConsumer(Consumer<JobOutput> outputConsumer) {
+		this.outputConsumer = outputConsumer;
 	}
 
 	public void setSceneLoader(String loader) { this.sLoader = loader; }
@@ -555,10 +305,19 @@ public class RayTracingJob implements Job {
 		this.cdy = y;
 		this.cdz = z;
 	}
+
+	public void setOutputHost(String host) { this.outputHost = host; }
+
+	public String getOutputHost() { return outputHost; }
+
+	public void setOutputPort(int port) { this.outputPort = port; }
+
+	public int getOutputPort() { return this.outputPort; }
 	
 	/**
 	 * @see io.flowtree.job.Job#encode()
 	 */
+	@Override
 	public String encode() {
 		StringBuffer s = new StringBuffer();
 		
@@ -589,6 +348,14 @@ public class RayTracingJob implements Job {
 		s.append(this.ssh);
 		s.append(":id=");
 		s.append(this.jobId);
+
+		if (this.outputHost != null) {
+			s.append(":oh=");
+			s.append(outputHost);
+		}
+
+		s.append(":op=");
+		s.append(outputPort);
 		
 		if (this.pw != -1) {
 			s.append(":pw=");
@@ -641,6 +408,7 @@ public class RayTracingJob implements Job {
 	/**
 	 * @see io.flowtree.job.Job#set(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void set(String key, String value) {
 		if (key.equals("uri"))
 			this.sceneUri = value;
@@ -663,7 +431,11 @@ public class RayTracingJob implements Job {
 		else if (key.equals("ssh"))
 			this.ssh = Integer.parseInt(value);
 		else if (key.equals("id"))
-			this.jobId = Long.parseLong(value);
+			this.jobId = value;
+		else if (key.equals("oh"))
+			this.outputHost = value;
+		else if (key.equals("op"))
+			this.outputPort = Integer.parseInt(value);
 		else if (key.equals("pw"))
 			this.pw = Double.parseDouble(value);
 		else if (key.equals("ph"))
@@ -689,6 +461,7 @@ public class RayTracingJob implements Job {
 	/**
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		Scene<ShadableSurface> s = this.getScene();
 		
@@ -763,7 +536,18 @@ public class RayTracingJob implements Job {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RGB rgb[][] = null; // LegacyRayTracingEngine.render(s, camera, s.getLights(), p, new FogParameters(), null); TODO
+		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) s,
+												new FogParameters()), s.getCamera(), p, getExecutorService());
+		Producer<RGB> renderedImageData[][] = r.realize(p).evaluate(null);
+		if (enableCompaction) {
+			for (int i = 0; i < renderedImageData.length; i++) {
+				for (int j = 0; j < renderedImageData[i].length; j++) {
+					renderedImageData[i][j].compact();
+				}
+			}
+		}
+
+		RGB rgb[][] = GraphicsConverter.convertToRGBArray(renderedImageData, p.positionForIndices());
 		
 		long time = System.currentTimeMillis() - start;
 		
@@ -777,8 +561,13 @@ public class RayTracingJob implements Job {
 //			user = c.getUser();
 //			passwd = c.getPassword();
 //		}
+
+		if (this.x + dx > this.w || this.y + dy > h) {
+			System.out.println("WARN: Image bounds exceeded");
+		}
 		
 		RayTracingJobOutput jo = new RayTracingJobOutput(
+									this.jobId,
 									user, passwd,
 									this.jobId + ":" +
 									this.x + ":" + this.y + ":" +
@@ -791,8 +580,9 @@ public class RayTracingJob implements Job {
 			}
 		}
 
-		/* TODO  Need to write image data
-		if (c == null || RayTracingJob.verboseRender) {
+		// System.out.println("RayTracingJob: There are " + jo.size() + " RGBs for " + toString());
+
+		if (RayTracingJob.verboseRender) {
 			File file = new File(this.jobId + "-" +
 								this.x + "-" + this.y + "-" +
 								this.w + "-" + this.h + "-" +
@@ -805,8 +595,11 @@ public class RayTracingJob implements Job {
 			}
 		}
 
-		if (c != null) c.writeOutput(jo);
-		*/
+		if (outputHost != null) {
+			new Output(outputHost, outputPort).apply(jo);
+		} else if (outputConsumer != null) {
+			outputConsumer.accept(jo);
+		}
 
 		future.complete(null);
 	}
@@ -815,8 +608,10 @@ public class RayTracingJob implements Job {
 	/**
 	 * @see io.flowtree.job.Job#getTaskId()
 	 */
-	public long getTaskId() { return this.jobId; }
-	
+	@Override
+	public String getTaskId() { return this.jobId; }
+
+	@Override
 	public String getTaskString() {
 		return "RayTracingJobFactory: " + this.jobId + " 0.0 " +
 			this.sceneUri + " " + this.w + "x" + this.h + " " +
@@ -825,13 +620,26 @@ public class RayTracingJob implements Job {
 			" " + this.cdx + "," + this.cdy + "," + this.cdz;
 	}
 
+	/**
+	 * Provide the {@link ExecutorService} to be used by {@link com.almostrealism.raytracer.RayTracer}.
+	 */
+	@Override
+	public void setExecutorService(ExecutorService pool) {
+		this.pool = pool;
+	}
+
+	/**
+	 * Return the {@link ExecutorService} to be used by {@link com.almostrealism.raytracer.RayTracer}.
+	 */
+	public ExecutorService getExecutorService() {
+		return this.pool;
+	}
+
 	@Override
 	public CompletableFuture<Void> getCompletableFuture() { return future; }
 
 	@Override
-	public int hashCode() {
-		return (int) ((this.jobId + this.x + this.y) % Integer.MAX_VALUE);
-	}
+	public int hashCode() { return jobId.hashCode(); }
 
 	@Override
 	public boolean equals(Object o) {
@@ -855,7 +663,8 @@ public class RayTracingJob implements Job {
 	
 	public String toString() {
 	    StringBuffer s = new StringBuffer();
-	    
+
+	    s.append("[task ");
 	    s.append(this.jobId);
 	    s.append(" (");
 	    s.append(this.x);
@@ -865,6 +674,7 @@ public class RayTracingJob implements Job {
 	    s.append(this.dx);
 	    s.append("x");
 	    s.append(this.dy);
+	    s.append("]");
 	    
 	    return s.toString();
 	}

@@ -16,6 +16,7 @@
 package com.almostrealism.raytracer;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -51,7 +52,11 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	}
 
 	public RayTracedScene(RayTracer.Engine t, Camera c, RenderParameters p) {
-		this.tracer = new RayTracer(t);
+		this(t, c, p, null);
+	}
+
+	public RayTracedScene(RayTracer.Engine t, Camera c, RenderParameters p, ExecutorService pool) {
+		this.tracer = pool == null ? new RayTracer(t) : new RayTracer(t, pool);
 		this.camera = c;
 		this.p = p;
 	}
@@ -108,8 +113,8 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 			}
 		}
 
-		System.out.println("Generated pixel template after " + (System.nanoTime() - start) + " nanoseconds");
+		// System.out.println("Generated pixel template after " + (System.nanoTime() - start) + " nanoseconds");
 
-		return new RealizableImage(px, new Pair(p.width, p.height));
+		return new RealizableImage(px, new Pair(p.dx, p.dy));
 	}
 }

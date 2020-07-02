@@ -65,6 +65,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	private Image renderedImage;
 
 	private Thread evaluationThread;
+	private boolean imageEvaluated;
+	private long evaluationStart = -1;
 	
 	/** Constructs a new {@link RenderPanel} that can be used to render the specified {@link Scene}. */
 	public RenderPanel(T scene) {
@@ -102,8 +104,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 		JFrame frame = null;
 
-		final Thread renderThread = new Thread(new Runnable() {
-			public void run() {
+		final Thread renderThread = new Thread(() -> {
 				RenderParameters rparams = new RenderParameters();
 				rparams.width = RenderPanel.this.width;
 				rparams.height = RenderPanel.this.height;
@@ -130,12 +131,12 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				}
 
 				evaluateImage();
-			}
-		});
+			});
 		
 		renderThread.start();
 	}
-	
+
+	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(width, height);
 	}
@@ -144,11 +145,18 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		if (evaluationThread != null) return;
 
 		evaluationThread = new Thread(() -> {
-			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData, this);
+			evaluationStart = System.currentTimeMillis();
+			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData, RenderPanel.this);
+			imageEvaluated = true;
 			evaluationThread = null;
+			System.out.println("Completed image realization after " + (System.currentTimeMillis() - evaluationStart) + " msec");
 		});
 
 		evaluationThread.start();
+	}
+
+	public boolean isImageEvaluated() {
+		return imageEvaluated;
 	}
 
 	/**
@@ -163,6 +171,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	}
 	
 	/** Method called when an event has been fired. */
+	@Override
 	public void eventFired(Event event) {
 		if (event instanceof SceneOpenEvent) {
 			this.scene = (T) ((SceneOpenEvent) event).getScene();
@@ -260,24 +269,31 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 */
 	public int getSupersampleHeight() { return this.ssHeight; }
 	
-	/** Returns the image rendered by this {@link RenderPanel} as an array of {@link RGB}s. */
+	/** Returns the {@link Producer}s for the {@link RGB}s that make up the image for this {@link RenderPanel}. */
 	public Producer<RGB>[][] getRenderedImageData() { return this.renderedImageData; }
-	
+
+	/** Returns the {@link Image} rendered by this {@link RenderPanel}. */
+	public Image getRenderedImage() { return renderedImage; }
+
 	/**
 	 * Sets the EventHandler object used by this RenderPanel object. Setting this to null will deactivae event reporting.
 	 */
+	@Override
 	public void setEventHandler(EventHandler handler) { this.handler = handler; }
 	
 	/**
 	 * Returns the EventHandler object used by this RenderPanel object.
 	 */
+	@Override
 	public EventHandler getEventHandler() { return this.handler; }
-	
+
+	@Deprecated
 	public double calculateAverageBrightness() {
 		return LegacyRayTracingEngine.calculateAverageBrightness(this.scene, this.width, this.height, 3);
 	}
 	
 	/** Method called when painting this RenderPanel. */
+	@Override
 	public void paint(Graphics g) {
 		if (this.renderedImage != null) {
 			g.setColor(Color.black);
@@ -318,7 +334,12 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
 		}
 
-		System.out.println("Repainted RenderPanel");
+		if (evaluationStart > 0) {
+			long mins = (System.currentTimeMillis() - evaluationStart) / 60000;
+			System.out.println("Repainted RenderPanel (" + mins + " evaluation minutes elapsed)");
+		} else {
+			System.out.println("Repainted RenderPanel");
+		}
 
 		return renderedImage;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 
 package com.almostrealism;
+
+import org.almostrealism.algebra.Pair;
+
+import java.util.function.Function;
 
 /**
  * A {@link RenderParameters} instance stores parameters related to the image that will
@@ -47,4 +51,8 @@ public class RenderParameters {
 	
 	/** Viewable image dimensions. */
 	public int dx, dy;
+
+	public Function<Pair, Pair> positionForIndices() {
+		return p -> new Pair(x + p.getX(), height - 1 - p.getY() - y);
+	}
 }
