@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2019 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,13 +53,12 @@ public class PointLightCalculation implements Producer<RGB> {
 		c.setLightDirection(l);
 
 		Producer<RGB> s = surface.shade(c);
+		if (s == null) throw new NullPointerException();
 
-		if (s == null) {
-			surface.shade(c); // TODO  Remove
+		RGB rgb = s.evaluate(args);
+		if (s == null)
 			throw new NullPointerException();
-		}
-
-		return s.evaluate(args);
+		return rgb;
 	}
 
 	@Override

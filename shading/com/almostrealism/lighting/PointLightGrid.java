@@ -132,12 +132,6 @@ public class PointLightGrid extends AbstractSurface implements Light {
 		return ZeroVector.getInstance();
 	}
 
-	/** Returns false. */
-	@Override
-	public boolean intersect(Ray ray) {
-		return false;
-	}
-	
 	/** Returns null. */
 	@Override
 	public ShadableIntersection intersectAt(Producer ray) {

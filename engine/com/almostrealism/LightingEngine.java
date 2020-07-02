@@ -24,6 +24,7 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBAdd;
 import org.almostrealism.color.RGBMultiply;
+import org.almostrealism.color.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
@@ -71,6 +72,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	protected void init() {
 		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
 			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)));
+		} else {
+			shadow = RGBWhite.getInstance();
 		}
 
 		ShaderContext context = p.clone();
@@ -110,6 +113,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		return intersections;
 	}
 
+	public Producer<RGB> getSurface() { return surface; }
+
 	/**
 	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
 	 * and {@link Light}s. This method may return null, which should be interpreted as black
@@ -117,6 +122,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	 */
 	public RGB evaluate(Object args[]) {
 		if (shade == null) return new RGB(0.0, 0.0, 0.0);
+
 		return new RGBMultiply(shadow, shade).evaluate(args);
 	}
 

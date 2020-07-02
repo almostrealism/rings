@@ -24,6 +24,7 @@ import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.io.DecodePostProcessing;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -43,7 +44,7 @@ import org.almostrealism.util.Producer;
  * @author  Michael Murray
  */
 @ModelEntity
-public class OrthographicCamera implements Camera, Positioned {
+public class OrthographicCamera implements Camera, Positioned, DecodePostProcessing {
 	private Vector location = new Vector(0.0, 0.0, 0.0);
 	private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
 	private Vector upDirection = new Vector(0.0, 1.0, 0.0);
@@ -157,7 +158,7 @@ public class OrthographicCamera implements Camera, Positioned {
 
 	/** Returns the ratio of the projection width of this camera to the projection height of this camera. */
 	public double getAspectRatio() { return getProjectionWidth() / getProjectionHeight(); }
-	
+
 	/** Updates the orthonormal vectors used to describe camera space for this {@link OrthographicCamera}. */
 	public void updateUVW() {
 		this.w = (this.viewDirection.divide(this.viewDirection.length())).minus();
@@ -239,4 +240,7 @@ public class OrthographicCamera implements Camera, Positioned {
 	public Scope<Variable<?>> getScope(String prefix) {
 		throw new RuntimeException("getScope not implemented");
 	}
+
+	@Override
+	public void afterDecoding() { updateUVW(); }
 }

@@ -1,26 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="web" name="Web">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/WebContent/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/WebContent" relative="/" />
-        </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/engine" />
-          <root url="file://$MODULE_DIR$/geometry" />
-          <root url="file://$MODULE_DIR$/shading" />
-          <root url="file://$MODULE_DIR$/ui" />
-        </sourceRoots>
-      </configuration>
-    </facet>
-    <facet type="Spring" name="Spring">
-      <configuration />
-    </facet>
-  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -28,22 +7,26 @@
       <sourceFolder url="file://$MODULE_DIR$/engine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/geometry" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/shading" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ui" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.almostrealism:FlowTreeAPI:0.3-rc" level="project" />
-    <orderEntry type="library" name="Maven: org.almostrealism:Common:0.8-rc" level="project" />
+    <orderEntry type="module" module-name="FlowTreeAPI" />
+    <orderEntry type="module" module-name="Common" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
-    <orderEntry type="library" name="Maven: org.jocl:jocl:2.0.1" level="project" />
-    <orderEntry type="library" name="Maven: io.almostrealism:TreeView:0.2-rc" level="project" />
-    <orderEntry type="library" name="Maven: io.almostrealism:GraphPersist:0.2-rc" level="project" />
+    <orderEntry type="library" name="Maven: org.jocl:jocl:2.0.2" level="project" />
+    <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:14" level="project" />
+    <orderEntry type="module" module-name="GraphPersist" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />

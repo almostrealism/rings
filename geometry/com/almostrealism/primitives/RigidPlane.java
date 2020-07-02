@@ -32,7 +32,17 @@ public class RigidPlane extends Plane implements RigidBody {
 	private State state;
 	
 	private TransformMatrix rotateXMatrix, rotateYMatrix, rotateZMatrix;
-	
+
+	public RigidPlane() {
+		this(new Vector(0.0, 0.0, 0.0),
+				new Vector(0.0, 0.0, 0.0),
+				new Vector(0.0, 0.0, 0.0),
+				new Vector(0.0, 0.0, 0.0),
+				new Vector(0.0, 0.0, 0.0),
+				new Vector(0.0, 0.0, 0.0),
+				1.0, 1.0);
+	}
+
 	/**
 	 * Constructs a new Plane object using the specified initial rigid body state values.
 	 * 

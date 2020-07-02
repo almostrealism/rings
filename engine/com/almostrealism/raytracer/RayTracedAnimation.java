@@ -19,7 +19,10 @@ package com.almostrealism.raytracer;
 import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.SphericalLight;
+import com.almostrealism.lighting.StandardLightingRigs;
+import com.almostrealism.primitives.RigidPlane;
 import com.almostrealism.projection.PinholeCamera;
+import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
@@ -195,6 +198,11 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 					p.setProperty("bodies." + i + ".light.atb", String.valueOf(at[1]));
 					p.setProperty("bodies." + i + ".light.atc", String.valueOf(at[2]));
 				}
+			} else if (surface instanceof RigidPlane) {
+				RigidPlane s = (RigidPlane) surface;
+
+				p.setProperty("bodies." + i + ".type", "plane");
+				p.setProperty("bodies." + i + ".size", String.valueOf(s.getSize()));
 			}
 
 			if (surface != null) {
@@ -250,10 +258,11 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 		return p;
 	}
 
+	@Override
 	public void loadProperties(Properties p) {
 		super.loadProperties(p);
 
-		PinholeCamera c;
+		ThinLensCamera c;
 
 		String d = p.getProperty("render.debug");
 		if (d != null && d.equals("true")) {
@@ -285,6 +294,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 		String vz = p.getProperty("camera.view.z");
 
 		String f = p.getProperty("camera.foc");
+		String fl = p.getProperty("camera.foclen");
+		String lr = p.getProperty("camera.lensradius");
 		String pw = p.getProperty("camera.proj.w");
 		String ph = p.getProperty("camera.proj.h");
 
@@ -296,9 +307,14 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 		if (vy != null) cv.setY(Double.parseDouble(vy));
 		if (vz != null) cv.setZ(Double.parseDouble(vz));
 
-		c = new PinholeCamera(cl, cv, new Vector(0.0, 1.0, 0.0));
+		c = new ThinLensCamera();
+		c.setLocation(cl);
+		c.setViewingDirection(cv);
+		c.setUpDirection(new Vector(0.0, 1.0, 0.0));
 
-		if (f != null) c.setFocalLength(Double.parseDouble(f));
+		if (f != null) c.setFocus(Double.parseDouble(f));
+		if (fl != null) c.setFocalLength(Double.parseDouble(fl));
+		if (lr != null) c.setLensRadius(Double.parseDouble(lr));
 		if (pw != null) c.setProjectionWidth(Double.parseDouble(pw));
 		if (ph != null) c.setProjectionHeight(Double.parseDouble(ph));
 
@@ -318,6 +334,30 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				b = new RigidSphere();
 				((RigidSphere)b).setRadius(size);
 				((RigidSphere)b).setColor(new RGB(0.8, 0.8, 0.8));
+
+				String lit = p.getProperty("bodies." + i + ".light.on");
+
+				if (lit != null) {
+					double intensity = Double.parseDouble(p.getProperty("bodies." + i + ".light.intensity", "0.0"));
+					int samples = Integer.parseInt(p.getProperty("bodies." + i + ".light.samples", "0"));
+
+					double ata = Double.parseDouble(p.getProperty("bodies." + i + ".light.ata", "0.0"));
+					double atb = Double.parseDouble(p.getProperty("bodies." + i + ".light.atb", "0.0"));
+					double atc = Double.parseDouble(p.getProperty("bodies." + i + ".light.atc", "1.0"));
+
+					((RigidSphere)b).setLighting(true);
+
+					SphericalLight light = ((RigidSphere)b).getLight();
+					light.setColor(new RGB(1.0, 1.0, 1.0));
+					light.setIntensity(intensity);
+					light.setSampleCount(samples);
+					light.setAttenuationCoefficients(ata, atb, atc);
+
+					super.addLight((Light)b);
+				}
+			} else if (type.equals("plane")) {
+				b = new RigidPlane();
+				((RigidPlane)b).setColor(new RGB(0.8, 0.8, 0.8));
 
 				String lit = p.getProperty("bodies." + i + ".light.on");
 
@@ -360,6 +400,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				if (ref != null) {
 					s.addShader(new ReflectionShader(Double.parseDouble(ref), new RGB(1.0, 1.0, 1.0)));
 				}
+
+				s.addShader(DiffuseShader.defaultDiffuseShader);
 			}
 
 			RigidBody.State s = b.getState();
@@ -395,8 +437,15 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 
 		double ambient = Double.parseDouble(p.getProperty("light.ambient", "0.0"));
 
-		if (ambient != 0.0) this.addLight(new DirectionalAmbientLight(ambient,
-				new RGB(1.0, 1.0, 1.0), new Vector(0.0, -1.0, -0.3)));
+		if (ambient != 0.0) {
+			this.addLight(new DirectionalAmbientLight(ambient,
+					new RGB(1.0, 1.0, 1.0), new Vector(0.0, -1.0, -0.3)));
+		}
+
+		boolean defaultLightRig = Boolean.parseBoolean(p.getProperty("light.default.rig", "false"));
+		if (defaultLightRig) {
+			StandardLightingRigs.addDefaultLights(this);
+		}
 
 		String viewFrom = p.getProperty("camera.view.from");
 		String viewTo = p.getProperty("camera.view.to");
@@ -415,6 +464,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			c.setViewDirection(vd);
 		}
 
-		super.setCamera(c);
+		setCamera(c);
+		addAll(bodies);
 	}
 }

@@ -44,4 +44,9 @@ public class IntersectionalLightingEngine extends LightingEngine {
 
 		return l;
 	}
+
+	@Override
+	public String toString() {
+    	return "IntersectionalLightingEngine[" + super.getSurface() + "]";
+	}
 }

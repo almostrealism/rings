@@ -42,7 +42,7 @@ public class RenderableSurfaceFactory {
 
 			return l;
 		} else {
-			System.err.println("Returning null for " + s);
+			System.err.println("RenderableSurfaceFactory: Returning null for " + s);
 		}
 		
 		return null;

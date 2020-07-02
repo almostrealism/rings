@@ -31,4 +31,12 @@ public class SphereTest {
 		Ray r = f.get(0).evaluate(new Object[0]);
 		System.out.println(r);
 	}
+
+	@Test
+	public void intersectionTest2() {
+		Sphere s = new Sphere();
+		ContinuousField f = s.intersectAt(new StaticProducer(new Ray(new Vector(0.0, 0.0, -2.0), new Vector(57.22891566265059, 72.32037025267255, 404.1157064026493))));
+		Ray r = f.get(0).evaluate(new Object[0]);
+		System.out.println(r);
+	}
 }

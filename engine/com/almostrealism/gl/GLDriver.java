@@ -28,6 +28,8 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import io.almostrealism.code.Method;
+import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
@@ -37,14 +39,15 @@ import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
-import java.awt.*;
+import java.awt.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
 public class GLDriver {
@@ -91,7 +94,7 @@ public class GLDriver {
 
         this.cameraStack = new Stack<>();
         this.projection_joml = new Matrix4d();
-		this.lighting = new GLLightingConfiguration(new ArrayList<>());
+		this.lighting = new GLLightingConfiguration(Arrays.asList());
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
@@ -291,7 +294,13 @@ public class GLDriver {
 		gl.glClearAccum((float) c.getRed(), (float) c.getGreen(), (float) c.getBlue(), (float) c.getAlpha());
 	}
 
-	public void glDepthFunc(int code) { gl.glDepthFunc(code); }
+	public void glDepthFunc(String code) {
+		try {
+			gl.glDepthFunc(GL2.class.getField(code).getInt(gl));
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void glStencilFunc(int func, int ref, int mask) { gl.glStencilFunc(func, ref, mask); }
 
@@ -393,6 +402,8 @@ public class GLDriver {
 	 * Compile the shader, attach to the current program, use the current program.
 	 */
 	protected boolean compileShader(String shaderType, String shaderSource) {
+		if (gl == null) return false; // TODO
+		
 		try {
 			System.out.println(shaderType + ":");
 			System.out.println(shaderSource);
@@ -424,6 +435,54 @@ public class GLDriver {
 	public void glPopAttrib() { gl.glPopAttrib(); }
 
 	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
+
+	public Variable createProgram() {
+		return null; // TODO
+	}
+
+	public void linkProgram(Variable program) {
+		// TODO
+	}
+
+	public void useProgram(Variable program) {
+		// TODO
+	}
+
+	public void mapProgramAttributes(Variable program) {
+		// TODO
+	}
+
+	public Variable createShader(String type) {
+		return null; // TODO
+	}
+
+	public void shaderSource(Variable shader, String source) {
+		// TODO
+	}
+
+	public void compileShader(Variable shader) {
+		// TODO
+	}
+
+	public void attachShader(Variable program, Variable shader) {
+		// TODO
+	}
+
+	public void deleteShader(Variable shader) {
+		// TODO
+	}
+
+	public Variable<String> createBuffer() {
+		return null; // TODO
+	}
+
+	public void bindBuffer(String code, Variable buffer) {
+		// TODO
+	}
+
+	public void bufferData(Variable buffer, List<Double> data) {
+		// TODO
+	}
 
 	public void glBindBuffer(int code, int v) { gl.glBindBuffer(code, v); }
 
@@ -607,6 +666,9 @@ public class GLDriver {
 		xmax = ymax * aspectRatio;
 		return getFrustum(-xmax, xmax, -ymax, ymax, near, far);
 	}
+	
+	
+	
 
 	private TransformMatrix getFrustum(double left, double right, double bottom, double top, double near, double far) {
 		double temp, temp2, temp3, temp4;
@@ -772,9 +834,12 @@ public class GLDriver {
 	}
 
 	public double[] getProjectionMatrix() {
-		double projection[] = new double[16];
-		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
-		return projection;
+	
+			double projection[] = new double[16];
+			gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
+			return projection;
+	
+		
 	}
 
 	public int[] getViewport() {

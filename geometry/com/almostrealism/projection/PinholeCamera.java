@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,34 @@ package com.almostrealism.projection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.RandomRay;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.AcceleratedProducer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Producer;
 
 /**
- * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the location, viewing direction,
- * up direction, focal length, and projection dimensions which are used for rendering.
- * When constructing a PinholeCamera object you must make these specifications carefully.
- * The camera location is, as expected, the location from which the camera views, represented as a vector.
- * This value is by default at the origin. The viewing direction is a vector that represents
- * the direction the camera is viewing. This value is by default aligned to the positive z axis,
- * or (0.0, 0.0, 1.0). The up direction is a vector that represents the orientation of the camera's "up."
- * This value is by default aligned with the positive y axis or (0.0, 1.0, 0.0).
- * The focal length of the camera can be thought of as the distance from the camera location to the projection.
- * The focal length is also the tangent of half the vertical field of view. The projection dimensions are the
- * dimensions of the projection that the camera will produce. By default the projection dimensions are set
- * to 0.36 by 0.24 to produce a 35mm film aspect ratio.
- * A Camera object also stores three perpendicular vectors that describe a coordinate system.
- * This is the camera coordinate system and is used for projection. These vectors are computed and updated
- * automatically based on the viewing direction and up direction vectors.
+ * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the
+ * location, viewing direction, up direction, focal length, and projection dimensions
+ * which are used for rendering. When constructing a PinholeCamera object you must make
+ * these specifications carefully. The camera location is, as expected, the location
+ * from which the camera views, represented as a vector. This value is by default at
+ * the origin. The viewing direction is a vector that represents the direction the
+ * camera is viewing. This value is by default aligned to the positive z axis, or
+ * (0.0, 0.0, 1.0). The up direction is a vector that represents the orientation of
+ * the camera's "up." This value is by default aligned with the positive y axis or
+ * (0.0, 1.0, 0.0). The focal length of the camera can be thought of as the distance
+ * from the camera location to the projection. The focal length is also the tangent of
+ * half the vertical field of view. The projection dimensions are the dimensions of
+ * the projection that the camera will produce. By default the projection dimensions
+ * are set to 0.36 by 0.24 to produce a 35mm film aspect ratio.
+ * A Camera object also stores three perpendicular vectors that describe a coordinate
+ * system. This is the camera coordinate system and is used for projection. These
+ * vectors are computed and updated automatically based on the viewing direction and
+ * up direction vectors.
  * 
  * @author  Michael Murray
  */
@@ -144,7 +149,7 @@ public class PinholeCamera extends OrthographicCamera {
 	public double getBlur() { return this.blur; }
 	
 	/**
-	 * Returns a Ray object that represents a line of sight from the camera represented by this PinholeCamera object.
+	 * Returns a {@link Ray} that represents a line of sight from the camera represented by this {@link PinholeCamera}.
 	 * The first two parameters are the coordinates across the camera. These coordinates correspond to the pixels on
 	 * the rendered image. The second pair of parameters specify the total integer width and height of the screen.
 	 * Although the pixels on the screen must be in integer coordinates, this method provides the ability to create
@@ -152,32 +157,29 @@ public class PinholeCamera extends OrthographicCamera {
 	 * camera surface. This effect can be used to produce large images from small scenes while retaining accuracy.
 	 */
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+	public Producer<Ray> rayAt(Producer<Pair> posP, Producer<Pair> sdP) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
 			Settings.cameraOut.println("CAMERA: U = " + this.u.toString() + ", V = " + this.v.toString() + ", W = " + this.w.toString());
 		}
 
 		if (enableHardwareAcceleration) {
-			Producer<Ray> newRay = new Producer<Ray>() {
-				@Override
-				public Ray evaluate(Object[] args) { return new Ray(); }
-
-				@Override
-				public void compact() { }
-			};
+			Producer<Ray> newRay = new DynamicProducer<>(args -> new Ray());
 
 			return new AcceleratedProducer<>("pinholeCameraRayAt", false,
-											new Producer[] { newRay, pos, sd },
+											new Producer[] { newRay, posP, sdP, new RandomRay() },
 											new Object[] { getLocation(), getProjectionDimensions(),
-															new Pair(blur * (Math.random() - 0.5), blur * (Math.random() - 0.5)),
+															new Pair(blur, blur),
 															new Scalar(focalLength),
 															u, v, w });
 		} else {
 			return new Producer<Ray>() {
 				@Override
 				public Ray evaluate(Object[] args) {
-					Pair pos = (Pair) args[0];
-					Pair screenDim = (Pair) args[1];
+//					Pair pos = (Pair) args[0];
+//					Pair screenDim = (Pair) args[1];
+
+					Pair pos = posP.evaluate(args);
+					Pair screenDim = sdP.evaluate(args);
 
 					double au = -(getProjectionWidth() / 2);
 					double av = -(getProjectionHeight() / 2);

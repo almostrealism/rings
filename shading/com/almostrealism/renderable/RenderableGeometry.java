@@ -22,7 +22,8 @@ import com.almostrealism.gl.GLMaterial;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.space.BasicGeometry;
 
-public abstract class RenderableGeometry<T extends BasicGeometry> extends RenderableGLAdapter implements RenderDelegate {
+public abstract class RenderableGeometry<T extends BasicGeometry> extends RenderableGLAdapter 
+						implements RenderDelegate {
 	private T geo;
 
 	public RenderableGeometry(T geometry) { geo = geometry; }
@@ -42,12 +43,11 @@ public abstract class RenderableGeometry<T extends BasicGeometry> extends Render
 
 	@Override
 	public void write(String glMember, String name, CodePrintWriter p) {
-		display(new GLPrintWriter(glMember, glMember + "u", glMember + "ut", name, p)); // TODO  These may not be the right member names
+		display(new GLPrintWriter(glMember, (String)null, name, p)); // TODO  These may not be the right member names
 	}
 
 	public static void applyTransform(GLDriver gl, BasicGeometry g) {
-		// TODO Perform full transformation
-		gl.glTranslate(g.getLocation());
+		gl.setMatrix(g.getTransform(true));
 	}
 
 	public String toString() { return "RenderableGeometry[" + getGeometry().toString() + "]"; }

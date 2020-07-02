@@ -69,16 +69,7 @@ public class Cone extends AbstractSurface {
 		super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		return new ImmutableVector(normal);
 	}
-	
-	/**
-	 * @return  True if the ray represented by the specified Ray object intersects the cone
-	 *          represented by this Cone object.
-	 */
-	@Override
-	public boolean intersect(Ray ray) {
-		throw new RuntimeException("Not implemented");
-	}
-	
+
 	/**
 	 * @return  An {@link Intersection} storing the locations along the ray represented by
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.

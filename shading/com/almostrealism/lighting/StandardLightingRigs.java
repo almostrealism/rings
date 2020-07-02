@@ -31,7 +31,7 @@ public class StandardLightingRigs {
 	public static void addDefaultLights(Scene<?> scene) {
 		RectangularLight rl = new RectangularLight(2.0, 2.0);
 		rl.setColor(new RGB(1.0, 1.0, 1.0));
-		rl.getLocation().setY(6.0);
+		rl.setLocation(rl.getLocation().add(new Vector(0.0, 6.0, 0.0)));
 		rl.setType(Plane.XZ);
 		rl.setIntensity(0.7);
 		rl.setSampleCount(6);

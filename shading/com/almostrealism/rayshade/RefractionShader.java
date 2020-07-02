@@ -98,6 +98,8 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n, p);
 
+					c = new RGBMultiply(new RGB(10, 10, 10), c);
+
 					if (Math.random() < 0.01)
 						System.out.println("RefractionShader.shadeFront: " + c.evaluate(args));
 
