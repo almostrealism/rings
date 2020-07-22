@@ -28,7 +28,7 @@ import org.almostrealism.color.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayOrigin;
+import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;

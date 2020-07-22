@@ -20,8 +20,6 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProduct;
-import org.almostrealism.relation.Computation;
 
 public class GLDiffuseShader extends VertexShader {
 	@Override

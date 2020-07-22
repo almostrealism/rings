@@ -17,6 +17,7 @@
 package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;

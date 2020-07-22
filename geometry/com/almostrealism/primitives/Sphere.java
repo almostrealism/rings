@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.almostrealism.primitives;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
@@ -121,13 +122,14 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 */
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
+		TransformMatrix m = getTransform(true);
+
 		if (enableHardwareAcceleration) {
-			TransformMatrix m = getTransform(true);
 			Producer<Ray> tr = r;
 			if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
-			return new ShadableIntersection(this, r, new SphereIntersectAt(tr));
+
+			return new ShadableIntersection(this, r, new SphereIntersectAtNew(tr));
 		} else {
-			TransformMatrix m = getTransform(true);
 			if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 
 			final Producer<Ray> fr = r;

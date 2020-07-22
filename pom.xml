@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.10</version>
+	<version>0.11</version>
 
 	<!-- Output to jar format -->
 	<packaging>jar</packaging>
@@ -49,19 +49,19 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>FlowTreeAPI</artifactId>
-			<version>0.8</version>
+			<version>0.9</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>TreeView</artifactId>
-			<version>0.3</version>
+			<version>0.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>GraphPersist</artifactId>
-			<version>0.3</version>
+			<version>0.4</version>
 		</dependency>
 
 		<dependency>

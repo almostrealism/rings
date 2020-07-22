@@ -44,7 +44,7 @@ public class LegacyRayTracingEngine {
    * Controls whether or not shadow casting will be done during rendering.
    * By default set to true.
    */
-  public static boolean castShadows = true;
+  public static boolean castShadows = false; // TODO  Enable shadows
   
   /**
    * This value will be set to true when a render method starts

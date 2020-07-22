@@ -22,11 +22,11 @@ import java.util.List;
 
 import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.RayMatrixTransform;
+import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayOrigin;
+import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;

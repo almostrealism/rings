@@ -21,13 +21,14 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayOrigin;
+import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.util.Producer;
 
 public class PointLightCalculation implements Producer<RGB> {
 	private Shadable surface;
 	private PointLight light;
 	private Producer<Ray> intersection;
+	private Producer<Vector> point;
 	private ShaderContext context;
 
 	public PointLightCalculation(Shadable surface, PointLight light, Producer<Ray> intersection, ShaderContext context) {
@@ -35,11 +36,12 @@ public class PointLightCalculation implements Producer<RGB> {
 		this.light = light;
 		this.intersection = intersection;
 		this.context = context;
+		this.point = new RayOrigin(intersection);
 	}
 
 	@Override
 	public RGB evaluate(Object[] args) {
-		Vector origin = new RayOrigin(intersection).evaluate(args);
+		Vector origin = point.evaluate(args);
 		if (origin == null) return new RGB(0.0, 0.0, 0.0);
 
 		// TODO  Move call to shade to initialization

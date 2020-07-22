@@ -163,21 +163,12 @@ public class PinholeCamera extends OrthographicCamera {
 		}
 
 		if (enableHardwareAcceleration) {
-			Producer<Ray> newRay = new DynamicProducer<>(args -> new Ray());
-
-			return new AcceleratedProducer<>("pinholeCameraRayAt", false,
-											new Producer[] { newRay, posP, sdP, new RandomRay() },
-											new Object[] { getLocation(), getProjectionDimensions(),
-															new Pair(blur, blur),
-															new Scalar(focalLength),
-															u, v, w });
+			return new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
+											blur, focalLength, u, v, w);
 		} else {
 			return new Producer<Ray>() {
 				@Override
 				public Ray evaluate(Object[] args) {
-//					Pair pos = (Pair) args[0];
-//					Pair screenDim = (Pair) args[1];
-
 					Pair pos = posP.evaluate(args);
 					Pair screenDim = sdP.evaluate(args);
 

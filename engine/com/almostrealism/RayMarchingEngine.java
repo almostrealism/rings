@@ -22,6 +22,7 @@ import com.almostrealism.raytracer.RayTracer;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.computations.VectorFutureAdapter;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBAdd;
@@ -78,11 +79,6 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 					e.printStackTrace();
 					return null;
 				}
-			}
-
-			@Override
-			public Producer<Scalar> dotProduct(VectorProducer vectorProducer) {
-				return null;  // TODO
 			}
 
 			@Override

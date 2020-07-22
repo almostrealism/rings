@@ -20,6 +20,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -119,9 +121,14 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				if (enableCompaction) {
 					System.out.print("Compacting image data producer pipeline...");
 
+					Set<Producer<RGB>> compacted = new HashSet<>();
+
 					for (int i = 0; i < renderedImageData.length; i++) {
 						for (int j = 0; j < renderedImageData[i].length; j++) {
-							renderedImageData[i][j].compact();
+							if (!compacted.contains(renderedImageData[i][j])) {
+								renderedImageData[i][j].compact();
+								compacted.add(renderedImageData[i][j]);
+							}
 						}
 
 						if (i % 10 == 0) System.out.print(".");
