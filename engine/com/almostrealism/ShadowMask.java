@@ -19,7 +19,7 @@ package com.almostrealism;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.algebra.ClosestIntersection;
+import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Vector;

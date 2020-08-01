@@ -109,7 +109,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		for (int i = 0; i < p.ssWidth; i++) {
 			for (int j = 0; j < p.ssHeight; j++) {
 				px.setSample(i, j, operate(new PassThroughProducer<>(0),
-											new StaticProducer<>(new Pair(p.width, p.height))));
+											StaticProducer.of(new Pair(p.width, p.height))));
 			}
 		}
 

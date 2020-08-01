@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
+import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;

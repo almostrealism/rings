@@ -17,7 +17,11 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.computations.RayDirection;
+import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.ColorProduct;
 import org.almostrealism.color.ColorSum;
@@ -29,6 +33,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.Future;
 
@@ -48,33 +53,34 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	/** Method specified by the {@link Shader} interface. */
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
+		VectorProducer point = new RayOrigin(normals.get(0));
+		VectorProducer n = new RayDirection(normals.get(0)).normalize();
+		ScalarProducer scaleFront = n.dotProduct(StaticProducer.of(p.getLightDirection()));
+		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(StaticProducer.of(p.getLightDirection()));
+
 		Producer<RGB> pr = new Producer<RGB>() {
 			@Override
 			public RGB evaluate(Object[] args) {
-				Ray l = normals.get(0).evaluate(args);
-				Vector point = l.getOrigin();
-				Vector n = l.getDirection();
-				n.normalize();
-
-				ColorProducer lightColor = p.getLight().getColorAt().operate(point);
+				Vector po = point.evaluate(args);
+				ColorProducer lightColor = p.getLight().getColorAt().operate(po);
 
 				ColorSum color = new ColorSum();
 
 				ColorProducer realized = null;
 
 				if (p.getSurface() != null) {
-					realized = p.getSurface().evaluate(new Object[] { point });
+					realized = p.getSurface().evaluate(new Object[] { po });
 				}
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-					double scale = n.dotProduct(p.getLightDirection());
+					double scale = scaleFront.evaluate(args).getValue();
 					if (scale > 0) {
 						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
 					}
 				}
 
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-					double scale = n.minus().dotProduct(p.getLightDirection());
+					double scale = scaleBack.evaluate(args).getValue();
 					if (scale > 0) {
 						color.add((Future) new ColorProduct(lightColor, realized, new RGB(scale, scale, scale)));
 					}
@@ -85,7 +91,10 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 
 			@Override
 			public void compact() {
-				// TODO
+				point.compact();
+				n.compact();
+				scaleFront.compact();
+				scaleBack.compact();
 			}
 		};
 		
