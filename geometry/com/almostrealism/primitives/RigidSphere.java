@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,10 @@ import org.almostrealism.algebra.ParticleGroup;
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
 import org.almostrealism.physics.RigidBody;
+import org.almostrealism.util.AdaptProducer;
+import org.almostrealism.util.Producer;
 
 import java.awt.Graphics;
 
@@ -184,20 +187,28 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 			return new Vector[0];
 		}
 	}
-	
+
+	@Override
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		return new AdaptProducer<>(getColorAt(), point);
+	}
+
 	/**
 	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()
 	 */
+	@Override
 	public double[][] getParticleVertices() { return this.vertices; }
 	
 	/**
 	 * @see RigidBody#getState()
 	 */
+	@Override
 	public State getState() { return this.state; }
 	
 	/**
 	 * @see RigidBody#draw(Camera, Graphics, double, double, double)
 	 */
+	@Override
 	public void draw(Camera c, Graphics g, double ox, double oy, double scale) {
 		ParticleGroupRenderer.draw(this, (PinholeCamera)c, g, ox, oy, scale, 0.1, 1.0, 20);
 	}

@@ -30,6 +30,7 @@ import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBProducer;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -180,7 +181,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	
 	/** Returns the {@link ColorProducer} for this AbstractSurfaceUI. */
 	@Override
-	public ColorProducer getColorAt() { return getSurface().getColorAt(); }
+	public RGBProducer getColorAt() { return getSurface().getColorAt(); }
 	
 	/**
 	 * Returns a Vector object that represents the vector normal to this surface

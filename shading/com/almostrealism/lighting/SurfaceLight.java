@@ -32,10 +32,10 @@ public interface SurfaceLight extends Light {
 	 * @param total  Total number of samples to return.
 	 * @return  An array containing samples for this SurfaceLight instance.
 	 */
-	public Light[] getSamples(int total);
+	Light[] getSamples(int total);
 	
 	/**
 	 * @return  An array containing samples for this SurfaceLight instance.
 	 */
-	public Light[] getSamples();
+	Light[] getSamples();
 }

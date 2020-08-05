@@ -93,7 +93,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 		if (m > 1.0) m = 1.0;
 		
 		d.divideBy(d.length());
-		p.setLightDirection(d);
+		p.setLightDirection(StaticProducer.of(d));
 		
 		return new RGBMultiply(this.shader.shade(p, f), new StaticProducer<>(new RGB(m, m, m)));
 	}

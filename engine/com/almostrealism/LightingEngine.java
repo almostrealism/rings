@@ -34,6 +34,7 @@ import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerWithRank;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.*;
 
@@ -98,7 +99,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 			Vector l = (directionalLight.getDirection().divide(
 					directionalLight.getDirection().length())).minus();
 
-			context.setLightDirection(l);
+			context.setLightDirection(StaticProducer.of(l));
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
@@ -128,7 +129,10 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 
 	@Override
 	public void compact() {
-		// TODO Hardware acceleration
+		shadow.compact();
+		shade.compact();
+
+		System.out.println("Compacted LightingEngine");
 	}
 
 	/**

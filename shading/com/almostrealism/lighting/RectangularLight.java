@@ -20,8 +20,12 @@ import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.space.Plane;
+import org.almostrealism.util.AdaptProducer;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A {@link RectangularLight} provides {@link PointLight} samples that are randomly distributed
@@ -59,7 +63,12 @@ public class RectangularLight extends Plane implements SurfaceLight {
 		
 		super.setShaders(new Shader[0]);
 	}
-	
+
+	@Override
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		return new AdaptProducer<>(getColorAt(), point);
+	}
+
 	/**
 	 * Sets the number of samples to use for this RectangularLight object.
 	 * 
@@ -101,16 +110,14 @@ public class RectangularLight extends Plane implements SurfaceLight {
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO This should hand off the color producer directly
-			l[i] = new PointLight(p, in, super.getColorAt().operate(new Vector()));
+			l[i] = new PointLight(p, in, getColorAt(StaticProducer.of(new Vector())).evaluate(new Object[0]));
 		}
 		
 		return l;
 	}
 
-	@Deprecated
-	public ColorProducer getColorAt(Vector p) { return getColorAt(); }
-
 	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
+	@Override
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 	
 	/** Sets the width of the rectangular area of this {@link RectangularLight}. */
@@ -126,9 +133,11 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	public double getHeight() { return this.height; }
 	
 	/** @see org.almostrealism.color.Light#setIntensity(double) */
+	@Override
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/** @see org.almostrealism.color.Light#getIntensity() */
+	@Override
 	public double getIntensity() { return this.intensity; }
 	
 	/** @return  "Rectangular Light". */

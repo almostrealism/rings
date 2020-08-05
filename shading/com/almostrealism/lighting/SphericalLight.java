@@ -22,6 +22,11 @@ import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 
 import com.almostrealism.primitives.Sphere;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBProducer;
+import org.almostrealism.util.AdaptProducer;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A SphericalLight object provides PointLight samples that are randomly distributed
@@ -58,7 +63,12 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 		
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
-	
+
+	@Override
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		return new AdaptProducer<>(getColorAt(), point);
+	}
+
 	/**
 	 * Sets the number of samples to use for this SphericalLight object.
 	 * 
@@ -93,7 +103,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO  This should pass along the ColorProucer directly rather than evaluating it
-			l[i] = new PointLight(p, in, super.getColorAt().operate(p));
+			l[i] = new PointLight(p, in, getColorAt(StaticProducer.of(p)).evaluate(new Object[0]));
 			l[i].setAttenuationCoefficients(this.atta, this.attb, this.attc);
 		}
 		
@@ -101,14 +111,18 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	}
 	
 	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
+	@Override
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 
-	public ColorProducer getColorAt(Vector p) { return getColorAt().operate(p); }
+	@Deprecated
+	public RGBProducer getColorAt(Vector p) { return getColorAt().evaluate(new Object[] { p }); }
 
 	/** @see org.almostrealism.color.Light#setIntensity(double) */
+	@Override
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 
 	/** @see org.almostrealism.color.Light#getIntensity() */
+	@Override
 	public double getIntensity() { return this.intensity; }
 	
 	/** Sets the attenuation coefficients to be used when light samples are created. */

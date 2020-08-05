@@ -31,6 +31,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
@@ -143,7 +144,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		return GeneratedColorProducer.fromProducer(this, pr);
 	}
 	
-	protected Producer<RGB> shade(Vector point, Vector viewerDirection, Vector lightDirection,
+	protected Producer<RGB> shade(Vector point, Vector viewerDirection, Producer<Vector> lightDirection,
 								Light light, Iterable<Light> otherLights, Producer<RGB> surface,
 								Producer<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
@@ -192,15 +193,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		// d = dv.minus();
 		
 		// if (entering) d.multiplyBy(-1.0);
-		Producer<Ray> r = new Producer<Ray>() {
-			@Override
-			public Ray evaluate(Object[] args) {
-				return new Ray(point, d);
-			}
-
-			@Override
-			public void compact() { }
-		};
+		Producer<Ray> r = new DynamicProducer<>(args -> new Ray(point, d));
 		
 		List<Producer<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		

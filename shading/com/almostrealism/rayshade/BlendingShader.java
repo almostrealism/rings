@@ -17,11 +17,17 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.computations.DotProduct;
+import org.almostrealism.algebra.computations.RayDirection;
+import org.almostrealism.algebra.computations.ScalarSum;
 import org.almostrealism.color.*;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
@@ -35,7 +41,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
   private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
   private static final Class types[] = {ColorProducer.class, ColorProducer.class};
   
-  private ColorProducer hotColor, coldColor;
+  private RGBProducer hotColor, coldColor;
 
 	/**
 	 * Constructs a new BlendingShader using white as a hot color
@@ -52,7 +58,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 	 * @param hot  ColorProducer to use for hot color.
 	 * @param cold  ColorProducer to use for cold color.
 	 */
-	public BlendingShader(ColorProducer hot, ColorProducer cold) {
+	public BlendingShader(RGBProducer hot, RGBProducer cold) {
 		this.hotColor = hot;
 		this.coldColor = cold;
 	}
@@ -63,26 +69,27 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 	public Producer<RGB> shade(LightingContext p, DiscreteField normals) {
 		// TODO  Put evaluation into producer
 
-		Vector n;
+		Producer<Ray> n;
 		
 		try {
-			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
+			n = normals.iterator().next();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		
-		Vector l = p.getLightDirection();
+		Producer<Vector> l = p.getLightDirection();
 		
-		double k = (1.0 + n.dotProduct(l));
+		ScalarProducer k = new DotProduct(new RayDirection(n), l).add(1.0);
+		ScalarProducer oneMinusK = new ScalarSum(StaticProducer.of(1.0), k.multiply(-1.0));
 		
 		RGB hc = this.hotColor.evaluate(new Object[] { p });
 		RGB cc = this.coldColor.evaluate(new Object[] { p });
 		
-		RGB c = hc.multiply(k);
-		c.addTo(cc.multiply(1 - k));
+		RGBProducer c = new ColorProduct(hc, RGBProducer.fromScalar(k));
+		c = new ColorSum(c, new ColorProduct(cc, RGBProducer.fromScalar(oneMinusK)));
 		
-		return GeneratedColorProducer.fromFunction(this, c);
+		return GeneratedColorProducer.fromProducer(this, c);
 	}
 
 	/**

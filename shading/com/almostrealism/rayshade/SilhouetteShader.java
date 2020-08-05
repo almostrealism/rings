@@ -29,7 +29,7 @@ import org.almostrealism.util.Producer;
  * @author  Michael Murray
  */
 public class SilhouetteShader implements Editable, Shader<LightingContext> {
-  private ColorProducer color;
+  private RGBProducer color;
   
   private String names[] = {"Color"};
   private String desc[] = {"The color of the silhouette"};
@@ -52,7 +52,7 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
 	public ColorProducer shade(LightingContext p, DiscreteField normals) {
-		return GeneratedColorProducer.fromFunction(this, color);
+		return GeneratedColorProducer.fromProducer(this, color);
 	}
 
 	/**

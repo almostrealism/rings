@@ -26,6 +26,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.Producer;
 
 import java.util.concurrent.ExecutionException;
@@ -130,6 +131,11 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	@Override
 	public VectorProducer getNormalAt(Vector point) {
 		return ZeroVector.getInstance();
+	}
+
+	@Override
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		return new AdaptProducer<>(getColorAt(), point);
 	}
 
 	/** Returns null. */

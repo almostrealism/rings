@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package com.almostrealism.lighting;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Triple;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.Callable;
 
@@ -76,23 +78,31 @@ public class AmbientLight implements Light {
 	/**
 	 * Sets the intensity of this AmbientLight object.
 	 */
+	@Override
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/**
 	 * Sets the color of this AmbientLight object to the color represented by the specified RGB object.
 	 */
+	@Override
 	public void setColor(RGB color) { this.color = color; }
 	
 	/** Returns the intensity of this AmbientLight object as a double value. */
+	@Override
 	public double getIntensity() { return this.intensity; }
 	
 	/** Returns the color of this AmbientLight object as an RGB object. */
+	@Override
 	public RGB getColor() { return this.color; }
 	
 	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
-	public ColorProducer getColorAt() { return colorProducer; }
+	public ColorProducer getColorAt(Producer<Vector> point) {
+		return GeneratedColorProducer.fromProducer(this,
+				new ColorProduct(color, RGBProducer.fromScalar(intensity)));
+	}
 	
 	/** Returns "Ambient Light". */
+	@Override
 	public String toString() { return "Ambient Light"; }
 
 	/**
@@ -102,8 +112,8 @@ public class AmbientLight implements Light {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static ColorProducer ambientLightingCalculation(Producer<RGB> surface, AmbientLight light) {
-		ColorProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
+	public static RGBProducer ambientLightingCalculation(Producer<RGB> surface, AmbientLight light) {
+		RGBProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
 		if (surface instanceof ShadableSurface)
 			color = new ColorProduct(color, ((ShadableSurface) surface).getColorAt());
 		

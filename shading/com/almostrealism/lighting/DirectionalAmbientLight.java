@@ -27,6 +27,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A DirectionAmbientLight object represents an ambient light source that always
@@ -110,10 +111,10 @@ public class DirectionalAmbientLight extends AmbientLight {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, l, light, otherLights, otherSurfaces)) : null;
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, StaticProducer.of(l), light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
-			p.setLightDirection(l);
+			p.setLightDirection(StaticProducer.of(l));
 			p.setLight(light);
 			p.setOtherLights(otherLights);
 			p.setOtherSurfaces(otherSurfaces);

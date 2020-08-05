@@ -52,7 +52,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
   private static final Class propTypes[] = {Double.class, ColorProducer.class, Double.class, Texture.class};
   
   private double reflectivity, blur;
-  private ColorProducer reflectiveColor;
+  private RGBProducer reflectiveColor;
   private Texture eMap;
 
 	/**
@@ -69,7 +69,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Constructs a new ReflectionShader object with the specified reflectivity
 	 * and reflective color.
 	 */
-	public ReflectionShader(double reflectivity, ColorProducer reflectiveColor) {
+	public ReflectionShader(double reflectivity, RGBProducer reflectiveColor) {
 		this.setReflectivity(reflectivity);
 		this.setReflectiveColor(reflectiveColor);
 		this.setBlur(0.0);
@@ -136,7 +136,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 						if (eMap == null)
 							break f;
 						else
-							color = eMap.getColorAt(null).operate(reflectedRay.evaluate(args).getDirection());
+							color = eMap.getColorAt(null).evaluate(new Object[] { reflectedRay.evaluate(args).getDirection() });
 					}
 
 					double c = 1 - nor.minus().dotProduct(n) / (nor.minus().length() * n.length());
@@ -166,7 +166,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 						if (eMap == null) {
 							break b;
 						} else {
-							color = eMap.getColorAt(null).operate(reflectedRay.evaluate(args).getDirection());
+							color = eMap.getColorAt(null).evaluate(new Object[] { reflectedRay.evaluate(args).getDirection() });
 						}
 					}
 
@@ -182,7 +182,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 					}
 				}
 
-				RGB lightColor = p.getLight().getColorAt().operate(point);
+				RGB lightColor = p.getLight().getColorAt(StaticProducer.of(point)).evaluate(new Object[0]);
 				return new RGBMultiply(tc, lightColor).evaluate(args);
 			}
 
@@ -211,7 +211,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Sets the reflective color used by this ReflectionShader object
 	 * to the color represented by the specified ColorProducer object.
 	 */
-	public void setReflectiveColor(ColorProducer color) { this.reflectiveColor = color; }
+	public void setReflectiveColor(RGBProducer color) { this.reflectiveColor = color; }
 	
 	/**
 	 * Sets the Texture object used as an environment map for this ReflectionShader object.
@@ -231,10 +231,10 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	public double getBlur() { return this.blur; }
 	
 	/**
-	 * Returns the reflective color used by this ReflectionShader object
-	 * as ColorProducer object.
+	 * Returns the reflective color used by this {@link ReflectionShader}
+	 * as an {@link RGBProducer}.
 	 */
-	public ColorProducer getReflectiveColor() { return this.reflectiveColor; }
+	public RGBProducer getReflectiveColor() { return this.reflectiveColor; }
 	
 	/**
 	 * @return  The Texture object used as an environment map for this ReflectionShader object.
@@ -244,6 +244,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	/**
 	 * Returns an array of String objects with names for each editable property of this ReflectionShader object.
 	 */
+	@Override
 	public String[] getPropertyNames() { return ReflectionShader.propNames; }
 	
 	/**

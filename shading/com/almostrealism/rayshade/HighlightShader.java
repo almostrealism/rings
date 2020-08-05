@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,17 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.computations.RayDirection;
+import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A HighlightShader object provides a shading method for highlights on surfaces.
@@ -34,7 +40,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
   private static final String propDesc[] = {"The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)"};
   private static final Class propTypes[] = {ColorProducer.class, Double.class};
   
-  private ColorProducer highlightColor;
+  private RGBProducer highlightColor;
   private double highlightExponent;
 
 	/**
@@ -66,71 +72,78 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			return null;
 		}
 		
-		RGB lightColor = p.getLight().getColorAt().operate(p.getIntersection().getNormalAt(point).evaluate(new Object[0]));
+		RGB lightColor = p.getLight().getColorAt(StaticProducer.of(p.getIntersection().getNormalAt(point).evaluate(new Object[0]))).evaluate(new Object[0]);
 		
-		Vector n;
+		VectorProducer n;
 		
 		try {
-			n = normals.iterator().next().evaluate(new Object[0]).getDirection();
+			n = new RayDirection(normals.iterator().next());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		
-		n.divideBy(n.length());
-		Vector h = p.getIntersection().getNormalAt(point).evaluate(new Object[0]).add(p.getLightDirection());
-		h = h.divide(h.length());
-
-		Producer<RGB> color = null;
+		n = n.scalarMultiply(n.length().pow(-1.0));
+		VectorProducer h = new VectorSum(p.getIntersection().getNormalAt(point), p.getLightDirection());
+		h = h.scalarMultiply(h.length().pow(-1.0));
 
 		Producer<RGB> hc = this.getHighlightColor().evaluate(new Object[] {p});
 		if (super.size() > 0) hc = new RGBMultiply(hc, super.shade(p, normals));
-		
-		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			double c = h.dotProduct(n);
-			if (c < 0) break f;
-			c = Math.pow(c, this.getHighlightExponent());
-			
-			Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, hc), new RGB(c, c, c));
-			if (color == null) {
-				color = pr;
-			} else {
-				color = new RGBAdd(color, pr);
-			}
-		}
-		
-		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-			double c = h.dotProduct(n.minus());
-			if (c < 0) break f;
-			c = Math.pow(c, this.getHighlightExponent());
 
-			Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, hc), new RGB(c, c, c));
-			if (color == null) {
-				color = pr;
-			} else {
-				color = new RGBAdd(color, pr);
+		ScalarProducer cFront = h.dotProduct(n);
+		ScalarProducer cBack = h.dotProduct(n.scalarMultiply(-1.0));
+
+		Producer<RGB> fhc = hc;
+
+		return GeneratedColorProducer.fromProducer(this, new DynamicProducer<>(args -> {
+			Producer<RGB> color = null;
+
+			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+				double c = cFront.evaluate(args).getValue();
+				if (c < 0) break f;
+				c = Math.pow(c, this.getHighlightExponent());
+
+				Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, fhc.evaluate(args)), new RGB(c, c, c));
+				if (color == null) {
+					color = pr;
+				} else {
+					color = new RGBAdd(color, pr);
+				}
 			}
-		}
-		
-		return GeneratedColorProducer.fromProducer(this, color);
+
+			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
+				double c = cBack.evaluate(args).getValue();
+				if (c < 0) break f;
+				c = Math.pow(c, this.getHighlightExponent());
+
+				Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, fhc.evaluate(args)), new RGB(c, c, c));
+				if (color == null) {
+					color = pr;
+				} else {
+					color = new RGBAdd(color, pr);
+				}
+			}
+
+			return color.evaluate(new Object[0]);
+		}));
 	}
 	
 	/**
 	 * Sets the color used for the highlight shaded by this HighlightShader object
 	 * to the color represented by the specifed RGB object.
 	 */
-	public void setHighlightColor(ColorProducer color) { this.highlightColor = color; }
+	public void setHighlightColor(RGBProducer color) { this.highlightColor = color; }
 	
 	/**
-	 * Sets the highlight exponent (phong exponent) used by this HighlightShader object.
+	 * Sets the highlight exponent (phong exponent) used by this {@link HighlightShader}.
 	 */
 	public void setHighlightExponent(double exp) { this.highlightExponent = exp; }
 	
 	/**
-	 * Returns the color used for the highlight shaded by this HighlightShader object
-	 * as an ColorProducer object.
+	 * Returns the color used for the highlight shaded by this {@link HighlightShader}
+	 * as an {@link RGBProducer}.
 	 */
-	public ColorProducer getHighlightColor() { return this.highlightColor; }
+	public RGBProducer getHighlightColor() { return this.highlightColor; }
 	
 	/**
 	 * Returns the highlight exponent (phong exponent) used by this HighlightShader object.

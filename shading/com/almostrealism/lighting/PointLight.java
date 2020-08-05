@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,17 @@ import java.util.concurrent.Callable;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
 import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -46,23 +49,6 @@ public class PointLight implements Light, Positioned {
 	private Vector location;
 
 	private double da, db, dc;
-
-	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, new TripleFunction<RGB>() {
-		@Override
-		public RGB operate(Triple t) {
-			double d = ((Vector) t).subtract(location).lengthSq();
-
-			RGB color = getColor().multiply(getIntensity());
-			color.divideBy(da * d + db * Math.sqrt(d) + dc);
-
-			return color;
-		}
-
-		@Override
-		public Scope<? extends Variable> getScope(String s) {
-			throw new RuntimeException("getScope not implemented"); // TODO
-		}
-	});
 
 	/** Constructs a PointLight object with the default intensity and color at the origin. */
 	public PointLight() {
@@ -117,11 +103,13 @@ public class PointLight implements Light, Positioned {
 	/**
 	 * Sets the intensity of this PointLight object to the specified double value.
 	 */
+	@Override
 	public void setIntensity(double intensity) { this.intensity = intensity; }
 	
 	/**
 	 * Sets the color of this PointLight object to the color represented by the specified RGB object.
 	 */
+	@Override
 	public void setColor(RGB color) { this.color = color; }
 	
 	/**
@@ -162,18 +150,26 @@ public class PointLight implements Light, Positioned {
 	}
 	
 	/** Returns the intensity of this PointLight object as a double value. */
+	@Override
 	public double getIntensity() { return this.intensity; }
 	
 	/** Returns the color of this PointLight object as an RGB object. */
+	@Override
 	public RGB getColor() { return this.color; }
 	
 	/**
 	 * Returns the color of the light represented by this PointLight object at the
 	 * specified point as an RGB object.
 	 */
-	public ColorProducer getColorAt() { return colorProducer; }
-	
-	/** Returns the location of this PointLight object as a Vector object. */
+	@Override
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		ScalarProducer d = new VectorSum(point, StaticProducer.of(location).scalarMultiply(-1.0)).lengthSq();
+
+		RGB color = getColor().multiply(getIntensity());
+		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, color, d));
+	}
+
+	/** Returns the location of this {@link PointLight} as a {@link Vector}. */
 	public Vector getLocation() { return this.location; }
 	
 	/**
@@ -188,6 +184,7 @@ public class PointLight implements Light, Positioned {
 	}
 	
 	/** Returns "Point Light". */
+	@Override
 	public String toString() { return "Point Light"; }
 
 	/**
@@ -209,11 +206,11 @@ public class PointLight implements Light, Positioned {
 		DirectionalAmbientLight dLight;
 		
 		if (RayTracedScene.premultiplyIntensity) {
-			dLight = new DirectionalAmbientLight(1.0, light.getColorAt().operate(point), direction);
+			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(StaticProducer.of(point)).evaluate(new Object[0]), direction);
 		} else {
 			double in = light.getIntensity();
 			light.setIntensity(1.0);
-			dLight = new DirectionalAmbientLight(in, light.getColorAt().operate(point), direction);
+			dLight = new DirectionalAmbientLight(in, light.getColorAt(StaticProducer.of(point)).evaluate(new Object[0]), direction);
 			light.setIntensity(in);
 		}
 		

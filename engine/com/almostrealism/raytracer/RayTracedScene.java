@@ -83,7 +83,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 				public boolean isDone() { return true; }
 
 				@Override
-				public ColorProducer get(long timeout, TimeUnit unit)
+				public Producer<RGB> get(long timeout, TimeUnit unit)
 						throws InterruptedException, ExecutionException, TimeoutException {
 					return get();
 				}
