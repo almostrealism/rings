@@ -27,6 +27,7 @@ import org.almostrealism.color.RGBMultiply;
 import org.almostrealism.color.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
@@ -41,8 +42,8 @@ import java.util.*;
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<RGB> implements PathElement<Ray, RGB> {
 	private T intersections;
-	private Producer<RGB> surface;
-	private Collection<Producer<RGB>> otherSurfaces;
+	private Curve<RGB> surface;
+	private Collection<Curve<RGB>> otherSurfaces;
 	private List<Intersectable> allSurfaces;
 	private Light light;
 	private Iterable<Light> otherLights;
@@ -52,8 +53,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	private Producer<RGB> shade;
 
 	public LightingEngine(T intersections,
-						  Producer<RGB> surface,
-						  Collection<Producer<RGB>> otherSurfaces,
+						  Curve<RGB> surface,
+						  Collection<Curve<RGB>> otherSurfaces,
 						  Light light, Iterable<Light> otherLights, ShaderContext p) {
 		super(((ShadableIntersection) intersections).getDistance());
 		this.intersections = intersections;
@@ -65,7 +66,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 
 		allSurfaces = new ArrayList<>();
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
-		for (Producer pr : otherSurfaces) if (pr instanceof Intersectable) allSurfaces.add((Intersectable) pr);
+		for (Curve pr : otherSurfaces) if (pr instanceof Intersectable) allSurfaces.add((Intersectable) pr);
 
 		init();
 	}
@@ -103,7 +104,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
-			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light);
+			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light, new RayOrigin(intersections.get(0)));
 		} else {
 			shade = new RGB(0.0, 0.0, 0.0);
 		}
@@ -114,7 +115,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		return intersections;
 	}
 
-	public Producer<RGB> getSurface() { return surface; }
+	public Curve<RGB> getSurface() { return surface; }
 
 	/**
 	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
@@ -143,7 +144,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	 * calculations are to be done.
 	 */
 	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
-													Producer<RGB> surface, Iterable<Producer<RGB>> otherSurfaces,
+													Curve<RGB> surface, Iterable<Curve<RGB>> otherSurfaces,
 											   		Light lights[], ShaderContext p) {
 		Producer<RGB> color = null;
 
@@ -177,11 +178,11 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
-													Producer<RGB> surface,
-													Iterable<Producer<RGB>> otherSurfaces, Light light,
+													Curve<RGB> surface,
+													Iterable<Curve<RGB>> otherSurfaces, Light light,
 													Light otherLights[], ShaderContext p) {
-		List<Producer<RGB>> allSurfaces = new ArrayList<>();
-		for (Producer<RGB> s : otherSurfaces) allSurfaces.add(s);
+		List<Curve<RGB>> allSurfaces = new ArrayList<>();
+		for (Curve<RGB> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);
 
 		if (light instanceof SurfaceLight) {

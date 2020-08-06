@@ -49,7 +49,7 @@ public class CSG extends AbstractSurface {
   public static final int INTERSECTION = 3;
   
   private int type;
-  private AbstractSurface<ShadableIntersection> sa, sb;
+  private AbstractSurface sa, sb;
   
   private boolean inverted;
 

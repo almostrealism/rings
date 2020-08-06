@@ -28,6 +28,7 @@ import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Positioned;
 
 import com.almostrealism.raytracer.RayTracedScene;
@@ -199,8 +200,8 @@ public class PointLight implements Light, Positioned {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static Producer<RGB> pointLightingCalculation(ContinuousField intersection, Vector point, Callable<Producer<RGB>> surface,
-														 Collection<Producer<RGB>> otherSurfaces, PointLight light,
+	public static Producer<RGB> pointLightingCalculation(ContinuousField intersection, Vector point, Curve<RGB> surface,
+														 Collection<Curve<RGB>> otherSurfaces, PointLight light,
 														 List<Light> otherLights, ShaderContext p) {
 		Vector direction = point.subtract(light.getLocation());
 		DirectionalAmbientLight dLight;

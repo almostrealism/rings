@@ -188,10 +188,11 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 		}
 	}
 
+	/**
+	 * Delegates to {@link #getValueAt(Producer)}.
+	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		return new AdaptProducer<>(getColorAt(), point);
-	}
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/**
 	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()

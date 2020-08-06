@@ -25,6 +25,7 @@ import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.space.AbstractSurface;
@@ -84,7 +85,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				public RGB evaluate(Object[] args) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
 					return reflectiveColor.evaluate(new Object[] { p })
-							.multiply(p.getSurface().evaluate(new Object[] { point } ).evaluate(null));
+							.multiply(p.getSurface().getValueAt(StaticProducer.of(point)).evaluate(new Object[0]));
 				}
 
 				@Override
@@ -96,7 +97,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		
 		p.addReflection();
 		
-		List<Producer<RGB>> allSurfaces = new ArrayList<>();
+		List<Curve<RGB>> allSurfaces = new ArrayList<>();
 		allSurfaces.add(p.getSurface());
 		for (int i = 0; i < p.getOtherSurfaces().length; i++) { allSurfaces.add(p.getOtherSurfaces()[i]); }
 		

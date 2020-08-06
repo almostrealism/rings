@@ -218,6 +218,9 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public boolean inside(VectorProducer x) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
+	public Producer getValueAt(Producer point) { return null; }
+
+	@Override
 	public VectorProducer getNormalAt(Vector x) { return plane.getNormalAt(x); }
 
 	@Override
@@ -257,10 +260,4 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Vector operate(Triple triple) {
 		return null;
 	}
-
-	@Override
-	public Object evaluate(Object[] args) { return null; }
-
-	@Override
-	public void compact() { }
 }

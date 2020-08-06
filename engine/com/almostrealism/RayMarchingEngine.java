@@ -34,6 +34,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
 	private ShaderContext sparams;
@@ -67,6 +68,11 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 	}
 
 	@Override
+	public Producer<RGB> getValueAt(Producer<Vector> point) {
+		return StaticProducer.of(new RGB(0.8, 0.8, 0.8));  // TODO  Support colors
+	}
+
+	@Override
 	public VectorProducer getNormalAt(Vector point) {
 		final Producer<Ray> c = iterator().next();
 
@@ -95,16 +101,6 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 
 	@Override
 	public Scope getScope(String prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
-
-	@Override
-	public RGB evaluate(Object args[]) {
-		return new RGB(0.8, 0.8, 0.8);  // TODO  Support colors
-	}
-
-	@Override
-	public void compact() { }
-
-	public Producer<RGB> call() { return evaluate(new Object[0]); }
 	
 	@Override
 	public Producer<RGB> shade(ShaderContext parameters) {

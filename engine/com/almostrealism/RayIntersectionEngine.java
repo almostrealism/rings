@@ -19,6 +19,7 @@ package com.almostrealism;
 import com.almostrealism.raytracer.RayTracer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -43,7 +44,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	}
 	
 	public Producer<RGB> trace(Producer<Ray> r) {
-		List<Producer<RGB>> surfaces = new ArrayList<>();
+		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		return new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams);
 	}

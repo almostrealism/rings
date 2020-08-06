@@ -64,10 +64,11 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 
+	/**
+	 * Delegates to {@link #getValueAt(Producer)}.
+	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		return new AdaptProducer<>(getColorAt(), point);
-	}
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/**
 	 * Sets the number of samples to use for this SphericalLight object.
@@ -84,6 +85,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	/**
 	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
 	 */
+	@Override
 	public Light[] getSamples(int total) {
 		PointLight l[] = new PointLight[total];
 		
@@ -114,9 +116,6 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	@Override
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 
-	@Deprecated
-	public RGBProducer getColorAt(Vector p) { return getColorAt().evaluate(new Object[] { p }); }
-
 	/** @see org.almostrealism.color.Light#setIntensity(double) */
 	@Override
 	public void setIntensity(double intensity) { this.intensity = intensity; }
@@ -139,5 +138,6 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	public double[][] getParticleVertices() { return new double[0][0]; }
 	
 	/** @return  "Spherical Light". */
+	@Override
 	public String toString() { return "Spherical Light"; }
 }

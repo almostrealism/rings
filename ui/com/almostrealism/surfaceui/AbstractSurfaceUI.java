@@ -178,11 +178,13 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	public ShadableSurface getSurface() {
 		return this.surface;
 	}
-	
-	/** Returns the {@link ColorProducer} for this AbstractSurfaceUI. */
+
+	/**
+	 * Delegates to the {@link #getValueAt(Producer)} method of the underlying {@link AbstractSurface}.
+	 */
 	@Override
-	public RGBProducer getColorAt() { return getSurface().getColorAt(); }
-	
+	public Producer<RGB> getValueAt(Producer<Vector> point) { return getSurface().getValueAt(point); }
+
 	/**
 	 * Returns a Vector object that represents the vector normal to this surface
 	 * at the point represented by the specified {@link Vector}.
@@ -203,18 +205,9 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	@Override
-	public Producer<RGB> call() throws Exception { return getSurface().call();  }
-
-	@Override
 	public Vector operate(Triple triple) {
 		return getSurface().operate(triple);
 	}
-
-	@Override
-	public RGB evaluate(Object args[]) { return getSurface().evaluate(args); }
-
-	@Override
-	public void compact() { getSurface().compact(); }
 
 	@Override
 	public Scope getScope(String prefix) {

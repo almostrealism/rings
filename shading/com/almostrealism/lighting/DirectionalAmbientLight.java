@@ -26,6 +26,7 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -103,8 +104,8 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 *           during a single set of ray casting events (reflections, refractions,
 	 *           etc.) (null is accepted).
 	 */
-	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Callable<Producer<RGB>> surface,
-																	  Collection<Producer<RGB>> otherSurfaces, DirectionalAmbientLight light,
+	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Curve<RGB> surface,
+																	  Collection<Curve<RGB>> otherSurfaces, DirectionalAmbientLight light,
 																	  List<Light> otherLights, ShaderContext p) {
 		Producer<RGB> color = null;
 		

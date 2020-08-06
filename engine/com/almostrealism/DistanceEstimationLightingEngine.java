@@ -25,6 +25,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
@@ -40,8 +41,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	private DistanceEstimator estimator;
 	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(Producer<Ray> ray, Producer<RGB> surface,
-											Collection<? extends Producer<RGB>> otherSurfaces,
+	public DistanceEstimationLightingEngine(Producer<Ray> ray, Curve<RGB> surface,
+											Collection<? extends Curve<RGB>> otherSurfaces,
 											Light light, Iterable<Light> otherLights,
 											ShaderContext p, DistanceEstimator estimator, ShaderSet shaders) {
 		// TODO

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,10 +133,11 @@ public class PointLightGrid extends AbstractSurface implements Light {
 		return ZeroVector.getInstance();
 	}
 
+	/**
+	 * Delegates to {@link #getValueAt(Producer)}.
+	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		return new AdaptProducer<>(getColorAt(), point);
-	}
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/** Returns null. */
 	@Override

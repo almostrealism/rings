@@ -64,10 +64,11 @@ public class RectangularLight extends Plane implements SurfaceLight {
 		super.setShaders(new Shader[0]);
 	}
 
+	/**
+	 * Delegates to {@link #getValueAt(Producer)}.
+	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		return new AdaptProducer<>(getColorAt(), point);
-	}
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/**
 	 * Sets the number of samples to use for this RectangularLight object.

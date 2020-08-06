@@ -23,6 +23,7 @@ import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.space.Volume;
+import org.almostrealism.util.Producer;
 
 public class Plane implements Volume {
 	public static double d = 0.0;
@@ -131,6 +132,9 @@ public class Plane implements Volume {
 	}
 
 	@Override
+	public Producer getValueAt(Producer point) { return null; }
+
+	@Override
 	public VectorProducer getNormalAt(Vector x) { return normal; }
 
 	@Override
@@ -162,10 +166,4 @@ public class Plane implements Volume {
 	public Scope<? extends Variable> getScope(String s) {
 		return null;
 	}
-
-	@Override
-	public Object evaluate(Object[] objects) { return null; }
-
-	@Override
-	public void compact() { }
 }

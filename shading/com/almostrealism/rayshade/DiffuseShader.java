@@ -62,25 +62,29 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
 
-		Producer<RGB> front, back;
+		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThan<>(3, RGB.blank(), scaleFront, StaticProducer.of(0),
-											new ColorProduct(lightColor, new AdaptProducer<>(p.getSurface(), point), RGBProducer.fromScalar(scaleFront)),
-											RGB.blank());
-		} else {
-			front = RGB.blank();
+											new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleFront)),
+											StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			back = new GreaterThan<>(3, RGB.blank(), scaleBack, StaticProducer.of(0),
-					new ColorProduct(lightColor, new AdaptProducer<>(p.getSurface(), point), RGBProducer.fromScalar(scaleBack)),
-					RGB.blank());
-		} else {
-			back = RGB.blank();
+					new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleBack)),
+					StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
 
-		return GeneratedColorProducer.fromProducer(this, new ColorSum(front, back));
+		if (front != null && back != null) {
+			return GeneratedColorProducer.fromProducer(this, new ColorSum(front, back));
+		} else if (front != null) {
+			return GeneratedColorProducer.fromProducer(this, new ColorSum(front));
+		} else if (back != null) {
+			return GeneratedColorProducer.fromProducer(this, new ColorSum(back));
+		} else {
+			return GeneratedColorProducer.fromProducer(this, RGB.blank());
+		}
 	}
 	
 	/** Returns a zero length array. */

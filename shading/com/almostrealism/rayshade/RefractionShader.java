@@ -27,6 +27,7 @@ import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
@@ -145,8 +146,8 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 	}
 	
 	protected Producer<RGB> shade(Vector point, Vector viewerDirection, Producer<Vector> lightDirection,
-								Light light, Iterable<Light> otherLights, Producer<RGB> surface,
-								Producer<RGB> otherSurfaces[], Vector n, ShaderContext p) {
+								Light light, Iterable<Light> otherLights, Curve<RGB> surface,
+								Curve<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
 			return new RGB(0.0, 0.0, 0.0);
@@ -195,7 +196,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 		// if (entering) d.multiplyBy(-1.0);
 		Producer<Ray> r = new DynamicProducer<>(args -> new Ray(point, d));
 		
-		List<Producer<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
+		List<Curve<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
 		List<Light> allLights = new ArrayList<>();
 		allLights.add(p.getLight());

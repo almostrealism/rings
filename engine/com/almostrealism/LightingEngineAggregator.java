@@ -21,9 +21,11 @@ import org.almostrealism.algebra.Intersection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.Scene;
+import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.RankedChoiceProducer;
 
@@ -32,18 +34,18 @@ import java.util.Collection;
 import java.util.List;
 
 public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB> {
-	public LightingEngineAggregator(Producer<Ray> r, Iterable<Producer<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		super(Intersection.e);
 		init(r, surfaces, lights, context);
 	}
 
 
 	// TODO  Rename this class to SurfaceLightingAggregator and have LightingEngineAggregator sum the lights instead of rank choice them
-	protected void init(Producer<Ray> r, Iterable<Producer<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
-		for (Producer<RGB> s : surfaces) {
+	protected void init(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+		for (Curve<RGB> s : surfaces) {
 			for (Light l : lights) {
-				Collection<Producer<RGB>> otherSurfaces = Scene.separate(s, surfaces);
-				Collection<Light> otherLights = Scene.separate(l, lights);
+				Collection<Curve<RGB>> otherSurfaces = CollectionUtils.separate(s, surfaces);
+				Collection<Light> otherLights = CollectionUtils.separate(l, lights);
 
 				ShaderContext c;
 
