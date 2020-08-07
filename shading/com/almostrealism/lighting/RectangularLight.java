@@ -18,12 +18,10 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.space.Plane;
-import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -106,12 +104,12 @@ public class RectangularLight extends Plane implements SurfaceLight {
 				y = Math.random() * this.width;
 				z = Math.random() * this.height;
 			}
-			
-			Vector p = new Vector(x, y, z);
-			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
+
+			Producer<Vector> p = getTransform(true).transform(StaticProducer.of(new Vector(x, y, z)),
+							TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO This should hand off the color producer directly
-			l[i] = new PointLight(p, in, getColorAt(StaticProducer.of(new Vector())).evaluate(new Object[0]));
+			l[i] = new PointLight(p.evaluate(), in, getColorAt(StaticProducer.of(new Vector())).evaluate());
 		}
 		
 		return l;

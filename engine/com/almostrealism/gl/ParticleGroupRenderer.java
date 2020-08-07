@@ -23,6 +23,7 @@ import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * @author Michael Murray
@@ -35,7 +36,7 @@ public class ParticleGroupRenderer {
         
         i: for (int i = 0; i < v.length; i++) {
             Vector l = new Vector(v[i][0], v[i][1], v[i][2]);
-            m.transform(l, TransformMatrix.TRANSFORM_AS_LOCATION);
+            l = m.transform(StaticProducer.of(l), TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
             
             if (l.getZ() < 0.0) continue i;
             

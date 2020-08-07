@@ -28,9 +28,7 @@ import javax.swing.ImageIcon;
 
 import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBProducer;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -190,7 +188,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * at the point represented by the specified {@link Vector}.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Vector point) {
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		return getSurface().getNormalAt(point);
 	}
 

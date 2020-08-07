@@ -16,23 +16,17 @@
 
 package com.almostrealism.lighting;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
-import org.almostrealism.geometry.Curve;
+import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
 
-import com.almostrealism.raytracer.RayTracedScene;
-import org.almostrealism.relation.TripleFunction;
+import org.almostrealism.geometry.Ray;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -200,24 +194,13 @@ public class PointLight implements Light, Positioned {
 	 * be left unattenuated and the shaders will be responsible for adjusting the color
 	 * based on intensity.
 	 */
-	public static Producer<RGB> pointLightingCalculation(ContinuousField intersection, Vector point, Curve<RGB> surface,
-														 Collection<Curve<RGB>> otherSurfaces, PointLight light,
-														 List<Light> otherLights, ShaderContext p) {
-		Vector direction = point.subtract(light.getLocation());
-		DirectionalAmbientLight dLight;
-		
-		if (RayTracedScene.premultiplyIntensity) {
-			dLight = new DirectionalAmbientLight(1.0, light.getColorAt(StaticProducer.of(point)).evaluate(new Object[0]), direction);
-		} else {
-			double in = light.getIntensity();
-			light.setIntensity(1.0);
-			dLight = new DirectionalAmbientLight(in, light.getColorAt(StaticProducer.of(point)).evaluate(new Object[0]), direction);
-			light.setIntensity(in);
-		}
-		
-		return DirectionalAmbientLight.directionalAmbientLightingCalculation(
-											intersection, surface,
-											otherSurfaces, dLight, otherLights, p);
+	// TODO  This should be a method of the Light interface
+	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
+		VectorProducer point = new RayOrigin(intersection);
+		VectorProducer direction = new VectorSum(point, StaticProducer.of(getLocation()).scalarMultiply(-1.0));
+		direction = direction.normalize().scalarMultiply(-1.0);
+		context.setLightDirection(direction);
+		return surface.shade(context);
 	}
 
 	@Override

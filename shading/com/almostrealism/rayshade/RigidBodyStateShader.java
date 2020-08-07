@@ -19,7 +19,7 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBMultiply;
+import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 

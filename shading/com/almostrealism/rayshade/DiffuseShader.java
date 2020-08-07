@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,21 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.RayOrigin;
-import org.almostrealism.color.ColorProducer;
-import org.almostrealism.color.ColorProduct;
-import org.almostrealism.color.ColorSum;
-import org.almostrealism.color.GeneratedColorProducer;
+import org.almostrealism.color.computations.ColorProduct;
+import org.almostrealism.color.computations.ColorSum;
+import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBProducer;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.bool.GreaterThan;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
-
-import java.util.concurrent.Future;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -79,9 +73,9 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		if (front != null && back != null) {
 			return GeneratedColorProducer.fromProducer(this, new ColorSum(front, back));
 		} else if (front != null) {
-			return GeneratedColorProducer.fromProducer(this, new ColorSum(front));
+			return GeneratedColorProducer.fromProducer(this, front);
 		} else if (back != null) {
-			return GeneratedColorProducer.fromProducer(this, new ColorSum(back));
+			return GeneratedColorProducer.fromProducer(this, back);
 		} else {
 			return GeneratedColorProducer.fromProducer(this, RGB.blank());
 		}

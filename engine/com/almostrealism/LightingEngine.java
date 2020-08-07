@@ -22,9 +22,9 @@ import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBAdd;
-import org.almostrealism.color.RGBMultiply;
-import org.almostrealism.color.RGBWhite;
+import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBMultiply;
+import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
@@ -93,7 +93,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 				e.printStackTrace();
 			}
 		} else if (light instanceof PointLight) {
-			shade = surface instanceof Shadable ? new PointLightCalculation((Shadable) surface, (PointLight) light, intersections.get(0), context) : null;
+			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, intersections.get(0), context) : null;
 		} else if (light instanceof DirectionalAmbientLight) {
 			DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) light;
 

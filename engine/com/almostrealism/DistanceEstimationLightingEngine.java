@@ -19,6 +19,7 @@ package com.almostrealism;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.VectorFutureAdapter;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -99,25 +100,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public VectorProducer getNormalAt(Vector vector) {
-			final Producer<Ray> c = get(0);
-
-			return new VectorFutureAdapter() {
-				@Override
-				public Vector evaluate(Object[] args) {
-					try {
-						return c.evaluate(args).getDirection();
-					} catch (Exception e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-
-				@Override
-				public Scope<? extends Variable> getScope(String s) {
-					return null;  // TODO
-				}
-			};
+		public VectorProducer getNormalAt(Producer<Vector> vector) {
+			return new RayDirection(get(0));
 		}
 
 		@Override

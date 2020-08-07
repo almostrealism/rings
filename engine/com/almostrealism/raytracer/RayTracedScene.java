@@ -24,7 +24,6 @@ import java.util.concurrent.TimeoutException;
 import com.almostrealism.RenderParameters;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 

@@ -29,6 +29,7 @@ import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * The {@link OrthographicCamera} provides an orthographic projection camera.
@@ -224,14 +225,16 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 				double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
 
 				Vector o = new Vector(x, y, 0.0);
-				getRotationMatrix().getInverse().transform(o, TransformMatrix.TRANSFORM_AS_LOCATION);
+				o = getRotationMatrix().getInverse().transform(StaticProducer.of(o),
+						TransformMatrix.TRANSFORM_AS_LOCATION).evaluate(new Object[0]);
 
 				return new Ray(o, viewDirection);
 			}
 
 			@Override
 			public void compact() {
-				// TODO
+				pos.compact();
+				sd.compact();
 			}
 		};
 	}

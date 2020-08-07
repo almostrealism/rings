@@ -31,7 +31,7 @@ import com.almostrealism.FogParameters;
 import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
-import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

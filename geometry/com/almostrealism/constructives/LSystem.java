@@ -23,8 +23,11 @@ import java.util.Stack;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * @author Mike Murray
@@ -113,10 +116,13 @@ public class LSystem {
 				TransformMatrix mz = TransformMatrix.createRotateZMatrix(this.forward.getZ());
 				
 				d = (Vector) d.clone();
-				
-				mx.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				my.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				mz.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
+
+				Producer<Vector> dp = StaticProducer.of(d);
+
+				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				d = dp.evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.BACKWARD)) {
@@ -125,10 +131,13 @@ public class LSystem {
 				TransformMatrix mz = TransformMatrix.createRotateZMatrix(this.backward.getZ());
 				
 				d = (Vector) d.clone();
+
+				Producer<Vector> dp = StaticProducer.of(d);
 				
-				mx.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				my.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				mz.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				d = dp.evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.LEFT)) {
@@ -137,10 +146,13 @@ public class LSystem {
 				TransformMatrix mz = TransformMatrix.createRotateZMatrix(this.left.getZ());
 				
 				d = (Vector) d.clone();
+
+				Producer<Vector> dp = StaticProducer.of(d);
 				
-				mx.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				my.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				mz.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				d = dp.evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.RIGHT)) {
@@ -149,10 +161,13 @@ public class LSystem {
 				TransformMatrix mz = TransformMatrix.createRotateZMatrix(this.right.getZ());
 				
 				d = (Vector) d.clone();
+
+				Producer<Vector> dp = StaticProducer.of(d);
 				
-				mx.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				my.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
-				mz.transform(d, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
+				d = dp.evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.PUSH)) {

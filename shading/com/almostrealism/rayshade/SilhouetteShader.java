@@ -18,6 +18,9 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -56,7 +59,7 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	}
 
 	/**
-	 * @see org.almostrealism.color.ColorProducer#evaluate(java.lang.Object[])
+	 * @see ColorProducer#evaluate(java.lang.Object[])
 	 */
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
 

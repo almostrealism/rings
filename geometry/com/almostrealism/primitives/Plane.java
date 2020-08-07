@@ -135,7 +135,7 @@ public class Plane implements Volume {
 	public Producer getValueAt(Producer point) { return null; }
 
 	@Override
-	public VectorProducer getNormalAt(Vector x) { return normal; }
+	public VectorProducer getNormalAt(Producer<Vector> x) { return normal; }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) {

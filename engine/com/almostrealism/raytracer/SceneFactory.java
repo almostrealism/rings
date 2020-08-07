@@ -22,7 +22,7 @@ import java.util.List;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RandomColorGenerator;
+import org.almostrealism.color.computations.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;

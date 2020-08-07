@@ -21,13 +21,14 @@ import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.ColorMultiplier;
+import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorProduct;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.relation.TripleFunction;
-import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
-
-import java.util.concurrent.Callable;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.

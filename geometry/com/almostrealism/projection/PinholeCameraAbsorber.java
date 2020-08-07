@@ -221,7 +221,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Producer getValueAt(Producer point) { return null; }
 
 	@Override
-	public VectorProducer getNormalAt(Vector x) { return plane.getNormalAt(x); }
+	public VectorProducer getNormalAt(Producer<Vector> x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {

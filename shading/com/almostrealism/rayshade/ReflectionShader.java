@@ -25,6 +25,11 @@ import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBMultiply;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
@@ -129,7 +134,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				Producer<RGB> tc = null;
 
 				f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-					Vector nor = p.getIntersection().getNormalAt(point).evaluate(args);
+					Vector nor = p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args);
 					Producer<Ray> reflectedRay = new ReflectedRay(loc, new StaticProducer<>(nor), new StaticProducer<>(n), blur);
 
 					Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p);
@@ -158,7 +163,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 					n = n.minus();
 
-					Vector no = p.getIntersection().getNormalAt(point).evaluate(args);
+					Vector no = p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args);
 					Producer<Ray> reflectedRay = new ReflectedRay(loc, new StaticProducer<>(no), new StaticProducer<>(n), blur);
 
 					Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);

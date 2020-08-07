@@ -74,7 +74,7 @@ public class CSG extends AbstractSurface {
 	
     /** @return  null. */
     @Override
-    public VectorProducer getNormalAt(Vector point) { return null; }
+    public VectorProducer getNormalAt(Producer<Vector> point) { return null; }
 
     /**
      * @see  Intersectable#intersectAt(Producer)

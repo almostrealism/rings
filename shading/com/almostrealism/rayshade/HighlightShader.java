@@ -23,6 +23,11 @@ import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBMultiply;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
@@ -72,7 +77,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			return null;
 		}
 		
-		RGB lightColor = p.getLight().getColorAt(StaticProducer.of(p.getIntersection().getNormalAt(point).evaluate(new Object[0]))).evaluate(new Object[0]);
+		RGB lightColor = p.getLight().getColorAt(StaticProducer.of(p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(new Object[0]))).evaluate(new Object[0]);
 		
 		VectorProducer n;
 		
@@ -84,7 +89,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n = n.scalarMultiply(n.length().pow(-1.0));
-		VectorProducer h = new VectorSum(p.getIntersection().getNormalAt(point), p.getLightDirection());
+		VectorProducer h = new VectorSum(p.getIntersection().getNormalAt(StaticProducer.of(point)), p.getLightDirection());
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
 		Producer<RGB> hc = this.getHighlightColor().evaluate(new Object[] {p});

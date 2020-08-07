@@ -27,6 +27,9 @@ import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.AbstractSurface;
@@ -96,7 +99,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 						return null;
 					}
 
-					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(point).evaluate(args),
+					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args),
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n, p);
 
@@ -117,7 +120,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
 
-					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(point).evaluate(args),
+					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args),
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n.minus(), p);
 

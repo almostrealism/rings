@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
+import org.almostrealism.algebra.computations.VectorProduct;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -60,15 +61,13 @@ public class Cone extends AbstractSurface {
 	public Cone(Vector location, double radius, RGB color) { super(location, radius, color); }
 	
 	/**
-	 * Returns a Vector object that represents the vector normal to this cone at the
-	 * point represented by the specified Vector object.
+	 * Returns a {@link Vector} {@link Producer} that represents the vector normal to this
+	 * cone at the point represented by the specified Vector object.
 	 */
 	@Override
-	public VectorProducer getNormalAt(Vector point) {
-		// TODO  Perform computation within VectorProducer
-		Vector normal = new Vector(point.getX(), -1.0 * point.getY(), point.getZ());
-		super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
-		return new ImmutableVector(normal);
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		VectorProducer normal = new VectorProduct(point, StaticProducer.of(new Vector(1.0, -1.0, 1.0)));
+		return super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
 	/**

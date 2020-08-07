@@ -18,13 +18,10 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.ColorProducer;
 import org.almostrealism.color.Light;
 
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBProducer;
-import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -100,12 +97,11 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			double y = r * Math.sin(u) * Math.sin(v);
 			double z = r * Math.cos(u);
 			
-			Vector p = new Vector(x, y, z);
-			
-			super.getTransform(true).transform(p, TransformMatrix.TRANSFORM_AS_LOCATION);
+			Producer<Vector> p = getTransform(true).transform(StaticProducer.of(new Vector(x, y, z)),
+						TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO  This should pass along the ColorProucer directly rather than evaluating it
-			l[i] = new PointLight(p, in, getColorAt(StaticProducer.of(p)).evaluate(new Object[0]));
+			l[i] = new PointLight(p.evaluate(), in, getColorAt(p).evaluate());
 			l[i].setAttenuationCoefficients(this.atta, this.attb, this.attc);
 		}
 		

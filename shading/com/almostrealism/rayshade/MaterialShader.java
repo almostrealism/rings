@@ -19,7 +19,7 @@ package com.almostrealism.rayshade;
 import com.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.chem.Material;
-import org.almostrealism.color.ColorProducer;
+import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhotonFieldContext;

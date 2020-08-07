@@ -20,12 +20,11 @@ import java.util.ArrayList;
 
 import com.almostrealism.raytracer.RayTracer;
 import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.VectorFutureAdapter;
+import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBAdd;
+import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.ShadableCurve;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
@@ -73,30 +72,13 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 	}
 
 	@Override
-	public VectorProducer getNormalAt(Vector point) {
-		final Producer<Ray> c = iterator().next();
-
-		return new VectorFutureAdapter() {
-			@Override
-			public Vector evaluate(Object[] args) {
-				try {
-					return c.evaluate(args).getDirection();
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-
-			@Override
-			public Scope<? extends Variable> getScope(String s) {
-				return null;  // TODO
-			}
-		};
+	public VectorProducer getNormalAt(Producer<Vector> point) {
+		return new RayDirection(iterator().next());
 	}
 
 	@Override
 	public Vector operate(Triple in) {
-		return getNormalAt(new Vector(in.getA(), in.getB(), in.getC())).evaluate(new Object[0]);
+		return getNormalAt(StaticProducer.of(new Vector(in.getA(), in.getB(), in.getC()))).evaluate(new Object[0]);
 	}
 
 	@Override

@@ -17,31 +17,22 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.computations.ScalarPow;
+import org.almostrealism.algebra.computations.ScalarProduct;
+import org.almostrealism.algebra.computations.ScalarSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBProducer;
+import org.almostrealism.color.computations.ColorProduct;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
-public class Attenuation implements RGBProducer {
-	private double da, db, dc;
-	private RGB color;
-	private Producer<Scalar> distance;
-
-	public Attenuation(double da, double db, double dc, RGB color, Producer<Scalar> distance) {
-		this.da = da;
-		this.db = db;
-		this.dc = dc;
-		this.color = color;
-		this.distance = distance;
-	}
-
-	@Override
-	public RGB evaluate(Object[] args) {
-		double d = distance.evaluate(args).getValue();
-		return color.divide(da * d + db * Math.sqrt(d) + dc);
-	}
-
-	@Override
-	public void compact() {
-		distance.compact();
+public class Attenuation extends ColorProduct {
+	public Attenuation(double da, double db, double dc, RGB color, Producer<Scalar> distanceSq) {
+		super(color, RGBProducer.fromScalar(
+				new ScalarSum(
+						new ScalarProduct(StaticProducer.of(da), distanceSq),
+						new ScalarProduct(StaticProducer.of(db),
+								new ScalarPow(distanceSq, StaticProducer.of(new Scalar(0.5)))),
+						StaticProducer.of(dc))));
 	}
 }

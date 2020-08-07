@@ -35,6 +35,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.Mesh;
 
 import org.almostrealism.graph.Triangle;
+import org.almostrealism.util.StaticProducer;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> {
 	public RenderableMesh(Mesh m) { super(m); }
@@ -45,9 +46,9 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		for (Triangle t : getGeometry().triangles()) {
 			Vector v[] = t.getVertices();
 			Vector n[] = new Vector[] {
-						t.getNormalAt(v[0]).evaluate(null),
-						t.getNormalAt(v[1]).evaluate(null),
-						t.getNormalAt(v[2]).evaluate(null)};
+						t.getNormalAt(StaticProducer.of(v[0])).evaluate(),
+						t.getNormalAt(StaticProducer.of(v[1])).evaluate(),
+						t.getNormalAt(StaticProducer.of(v[2])).evaluate()};
 
 			vertices.add(v[0].getX());
 			vertices.add(v[0].getY());

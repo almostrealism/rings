@@ -20,6 +20,7 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
+import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.Mesh;
 import org.almostrealism.geometry.Ray;
@@ -30,6 +31,7 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -105,14 +107,14 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	 * by the specified Vector object.
 	 */
 	@Override
-	public VectorProducer getNormalAt(Vector point) {
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		// TODO  Perform computation within VectorProducer
 
-		Vector normal = point.subtract(super.getLocation());
+		Producer<Vector> normal = new VectorSum(point, StaticProducer.of(getLocation().minus()));
 		if (getTransform(true) != null)
-			normal = getTransform(true).transformAsNormal(normal);
+			normal = getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 
-		return new ImmutableVector(normal);
+		return normal;
 	}
 
 	/**
