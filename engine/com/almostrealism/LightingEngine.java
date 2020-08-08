@@ -132,8 +132,6 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	public void compact() {
 		shadow.compact();
 		shade.compact();
-
-		System.out.println("Compacted LightingEngine");
 	}
 
 	/**
