@@ -22,6 +22,7 @@ import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.color.computations.RGBWhite;
@@ -51,6 +52,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 
 	private Producer<RGB> shadow;
 	private Producer<RGB> shade;
+	private ColorProduct result;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
@@ -108,6 +110,8 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		} else {
 			shade = new RGB(0.0, 0.0, 0.0);
 		}
+
+		result = new ColorProduct(shadow, shade);
 	}
 
 	@Override
@@ -123,15 +127,14 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	 * (or "nothing").
 	 */
 	public RGB evaluate(Object args[]) {
-		if (shade == null) return new RGB(0.0, 0.0, 0.0);
-
-		return new RGBMultiply(shadow, shade).evaluate(args);
+		return result.evaluate(args);
 	}
 
 	@Override
 	public void compact() {
-		shadow.compact();
-		shade.compact();
+		result.compact();
+
+		System.out.println("Compacting LightingEngine");
 	}
 
 	/**

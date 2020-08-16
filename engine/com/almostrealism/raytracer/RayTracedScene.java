@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.almostrealism.LightingEngineAggregator;
 import com.almostrealism.RenderParameters;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
@@ -103,16 +104,21 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
 
-		long start = System.nanoTime();
+		Producer<RGB> producer = operate(new PassThroughProducer<>(0),
+				StaticProducer.of(new Pair(p.width, p.height)));
+
+		// TODO  This dependence on LightingEngineAggregator is not ideal
+		//       at worst their should be some interface that gets notified
+		//       of width and height for kernelization
+		if (producer instanceof LightingEngineAggregator) {
+			((LightingEngineAggregator) producer).setDimensions(p.width, p.height);
+		}
 
 		for (int i = 0; i < p.ssWidth; i++) {
 			for (int j = 0; j < p.ssHeight; j++) {
-				px.setSample(i, j, operate(new PassThroughProducer<>(0),
-											StaticProducer.of(new Pair(p.width, p.height))));
+				px.setSample(i, j, producer);
 			}
 		}
-
-		// System.out.println("Generated pixel template after " + (System.nanoTime() - start) + " nanoseconds");
 
 		return new RealizableImage(px, new Pair(p.dx, p.dy));
 	}

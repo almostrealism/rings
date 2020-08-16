@@ -18,15 +18,22 @@ package com.almostrealism;
 
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.algebra.Intersection;
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.PairBank;
+import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
+import org.almostrealism.math.Hardware;
+import org.almostrealism.math.KernelizedProducer;
+import org.almostrealism.math.MemoryBank;
 import org.almostrealism.space.Scene;
 import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.ProducerWithRank;
 import org.almostrealism.util.RankedChoiceProducer;
 
 import java.util.ArrayList;
@@ -34,11 +41,67 @@ import java.util.Collection;
 import java.util.List;
 
 public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB> {
+	public static final boolean enableKernel = true;
+
+	private PairBank input;
+	private List<ScalarBank> ranks;
+
+	private int width, height;
+
 	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		super(Intersection.e);
 		init(r, surfaces, lights, context);
 	}
 
+	public void setDimensions(int w, int h) {
+		this.width = w;
+		this.height = h;
+
+		PairBank pixelLocations = new PairBank(w * h);
+
+		for (int i = 0; i < w; i++) {
+			for (int j = 0; j < h; j++) {
+				Pair p = pixelLocations.get(j * w + i);
+				p.setMem(new double[] { i, j });
+			}
+		}
+
+		setKernelInput(pixelLocations);
+	}
+
+	/**
+	 * Provide a {@link MemoryBank} to use when evaluating the rank for each
+	 * {@link LightingEngine}.
+	 */
+	private void setKernelInput(PairBank input) {
+		this.input = input;
+		resetRankCache();
+	}
+
+	/**
+	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available, using
+	 * {@link org.almostrealism.math.KernelizedProducer#kernelEvaluate(MemoryBank, MemoryBank[], int, int)}.
+	 */
+	public synchronized void initRankCache() {
+		if (this.ranks != null) return;
+		if (this.input == null)
+			throw new IllegalArgumentException("Kernel input must be specified ahead of rank computation");
+
+		System.out.println("Evaluating rank kernel...");
+
+		this.ranks = new ArrayList<>();
+		for (int i = 0; i < size(); i++) {
+			this.ranks.add(new ScalarBank(input.getCount()));
+			((KernelizedProducer) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input, input });
+		}
+	}
+
+	/**
+	 * Destroy the cache of rank for {@link LightingEngine}s.
+	 */
+	public void resetRankCache() {
+		this.ranks = null;
+	}
 
 	// TODO  Rename this class to SurfaceLightingAggregator and have LightingEngineAggregator sum the lights instead of rank choice them
 	protected void init(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
@@ -68,6 +131,52 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 															c));
 			}
 		}
+	}
+
+	@Override
+	public RGB evaluate(Object args[]) {
+		if (!enableKernel) return super.evaluate(args);
+
+		initRankCache();
+
+		Pair pos = (Pair) args[0];
+
+		Producer<RGB> best = null;
+		double rank = Double.MAX_VALUE;
+
+		boolean printLog = false; // Math.random() < 0.04;
+
+		if (printLog) {
+			System.out.println("RankedChoiceProducer: There are " + size() + " Producers to choose from");
+		}
+
+		int position = (int) pos.getY() * width + (int) pos.getX();
+
+		r: for (int i = 0; i < size(); i++) {
+			ProducerWithRank<RGB> p = get(i);
+
+			double r = ranks.get(i).get(position).getValue();
+			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);
+			if (r < e) continue r;
+
+			if (best == null) {
+				if (printLog) System.out.println(p + " was assigned (rank = " + r + ")");
+				best = p.getProducer();
+				rank = r;
+			} else {
+				if (r >= e && r < rank) {
+					if (printLog) System.out.println(p + " was assigned (rank = " + r + ")");
+					best = p.getProducer();
+					rank = r;
+				}
+			}
+
+			if (rank <= e) break r;
+		}
+
+		if (printLog) System.out.println(best + " was chosen\n----------");
+
+		return best == null ? null : best.evaluate(args);
 	}
 
 	@Override

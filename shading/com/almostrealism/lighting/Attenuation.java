@@ -27,7 +27,7 @@ import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
 public class Attenuation extends ColorProduct {
-	public Attenuation(double da, double db, double dc, RGB color, Producer<Scalar> distanceSq) {
+	public Attenuation(double da, double db, double dc, Producer<RGB> color, Producer<Scalar> distanceSq) {
 		super(color, RGBProducer.fromScalar(
 				new ScalarSum(
 						new ScalarProduct(StaticProducer.of(da), distanceSq),

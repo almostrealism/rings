@@ -59,9 +59,14 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			front = new GreaterThan<>(3, RGB.blank(), scaleFront, StaticProducer.of(0),
+			front = new GreaterThan<RGB>(3, RGB.blank(), scaleFront, StaticProducer.of(0),
 											new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleFront)),
-											StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
+											StaticProducer.of(new RGB(0.0, 0.0, 0.0))) {
+				@Override
+				public void compact() {
+					super.compact();
+				}
+			};
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {

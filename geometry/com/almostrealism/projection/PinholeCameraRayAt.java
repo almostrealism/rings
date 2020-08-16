@@ -26,11 +26,11 @@ import org.almostrealism.algebra.computations.PairFromScalars;
 import org.almostrealism.algebra.computations.ScalarFromPair;
 import org.almostrealism.algebra.computations.VectorFromScalars;
 import org.almostrealism.geometry.RandomPair;
-import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.geometry.RayFromVectors;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
-public class PinholeCameraRayAt extends RayProducer {
+public class PinholeCameraRayAt extends RayFromVectors {
 	private PinholeCameraRayAt(Vector location, VectorProducer direction) {
 		super(StaticProducer.of(location), direction);
 	}

@@ -119,8 +119,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				renderedImageData = r.realize(rparams).evaluate(null);
 
 				if (enableCompaction) {
-					System.out.print("Compacting image data producer pipeline...");
-
 					Set<Producer<RGB>> compacted = new HashSet<>();
 
 					for (int i = 0; i < renderedImageData.length; i++) {
@@ -130,11 +128,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 								compacted.add(renderedImageData[i][j]);
 							}
 						}
-
-						if (i % 10 == 0) System.out.print(".");
 					}
-
-					System.out.println(" Done");
 				}
 
 				evaluateImage();

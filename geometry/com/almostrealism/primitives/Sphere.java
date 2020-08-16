@@ -130,7 +130,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 			Producer<Ray> tr = r;
 			if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
 
-			return new ShadableIntersection(this, r, new SphereIntersectAtNew(tr));
+			return new ShadableIntersection(this, r, new SphereIntersectAt(tr));
 		} else {
 			if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
 

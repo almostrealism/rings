@@ -161,7 +161,7 @@ public class PointLight implements Light, Positioned {
 		ScalarProducer d = new VectorSum(point, StaticProducer.of(location).scalarMultiply(-1.0)).lengthSq();
 
 		RGB color = getColor().multiply(getIntensity());
-		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, color, d));
+		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, StaticProducer.of(color), d));
 	}
 
 	/** Returns the location of this {@link PointLight} as a {@link Vector}. */
