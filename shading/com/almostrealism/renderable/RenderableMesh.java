@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.mesh.Mesh;
 
-import org.almostrealism.graph.Triangle;
+import org.almostrealism.graph.mesh.Triangle;
 import org.almostrealism.util.StaticProducer;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> {

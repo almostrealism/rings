@@ -12,7 +12,7 @@ import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
-import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;

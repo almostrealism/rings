@@ -17,7 +17,7 @@
 package com.almostrealism.renderable;
 
 import com.almostrealism.primitives.SurfaceUI;
-import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
 import com.almostrealism.primitives.Sphere;

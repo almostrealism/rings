@@ -16,7 +16,7 @@
 
 package com.almostrealism.webgl;
 
-import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.html.HTMLContent;
 
 public class WebGLMeshGeometry implements WebGLExportable {

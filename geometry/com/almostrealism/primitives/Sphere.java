@@ -22,7 +22,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.RGB;
-import org.almostrealism.graph.Mesh;
+import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
 import org.almostrealism.relation.Operator;
