@@ -32,6 +32,7 @@ import org.almostrealism.math.KernelizedProducer;
 import org.almostrealism.math.MemoryBank;
 import org.almostrealism.space.Scene;
 import org.almostrealism.util.CollectionUtils;
+import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerWithRank;
 import org.almostrealism.util.RankedChoiceProducer;
@@ -40,33 +41,42 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB> {
+public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB>, DimensionAware {
 	public static final boolean enableKernel = true;
 
 	private PairBank input;
 	private List<ScalarBank> ranks;
 
-	private int width, height;
+	private int width, height, ssw, ssh;
 
 	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		super(Intersection.e);
 		init(r, surfaces, lights, context);
 	}
 
-	public void setDimensions(int w, int h) {
+	@Override
+	public void setDimensions(int w, int h, int ssw, int ssh) {
 		this.width = w;
 		this.height = h;
+		this.ssw = ssw;
+		this.ssh = ssh;
 
-		PairBank pixelLocations = new PairBank(w * h);
+		int totalWidth = w * ssw;
+		int totalHeight = h * ssh;
 
-		for (int i = 0; i < w; i++) {
-			for (int j = 0; j < h; j++) {
-				Pair p = pixelLocations.get(j * w + i);
-				p.setMem(new double[] { i, j });
+		PairBank pixelLocations = new PairBank(totalWidth * totalHeight);
+
+		for (double i = 0; i < totalWidth; i++) {
+			for (double j = 0; j < totalHeight; j++) {
+				Pair p = pixelLocations.get((int) (j * totalWidth + i));
+				p.setMem(new double[] { i / ssw, j / ssh });
 			}
 		}
 
 		setKernelInput(pixelLocations);
+
+		stream().filter(p -> p instanceof DimensionAware)
+				.forEach(p -> ((DimensionAware) p).setDimensions(width, height, ssw, ssh));
 	}
 
 	/**
@@ -80,19 +90,19 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 
 	/**
 	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available, using
-	 * {@link org.almostrealism.math.KernelizedProducer#kernelEvaluate(MemoryBank, MemoryBank[], int, int)}.
+	 * {@link org.almostrealism.math.KernelizedProducer#kernelEvaluate(MemoryBank, MemoryBank[])}.
 	 */
 	public synchronized void initRankCache() {
 		if (this.ranks != null) return;
 		if (this.input == null)
 			throw new IllegalArgumentException("Kernel input must be specified ahead of rank computation");
 
-		System.out.println("Evaluating rank kernel...");
+		System.out.println("Evaluating rank kernels...");
 
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(new ScalarBank(input.getCount()));
-			((KernelizedProducer) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input, input });
+			((KernelizedProducer) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
 		}
 	}
 
@@ -150,7 +160,8 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 			System.out.println("RankedChoiceProducer: There are " + size() + " Producers to choose from");
 		}
 
-		int position = (int) pos.getY() * width + (int) pos.getX();
+		int position = DimensionAware.getPosition(pos.getX(), pos.getY(), width, height, ssw, ssh);
+		// assert pos.equals(input.get(position));
 
 		r: for (int i = 0; i < size(); i++) {
 			ProducerWithRank<RGB> p = get(i);
