@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.almostrealism.raytracer;
 
 import java.util.concurrent.ExecutionException;
@@ -29,6 +30,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 
 import io.almostrealism.lambda.Realization;
+import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
@@ -104,14 +106,11 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
 
-		Producer<RGB> producer = operate(new PassThroughProducer<>(0),
+		Producer<RGB> producer = operate(new PassThroughProducer(0),
 				StaticProducer.of(new Pair(p.width, p.height)));
 
-		// TODO  This dependence on LightingEngineAggregator is not ideal
-		//       at worst their should be some interface that gets notified
-		//       of width and height for kernelization
-		if (producer instanceof LightingEngineAggregator) {
-			((LightingEngineAggregator) producer).setDimensions(p.width, p.height);
+		if (producer instanceof DimensionAware) {
+			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);
 		}
 
 		for (int i = 0; i < p.ssWidth; i++) {
