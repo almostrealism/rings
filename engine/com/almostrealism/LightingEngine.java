@@ -34,6 +34,7 @@ import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerWithRank;
 import org.almostrealism.util.StaticProducer;
@@ -41,7 +42,7 @@ import org.almostrealism.util.StaticProducer;
 import java.util.*;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<RGB> implements PathElement<Ray, RGB> {
+public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<RGB> implements PathElement<Ray, RGB>, DimensionAware {
 	private T intersections;
 	private Curve<RGB> surface;
 	private Collection<Curve<RGB>> otherSurfaces;
@@ -112,6 +113,13 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		}
 
 		result = new ColorProduct(shadow, shade);
+	}
+
+	@Override
+	public void setDimensions(int width, int height, int ssw, int ssh) {
+		if (intersections instanceof DimensionAware) {
+			((DimensionAware) intersections).setDimensions(width, height, ssw, ssh);
+		}
 	}
 
 	@Override
