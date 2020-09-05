@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Producer;
 
 /**
- * A ThinLensCamera object provides a camera with viewing rays that originate
+ * A {@link ThinLensCamera} provides a camera with viewing rays that originate
  * from a random point on a circular lens. By default the width and height of
  * the projection are set to 0.036 by 0.024 and the focal length is set to 0.05.
  * Also, the focus distance is set to 1.0 and the radius of the lens is set to 0.005
