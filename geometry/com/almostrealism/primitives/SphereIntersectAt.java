@@ -38,7 +38,7 @@ public class SphereIntersectAt extends LessThan<Scalar> {
 				discriminant(oDotD, oDotO, dDotD),
 				StaticProducer.of(new Scalar(0.0)),
 				StaticProducer.of(new Scalar(-1.0)),
-				closest(t(oDotD, oDotO, dDotD)));
+				closest(t(oDotD, oDotO, dDotD)), false);
 	}
 
 	public SphereIntersectAt(Producer<Ray> r) {
@@ -47,12 +47,12 @@ public class SphereIntersectAt extends LessThan<Scalar> {
 
 	private static AcceleratedConjunctionAdapter<Scalar> closest(PairProducer t) {
 		return new AcceleratedConjunctionAdapter<>(2, Scalar.blank(),
-				new LessThan(2, Scalar.blank(), t.x(), t.y(), t.x(), t.y()),
+				new LessThan(2, Scalar.blank(), t.x(), t.y(), t.x(), t.y(), false),
 				new GreaterThan(2, Scalar.blank(), t.x(),
 						StaticProducer.of(new Scalar(0.0)),
 						t.x(), new GreaterThan(2, Scalar.blank(), t.y(),
 						StaticProducer.of(new Scalar(0.0)), t.y(),
-						StaticProducer.of(new Scalar(-1.0)))),
+						StaticProducer.of(new Scalar(-1.0)), false), false),
 				new GreaterThan(2, new ScalarFromPair(t, ScalarFromPair.X),
 						StaticProducer.of(new Scalar(0))),
 				new GreaterThan(2, new ScalarFromPair(t, ScalarFromPair.Y),
