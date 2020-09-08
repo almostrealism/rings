@@ -23,6 +23,7 @@ import org.almostrealism.util.Producer;
 
 import java.util.ArrayList;
 
+// TODO  Modify to implement KernelizedProducer
 public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 	protected Producer<RGB> samples[][];
 	private double scale;
