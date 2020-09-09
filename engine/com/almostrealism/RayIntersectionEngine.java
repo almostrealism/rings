@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO  This does not need {@link RenderParameters}, but rather it needs Fog Parameters.
- * 
  * @author  Michael Murray
  */
 public class RayIntersectionEngine implements RayTracer.Engine {
@@ -46,6 +44,6 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	public Producer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
-		return new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams);
+		return new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
 	}
 }
