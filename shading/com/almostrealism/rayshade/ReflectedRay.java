@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,29 +16,32 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
-public class ReflectedRay implements Producer<Ray> {
+public class ReflectedRay implements RayProducer {
 	private Producer<Vector> point;
-	private Producer<Vector> incident;
 	private Producer<Vector> normal;
+	private Producer<Vector> reflected;
 	private double blur;
 
 	public ReflectedRay(Producer<Vector> point, Producer<Vector> incident, Producer<Vector> normal, double blur) {
 		this.point = point;
-		this.incident = incident;
 		this.normal = normal;
+		this.reflected = reflect(incident, normal);
 		this.blur = blur;
 	}
 
 	@Override
 	public Ray evaluate(Object[] args) {
-		Vector in = incident.evaluate(args);
 		Vector n = normal.evaluate(args);
-
-		Vector ref = reflect(in, n);
+		Vector ref = reflected.evaluate(args);
 
 		if (blur != 0.0) {
 			double a = blur * (-0.5 + Math.random());
@@ -73,16 +76,17 @@ public class ReflectedRay implements Producer<Ray> {
 
 	@Override
 	public void compact() {
-		this.incident.compact();
 		this.normal.compact();
+		this.reflected.compact();
 	}
 
 	/**
 	 * Reflects the specified {@link Vector} across the normal vector represented by the
 	 * second specified {@link Vector} and returns the result.
 	 */
-	public static Vector reflect(Vector vector, Vector normal) { // TODO  Should return Producer
-		vector = vector.minus();
-		return vector.subtract(normal.multiply(2 * (vector.dotProduct(normal) / normal.lengthSq())));
+	public static VectorSum reflect(Producer<Vector> vector, Producer<Vector> normal) {
+		VectorProducer newVector = VectorProducer.minus(vector);
+		ScalarProducer s = StaticProducer.of(2).multiply(newVector.dotProduct(normal).divide(VectorProducer.lengthSq(normal)));
+		return newVector.subtract(VectorProducer.scalarMultiply(normal, s));
 	}
 }
