@@ -42,15 +42,19 @@ import java.util.Collection;
 import java.util.List;
 
 public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implements PathElement<RGB, RGB>, DimensionAware {
-	public static final boolean enableKernel = true;
-
 	private PairBank input;
 	private List<ScalarBank> ranks;
 
+	private boolean kernel;
 	private int width, height, ssw, ssh;
 
 	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+		this(r, surfaces, lights, context, false);
+	}
+
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context, boolean kernel) {
 		super(Intersection.e);
+		this.kernel = kernel;
 		init(r, surfaces, lights, context);
 	}
 
@@ -102,6 +106,7 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(new ScalarBank(input.getCount()));
+			get(i).getRank().compact();
 			((KernelizedProducer) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
 		}
 	}
@@ -145,7 +150,7 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 
 	@Override
 	public RGB evaluate(Object args[]) {
-		if (!enableKernel) return super.evaluate(args);
+		if (!kernel) return super.evaluate(args);
 
 		initRankCache();
 
