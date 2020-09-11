@@ -19,10 +19,11 @@ package com.almostrealism.gl;
 import io.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.Variable;
-import org.almostrealism.relation.Computation;
+import org.almostrealism.io.PrintStreamPrintWriter;
+import org.almostrealism.io.PrintWriter;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 
 /**
  * {@link GLSLPrintWriter} is a {@link CodePrintWriter} implementation for writing GLSL,
@@ -30,7 +31,7 @@ import java.io.PrintWriter;
  */
 public class GLSLPrintWriter extends CPrintWriter {
 	public GLSLPrintWriter(OutputStream out) {
-		this(new PrintWriter(out));
+		this(new PrintStreamPrintWriter(new PrintStream(out)));
 		// TODO  Move this to super class
 	}
 
@@ -41,7 +42,7 @@ public class GLSLPrintWriter extends CPrintWriter {
 
 	public void println(Variable v) {
 		if (v.getAnnotation() != null) {
-			v = new Variable(v.getAnnotation() + " " + v.getName(), v.getType(), v.getData());
+			v = new Variable(v.getAnnotation() + " " + v.getName(), v.getType(), v.getProducer());
 		}
 
 		super.println(v);

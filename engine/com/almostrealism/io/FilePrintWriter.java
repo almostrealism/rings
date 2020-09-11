@@ -30,12 +30,22 @@ public class FilePrintWriter implements PrintWriter {
 	public FilePrintWriter(File f) throws FileNotFoundException { 
 		this.out = new java.io.PrintWriter(new FileOutputStream(f), true);
 	}
-	
+
+	@Override
 	public void close() { this.out.close(); }
-	
+
+	@Override
 	public void moreIndent() { this.indent.append("    "); }
+
+	@Override
 	public void lessIndent() { this.indent.delete(this.indent.length() - 4, this.indent.length()); }
+
+	@Override
 	public void print(String s) { this.out.print(this.indent.toString() + s); }
+
+	@Override
 	public void println(String s) { this.out.println(this.indent.toString() + s); }
+
+	@Override
 	public void println() { this.out.println(); }
 }

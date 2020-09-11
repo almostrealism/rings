@@ -17,15 +17,11 @@
 package com.almostrealism.projection;
 
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.geometry.RandomRay;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.math.AcceleratedProducer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Producer;
 
 /**

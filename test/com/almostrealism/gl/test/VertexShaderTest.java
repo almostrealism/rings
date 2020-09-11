@@ -1,5 +1,6 @@
 package com.almostrealism.gl.test;
 
+import io.almostrealism.code.DefaultNameProvider;
 import org.junit.Test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
@@ -10,6 +11,6 @@ public class VertexShaderTest {
 	public void test() {
 		DotProductVertexShader s = new DotProductVertexShader();
 		GLSLPrintWriter shaderOutput = new GLSLPrintWriter(System.out);
-		shaderOutput.println(s);
+		shaderOutput.println(s.getScope(new DefaultNameProvider("test")));
 	}
 }

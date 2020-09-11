@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Producer;
@@ -82,7 +83,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 	}
 
 	@Override
-	public Scope getScope(String prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
+	public Scope getScope(NameProvider prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
 	
 	@Override
 	public Producer<RGB> shade(ShaderContext parameters) {

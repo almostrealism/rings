@@ -31,6 +31,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
+import org.almostrealism.util.StaticProducer;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -526,20 +527,16 @@ public class GLPrintWriter extends GLDriver {
 	public Variable createProgram() {
 		String name = "program" + (varIndex++);
 		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createProgram",
-				new ArrayList<>(), new HashMap<>()));
+				new ArrayList<>()));
 		p.println(v);
 		return v;
 	}
 
 	@Override
 	public void linkProgram(Variable program) {
-		List<String> args = new ArrayList<>();
-		args.add("program");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("program", new InstanceReference(program));
-
-		p.println(new Method(glMember, "linkProgram", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(program));
+		p.println(new Method(glMember, "linkProgram", args));
 	}
 
 	@Override
@@ -569,85 +566,58 @@ public class GLPrintWriter extends GLDriver {
 
 	@Override
 	public Variable createShader(String type) {
-		List<String> args = new ArrayList<>();
-		args.add("type");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("type", new InstanceReference(new Variable(glMember + "." + type, String.class, null)));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(new Variable(glMember + "." + type, String.class, (String)  null)));
 
 		String name = "shader" + (varIndex++);
-		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createShader", args, values));
+		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createShader", args));
 		p.println(v);
 		return v;
 	}
 
 	@Override
 	public void shaderSource(Variable shader, String source) {
-		List<String> args = new ArrayList<>();
-		args.add("shader");
-		args.add("source");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("shader", new InstanceReference(shader));
-		values.put("source", new Variable("source", String.class, source));
-
-		p.println(new Method(glMember, "shaderSource", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(shader));
+		args.add(new Variable("source", String.class, source));
+		p.println(new Method(glMember, "shaderSource", args));
 	}
 
 	@Override
 	public void compileShader(Variable shader) {
-		List<String> args = new ArrayList<>();
-		args.add("shader");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("shader", new InstanceReference(shader));
-
-		p.println(new Method(glMember, "compileShader", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(shader));
+		p.println(new Method(glMember, "compileShader", args));
 	}
 
 	@Override
 	public void attachShader(Variable program, Variable shader) {
-		List<String> args = new ArrayList<>();
-		args.add("program");
-		args.add("shader");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("program", new InstanceReference(program));
-		values.put("shader", new InstanceReference(shader));
-
-		p.println(new Method(glMember, "attachShader", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(program));
+		args.add(new InstanceReference(shader));
+		p.println(new Method(glMember, "attachShader", args));
 	}
 
 	@Override
 	public void deleteShader(Variable shader) {
-		List<String> args = new ArrayList<>();
-		args.add("shader");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("shader", new InstanceReference(shader));
-
-		p.println(new Method(glMember, "deleteShader", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(shader));
+		p.println(new Method(glMember, "deleteShader", args));
 	}
 
 	@Override
 	public Variable<String> createBuffer() {
 		String name = "buffer" + (varIndex++);
-		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createBuffer",
-									new ArrayList<>(), new HashMap<>()));
+		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createBuffer"));
 		p.println(v);
 		return v;
 	}
 
 	public void bindBuffer(String code, Variable v) {
-		List<String> args = new ArrayList<>();
-		args.add("code");
-		args.add("buffer");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("code", new InstanceReference(new Variable(glMember + "." + code, String.class,null)));
-		values.put("buffer", new InstanceReference(v));
-
-		p.println(new Method(glMember, "bindBuffer", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(new Variable(glMember + "." + code, String.class, (String) null)));
+		args.add(new InstanceReference(v));
+		p.println(new Method(glMember, "bindBuffer", args));
 	}
 
 	public void bufferData(Variable buffer, List<Double> data) {
@@ -655,25 +625,16 @@ public class GLPrintWriter extends GLDriver {
 
 		p.println(v);
 
-		List<String> nargs = new ArrayList<>();
-		nargs.add("v");
+		List<Variable> nargs = new ArrayList<>();
+		nargs.add(new InstanceReference(v));
 
-		HashMap<String, Variable> nvalues = new HashMap<>();
-		nvalues.put("v", new InstanceReference(v));
+		Method n = new Method("new Float32Array", nargs);
 
-		Method n = new Method("new Float32Array", nargs, nvalues);
-
-		List<String> args = new ArrayList<>();
-		args.add("target");
-		args.add("source");
-		args.add("usage");
-
-		HashMap<String, Variable> values = new HashMap<>();
-		values.put("target", new InstanceReference(new Variable(glMember + ".ARRAY_BUFFER", String.class,null)));
-		values.put("source", new Variable("source", String.class, n));
-		values.put("usage", new InstanceReference(new Variable(glMember + ".STATIC_DRAW", String.class,null)));
-
-		p.println(new Method(glMember, "bufferData", args, values));
+		List<Variable> args = new ArrayList<>();
+		args.add(new InstanceReference(new Variable(glMember + ".ARRAY_BUFFER", String.class, (String) null)));
+		args.add(new Variable("source", String.class, n));
+		args.add(new InstanceReference(new Variable(glMember + ".STATIC_DRAW", String.class, (String) null)));
+		p.println(new Method(glMember, "bufferData", args));
 	}
 
 	@Override
@@ -869,15 +830,8 @@ public class GLPrintWriter extends GLDriver {
 		arguments.add(aspect);
 		arguments.add(zNear);
 		arguments.add(zFar);
-		
-		String[] order = {"projMatrix","fieldOfView","aspect","zNear","zFar"};
-		Map<String,Variable> argMap = new HashMap<String,Variable>();
-		argMap.put("projMatrix", projMatrix);
-		argMap.put("fieldOfView", fieldOfView);
-		argMap.put("aspect", aspect);
-		argMap.put("zNear", zNear);
-		argMap.put("zFar", zFar);
-		Method persp = new Method("mat4","perspective",Arrays.asList(order), argMap);
+
+		Method persp = new Method("mat4","perspective", arguments);
 		p.println(persp);
 		
 		Variable modelViewMatrix = new Variable("modelViewMatrix", String.class, matrixMember+".create()");
@@ -885,11 +839,11 @@ public class GLPrintWriter extends GLDriver {
 		Variable amtToTranslate = new Variable("amountToTranslate", String.class, "[-0.0,0.0,-6.0]");
 		p.println(amtToTranslate);
 		
-		String[] tranArgOrder = {"modelViewMatrix", "modelViewMatrix","amountToTranslate"};
-		Map<String, Variable> tranArgMap = new HashMap<String,Variable>();
-		tranArgMap.put("modelViewMatrix", new InstanceReference("modelViewMatrix"));
-		tranArgMap.put("amountToTranslate", new InstanceReference("amountToTranslate"));
-		Method transl = new Method("mat4","translate",Arrays.asList(tranArgOrder), tranArgMap);
+		List<Variable> tranArgs = new ArrayList<>();
+		tranArgs.add(new InstanceReference("modelViewMatrix"));
+		tranArgs.add(new InstanceReference("modelViewMatrix"));
+		tranArgs.add(new InstanceReference("amountToTranslate"));
+		Method transl = new Method("mat4","translate", tranArgs);
 		
 		p.println(transl);
 //		mat4.translate(modelViewMatrix,     // destination matrix
@@ -899,7 +853,7 @@ public class GLPrintWriter extends GLDriver {
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
 		
-		Variable positionBuffer = new Variable("positionBuffer",String.class, new Method(glMember,"createBuffer",emptyList,emptyMap));
+		Variable positionBuffer = new Variable("positionBuffer", String.class, new Method(glMember,"createBuffer"));
 		
 		p.println(positionBuffer);
 		
@@ -1031,26 +985,16 @@ public class GLPrintWriter extends GLDriver {
 		} else {
 			for (Variable v : args) {
 				if (v instanceof InstanceReference) {
-					if (((InstanceReference) v).getData().startsWith("GL_")) {
-						((InstanceReference) v).setData(((InstanceReference) v).getData().substring(3));
-					} else if (((InstanceReference) v).getData().startsWith(glMember + ".GL_")) {
-						((InstanceReference) v).setData(glMember + "." +
-								((InstanceReference) v).getData().substring(glMember.length() + 4));
+					if (((InstanceReference) v).getValue().startsWith("GL_")) {
+						v.setProducer(StaticProducer.of(((InstanceReference) v).getValue().substring(3)));
+					} else if (((InstanceReference) v).getValue().startsWith(glMember + ".GL_")) {
+						v.setProducer(StaticProducer.of(glMember + "." +
+								((InstanceReference) v).getValue().substring(glMember.length() + 4)));
 					}
 				}
 			}
 		}
 
-		List<String> argList = new ArrayList<>();
-		for (int i = 0; i < args.size(); i++) {
-			argList.add(String.valueOf(i));
-		}
-
-		Map<String, Variable> argMap = new HashMap<>();
-		for (int i = 0; i < args.size(); i++) {
-			argMap.put(String.valueOf(i), args.get(i));
-		}
-
-		return new Method(glMember, name, argList, argMap);
+		return new Method(glMember, name, args);
 	}
 }

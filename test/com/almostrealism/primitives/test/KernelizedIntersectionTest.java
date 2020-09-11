@@ -4,7 +4,7 @@ import com.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.math.MemoryBank;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.StaticProducer;
 import org.junit.Test;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
@@ -370,7 +371,7 @@ public class GLDriver {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out);
-		this.vertexShader.getScope("vshade").write(p);
+		this.vertexShader.getScope(new DefaultNameProvider("vshade")).write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_VERTEX_SHADER", shader);
 	}
@@ -382,7 +383,7 @@ public class GLDriver {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out);
-		this.fragmentShader.getScope("fshade").write(p);
+		this.fragmentShader.getScope(new DefaultNameProvider("fshade")).write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_FRAGMENT_SHADER", shader);
 	}

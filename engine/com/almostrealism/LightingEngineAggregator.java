@@ -27,10 +27,8 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.math.Hardware;
-import org.almostrealism.math.KernelizedProducer;
-import org.almostrealism.math.MemoryBank;
-import org.almostrealism.space.Scene;
+import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.Producer;
@@ -94,7 +92,7 @@ public class LightingEngineAggregator extends RankedChoiceProducer<RGB> implemen
 
 	/**
 	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available, using
-	 * {@link org.almostrealism.math.KernelizedProducer#kernelEvaluate(MemoryBank, MemoryBank[])}.
+	 * {@link KernelizedProducer#kernelEvaluate(MemoryBank, MemoryBank[])}.
 	 */
 	public synchronized void initRankCache() {
 		if (this.ranks != null) return;

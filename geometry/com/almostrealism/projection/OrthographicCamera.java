@@ -25,6 +25,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.io.DecodePostProcessing;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
@@ -240,7 +241,7 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 	}
 
 	@Override
-	public Scope<Variable<?>> getScope(String prefix) {
+	public Scope<Ray> getScope(NameProvider p) {
 		throw new RuntimeException("getScope not implemented");
 	}
 

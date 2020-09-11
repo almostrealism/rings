@@ -20,13 +20,15 @@ import com.almostrealism.gl.DefaultGLRenderingEngine;
 import com.almostrealism.gl.GLPrintWriter;
 import com.almostrealism.gl.GLRenderingEngine;
 import com.almostrealism.gl.GLScene;
+import com.almostrealism.io.FilePrintWriter;
 import io.almostrealism.js.JavaScriptPrintWriter;
+import org.almostrealism.io.PrintWriter;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 
 public class GLPrintWriterTest extends AbstractGLSceneTest {
 	@Test
@@ -35,7 +37,7 @@ public class GLPrintWriterTest extends AbstractGLSceneTest {
 
 		GLRenderingEngine engine = new DefaultGLRenderingEngine();
 
-		try (PrintWriter p = new PrintWriter("test.js")) {
+		try (PrintWriter p = new FilePrintWriter(new File("test.js"))) {
 			GLPrintWriter out = new GLPrintWriter("gl", "mat", "main", new JavaScriptPrintWriter(p));
 			GLScene gls = new GLScene(s);
 			gls.init(out);

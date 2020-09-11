@@ -20,15 +20,16 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.relation.NameProvider;
 
 public class GLDiffuseShader extends VertexShader {
 	@Override
-	public Scope<? extends Variable> getScope(String prefix) {
+	public Scope<? extends Variable> getScope(NameProvider p) {
 		Scope<Variable> s = new Scope<>();
 
-		Variable pos = new Variable("position", Vector.class, null);
+		Variable pos = new Variable("position", Vector.class, (Vector) null);
 		pos.setAnnotation("attribute");
-		Variable tex = new Variable("texcoord", Pair.class, null);
+		Variable tex = new Variable("texcoord", Pair.class, (Vector) null);
 		pos.setAnnotation("varying");
 		s.getVariables().add(tex);
 

@@ -28,6 +28,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
@@ -116,7 +117,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Scope getScope(String prefix) { throw new RuntimeException("getScope not implemented"); } // TODO
+		public Scope getScope(NameProvider prefix) { throw new RuntimeException("getScope not implemented"); } // TODO
 
 		public ShaderSet getShaders() { return shaders; }
 

@@ -22,6 +22,7 @@ import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.Volume;
 import org.almostrealism.util.Producer;
 
@@ -163,7 +164,7 @@ public class Plane implements Volume {
 	}
 
 	@Override
-	public Scope<? extends Variable> getScope(String s) {
+	public Scope<Vector> getScope(NameProvider p) {
 		return null;
 	}
 }

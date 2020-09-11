@@ -17,11 +17,11 @@
 package com.almostrealism.gl.shaders;
 
 import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
+import org.almostrealism.relation.NameProvider;
 
 public class BaseFragmentShader extends FragmentShader {
 	@Override
-	public Scope<? extends Variable> getScope(String s) {
+	public Scope getScope(NameProvider p) {
 		return new Scope();
 	}
 }

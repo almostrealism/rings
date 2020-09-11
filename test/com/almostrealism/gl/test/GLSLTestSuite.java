@@ -19,6 +19,7 @@ package com.almostrealism.gl.test;
 import com.almostrealism.gl.GLSLPrintWriter;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.test.RayTracingTest;
+import io.almostrealism.code.DefaultNameProvider;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.relation.Computation;
 import org.almostrealism.relation.PairFunction;
@@ -44,7 +45,7 @@ public class GLSLTestSuite {
 		}
 
 		GLSLPrintWriter p = new GLSLPrintWriter(System.out);
-		p.println(f);
+		p.println(f.getScope(new DefaultNameProvider("test")));
 	}
 
 	public static void main(String args[]) {

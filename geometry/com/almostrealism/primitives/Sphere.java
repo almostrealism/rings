@@ -25,6 +25,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
@@ -198,7 +199,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 		return new Operator<Scalar>() {
 			@Override
 			public Scalar evaluate(Object[] args) {
-				return new Scalar(((Operator<Vector>) getInput()).evaluate(args).lengthSq());
+				return new Scalar(getInput().evaluate(args).lengthSq());
 			}
 
 			@Override
@@ -206,10 +207,10 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 
 
 			@Override
-			public Scope<Variable<Scalar>> getScope(String prefix) {
+			public Scope<Scalar> getScope(NameProvider p) {
 				// TODO  Not sure this is correct
 				Scope s = new Scope();
-				s.getVariables().add(new Variable(prefix + "scalar", evaluate(new Object[0])));
+				s.getVariables().add(new Variable(p.getFunctionName() + "scalar", evaluate(new Object[0])));
 				return s;
 			}
 		};

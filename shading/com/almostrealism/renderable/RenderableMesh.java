@@ -115,7 +115,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
 		
-		Variable positionBuffer = new Variable("positionBuffer",String.class, new Method(glMember,"createBuffer",emptyList,emptyMap));
+		Variable positionBuffer = new Variable("positionBuffer", String.class, new Method(glMember, "createBuffer"));
 		
 		GLPrintWriter glPrintWriter = (GLPrintWriter)gl;
 		CodePrintWriter p = glPrintWriter.getPrintWriter();

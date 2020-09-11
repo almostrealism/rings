@@ -31,6 +31,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
@@ -208,8 +209,8 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	@Override
-	public Scope getScope(String prefix) {
-		return getSurface().getScope(prefix);
+	public Scope getScope(NameProvider p) {
+		return getSurface().getScope(p);
 	}
 
 	@Override

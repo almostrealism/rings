@@ -27,6 +27,7 @@ import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.geometry.Curve;
+import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.util.Producer;
 
@@ -47,7 +48,7 @@ public class AmbientLight implements Light {
 		}
 
 		@Override
-		public Scope<? extends Variable> getScope(String s) {
+		public Scope<RGB> getScope(NameProvider p) {
 			throw new RuntimeException("getScope not implemented");
 		}
 	});
