@@ -100,18 +100,25 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		}
 	}
 
-	@Override
-	public RealizableImage realize(RenderParameters p) {
-		this.p = p;
+	public Producer<RGB> getProducer() { return getProducer(getRenderParameters()); }
 
-		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
-
+	public Producer<RGB> getProducer(RenderParameters p) {
 		Producer<RGB> producer = operate(new PassThroughProducer(0),
 				StaticProducer.of(new Pair(p.width, p.height)));
 
 		if (producer instanceof DimensionAware) {
 			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);
 		}
+
+		return producer;
+	}
+
+	@Override
+	public RealizableImage realize(RenderParameters p) {
+		this.p = p;
+
+		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
+		Producer<RGB> producer = getProducer(p);
 
 		for (int i = 0; i < p.ssWidth; i++) {
 			for (int j = 0; j < p.ssHeight; j++) {

@@ -19,6 +19,7 @@ package com.almostrealism;
 import com.almostrealism.lighting.*;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -42,39 +43,30 @@ import org.almostrealism.util.StaticProducer;
 import java.util.*;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<RGB> implements PathElement<Ray, RGB>, DimensionAware {
+public class LightingEngine<T extends ContinuousField> extends ColorProduct implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware {
 	private T intersections;
 	private Curve<RGB> surface;
-	private Collection<Curve<RGB>> otherSurfaces;
-	private List<Intersectable> allSurfaces;
-	private Light light;
-	private Iterable<Light> otherLights;
-	private ShaderContext p;
-
-	private Producer<RGB> shadow;
-	private Producer<RGB> shade;
-	private ColorProduct result;
+	private Producer<Scalar> distance;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
 						  Collection<Curve<RGB>> otherSurfaces,
 						  Light light, Iterable<Light> otherLights, ShaderContext p) {
-		super(((ShadableIntersection) intersections).getDistance());
+		super(shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p));
 		this.intersections = intersections;
 		this.surface = surface;
-		this.otherSurfaces = otherSurfaces;
-		this.light = light;
-		this.otherLights = otherLights;
-		this.p = p;
-
-		allSurfaces = new ArrayList<>();
-		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
-		for (Curve pr : otherSurfaces) if (pr instanceof Intersectable) allSurfaces.add((Intersectable) pr);
-
-		init();
+		this.distance = ((ShadableIntersection) intersections).getDistance();
 	}
 
-	protected void init() {
+	protected static Producer[] shadowAndShade(ContinuousField intersections,
+											   Curve<RGB> surface,
+											   Collection<Curve<RGB>> otherSurfaces,
+											   Light light, Iterable<Light> otherLights, ShaderContext p) {
+		Producer<RGB> shadow, shade;
+
+		List<Intersectable> allSurfaces = new ArrayList<>();
+		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
+
 		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
 			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)));
 		} else {
@@ -88,13 +80,9 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 		context.setOtherSurfaces(otherSurfaces);
 
 		if (light instanceof SurfaceLight) {
-			try {
-				shade = lightingCalculation(intersections, new RayOrigin(intersections.get(0)),
-											surface, otherSurfaces,
-											((SurfaceLight) light).getSamples(), p);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			shade = lightingCalculation(intersections, new RayOrigin(intersections.get(0)),
+										surface, otherSurfaces,
+										((SurfaceLight) light).getSamples(), p);
 		} else if (light instanceof PointLight) {
 			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, intersections.get(0), context) : null;
 		} else if (light instanceof DirectionalAmbientLight) {
@@ -112,7 +100,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 			shade = new RGB(0.0, 0.0, 0.0);
 		}
 
-		result = new ColorProduct(shadow, shade);
+		return new Producer[] { shadow, shade };
 	}
 
 	@Override
@@ -123,24 +111,20 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRank<
 	}
 
 	@Override
-	public Iterable<Producer<Ray>> getDependencies() {
-		return intersections;
-	}
+	public Iterable<Producer<Ray>> getDependencies() { return intersections; }
 
 	public Curve<RGB> getSurface() { return surface; }
 
-	/**
-	 * Performs intersection and lighting calculations for the specified {@link Ray}, Surfaces,
-	 * and {@link Light}s. This method may return null, which should be interpreted as black
-	 * (or "nothing").
-	 */
-	public RGB evaluate(Object args[]) {
-		return result.evaluate(args);
-	}
+	@Override
+	public Producer<RGB> getProducer() { return this; }
+
+	@Override
+	public Producer<Scalar> getRank() { return distance; }
 
 	@Override
 	public void compact() {
-		result.compact();
+		super.compact();
+		getRank().compact();
 
 		System.out.println("Compacting LightingEngine");
 	}

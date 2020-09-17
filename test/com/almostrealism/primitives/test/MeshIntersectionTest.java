@@ -17,6 +17,7 @@ import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerWithRank;
+import org.almostrealism.util.ProducerWithRankAdapter;
 import org.almostrealism.util.RankedChoiceProducer;
 import org.almostrealism.util.StaticProducer;
 import org.junit.Assert;
@@ -74,7 +75,7 @@ public class MeshIntersectionTest {
 		Assert.assertEquals(-1.0, distances.get(1).getValue(), Math.pow(10, -10));
 
 		RankedChoiceProducer<Vector> closestNormal = new RankedChoiceProducer<>(Intersection.e, false);
-		closestNormal.add(new ProducerWithRank<>(
+		closestNormal.add(new ProducerWithRankAdapter<>(
 					StaticProducer.of(data.get(0).getNormal()),
 					new AdaptProducer<>(Triangle.intersectAt, ray, StaticProducer.of(data.get(0)))));
 		closestNormal.evaluate(new Object[] { new Pair(43.50, 92.00) });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.almostrealism;
 
+import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -28,26 +29,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class IntersectionalLightingEngine extends LightingEngine {
+public class IntersectionalLightingEngine extends LightingEngine<ContinuousField> {
 	// TODO  Arguments are redundant (they are found in ShaderContext)
     public IntersectionalLightingEngine(Producer<Ray> ray, Intersectable surface, Collection<Curve<RGB>> otherSurfaces,
 										Light light, Iterable<Light> otherLights, ShaderContext p) {
         super(surface.intersectAt(ray), (Curve<RGB>) surface, otherSurfaces, light, otherLights, p);
     }
 
-    public static List<Intersectable> filterIntersectables(Iterable<? extends Producer<RGB>> allSurfaces) {
-		List<Intersectable> l = new ArrayList<>();
-		for (Producer<RGB> p : allSurfaces) {
-			if (p instanceof Intersectable) {
-				l.add((Intersectable) p);
-			}
-		}
-
-		return l;
-	}
-
 	@Override
 	public String toString() {
-    	return "IntersectionalLightingEngine[" + super.getSurface() + "]";
+    	return "IntersectionalLightingEngine[" + getSurface() + "]";
 	}
 }

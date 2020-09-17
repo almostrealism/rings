@@ -32,6 +32,8 @@ import java.util.List;
  * @author  Michael Murray
  */
 public class RayIntersectionEngine implements RayTracer.Engine {
+	public static final boolean enableAcceleratedAggregator = false;
+
 	private Scene<ShadableSurface> scene;
 	private ShaderContext sparams;
 	private FogParameters fparams;
@@ -44,6 +46,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 	public Producer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
-		return new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
+		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
+		return enableAcceleratedAggregator ? agg.getAccelerated() : agg;
 	}
 }
