@@ -12,7 +12,9 @@ import com.almostrealism.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
+import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.Mesh;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
@@ -27,6 +29,7 @@ import com.almostrealism.RenderParameters;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
@@ -74,7 +77,7 @@ public class RayTracingTest {
 
 			/* Shaders */
 			s1.addShader(new DiffuseShader());
-			s1.addShader(new ReflectionShader(1.0, new RGB(1.0, 1.0, 1.0)));
+			s1.addShader(new ReflectionShader(1.0, RGBWhite.getInstance()));
 
 
 			/* Sphere 2 */
@@ -160,37 +163,14 @@ public class RayTracingTest {
 	public static void main(String args[]) throws IOException {
 		RealizableImage img = generateImage();
 
-		if (waitUntilComplete) {
-			while (!img.isComplete()) {
-				try {
-					Thread.sleep(30000); // Wait 30 seconds before trying again
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		while (true) {
-			try {
-				Producer<RGB> im[][] = img.evaluate(new Object[0]);
-				ImageCanvas.encodeImageFile(im, new File("test.jpeg"),
+		try {
+			ImageCanvas.encodeImageFile(img, new File("test.jpeg"),
 						ImageCanvas.JPEGEncoding);
-				System.out.println("Wrote image (" + (img.getCompleted() * 100) + "%)");
-			} catch (FileNotFoundException fnf) {
-				System.out.println("ERROR: Output file not found");
-			} catch (IOException ioe) {
-				System.out.println("IO ERROR");
-			}
-
-			if (img.isComplete()) {
-				System.exit(0);
-			}
-
-			try {
-				Thread.sleep(30000); // Wait 30 seconds before trying again
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			System.out.println("Wrote image");
+		} catch (FileNotFoundException fnf) {
+			System.out.println("ERROR: Output file not found");
+		} catch (IOException ioe) {
+			System.out.println("IO ERROR");
 		}
 	}
 }
