@@ -100,7 +100,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		if (this.input == null)
 			throw new IllegalArgumentException("Kernel input must be specified ahead of rank computation");
 
-		System.out.println("Evaluating rank kernels...");
+		System.out.println("LightingEngineAggregator: Evaluating rank kernels...");
 
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
