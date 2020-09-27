@@ -71,8 +71,8 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		if (color == null) {
 			color = new Future<Producer<RGB>>() {
 				@Override
-				public RGB get() {
-					return RayTracedScene.black;
+				public Producer<RGB> get() {
+					return StaticProducer.of(RayTracedScene.black);
 				}
 
 				@Override
