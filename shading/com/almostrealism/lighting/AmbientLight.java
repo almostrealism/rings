@@ -20,8 +20,7 @@ import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorMultiplier;
+import org.almostrealism.color.*;;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -30,6 +29,7 @@ import org.almostrealism.geometry.Curve;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.
@@ -101,7 +101,7 @@ public class AmbientLight implements Light {
 	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
 	public ColorProducer getColorAt(Producer<Vector> point) {
 		return GeneratedColorProducer.fromProducer(this,
-				new ColorProduct(color, RGBProducer.fromScalar(intensity)));
+				new ColorProduct(StaticProducer.of(color), RGBProducer.fromScalar(intensity)));
 	}
 	
 	/** Returns "Ambient Light". */
@@ -116,7 +116,9 @@ public class AmbientLight implements Light {
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static RGBProducer ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
-		RGBProducer color = new ColorMultiplier(light.getColor(), light.getIntensity());
+		RGBProducer color = new ColorProduct(StaticProducer.of(light.getColor()),
+				StaticProducer.of(
+						new RGB(light.getIntensity(), light.getIntensity(), light.getIntensity())));
 		color = new ColorProduct(color, surface.getValueAt(point));
 		
 		return color;
