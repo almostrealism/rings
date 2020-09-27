@@ -27,15 +27,14 @@ import org.almostrealism.algebra.computations.ScalarFromPair;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.bool.AcceleratedConjunctionAdapter;
 import org.almostrealism.math.bool.GreaterThan;
-import org.almostrealism.math.bool.LessThan;
+import org.almostrealism.math.bool.LessThanScalar;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
-public class SphereIntersectAt extends LessThan<Scalar> {
+public class SphereIntersectAt extends LessThanScalar {
 	private SphereIntersectAt(Producer<Ray> r, OriginDotDirection oDotD,
 							  OriginDotOrigin oDotO, DirectionDotDirection dDotD) {
-		super(2, Scalar.blank(),
-				discriminant(oDotD, oDotO, dDotD),
+		super(discriminant(oDotD, oDotO, dDotD),
 				StaticProducer.of(new Scalar(0.0)),
 				StaticProducer.of(new Scalar(-1.0)),
 				closest(t(oDotD, oDotO, dDotD)), false);
@@ -47,7 +46,7 @@ public class SphereIntersectAt extends LessThan<Scalar> {
 
 	private static AcceleratedConjunctionAdapter<Scalar> closest(PairProducer t) {
 		return new AcceleratedConjunctionAdapter<>(2, Scalar.blank(),
-				new LessThan(2, Scalar.blank(), t.x(), t.y(), t.x(), t.y(), false),
+				new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
 				new GreaterThan(2, Scalar.blank(), t.x(),
 						StaticProducer.of(new Scalar(0.0)),
 						t.x(), new GreaterThan(2, Scalar.blank(), t.y(),
