@@ -43,6 +43,7 @@ import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
 import io.flowtree.job.Output;
 import org.almostrealism.algebra.Camera;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
@@ -63,6 +64,7 @@ import io.flowtree.job.Job;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}
@@ -538,16 +540,10 @@ public class RayTracingJob implements Job {
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) s,
 												new FogParameters()), s.getCamera(), p, getExecutorService());
-		Producer<RGB> renderedImageData[][] = r.realize(p).evaluate(null);
-		if (enableCompaction) {
-			for (int i = 0; i < renderedImageData.length; i++) {
-				for (int j = 0; j < renderedImageData[i].length; j++) {
-					renderedImageData[i][j].compact();
-				}
-			}
-		}
+		Producer<RGB[][]> renderedImageData = r.realize(p);
+		if (enableCompaction) renderedImageData.compact();
 
-		RGB rgb[][] = GraphicsConverter.convertToRGBArray(renderedImageData, p.positionForIndices());
+		RGB rgb[][] = renderedImageData.evaluate(new Object[] { x, y });
 		
 		long time = System.currentTimeMillis() - start;
 		
@@ -589,7 +585,7 @@ public class RayTracingJob implements Job {
 								this.ssw + "-" + this.ssh + ".jpg");
 
 			try {
-				ImageCanvas.encodeImageFile(rgb, file, ImageCanvas.JPEGEncoding);
+				ImageCanvas.encodeImageFile(StaticProducer.of(rgb), file, ImageCanvas.JPEGEncoding);
 			} catch (IOException e) {
 				System.out.println("RayTracingJob: IO Error");
 			}
