@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.almostrealism.FogParameters;
 import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
+import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
@@ -50,8 +51,8 @@ import org.almostrealism.util.Pipeline;
 import org.almostrealism.util.Producer;
 
 /**
- * A {@link RenderPanel} object allows display of scene previews and
- * rendered images of the {@link Scene} object it uses.
+ * A {@link RenderPanel} object allows display of {@link Scene} previews and
+ * rendered images of the {@link Scene} it uses.
  * 
  * @author  Michael Murray
  */
@@ -63,7 +64,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	private int width, height, ssWidth, ssHeight;
 
-	private Producer<RGB> renderedImageData[][];
+	private RealizableImage image;
+	private RGB renderedImageData[][];
 	private Image renderedImage;
 
 	private Thread evaluationThread;
@@ -80,7 +82,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		double pw = this.getProjectionWidth();
 		// int w = 320;
 		// int w = 440;
-		int w = 440;
+		int w = 4;
 		
 		this.setImageWidth(w);
 		this.setImageHeight((int)(ph * (w / pw)));
@@ -118,20 +120,8 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				rparams.ssHeight = RenderPanel.this.ssHeight;
 
 				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, new FogParameters()), scene.getCamera(), rparams);
-				renderedImageData = r.realize(rparams).evaluate(null);
-
-				if (enableCompaction) {
-					Set<Producer<RGB>> compacted = new HashSet<>();
-
-					for (int i = 0; i < renderedImageData.length; i++) {
-						for (int j = 0; j < renderedImageData[i].length; j++) {
-							if (!compacted.contains(renderedImageData[i][j])) {
-								renderedImageData[i][j].compact();
-								compacted.add(renderedImageData[i][j]);
-							}
-						}
-					}
-				}
+				image = r.realize(rparams);
+				if (enableCompaction) image.compact();
 
 				evaluateImage();
 			});
@@ -149,10 +139,13 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 		evaluationThread = new Thread(() -> {
 			evaluationStart = System.currentTimeMillis();
+			renderedImageData = image.evaluate();
+			System.out.println("Completed image realization after " + (System.currentTimeMillis() - evaluationStart) + " msec");
+
 			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData, RenderPanel.this);
 			imageEvaluated = true;
 			evaluationThread = null;
-			System.out.println("Completed image realization after " + (System.currentTimeMillis() - evaluationStart) + " msec");
+			System.out.println("Completed image display after " + (System.currentTimeMillis() - evaluationStart) + " msec");
 		});
 
 		evaluationThread.start();
@@ -168,7 +161,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 * @see  #repaint()
 	 */
 	public void clearRenderedImage() {
-		this.renderedImageData = null;
+		this.image = null;
 		this.renderedImage = null;
 		this.repaint();
 	}
@@ -272,20 +265,23 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	 */
 	public int getSupersampleHeight() { return this.ssHeight; }
 	
-	/** Returns the {@link Producer}s for the {@link RGB}s that make up the image for this {@link RenderPanel}. */
-	public Producer<RGB>[][] getRenderedImageData() { return this.renderedImageData; }
+	/** Returns the {@link Producer} for the {@link RGB}s that make up the image for this {@link RenderPanel}. */
+	public RealizableImage getRealizableImage() { return this.image; }
+
+	/** Returns the {@link RGB}s that make up the image for this {@link RenderPanel}. */
+	public RGB[][] getRenderedImageData() { return renderedImageData; }
 
 	/** Returns the {@link Image} rendered by this {@link RenderPanel}. */
 	public Image getRenderedImage() { return renderedImage; }
 
 	/**
-	 * Sets the EventHandler object used by this RenderPanel object. Setting this to null will deactivae event reporting.
+	 * Sets the EventHandler object used by this {@link RenderPanel}. Setting this to null will deactivae event reporting.
 	 */
 	@Override
 	public void setEventHandler(EventHandler handler) { this.handler = handler; }
 	
 	/**
-	 * Returns the EventHandler object used by this RenderPanel object.
+	 * Returns the {@link EventHandler} used by this {@link RenderPanel}.
 	 */
 	@Override
 	public EventHandler getEventHandler() { return this.handler; }
