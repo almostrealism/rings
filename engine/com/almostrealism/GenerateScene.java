@@ -35,7 +35,7 @@ public class GenerateScene {
 	public static void main(String args[]) throws IOException {
 		Scene<ShadableSurface> s = new SceneFactory().construct();
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s, new FogParameters()), s.getCamera(), p);
-		ImageCanvas.encodeImageFile(r.realize(p).evaluate(null),
+		ImageCanvas.encodeImageFile(r.realize(p),
 									new File(System.currentTimeMillis() + ".jpg"),
 									ImageCanvas.JPEGEncoding);
 	}
