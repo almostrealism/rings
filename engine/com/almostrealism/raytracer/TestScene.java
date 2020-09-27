@@ -21,6 +21,7 @@ import com.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
+import com.almostrealism.rayshade.SilhouetteShader;
 import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
@@ -28,6 +29,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.DefaultVertexData;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.io.FileDecoder;
@@ -39,6 +42,8 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +51,8 @@ import java.io.IOException;
 
 public class TestScene extends Scene<ShadableSurface> {
 	public TestScene(boolean enableCornellBox, boolean enableRandomThing, boolean enableDragon,
-					 boolean enableSphere, boolean enableTriangle, boolean enableFloor,
+					 boolean enableSphere, boolean enableTriangles, boolean enableFloor,
+					 boolean enableSilhouette,
 					 boolean enableSphereReflection, boolean enableFloorReflection) throws IOException {
 		if (enableCornellBox) {
 			addAll(FileDecoder.decodeScene(new FileInputStream(new File("CornellBox.xml")),
@@ -56,9 +62,11 @@ public class TestScene extends Scene<ShadableSurface> {
 		Sphere s = new Sphere();
 
 		if (enableSphere) {
-			if (enableSphereReflection) {
+			if (enableSilhouette) {
+				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
-						new ReflectionShader(0.6, new RGB(0.6, 0.6, 0.6))
+						new ReflectionShader(0.6, StaticProducer.of(new RGB(0.6, 0.6, 0.6)))
 				});
 			} else {
 				s.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
@@ -66,7 +74,28 @@ public class TestScene extends Scene<ShadableSurface> {
 
 			s.setLocation(new Vector(0.0, 3.4, -3.0));
 			s.setColor(new RGB(0.8, 0.8, 0.8));
-			add(s);
+			// add(s);
+
+			Sphere s2 = new Sphere();
+			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s2.setLocation(new Vector(0.0, 2.4, -3.0));
+			s2.setColor(new RGB(0.8, 0.8, 0.8));
+			s2.setSize(0.25);
+			add(s2);
+
+			Sphere s3 = new Sphere();
+			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s3.setLocation(new Vector(0.0, 1.4, -3.0));
+			s3.setColor(new RGB(0.8, 0.8, 0.8));
+			s3.setSize(0.25);
+			add(s3);
+
+			Sphere s4 = new Sphere();
+			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s4.setLocation(new Vector(0.0, 0.4, -3.0));
+			s4.setColor(new RGB(0.8, 0.8, 0.8));
+			s4.setSize(0.25);
+			// add(s4);
 		}
 
 		if (enableFloor) {
@@ -75,7 +104,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 			if (enableFloorReflection) {
 				p.setShaders(new Shader[] {
-						new ReflectionShader(0.65, new RGB(1.0, 1.0, 1.0))
+						new ReflectionShader(0.65, RGBWhite.getInstance())
 				});
 			}
 
@@ -111,7 +140,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 				public ColorProducer getColorAt() { return p; }
 
-				public RGB getColorAt(Object args[]) { return evaluate(args); }
+				public RGBProducer getColorAt(Object args[]) { return StaticProducer.of(evaluate(args)); }
 				public RGB evaluate(Object args[]) { return this.getColorAt().evaluate(args); }
 
 				@Override
@@ -145,12 +174,16 @@ public class TestScene extends Scene<ShadableSurface> {
 			add(thing);
 		}
 
-		if (enableTriangle) {
-			DefaultVertexData data = new DefaultVertexData(3, 1);
+		if (enableTriangles) {
+			DefaultVertexData data = new DefaultVertexData(5, 3);
 			data.getVertices().set(0, new Vector(0.0, 1.0, 0.0));
 			data.getVertices().set(1, new Vector(-1.0, -1.0, 0.0));
 			data.getVertices().set(2, new Vector(1.0, -1.0, 0.0));
+			data.getVertices().set(3, new Vector(-1.0, 1.0, -1.0));
+			data.getVertices().set(4, new Vector(1.0, 1.0, -1.0));
 			data.setTriangle(0, 0, 1, 2);
+			data.setTriangle(1, 3, 1, 0);
+			data.setTriangle(2, 0, 2, 4);
 
 			Mesh triangle = new Mesh(data);
 			triangle.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
@@ -163,7 +196,7 @@ public class TestScene extends Scene<ShadableSurface> {
 					FileDecoder.PLYEncoding, false, null)).get(0);
 			dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 			dragon.setColor(new RGB(0.3, 0.4, 0.8));
-			dragon.setLocation(new Vector(0.0, -2.6, 0.0));
+			dragon.setLocation(new Vector(0.0, -2.4, 0.0));
 			dragon.setSize(25);
 			add(dragon);
 		}
