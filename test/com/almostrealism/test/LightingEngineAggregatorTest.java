@@ -19,23 +19,40 @@ package com.almostrealism.test;
 import com.almostrealism.FogParameters;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
+import com.almostrealism.primitives.SphereIntersectAt;
+import com.almostrealism.primitives.test.KernelizedIntersectionTest;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.TestScene;
+import io.almostrealism.code.Argument;
 import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.PairBank;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBBank;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.hardware.AcceleratedComputation;
 import org.almostrealism.hardware.AcceleratedProducer;
 import org.almostrealism.hardware.DynamicAcceleratedProducer;
+import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.swing.displays.ImageDisplay;
+import org.almostrealism.util.Producer;
+import org.almostrealism.util.ProducerArgumentReference;
+import org.almostrealism.util.StaticProducer;
+import org.junit.Assert;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.io.IOException;
 
-public class LightingEngineAggregatorTest {
+public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	protected RayTracedScene getScene() throws IOException {
 		TestScene scene = new TestScene(false, false, false,
-				true, false, true,
-				false, false);
+				true, false, false,
+				true, false, false);
 
 		RenderParameters rp = new RenderParameters();
 		rp.width = 100;
@@ -56,5 +73,107 @@ public class LightingEngineAggregatorTest {
 		p.compact();
 		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
+	}
+
+	@Test
+	public void aggregateKernelCompare() throws IOException {
+		AcceleratedComputation<RGB> p = (AcceleratedComputation<RGB>) getScene().getProducer();
+		p.compact();
+
+		PairBank input = getInput();
+		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		RGBBank output = new RGBBank(input.getCount());
+
+		System.out.println(p.getFunctionDefinition());
+
+		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
+		p.kernelEvaluate(output, new MemoryBank[] { input, dim });
+
+		/*
+		System.out.println("LightingEngineAggregatorTest: Displaying image...");
+
+		RGB image[][] = new RGB[width][height];
+		for (int i = 0; i < image.length; i++) {
+			for (int j = 0; j < image[i].length; j++) {
+				image[i][j] = output.get(j * width + i);
+			}
+		}
+
+		displayImage(image);
+		*/
+
+		System.out.println("LightingEngineAggregatorTest: Comparing...");
+		for (int i = 0; i < output.getCount(); i++) {
+			RGB value = p.evaluate(new Object[] { input.get(i), dim.get(i) });
+			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
+			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
+			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));
+		}
+	}
+
+	@Test
+	public void aggregateAcceleratedCompare() throws IOException {
+		RayIntersectionEngine.enableAcceleratedAggregator = false;
+		Producer<RGB> agg = getScene().getProducer();
+		agg.compact();
+
+		RayIntersectionEngine.enableAcceleratedAggregator = true;
+		AcceleratedComputation<RGB> p = (AcceleratedComputation<RGB>) getScene().getProducer();
+		p.compact();
+
+		PairBank input = getInput();
+		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		RGBBank output = new RGBBank(input.getCount());
+
+		System.out.println(p.getFunctionDefinition());
+
+		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
+		p.kernelEvaluate(output, new MemoryBank[] { input, dim });
+
+		System.out.println("LightingEngineAggregatorTest: Comparing...");
+		for (int i = 0; i < output.getCount(); i++) {
+			RGB value = agg.evaluate(new Object[] { input.get(i), dim.get(i) });
+			if (value == null) value = RGBBlack.getInstance().evaluate();
+			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
+			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
+			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));
+		}
+	}
+
+	@Test
+	public void compareDependents() throws IOException {
+		PairBank input = getInput();
+		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+
+		AcceleratedComputation<RGB> a = (AcceleratedComputation<RGB>) getScene().getProducer();
+		a.compact();
+
+		i: for (int i = 1; i < a.getInputProducers().length; i++) {
+			if (a.getInputProducers()[i] == null) continue i;
+
+			if (a.getInputProducers()[i].getProducer() instanceof ProducerArgumentReference) {
+				continue i;
+			} else if (a.getInputProducers()[i].getProducer() instanceof KernelizedProducer) {
+				KernelizedProducer kp = (KernelizedProducer)  a.getInputProducers()[i].getProducer();
+				MemoryBank output = kp.createKernelDestination(input.getCount());
+				kp.kernelEvaluate(output, new MemoryBank[] { input, dim });
+
+				System.out.println("LightingEngineAggregatorTest: Comparing...");
+				for (int j = 0; j < output.getCount(); j++) {
+					Object value = kp.evaluate(new Object[] { input.get(j), dim.get(j) });
+					Assert.assertEquals(value, output.get(j));
+				}
+			} else {
+				throw new IllegalArgumentException(a.getInputProducers()[i].getProducer().getClass().getSimpleName() +
+						" is not a ProducerArgumentReference or KernelizedProducer");
+			}
+		}
+	}
+
+	public void displayImage(RGB image[][]) {
+		JFrame frame = new JFrame();
+		frame.getContentPane().add(new ImageDisplay(image));
+		frame.setSize(image.length, image[0].length);
+		frame.setVisible(true);
 	}
 }
