@@ -21,11 +21,14 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
-public class ReflectedRay implements RayProducer {
+public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
 	private Producer<Vector> point;
 	private Producer<Vector> normal;
 	private Producer<Vector> reflected;
@@ -79,6 +82,9 @@ public class ReflectedRay implements RayProducer {
 		this.normal.compact();
 		this.reflected.compact();
 	}
+
+	@Override
+	public MemoryBank<Ray> createKernelDestination(int size) { return new RayBank(size); }
 
 	/**
 	 * Reflects the specified {@link Vector} across the normal vector represented by the
