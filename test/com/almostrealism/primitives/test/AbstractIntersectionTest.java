@@ -8,6 +8,8 @@ import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.StaticProducer;
 
 public class AbstractIntersectionTest {
+	protected final int width = 400, height = 400;
+
 	protected SphereIntersectAt combined() {
 		Vector viewDirection = new Vector(0.0, 0.0,  -1.0);
 		Vector upDirection = new Vector(0.0, 1.0, 0.0);
@@ -21,8 +23,8 @@ public class AbstractIntersectionTest {
 
 		return
 				new SphereIntersectAt(new PinholeCameraRayAt(new PassThroughProducer<>(0),
-						new StaticProducer<>(new Pair(100, 100)),
-						new Vector(0.0, 0.0, 100.0),
+						StaticProducer.of(new Pair(width, height)),
+						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,
 						u, v, w));
