@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,18 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.PairBank;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
+import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.Producer;
 
 import java.util.ArrayList;
 
-// TODO  Modify to implement KernelizedProducer
-public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
+// TODO Convert to subclass of ColorSum
+public class SuperSampler implements KernelizedProducer<RGB>, PathElement<RGB, RGB> {
 	protected Producer<RGB> samples[][];
 	private double scale;
 
@@ -53,6 +57,44 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 		}
 
 		return c;
+	}
+
+	@Override
+	public void kernelEvaluate(MemoryBank destination, MemoryBank[] args) {
+		int w = samples.length;
+		int h = samples[0].length;
+
+		PairBank allSamples = new PairBank(args[0].getCount());
+		RGBBank out[][] = new RGBBank[w][h];
+
+		System.out.println("SuperSampler: Evaluating sample kernels...");
+		for (int i = 0; i < samples.length; i++) {
+			j: for (int j = 0; j < samples[i].length; j++) {
+				for (int k = 0; k < args[0].getCount(); k++) {
+					Pair pos = (Pair) args[0].get(k);
+					double r = pos.getX() + ((double) i / (double) samples.length);
+					double q = pos.getY() + ((double) j / (double) samples[i].length);
+					allSamples.set(k, r, q);
+				}
+
+				out[i][j] = new RGBBank(args[0].getCount());
+				((KernelizedProducer) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
+			}
+		}
+
+		System.out.println("SuperSampler: Combining samples...");
+		for (int k = 0; k < destination.getCount(); k++) {
+			for (int i = 0; i < samples.length; i++) {
+				j: for (int j = 0; j < samples[i].length; j++) {
+					((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+				}
+			}
+		}
+	}
+
+	@Override
+	public MemoryBank<RGB> createKernelDestination(int size) {
+		return new RGBBank(size);
 	}
 
 	@Override
