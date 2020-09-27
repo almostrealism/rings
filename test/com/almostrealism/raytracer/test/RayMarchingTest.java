@@ -114,7 +114,7 @@ public class RayMarchingTest {
 			animation.render().start();
 		} else {
 			try {
-				ImageCanvas.encodeImageFile(new RayTracedScene(mandel, c).realize(params).evaluate(null),
+				ImageCanvas.encodeImageFile(new RayTracedScene(mandel, c).realize(params),
 						new File("test-march.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			} catch (FileNotFoundException fnf) {
@@ -167,9 +167,9 @@ public class RayMarchingTest {
 			dz[0].setZ(dz[0].getZ() * -1.0);
 			dz[1].setZ(dz[1].getZ() * -1.0);
 			dz[2].setZ(dz[2].getZ() * -1.0);
-	    	}
+	    }
 	    
-		z = clamp(z, -foldingLimit, foldingLimit).multiply(2.0).subtract(z);
+		z.setTo(clamp(z, -foldingLimit, foldingLimit).multiply(2.0).subtract(z));
 	}
 	
 	static Vector clamp(Vector x, double min, double max) {
