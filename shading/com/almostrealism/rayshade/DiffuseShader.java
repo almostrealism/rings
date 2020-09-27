@@ -29,6 +29,7 @@ import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.math.bool.GreaterThan;
+import org.almostrealism.math.bool.GreaterThanRGB;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -59,7 +60,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			front = new GreaterThan<RGB>(3, RGB.blank(), scaleFront, StaticProducer.of(0),
+			front = new GreaterThanRGB(scaleFront, StaticProducer.of(0),
 											new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleFront)),
 											StaticProducer.of(new RGB(0.0, 0.0, 0.0))) {
 				@Override
@@ -70,7 +71,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-			back = new GreaterThan<>(3, RGB.blank(), scaleBack, StaticProducer.of(0),
+			back = new GreaterThanRGB(scaleBack, StaticProducer.of(0),
 					new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleBack)),
 					StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
