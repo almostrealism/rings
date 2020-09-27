@@ -27,6 +27,7 @@ import org.almostrealism.algebra.Intersection;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
+import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBMultiply;
@@ -103,7 +104,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n, p);
 
-					c = new RGBMultiply(new RGB(10, 10, 10), c);
+					c = new ColorProduct(StaticProducer.of(new RGB(10, 10, 10)), c);
 
 					if (Math.random() < 0.01)
 						System.out.println("RefractionShader.shadeFront: " + c.evaluate(args));
@@ -153,7 +154,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 								Curve<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
-			return new RGB(0.0, 0.0, 0.0);
+			return StaticProducer.of(new RGB(0.0, 0.0, 0.0));
 		}
 		
 		boolean entering = this.checkEntering(viewerDirection, n);
