@@ -6,6 +6,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.texture.ImageCanvas;
+import org.almostrealism.util.DynamicProducer;
+import org.almostrealism.util.Producer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -309,18 +311,20 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 		this.image = RayTracingJob.processOutput(data, this.image, x, y, dx, dy);
 	}
 
-	public synchronized RGB[][] getImage() {
-		RGB copy[][] = new RGB[this.image.length][this.image[0].length];
+	public synchronized Producer<RGB[][]> getImage() {
+		return new DynamicProducer<>(args -> {
+			RGB copy[][] = new RGB[this.image.length][this.image[0].length];
 
-		for (int i = 0; i < copy.length; i++) {
-			for (int j = 0; j < copy[i].length; j++) {
-				if (this.image[i][j] == null)
-					copy[i][j] = new RGB(0.0, 0.0, 0.0);
-				else
-					copy[i][j] = (RGB) this.image[i][j].clone();
+			for (int i = 0; i < copy.length; i++) {
+				for (int j = 0; j < copy[i].length; j++) {
+					if (this.image[i][j] == null)
+						copy[i][j] = new RGB(0.0, 0.0, 0.0);
+					else
+						copy[i][j] = (RGB) this.image[i][j].clone();
+				}
 			}
-		}
 
-		return copy;
+			return copy;
+		});
 	}
 }
