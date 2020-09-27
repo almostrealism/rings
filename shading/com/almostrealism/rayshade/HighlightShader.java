@@ -24,10 +24,12 @@ import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
@@ -53,7 +55,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 * and 1.0 as a highlight exponent.
 	 */
 	public HighlightShader() {
-		this.setHighlightColor(new RGB(1.0, 1.0, 1.0));
+		this.setHighlightColor(RGBWhite.getInstance());
 		this.setHighlightExponent(1.0);
 	}
 	
@@ -92,8 +94,8 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		VectorProducer h = new VectorSum(p.getIntersection().getNormalAt(StaticProducer.of(point)), p.getLightDirection());
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
-		Producer<RGB> hc = this.getHighlightColor().evaluate(new Object[] {p});
-		if (super.size() > 0) hc = new RGBMultiply(hc, super.shade(p, normals));
+		Producer<RGB> hc = StaticProducer.of(this.getHighlightColor().evaluate(new Object[] {p}));
+		if (super.size() > 0) hc = new ColorProduct(hc, super.shade(p, normals));
 
 		ScalarProducer cFront = h.dotProduct(n);
 		ScalarProducer cBack = h.dotProduct(n.scalarMultiply(-1.0));
@@ -108,7 +110,9 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, fhc.evaluate(args)), new RGB(c, c, c));
+				Producer<RGB> pr = new ColorProduct(
+						new ColorProduct(StaticProducer.of(lightColor), StaticProducer.of(fhc.evaluate(args))),
+						StaticProducer.of(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {
@@ -121,7 +125,9 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = new RGBMultiply(new RGBMultiply(lightColor, fhc.evaluate(args)), new RGB(c, c, c));
+				Producer<RGB> pr = new ColorProduct(
+						new ColorProduct(StaticProducer.of(lightColor), StaticProducer.of(fhc.evaluate(args))),
+						StaticProducer.of(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {
