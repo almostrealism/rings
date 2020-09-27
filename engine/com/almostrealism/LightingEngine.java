@@ -97,7 +97,7 @@ public class LightingEngine<T extends ContinuousField> extends ColorProduct impl
 		} else if (light instanceof AmbientLight) {
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light, new RayOrigin(intersections.get(0)));
 		} else {
-			shade = new RGB(0.0, 0.0, 0.0);
+			shade = StaticProducer.of(new RGB(0.0, 0.0, 0.0));
 		}
 
 		return new Producer[] { shadow, shade };
@@ -126,7 +126,7 @@ public class LightingEngine<T extends ContinuousField> extends ColorProduct impl
 		super.compact();
 		getRank().compact();
 
-		System.out.println("Compacting LightingEngine");
+		System.out.println("Compacted LightingEngine");
 	}
 
 	/**
@@ -170,6 +170,7 @@ public class LightingEngine<T extends ContinuousField> extends ColorProduct impl
 	 * surfaces in the scene must be specified for reflection/shadowing. This list does not
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
+	@Deprecated
 	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
 													Curve<RGB> surface,
 													Iterable<Curve<RGB>> otherSurfaces, Light light,
@@ -189,7 +190,7 @@ public class LightingEngine<T extends ContinuousField> extends ColorProduct impl
 		} else if (light instanceof AmbientLight) {
 			throw new IllegalArgumentException("Migrated elsewhere");
 		} else {
-			return new RGB(0.0, 0.0, 0.0);
+			return StaticProducer.of(new RGB(0.0, 0.0, 0.0));
 		}
 	}
 
