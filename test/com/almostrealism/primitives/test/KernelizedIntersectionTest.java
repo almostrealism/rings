@@ -3,20 +3,20 @@ package com.almostrealism.primitives.test;
 import com.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.StaticProducer;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class KernelizedIntersectionTest extends AbstractIntersectionTest {
-	private int w = 2, h = 2;
-
 	public PairBank getInput() {
-		PairBank pixelLocations = new PairBank(w * h);
+		PairBank pixelLocations = new PairBank(width * height);
 
-		for (int i = 0; i < w; i++) {
-			for (int j = 0; j < h; j++) {
-				Pair p = pixelLocations.get(j * w + i);
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				Pair p = pixelLocations.get(j * width + i);
 				p.setMem(new double[] { i, j });
 			}
 		}
@@ -30,18 +30,18 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		combined.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(w, h)), w * h);
+		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
 		ScalarBank output = new ScalarBank(input.getCount());
 
 		System.out.println(combined.getFunctionDefinition());
 
-		combined.kernelEvaluate(output, new MemoryBank[] { input, dim, input, dim });
+		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
+		combined.kernelEvaluate(output, new MemoryBank[] { input, dim });
 
+		System.out.println("KernelizedIntersectionTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			System.out.println(output.get(i));
+			Scalar value = combined.evaluate(new Object[] { input.get(i), dim.get(i) });
+			Assert.assertEquals(value.getValue(), output.get(i).getValue(), Math.pow(10, -10));
 		}
-
-//		System.out.println(output.get(0));
-//		System.out.println(output.get(w * 50 + 50));
 	}
 }
