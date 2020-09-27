@@ -37,6 +37,7 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBFromScalars;
 import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
@@ -76,7 +77,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	public ReflectionShader() {
 		this.setReflectivity(0.0);
 		this.setBlur(0.0);
-		this.setReflectiveColor(new RGB(1.0, 1.0, 1.0));
+		this.setReflectiveColor(RGBWhite.getInstance());
 	}
 	
 	/**
@@ -141,7 +142,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p);
+			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
 			/*
 			if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
 				if (eMap == null) {
