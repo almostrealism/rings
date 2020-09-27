@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,39 @@ import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
+import org.almostrealism.util.StaticProducer;
 
 /**
- * A SilhouetteShader object can be used to shade a surface with one color value
- * for all parts of the surface.
+ * A {@link SilhouetteShader} can be used to shade a surface with one color value
+ * for all pixels where the surface appears.
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements Editable, Shader<LightingContext> {
-  private RGBProducer color;
-  
-  private String names[] = {"Color"};
-  private String desc[] = {"The color of the silhouette"};
-  private Class types[] = {ColorProducer.class};
+public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingContext> {
+	private Producer<RGB> color;
+
+	private String names[] = { "Color" };
+	private String desc[] = { "The color of the silhouette" };
+	private Class types[] = { RGBProducer.class };
   
   
 	/**
-	 * Constructs a new SilhouetteShader object using black as a color.
+	 * Constructs a new {@link SilhouetteShader} using black as a color.
 	 */
-	public SilhouetteShader() { this.color = new RGB(0.0, 0.0, 0.0); }
+	public SilhouetteShader() { this.color = StaticProducer.of(new RGB(0.0, 0.0, 0.0)); }
 	
 	/**
-	 * Constructs a new SilhouetteShader using the specified ColorProducer as a color.
+	 * Constructs a new {@link SilhouetteShader} using the specified {@link RGB}
+	 * {@link Producer} as a color.
 	 * 
-	 * @param color  ColorProducer to use.
+	 * @param color  RGB Producer to use.
 	 */
-	public SilhouetteShader(ColorProducer color) { this.color = color; }
+	public SilhouetteShader(Producer<RGB> color) { this.color = color; }
 	
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
+	@Override
 	public ColorProducer shade(LightingContext p, DiscreteField normals) {
 		return GeneratedColorProducer.fromProducer(this, color);
 	}
@@ -61,31 +64,40 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	/**
 	 * @see ColorProducer#evaluate(java.lang.Object[])
 	 */
+	@Override
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
+
+	@Override
+	public void compact() { color.compact(); }
 
 	/**
 	 * @see org.almostrealism.util.Editable#getPropertyNames()
 	 */
+	@Override
 	public String[] getPropertyNames() { return this.names; }
 
 	/**
 	 * @see org.almostrealism.util.Editable#getPropertyDescriptions()
 	 */
+	@Override
 	public String[] getPropertyDescriptions() { return this.desc; }
 
 	/**
 	 * @see org.almostrealism.util.Editable#getPropertyTypes()
 	 */
+	@Override
 	public Class[] getPropertyTypes() { return this.types; }
 
 	/**
 	 * @see org.almostrealism.util.Editable#getPropertyValues()
 	 */
+	@Override
 	public Object[] getPropertyValues() { return new Object[] {this.color}; }
 
 	/**
 	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
+	@Override
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
 			this.color = (ColorProducer)value;
@@ -96,6 +108,7 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	/**
 	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
 	 */
+	@Override
 	public void setPropertyValues(Object values[]) {
 		if (values.length > 0) this.color = (ColorProducer)values[0];
 	}
@@ -103,11 +116,13 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	/**
 	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
+	@Override
 	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
 
 	/**
 	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
 	 */
+	@Override
 	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)
 			this.color = (ColorProducer)p;
@@ -118,5 +133,6 @@ public class SilhouetteShader implements Editable, Shader<LightingContext> {
 	/**
 	 * @return  "Silhouette Shader".
 	 */
+	@Override
 	public String toString() { return "Silhouette Shader"; }
 }
