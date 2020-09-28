@@ -6,6 +6,7 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.graph.mesh.CachedMeshIntersectionKernel;
@@ -33,11 +34,15 @@ public class MeshIntersectionTest {
 	private int width, height;
 
 	protected Mesh mesh() {
-		DefaultVertexData data = new DefaultVertexData(3, 1);
+		DefaultVertexData data = new DefaultVertexData(5, 3);
 		data.getVertices().set(0, new Vector(0.0, 1.0, 0.0));
 		data.getVertices().set(1, new Vector(-1.0, -1.0, 0.0));
 		data.getVertices().set(2, new Vector(1.0, -1.0, 0.0));
+		data.getVertices().set(3, new Vector(-1.0, 1.0, -1.0));
+		data.getVertices().set(4, new Vector(1.0, 1.0, -1.0));
 		data.setTriangle(0, 0, 1, 2);
+		data.setTriangle(1, 3, 1, 0);
+		data.setTriangle(2, 0, 2, 4);
 
 		return new Mesh(data);
 	}
@@ -67,29 +72,36 @@ public class MeshIntersectionTest {
 	public void intersectAt() {
 		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, ray);
 
-		int size = 3;
-
-		PairBank input = new PairBank(size);
-		input.set(0, new Pair(0.00, 0.00));
-		input.set(1, new Pair(43.50, 92.00));
-		input.set(2, new Pair(width / 2, height / 2));
-
-		ScalarBank distances = new ScalarBank(size);
+		PairBank input = RealizableImage.generateKernelInput(0, 0, width, height);
+		ScalarBank distances = new ScalarBank(input.getCount());
 		kernel.setDimensions(width, height, 1, 1);
 		kernel.kernelEvaluate(distances, new MemoryBank[] { input });
 
-		System.out.println("distance(0) = " + distances.get(0).getValue());
-		Assert.assertEquals(-1.0, distances.get(0).getValue(), Math.pow(10, -10));
-
-		System.out.println("distance(1) = " + distances.get(1).getValue());
-		Assert.assertEquals(-1.0, distances.get(1).getValue(), Math.pow(10, -10));
-
-		System.out.println("distance(2) = " + distances.get(2).getValue());
-		Assert.assertEquals(1.0, distances.get(2).getValue(), Math.pow(10, -10));
-
 		Producer<Vector> closestNormal = kernel.getClosestNormal();
-		Vector n = closestNormal.evaluate(new Object[] { input.get(2) });
-		System.out.println("normal(2) = " + n);
+
+		int pos = 0;
+		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
+		Assert.assertEquals(-1.0, distances.get(pos).getValue(), Math.pow(10, -10));
+
+		pos = (height / 2) * width + width / 2;
+		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
+		Assert.assertEquals(1.0, distances.get(pos).getValue(), Math.pow(10, -10));
+
+		Vector n = closestNormal.evaluate(new Object[] { input.get(pos) });
+		System.out.println("normal(" + pos + ") = " + n);
+		Assert.assertEquals(0.0, n.getX(), Math.pow(10, -10));
+		Assert.assertEquals(0.0, n.getY(), Math.pow(10, -10));
+		Assert.assertEquals(1.0, n.getZ(), Math.pow(10, -10));
+
+		pos = (height / 2) * width + 3 * width / 8;
+		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
+		Assert.assertEquals(1.042412281036377, distances.get(pos).getValue(), Math.pow(10, -10));
+
+		n = closestNormal.evaluate(new Object[] { input.get(pos) });
+		System.out.println("normal(" + pos + ") = " + n);
+		Assert.assertEquals(-0.6666666865348816, n.getX(), Math.pow(10, -10));
+		Assert.assertEquals(0.3333333432674408, n.getY(), Math.pow(10, -10));
+		Assert.assertEquals(0.6666666865348816, n.getZ(), Math.pow(10, -10));
 	}
 
 	@Test
