@@ -66,25 +66,24 @@ public class DirectionalAmbientLight extends AmbientLight {
 	}
 	
 	/**
-	  Sets the direction of this DirectionalAmbientLight object to the direction represented by the specified Vector object.
-	*/
-	
+	 * Sets the direction of this {@link DirectionalAmbientLight} to the direction represented by the
+	 * specified {@link Vector}.
+	 */
 	public void setDirection(Vector direction) {
 		this.direction = direction;
 	}
 	
 	/**
-	  Returns the direction of this DirectionalAmbientLight object as a Vector object.
-	*/
-	
+	 * Returns the direction of this DirectionalAmbientLight object as a Vector object.
+	 */
 	public Vector getDirection() {
 		return this.direction;
 	}
 	
 	/**
-	  Returns "Directional Ambient Light".
-	*/
-	
+	 * Returns "Directional Ambient Light".
+	 */
+	@Override
 	public String toString() {
 		return "Directional Ambient Light";
 	}

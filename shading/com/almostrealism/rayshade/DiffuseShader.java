@@ -56,12 +56,13 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		ScalarProducer scaleFront = n.dotProduct(p.getLightDirection());
 		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
+		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 
 		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThanRGB(scaleFront, StaticProducer.of(0),
-											new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleFront)),
+											new ColorProduct(lightColor, surfaceColor, RGBProducer.fromScalar(scaleFront)),
 											StaticProducer.of(new RGB(0.0, 0.0, 0.0))) {
 				@Override
 				public void compact() {
@@ -72,7 +73,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			back = new GreaterThanRGB(scaleBack, StaticProducer.of(0),
-					new ColorProduct(lightColor, p.getSurface().getValueAt(point), RGBProducer.fromScalar(scaleBack)),
+					new ColorProduct(lightColor, surfaceColor, RGBProducer.fromScalar(scaleBack)),
 					StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
 
