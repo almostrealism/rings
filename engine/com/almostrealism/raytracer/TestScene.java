@@ -194,7 +194,13 @@ public class TestScene extends Scene<ShadableSurface> {
 		if (enableDragon) {
 			Mesh dragon = (Mesh) ((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("resources/dragon.ply")),
 					FileDecoder.PLYEncoding, false, null)).get(0);
-			dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
+
+			if (enableSilhouette) {
+				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			} else {
+				dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
+			}
+
 			dragon.setColor(new RGB(0.3, 0.4, 0.8));
 			dragon.setLocation(new Vector(0.0, -2.4, 0.0));
 			dragon.setSize(25);
