@@ -77,6 +77,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 	/**
 	 * @see org.almostrealism.color.Shader#shade(LightingContext, DiscreteField)
 	 */
+	@Override
 	public Producer<RGB> shade(T p, DiscreteField f) {
 		if (p.getSurface() instanceof RigidBody == false)
 			return RGBWhite.getInstance();
