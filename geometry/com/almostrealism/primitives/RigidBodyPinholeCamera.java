@@ -36,10 +36,13 @@ public class RigidBodyPinholeCamera implements Temporal {
 		this.model = model.getState();
 		this.model.addUpdateListener(this);
 	}
-	
-	public void tick() {
-		c.setLocation(this.model.getLocation());
-		c.setViewingDirection(this.model.getRotation());
+
+	@Override
+	public Runnable tick() {
+		return () -> {
+			c.setLocation(this.model.getLocation());
+			c.setViewingDirection(this.model.getRotation());
+		};
 	}
 	
 	public void forward(double d) {
