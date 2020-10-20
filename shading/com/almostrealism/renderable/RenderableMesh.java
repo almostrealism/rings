@@ -20,6 +20,7 @@ import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
+import io.almostrealism.code.Expression;
 import io.almostrealism.code.InstanceReference;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Scope;
@@ -121,11 +122,11 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		CodePrintWriter p = glPrintWriter.getPrintWriter();
 		p.println(positionBuffer);
 		
-		List<Variable> bindArgs = new ArrayList<Variable>();
+		List<Expression<?>> bindArgs = new ArrayList<>();
 		bindArgs.add(new InstanceReference("gl.ARRAY_BUFFER"));
 		bindArgs.add(new InstanceReference("positionBuffer"));
 		
-		Method bindBuf = glPrintWriter.glMethod("bindBuffer",bindArgs);
+		Method bindBuf = glPrintWriter.glMethod("bindBuffer", bindArgs);
 		
 		p.println(bindBuf);
 
@@ -143,7 +144,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
 		p.println(buffers);
 		Scope<Variable> bufferBinding= new Scope<Variable>();
-		List<Variable> vars=bufferBinding.getVariables();
+		List<Variable<?>> vars = bufferBinding.getVariables();
 		Variable numC = new Variable("numComponents", Integer.class, 2);
 		vars.add(numC);
 
@@ -155,8 +156,11 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glPrintWriter.glMethod("bindBuffer",new InstanceReference("gl.ARRAY_BUFFER"), new InstanceReference("buffers.position")));
-		methods.add(glPrintWriter.glMethod("vertexAttribPointer",new InstanceReference("programInfo.attribLocations.vertexPosition"), numC, 
-				new InstanceReference("gl.FLOAT"), norm, strd,offs));
+		methods.add(glPrintWriter.glMethod("vertexAttribPointer",
+				new InstanceReference("programInfo.attribLocations.vertexPosition"),
+				new InstanceReference<>(numC),
+				new InstanceReference("gl.FLOAT"), new InstanceReference<>(norm),
+				new InstanceReference<>(strd), new InstanceReference<>(offs)));
 		
 		//add
 //		gl.enableVertexAttribArray(
@@ -175,9 +179,12 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		Method useP= glPrintWriter.glMethod("useProgram", new InstanceReference("programInfo.program"));
 		p.println(useP);
 		
-		Method m4fv= glPrintWriter.glMethod("uniformMatrix4fv", new InstanceReference("programInfo.uniformLocations.projectionMatrix"),
-				norm, new InstanceReference("projectionMatrix"));
-		Method m4fvModel= glPrintWriter.glMethod("uniformMatrix4fv", new InstanceReference("programInfo.uniformLocations.modelViewMatrix"),norm,
+		Method m4fv= glPrintWriter.glMethod("uniformMatrix4fv",
+				new InstanceReference("programInfo.uniformLocations.projectionMatrix"),
+				new InstanceReference<>(norm), new InstanceReference("projectionMatrix"));
+		Method m4fvModel= glPrintWriter.glMethod("uniformMatrix4fv",
+				new InstanceReference("programInfo.uniformLocations.modelViewMatrix"),
+				new InstanceReference<>(norm),
 				new InstanceReference("modelViewMatrix"));
 
 		//pass identity matrices instead because conversion is on server side
@@ -185,7 +192,8 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 //		p.println(m4fvModel);
 		
 		Variable vCount = new Variable("vertexCount",Integer.class,4);
-		Method drawIt = glPrintWriter.glMethod("drawArrays",new InstanceReference("gl.TRIANGLE_STRIP"),offs,vCount);
+		Method drawIt = glPrintWriter.glMethod("drawArrays",new InstanceReference("gl.TRIANGLE_STRIP"),
+				new InstanceReference<>(offs), new InstanceReference<>(vCount));
 		p.println(vCount);
 		p.println(drawIt);
 	}

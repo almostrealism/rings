@@ -34,6 +34,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.graph.mesh.Triangle;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.texture.ImageTexture;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
@@ -51,7 +52,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class GLDriver {
-	protected boolean enableDoublePrecision = false;
+	protected boolean enableDoublePrecision = Hardware.getLocalHardware().isDoublePrecision();
 	protected boolean useGlMatrixStack = false;
 
 	protected GL2 gl;
