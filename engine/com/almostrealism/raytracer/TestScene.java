@@ -63,7 +63,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 		if (enableSphere) {
 			if (enableSilhouette) {
-				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
 						new ReflectionShader(0.6, StaticProducer.of(new RGB(0.6, 0.6, 0.6)))
@@ -77,21 +77,21 @@ public class TestScene extends Scene<ShadableSurface> {
 			// add(s);
 
 			Sphere s2 = new Sphere();
-			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			s2.setLocation(new Vector(0.0, 2.4, -3.0));
 			s2.setColor(new RGB(0.8, 0.8, 0.8));
 			s2.setSize(0.25);
 			add(s2);
 
 			Sphere s3 = new Sphere();
-			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			s3.setLocation(new Vector(0.0, 1.4, -3.0));
 			s3.setColor(new RGB(0.8, 0.8, 0.8));
 			s3.setSize(0.25);
 			add(s3);
 
 			Sphere s4 = new Sphere();
-			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			s4.setLocation(new Vector(0.0, 0.4, -3.0));
 			s4.setColor(new RGB(0.8, 0.8, 0.8));
 			s4.setSize(0.25);
@@ -104,7 +104,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 			if (enableFloorReflection) {
 				p.setShaders(new Shader[] {
-						new ReflectionShader(0.65, RGBWhite.getInstance())
+						new ReflectionShader(0.65, RGBWhite.getProducer())
 				});
 			}
 
@@ -117,7 +117,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				ColorProducer p = GeneratedColorProducer.fromFunction(this, new TripleFunction<RGB>() {
+				ColorProducer p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
 					@Override
 					public RGB operate(Triple t) {
 						Vector point = new Vector(t.getA(), t.getB(), 0.0);
@@ -196,7 +196,7 @@ public class TestScene extends Scene<ShadableSurface> {
 					FileDecoder.PLYEncoding, false, null)).get(0);
 
 			if (enableSilhouette) {
-				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			} else {
 				dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 			}

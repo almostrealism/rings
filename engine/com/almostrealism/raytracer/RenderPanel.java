@@ -82,7 +82,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 		double pw = this.getProjectionWidth();
 		// int w = 320;
 		// int w = 440;
-		int w = 100;
+		int w = 60;
 		
 		this.setImageWidth(w);
 		this.setImageHeight((int)(ph * (w / pw)));

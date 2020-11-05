@@ -19,6 +19,7 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.computations.DefaultScalarProducer;
 import org.almostrealism.algebra.computations.DirectionDotDirection;
 import org.almostrealism.algebra.computations.OriginDotDirection;
 import org.almostrealism.algebra.computations.OriginDotOrigin;
@@ -32,8 +33,8 @@ import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
 public class SphereIntersectAt extends LessThanScalar {
-	private SphereIntersectAt(Producer<Ray> r, OriginDotDirection oDotD,
-							  OriginDotOrigin oDotO, DirectionDotDirection dDotD) {
+	private SphereIntersectAt(Producer<Ray> r, ScalarProducer oDotD,
+							  ScalarProducer oDotO, ScalarProducer dDotD) {
 		super(discriminant(oDotD, oDotO, dDotD),
 				StaticProducer.of(new Scalar(0.0)),
 				StaticProducer.of(new Scalar(-1.0)),
@@ -41,7 +42,9 @@ public class SphereIntersectAt extends LessThanScalar {
 	}
 
 	public SphereIntersectAt(Producer<Ray> r) {
-		this(r, new OriginDotDirection(r), new OriginDotOrigin(r), new DirectionDotDirection(r));
+		this(r, new DefaultScalarProducer(new OriginDotDirection(r)),
+				new DefaultScalarProducer(new OriginDotOrigin(r)),
+				new DefaultScalarProducer(new DirectionDotDirection(r)));
 	}
 
 	private static AcceleratedConjunctionAdapter<Scalar> closest(PairProducer t) {
@@ -52,31 +55,31 @@ public class SphereIntersectAt extends LessThanScalar {
 						t.x(), new GreaterThan(2, Scalar.blank(), t.y(),
 						StaticProducer.of(new Scalar(0.0)), t.y(),
 						StaticProducer.of(new Scalar(-1.0)), false), false),
-				new GreaterThan(2, new ScalarFromPair(t, ScalarFromPair.X),
+				new GreaterThan(2, PairProducer.x(t),
 						StaticProducer.of(new Scalar(0))),
-				new GreaterThan(2, new ScalarFromPair(t, ScalarFromPair.Y),
+				new GreaterThan(2, PairProducer.y(t),
 						StaticProducer.of(new Scalar(0))));
 	}
 
-	private static PairProducer t(OriginDotDirection oDotD,
-								  OriginDotOrigin oDotO,
-								  DirectionDotDirection dDotD) {
+	private static PairProducer t(ScalarProducer oDotD,
+								  ScalarProducer oDotO,
+								  ScalarProducer dDotD) {
 		ScalarProducer dS = discriminantSqrt(oDotD, oDotO, dDotD);
 		ScalarProducer minusODotD = oDotD.multiply(-1.0);
 		ScalarProducer dDotDInv = dDotD.pow(-1.0);
-		return new PairFromScalars(minusODotD.add(dS).multiply(dDotDInv),
+		return PairProducer.fromScalars(minusODotD.add(dS).multiply(dDotDInv),
 								minusODotD.add(dS.multiply(-1.0)).multiply(dDotDInv));
 	}
 
-	private static ScalarProducer discriminant(OriginDotDirection oDotD,
-											  OriginDotOrigin oDotO,
-											  DirectionDotDirection dDotD) {
+	private static ScalarProducer discriminant(ScalarProducer oDotD,
+											   ScalarProducer oDotO,
+											   ScalarProducer dDotD) {
 		return oDotD.pow(2.0).add(dDotD.multiply(oDotO.add(-1.0)).multiply(-1));
 	}
 
-	private static ScalarProducer discriminantSqrt(OriginDotDirection oDotD,
-												  OriginDotOrigin oDotO,
-												  DirectionDotDirection dDotD) {
+	private static ScalarProducer discriminantSqrt(ScalarProducer oDotD,
+												   ScalarProducer oDotO,
+												   ScalarProducer dDotD) {
 		return discriminant(oDotD, oDotO, dDotD).pow(0.5);
 	}
 }

@@ -17,6 +17,7 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.computations.ScalarPow;
 import org.almostrealism.algebra.computations.ScalarProduct;
 import org.almostrealism.algebra.computations.ScalarSum;
@@ -29,10 +30,8 @@ import org.almostrealism.util.StaticProducer;
 public class Attenuation extends ColorProduct {
 	public Attenuation(double da, double db, double dc, Producer<RGB> color, Producer<Scalar> distanceSq) {
 		super(color, RGBProducer.fromScalar(
-				new ScalarSum(
-						new ScalarProduct(StaticProducer.of(da), distanceSq),
-						new ScalarProduct(StaticProducer.of(db),
-								new ScalarPow(distanceSq, StaticProducer.of(new Scalar(0.5)))),
-						StaticProducer.of(dc))));
+				StaticProducer.of(da).multiply(distanceSq)
+						.add(StaticProducer.of(db).multiply(ScalarProducer.pow(distanceSq, StaticProducer.of(new Scalar(0.5)))))
+								.add(StaticProducer.of(dc))));
 	}
 }

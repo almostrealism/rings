@@ -41,6 +41,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class LightingEngineAggregator extends RankedChoiceProducerForRGB implements PathElement<RGB, RGB>, DimensionAware {
+	public static boolean enableVerbose = false;
+
 	private PairBank input;
 	private List<ScalarBank> ranks;
 
@@ -158,7 +160,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		Producer<RGB> best = null;
 		double rank = Double.MAX_VALUE;
 
-		boolean printLog = false; // Math.random() < 0.04;
+		boolean printLog = enableVerbose && Math.random() < 0.04;
 
 		if (printLog) {
 			System.out.println("RankedChoiceProducer: There are " + size() + " Producers to choose from");

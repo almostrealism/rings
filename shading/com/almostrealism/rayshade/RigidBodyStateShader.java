@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.LightingContext;
@@ -80,7 +80,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 	@Override
 	public Producer<RGB> shade(T p, DiscreteField f) {
 		if (p.getSurface() instanceof RigidBody == false)
-			return RGBWhite.getInstance();
+			return RGBWhite.getProducer();
 		
 		RigidBody.State state = ((RigidBody)p.getSurface()).getState();
 		
@@ -98,6 +98,6 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 		d.divideBy(d.length());
 		p.setLightDirection(StaticProducer.of(d));
 		
-		return new RGBMultiply(this.shader.shade(p, f), new StaticProducer<>(new RGB(m, m, m)));
+		return RGBProducer.fromScalar(m).multiply(this.shader.shade(p, f));
 	}
 }

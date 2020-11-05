@@ -31,6 +31,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeoutException;
 // TODO Add ParticleGroup implementation.
 
 /** A {@link Sphere} represents a primitive sphere in 3d space. */
-public class Sphere extends AbstractSurface implements DistanceEstimator {
+public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFeatures {
 	private static boolean enableHardwareAcceleration = true;
 
 	/** Constructs a {@link Sphere} representing a unit sphere centered at the origin that is black. */
@@ -111,7 +112,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		// TODO  Perform computation within VectorProducer
 
-		Producer<Vector> normal = new VectorSum(point, StaticProducer.of(getLocation().minus()));
+		Producer<Vector> normal = add(point, StaticProducer.of(getLocation().minus()));
 		if (getTransform(true) != null)
 			normal = getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 
@@ -129,11 +130,11 @@ public class Sphere extends AbstractSurface implements DistanceEstimator {
 
 		if (enableHardwareAcceleration) {
 			Producer<Ray> tr = r;
-			if (m != null) tr = new RayMatrixTransform(m.getInverse(), tr);
+			if (m != null) tr = m.getInverse().transform(tr);
 
 			return new ShadableIntersection(this, r, new SphereIntersectAt(tr));
 		} else {
-			if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+			if (m != null) r = m.getInverse().transform(r);
 
 			final Producer<Ray> fr = r;
 

@@ -25,6 +25,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * A Cylinder object represents a cylinder in 3d space.
  */
-public class Cylinder extends AbstractSurface {
+public class Cylinder extends AbstractSurface implements CodeFeatures {
 	/**
 	 * Constructs a Cylinder object that represents a cylinder with a base radius of 1.0,
 	 * with base at the origin, that is black.
@@ -67,9 +68,9 @@ public class Cylinder extends AbstractSurface {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		Producer<Vector> normal = new VectorSum(point, StaticProducer.of(getLocation().minus()));
+		Producer<Vector> normal = add(point, StaticProducer.of(getLocation().minus()));
 		normal = super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
-		normal = new VectorProduct(normal, StaticProducer.of(new Vector(1.0, 0.0, 1.0)));
+		normal = multiply(normal, StaticProducer.of(new Vector(1.0, 0.0, 1.0)));
 		return normal;
 	}
 	
@@ -87,7 +88,7 @@ public class Cylinder extends AbstractSurface {
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+		if (m != null) r = m.getInverse().transform(r);
 
 		final Producer<Ray> fr = r;
 

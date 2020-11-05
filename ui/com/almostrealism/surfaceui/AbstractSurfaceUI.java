@@ -204,7 +204,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	@Override
-	public Vector operate(Triple triple) {
+	public RGB operate(Vector triple) {
 		return getSurface().operate(triple);
 	}
 

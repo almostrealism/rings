@@ -19,25 +19,18 @@ package com.almostrealism.test;
 import com.almostrealism.FogParameters;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
-import com.almostrealism.primitives.SphereIntersectAt;
 import com.almostrealism.primitives.test.KernelizedIntersectionTest;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.TestScene;
-import io.almostrealism.code.Argument;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.hardware.AcceleratedComputation;
-import org.almostrealism.hardware.AcceleratedProducer;
-import org.almostrealism.hardware.DynamicAcceleratedProducer;
+import org.almostrealism.hardware.AcceleratedComputationOperation;
+import org.almostrealism.hardware.AcceleratedComputationProducer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.displays.ImageDisplay;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerArgumentReference;
@@ -62,14 +55,14 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 	@Test
 	public void aggregate() throws IOException {
-		AcceleratedComputation p = (AcceleratedComputation) getScene().getProducer();
+		AcceleratedComputationProducer p = (AcceleratedComputationProducer) getScene().getProducer();
 		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
 	@Test
 	public void aggregateCompact() throws IOException {
-		AcceleratedComputation p = (AcceleratedComputation) getScene().getProducer();
+		AcceleratedComputationProducer p = (AcceleratedComputationProducer) getScene().getProducer();
 		p.compact();
 		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
@@ -77,7 +70,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 	@Test
 	public void aggregateKernelCompare() throws IOException {
-		AcceleratedComputation<RGB> p = (AcceleratedComputation<RGB>) getScene().getProducer();
+		AcceleratedComputationProducer<RGB> p = (AcceleratedComputationProducer<RGB>) getScene().getProducer();
 		p.compact();
 
 		PairBank input = getInput();
@@ -118,7 +111,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
-		AcceleratedComputation<RGB> p = (AcceleratedComputation<RGB>) getScene().getProducer();
+		AcceleratedComputationProducer<RGB> p = (AcceleratedComputationProducer<RGB>) getScene().getProducer();
 		p.compact();
 
 		PairBank input = getInput();
@@ -133,7 +126,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
 			RGB value = agg.evaluate(new Object[] { input.get(i), dim.get(i) });
-			if (value == null) value = RGBBlack.getInstance().evaluate();
+			if (value == null) value = RGBBlack.getProducer().evaluate();
 			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
 			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
 			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));
@@ -145,16 +138,16 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		PairBank input = getInput();
 		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
 
-		AcceleratedComputation<RGB> a = (AcceleratedComputation<RGB>) getScene().getProducer();
+		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
 		a.compact();
 
-		i: for (int i = 1; i < a.getInputProducers().length; i++) {
-			if (a.getInputProducers()[i] == null) continue i;
+		i: for (int i = 1; i < a.getArguments().size(); i++) {
+			if (a.getArguments().get(i) == null) continue i;
 
-			if (a.getInputProducers()[i].getProducer() instanceof ProducerArgumentReference) {
+			if (a.getArguments().get(i).getProducer() instanceof ProducerArgumentReference) {
 				continue i;
-			} else if (a.getInputProducers()[i].getProducer() instanceof KernelizedProducer) {
-				KernelizedProducer kp = (KernelizedProducer)  a.getInputProducers()[i].getProducer();
+			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedProducer) {
+				KernelizedProducer kp = (KernelizedProducer)  a.getArguments().get(i).getProducer();
 				MemoryBank output = kp.createKernelDestination(input.getCount());
 				kp.kernelEvaluate(output, new MemoryBank[] { input, dim });
 
@@ -164,7 +157,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 					Assert.assertEquals(value, output.get(j));
 				}
 			} else {
-				throw new IllegalArgumentException(a.getInputProducers()[i].getProducer().getClass().getSimpleName() +
+				throw new IllegalArgumentException(a.getArguments().get(i).getProducer().getClass().getSimpleName() +
 						" is not a ProducerArgumentReference or KernelizedProducer");
 			}
 		}

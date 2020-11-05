@@ -20,9 +20,11 @@ import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Intersectable;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.Producer;
 
 import java.util.ArrayList;
@@ -35,6 +37,9 @@ public class IntersectionalLightingEngine extends LightingEngine<ContinuousField
 										Light light, Iterable<Light> otherLights, ShaderContext p) {
         super(surface.intersectAt(ray), (Curve<RGB>) surface, otherSurfaces, light, otherLights, p);
     }
+
+	@Override
+	public MemoryBank<RGB> createKernelDestination(int size) { return new RGBBank(size); }
 
 	@Override
 	public String toString() {

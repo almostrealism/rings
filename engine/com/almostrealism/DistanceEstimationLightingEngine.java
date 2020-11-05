@@ -28,6 +28,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
@@ -90,7 +91,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		this.shaders = shaders;
 	}
 
-	public static class Locus extends ArrayList<Producer<Ray>> implements ContinuousField, Callable<Producer<RGB>>, Shadable {
+	public static class Locus extends ArrayList<Producer<Ray>>
+			implements ContinuousField, Callable<Producer<RGB>>, Shadable, HardwareFeatures {
 		private ShaderSet shaders;
 		private ShaderContext params;
 
@@ -101,12 +103,12 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public VectorProducer getNormalAt(Producer<Vector> vector) {
-			return new RayDirection(get(0));
+		public Producer<Vector> getNormalAt(Producer<Vector> vector) {
+			return compileProducer(new RayDirection(get(0)));
 		}
 
 		@Override
-		public Vector operate(Triple triple) {
+		public Vector operate(Vector triple) {
 			try {
 				return get(0).evaluate(new Object[] { triple }).getOrigin();
 			} catch (Exception e) {

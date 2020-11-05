@@ -41,7 +41,7 @@ public class AmbientLight implements Light {
 	private double intensity;
 	private RGB color;
 
-	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, new TripleFunction<RGB>() {
+	private ColorProducer colorProducer = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
 		@Override
 		public RGB operate(Triple triple) {
 			return color.multiply(intensity);
@@ -99,9 +99,10 @@ public class AmbientLight implements Light {
 	public RGB getColor() { return this.color; }
 	
 	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
+	@Override
 	public ColorProducer getColorAt(Producer<Vector> point) {
 		return GeneratedColorProducer.fromProducer(this,
-				new ColorProduct(StaticProducer.of(color), RGBProducer.fromScalar(intensity)));
+				StaticProducer.of(color).multiply(RGBProducer.fromScalar(intensity)));
 	}
 	
 	/** Returns "Ambient Light". */
@@ -116,10 +117,9 @@ public class AmbientLight implements Light {
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static RGBProducer ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
-		RGBProducer color = new ColorProduct(StaticProducer.of(light.getColor()),
-				StaticProducer.of(
-						new RGB(light.getIntensity(), light.getIntensity(), light.getIntensity())));
-		color = new ColorProduct(color, surface.getValueAt(point));
+		RGBProducer color = StaticProducer.of(light.getColor())
+				.multiply(RGBProducer.fromScalar(light.getIntensity()));
+		color = color.multiply(surface.getValueAt(point));
 		
 		return color;
 	}

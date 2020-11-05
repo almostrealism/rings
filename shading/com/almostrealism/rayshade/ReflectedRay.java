@@ -19,7 +19,6 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
@@ -27,6 +26,7 @@ import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
+import static org.almostrealism.util.Ops.*;
 
 public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
 	private Producer<Vector> point;
@@ -90,9 +90,9 @@ public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
 	 * Reflects the specified {@link Vector} across the normal vector represented by the
 	 * second specified {@link Vector} and returns the result.
 	 */
-	public static VectorSum reflect(Producer<Vector> vector, Producer<Vector> normal) {
-		VectorProducer newVector = VectorProducer.minus(vector);
-		ScalarProducer s = StaticProducer.of(2).multiply(newVector.dotProduct(normal).divide(VectorProducer.lengthSq(normal)));
-		return newVector.subtract(VectorProducer.scalarMultiply(normal, s));
+	public static VectorProducer reflect(Producer<Vector> vector, Producer<Vector> normal) {
+		VectorProducer newVector = ops().minus(vector);
+		ScalarProducer s = StaticProducer.of(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
+		return newVector.subtract(ops().scalarMultiply(normal, s));
 	}
 }

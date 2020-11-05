@@ -31,6 +31,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -39,7 +40,7 @@ import org.almostrealism.util.StaticProducer;
 /**
  * A {@link Cone} instance represents a cone in 3d space.
  */
-public class Cone extends AbstractSurface {
+public class Cone extends AbstractSurface implements CodeFeatures {
 	private static final double nsq = 1.0 / 2.0;
 
 	/**
@@ -66,7 +67,7 @@ public class Cone extends AbstractSurface {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		VectorProducer normal = new VectorProduct(point, StaticProducer.of(new Vector(1.0, -1.0, 1.0)));
+		VectorProducer normal = multiply(point, StaticProducer.of(new Vector(1.0, -1.0, 1.0)));
 		return super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
@@ -77,7 +78,7 @@ public class Cone extends AbstractSurface {
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		if (m != null) r = new RayMatrixTransform(m.getInverse(), r);
+		if (m != null) r = m.getInverse().transform(r);
 
 		final Producer<Ray> fr = r;
 

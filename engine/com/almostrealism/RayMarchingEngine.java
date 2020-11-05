@@ -30,13 +30,14 @@ import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
-public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField {
+public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;
@@ -73,13 +74,13 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 	}
 
 	@Override
-	public VectorProducer getNormalAt(Producer<Vector> point) {
-		return new RayDirection(iterator().next());
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		return compileProducer(new RayDirection(iterator().next()));
 	}
 
 	@Override
-	public Vector operate(Triple in) {
-		return getNormalAt(StaticProducer.of(new Vector(in.getA(), in.getB(), in.getC()))).evaluate(new Object[0]);
+	public RGB operate(Vector in) {
+		return getValueAt(StaticProducer.of(in)).evaluate();
 	}
 
 	@Override

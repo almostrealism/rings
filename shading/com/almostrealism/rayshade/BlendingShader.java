@@ -27,9 +27,11 @@ import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.ColorSum;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -54,8 +56,8 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 	 * and black as a cold color.
 	 */
 	public BlendingShader() {
-		this.hotColor = RGBWhite.getInstance();
-		this.coldColor = StaticProducer.of(new RGB(0.0, 0.0, 0.0));
+		this.hotColor = RGBWhite.getProducer();
+		this.coldColor = RGBBlack.getProducer();
 	}
 	
 	/**
@@ -86,14 +88,14 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 		
 		Producer<Vector> l = p.getLightDirection();
 		
-		ScalarProducer k = new DotProduct(new RayDirection(n), l).add(1.0);
-		ScalarProducer oneMinusK = new ScalarSum(StaticProducer.of(1.0), k.multiply(-1.0));
+		ScalarProducer k = RayProducer.direction(n).dotProduct(l).add(1.0);
+		ScalarProducer oneMinusK = StaticProducer.of(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.evaluate(new Object[] { p });
 		RGB cc = this.coldColor.evaluate(new Object[] { p });
 		
-		RGBProducer c = new ColorProduct(StaticProducer.of(hc), RGBProducer.fromScalar(k));
-		c = new ColorSum(c, new ColorProduct(StaticProducer.of(cc), RGBProducer.fromScalar(oneMinusK)));
+		RGBProducer c = StaticProducer.of(hc).multiply(RGBProducer.fromScalar(k));
+		c = c.add(StaticProducer.of(cc).multiply(RGBProducer.fromScalar(oneMinusK)));
 		
 		return GeneratedColorProducer.fromProducer(this, c);
 	}

@@ -138,19 +138,13 @@ public class GLPrintWriter extends GLDriver {
 	public void glColor(RGBA color) {
 		if (gl != null) super.glColor(color);
 
-		if (enableDoublePrecision) {
-			p.println(glMethod("color4d",
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getRed())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getGreen())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getBlue())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getAlpha()))));
-		} else {
-			p.println(glMethod("color4f",
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getRed())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getGreen())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getBlue())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(color.getAlpha()))));
-		}
+		String method = enableDoublePrecision ? "color4d" : "color4f";
+
+		p.println(glMethod(method,
+								new Expression<>(Double.class, stringForDouble(color.getRed())),
+								new Expression<>(Double.class, stringForDouble(color.getGreen())),
+								new Expression<>(Double.class, stringForDouble(color.getBlue())),
+								new Expression<>(Double.class, stringForDouble(color.getAlpha()))));
 	}
 
 	@Override
@@ -241,9 +235,9 @@ public class GLPrintWriter extends GLDriver {
 	public void glTexParameter(int code, int param, int value) {
 		if (gl != null) super.glTexParameter(code, param, value);
 		p.println(glMethod("texParameteri",
-				Arrays.asList(new Expression<>(String.valueOf(code)),
-								new Expression<>(String.valueOf(param)),
-								new Expression<>(String.valueOf(value)))));
+				Arrays.asList(new Expression<>(Integer.class, String.valueOf(code)),
+								new Expression<>(Integer.class, String.valueOf(param)),
+								new Expression<>(Integer.class, String.valueOf(value)))));
 	}
 
 	@Override
@@ -291,9 +285,9 @@ public class GLPrintWriter extends GLDriver {
 		String method = enableDoublePrecision ? "vertex3d" : "vertex3f";
 
 		p.println(glMethod(method,
-					Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(v.getX())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(v.getY())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(v.getZ())))));
+					Arrays.asList(new Expression<>(Double.class, stringForDouble(v.getX())),
+								new Expression<>(Double.class, stringForDouble(v.getY())),
+								new Expression<>(Double.class, stringForDouble(v.getZ())))));
 	}
 
 	@Override
@@ -303,8 +297,8 @@ public class GLPrintWriter extends GLDriver {
 		String method = enableDoublePrecision ? "vertex2d" : "vertex2f";
 
 		this.p.println(glMethod(method,
-					Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(p.getX())),
-								new Expression<>(Hardware.getLocalHardware().stringForDouble(p.getY())))));
+					Arrays.asList(new Expression<>(Double.class, stringForDouble(p.getX())),
+								new Expression<>(Double.class, stringForDouble(p.getY())))));
 	}
 
 	@Override
@@ -316,9 +310,9 @@ public class GLPrintWriter extends GLDriver {
 		String method = enableDoublePrecision ? "normal3d" : "normal3f";
 
 		p.println(glMethod(method,
-					Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(n.getX())),
-							new Expression<>(Hardware.getLocalHardware().stringForDouble(n.getY())),
-							new Expression<>(Hardware.getLocalHardware().stringForDouble(n.getZ())))));
+					Arrays.asList(new Expression<>(Double.class, stringForDouble(n.getX())),
+							new Expression<>(Double.class, stringForDouble(n.getY())),
+							new Expression<>(Double.class, stringForDouble(n.getZ())))));
 	}
 
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
@@ -338,10 +332,10 @@ public class GLPrintWriter extends GLDriver {
 	public void glColorMask(boolean r, boolean g, boolean b, boolean a) {
 		if (gl != null) super.glColorMask(r, g, b, a);
 		p.println(glMethod("colorMask",
-						new Expression<>(String.valueOf(r)),
-						new Expression<>(String.valueOf(g)),
-						new Expression<>(String.valueOf(b)),
-						new Expression<>(String.valueOf(a))));
+						new Expression<>(Boolean.class, String.valueOf(r)),
+						new Expression<>(Boolean.class, String.valueOf(g)),
+						new Expression<>(Boolean.class, String.valueOf(b)),
+						new Expression<>(Boolean.class, String.valueOf(a))));
 	}
 
 
@@ -349,24 +343,24 @@ public class GLPrintWriter extends GLDriver {
 	public void clearColorBuffer() {
 		if (gl != null) super.clearColorBuffer();
 		//throw new RuntimeException("clearColorBuffer");
-		p.println(glMethod("clear", new InstanceReference<>(glMember + ".COLOR_BUFFER_BIT")));
+		p.println(glMethod("clear", glParam("COLOR_BUFFER_BIT")));
 		
 	}
 	
 	@Override
 	public void glClearColorAndDepth() {
 		if (gl != null) super.glClearColorAndDepth();
-		p.println(glMethod("clear", new InstanceReference<>(glMember + ".COLOR_BUFFER_BIT  | " + glMember + ".DEPTH_BUFFER_BIT")));
+		p.println(glMethod("clear", glParam("COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT")));
 	}
 
 	@Override
 	public void glClearColor(RGBA c) {
 		if (gl != null) super.glClearColor(c);
 		p.println(glMethod("clearColor",
-						Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(c.r())),
-									new Expression<>(Hardware.getLocalHardware().stringForDouble(c.g())),
-									new Expression<>(Hardware.getLocalHardware().stringForDouble(c.b())),
-									new Expression<>(Hardware.getLocalHardware().stringForDouble(c.a())))));
+						Arrays.asList(new Expression<>(Double.class, stringForDouble(c.r())),
+									new Expression<>(Double.class, stringForDouble(c.g())),
+									new Expression<>(Double.class, stringForDouble(c.b())),
+									new Expression<>(Double.class, stringForDouble(c.a())))));
 	}
 
 	@Override
@@ -378,42 +372,39 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glDepthFunc(String code) {
 		if (gl != null) super.glDepthFunc(code);
-		p.println(glMethod("depthFunc", new InstanceReference<>(glMember + "." + code)));
+		p.println(glMethod("depthFunc", glParam(code)));
 	}
 
 	@Override
 	public void glStencilFunc(int func, int ref, int mask) {
 		if (gl != null) super.glStencilFunc(func, ref, mask);
 		p.println(glMethod("stencilFunc",
-							new Expression<>(String.valueOf(func)),
-							new Expression<>(String.valueOf(ref)),
-							new Expression<>(String.valueOf(mask))));
+							new Expression<>(Integer.class, String.valueOf(func)),
+							new Expression<>(Integer.class, String.valueOf(ref)),
+							new Expression<>(Integer.class, String.valueOf(mask))));
 	}
 
 	@Override
 	public void glStencilOp(int sfail, int dpfail, int dppass) {
 		if (gl != null) super.glStencilOp(sfail, dpfail, dppass);
 		p.println(glMethod("sStencilOp",
-							new Expression<>(String.valueOf(sfail)),
-							new Expression<>(String.valueOf(dpfail)),
-							new Expression<>(String.valueOf(dppass))));
+							new Expression<>(Integer.class, String.valueOf(sfail)),
+							new Expression<>(Integer.class, String.valueOf(dpfail)),
+							new Expression<>(Integer.class, String.valueOf(dppass))));
 	}
 
 	@Override
 	public void clearDepth(double d) {
 		if (gl != null) super.clearDepth(d);
 
-		if (enableDoublePrecision) {
-			p.println(glMethod("clearDepth", Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(d)))));
-		} else {
-			p.println(glMethod("clearDepthf", Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(d)))));
-		}
+		String method = enableDoublePrecision ? "clearDepth" : "clearDepthf";
+		p.println(glMethod(method, Arrays.asList(new Expression<>(Double.class, stringForDouble(d)))));
 	}
 
 	@Override
 	public void glClearStencil(int param) {
 		if (gl != null) super.glClearStencil(param);
-		p.println(glMethod("clearStencil", Arrays.asList(new Expression<>(String.valueOf(param)))));
+		p.println(glMethod("clearStencil", Arrays.asList(new Expression<>(Integer.class, String.valueOf(param)))));
 	}
 
 	@Override
@@ -462,7 +453,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void enable(String code) {
 		if (gl != null) super.enable(code);
-		p.println(glMethod("enable", new InstanceReference(glMember + "." + code)));
+		p.println(glMethod("enable", glParam(code)));
 	}
 
 	@Override
@@ -481,8 +472,8 @@ public class GLPrintWriter extends GLDriver {
 	public void blendFunc(String sfactor, String dfactor) {
 		if (gl != null) super.blendFunc(sfactor, dfactor);
 		p.println(glMethod("blendFunc",
-							new InstanceReference(glMember + "." + sfactor),
-							new InstanceReference(glMember + "." + dfactor)));
+							glParam(sfactor),
+							glParam(dfactor)));
 	}
 
 	@Override
@@ -531,20 +522,19 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	public void mapProgramAttributes(Variable program) {
-		Variable pos = new Variable(program.getName() + ".positionAttribute", String.class,
+		Variable pos = new Variable(program.getName() + ".positionAttribute", false, new Expression(String.class,
 									new Method<String>(glMember, "getAttribLocation",
 														new InstanceReference(program),
-														new InstanceReference("pos")));
-		p.println(pos, false);
+														new InstanceReference(null, "pos"))));
+		p.println(pos);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
 							new InstanceReference(new Variable(program.getName() + ".positionAttribute", ""))));
 
-		Variable norm = new Variable(program.getName() + ".normalAttribute", String.class,
-				new Method<String>(glMember, "getAttribLocation",
-						new InstanceReference<>(program),
-						new InstanceReference<>("normal")));
-		p.println(norm, false);
+		Variable norm = new Variable(program.getName() + ".normalAttribute", false,
+				new Expression(String.class, new Method<String>(glMember, "getAttribLocation",
+						new InstanceReference<>(program), new InstanceReference<>(Vector.class, "normal"))));
+		p.println(norm);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
 				new InstanceReference(new Variable(program.getName() + ".normalAttribute", ""))));
@@ -553,7 +543,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public Variable createShader(String type) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference<>(glMember + "." + type));
+		args.add(glParam(type));
 
 		String name = "shader" + (varIndex++);
 		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createShader", args));
@@ -565,7 +555,7 @@ public class GLPrintWriter extends GLDriver {
 	public void shaderSource(Variable shader, String source) {
 		List<Expression<?>> args = new ArrayList<>();
 		args.add(new InstanceReference<>(shader));
-		args.add(new Expression(source));
+		args.add(new Expression(String.class, source));
 		p.println(new Method(glMember, "shaderSource", args));
 	}
 
@@ -601,7 +591,7 @@ public class GLPrintWriter extends GLDriver {
 
 	public void bindBuffer(String code, Variable v) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference(glMember + "." + code));
+		args.add(glParam(code));
 		args.add(new InstanceReference(v));
 		p.println(new Method(glMember, "bindBuffer", args));
 	}
@@ -617,9 +607,9 @@ public class GLPrintWriter extends GLDriver {
 		Method n = new Method("new Float32Array", nargs);
 
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference(glMember + ".ARRAY_BUFFER"));
+		args.add(glParam("ARRAY_BUFFER"));
 		args.add(new Expression(n));
-		args.add(new InstanceReference(glMember + ".STATIC_DRAW"));
+		args.add(glParam("STATIC_DRAW"));
 		p.println(new Method(glMember, "bufferData", args));
 	}
 
@@ -639,7 +629,6 @@ public class GLPrintWriter extends GLDriver {
 	public void glBufferData(int code, int l, ByteBuffer buf, int d) {
 		if (gl != null) super.glBufferData(code, l, buf, d);
 		throw new RuntimeException("bufferData");
-
 	}
 
 	@Override
@@ -653,8 +642,8 @@ public class GLPrintWriter extends GLDriver {
 		String method = enableDoublePrecision ? "texCoord2d" : "texCoord2f";
 
 		p.println(glMethod(method,
-						Arrays.asList(new Expression<>(Hardware.getLocalHardware().stringForDouble(texCoord.getA())),
-									new Expression<>(Hardware.getLocalHardware().stringForDouble(texCoord.getB())))));
+						Arrays.asList(new Expression<>(Double.class, stringForDouble(texCoord.getA())),
+									new Expression<>(Double.class, stringForDouble(texCoord.getB())))));
 	}
 
 	@Override
@@ -722,13 +711,13 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void glCullFace(int param) {
 		if (gl != null) super.glCullFace(param);
-		p.println(glMethod("cullFace", new Expression<>(String.valueOf(param))));
+		p.println(glMethod("cullFace", new Expression<>(Integer.class, String.valueOf(param))));
 	}
 
 	@Override
 	public void glFrontFace(int param) {
 		if (gl != null) super.glFrontFace(param);
-		p.println(glMethod("frontFace", new Expression<>(String.valueOf(param))));
+		p.println(glMethod("frontFace", new Expression<>(Integer.class, String.valueOf(param))));
 	}
 
 	@Override
@@ -779,9 +768,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public void hint(String param, String value) throws NoSuchFieldException, IllegalAccessException {
 		if (gl != null) super.hint(param, value);
-		p.println(glMethod("hint",
-						new InstanceReference(glMember + "." + param),
-						new InstanceReference(glMember + "." + value)));
+		p.println(glMethod("hint", glParam(param), glParam(value)));
 	}
 	
 	//TODO: revise to correctly render a sphere.
@@ -799,13 +786,13 @@ public class GLPrintWriter extends GLDriver {
 		Variable projectionMatrix = new Variable("projectionMatrix", String.class, matrixMember + ".create()");
 		p.println(projectionMatrix);
 		List<Expression<?>> arguments = new ArrayList<>();
-		InstanceReference projMatrix = new InstanceReference<>("projectionMatrix");
-		Expression fieldOfView = new Expression(Hardware.getLocalHardware().stringForDouble(45 * Math.PI / 180));
+		InstanceReference projMatrix = new InstanceReference<>(TransformMatrix.class, "projectionMatrix");
+		Expression fieldOfView = new Expression(Double.class, stringForDouble(45 * Math.PI / 180));
 		Variable clientWidth = new Variable("clientWidth", String.class,"gl.canvas.clientWidth");
 		Variable clientHeight = new Variable("clientHeight", String.class,"gl.canvas.clientHeight");
 		p.println(clientWidth);
 		p.println(clientHeight);
-		Expression aspect = new Expression<>("clientWidth / clientHeight");
+		Expression aspect = new Expression<>(Double.class, "clientWidth / clientHeight");
 		Variable zNear = new Variable ("zNear", Float.class, 0.1);
 		Variable zFar = new Variable("zFar", Float.class, 100.0);
 		arguments.add(projMatrix);
@@ -823,9 +810,9 @@ public class GLPrintWriter extends GLDriver {
 		p.println(amtToTranslate);
 		
 		List<Expression<?>> tranArgs = new ArrayList<>();
-		tranArgs.add(new InstanceReference("modelViewMatrix"));
-		tranArgs.add(new InstanceReference("modelViewMatrix"));
-		tranArgs.add(new InstanceReference("amountToTranslate"));
+		tranArgs.add(new InstanceReference(TransformMatrix.class, "modelViewMatrix"));
+		tranArgs.add(new InstanceReference(TransformMatrix.class, "modelViewMatrix"));
+		tranArgs.add(new InstanceReference(TransformMatrix.class, "amountToTranslate"));
 		Method transl = new Method("mat4","translate", tranArgs);
 		
 		p.println(transl);
@@ -841,8 +828,8 @@ public class GLPrintWriter extends GLDriver {
 		p.println(positionBuffer);
 		
 		List<Expression<?>> bindArgs = new ArrayList<>();
-		bindArgs.add(new InstanceReference("gl.ARRAY_BUFFER"));
-		bindArgs.add(new InstanceReference("positionBuffer"));
+		bindArgs.add(glParam("ARRAY_BUFFER"));
+		bindArgs.add(new InstanceReference(null, "positionBuffer"));
 		
 		Method bindBuf = glMethod("bindBuffer", bindArgs);
 		
@@ -851,12 +838,11 @@ public class GLPrintWriter extends GLDriver {
 		
 		Variable positions = new Variable("positions", String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]");
 		p.println(positions);
-		
-		
-		
-		p.println(glMethod("bufferData", new InstanceReference("gl.ARRAY_BUFFER"),
-				new InstanceReference("new Float32Array(positions)"),
-				new InstanceReference("gl.STATIC_DRAW")));
+
+
+		p.println(glMethod("bufferData", glParam("ARRAY_BUFFER"),
+				new Expression(null, "new Float32Array(positions)"),
+				glParam("STATIC_DRAW")));
 		
 		//var buffers = { position: positionBuffer, };
 		
@@ -875,18 +861,19 @@ public class GLPrintWriter extends GLDriver {
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glMethod("bindBuffer",
-				new InstanceReference("gl.ARRAY_BUFFER"),
-				new InstanceReference("buffers.position")));
+				glParam("ARRAY_BUFFER"),
+				new InstanceReference(null, "buffers.position")));
 		methods.add(glMethod("vertexAttribPointer",
-				new InstanceReference("programInfo.attribLocations.vertexPosition"),
+				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition"),
 				new InstanceReference(numC),
-				new InstanceReference("gl.FLOAT"), new InstanceReference<>(norm),
+				glParam("FLOAT"), new InstanceReference<>(norm),
 				new InstanceReference<>(strd), new InstanceReference<>(offs)));
 		
 		//add
 //		gl.enableVertexAttribArray(
 //		        programInfo.attribLocations.vertexPosition);
-		methods.add(glMethod("enableVertexAttribArray",new InstanceReference("programInfo.attribLocations.vertexPosition")));
+		methods.add(glMethod("enableVertexAttribArray",
+				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition")));
 		
 		for (Iterator it = vars.iterator(); it.hasNext();) {
 			Variable v = (Variable) it.next();
@@ -897,21 +884,22 @@ public class GLPrintWriter extends GLDriver {
 			p.println(method);
 		}
 		
-		Method useP = glMethod("useProgram", new InstanceReference("programInfo.program"));
+		Method useP = glMethod("useProgram", new InstanceReference(null, "programInfo.program"));
 		p.println(useP);
 		
 		Method m4fv = glMethod("uniformMatrix4fv",
-				new InstanceReference("programInfo.uniformLocations.projectionMatrix"),
-				new InstanceReference<>(norm), new InstanceReference("projectionMatrix"));
+				new InstanceReference(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
+				new InstanceReference<>(norm), new InstanceReference(TransformMatrix.class, "projectionMatrix"));
 		Method m4fvModel = glMethod("uniformMatrix4fv",
-				new InstanceReference("programInfo.uniformLocations.modelViewMatrix"), new InstanceReference<>(norm),
-				new InstanceReference("modelViewMatrix"));
+				new InstanceReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
+				new InstanceReference(norm),
+				new InstanceReference<>(TransformMatrix.class, "modelViewMatrix"));
 		
 		p.println(m4fv);
 		p.println(m4fvModel);
 		
 		Variable vCount = new Variable("vertexCount",Integer.class,4);
-		Method drawIt = glMethod("drawArrays", new InstanceReference("gl.TRIANGLE_STRIP"),
+		Method drawIt = glMethod("drawArrays", glParam("TRIANGLE_STRIP"),
 				new InstanceReference<>(offs), new InstanceReference<>(vCount));
 		p.println(vCount);
 		p.println(drawIt);
@@ -970,6 +958,23 @@ public class GLPrintWriter extends GLDriver {
 //	protected Method glutMethod(String name, List<Variable> args) {
 //		return glMethod(glutMember, p instanceof JavaScriptPrintWriter, name, args);
 //	}
+
+	public InstanceReference<Integer> glParam(String... params) {
+		StringBuffer concat = new StringBuffer();
+
+		for (int i = 0; i < params.length; i++) {
+			concat.append(glMember);
+			concat.append(".");
+			concat.append(p);
+			if (i < params.length - 1) concat.append(" | ");
+		}
+
+		return new InstanceReference<>(Integer.class,concat.toString());
+	}
+
+	public static String stringForDouble(double value) {
+		return Hardware.getLocalHardware().stringForDouble(value);
+	}
 
 	protected static Method glMethod(String glMember, boolean isWebGL, String name, List<Expression<?>> args) {
 		if (!isWebGL) {

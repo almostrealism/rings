@@ -159,8 +159,8 @@ public class PinholeCamera extends OrthographicCamera {
 		}
 
 		if (enableHardwareAcceleration) {
-			return new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
-											blur, focalLength, u, v, w);
+			return compileProducer(new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
+											blur, focalLength, u, v, w));
 		} else {
 			return new Producer<Ray>() {
 				@Override

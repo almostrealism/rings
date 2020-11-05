@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.mesh.Mesh;
 
@@ -123,8 +124,8 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		p.println(positionBuffer);
 		
 		List<Expression<?>> bindArgs = new ArrayList<>();
-		bindArgs.add(new InstanceReference("gl.ARRAY_BUFFER"));
-		bindArgs.add(new InstanceReference("positionBuffer"));
+		bindArgs.add(glPrintWriter.glParam("ARRAY_BUFFER"));
+		bindArgs.add(new InstanceReference(null, "positionBuffer"));
 		
 		Method bindBuf = glPrintWriter.glMethod("bindBuffer", bindArgs);
 		
@@ -136,14 +137,15 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		
 		
 		
-		p.println(glPrintWriter.glMethod("bufferData",new InstanceReference("gl.ARRAY_BUFFER"),new InstanceReference(
-				"new Float32Array(positions)"),new InstanceReference("gl.STATIC_DRAW")));
+		p.println(glPrintWriter.glMethod("bufferData", glPrintWriter.glParam("ARRAY_BUFFER"),
+				new Expression(null, "new Float32Array(positions)"),
+				glPrintWriter.glParam("STATIC_DRAW")));
 		
 		//var buffers = { position: positionBuffer, };
 		
 		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
 		p.println(buffers);
-		Scope<Variable> bufferBinding= new Scope<Variable>();
+		Scope<Variable> bufferBinding = new Scope<Variable>();
 		List<Variable<?>> vars = bufferBinding.getVariables();
 		Variable numC = new Variable("numComponents", Integer.class, 2);
 		vars.add(numC);
@@ -155,17 +157,19 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		Variable offs = new Variable("offset",Integer.class,0);
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
-		methods.add(glPrintWriter.glMethod("bindBuffer",new InstanceReference("gl.ARRAY_BUFFER"), new InstanceReference("buffers.position")));
+		methods.add(glPrintWriter.glMethod("bindBuffer", glPrintWriter.glParam("ARRAY_BUFFER"),
+				new InstanceReference(Vector.class, "buffers.position")));
 		methods.add(glPrintWriter.glMethod("vertexAttribPointer",
-				new InstanceReference("programInfo.attribLocations.vertexPosition"),
+				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition"),
 				new InstanceReference<>(numC),
-				new InstanceReference("gl.FLOAT"), new InstanceReference<>(norm),
+				glPrintWriter.glParam("FLOAT"), new InstanceReference<>(norm),
 				new InstanceReference<>(strd), new InstanceReference<>(offs)));
 		
 		//add
 //		gl.enableVertexAttribArray(
 //		        programInfo.attribLocations.vertexPosition);
-		methods.add(glPrintWriter.glMethod("enableVertexAttribArray",new InstanceReference("programInfo.attribLocations.vertexPosition")));
+		methods.add(glPrintWriter.glMethod("enableVertexAttribArray",
+				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition")));
 		
 		for (Iterator it = vars.iterator(); it.hasNext();) {
 			Variable v = (Variable) it.next();
@@ -176,26 +180,25 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 			p.println(method);
 		}
 		
-		Method useP= glPrintWriter.glMethod("useProgram", new InstanceReference("programInfo.program"));
+		Method useP = glPrintWriter.glMethod("useProgram", new InstanceReference(null, "programInfo.program"));
 		p.println(useP);
 		
-		Method m4fv= glPrintWriter.glMethod("uniformMatrix4fv",
-				new InstanceReference("programInfo.uniformLocations.projectionMatrix"),
-				new InstanceReference<>(norm), new InstanceReference("projectionMatrix"));
-		Method m4fvModel= glPrintWriter.glMethod("uniformMatrix4fv",
-				new InstanceReference("programInfo.uniformLocations.modelViewMatrix"),
+		Method m4fv = glPrintWriter.glMethod("uniformMatrix4fv",
+				new InstanceReference<>(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
+				new InstanceReference<>(norm), new InstanceReference<>(TransformMatrix.class, "projectionMatrix"));
+		Method m4fvModel = glPrintWriter.glMethod("uniformMatrix4fv",
+				new InstanceReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
 				new InstanceReference<>(norm),
-				new InstanceReference("modelViewMatrix"));
+				new InstanceReference<>(TransformMatrix.class, "modelViewMatrix"));
 
 		//pass identity matrices instead because conversion is on server side
 //		p.println(m4fv);
 //		p.println(m4fvModel);
 		
 		Variable vCount = new Variable("vertexCount",Integer.class,4);
-		Method drawIt = glPrintWriter.glMethod("drawArrays",new InstanceReference("gl.TRIANGLE_STRIP"),
+		Method drawIt = glPrintWriter.glMethod("drawArrays", glPrintWriter.glParam("TRIANGLE_STRIP"),
 				new InstanceReference<>(offs), new InstanceReference<>(vCount));
 		p.println(vCount);
 		p.println(drawIt);
 	}
-
 }

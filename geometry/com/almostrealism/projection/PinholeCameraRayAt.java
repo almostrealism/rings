@@ -22,13 +22,11 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.PairFromScalars;
-import org.almostrealism.algebra.computations.ScalarFromPair;
-import org.almostrealism.algebra.computations.VectorFromScalars;
 import org.almostrealism.geometry.RandomPair;
 import org.almostrealism.geometry.RayFromVectors;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
+import static org.almostrealism.util.Ops.*;
 
 public class PinholeCameraRayAt extends RayFromVectors {
 	private PinholeCameraRayAt(Vector location, VectorProducer direction) {
@@ -44,12 +42,12 @@ public class PinholeCameraRayAt extends RayFromVectors {
 											Vector u, Vector v, Vector w, Pair blur) {
 		PairProducer pd = StaticProducer.of(projectionDimensions);
 
-		ScalarProducer sdx = new ScalarFromPair(sd, ScalarFromPair.X);
-		ScalarProducer sdy = new ScalarFromPair(sd, ScalarFromPair.Y);
+		ScalarProducer sdx = PairProducer.x(sd);
+		ScalarProducer sdy = PairProducer.y(sd);
 
-		ScalarProducer p = pd.x().multiply(new ScalarFromPair(pos, ScalarFromPair.X))
+		ScalarProducer p = pd.x().multiply(PairProducer.x(pos))
 								.multiply(sdx.add(-1.0).pow(-1.0)).add(pd.x().multiply(-0.5));
-		ScalarProducer q = pd.y().multiply(new ScalarFromPair(pos, ScalarFromPair.Y))
+		ScalarProducer q = pd.y().multiply(PairProducer.y(pos))
 								.multiply(sdy.add(-1.0).pow(-1.0)).add(pd.y().multiply(-0.5));
 		ScalarProducer r = StaticProducer.of(new Scalar(-focalLength));
 
@@ -57,7 +55,7 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		ScalarProducer y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
 		ScalarProducer z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
 
-		VectorProducer pqr = new VectorFromScalars(x, y, z);
+		VectorProducer pqr = ops().fromScalars(x, y, z);
 		ScalarProducer len = pqr.length();
 		
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
@@ -66,7 +64,7 @@ public class PinholeCameraRayAt extends RayFromVectors {
 			VectorProducer vv = v(wv, uv);
 
 			PairProducer random = new RandomPair();
-			random = new PairFromScalars(random.x().add(-0.5), random.y().add(-0.5));
+			random = PairProducer.fromScalars(random.x().add(-0.5), random.y().add(-0.5));
 
 			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(random.x()));
 			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(random.y()));
@@ -79,11 +77,11 @@ public class PinholeCameraRayAt extends RayFromVectors {
 
 	private static VectorProducer t(VectorProducer pqr) {
 		VectorProducer t = pqr.y().lessThan(pqr.x()).and(pqr.y().lessThan(pqr.z()),
-				new VectorFromScalars(pqr.x(), StaticProducer.of(new Scalar(1.0)), pqr.z()),
-				new VectorFromScalars(pqr.x(), pqr.y(), StaticProducer.of(new Scalar(1.0))));
+				ops().fromScalars(pqr.x(), StaticProducer.of(new Scalar(1.0)), pqr.z()),
+				ops().fromScalars(pqr.x(), pqr.y(), StaticProducer.of(new Scalar(1.0))));
 
 		t = pqr.x().lessThan(pqr.y()).and(pqr.y().lessThan(pqr.z()),
-				new VectorFromScalars(StaticProducer.of(new Scalar(1.0)), pqr.y(), pqr.z()), t);
+				ops().fromScalars(StaticProducer.of(new Scalar(1.0)), pqr.y(), pqr.z()), t);
 
 		return t;
 	}
@@ -92,13 +90,13 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		ScalarProducer x = t.y().multiply(w.z()).add(t.z().multiply(w.y()).multiply(-1.0));
 		ScalarProducer y = t.z().multiply(w.x()).add(t.x().multiply(w.z()).multiply(-1.0));
 		ScalarProducer z = t.x().multiply(w.y()).add(t.y().multiply(w.x()).multiply(-1.0));
-		return new VectorFromScalars(x, y, z).normalize();
+		return ops().fromScalars(x, y, z).normalize();
 	}
 
 	private static VectorProducer v(VectorProducer w, VectorProducer u) {
 		ScalarProducer x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
 		ScalarProducer y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
 		ScalarProducer z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
-		return new VectorFromScalars(x, y, z);
+		return ops().fromScalars(x, y, z);
 	}
 }

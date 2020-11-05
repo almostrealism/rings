@@ -30,9 +30,9 @@ import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBMultiply;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -48,7 +48,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author  Michael Murray
  */
-public class RefractionShader implements Shader<ShaderContext>, Editable {
+public class RefractionShader implements Shader<ShaderContext>, Editable, HardwareFeatures {
 	public static Vector lastRay;
 	
 	public static boolean produceOutput = false;
@@ -104,7 +104,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable {
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n, p);
 
-					c = new ColorProduct(StaticProducer.of(new RGB(10, 10, 10)), c);
+					c = compileProducer(new ColorProduct(StaticProducer.of(new RGB(10, 10, 10)), c));
 
 					if (Math.random() < 0.01)
 						System.out.println("RefractionShader.shadeFront: " + c.evaluate(args));

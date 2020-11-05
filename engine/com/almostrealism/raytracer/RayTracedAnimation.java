@@ -401,7 +401,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String ref = p.getProperty("bodies." + i + ".shade.ref");
 
 				if (ref != null) {
-					s.addShader(new ReflectionShader(Double.parseDouble(ref), RGBWhite.getInstance()));
+					s.addShader(new ReflectionShader(Double.parseDouble(ref), RGBWhite.getProducer()));
 				}
 
 				s.addShader(DiffuseShader.defaultDiffuseShader);

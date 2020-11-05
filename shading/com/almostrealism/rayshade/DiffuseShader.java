@@ -28,6 +28,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.math.bool.GreaterThan;
 import org.almostrealism.math.bool.GreaterThanRGB;
 import org.almostrealism.space.ShadableSurface;
@@ -51,8 +52,8 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 	/** Method specified by the {@link Shader} interface. */
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
-		VectorProducer point = new RayOrigin(normals.get(0));
-		VectorProducer n = new RayDirection(normals.get(0)).normalize();
+		VectorProducer point = RayProducer.origin(normals.get(0));
+		VectorProducer n = RayProducer.direction(normals.get(0)).normalize();
 		ScalarProducer scaleFront = n.dotProduct(p.getLightDirection());
 		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
@@ -62,23 +63,18 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThanRGB(scaleFront, StaticProducer.of(0),
-											new ColorProduct(lightColor, surfaceColor, RGBProducer.fromScalar(scaleFront)),
-											StaticProducer.of(new RGB(0.0, 0.0, 0.0))) {
-				@Override
-				public void compact() {
-					super.compact();
-				}
-			};
+							RGBProducer.fromScalar(scaleFront).multiply(lightColor).multiply(surfaceColor),
+							StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			back = new GreaterThanRGB(scaleBack, StaticProducer.of(0),
-					new ColorProduct(lightColor, surfaceColor, RGBProducer.fromScalar(scaleBack)),
-					StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
+							RGBProducer.fromScalar(scaleBack).multiply(lightColor).multiply(surfaceColor),
+							StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
 		}
 
 		if (front != null && back != null) {
-			return GeneratedColorProducer.fromProducer(this, new ColorSum(front, back));
+			return GeneratedColorProducer.fromProducer(this, RGBProducer.add(front, back));
 		} else if (front != null) {
 			return GeneratedColorProducer.fromProducer(this, front);
 		} else if (back != null) {

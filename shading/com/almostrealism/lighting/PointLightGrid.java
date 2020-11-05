@@ -130,7 +130,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	/** Returns a zero vector. */
 	@Override
 	public VectorProducer getNormalAt(Producer<Vector> point) {
-		return ZeroVector.getInstance();
+		return ZeroVector.getProducer();
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	}
 
 	@Override
-	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+	public Operator<Scalar> get() {
 		return null;
 	}
 

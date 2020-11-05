@@ -24,6 +24,7 @@ import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.io.DecodePostProcessing;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.uml.ModelEntity;
@@ -46,7 +47,7 @@ import org.almostrealism.util.StaticProducer;
  * @author  Michael Murray
  */
 @ModelEntity
-public class OrthographicCamera implements Camera, Positioned, DecodePostProcessing {
+public class OrthographicCamera implements Camera, Positioned, DecodePostProcessing, HardwareFeatures {
 	private Vector location = new Vector(0.0, 0.0, 0.0);
 	private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
 	private Vector upDirection = new Vector(0.0, 1.0, 0.0);

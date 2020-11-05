@@ -27,6 +27,8 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
 
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.StaticProducer;
 
@@ -37,7 +39,7 @@ import org.almostrealism.util.StaticProducer;
  * and 1.0 (no attenuation).
  */
 // TODO  Accept a ColorProducer instead of an RGB
-public class PointLight implements Light, Positioned {
+public class PointLight implements Light, Positioned, CodeFeatures {
 	private double intensity;
 	private RGB color;
 
@@ -158,10 +160,10 @@ public class PointLight implements Light, Positioned {
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		ScalarProducer d = new VectorSum(point, StaticProducer.of(location).scalarMultiply(-1.0)).lengthSq();
+		ScalarProducer d = add(point, StaticProducer.of(location).scalarMultiply(-1.0)).lengthSq();
 
 		RGB color = getColor().multiply(getIntensity());
-		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, StaticProducer.of(color), d));
+		return GeneratedColorProducer.fromComputation(this, new Attenuation(da, db, dc, StaticProducer.of(color), d));
 	}
 
 	/** Returns the location of this {@link PointLight} as a {@link Vector}. */
@@ -196,8 +198,8 @@ public class PointLight implements Light, Positioned {
 	 */
 	// TODO  This should be a method of the Light interface
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
-		VectorProducer point = new RayOrigin(intersection);
-		VectorProducer direction = new VectorSum(point, StaticProducer.of(getLocation()).scalarMultiply(-1.0));
+		VectorProducer point = RayProducer.origin(intersection);
+		VectorProducer direction = add(point, v(getLocation()).scalarMultiply(-1.0));
 		direction = direction.normalize().scalarMultiply(-1.0);
 		context.setLightDirection(direction);
 		return surface.shade(context);

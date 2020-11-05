@@ -1,13 +1,30 @@
+/*
+ * Copyright 2020 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.primitives.SphereIntersectAt;
 import com.almostrealism.projection.PinholeCameraRayAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.StaticProducer;
 
-public class AbstractIntersectionTest {
+public class AbstractIntersectionTest implements HardwareFeatures {
 	protected final int width = 400, height = 400;
 
 	protected SphereIntersectAt combined() {
@@ -22,11 +39,11 @@ public class AbstractIntersectionTest {
 		Vector v = w.crossProduct(u);
 
 		return
-				new SphereIntersectAt(new PinholeCameraRayAt(new PassThroughProducer<>(0),
+				new SphereIntersectAt(compileProducer(new PinholeCameraRayAt(new PassThroughProducer<>(0),
 						StaticProducer.of(new Pair(width, height)),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,
-						u, v, w));
+						u, v, w)));
 	}
 }

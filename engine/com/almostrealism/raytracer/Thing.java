@@ -33,7 +33,7 @@ public class Thing extends AbstractSurface {
 	}
 
 	@Override
-	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+	public Operator<Scalar> get() {
 		return p.get();
 	}
 
@@ -44,6 +44,6 @@ public class Thing extends AbstractSurface {
 
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		return new ImmutableVector(0.0, 0.0, 1.0);
+		return compileProducer(new ImmutableVector(0.0, 0.0, 1.0));
 	}
 }

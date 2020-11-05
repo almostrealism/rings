@@ -22,6 +22,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
 import org.almostrealism.time.Clock;
@@ -32,7 +33,7 @@ import org.almostrealism.util.Producer;
 /**
  * @author  Michael Murray
  */
-public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Volume {
+public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Volume<Ray>, HardwareFeatures {
 	private Clock clock;
 	
 	private Pinhole pinhole;
@@ -73,7 +74,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 		this.pinhole = pinhole;
 		this.plane = plane;
 		
-		double norm[] = pinhole.getSurfaceNormal().evaluate(new Object[0]).toArray();
+		double norm[] = pinhole.getSurfaceNormal().evaluate().toArray();
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
 	}
 
@@ -115,7 +116,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 
 	@Override
 	public Vector getViewingDirection() {
-		return plane.getSurfaceNormal().evaluate(new Object[0]);
+		return plane.getSurfaceNormal().evaluate();
 	}
 
 	@Override
@@ -215,13 +216,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Clock getClock() { return this.clock; }
 
 	@Override
-	public boolean inside(VectorProducer x) { return pinhole.inside(x) || plane.inside(x); }
+	public boolean inside(Producer<Vector> x) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
 	public Producer getValueAt(Producer point) { return null; }
 
 	@Override
-	public VectorProducer getNormalAt(Producer<Vector> x) { return plane.getNormalAt(x); }
+	public Producer<Vector> getNormalAt(Producer<Vector> x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {
@@ -229,7 +230,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public double[] getSurfaceCoords(VectorProducer xyz) { return plane.getSurfaceCoords(xyz); }
+	public double[] getSurfaceCoords(Producer<Vector> xyz) { return plane.getSurfaceCoords(xyz); }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }
@@ -257,7 +258,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getNextEmit() { return Integer.MAX_VALUE; }
 
 	@Override
-	public Vector operate(Triple triple) {
+	public Ray operate(Vector v) {
 		return null;
 	}
 }

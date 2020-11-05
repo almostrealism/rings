@@ -77,7 +77,7 @@ public class RayTracingTest {
 
 			/* Shaders */
 			s1.addShader(new DiffuseShader());
-			s1.addShader(new ReflectionShader(1.0, RGBWhite.getInstance()));
+			s1.addShader(new ReflectionShader(1.0, RGBWhite.getProducer()));
 
 
 			/* Sphere 2 */
