@@ -23,7 +23,6 @@ import java.util.List;
 import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
@@ -47,7 +46,7 @@ import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.
@@ -99,7 +98,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 				public RGB evaluate(Object[] args) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
 					return reflectiveColor.evaluate(new Object[] { p })
-							.multiply(p.getSurface().getValueAt(StaticProducer.of(point)).evaluate(new Object[0]));
+							.multiply(p.getSurface().getValueAt(v(point)).evaluate());
 				}
 
 				@Override
@@ -158,9 +157,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			 */
 
 			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = StaticProducer.of(reflectivity).add(
-							v(1 - reflectivity)
-							.multiply(compileProducer(new ScalarPow(c, StaticProducer.of(5.0)))));
+			ScalarProducer reflective = v(reflectivity).add(v(1 - reflectivity)
+							.multiply(compileProducer(new ScalarPow(c, v(5.0)))));
 			color = RGBProducer.fromScalar(reflective).multiply(fr).multiply(color);
 
 			if (tc == null) {
@@ -190,8 +188,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			 */
 
 			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = StaticProducer.of(reflectivity).add(
-					v(1 - reflectivity).multiply(compileProducer(new ScalarPow(c, StaticProducer.of(5.0)))));
+			ScalarProducer reflective = v(reflectivity).add(
+					v(1 - reflectivity).multiply(compileProducer(new ScalarPow(c, v(5.0)))));
 			color = RGBProducer.multiply(color, RGBProducer.multiply(fr, compileProducer(new RGBFromScalars(reflective, reflective, reflective))));
 
 			if (tc == null) {

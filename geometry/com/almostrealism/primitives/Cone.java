@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.RayMatrixTransform;
-import org.almostrealism.algebra.computations.VectorProduct;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -33,7 +31,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 // TODO Add ParticleGroup implementation.
 
@@ -67,7 +65,7 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		VectorProducer normal = multiply(point, StaticProducer.of(new Vector(1.0, -1.0, 1.0)));
+		VectorProducer normal = multiply(point, vector(1.0, -1.0, 1.0));
 		return super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
@@ -111,21 +109,21 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 						double invC2 = 1.0 / c2;
 
 						double t = (-c1 - root) * invC2;
-						Vector p = ray.pointAt(new StaticProducer<>(new Scalar(t))).evaluate(args);
+						Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 
 						t = (-c1 + root) * invC2;
-						p = ray.pointAt(new StaticProducer<>(new Scalar(t))).evaluate(args);
+						p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 					} else {
 						double t = -c1 / c2;
-						Vector p = ray.pointAt(new StaticProducer<>(new Scalar(t))).evaluate(args);
+						Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
 
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 					}
 				} else if (Math.abs(c1) >= Intersection.e) {
 					double t = -0.5 * c0 / c1;
-					Vector p = ray.pointAt(new StaticProducer<>(new Scalar(t))).evaluate(args);
+					Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
 					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 				} else if (Math.abs(c0) < Intersection.e) {
 					inter.add(new Double(0.0));

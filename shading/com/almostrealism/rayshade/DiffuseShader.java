@@ -19,22 +19,19 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.RayDirection;
-import org.almostrealism.algebra.computations.RayOrigin;
-import org.almostrealism.color.computations.ColorProduct;
-import org.almostrealism.color.computations.ColorSum;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.RayProducer;
-import org.almostrealism.math.bool.GreaterThan;
 import org.almostrealism.math.bool.GreaterThanRGB;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -42,7 +39,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author Michael Murray
  */
-public class DiffuseShader implements Shader<ShaderContext>, Editable {
+public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatures {
 	public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
 	public static boolean produceOutput = false;
 
@@ -62,15 +59,15 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable {
 		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			front = new GreaterThanRGB(scaleFront, StaticProducer.of(0),
+			front = new GreaterThanRGB(scaleFront, scalar(0),
 							RGBProducer.fromScalar(scaleFront).multiply(lightColor).multiply(surfaceColor),
-							StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
+							RGBBlack.getProducer());
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-			back = new GreaterThanRGB(scaleBack, StaticProducer.of(0),
+			back = new GreaterThanRGB(scaleBack, scalar(0),
 							RGBProducer.fromScalar(scaleBack).multiply(lightColor).multiply(surfaceColor),
-							StaticProducer.of(new RGB(0.0, 0.0, 0.0)));
+							RGBBlack.getProducer());
 		}
 
 		if (front != null && back != null) {

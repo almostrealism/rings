@@ -29,12 +29,14 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 
 import io.almostrealism.lambda.Realization;
+import org.almostrealism.color.computations.RGBBlack;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
-public class RayTracedScene implements Realization<RealizableImage, RenderParameters> {
+public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
 	private RayTracer tracer;
 	private Camera camera;
 	private RenderParameters p;
@@ -71,7 +73,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 			color = new Future<Producer<RGB>>() {
 				@Override
 				public Producer<RGB> get() {
-					return StaticProducer.of(RayTracedScene.black);
+					return RGBBlack.getProducer();
 				}
 
 				@Override
@@ -102,8 +104,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	public Producer<RGB> getProducer() { return getProducer(getRenderParameters()); }
 
 	public Producer<RGB> getProducer(RenderParameters p) {
-		Producer<RGB> producer = operate(new PassThroughProducer(0),
-				StaticProducer.of(new Pair(p.width, p.height)));
+		Producer<RGB> producer = operate(new PassThroughProducer(0), pair(p.width, p.height));
 
 		if (producer instanceof DimensionAware) {
 			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);

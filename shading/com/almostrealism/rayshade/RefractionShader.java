@@ -30,16 +30,18 @@ import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 // TODO  Fix refraction algorithm.
 
@@ -48,7 +50,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author  Michael Murray
  */
-public class RefractionShader implements Shader<ShaderContext>, Editable, HardwareFeatures {
+public class RefractionShader implements Shader<ShaderContext>, Editable, HardwareFeatures, CodeFeatures {
 	public static Vector lastRay;
 	
 	public static boolean produceOutput = false;
@@ -100,11 +102,11 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 						return null;
 					}
 
-					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args),
+					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(v(point)).evaluate(args),
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n, p);
 
-					c = compileProducer(new ColorProduct(StaticProducer.of(new RGB(10, 10, 10)), c));
+					c = compileProducer(new ColorProduct(v(new RGB(10, 10, 10)), c));
 
 					if (Math.random() < 0.01)
 						System.out.println("RefractionShader.shadeFront: " + c.evaluate(args));
@@ -121,7 +123,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 				if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
 
-					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(StaticProducer.of(point)).evaluate(args),
+					Producer<RGB> c = RefractionShader.this.shade(point, p.getIntersection().getNormalAt(v(point)).evaluate(args),
 							p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 							p.getOtherSurfaces(), n.minus(), p);
 
@@ -154,7 +156,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 								Curve<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
-			return StaticProducer.of(new RGB(0.0, 0.0, 0.0));
+			return RGBBlack.getProducer();
 		}
 		
 		boolean entering = this.checkEntering(viewerDirection, n);
@@ -263,7 +265,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 			if (inter == null || id.getValue() < 0) {
 				totalR += 1.0;
 			} else {
-				totalR += s.getIndexOfRefraction(r.evaluate(new Object[0]).pointAt(new StaticProducer<>(id)).evaluate(new Object[0]));
+				totalR += s.getIndexOfRefraction(r.evaluate(new Object[0]).pointAt(new Provider<>(id)).evaluate(new Object[0]));
 			}
 		}
 		

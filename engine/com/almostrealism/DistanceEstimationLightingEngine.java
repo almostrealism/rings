@@ -17,10 +17,8 @@
 package com.almostrealism;
 
 import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayDirection;
-import org.almostrealism.algebra.computations.VectorFutureAdapter;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
@@ -32,7 +30,7 @@ import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,7 +95,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		private ShaderContext params;
 
 		public Locus(Vector location, Vector normal, ShaderSet s, ShaderContext p) {
-			this.add(new StaticProducer<>(new Ray(location, normal)));
+			this.add(new Provider<>(new Ray(location, normal)));
 			shaders = s;
 			params = p;
 		}

@@ -16,18 +16,16 @@ import org.almostrealism.graph.mesh.MeshData;
 import org.almostrealism.graph.mesh.Triangle;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.AdaptProducer;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.PassThroughProducer;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.ProducerWithRank;
-import org.almostrealism.util.ProducerWithRankAdapter;
 import org.almostrealism.util.RankedChoiceProducer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MeshIntersectionTest {
+public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
 	private KernelizedProducer<Ray> ray;
 
@@ -58,7 +56,7 @@ public class MeshIntersectionTest {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return c.rayAt(new PassThroughProducer<>(0), StaticProducer.of(new Pair(width, height)));
+		return c.rayAt(new PassThroughProducer<>(0), pair(width, height));
 	}
 
 	@Before

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@ import java.util.Stack;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
- * @author Mike Murray
+ * @author Michael Murray
  */
-public class LSystem {
+public class LSystem implements CodeFeatures {
 	public static final String STEP = "step";
 	public static final String FORWARD = "forward";
 	public static final String BACKWARD = "backward";
@@ -117,7 +117,7 @@ public class LSystem {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = StaticProducer.of(d);
+				Producer<Vector> dp = v(d);
 
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -132,7 +132,7 @@ public class LSystem {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = StaticProducer.of(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -147,7 +147,7 @@ public class LSystem {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = StaticProducer.of(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -162,7 +162,7 @@ public class LSystem {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = StaticProducer.of(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);

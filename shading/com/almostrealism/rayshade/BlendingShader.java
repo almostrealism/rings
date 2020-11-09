@@ -19,13 +19,8 @@ package com.almostrealism.rayshade;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.computations.DotProduct;
-import org.almostrealism.algebra.computations.RayDirection;
-import org.almostrealism.algebra.computations.ScalarSum;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProducer;
-import org.almostrealism.color.computations.ColorProduct;
-import org.almostrealism.color.computations.ColorSum;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
@@ -33,9 +28,10 @@ import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
@@ -44,7 +40,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author  Michael Murray
  */
-public class BlendingShader implements Shader<LightingContext>, Editable {
+public class BlendingShader implements Shader<LightingContext>, Editable, CodeFeatures {
   private static final String names[] = {"Hot color", "Cold color"};
   private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
   private static final Class types[] = {ColorProducer.class, ColorProducer.class};
@@ -89,13 +85,13 @@ public class BlendingShader implements Shader<LightingContext>, Editable {
 		Producer<Vector> l = p.getLightDirection();
 		
 		ScalarProducer k = RayProducer.direction(n).dotProduct(l).add(1.0);
-		ScalarProducer oneMinusK = StaticProducer.of(1.0).subtract(k);
+		ScalarProducer oneMinusK = scalar(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.evaluate(new Object[] { p });
 		RGB cc = this.coldColor.evaluate(new Object[] { p });
 		
-		RGBProducer c = StaticProducer.of(hc).multiply(RGBProducer.fromScalar(k));
-		c = c.add(StaticProducer.of(cc).multiply(RGBProducer.fromScalar(oneMinusK)));
+		RGBProducer c = v(hc).multiply(RGBProducer.fromScalar(k));
+		c = c.add(v(cc).multiply(RGBProducer.fromScalar(oneMinusK)));
 		
 		return GeneratedColorProducer.fromProducer(this, c);
 	}

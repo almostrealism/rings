@@ -25,7 +25,7 @@ import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 import static org.almostrealism.util.Ops.*;
 
 public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
@@ -92,7 +92,7 @@ public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
 	 */
 	public static VectorProducer reflect(Producer<Vector> vector, Producer<Vector> normal) {
 		VectorProducer newVector = ops().minus(vector);
-		ScalarProducer s = StaticProducer.of(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
+		ScalarProducer s = ops().scalar(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
 		return newVector.subtract(ops().scalarMultiply(normal, s));
 	}
 }

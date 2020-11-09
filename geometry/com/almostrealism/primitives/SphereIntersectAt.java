@@ -23,21 +23,20 @@ import org.almostrealism.algebra.computations.DefaultScalarProducer;
 import org.almostrealism.algebra.computations.DirectionDotDirection;
 import org.almostrealism.algebra.computations.OriginDotDirection;
 import org.almostrealism.algebra.computations.OriginDotOrigin;
-import org.almostrealism.algebra.computations.PairFromScalars;
-import org.almostrealism.algebra.computations.ScalarFromPair;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.bool.AcceleratedConjunctionAdapter;
 import org.almostrealism.math.bool.GreaterThan;
 import org.almostrealism.math.bool.LessThanScalar;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
+import static org.almostrealism.util.Ops.*;
 
 public class SphereIntersectAt extends LessThanScalar {
 	private SphereIntersectAt(Producer<Ray> r, ScalarProducer oDotD,
 							  ScalarProducer oDotO, ScalarProducer dDotD) {
 		super(discriminant(oDotD, oDotO, dDotD),
-				StaticProducer.of(new Scalar(0.0)),
-				StaticProducer.of(new Scalar(-1.0)),
+				ops().scalar(0.0),
+				ops().scalar(-1.0),
 				closest(t(oDotD, oDotO, dDotD)), false);
 	}
 
@@ -51,14 +50,14 @@ public class SphereIntersectAt extends LessThanScalar {
 		return new AcceleratedConjunctionAdapter<>(2, Scalar.blank(),
 				new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
 				new GreaterThan(2, Scalar.blank(), t.x(),
-						StaticProducer.of(new Scalar(0.0)),
+						ops().scalar(0.0),
 						t.x(), new GreaterThan(2, Scalar.blank(), t.y(),
-						StaticProducer.of(new Scalar(0.0)), t.y(),
-						StaticProducer.of(new Scalar(-1.0)), false), false),
+						ops().scalar(0.0), t.y(),
+						ops().scalar(-1.0), false), false),
 				new GreaterThan(2, PairProducer.x(t),
-						StaticProducer.of(new Scalar(0))),
+						ops().scalar(0)),
 				new GreaterThan(2, PairProducer.y(t),
-						StaticProducer.of(new Scalar(0))));
+						ops().scalar(0)));
 	}
 
 	private static PairProducer t(ScalarProducer oDotD,

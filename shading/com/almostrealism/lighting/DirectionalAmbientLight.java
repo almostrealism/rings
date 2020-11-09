@@ -18,7 +18,6 @@ package com.almostrealism.lighting;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
@@ -28,7 +27,7 @@ import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import static org.almostrealism.util.Ops.*;
 
 /**
  * A DirectionAmbientLight object represents an ambient light source that always
@@ -111,10 +110,10 @@ public class DirectionalAmbientLight extends AmbientLight {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, StaticProducer.of(l), light, otherLights, otherSurfaces)) : null;
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, ops().v(l), light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
-			p.setLightDirection(StaticProducer.of(l));
+			p.setLightDirection(ops().v(l));
 			p.setLight(light);
 			p.setOtherLights(otherLights);
 			p.setOtherSurfaces(otherSurfaces);

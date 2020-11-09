@@ -34,7 +34,7 @@ import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.swing.displays.ImageDisplay;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerArgumentReference;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -74,7 +74,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println(p.getFunctionDefinition());
@@ -115,7 +115,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println(p.getFunctionDefinition());
@@ -136,7 +136,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void compareDependents() throws IOException {
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
 		a.compact();

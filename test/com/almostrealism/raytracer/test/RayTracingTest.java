@@ -14,7 +14,6 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.Mesh;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
@@ -28,8 +27,6 @@ import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.RenderParameters;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;

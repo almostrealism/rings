@@ -23,7 +23,7 @@ import org.almostrealism.color.Light;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.color.RGB;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A SphericalLight object provides PointLight samples that are randomly distributed
@@ -97,8 +97,8 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			double y = r * Math.sin(u) * Math.sin(v);
 			double z = r * Math.cos(u);
 			
-			Producer<Vector> p = getTransform(true).transform(StaticProducer.of(new Vector(x, y, z)),
-						TransformMatrix.TRANSFORM_AS_LOCATION);
+			Producer<Vector> p = getTransform(true).transform(vector(x, y, z),
+									TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO  This should pass along the ColorProucer directly rather than evaluating it
 			l[i] = new PointLight(p.evaluate(), in, getColorAt(p).evaluate());

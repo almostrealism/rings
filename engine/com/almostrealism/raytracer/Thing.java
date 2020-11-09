@@ -9,7 +9,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,7 @@ public class Thing extends AbstractSurface {
 		if (Math.random() > 0.5) {
 			return this.p.intersectAt(ray);
 		} else {
-			return new ShadableIntersection(this, ray, new StaticProducer<>(new Scalar(-1)));
+			return new ShadableIntersection(this, ray, new Provider<>(new Scalar(-1)));
 		}
 	}
 

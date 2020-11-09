@@ -6,7 +6,7 @@ import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		combined.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(StaticProducer.of(new Pair(width, height)), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
 		ScalarBank output = new ScalarBank(input.getCount());
 
 		System.out.println(combined.getFunctionDefinition());

@@ -17,7 +17,6 @@
 package com.almostrealism.projection;
 
 import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.TransformMatrix;
@@ -30,8 +29,9 @@ import org.almostrealism.relation.NameProvider;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * The {@link OrthographicCamera} provides an orthographic projection camera.
@@ -47,7 +47,7 @@ import org.almostrealism.util.StaticProducer;
  * @author  Michael Murray
  */
 @ModelEntity
-public class OrthographicCamera implements Camera, Positioned, DecodePostProcessing, HardwareFeatures {
+public class OrthographicCamera implements Camera, Positioned, DecodePostProcessing, HardwareFeatures, CodeFeatures {
 	private Vector location = new Vector(0.0, 0.0, 0.0);
 	private Vector viewDirection = new Vector(0.0, 0.0, 1.0);
 	private Vector upDirection = new Vector(0.0, 1.0, 0.0);
@@ -226,9 +226,8 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 				double x = getProjectionWidth() * ((p.getX() / screenDim.getX()) - 0.5);
 				double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
 
-				Vector o = new Vector(x, y, 0.0);
-				o = getRotationMatrix().getInverse().transform(StaticProducer.of(o),
-						TransformMatrix.TRANSFORM_AS_LOCATION).evaluate(new Object[0]);
+				Vector o = getRotationMatrix().getInverse().transform(vector(x, y, 0.0),
+						TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
 
 				return new Ray(o, viewDirection);
 			}

@@ -33,7 +33,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.util.StaticProducer;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;

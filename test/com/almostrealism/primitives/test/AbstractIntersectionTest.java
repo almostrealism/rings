@@ -21,10 +21,11 @@ import com.almostrealism.projection.PinholeCameraRayAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
-public class AbstractIntersectionTest implements HardwareFeatures {
+public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;
 
 	protected SphereIntersectAt combined() {
@@ -40,7 +41,7 @@ public class AbstractIntersectionTest implements HardwareFeatures {
 
 		return
 				new SphereIntersectAt(compileProducer(new PinholeCameraRayAt(new PassThroughProducer<>(0),
-						StaticProducer.of(new Pair(width, height)),
+						pair(width, height),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,

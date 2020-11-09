@@ -19,8 +19,6 @@ package com.almostrealism.primitives;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.RayMatrixTransform;
-import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.geometry.Ray;
@@ -33,7 +31,7 @@ import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -112,7 +110,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		// TODO  Perform computation within VectorProducer
 
-		Producer<Vector> normal = add(point, StaticProducer.of(getLocation().minus()));
+		Producer<Vector> normal = add(point, v(getLocation().minus()));
 		if (getTransform(true) != null)
 			normal = getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 

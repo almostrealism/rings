@@ -17,9 +17,6 @@
 package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.RayMatrixTransform;
-import org.almostrealism.algebra.computations.VectorProduct;
-import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
@@ -27,7 +24,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -68,9 +65,9 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		Producer<Vector> normal = add(point, StaticProducer.of(getLocation().minus()));
+		Producer<Vector> normal = add(point, v(getLocation().minus()));
 		normal = super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
-		normal = multiply(normal, StaticProducer.of(new Vector(1.0, 0.0, 1.0)));
+		normal = multiply(normal, vector(1.0, 0.0, 1.0));
 		return normal;
 	}
 	
@@ -121,8 +118,8 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 				t0 = (-b / g) + discriminantSqrt;
 				t1 = (-b / g) - discriminantSqrt;
 
-				double l0 = ray.pointAt(new StaticProducer<>(new Scalar(t0))).evaluate(args).getY();
-				double l1 = ray.pointAt(new StaticProducer<>(new Scalar(t1))).evaluate(args).getY();
+				double l0 = ray.pointAt(new Provider<>(new Scalar(t0))).evaluate(args).getY();
+				double l1 = ray.pointAt(new Provider<>(new Scalar(t1))).evaluate(args).getY();
 
 				Scalar s;
 

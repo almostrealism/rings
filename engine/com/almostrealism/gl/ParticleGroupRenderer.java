@@ -20,10 +20,11 @@ import java.awt.Graphics;
 
 import org.almostrealism.algebra.ParticleGroup;
 import org.almostrealism.algebra.TransformMatrix;
-import org.almostrealism.algebra.Vector;
 
 import com.almostrealism.projection.PinholeCamera;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.algebra.Vector;
+
+import static org.almostrealism.util.Ops.*;
 
 /**
  * @author Michael Murray
@@ -35,8 +36,7 @@ public class ParticleGroupRenderer {
         TransformMatrix m = c.getRotationMatrix();
         
         i: for (int i = 0; i < v.length; i++) {
-            Vector l = new Vector(v[i][0], v[i][1], v[i][2]);
-            l = m.transform(StaticProducer.of(l), TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
+            Vector l = m.transform(ops().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
             
             if (l.getZ() < 0.0) continue i;
             

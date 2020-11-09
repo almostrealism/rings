@@ -20,11 +20,12 @@ import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value
@@ -43,7 +44,7 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	/**
 	 * Constructs a new {@link SilhouetteShader} using black as a color.
 	 */
-	public SilhouetteShader() { this.color = StaticProducer.of(new RGB(0.0, 0.0, 0.0)); }
+	public SilhouetteShader() { this.color = RGBBlack.getProducer(); }
 	
 	/**
 	 * Constructs a new {@link SilhouetteShader} using the specified {@link RGB}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,22 +18,15 @@ package com.almostrealism.network;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -43,11 +36,9 @@ import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
 import io.flowtree.job.Output;
 import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
-import org.almostrealism.io.OutputHandler;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -55,16 +46,13 @@ import com.almostrealism.io.FilePrintWriter;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
-import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.RenderParameters;
 
-import io.almostrealism.db.Query;
-import io.almostrealism.db.QueryHandler;
 import io.flowtree.job.Job;
-import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.ImageCanvas;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}
@@ -72,7 +60,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author  Michael Murray
  */
-public class RayTracingJob implements Job {
+public class RayTracingJob implements Job, CodeFeatures {
 	public static final String htmlPre = "<html> <head> <title>Universe in a Box</title> </head> " +
 										"<body bgcolor=\"#000000\" text=\"#ffffff\"> <center> " +
 										"<h1>Universe in a Box</h1> <img src=\"images/NetworkRender-";
@@ -585,7 +573,7 @@ public class RayTracingJob implements Job {
 								this.ssw + "-" + this.ssh + ".jpg");
 
 			try {
-				ImageCanvas.encodeImageFile(StaticProducer.of(rgb), file, ImageCanvas.JPEGEncoding);
+				ImageCanvas.encodeImageFile(v(rgb), file, ImageCanvas.JPEGEncoding);
 			} catch (IOException e) {
 				System.out.println("RayTracingJob: IO Error");
 			}

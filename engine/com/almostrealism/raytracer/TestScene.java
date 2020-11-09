@@ -42,14 +42,14 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.Provider;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class TestScene extends Scene<ShadableSurface> {
+public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 	public TestScene(boolean enableCornellBox, boolean enableRandomThing, boolean enableDragon,
 					 boolean enableSphere, boolean enableTriangles, boolean enableFloor,
 					 boolean enableSilhouette,
@@ -66,7 +66,7 @@ public class TestScene extends Scene<ShadableSurface> {
 				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
-						new ReflectionShader(0.6, StaticProducer.of(new RGB(0.6, 0.6, 0.6)))
+						new ReflectionShader(0.6, v(new RGB(0.6, 0.6, 0.6)))
 				});
 			} else {
 				s.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
@@ -140,7 +140,7 @@ public class TestScene extends Scene<ShadableSurface> {
 
 				public ColorProducer getColorAt() { return p; }
 
-				public RGBProducer getColorAt(Object args[]) { return StaticProducer.of(evaluate(args)); }
+				public RGBProducer getColorAt(Object args[]) { return v(evaluate(args)); }
 				public RGB evaluate(Object args[]) { return this.getColorAt().evaluate(args); }
 
 				@Override

@@ -39,7 +39,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.time.Animation;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -389,8 +389,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String rbstate = p.getProperty("bodies." + i + ".shade.rbstate");
 
 				if (rbstate != null) {
-					BlendingShader bs = new BlendingShader(StaticProducer.of(new RGB(0.8, 0.0, 0.0)),
-															StaticProducer.of(new RGB(0.0, 0.0, 0.8)));
+					BlendingShader bs = new BlendingShader(v(new RGB(0.8, 0.0, 0.0)),
+															v(new RGB(0.0, 0.0, 0.8)));
 
 					if (rbstate.equals("force"))
 						s.addShader(new RigidBodyStateShader(RigidBodyStateShader.FORCE, 0.0, 1.0, bs));

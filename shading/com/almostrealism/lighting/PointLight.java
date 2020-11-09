@@ -20,8 +20,6 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.RayOrigin;
-import org.almostrealism.algebra.computations.VectorSum;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
@@ -30,7 +28,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -160,10 +158,10 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		ScalarProducer d = add(point, StaticProducer.of(location).scalarMultiply(-1.0)).lengthSq();
+		ScalarProducer d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
 
 		RGB color = getColor().multiply(getIntensity());
-		return GeneratedColorProducer.fromComputation(this, new Attenuation(da, db, dc, StaticProducer.of(color), d));
+		return GeneratedColorProducer.fromComputation(this, new Attenuation(da, db, dc, v(color), d));
 	}
 
 	/** Returns the location of this {@link PointLight} as a {@link Vector}. */

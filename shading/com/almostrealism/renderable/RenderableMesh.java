@@ -37,9 +37,10 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.graph.mesh.Mesh;
 
 import org.almostrealism.graph.mesh.Triangle;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.Provider;
 
-public class RenderableMesh extends RenderableGeometry<Mesh> {
+public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeatures {
 	public RenderableMesh(Mesh m) { super(m); }
 	
 	@Override
@@ -48,9 +49,9 @@ public class RenderableMesh extends RenderableGeometry<Mesh> {
 		for (Triangle t : getGeometry().triangles()) {
 			Vector v[] = t.getVertices();
 			Vector n[] = new Vector[] {
-						t.getNormalAt(StaticProducer.of(v[0])).evaluate(),
-						t.getNormalAt(StaticProducer.of(v[1])).evaluate(),
-						t.getNormalAt(StaticProducer.of(v[2])).evaluate()};
+						t.getNormalAt(v(v[0])).evaluate(),
+						t.getNormalAt(v(v[1])).evaluate(),
+						t.getNormalAt(v(v[2])).evaluate()};
 
 			vertices.add(v[0].getX());
 			vertices.add(v[0].getY());

@@ -26,8 +26,9 @@ import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property
@@ -36,7 +37,7 @@ import org.almostrealism.util.StaticProducer;
  * 
  * @author  Michael Murray
  */
-public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> {
+public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>, CodeFeatures {
 	public static final int VELOCITY = 1;
 	public static final int FORCE = 2;
 	
@@ -82,7 +83,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 		if (p.getSurface() instanceof RigidBody == false)
 			return RGBWhite.getProducer();
 		
-		RigidBody.State state = ((RigidBody)p.getSurface()).getState();
+		RigidBody.State state = ((RigidBody) p.getSurface()).getState();
 		
 		Vector d = null;
 		
@@ -96,8 +97,8 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T> 
 		if (m > 1.0) m = 1.0;
 		
 		d.divideBy(d.length());
-		p.setLightDirection(StaticProducer.of(d));
+		p.setLightDirection(v(d));
 		
-		return RGBProducer.fromScalar(m).multiply(this.shader.shade(p, f));
+		return rgb(m).multiply(this.shader.shade(p, f));
 	}
 }

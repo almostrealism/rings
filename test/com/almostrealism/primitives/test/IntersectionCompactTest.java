@@ -1,13 +1,8 @@
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.primitives.SphereIntersectAt;
-import com.almostrealism.projection.PinholeCameraRayAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.geometry.Ray;
-import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.StaticProducer;
 import org.junit.Test;
 
 public class IntersectionCompactTest extends AbstractIntersectionTest {

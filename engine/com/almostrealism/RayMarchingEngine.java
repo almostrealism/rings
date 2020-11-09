@@ -34,10 +34,11 @@ import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
-public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures {
+public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;
@@ -70,7 +71,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 
 	@Override
 	public Producer<RGB> getValueAt(Producer<Vector> point) {
-		return StaticProducer.of(new RGB(0.8, 0.8, 0.8));  // TODO  Support colors
+		return v(new RGB(0.8, 0.8, 0.8));  // TODO  Support colors
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 
 	@Override
 	public RGB operate(Vector in) {
-		return getValueAt(StaticProducer.of(in)).evaluate();
+		return getValueAt(v(in)).evaluate();
 	}
 
 	@Override

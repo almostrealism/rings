@@ -23,7 +23,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.space.Plane;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.StaticProducer;
+import org.almostrealism.util.Provider;
 
 /**
  * A {@link RectangularLight} provides {@link PointLight} samples that are randomly distributed
@@ -105,11 +105,11 @@ public class RectangularLight extends Plane implements SurfaceLight {
 				z = Math.random() * this.height;
 			}
 
-			Producer<Vector> p = getTransform(true).transform(StaticProducer.of(new Vector(x, y, z)),
-							TransformMatrix.TRANSFORM_AS_LOCATION);
+			Producer<Vector> p = getTransform(true).transform(vector(x, y, z),
+									TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO This should hand off the color producer directly
-			l[i] = new PointLight(p.evaluate(), in, getColorAt(StaticProducer.of(new Vector())).evaluate());
+			l[i] = new PointLight(p.evaluate(), in, getColorAt(vector()).evaluate());
 		}
 		
 		return l;

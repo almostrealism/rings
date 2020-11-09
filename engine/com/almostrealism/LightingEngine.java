@@ -25,6 +25,7 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.RGBAdd;
+import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
@@ -34,18 +35,18 @@ import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.ProducerWithRank;
-import org.almostrealism.util.StaticProducer;
+import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware {
+public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
 	private Producer<Scalar> distance;
@@ -97,7 +98,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			Vector l = (directionalLight.getDirection().divide(
 					directionalLight.getDirection().length())).minus();
 
-			context.setLightDirection(StaticProducer.of(l));
+			context.setLightDirection(ops().v(l));
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
@@ -105,7 +106,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 					Hardware.getLocalHardware().getComputer()
 							.compileProducer(new RayOrigin(intersections.get(0))));
 		} else {
-			shade = StaticProducer.of(new RGB(0.0, 0.0, 0.0));
+			shade = RGBBlack.getProducer();
 		}
 
 		return new Producer[] { shadow, shade };
@@ -198,7 +199,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		} else if (light instanceof AmbientLight) {
 			throw new IllegalArgumentException("Migrated elsewhere");
 		} else {
-			return StaticProducer.of(new RGB(0.0, 0.0, 0.0));
+			return RGBBlack.getProducer();
 		}
 	}
 
