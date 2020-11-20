@@ -74,7 +74,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println(p.getFunctionDefinition());
@@ -115,7 +115,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println(p.getFunctionDefinition());
@@ -136,7 +136,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void compareDependents() throws IOException {
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
 		a.compact();

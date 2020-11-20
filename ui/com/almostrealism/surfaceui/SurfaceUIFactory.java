@@ -39,7 +39,7 @@ import com.almostrealism.primitives.SurfaceUI;
 /**
  * The SurfaceUIFactory class provides static methods for creating SurfaceUI instances.
  * 
- * @author Mike Murray
+ * @author Michael Murray
  */
 public class SurfaceUIFactory {
 	// TODO  Add getIcon method.

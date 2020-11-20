@@ -36,7 +36,7 @@ public class ParticleGroupRenderer {
         TransformMatrix m = c.getRotationMatrix();
         
         i: for (int i = 0; i < v.length; i++) {
-            Vector l = m.transform(ops().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
+            Vector l = m.transform(ops().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
             
             if (l.getZ() < 0.0) continue i;
             

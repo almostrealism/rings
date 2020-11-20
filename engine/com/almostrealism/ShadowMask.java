@@ -28,7 +28,9 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.util.Producer;
 
-public class ShadowMask implements Producer<RGB> {
+import java.util.function.Supplier;
+
+public class ShadowMask implements Producer<RGB>, Supplier<Producer<? extends RGB>> {
 	private Light light;
 	private Iterable<Intersectable> surfaces;
 	private Producer<Vector> point;
@@ -38,6 +40,9 @@ public class ShadowMask implements Producer<RGB> {
 		this.surfaces = surfaces;
 		this.point = point;
 	}
+
+	@Override
+	public Producer<? extends RGB> get() { return this; }
 
 	@Override
 	public RGB evaluate(Object[] args) {

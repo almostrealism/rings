@@ -36,6 +36,7 @@ import org.almostrealism.util.Provider;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 // TODO Add ParticleGroup implementation.
 
@@ -108,11 +109,11 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		// TODO  Perform computation within VectorProducer
-
-		Producer<Vector> normal = add(point, v(getLocation().minus()));
-		if (getTransform(true) != null)
-			normal = getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
+		Producer<Vector> normal = add(() -> point, v(getLocation().minus())).get();
+		if (getTransform(true) != null) {
+			Producer<Vector> fnormal = normal;
+			normal = (Producer<Vector>) getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
+		}
 
 		return normal;
 	}
@@ -126,20 +127,18 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
 
+		Supplier<Producer<? extends Ray>> tr = () -> r;
+		if (m != null) tr = m.getInverse().transform(tr);
+
+		final Supplier<Producer<? extends Ray>> fr = tr;
+
 		if (enableHardwareAcceleration) {
-			Producer<Ray> tr = r;
-			if (m != null) tr = m.getInverse().transform(tr);
-
-			return new ShadableIntersection(this, r, new SphereIntersectAt(tr));
+			return new ShadableIntersection(this, () -> r, () -> new SphereIntersectAt(fr));
 		} else {
-			if (m != null) r = m.getInverse().transform(r);
-
-			final Producer<Ray> fr = r;
-
 			Producer<Scalar> s = new Producer<Scalar>() {
 				@Override
 				public Scalar evaluate(Object[] args) {
-					Ray ray = fr.evaluate(args);
+					Ray ray = fr.get().evaluate(args);
 
 					double b = ray.oDotd().evaluate(args).getValue();
 					double c = ray.oDoto().evaluate(args).getValue();
@@ -184,7 +183,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 				}
 			};
 
-			return new ShadableIntersection(this, r, s);
+			return new ShadableIntersection(this, () -> r, () -> s);
 		}
 	}
 

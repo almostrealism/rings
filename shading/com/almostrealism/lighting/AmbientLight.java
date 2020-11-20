@@ -23,7 +23,9 @@ import org.almostrealism.color.*;;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBSupplier;
 import org.almostrealism.geometry.Curve;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.util.CodeFeatures;
@@ -99,9 +101,9 @@ public class AmbientLight implements Light, CodeFeatures {
 	
 	/** Returns the {@link ColorProducer} for this {@link AmbientLight}. */
 	@Override
-	public ColorProducer getColorAt(Producer<Vector> point) {
-		return GeneratedColorProducer.fromProducer(this,
-				v(color).multiply(rgb(intensity)));
+	public Maker<RGB> getColorAt(Maker<Vector> point) {
+		return () -> GeneratedColorProducer.fromProducer(this,
+				v(color).multiply(rgb(intensity)).get());
 	}
 	
 	/** Returns "Ambient Light". */
@@ -115,10 +117,10 @@ public class AmbientLight implements Light, CodeFeatures {
 	 * other surfaces in the scene must be specified for reflection/shadowing. This list does
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
-	public static RGBProducer ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
-		RGBProducer color = ops().v(light.getColor())
-				.multiply(RGBProducer.fromScalar(light.getIntensity()));
-		color = color.multiply(surface.getValueAt(point));
+	public static RGBSupplier ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
+		RGBSupplier color = ops().v(light.getColor())
+				.multiply(ops().cfromScalar(light.getIntensity()));
+		color = color.multiply(() -> surface.getValueAt(point));
 		
 		return color;
 	}

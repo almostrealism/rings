@@ -31,6 +31,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
@@ -71,31 +72,32 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 
 	@Override
 	public Producer<RGB> getValueAt(Producer<Vector> point) {
-		return v(new RGB(0.8, 0.8, 0.8));  // TODO  Support colors
+		return v(new RGB(0.8, 0.8, 0.8)).get();  // TODO  Support colors
 	}
 
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		return compileProducer(new RayDirection(iterator().next()));
+		return compileProducer(new RayDirection(() -> iterator().next()));
 	}
 
 	@Override
 	public RGB operate(Vector in) {
-		return getValueAt(v(in)).evaluate();
+		return getValueAt(v(in).get()).evaluate();
 	}
 
 	@Override
 	public Scope getScope(NameProvider prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
 	
 	@Override
-	public Producer<RGB> shade(ShaderContext parameters) {
-		Producer<RGB> c = null;
+	public Maker<RGB> shade(ShaderContext parameters) {
+		Maker<RGB> c = null;
 		
 		for (Shader s : shaders) {
 			if (c == null) {
 				c = s.shade(parameters, this);
 			} else {
-				c = new RGBAdd(c, s.shade(parameters, this));
+				final Maker<RGB> fc = c;
+				c = () -> new RGBAdd(fc, s.shade(parameters, this));
 			}
 		}
 		

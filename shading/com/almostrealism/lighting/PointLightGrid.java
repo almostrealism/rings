@@ -23,6 +23,7 @@ import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
@@ -137,7 +138,7 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	 * Delegates to {@link #getValueAt(Producer)}.
 	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
+	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
 
 	/** Returns null. */
 	@Override

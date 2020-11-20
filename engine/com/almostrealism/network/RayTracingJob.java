@@ -573,7 +573,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 								this.ssw + "-" + this.ssh + ".jpg");
 
 			try {
-				ImageCanvas.encodeImageFile(v(rgb), file, ImageCanvas.JPEGEncoding);
+				ImageCanvas.encodeImageFile(v(rgb).get(), file, ImageCanvas.JPEGEncoding);
 			} catch (IOException e) {
 				System.out.println("RayTracingJob: IO Error");
 			}

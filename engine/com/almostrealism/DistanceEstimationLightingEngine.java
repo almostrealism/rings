@@ -27,6 +27,7 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.util.Producer;
@@ -102,7 +103,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 
 		@Override
 		public Producer<Vector> getNormalAt(Producer<Vector> vector) {
-			return compileProducer(new RayDirection(get(0)));
+			return new RayDirection(() -> get(0)).get();
 		}
 
 		@Override
@@ -132,9 +133,9 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Producer<RGB> shade(ShaderContext parameters) {
+		public Maker<RGB> shade(ShaderContext parameters) {
 			try {
-				Producer<RGB> color = null;
+				Maker<RGB> color = null;
 
 				if (shaders != null)
 					color = shaders.shade(parameters, this);
@@ -147,8 +148,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Producer<RGB> call() throws Exception {
-			return shade(params);
+		public Producer<RGB> call() {
+			return shade(params).get();
 		}
 	}
 }

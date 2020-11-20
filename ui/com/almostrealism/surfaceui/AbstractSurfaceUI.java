@@ -31,6 +31,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
@@ -247,7 +248,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
 	@Override
-	public Producer<RGB> shade(ShaderContext parameters) {
+	public Maker<RGB> shade(ShaderContext parameters) {
 		return this.surface.shade(parameters);
 	}
 

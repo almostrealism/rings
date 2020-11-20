@@ -23,6 +23,8 @@ import java.util.List;
 import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarSupplier;
+import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
@@ -40,6 +42,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
@@ -66,7 +69,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
   private static final Class propTypes[] = {Double.class, ColorProducer.class, Double.class, Texture.class};
   
   private double reflectivity, blur;
-  private RGBProducer reflectiveColor;
+  private Producer<RGB> reflectiveColor;
   private Texture eMap;
 
 	/**
@@ -83,7 +86,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Constructs a new ReflectionShader object with the specified reflectivity
 	 * and reflective color.
 	 */
-	public ReflectionShader(double reflectivity, RGBProducer reflectiveColor) {
+	public ReflectionShader(double reflectivity, Producer<RGB> reflectiveColor) {
 		this.setReflectivity(reflectivity);
 		this.setReflectiveColor(reflectiveColor);
 		this.setBlur(0.0);
@@ -91,14 +94,14 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	
 	/** Method specified by the Shader interface. */
 	@Override
-	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
+	public Maker<RGB> shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
-			return new Producer<RGB>() {
+			return () -> new Producer<RGB>() {
 				@Override
 				public RGB evaluate(Object[] args) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
 					return reflectiveColor.evaluate(new Object[] { p })
-							.multiply(p.getSurface().getValueAt(v(point)).evaluate());
+							.multiply(p.getSurface().getValueAt(v(point).get()).evaluate());
 				}
 
 				@Override
@@ -118,21 +121,21 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		allLights.add(p.getLight());
 		for (Light l : p.getOtherLights()) { allLights.add(l); }
 
-		Producer<RGB> r = getReflectiveColor();
+		Maker<RGB> r = () -> getReflectiveColor();
 		if (size() > 0) {
-			r = RGBProducer.multiply(r, ReflectionShader.super.shade(p, normals));
+			r = cmultiply(r, ReflectionShader.super.shade(p, normals));
 		}
 
-		final Producer<RGB> fr = r;
+		final Maker<RGB> fr = r;
 
-		Producer<Vector> point = compileProducer(new RayOrigin(p.getIntersection().get(0)));
-		Producer<Vector> n = compileProducer(new RayDirection(normals.iterator().next()));
-		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
+		VectorSupplier point = new RayOrigin(() -> p.getIntersection().get(0));
+		VectorSupplier n = new RayDirection(() -> normals.iterator().next());
+		Producer<Vector> nor = p.getIntersection().getNormalAt(point.get());
 
-		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
-		Producer<Vector> loc = RayProducer.origin(compileProducer(transform));
+		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), () -> p.getIntersection().get(0));
+		VectorSupplier loc = origin(transform);
 
-		ScalarProducer cp = length(nor).multiply(length(n));
+		ScalarSupplier cp = length(() -> nor).multiply(length(n));
 
 		Producer<RGB> tc = null;
 
@@ -140,7 +143,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
 
 		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
+			Producer<Ray> reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
 
 			// TODO  Environment map should be a feature of the aggregator
 			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
@@ -156,22 +159,25 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = v(reflectivity).add(v(1 - reflectivity)
+			ScalarSupplier c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarSupplier reflective = v(reflectivity).add(v(1 - reflectivity)
 							.multiply(compileProducer(new ScalarPow(c, v(5.0)))));
-			color = RGBProducer.fromScalar(reflective).multiply(fr).multiply(color);
+			Producer<RGB> fcolor = color;
+			color = cfromScalar(reflective).multiply(fr).multiply(() -> fcolor).get();
 
 			if (tc == null) {
 				tc = color;
 			} else {
-				tc = new RGBAdd(tc, color);
+				Producer<RGB> ftc = tc;
+				Producer<RGB> ffcolor = color;
+				tc = new RGBAdd(() -> ftc, () -> ffcolor);
 			}
 		}
 
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = minus(n);
 
-			RayProducer reflectedRay = new ReflectedRay(loc, nor, n, blur);
+			RayProducer reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
 
 			// TODO  Environment map should be a feature of the aggregator
 			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
@@ -187,20 +193,22 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = v(reflectivity).add(
-					v(1 - reflectivity).multiply(compileProducer(new ScalarPow(c, v(5.0)))));
-			color = RGBProducer.multiply(color, RGBProducer.multiply(fr, compileProducer(new RGBFromScalars(reflective, reflective, reflective))));
+			ScalarSupplier c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarSupplier reflective = v(reflectivity).add(
+					v(1 - reflectivity).multiply(pow(c, v(5.0))));
+			Producer<RGB> fcolor = color;
+			color = cmultiply(() -> fcolor, cmultiply(fr, cfromScalar(reflective))).get();
 
 			if (tc == null) {
 				tc = color;
 			} else {
-				tc = RGBProducer.add(tc, color);
+				tc = cadd(tc, color);
 			}
 		}
 
-		Producer<RGB> lightColor = p.getLight().getColorAt(point);
-		return GeneratedColorProducer.fromComputation(this, new ColorProduct(tc, lightColor));
+		Maker<RGB> lightColor = p.getLight().getColorAt(point);
+		Producer<RGB> ftc = tc;
+		return () -> GeneratedColorProducer.fromComputation(this, cmultiply(() -> ftc, lightColor));
 	}
 	
 	/**
@@ -219,7 +227,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Sets the reflective color used by this ReflectionShader object
 	 * to the color represented by the specified ColorProducer object.
 	 */
-	public void setReflectiveColor(RGBProducer color) { this.reflectiveColor = color; }
+	public void setReflectiveColor(Producer<RGB> color) { this.reflectiveColor = color; }
 	
 	/**
 	 * Sets the Texture object used as an environment map for this ReflectionShader object.
@@ -242,7 +250,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Returns the reflective color used by this {@link ReflectionShader}
 	 * as an {@link RGBProducer}.
 	 */
-	public RGBProducer getReflectiveColor() { return this.reflectiveColor; }
+	public Producer<RGB> getReflectiveColor() { return this.reflectiveColor; }
 	
 	/**
 	 * @return  The Texture object used as an environment map for this ReflectionShader object.

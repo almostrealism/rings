@@ -23,7 +23,7 @@ public class Thing extends AbstractSurface {
 		if (Math.random() > 0.5) {
 			return this.p.intersectAt(ray);
 		} else {
-			return new ShadableIntersection(this, ray, new Provider<>(new Scalar(-1)));
+			return new ShadableIntersection(this, () -> ray, scalar(-1));
 		}
 	}
 

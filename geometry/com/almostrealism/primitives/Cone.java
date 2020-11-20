@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
@@ -65,8 +66,8 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		VectorProducer normal = multiply(point, vector(1.0, -1.0, 1.0));
-		return super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
+		VectorProducer normal = multiply(point, vector(1.0, -1.0, 1.0).get());
+		return (Producer<Vector>) super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
 	/**
@@ -74,16 +75,17 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Producer ray) {
 		TransformMatrix m = getTransform(true);
+		Supplier<Producer<? extends Ray>> r = () -> ray;
 		if (m != null) r = m.getInverse().transform(r);
 
-		final Producer<Ray> fr = r;
+		final Supplier<Producer<? extends Ray>> fr = r;
 
 		Producer<Scalar> s = new Producer<Scalar>() {
 			@Override
 			public Scalar evaluate(Object[] args) {
-				Ray ray = fr.evaluate(args);
+				Ray ray = fr.get().evaluate(args);
 
 				Vector d = ray.getDirection().divide(ray.getDirection().length());
 				Vector o = ray.getOrigin().divide(ray.getOrigin().length());
@@ -151,7 +153,7 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 			public void compact() { }
 		};
 
-		return new ShadableIntersection(this, fr, s);
+		return new ShadableIntersection(this, fr, () -> s);
 	}
 
 	@Override

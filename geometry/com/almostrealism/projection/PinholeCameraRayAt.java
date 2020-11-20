@@ -18,18 +18,22 @@ package com.almostrealism.projection;
 
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairProducer;
+import org.almostrealism.algebra.PairSupplier;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.geometry.RandomPair;
 import org.almostrealism.geometry.RayFromVectors;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+
 import static org.almostrealism.util.Ops.*;
 
 public class PinholeCameraRayAt extends RayFromVectors {
-	private PinholeCameraRayAt(Vector location, VectorProducer direction) {
+	private PinholeCameraRayAt(Vector location, VectorSupplier direction) {
 		super(ops().v(location), direction);
 	}
 
@@ -38,36 +42,36 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		this(location, direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
-	private static VectorProducer direction(Producer<Pair> pos, Producer<Pair> sd, Pair projectionDimensions, double focalLength,
+	private static VectorSupplier direction(Producer<Pair> pos, Producer<Pair> sd, Pair projectionDimensions, double focalLength,
 											Vector u, Vector v, Vector w, Pair blur) {
-		PairProducer pd = ops().v(projectionDimensions);
+		PairSupplier pd = ops().v(projectionDimensions);
 
-		ScalarProducer sdx = PairProducer.x(sd);
-		ScalarProducer sdy = PairProducer.y(sd);
+		ScalarSupplier sdx = ops().l(() -> sd);
+		ScalarSupplier sdy = ops().r(() -> sd);
 
-		ScalarProducer p = pd.x().multiply(PairProducer.x(pos))
+		ScalarSupplier p = pd.x().multiply(ops().l(pos))
 								.multiply(sdx.add(-1.0).pow(-1.0)).add(pd.x().multiply(-0.5));
-		ScalarProducer q = pd.y().multiply(PairProducer.y(pos))
+		ScalarSupplier q = pd.y().multiply(ops().r(pos))
 								.multiply(sdy.add(-1.0).pow(-1.0)).add(pd.y().multiply(-0.5));
-		ScalarProducer r = ops().scalar(-focalLength);
+		ScalarSupplier r = ops().scalar(-focalLength);
 
-		ScalarProducer x = p.multiply(u.getX()).add(q.multiply(v.getX())).add(r.multiply(w.getX()));
-		ScalarProducer y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
-		ScalarProducer z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
+		ScalarSupplier x = p.multiply(u.getX()).add(q.multiply(v.getX())).add(r.multiply(w.getX()));
+		ScalarSupplier y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
+		ScalarSupplier z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
 
-		VectorProducer pqr = ops().fromScalars(x, y, z);
-		ScalarProducer len = pqr.length();
+		VectorSupplier pqr = ops().fromScalars(x, y, z);
+		ScalarSupplier len = pqr.length();
 		
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
-			VectorProducer wv = pqr.normalize();
-			VectorProducer uv = u(wv, t(pqr));
-			VectorProducer vv = v(wv, uv);
+			VectorSupplier wv = pqr.normalize();
+			VectorSupplier uv = u(wv, t(pqr));
+			VectorSupplier vv = v(wv, uv);
 
 			PairProducer random = new RandomPair();
-			random = PairProducer.fromScalars(random.x().add(-0.5), random.y().add(-0.5));
+			PairProducer frandom = ops().fromScalars(random.x().add(-0.5), random.y().add(-0.5));
 
-			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(random.x()));
-			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(random.y()));
+			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(() -> frandom.x()));
+			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(() -> frandom.y()));
 
 			pqr = pqr.scalarMultiply(len).scalarMultiply(pqr.length().pow(-1.0));
 		}
@@ -75,28 +79,28 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		return pqr;
 	}
 
-	private static VectorProducer t(VectorProducer pqr) {
-		VectorProducer t = pqr.y().lessThan(pqr.x()).and(pqr.y().lessThan(pqr.z()),
+	private static Maker<Vector> t(VectorSupplier pqr) {
+		Maker<Vector> ft = () -> pqr.y().lessThan(pqr.x()).and(pqr.y().lessThan(pqr.z()),
 				ops().fromScalars(pqr.x(), ops().scalar(1.0), pqr.z()),
 				ops().fromScalars(pqr.x(), pqr.y(), ops().scalar(1.0)));
 
-		t = pqr.x().lessThan(pqr.y()).and(pqr.y().lessThan(pqr.z()),
-				ops().fromScalars(ops().scalar(1.0), pqr.y(), pqr.z()), t);
+		Maker<Vector> t = () -> pqr.x().lessThan(pqr.y()).and(pqr.y().lessThan(pqr.z()),
+				ops().fromScalars(ops().scalar(1.0), pqr.y(), pqr.z()), ft);
 
 		return t;
 	}
 
-	private static VectorProducer u(VectorProducer w, VectorProducer t) {
-		ScalarProducer x = t.y().multiply(w.z()).add(t.z().multiply(w.y()).multiply(-1.0));
-		ScalarProducer y = t.z().multiply(w.x()).add(t.x().multiply(w.z()).multiply(-1.0));
-		ScalarProducer z = t.x().multiply(w.y()).add(t.y().multiply(w.x()).multiply(-1.0));
+	private static VectorSupplier u(VectorSupplier w, Maker<Vector> t) {
+		ScalarSupplier x = ops().y(t).multiply(w.z()).add(ops().z(t).multiply(w.y()).multiply(-1.0));
+		ScalarSupplier y = ops().z(t).multiply(w.x()).add(ops().x(t).multiply(w.z()).multiply(-1.0));
+		ScalarSupplier z = ops().x(t).multiply(w.y()).add(ops().y(t).multiply(w.x()).multiply(-1.0));
 		return ops().fromScalars(x, y, z).normalize();
 	}
 
-	private static VectorProducer v(VectorProducer w, VectorProducer u) {
-		ScalarProducer x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
-		ScalarProducer y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
-		ScalarProducer z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
+	private static VectorSupplier v(VectorSupplier w, VectorSupplier u) {
+		ScalarSupplier x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
+		ScalarSupplier y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
+		ScalarSupplier z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
 		return ops().fromScalars(x, y, z);
 	}
 }

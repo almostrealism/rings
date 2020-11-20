@@ -22,6 +22,7 @@ import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
@@ -58,8 +59,8 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
 	@Override
-	public ColorProducer shade(LightingContext p, DiscreteField normals) {
-		return GeneratedColorProducer.fromProducer(this, color);
+	public Maker<RGB> shade(LightingContext p, DiscreteField normals) {
+		return () -> GeneratedColorProducer.fromProducer(this, color);
 	}
 
 	/**

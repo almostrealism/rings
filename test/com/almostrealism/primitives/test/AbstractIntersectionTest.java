@@ -40,11 +40,11 @@ public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures 
 		Vector v = w.crossProduct(u);
 
 		return
-				new SphereIntersectAt(compileProducer(new PinholeCameraRayAt(new PassThroughProducer<>(0),
-						pair(width, height),
+				new SphereIntersectAt(new PinholeCameraRayAt(new PassThroughProducer<>(0),
+						pair(width, height).get(),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,
-						u, v, w)));
+						u, v, w));
 	}
 }

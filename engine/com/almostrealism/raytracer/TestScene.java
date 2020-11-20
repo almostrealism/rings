@@ -43,6 +43,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.Producer;
 import org.almostrealism.util.Provider;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
 			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
-						new ReflectionShader(0.6, v(new RGB(0.6, 0.6, 0.6)))
+						new ReflectionShader(0.6, rgb(0.6).get())
 				});
 			} else {
 				s.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
@@ -140,7 +141,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 				public ColorProducer getColorAt() { return p; }
 
-				public RGBProducer getColorAt(Object args[]) { return v(evaluate(args)); }
+				public Producer<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
 				public RGB evaluate(Object args[]) { return this.getColorAt().evaluate(args); }
 
 				@Override

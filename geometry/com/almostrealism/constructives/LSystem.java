@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Supplier;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
@@ -117,12 +119,12 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = v(d);
+				Supplier<Producer<? extends Vector>> dp = v(d);
 
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
-				d = dp.evaluate();
+				d = dp.get().evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.BACKWARD)) {
@@ -132,12 +134,12 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = v(d);
+				Supplier<Producer<? extends Vector>> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
-				d = dp.evaluate();
+				d = dp.get().evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.LEFT)) {
@@ -147,12 +149,12 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = v(d);
+				Supplier<Producer<? extends Vector>> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
-				d = dp.evaluate();
+				d = dp.get().evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.RIGHT)) {
@@ -162,12 +164,12 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Producer<Vector> dp = v(d);
+				Supplier<Producer<? extends Vector>> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = mz.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
-				d = dp.evaluate();
+				d = dp.get().evaluate();
 				
 				continue i;
 			} else if (data[i].equals(LSystem.PUSH)) {

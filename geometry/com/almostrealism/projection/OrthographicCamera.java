@@ -227,7 +227,7 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 				double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
 
 				Vector o = getRotationMatrix().getInverse().transform(vector(x, y, 0.0),
-						TransformMatrix.TRANSFORM_AS_LOCATION).evaluate();
+						TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
 
 				return new Ray(o, viewDirection);
 			}

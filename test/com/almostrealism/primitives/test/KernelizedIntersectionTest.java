@@ -30,7 +30,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		combined.compact();
 
 		PairBank input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height), width * height);
+		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		ScalarBank output = new ScalarBank(input.getCount());
 
 		System.out.println(combined.getFunctionDefinition());

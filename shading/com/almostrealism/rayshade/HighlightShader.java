@@ -18,8 +18,10 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProducer;
@@ -28,6 +30,7 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DynamicProducer;
@@ -68,69 +71,72 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	}
 	
 	/** Method specified by the Shader interface. */
-	public ColorProducer shade(ShaderContext p, DiscreteField normals) {
+	@Override
+	public Maker<RGB> shade(ShaderContext p, DiscreteField normals) {
 		Vector point;
 		
 		try {
-			point = p.getIntersection().get(0).evaluate(new Object[0]).getOrigin();
+			point = p.getIntersection().get(0).evaluate().getOrigin();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 		
-		RGB lightColor = p.getLight().getColorAt(v(p.getIntersection().getNormalAt(v(point)).evaluate())).evaluate();
+		RGB lightColor = p.getLight().getColorAt(v(p.getIntersection().getNormalAt(v(point).get()).evaluate())).get().evaluate();
 		
 		Producer<Vector> n;
 		
 		try {
-			n = compileProducer(new RayDirection(normals.iterator().next()));
+			n = compileProducer(new RayDirection(() -> normals.iterator().next()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		
 		n = scalarMultiply(n, length(n).pow(-1.0));
-		VectorProducer h = add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection());
+		VectorSupplier h = add(() -> p.getIntersection().getNormalAt(v(point).get()), p.getLightDirection());
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
-		Producer<RGB> hc = v(this.getHighlightColor().evaluate(new Object[] {p}));
-		if (super.size() > 0) hc = RGBProducer.multiply(hc, super.shade(p, normals));
+		Maker<RGB> hc = v(this.getHighlightColor().evaluate(new Object[] {p}));
+		if (super.size() > 0) hc = cmultiply(hc, super.shade(p, normals));
 
-		ScalarProducer cFront = h.dotProduct(n);
-		ScalarProducer cBack = h.dotProduct(scalarMultiply(n, -1.0));
+		ScalarSupplier cFront = h.dotProduct(n);
+		ScalarSupplier cBack = h.dotProduct(scalarMultiply(n, -1.0));
 
-		Producer<RGB> fhc = hc;
+		Maker<RGB> fhc = hc;
 
-		return GeneratedColorProducer.fromProducer(this, new DynamicProducer<>(args -> {
-			Producer<RGB> color = null;
+		return () -> GeneratedColorProducer.fromProducer(this, new DynamicProducer<>(args -> {
+			Maker<RGB> color = null;
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-				double c = cFront.evaluate(args).getValue();
+				double c = cFront.get().evaluate(args).getValue();
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = v(lightColor).multiply(v(fhc.evaluate(args))).multiply(v(new RGB(c, c, c)));
+				Maker<RGB> pr = v(lightColor).multiply(v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {
-					color = new RGBAdd(color, pr);
+					RGBAdd sum = new RGBAdd(color, pr);
+					color = () -> sum;
 				}
 			}
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-				double c = cBack.evaluate(args).getValue();
+				double c = cBack.get().evaluate(args).getValue();
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = v(lightColor).multiply(v(fhc.evaluate(args))).multiply(v(new RGB(c, c, c)));
+				Maker<RGB> pr = v(lightColor).multiply(v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {
-					color = new RGBAdd(color, pr);
+					RGBAdd sum = new RGBAdd(color, pr);
+					color = () -> sum;
 				}
 			}
 
-			return color.evaluate(new Object[0]);
+			return color.get().evaluate();
 		}));
 	}
 	

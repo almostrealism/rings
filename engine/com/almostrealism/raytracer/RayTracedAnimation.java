@@ -389,8 +389,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String rbstate = p.getProperty("bodies." + i + ".shade.rbstate");
 
 				if (rbstate != null) {
-					BlendingShader bs = new BlendingShader(v(new RGB(0.8, 0.0, 0.0)),
-															v(new RGB(0.0, 0.0, 0.8)));
+					BlendingShader bs = new BlendingShader(rgb(0.8, 0.0, 0.0).get(),
+															rgb(0.0, 0.0, 0.8).get());
 
 					if (rbstate.equals("force"))
 						s.addShader(new RigidBodyStateShader(RigidBodyStateShader.FORCE, 0.0, 1.0, bs));

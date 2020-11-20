@@ -18,20 +18,25 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.ColorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBSupplier;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
 import org.almostrealism.util.Producer;
 import org.almostrealism.util.Provider;
+
+import java.util.function.Supplier;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
@@ -45,7 +50,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
   private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
   private static final Class types[] = {ColorProducer.class, ColorProducer.class};
   
-  private RGBProducer hotColor, coldColor;
+  private Producer<RGB> hotColor, coldColor;
 
 	/**
 	 * Constructs a new BlendingShader using white as a hot color
@@ -62,7 +67,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	 * @param hot  ColorProducer to use for hot color.
 	 * @param cold  ColorProducer to use for cold color.
 	 */
-	public BlendingShader(RGBProducer hot, RGBProducer cold) {
+	public BlendingShader(Producer<RGB> hot, Producer<RGB> cold) {
 		this.hotColor = hot;
 		this.coldColor = cold;
 	}
@@ -70,7 +75,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
-	public Producer<RGB> shade(LightingContext p, DiscreteField normals) {
+	public Maker<RGB> shade(LightingContext p, DiscreteField normals) {
 		// TODO  Put evaluation into producer
 
 		Producer<Ray> n;
@@ -82,18 +87,19 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 			return null;
 		}
 		
-		Producer<Vector> l = p.getLightDirection();
-		
-		ScalarProducer k = RayProducer.direction(n).dotProduct(l).add(1.0);
-		ScalarProducer oneMinusK = scalar(1.0).subtract(k);
+		Supplier<Producer<? extends Vector>> l = p.getLightDirection();
+
+		ScalarSupplier k = direction(() -> n).dotProduct(l).add(1.0);
+		ScalarSupplier oneMinusK = scalar(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.evaluate(new Object[] { p });
 		RGB cc = this.coldColor.evaluate(new Object[] { p });
 		
-		RGBProducer c = v(hc).multiply(RGBProducer.fromScalar(k));
-		c = c.add(v(cc).multiply(RGBProducer.fromScalar(oneMinusK)));
-		
-		return GeneratedColorProducer.fromProducer(this, c);
+		RGBSupplier c = v(hc).multiply(cfromScalar(k));
+		c = c.add(v(cc).multiply(cfromScalar(oneMinusK)));
+
+		Producer<RGB> cp = c.get();
+		return () -> GeneratedColorProducer.fromProducer(this, cp);
 	}
 
 	/**

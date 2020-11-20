@@ -19,6 +19,7 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
@@ -29,6 +30,7 @@ import org.almostrealism.util.Provider;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 //TODO Add ParticleGroup implementation.
 
@@ -60,15 +62,16 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	}
 	
 	/**
-	 * @return  A Vector object that represents the vector normal to this cylinder
+	 * @return  A Vector that represents the vector normal to this cylinder
 	 *          at the point represented by the specified Vector object.
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		Producer<Vector> normal = add(point, v(getLocation().minus()));
-		normal = super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
+		Maker<Vector> normal = add(() -> point, v(getLocation().minus()));
+		Maker<Vector> fnormal = normal;
+		normal = () -> (Producer<Vector>) super.getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		normal = multiply(normal, vector(1.0, 0.0, 1.0));
-		return normal;
+		return normal.get();
 	}
 	
 	/**
@@ -85,14 +88,15 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		if (m != null) r = m.getInverse().transform(r);
+		Supplier<Producer<? extends Ray>> sr = () -> r;
+		if (m != null) sr = m.getInverse().transform(sr);
 
-		final Producer<Ray> fr = r;
+		final Supplier<Producer<? extends Ray>> fr = sr;
 
 		Producer<Scalar> s = new Producer<Scalar>() {
 			@Override
 			public Scalar evaluate(Object[] args) {
-				Ray ray = fr.evaluate(args);
+				Ray ray = fr.get().evaluate(args);
 
 				Vector a = ray.getOrigin();
 				Vector d = ray.getDirection();
@@ -139,7 +143,7 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 			}
 		};
 
-		return new ShadableIntersection(this, r, s);
+		return new ShadableIntersection(this, () -> r, () -> s);
 	}
 
 	@Override

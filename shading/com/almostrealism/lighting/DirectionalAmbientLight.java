@@ -26,6 +26,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.util.Producer;
 import static org.almostrealism.util.Ops.*;
 
@@ -105,7 +106,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Curve<RGB> surface,
 																	  Collection<Curve<RGB>> otherSurfaces, DirectionalAmbientLight light,
 																	  List<Light> otherLights, ShaderContext p) {
-		Producer<RGB> color = null;
+		Maker<RGB> color;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
@@ -121,6 +122,6 @@ public class DirectionalAmbientLight extends AmbientLight {
 			color = surface instanceof Shadable ? ((Shadable) surface).shade(p) : null;
 		}
 		
-		return color;
+		return color.get();
 	}
 }

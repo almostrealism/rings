@@ -28,6 +28,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.RigidBody;
+import org.almostrealism.relation.Maker;
 import org.almostrealism.util.AdaptProducer;
 import org.almostrealism.util.Producer;
 
@@ -192,7 +193,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	 * Delegates to {@link #getValueAt(Producer)}.
 	 */
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
+	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
 
 	/**
 	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()

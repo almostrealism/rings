@@ -44,12 +44,13 @@ import org.almostrealism.util.ProducerWithRank;
 import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
-	private Producer<Scalar> distance;
+	private Supplier<Producer<Scalar>> distance;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
@@ -61,21 +62,19 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		this.distance = ((ShadableIntersection) intersections).getDistance();
 	}
 
-	protected static Producer[] shadowAndShade(ContinuousField intersections,
+	protected static Supplier[] shadowAndShade(ContinuousField intersections,
 											   Curve<RGB> surface,
 											   Collection<Curve<RGB>> otherSurfaces,
 											   Light light, Iterable<Light> otherLights, ShaderContext p) {
-		Producer<RGB> shadow, shade;
+		Supplier<Producer<? extends RGB>> shadow, shade;
 
 		List<Intersectable> allSurfaces = new ArrayList<>();
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
 
 		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
-			shadow = new ShadowMask(light, allSurfaces,
-					Hardware.getLocalHardware().getComputer()
-							.compileProducer(new RayOrigin(intersections.get(0))));
+			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(() -> intersections.get(0)).get());
 		} else {
-			shadow = RGBWhite.getProducer();
+			shadow = RGBWhite.getInstance();
 		}
 
 		ShaderContext context = p.clone();
@@ -85,13 +84,11 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		context.setOtherSurfaces(otherSurfaces);
 
 		if (light instanceof SurfaceLight) {
-			shade = lightingCalculation(intersections,
-						Hardware.getLocalHardware().getComputer()
-								.compileProducer(new RayOrigin(intersections.get(0))),
+			shade = lightingCalculation(intersections, new RayOrigin(() -> intersections.get(0)).get(),
 										surface, otherSurfaces,
 										((SurfaceLight) light).getSamples(), p);
 		} else if (light instanceof PointLight) {
-			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, intersections.get(0), context) : null;
+			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, () -> intersections.get(0), context) : null;
 		} else if (light instanceof DirectionalAmbientLight) {
 			DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) light;
 
@@ -103,13 +100,12 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
-					Hardware.getLocalHardware().getComputer()
-							.compileProducer(new RayOrigin(intersections.get(0))));
+						new RayOrigin(() -> intersections.get(0)).get());
 		} else {
-			shade = RGBBlack.getProducer();
+			shade = RGBBlack.getInstance();
 		}
 
-		return new Producer[] { shadow, shade };
+		return new Supplier[] { shadow, shade };
 	}
 
 	@Override
@@ -128,7 +124,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	public Producer<RGB> getProducer() { return this; }
 
 	@Override
-	public Producer<Scalar> getRank() { return distance; }
+	public Producer<Scalar> getRank() { return distance.get(); }
 
 	@Override
 	public void compact() {
@@ -145,10 +141,10 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
+	public static Supplier<Producer<? extends RGB>> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
 													Curve<RGB> surface, Iterable<Curve<RGB>> otherSurfaces,
 											   		Light lights[], ShaderContext p) {
-		Producer<RGB> color = null;
+		Supplier<Producer<? extends RGB>> color = null;
 
 		for (int i = 0; i < lights.length; i++) {
 			// See RayTracingEngine.seperateLights method
@@ -158,13 +154,14 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 
-			Producer<RGB> c = lightingCalculation(intersection, point, surface,
+			Supplier<Producer<? extends RGB>> c = lightingCalculation(intersection, point, surface,
 										otherSurfaces, lights[i], otherLights, p);
 			if (c != null) {
 				if (color == null) {
 					color = c;
 				} else {
-					color = new RGBAdd(color, c);
+					Supplier<Producer<? extends RGB>> fc = color;
+					color = () -> new RGBAdd(fc, c);
 				}
 			}
 		}
@@ -180,7 +177,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	@Deprecated
-	public static Producer<RGB> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
+	public static Supplier<Producer<? extends RGB>> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
 													Curve<RGB> surface,
 													Iterable<Curve<RGB>> otherSurfaces, Light light,
 													Light otherLights[], ShaderContext p) {
@@ -199,7 +196,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		} else if (light instanceof AmbientLight) {
 			throw new IllegalArgumentException("Migrated elsewhere");
 		} else {
-			return RGBBlack.getProducer();
+			return RGBBlack.getInstance();
 		}
 	}
 

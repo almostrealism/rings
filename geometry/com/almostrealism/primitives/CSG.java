@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayMatrixTransform;
@@ -80,14 +81,15 @@ public class CSG extends AbstractSurface {
      * @see  Intersectable#intersectAt(Producer)
      */
     @Override
-    public ContinuousField intersectAt(Producer r) {
+    public ContinuousField intersectAt(Producer ray) {
         TransformMatrix m  = getTransform(true);
+        Supplier<Producer<? extends Ray>> r = () -> ray;
         if (m != null) r = m.getInverse().transform(r);
 
-        final Producer<Ray> fr = r;
+        final Supplier<Producer<? extends Ray>> fr = r;
         
         if (this.type == CSG.UNION) {
-            return new ClosestIntersection(r, Arrays.asList(this.sa, this.sb));
+            return new ClosestIntersection(r.get(), Arrays.asList(this.sa, this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
 			throw new RuntimeException("Not implemented");
         	/* TODO
