@@ -21,6 +21,8 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.time.Temporal;
 
+import java.util.function.Supplier;
+
 /**
  * @author  Michael Murray
  */
@@ -38,8 +40,8 @@ public class RigidBodyPinholeCamera implements Temporal {
 	}
 
 	@Override
-	public Runnable tick() {
-		return () -> {
+	public Supplier<Runnable> tick() {
+		return () -> () -> {
 			c.setLocation(this.model.getLocation());
 			c.setViewingDirection(this.model.getRotation());
 		};
