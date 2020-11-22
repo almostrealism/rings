@@ -16,12 +16,9 @@
 
 package com.almostrealism.primitives;
 
-import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.PairSupplier;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
-import org.almostrealism.algebra.computations.DefaultScalarProducer;
 import org.almostrealism.algebra.computations.DirectionDotDirection;
 import org.almostrealism.algebra.computations.OriginDotDirection;
 import org.almostrealism.algebra.computations.OriginDotOrigin;
@@ -29,14 +26,14 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.math.bool.AcceleratedConjunctionAdapter;
 import org.almostrealism.math.bool.GreaterThan;
 import org.almostrealism.math.bool.LessThanScalar;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
 import static org.almostrealism.util.Ops.*;
 
 public class SphereIntersectAt extends LessThanScalar {
-	private SphereIntersectAt(Supplier<Producer<? extends Ray>> r, ScalarSupplier oDotD,
+	private SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r, ScalarSupplier oDotD,
 							  ScalarSupplier oDotO, ScalarSupplier dDotD) {
 		super(discriminant(oDotD, oDotO, dDotD),
 				ops().scalar(0.0),
@@ -44,7 +41,7 @@ public class SphereIntersectAt extends LessThanScalar {
 				() -> closest(t(oDotD, oDotO, dDotD)), false);
 	}
 
-	public SphereIntersectAt(Supplier<Producer<? extends Ray>> r) {
+	public SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r) {
 		this(r, new OriginDotDirection(r), new OriginDotOrigin(r), new DirectionDotDirection(r));
 	}
 

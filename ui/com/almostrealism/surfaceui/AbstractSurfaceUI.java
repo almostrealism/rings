@@ -42,7 +42,7 @@ import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.primitives.SurfaceUI;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface
@@ -180,27 +180,27 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	/**
-	 * Delegates to the {@link #getValueAt(Producer)} method of the underlying {@link AbstractSurface}.
+	 * Delegates to the {@link #getValueAt(Evaluable)} method of the underlying {@link AbstractSurface}.
 	 */
 	@Override
-	public Producer<RGB> getValueAt(Producer<Vector> point) { return getSurface().getValueAt(point); }
+	public Evaluable<RGB> getValueAt(Evaluable<Vector> point) { return getSurface().getValueAt(point); }
 
 	/**
 	 * Returns a Vector object that represents the vector normal to this surface
 	 * at the point represented by the specified {@link Vector}.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
 		return getSurface().getNormalAt(point);
 	}
 
 	/**
 	 * Returns a {@link ContinuousField} representing the point along the ray produced by
-	 * the specified {@link Ray} {@link Producer} that intersection between the ray and
+	 * the specified {@link Ray} {@link Evaluable} that intersection between the ray and
 	 * the surface occurs.
 	 */
 	@Override
-	public ContinuousField intersectAt(Producer ray) {
+	public ContinuousField intersectAt(Evaluable ray) {
 		return getSurface().intersectAt(ray);
 	}
 

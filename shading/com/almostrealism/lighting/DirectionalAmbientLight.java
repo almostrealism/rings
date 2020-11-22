@@ -27,7 +27,7 @@ import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import static org.almostrealism.util.Ops.*;
 
 /**
@@ -103,9 +103,9 @@ public class DirectionalAmbientLight extends AmbientLight {
 	 *           during a single set of ray casting events (reflections, refractions,
 	 *           etc.) (null is accepted).
 	 */
-	public static Producer<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Curve<RGB> surface,
-																	  Collection<Curve<RGB>> otherSurfaces, DirectionalAmbientLight light,
-																	  List<Light> otherLights, ShaderContext p) {
+	public static Evaluable<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Curve<RGB> surface,
+																	   Collection<Curve<RGB>> otherSurfaces, DirectionalAmbientLight light,
+																	   List<Light> otherLights, ShaderContext p) {
 		Maker<RGB> color;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();

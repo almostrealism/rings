@@ -51,8 +51,7 @@ import com.almostrealism.RenderParameters;
 import io.flowtree.job.Job;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}
@@ -528,7 +527,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) s,
 												new FogParameters()), s.getCamera(), p, getExecutorService());
-		Producer<RGB[][]> renderedImageData = r.realize(p);
+		Evaluable<RGB[][]> renderedImageData = r.realize(p);
 		if (enableCompaction) renderedImageData.compact();
 
 		RGB rgb[][] = renderedImageData.evaluate(new Object[] { x, y });

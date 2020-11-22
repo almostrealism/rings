@@ -20,7 +20,7 @@ import com.almostrealism.gl.GLSLPrintWriter;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.test.RayTracingTest;
 import io.almostrealism.code.DefaultNameProvider;
-import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.relation.Computation;
 import org.almostrealism.relation.PairFunction;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class GLSLTestSuite {
 		}
 	}
 
-	public void encodePairFunction(PairFunction<Future<ColorProducer>> f) {
+	public void encodePairFunction(PairFunction<Future<ColorEvaluable>> f) {
 		if (f instanceof Computation == false) {
 			throw new IllegalArgumentException(f + " is not a Computation, a requirement for encoding to GLSL");
 		}

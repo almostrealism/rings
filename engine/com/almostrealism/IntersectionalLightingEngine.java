@@ -25,15 +25,13 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class IntersectionalLightingEngine extends LightingEngine<ContinuousField> {
 	// TODO  Arguments are redundant (they are found in ShaderContext)
-    public IntersectionalLightingEngine(Producer<Ray> ray, Intersectable surface, Collection<Curve<RGB>> otherSurfaces,
+    public IntersectionalLightingEngine(Evaluable<Ray> ray, Intersectable surface, Collection<Curve<RGB>> otherSurfaces,
 										Light light, Iterable<Light> otherLights, ShaderContext p) {
         super(surface.intersectAt(ray), (Curve<RGB>) surface, otherSurfaces, light, otherLights, p);
     }

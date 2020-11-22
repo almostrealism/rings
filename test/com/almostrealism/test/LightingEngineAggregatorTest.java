@@ -29,12 +29,11 @@ import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
-import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.swing.displays.ImageDisplay;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.ProducerArgumentReference;
-import org.almostrealism.util.Provider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -107,7 +106,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void aggregateAcceleratedCompare() throws IOException {
 		RayIntersectionEngine.enableAcceleratedAggregator = false;
-		Producer<RGB> agg = getScene().getProducer();
+		Evaluable<RGB> agg = getScene().getProducer();
 		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
@@ -146,8 +145,8 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 			if (a.getArguments().get(i).getProducer() instanceof ProducerArgumentReference) {
 				continue i;
-			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedProducer) {
-				KernelizedProducer kp = (KernelizedProducer)  a.getArguments().get(i).getProducer();
+			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedEvaluable) {
+				KernelizedEvaluable kp = (KernelizedEvaluable)  a.getArguments().get(i).getProducer();
 				MemoryBank output = kp.createKernelDestination(input.getCount());
 				kp.kernelEvaluate(output, new MemoryBank[] { input, dim });
 

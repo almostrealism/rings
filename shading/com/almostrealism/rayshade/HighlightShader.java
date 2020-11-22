@@ -17,26 +17,23 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DynamicProducer;
+import org.almostrealism.util.DynamicEvaluable;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A {@link HighlightShader} provides a shading method for highlights on surfaces.
@@ -47,9 +44,9 @@ import org.almostrealism.util.Provider;
 public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, HardwareFeatures, CodeFeatures {
   private static final String propNames[] = {"Highlight Color", "Highlight Exponent"};
   private static final String propDesc[] = {"The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)"};
-  private static final Class propTypes[] = {ColorProducer.class, Double.class};
+  private static final Class propTypes[] = {ColorEvaluable.class, Double.class};
   
-  private RGBProducer highlightColor;
+  private RGBEvaluable highlightColor;
   private double highlightExponent;
 
 	/**
@@ -65,7 +62,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 * Constructs a new HighlightShader object using the specified highlight color
 	 * and highlight exponent.
 	 */
-	public HighlightShader(ColorProducer color, double exponent) {
+	public HighlightShader(ColorEvaluable color, double exponent) {
 		this.setHighlightColor(color);
 		this.setHighlightExponent(exponent);
 	}
@@ -84,7 +81,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		
 		RGB lightColor = p.getLight().getColorAt(v(p.getIntersection().getNormalAt(v(point).get()).evaluate())).get().evaluate();
 		
-		Producer<Vector> n;
+		Evaluable<Vector> n;
 		
 		try {
 			n = compileProducer(new RayDirection(() -> normals.iterator().next()));
@@ -105,7 +102,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 
 		Maker<RGB> fhc = hc;
 
-		return () -> GeneratedColorProducer.fromProducer(this, new DynamicProducer<>(args -> {
+		return () -> GeneratedColorProducer.fromProducer(this, new DynamicEvaluable<>(args -> {
 			Maker<RGB> color = null;
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
@@ -144,7 +141,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 * Sets the color used for the highlight shaded by this HighlightShader object
 	 * to the color represented by the specifed RGB object.
 	 */
-	public void setHighlightColor(RGBProducer color) { this.highlightColor = color; }
+	public void setHighlightColor(RGBEvaluable color) { this.highlightColor = color; }
 	
 	/**
 	 * Sets the highlight exponent (phong exponent) used by this {@link HighlightShader}.
@@ -153,9 +150,9 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	
 	/**
 	 * Returns the color used for the highlight shaded by this {@link HighlightShader}
-	 * as an {@link RGBProducer}.
+	 * as an {@link RGBEvaluable}.
 	 */
-	public RGBProducer getHighlightColor() { return this.highlightColor; }
+	public RGBEvaluable getHighlightColor() { return this.highlightColor; }
 	
 	/**
 	 * Returns the highlight exponent (phong exponent) used by this HighlightShader object.
@@ -193,8 +190,8 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 */
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0) {
-			if (value instanceof ColorProducer)
-				this.setHighlightColor((ColorProducer)value);
+			if (value instanceof ColorEvaluable)
+				this.setHighlightColor((ColorEvaluable)value);
 			else
 				throw new IllegalArgumentException("Illegal argument: " + value.toString());
 		} else if (index == 1) {
@@ -223,7 +220,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	/**
 	 * @return  {highlight color}.
 	 */
-	public Producer[] getInputPropertyValues() { return new Producer[] {this.highlightColor}; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[] {this.highlightColor}; }
 	
 	/**
 	 * Sets the values of properties of this HighlightShader object to those specified.
@@ -231,7 +228,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 * @throws IllegalArgumentException  If the Producer object specified is not of the correct type.
 	 * @throws IndexOutOfBoundsException  If the lindex != 0;
 	 */
-	public void setInputPropertyValue(int index, Producer p) {
+	public void setInputPropertyValue(int index, Evaluable p) {
 		if (index == 0)
 			this.setPropertyValue(p, 0);
 		else

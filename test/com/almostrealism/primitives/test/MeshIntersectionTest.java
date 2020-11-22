@@ -14,20 +14,19 @@ import org.almostrealism.graph.mesh.DefaultVertexData;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.graph.mesh.MeshData;
 import org.almostrealism.graph.mesh.Triangle;
-import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.RankedChoiceProducer;
-import org.almostrealism.util.Provider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
-	private KernelizedProducer<Ray> ray;
+	private KernelizedEvaluable<Ray> ray;
 
 	private int width, height;
 
@@ -45,7 +44,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		return new Mesh(data);
 	}
 
-	protected Producer<Ray> camera() {
+	protected Evaluable<Ray> camera() {
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
 		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
@@ -62,7 +61,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 	@Before
 	public void init() {
 		data = mesh().getMeshData();
-		ray = (KernelizedProducer) camera();
+		ray = (KernelizedEvaluable) camera();
 		ray.compact();
 	}
 
@@ -75,7 +74,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		kernel.setDimensions(width, height, 1, 1);
 		kernel.kernelEvaluate(distances, new MemoryBank[] { input });
 
-		Producer<Vector> closestNormal = kernel.getClosestNormal();
+		Evaluable<Vector> closestNormal = kernel.getClosestNormal();
 
 		int pos = 0;
 		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());

@@ -8,8 +8,7 @@ import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,7 @@ public class Thing extends AbstractSurface {
 	private Plane p = new Plane(Plane.XY);
 
 	@Override
-	public ContinuousField intersectAt(Producer ray) {
+	public ContinuousField intersectAt(Evaluable ray) {
 		if (Math.random() > 0.5) {
 			return this.p.intersectAt(ray);
 		} else {
@@ -43,7 +42,7 @@ public class Thing extends AbstractSurface {
 	}
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
 		return compileProducer(new ImmutableVector(0.0, 0.0, 1.0));
 	}
 }

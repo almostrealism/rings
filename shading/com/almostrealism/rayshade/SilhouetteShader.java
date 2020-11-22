@@ -18,15 +18,14 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBEvaluable;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value
@@ -34,12 +33,12 @@ import org.almostrealism.util.Provider;
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingContext> {
-	private Producer<RGB> color;
+public class SilhouetteShader implements RGBEvaluable, Editable, Shader<LightingContext> {
+	private Evaluable<RGB> color;
 
 	private String names[] = { "Color" };
 	private String desc[] = { "The color of the silhouette" };
-	private Class types[] = { RGBProducer.class };
+	private Class types[] = { RGBEvaluable.class };
   
   
 	/**
@@ -49,11 +48,11 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	
 	/**
 	 * Constructs a new {@link SilhouetteShader} using the specified {@link RGB}
-	 * {@link Producer} as a color.
+	 * {@link Evaluable} as a color.
 	 * 
 	 * @param color  RGB Producer to use.
 	 */
-	public SilhouetteShader(Producer<RGB> color) { this.color = color; }
+	public SilhouetteShader(Evaluable<RGB> color) { this.color = color; }
 	
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
@@ -64,7 +63,7 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	}
 
 	/**
-	 * @see ColorProducer#evaluate(java.lang.Object[])
+	 * @see ColorEvaluable#evaluate(java.lang.Object[])
 	 */
 	@Override
 	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
@@ -102,7 +101,7 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	@Override
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
-			this.color = (ColorProducer)value;
+			this.color = (ColorEvaluable)value;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}
@@ -112,22 +111,22 @@ public class SilhouetteShader implements RGBProducer, Editable, Shader<LightingC
 	 */
 	@Override
 	public void setPropertyValues(Object values[]) {
-		if (values.length > 0) this.color = (ColorProducer)values[0];
+		if (values.length > 0) this.color = (ColorEvaluable)values[0];
 	}
 
 	/**
 	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	@Override
-	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[] { this.color }; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, Evaluable)
 	 */
 	@Override
-	public void setInputPropertyValue(int index, Producer p) {
+	public void setInputPropertyValue(int index, Evaluable p) {
 		if (index == 0)
-			this.color = (ColorProducer)p;
+			this.color = (ColorEvaluable)p;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}

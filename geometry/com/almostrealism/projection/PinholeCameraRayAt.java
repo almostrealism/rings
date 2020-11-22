@@ -17,18 +17,15 @@
 package com.almostrealism.projection;
 
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairProducer;
+import org.almostrealism.algebra.PairEvaluable;
 import org.almostrealism.algebra.PairSupplier;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.geometry.RandomPair;
 import org.almostrealism.geometry.RayFromVectors;
 import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import static org.almostrealism.util.Ops.*;
 
@@ -37,12 +34,12 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		super(ops().v(location), direction);
 	}
 
-	public PinholeCameraRayAt(Producer<Pair> pos, Producer<Pair> sd, Vector location, Pair projectionDimensions,
+	public PinholeCameraRayAt(Evaluable<Pair> pos, Evaluable<Pair> sd, Vector location, Pair projectionDimensions,
 							  double blur, double focalLength, Vector u, Vector v, Vector w) {
 		this(location, direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
-	private static VectorSupplier direction(Producer<Pair> pos, Producer<Pair> sd, Pair projectionDimensions, double focalLength,
+	private static VectorSupplier direction(Evaluable<Pair> pos, Evaluable<Pair> sd, Pair projectionDimensions, double focalLength,
 											Vector u, Vector v, Vector w, Pair blur) {
 		PairSupplier pd = ops().v(projectionDimensions);
 
@@ -67,8 +64,8 @@ public class PinholeCameraRayAt extends RayFromVectors {
 			VectorSupplier uv = u(wv, t(pqr));
 			VectorSupplier vv = v(wv, uv);
 
-			PairProducer random = new RandomPair();
-			PairProducer frandom = ops().fromScalars(random.x().add(-0.5), random.y().add(-0.5));
+			PairEvaluable random = new RandomPair();
+			PairEvaluable frandom = ops().fromScalars(random.x().add(-0.5), random.y().add(-0.5));
 
 			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(() -> frandom.x()));
 			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(() -> frandom.y()));

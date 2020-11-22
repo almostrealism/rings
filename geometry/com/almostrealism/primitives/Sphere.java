@@ -30,8 +30,7 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -108,11 +107,11 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 * by the specified Vector object.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		Producer<Vector> normal = add(() -> point, v(getLocation().minus())).get();
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
+		Evaluable<Vector> normal = add(() -> point, v(getLocation().minus())).get();
 		if (getTransform(true) != null) {
-			Producer<Vector> fnormal = normal;
-			normal = (Producer<Vector>) getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
+			Evaluable<Vector> fnormal = normal;
+			normal = (Evaluable<Vector>) getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		}
 
 		return normal;
@@ -124,18 +123,18 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 * this {@link Sphere} occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Evaluable r) {
 		TransformMatrix m = getTransform(true);
 
-		Supplier<Producer<? extends Ray>> tr = () -> r;
+		Supplier<Evaluable<? extends Ray>> tr = () -> r;
 		if (m != null) tr = m.getInverse().transform(tr);
 
-		final Supplier<Producer<? extends Ray>> fr = tr;
+		final Supplier<Evaluable<? extends Ray>> fr = tr;
 
 		if (enableHardwareAcceleration) {
 			return new ShadableIntersection(this, () -> r, () -> new SphereIntersectAt(fr));
 		} else {
-			Producer<Scalar> s = new Producer<Scalar>() {
+			Evaluable<Scalar> s = new Evaluable<Scalar>() {
 				@Override
 				public Scalar evaluate(Object[] args) {
 					Ray ray = fr.get().evaluate(args);

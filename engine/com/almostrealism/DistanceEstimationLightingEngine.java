@@ -30,7 +30,7 @@ import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.Provider;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	private DistanceEstimator estimator;
 	private ShaderSet shaders;
 
-	public DistanceEstimationLightingEngine(Producer<Ray> ray, Curve<RGB> surface,
+	public DistanceEstimationLightingEngine(Evaluable<Ray> ray, Curve<RGB> surface,
 											Collection<? extends Curve<RGB>> otherSurfaces,
 											Light light, Iterable<Light> otherLights,
 											ShaderContext p, DistanceEstimator estimator, ShaderSet shaders) {
@@ -90,8 +90,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		this.shaders = shaders;
 	}
 
-	public static class Locus extends ArrayList<Producer<Ray>>
-			implements ContinuousField, Callable<Producer<RGB>>, Shadable, HardwareFeatures {
+	public static class Locus extends ArrayList<Evaluable<Ray>>
+			implements ContinuousField, Callable<Evaluable<RGB>>, Shadable, HardwareFeatures {
 		private ShaderSet shaders;
 		private ShaderContext params;
 
@@ -102,7 +102,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Producer<Vector> getNormalAt(Producer<Vector> vector) {
+		public Evaluable<Vector> getNormalAt(Evaluable<Vector> vector) {
 			return new RayDirection(() -> get(0)).get();
 		}
 
@@ -148,7 +148,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Producer<RGB> call() {
+		public Evaluable<RGB> call() {
 			return shade(params).get();
 		}
 	}

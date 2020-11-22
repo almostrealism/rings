@@ -28,7 +28,7 @@ import org.almostrealism.space.Volume;
 import org.almostrealism.time.Clock;
 
 import org.almostrealism.util.PriorityQueue;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 /**
  * @author  Michael Murray
@@ -133,8 +133,8 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
 
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
-		return new Producer<Ray>() {
+	public Evaluable<Ray> rayAt(Evaluable<Pair> pos, Evaluable<Pair> sd) {
+		return new Evaluable<Ray>() {
 			@Override
 			public Ray evaluate(Object[] args) {
 				Pair ij = pos.evaluate(args);
@@ -216,13 +216,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Clock getClock() { return this.clock; }
 
 	@Override
-	public boolean inside(Producer<Vector> x) { return pinhole.inside(x) || plane.inside(x); }
+	public boolean inside(Evaluable<Vector> x) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
-	public Producer getValueAt(Producer point) { return null; }
+	public Evaluable getValueAt(Evaluable point) { return null; }
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> x) { return plane.getNormalAt(x); }
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {
@@ -230,7 +230,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Producer<Vector> xyz) { return plane.getSurfaceCoords(xyz); }
+	public double[] getSurfaceCoords(Evaluable<Vector> xyz) { return plane.getSurfaceCoords(xyz); }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }
@@ -246,13 +246,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public VectorProducer emit() { return null; }
+	public VectorEvaluable emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0.0; }
 
 	@Override
-	public VectorProducer getEmitPosition() { return null; }
+	public VectorEvaluable getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }

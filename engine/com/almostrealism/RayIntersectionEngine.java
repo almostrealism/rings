@@ -23,7 +23,7 @@ import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		this.fparams = fparams;
 	}
 	
-	public Producer<RGB> trace(Producer<Ray> r) {
+	public Evaluable<RGB> trace(Evaluable<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);

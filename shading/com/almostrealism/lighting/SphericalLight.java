@@ -23,8 +23,7 @@ import org.almostrealism.color.Light;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.color.RGB;
 import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
@@ -65,7 +64,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	}
 
 	/**
-	 * Delegates to {@link #getValueAt(Producer)}.
+	 * Delegates to {@link #getValueAt(Evaluable)}.
 	 */
 	@Override
 	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
@@ -100,11 +99,11 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 			double y = r * Math.sin(u) * Math.sin(v);
 			double z = r * Math.cos(u);
 			
-			Supplier<Producer<? extends Vector>> p = getTransform(true).transform(vector(x, y, z),
+			Supplier<Evaluable<? extends Vector>> p = getTransform(true).transform(vector(x, y, z),
 									TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO  This should pass along the ColorProucer directly rather than evaluating it
-			l[i] = new PointLight(p.get().evaluate(), in, getColorAt(() -> (Producer<Vector>) p.get()).get().evaluate());
+			l[i] = new PointLight(p.get().evaluate(), in, getColorAt(() -> (Evaluable<Vector>) p.get()).get().evaluate());
 			l[i].setAttenuationCoefficients(this.atta, this.attb, this.attc);
 		}
 		

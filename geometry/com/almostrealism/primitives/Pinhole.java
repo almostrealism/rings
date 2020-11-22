@@ -17,7 +17,7 @@
 package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.time.Clock;
@@ -70,7 +70,7 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	public void setOrigPosition(double[] x) { }
 
 	@Override
-	public VectorProducer emit() { return null; }
+	public VectorEvaluable emit() { return null; }
 
 	@Override
 	public void setClock(Clock c) { this.clock = c; }
@@ -82,7 +82,7 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	public double getEmitEnergy() { return 0.0; }
 
 	@Override
-	public VectorProducer getEmitPosition() { return null; }
+	public VectorEvaluable getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }

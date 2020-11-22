@@ -34,12 +34,11 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.ProducerWithRank;
 import static org.almostrealism.util.Ops.*;
 
@@ -50,7 +49,7 @@ import java.util.function.Supplier;
 public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
-	private Supplier<Producer<Scalar>> distance;
+	private Supplier<Evaluable<Scalar>> distance;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
@@ -66,7 +65,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 											   Curve<RGB> surface,
 											   Collection<Curve<RGB>> otherSurfaces,
 											   Light light, Iterable<Light> otherLights, ShaderContext p) {
-		Supplier<Producer<? extends RGB>> shadow, shade;
+		Supplier<Evaluable<? extends RGB>> shadow, shade;
 
 		List<Intersectable> allSurfaces = new ArrayList<>();
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
@@ -116,15 +115,15 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	}
 
 	@Override
-	public Iterable<Producer<Ray>> getDependencies() { return intersections; }
+	public Iterable<Evaluable<Ray>> getDependencies() { return intersections; }
 
 	public Curve<RGB> getSurface() { return surface; }
 
 	@Override
-	public Producer<RGB> getProducer() { return this; }
+	public Evaluable<RGB> getProducer() { return this; }
 
 	@Override
-	public Producer<Scalar> getRank() { return distance.get(); }
+	public Evaluable<Scalar> getRank() { return distance.get(); }
 
 	@Override
 	public void compact() {
@@ -141,10 +140,10 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static Supplier<Producer<? extends RGB>> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
-													Curve<RGB> surface, Iterable<Curve<RGB>> otherSurfaces,
-											   		Light lights[], ShaderContext p) {
-		Supplier<Producer<? extends RGB>> color = null;
+	public static Supplier<Evaluable<? extends RGB>> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
+																		 Curve<RGB> surface, Iterable<Curve<RGB>> otherSurfaces,
+																		 Light lights[], ShaderContext p) {
+		Supplier<Evaluable<? extends RGB>> color = null;
 
 		for (int i = 0; i < lights.length; i++) {
 			// See RayTracingEngine.seperateLights method
@@ -154,13 +153,13 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 
-			Supplier<Producer<? extends RGB>> c = lightingCalculation(intersection, point, surface,
+			Supplier<Evaluable<? extends RGB>> c = lightingCalculation(intersection, point, surface,
 										otherSurfaces, lights[i], otherLights, p);
 			if (c != null) {
 				if (color == null) {
 					color = c;
 				} else {
-					Supplier<Producer<? extends RGB>> fc = color;
+					Supplier<Evaluable<? extends RGB>> fc = color;
 					color = () -> new RGBAdd(fc, c);
 				}
 			}
@@ -177,10 +176,10 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	@Deprecated
-	public static Supplier<Producer<? extends RGB>> lightingCalculation(ContinuousField intersection, Producer<Vector> point,
-													Curve<RGB> surface,
-													Iterable<Curve<RGB>> otherSurfaces, Light light,
-													Light otherLights[], ShaderContext p) {
+	public static Supplier<Evaluable<? extends RGB>> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
+																		 Curve<RGB> surface,
+																		 Iterable<Curve<RGB>> otherSurfaces, Light light,
+																		 Light otherLights[], ShaderContext p) {
 		List<Curve<RGB>> allSurfaces = new ArrayList<>();
 		for (Curve<RGB> s : otherSurfaces) allSurfaces.add(s);
 		allSurfaces.add(surface);

@@ -17,17 +17,14 @@
 package com.almostrealism.primitives;
 
 import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.ImmutableVector;
-import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.Volume;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	public static double d = 0.0;
@@ -35,7 +32,7 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	protected double w, h;
 	protected double thick = 0.5;
 	protected double up[], across[];
-	protected Producer<Vector> normal;
+	protected Evaluable<Vector> normal;
 	
 	/** @param t  The thickness of the plane (usually measured in micrometers). */
 	public void setThickness(double t) { this.thick = t; }
@@ -69,7 +66,7 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	/**
 	 * @return  {x, y, z} - The vector normal to the plane.
 	 */
-	public Producer<Vector> getSurfaceNormal() { return this.normal; }
+	public Evaluable<Vector> getSurfaceNormal() { return this.normal; }
 	
 	/**
 	 * @param p  {x, y, z} - The vector pointing upwards across the surface of this
@@ -91,7 +88,7 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	}
 
 	@Override
-	public boolean inside(Producer<Vector> x) {
+	public boolean inside(Evaluable<Vector> x) {
 		double d = Math.abs(dotProduct(x, normal).evaluate().getValue());
 		Plane.d = d;
 		if (d > this.thick) return false;
@@ -136,10 +133,10 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	}
 
 	@Override
-	public Producer getValueAt(Producer point) { return null; }
+	public Evaluable getValueAt(Evaluable point) { return null; }
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> x) { return normal; }
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> x) { return normal; }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) {
@@ -151,7 +148,7 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Producer<Vector> v) {
+	public double[] getSurfaceCoords(Evaluable<Vector> v) {
 		double xyz[] = v.evaluate().toArray();
 
 		if (this.across == null)

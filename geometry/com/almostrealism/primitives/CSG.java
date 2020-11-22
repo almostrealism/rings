@@ -23,13 +23,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 
@@ -75,18 +73,18 @@ public class CSG extends AbstractSurface {
 	
     /** @return  null. */
     @Override
-    public VectorProducer getNormalAt(Producer<Vector> point) { return null; }
+    public VectorEvaluable getNormalAt(Evaluable<Vector> point) { return null; }
 
     /**
-     * @see  Intersectable#intersectAt(Producer)
+     * @see  Intersectable#intersectAt(Evaluable)
      */
     @Override
-    public ContinuousField intersectAt(Producer ray) {
+    public ContinuousField intersectAt(Evaluable ray) {
         TransformMatrix m  = getTransform(true);
-        Supplier<Producer<? extends Ray>> r = () -> ray;
+        Supplier<Evaluable<? extends Ray>> r = () -> ray;
         if (m != null) r = m.getInverse().transform(r);
 
-        final Supplier<Producer<? extends Ray>> fr = r;
+        final Supplier<Evaluable<? extends Ray>> fr = r;
         
         if (this.type == CSG.UNION) {
             return new ClosestIntersection(r.get(), Arrays.asList(this.sa, this.sb));

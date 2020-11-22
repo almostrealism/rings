@@ -36,22 +36,21 @@ import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
-public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
+public class RayMarchingEngine extends ArrayList<Evaluable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;
 
 	private DistanceEstimator estimator;
-	private Iterable<? extends Producer<RGB>> allSurfaces;
+	private Iterable<? extends Evaluable<RGB>> allSurfaces;
 	private Light allLights[];
 
 	private Light lights[];
 	private ShaderSet<? extends LightingContext> shaders;
 	
-	public RayMarchingEngine(Iterable<? extends Producer<RGB>> allSurfaces,
+	public RayMarchingEngine(Iterable<? extends Evaluable<RGB>> allSurfaces,
 							 Light allLights[], Light l, DistanceEstimator e, ShaderSet shaders) {
 		this.allSurfaces = allSurfaces;
 		this.allLights = allLights;
@@ -64,19 +63,19 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTr
 	}
 
 	@Override
-	public Producer<RGB> trace(Producer<Ray> r) {
+	public Evaluable<RGB> trace(Evaluable<Ray> r) {
 		// TODO
 //		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
 		return null;
 	}
 
 	@Override
-	public Producer<RGB> getValueAt(Producer<Vector> point) {
+	public Evaluable<RGB> getValueAt(Evaluable<Vector> point) {
 		return v(new RGB(0.8, 0.8, 0.8)).get();  // TODO  Support colors
 	}
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
 		return compileProducer(new RayDirection(() -> iterator().next()));
 	}
 

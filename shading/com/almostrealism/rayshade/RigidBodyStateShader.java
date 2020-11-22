@@ -22,14 +22,11 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 
-import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property

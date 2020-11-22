@@ -16,28 +16,26 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
-import org.almostrealism.geometry.RayProducer;
-import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.geometry.RayEvaluable;
+import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
+
 import static org.almostrealism.util.Ops.*;
 
-public class ReflectedRay implements KernelizedProducer<Ray>, RayProducer {
-	private Producer<Vector> point;
-	private Producer<Vector> normal;
-	private Producer<Vector> reflected;
+public class ReflectedRay implements KernelizedEvaluable<Ray>, RayEvaluable {
+	private Evaluable<Vector> point;
+	private Evaluable<Vector> normal;
+	private Evaluable<Vector> reflected;
 	private double blur;
 
-	public ReflectedRay(Producer<Vector> point, Producer<Vector> incident, Producer<Vector> normal, double blur) {
+	public ReflectedRay(Evaluable<Vector> point, Evaluable<Vector> incident, Evaluable<Vector> normal, double blur) {
 		this.point = point;
 		this.normal = normal;
 		this.reflected = reflect(() -> incident, () -> normal).get();

@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.almostrealism.LightingEngineAggregator;
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.algebra.computations.RayDirection;
@@ -30,17 +29,15 @@ import org.almostrealism.algebra.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.computations.ScalarPow;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorProducer;
-import org.almostrealism.color.computations.ColorProduct;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBFromScalars;
-import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.computations.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
-import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.geometry.RayEvaluable;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.AbstractSurface;
@@ -48,8 +45,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.
@@ -66,10 +62,10 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
   private static final String propDesc[] = {"The reflectivity of the surface at a direct (normal) viewing angle, usually in the range [0,1].",
 										"The base color of the reflection.", "Blur factor.",
 										"Texture to use as an environment map."};
-  private static final Class propTypes[] = {Double.class, ColorProducer.class, Double.class, Texture.class};
+  private static final Class propTypes[] = {Double.class, ColorEvaluable.class, Double.class, Texture.class};
   
   private double reflectivity, blur;
-  private Producer<RGB> reflectiveColor;
+  private Evaluable<RGB> reflectiveColor;
   private Texture eMap;
 
 	/**
@@ -86,7 +82,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Constructs a new ReflectionShader object with the specified reflectivity
 	 * and reflective color.
 	 */
-	public ReflectionShader(double reflectivity, Producer<RGB> reflectiveColor) {
+	public ReflectionShader(double reflectivity, Evaluable<RGB> reflectiveColor) {
 		this.setReflectivity(reflectivity);
 		this.setReflectiveColor(reflectiveColor);
 		this.setBlur(0.0);
@@ -96,7 +92,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	@Override
 	public Maker<RGB> shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
-			return () -> new Producer<RGB>() {
+			return () -> new Evaluable<RGB>() {
 				@Override
 				public RGB evaluate(Object[] args) {
 					Vector point = p.getIntersection().get(0).evaluate(args).getOrigin();
@@ -130,23 +126,23 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		VectorSupplier point = new RayOrigin(() -> p.getIntersection().get(0));
 		VectorSupplier n = new RayDirection(() -> normals.iterator().next());
-		Producer<Vector> nor = p.getIntersection().getNormalAt(point.get());
+		Evaluable<Vector> nor = p.getIntersection().getNormalAt(point.get());
 
 		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), () -> p.getIntersection().get(0));
 		VectorSupplier loc = origin(transform);
 
 		ScalarSupplier cp = length(() -> nor).multiply(length(n));
 
-		Producer<RGB> tc = null;
+		Evaluable<RGB> tc = null;
 
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
 
 		f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-			Producer<Ray> reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
+			Evaluable<Ray> reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
+			Evaluable<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
 			/*
 			if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
 				if (eMap == null) {
@@ -162,14 +158,14 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			ScalarSupplier c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
 			ScalarSupplier reflective = v(reflectivity).add(v(1 - reflectivity)
 							.multiply(compileProducer(new ScalarPow(c, v(5.0)))));
-			Producer<RGB> fcolor = color;
+			Evaluable<RGB> fcolor = color;
 			color = cfromScalar(reflective).multiply(fr).multiply(() -> fcolor).get();
 
 			if (tc == null) {
 				tc = color;
 			} else {
-				Producer<RGB> ftc = tc;
-				Producer<RGB> ffcolor = color;
+				Evaluable<RGB> ftc = tc;
+				Evaluable<RGB> ffcolor = color;
 				tc = new RGBAdd(() -> ftc, () -> ffcolor);
 			}
 		}
@@ -177,10 +173,10 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		b: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			n = minus(n);
 
-			RayProducer reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
+			RayEvaluable reflectedRay = new ReflectedRay(loc.get(), nor, n.get(), blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			Producer<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
+			Evaluable<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
 			/*
 			if (color == null) {
 				if (eMap == null) {
@@ -196,7 +192,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			ScalarSupplier c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
 			ScalarSupplier reflective = v(reflectivity).add(
 					v(1 - reflectivity).multiply(pow(c, v(5.0))));
-			Producer<RGB> fcolor = color;
+			Evaluable<RGB> fcolor = color;
 			color = cmultiply(() -> fcolor, cmultiply(fr, cfromScalar(reflective))).get();
 
 			if (tc == null) {
@@ -207,7 +203,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		}
 
 		Maker<RGB> lightColor = p.getLight().getColorAt(point);
-		Producer<RGB> ftc = tc;
+		Evaluable<RGB> ftc = tc;
 		return () -> GeneratedColorProducer.fromComputation(this, cmultiply(() -> ftc, lightColor));
 	}
 	
@@ -227,7 +223,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Sets the reflective color used by this ReflectionShader object
 	 * to the color represented by the specified ColorProducer object.
 	 */
-	public void setReflectiveColor(Producer<RGB> color) { this.reflectiveColor = color; }
+	public void setReflectiveColor(Evaluable<RGB> color) { this.reflectiveColor = color; }
 	
 	/**
 	 * Sets the Texture object used as an environment map for this ReflectionShader object.
@@ -248,9 +244,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	
 	/**
 	 * Returns the reflective color used by this {@link ReflectionShader}
-	 * as an {@link RGBProducer}.
+	 * as an {@link RGBEvaluable}.
 	 */
-	public Producer<RGB> getReflectiveColor() { return this.reflectiveColor; }
+	public Evaluable<RGB> getReflectiveColor() { return this.reflectiveColor; }
 	
 	/**
 	 * @return  The Texture object used as an environment map for this ReflectionShader object.
@@ -294,8 +290,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			else
 				throw new IllegalArgumentException("Illegal argument: " + value);
 		} else if (index == 1) {
-			if (value instanceof ColorProducer)
-				this.setReflectiveColor((ColorProducer)value);
+			if (value instanceof ColorEvaluable)
+				this.setReflectiveColor((ColorEvaluable)value);
 			else
 				throw new IllegalArgumentException("Illegal argument: " + value);
 		} else if (index == 2) {
@@ -328,7 +324,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	/**
 	 * @return  {reflective color}.
 	 */
-	public Producer[] getInputPropertyValues() { return new Producer[] {this.reflectiveColor}; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[] {this.reflectiveColor}; }
 	
 	/**
 	 * Sets the values of properties of this HighlightShader object to those specified.
@@ -336,7 +332,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * @throws IllegalArgumentException  If the Producer object specified is not of the correct type.
 	 * @throws IndexOutOfBoundsException  If the lindex != 0;
 	 */
-	public void setInputPropertyValue(int index, Producer p) {
+	public void setInputPropertyValue(int index, Evaluable p) {
 		if (index == 0)
 			this.setPropertyValue(p, 1);
 		else

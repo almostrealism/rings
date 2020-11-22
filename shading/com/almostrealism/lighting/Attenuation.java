@@ -19,14 +19,14 @@ package com.almostrealism.lighting;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.ColorProduct;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
 import static org.almostrealism.util.Ops.*;
 
 public class Attenuation extends ColorProduct {
-	public Attenuation(double da, double db, double dc, Supplier<Producer<? extends RGB>> color, Supplier<Producer<? extends Scalar>> distanceSq) {
+	public Attenuation(double da, double db, double dc, Supplier<Evaluable<? extends RGB>> color, Supplier<Evaluable<? extends Scalar>> distanceSq) {
 		super(color, ops().cfromScalar(
 				ops().v(da).multiply(distanceSq)
 						.add(ops().v(db).multiply(ops().pow(distanceSq, ops().scalar(0.5))))

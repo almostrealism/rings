@@ -26,23 +26,23 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
-public class ShadowMask implements Producer<RGB>, Supplier<Producer<? extends RGB>> {
+public class ShadowMask implements Evaluable<RGB>, Supplier<Evaluable<? extends RGB>> {
 	private Light light;
 	private Iterable<Intersectable> surfaces;
-	private Producer<Vector> point;
+	private Evaluable<Vector> point;
 
-	public ShadowMask(Light light, Iterable<Intersectable> surfaces, Producer<Vector> point) {
+	public ShadowMask(Light light, Iterable<Intersectable> surfaces, Evaluable<Vector> point) {
 		this.light = light;
 		this.surfaces = surfaces;
 		this.point = point;
 	}
 
 	@Override
-	public Producer<? extends RGB> get() { return this; }
+	public Evaluable<? extends RGB> get() { return this; }
 
 	@Override
 	public RGB evaluate(Object[] args) {
@@ -64,7 +64,7 @@ public class ShadowMask implements Producer<RGB>, Supplier<Producer<? extends RG
 
 		final Vector fdirection = direction;
 
-		Producer<Ray> shadowRay = new Producer() {
+		Evaluable<Ray> shadowRay = new Evaluable() {
 			@Override
 			public Ray evaluate(Object[] args) {
 				return new Ray(p, fdirection);

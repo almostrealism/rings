@@ -17,30 +17,26 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBSupplier;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
- * different {@link ColorProducer} instances based on lighting. This is best
+ * different {@link ColorEvaluable} instances based on lighting. This is best
  * for cool to warm shading or cartoon shading.
  * 
  * @author  Michael Murray
@@ -48,9 +44,9 @@ import java.util.function.Supplier;
 public class BlendingShader implements Shader<LightingContext>, Editable, CodeFeatures {
   private static final String names[] = {"Hot color", "Cold color"};
   private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
-  private static final Class types[] = {ColorProducer.class, ColorProducer.class};
+  private static final Class types[] = {ColorEvaluable.class, ColorEvaluable.class};
   
-  private Producer<RGB> hotColor, coldColor;
+  private Evaluable<RGB> hotColor, coldColor;
 
 	/**
 	 * Constructs a new BlendingShader using white as a hot color
@@ -67,7 +63,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	 * @param hot  ColorProducer to use for hot color.
 	 * @param cold  ColorProducer to use for cold color.
 	 */
-	public BlendingShader(Producer<RGB> hot, Producer<RGB> cold) {
+	public BlendingShader(Evaluable<RGB> hot, Evaluable<RGB> cold) {
 		this.hotColor = hot;
 		this.coldColor = cold;
 	}
@@ -78,7 +74,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	public Maker<RGB> shade(LightingContext p, DiscreteField normals) {
 		// TODO  Put evaluation into producer
 
-		Producer<Ray> n;
+		Evaluable<Ray> n;
 		
 		try {
 			n = normals.iterator().next();
@@ -87,7 +83,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 			return null;
 		}
 		
-		Supplier<Producer<? extends Vector>> l = p.getLightDirection();
+		Supplier<Evaluable<? extends Vector>> l = p.getLightDirection();
 
 		ScalarSupplier k = direction(() -> n).dotProduct(l).add(1.0);
 		ScalarSupplier oneMinusK = scalar(1.0).subtract(k);
@@ -98,7 +94,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 		RGBSupplier c = v(hc).multiply(cfromScalar(k));
 		c = c.add(v(cc).multiply(cfromScalar(oneMinusK)));
 
-		Producer<RGB> cp = c.get();
+		Evaluable<RGB> cp = c.get();
 		return () -> GeneratedColorProducer.fromProducer(this, cp);
 	}
 
@@ -125,7 +121,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	/**
 	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
 	 */
-	public void setPropertyValue(Object o, int index) { this.setInputPropertyValue(index, (Producer)o); }
+	public void setPropertyValue(Object o, int index) { this.setInputPropertyValue(index, (Evaluable)o); }
 
 	/**
 	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
@@ -135,17 +131,17 @@ public class BlendingShader implements Shader<LightingContext>, Editable, CodeFe
 	}
 
 	/** @see org.almostrealism.util.Editable#getInputPropertyValues() */
-	public Producer[] getInputPropertyValues() { return new Producer[] {this.hotColor, this.coldColor}; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[] {this.hotColor, this.coldColor}; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, org.almostrealism.util.Producer)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, Evaluable)
 	 * @throws IndexOutOfBoundsException  If the property index is out of bounds.
 	 */
-	public void setInputPropertyValue(int index, Producer p) {
+	public void setInputPropertyValue(int index, Evaluable p) {
 		if (index == 0)
-			this.hotColor = (ColorProducer)p;
+			this.hotColor = (ColorEvaluable)p;
 		else if (index == 1)
-			this.coldColor = (ColorProducer)p;
+			this.coldColor = (ColorEvaluable)p;
 		else
 			throw new IndexOutOfBoundsException("Property index out of bounds: " + index);
 	}

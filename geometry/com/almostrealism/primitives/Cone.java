@@ -31,7 +31,7 @@ import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.Provider;
 
 // TODO Add ParticleGroup implementation.
@@ -61,13 +61,13 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	public Cone(Vector location, double radius, RGB color) { super(location, radius, color); }
 	
 	/**
-	 * Returns a {@link Vector} {@link Producer} that represents the vector normal to this
+	 * Returns a {@link Vector} {@link Evaluable} that represents the vector normal to this
 	 * cone at the point represented by the specified Vector object.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		VectorProducer normal = multiply(point, vector(1.0, -1.0, 1.0).get());
-		return (Producer<Vector>) super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
+		VectorEvaluable normal = multiply(point, vector(1.0, -1.0, 1.0).get());
+		return (Evaluable<Vector>) super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
 	/**
@@ -75,14 +75,14 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Producer ray) {
+	public ShadableIntersection intersectAt(Evaluable ray) {
 		TransformMatrix m = getTransform(true);
-		Supplier<Producer<? extends Ray>> r = () -> ray;
+		Supplier<Evaluable<? extends Ray>> r = () -> ray;
 		if (m != null) r = m.getInverse().transform(r);
 
-		final Supplier<Producer<? extends Ray>> fr = r;
+		final Supplier<Evaluable<? extends Ray>> fr = r;
 
-		Producer<Scalar> s = new Producer<Scalar>() {
+		Evaluable<Scalar> s = new Evaluable<Scalar>() {
 			@Override
 			public Scalar evaluate(Object[] args) {
 				Ray ray = fr.get().evaluate(args);

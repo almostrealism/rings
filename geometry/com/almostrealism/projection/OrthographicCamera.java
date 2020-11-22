@@ -30,8 +30,7 @@ import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * The {@link OrthographicCamera} provides an orthographic projection camera.
@@ -214,10 +213,10 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 	    return new TransformMatrix(matrix);
 	}
 	
-	/** @see org.almostrealism.algebra.Camera#rayAt(Producer, Producer) */
+	/** @see org.almostrealism.algebra.Camera#rayAt(Evaluable, Evaluable) */
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
-		return new Producer<Ray>() {
+	public Evaluable<Ray> rayAt(Evaluable<Pair> pos, Evaluable<Pair> sd) {
+		return new Evaluable<Ray>() {
 			@Override
 			public Ray evaluate(Object[] args) {
 				Pair p = pos.evaluate(args);

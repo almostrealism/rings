@@ -23,8 +23,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.Plane;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.util.function.Supplier;
 
@@ -66,7 +65,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	}
 
 	/**
-	 * Delegates to {@link #getValueAt(Producer)}.
+	 * Delegates to {@link #getValueAt(Evaluable)}.
 	 */
 	@Override
 	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
@@ -108,7 +107,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 				z = Math.random() * this.height;
 			}
 
-			Supplier<Producer<? extends Vector>> p = getTransform(true).transform(vector(x, y, z),
+			Supplier<Evaluable<? extends Vector>> p = getTransform(true).transform(vector(x, y, z),
 									TransformMatrix.TRANSFORM_AS_LOCATION);
 
 			// TODO This should hand off the color producer directly

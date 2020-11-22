@@ -24,7 +24,7 @@ import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.Provider;
 
 import java.util.concurrent.ExecutionException;
@@ -66,10 +66,10 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	 *          at the point represented by the specified Vector object.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
 		Maker<Vector> normal = add(() -> point, v(getLocation().minus()));
 		Maker<Vector> fnormal = normal;
-		normal = () -> (Producer<Vector>) super.getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
+		normal = () -> (Evaluable<Vector>) super.getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		normal = multiply(normal, vector(1.0, 0.0, 1.0));
 		return normal.get();
 	}
@@ -86,14 +86,14 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	 * and the cylinder represented by this {@link Cylinder} occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Producer r) {
+	public ShadableIntersection intersectAt(Evaluable r) {
 		TransformMatrix m = getTransform(true);
-		Supplier<Producer<? extends Ray>> sr = () -> r;
+		Supplier<Evaluable<? extends Ray>> sr = () -> r;
 		if (m != null) sr = m.getInverse().transform(sr);
 
-		final Supplier<Producer<? extends Ray>> fr = sr;
+		final Supplier<Evaluable<? extends Ray>> fr = sr;
 
-		Producer<Scalar> s = new Producer<Scalar>() {
+		Evaluable<Scalar> s = new Evaluable<Scalar>() {
 			@Override
 			public Scalar evaluate(Object[] args) {
 				Ray ray = fr.get().evaluate(args);

@@ -21,18 +21,18 @@ import org.almostrealism.algebra.PairBank;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.hardware.KernelizedProducer;
+import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 import java.util.ArrayList;
 
 // TODO Convert to subclass of ColorSum
-public class SuperSampler implements KernelizedProducer<RGB>, PathElement<RGB, RGB> {
-	protected Producer<RGB> samples[][];
+public class SuperSampler implements KernelizedEvaluable<RGB>, PathElement<RGB, RGB> {
+	protected Evaluable<RGB> samples[][];
 	private double scale;
 
-	public SuperSampler(Producer<RGB> samples[][]) {
+	public SuperSampler(Evaluable<RGB> samples[][]) {
 		this.samples = samples;
 		scale = 1.0 / (this.samples.length * this.samples[0].length);
 	}
@@ -78,7 +78,7 @@ public class SuperSampler implements KernelizedProducer<RGB>, PathElement<RGB, R
 				}
 
 				out[i][j] = new RGBBank(args[0].getCount());
-				((KernelizedProducer) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
+				((KernelizedEvaluable) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
 			}
 		}
 
@@ -108,8 +108,8 @@ public class SuperSampler implements KernelizedProducer<RGB>, PathElement<RGB, R
 	}
 
 	@Override
-	public Iterable<Producer<RGB>> getDependencies() {
-		ArrayList<Producer<RGB>> l = new ArrayList<>();
+	public Iterable<Evaluable<RGB>> getDependencies() {
+		ArrayList<Evaluable<RGB>> l = new ArrayList<>();
 
 		for (int i = 0; i < samples.length; i++) {
 			for (int j = 0; j < samples[i].length; j++) {

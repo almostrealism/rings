@@ -16,22 +16,17 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
 
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.

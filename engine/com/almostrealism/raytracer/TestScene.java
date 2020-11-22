@@ -27,9 +27,8 @@ import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
-import org.almostrealism.color.computations.ColorProducer;
+import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.DefaultVertexData;
 import org.almostrealism.graph.mesh.Mesh;
@@ -43,8 +42,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -118,7 +116,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				ColorProducer p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
+				ColorEvaluable p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
 					@Override
 					public RGB operate(Triple t) {
 						Vector point = new Vector(t.getA(), t.getB(), 0.0);
@@ -139,9 +137,9 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 					}
 				});
 
-				public ColorProducer getColorAt() { return p; }
+				public ColorEvaluable getColorAt() { return p; }
 
-				public Producer<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
+				public Evaluable<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
 				public RGB evaluate(Object args[]) { return this.getColorAt().evaluate(args); }
 
 				@Override

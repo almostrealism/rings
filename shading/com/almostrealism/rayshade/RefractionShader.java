@@ -40,9 +40,9 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DynamicProducer;
+import org.almostrealism.util.DynamicEvaluable;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 import org.almostrealism.util.Provider;
 
 // TODO  Fix refraction algorithm.
@@ -77,7 +77,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 	
 	/** Method specified by the {@link Shader} interface. */
 	public Maker<RGB> shade(ShaderContext p, DiscreteField normals) {
-		Producer pr = new Producer<RGB>() {
+		Evaluable pr = new Evaluable<RGB>() {
 			@Override
 			public RGB evaluate(Object[] args) {
 				p.addReflection();
@@ -155,7 +155,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 		return () -> GeneratedColorProducer.fromProducer(this, pr);
 	}
 	
-	protected Maker<RGB> shade(Vector point, Vector viewerDirection, Supplier<Producer<? extends Vector>> lightDirection,
+	protected Maker<RGB> shade(Vector point, Vector viewerDirection, Supplier<Evaluable<? extends Vector>> lightDirection,
 								Light light, Iterable<Light> otherLights, Curve<RGB> surface,
 								Curve<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
@@ -204,7 +204,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 		// d = dv.minus();
 		
 		// if (entering) d.multiplyBy(-1.0);
-		Producer<Ray> r = new DynamicProducer<>(args -> new Ray(point, d));
+		Evaluable<Ray> r = new DynamicEvaluable<>(args -> new Ray(point, d));
 		
 		List<Curve<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
@@ -253,7 +253,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 				d.multiplyBy(-1.0);
 			}
 			
-			Producer<Ray> r = new Producer<Ray>(){
+			Evaluable<Ray> r = new Evaluable<Ray>(){
 				@Override
 				public Ray evaluate(Object[] args) {
 					return new Ray(p, d);
@@ -264,7 +264,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 			};
 
 			Intersection inter = (Intersection) s.intersectAt(r);
-			Scalar id = ((Producer<Scalar>) inter.getDistance().get()).evaluate();
+			Scalar id = ((Evaluable<Scalar>) inter.getDistance().get()).evaluate();
 			
 			if (inter == null || id.getValue() < 0) {
 				totalR += 1.0;
@@ -404,12 +404,12 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 	/**
 	 * @return  An empty array.
 	 */
-	public Producer[] getInputPropertyValues() { return new Producer[0]; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[0]; }
 	
 	/**
 	 * Does nothing.
 	 */
-	public void setInputPropertyValue(int index, Producer p) {}
+	public void setInputPropertyValue(int index, Evaluable p) {}
 	
 	/**
 	 * Sets the values of editable properties of this ReflectionShader object to those specified.

@@ -22,7 +22,7 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.util.Producer;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the
@@ -153,7 +153,7 @@ public class PinholeCamera extends OrthographicCamera {
 	 * camera surface. This effect can be used to produce large images from small scenes while retaining accuracy.
 	 */
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> posP, Producer<Pair> sdP) {
+	public Evaluable<Ray> rayAt(Evaluable<Pair> posP, Evaluable<Pair> sdP) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
 			Settings.cameraOut.println("CAMERA: U = " + this.u.toString() + ", V = " + this.v.toString() + ", W = " + this.w.toString());
 		}
@@ -162,7 +162,7 @@ public class PinholeCamera extends OrthographicCamera {
 			return compileProducer(new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
 											blur, focalLength, u, v, w));
 		} else {
-			return new Producer<Ray>() {
+			return new Evaluable<Ray>() {
 				@Override
 				public Ray evaluate(Object[] args) {
 					Pair pos = posP.evaluate(args);

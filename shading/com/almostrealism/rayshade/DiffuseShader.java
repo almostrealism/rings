@@ -17,25 +17,19 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarSupplier;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorSupplier;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.color.computations.RGBSupplier;
-import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.math.bool.GreaterThanRGB;
 import org.almostrealism.relation.Maker;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Producer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.Evaluable;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -60,7 +54,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 		Maker<RGB> lightColor = p.getLight().getColorAt(point);
 		Maker<RGB> surfaceColor = () -> p.getSurface().getValueAt(point.get());
 
-		Producer<RGB> front = null, back = null;
+		Evaluable<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThanRGB(scaleFront, scalar(0),
@@ -74,8 +68,8 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 							RGBBlack.getInstance());
 		}
 
-		Producer<RGB> ffront = front;
-		Producer<RGB> fback = back;
+		Evaluable<RGB> ffront = front;
+		Evaluable<RGB> fback = back;
 
 		if (front != null && back != null) {
 			return () -> GeneratedColorProducer.fromProducer(this, cadd(ffront, fback));
@@ -120,11 +114,11 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 	 * @return  An empty array.
 	 */
 	@Override
-	public Producer[] getInputPropertyValues() { return new Producer[0]; }
+	public Evaluable[] getInputPropertyValues() { return new Evaluable[0]; }
 	
 	/** Does nothing. */
 	@Override
-	public void setInputPropertyValue(int index, Producer p) {}
+	public void setInputPropertyValue(int index, Evaluable p) {}
 	
 	/** Returns "Diffuse Shader". */
 	@Override
