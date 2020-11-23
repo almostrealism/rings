@@ -19,12 +19,13 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Provider;
 
 import java.util.concurrent.ExecutionException;
@@ -66,12 +67,11 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	 *          at the point represented by the specified Vector object.
 	 */
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
-		Maker<Vector> normal = add(() -> point, v(getLocation().minus()));
-		Maker<Vector> fnormal = normal;
-		normal = () -> (Evaluable<Vector>) super.getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		Producer<Vector> normal = add(point, v(getLocation().minus()));
+		normal = super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		normal = multiply(normal, vector(1.0, 0.0, 1.0));
-		return normal.get();
+		return normal;
 	}
 	
 	/**
@@ -86,16 +86,14 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	 * and the cylinder represented by this {@link Cylinder} occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Evaluable r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		Supplier<Evaluable<? extends Ray>> sr = () -> r;
+		Supplier<Evaluable<? extends Ray>> sr = r;
 		if (m != null) sr = m.getInverse().transform(sr);
 
 		final Supplier<Evaluable<? extends Ray>> fr = sr;
 
-		Evaluable<Scalar> s = new Evaluable<Scalar>() {
-			@Override
-			public Scalar evaluate(Object[] args) {
+		Producer<Scalar> s = new DynamicProducer<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector a = ray.getOrigin();
@@ -122,28 +120,22 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 				t0 = (-b / g) + discriminantSqrt;
 				t1 = (-b / g) - discriminantSqrt;
 
-				double l0 = ray.pointAt(new Provider<>(new Scalar(t0))).evaluate(args).getY();
-				double l1 = ray.pointAt(new Provider<>(new Scalar(t1))).evaluate(args).getY();
+				double l0 = ray.pointAt(scalar(t0)).get().evaluate(args).getY();
+				double l1 = ray.pointAt(scalar(t1)).get().evaluate(args).getY();
 
-				Scalar s;
+				Scalar sc;
 
 				if (l0 >= 0 && l0 <= 1.0)
-					s = new Scalar(l0);
+					sc = new Scalar(l0);
 				else if (l1 >= 0 && l1 <= 1.0)
-					s = new Scalar(l1);
+					sc = new Scalar(l1);
 				else
 					return null;
 
-				return s;
-			}
+				return sc;
+			});
 
-			@Override
-			public void compact() {
-				// TODO
-			}
-		};
-
-		return new ShadableIntersection(this, () -> r, () -> s);
+		return new ShadableIntersection(this, r, s);
 	}
 
 	@Override

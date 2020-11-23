@@ -23,78 +23,86 @@ import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.relation.Producer;
 
 import java.util.ArrayList;
 
 // TODO Convert to subclass of ColorSum
-public class SuperSampler implements KernelizedEvaluable<RGB>, PathElement<RGB, RGB> {
-	protected Evaluable<RGB> samples[][];
+public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
+	protected Producer<RGB> samples[][];
 	private double scale;
 
-	public SuperSampler(Evaluable<RGB> samples[][]) {
+	public SuperSampler(Producer<RGB> samples[][]) {
 		this.samples = samples;
 		scale = 1.0 / (this.samples.length * this.samples[0].length);
 	}
 
 	@Override
-	public RGB evaluate(Object[] args) {
-		Pair pos = (Pair) args[0];
+	public Evaluable<RGB> get() {
+		return new KernelizedEvaluable<RGB>() {
 
-		RGB c = new RGB(0.0, 0.0, 0.0);
-
-		for (int i = 0; i < samples.length; i++) {
-			j: for (int j = 0; j < samples[i].length; j++) {
-				double r = pos.getX() + ((double) i / (double) samples.length);
-				double q = pos.getY() + ((double) j / (double) samples[i].length);
-
-				RGB rgb = samples[i][j].evaluate(new Object[] { new Pair(r, q) });
-				if (rgb == null) continue j;
-
-				rgb.multiplyBy(scale);
-				c.addTo(rgb);
+			@Override
+			public MemoryBank<RGB> createKernelDestination(int size) {
+				return new RGBBank(size);
 			}
-		}
 
-		return c;
-	}
+			@Override
+			public RGB evaluate(Object... args) {
+				Pair pos = (Pair) args[0];
 
-	@Override
-	public void kernelEvaluate(MemoryBank destination, MemoryBank[] args) {
-		int w = samples.length;
-		int h = samples[0].length;
+				RGB c = new RGB(0.0, 0.0, 0.0);
 
-		PairBank allSamples = new PairBank(args[0].getCount());
-		RGBBank out[][] = new RGBBank[w][h];
+				for (int i = 0; i < samples.length; i++) {
+					j:
+					for (int j = 0; j < samples[i].length; j++) {
+						double r = pos.getX() + ((double) i / (double) samples.length);
+						double q = pos.getY() + ((double) j / (double) samples[i].length);
 
-		System.out.println("SuperSampler: Evaluating sample kernels...");
-		for (int i = 0; i < samples.length; i++) {
-			j: for (int j = 0; j < samples[i].length; j++) {
-				for (int k = 0; k < args[0].getCount(); k++) {
-					Pair pos = (Pair) args[0].get(k);
-					double r = pos.getX() + ((double) i / (double) samples.length);
-					double q = pos.getY() + ((double) j / (double) samples[i].length);
-					allSamples.set(k, r, q);
+						RGB rgb = samples[i][j].get().evaluate(new Object[]{new Pair(r, q)});
+						if (rgb == null) continue j;
+
+						rgb.multiplyBy(scale);
+						c.addTo(rgb);
+					}
 				}
 
-				out[i][j] = new RGBBank(args[0].getCount());
-				((KernelizedEvaluable) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
+				return c;
 			}
-		}
 
-		System.out.println("SuperSampler: Combining samples...");
-		for (int k = 0; k < destination.getCount(); k++) {
-			for (int i = 0; i < samples.length; i++) {
-				j: for (int j = 0; j < samples[i].length; j++) {
-					((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+			@Override
+			public void kernelEvaluate(MemoryBank destination, MemoryBank[] args) {
+				int w = samples.length;
+				int h = samples[0].length;
+
+				PairBank allSamples = new PairBank(args[0].getCount());
+				RGBBank out[][] = new RGBBank[w][h];
+
+				System.out.println("SuperSampler: Evaluating sample kernels...");
+				for (int i = 0; i < samples.length; i++) {
+					j: for (int j = 0; j < samples[i].length; j++) {
+						for (int k = 0; k < args[0].getCount(); k++) {
+							Pair pos = (Pair) args[0].get(k);
+							double r = pos.getX() + ((double) i / (double) samples.length);
+							double q = pos.getY() + ((double) j / (double) samples[i].length);
+							allSamples.set(k, r, q);
+						}
+
+						out[i][j] = new RGBBank(args[0].getCount());
+						((KernelizedEvaluable) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
+					}
+				}
+
+				System.out.println("SuperSampler: Combining samples...");
+				for (int k = 0; k < destination.getCount(); k++) {
+					for (int i = 0; i < samples.length; i++) {
+						j: for (int j = 0; j < samples[i].length; j++) {
+							((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+						}
+					}
 				}
 			}
-		}
-	}
-
-	@Override
-	public MemoryBank<RGB> createKernelDestination(int size) {
-		return new RGBBank(size);
+		};
 	}
 
 	@Override
@@ -108,8 +116,8 @@ public class SuperSampler implements KernelizedEvaluable<RGB>, PathElement<RGB, 
 	}
 
 	@Override
-	public Iterable<Evaluable<RGB>> getDependencies() {
-		ArrayList<Evaluable<RGB>> l = new ArrayList<>();
+	public Iterable<Producer<RGB>> getDependencies() {
+		ArrayList<Producer<RGB>> l = new ArrayList<>();
 
 		for (int i = 0; i < samples.length; i++) {
 			for (int j = 0; j < samples[i].length; j++) {

@@ -24,10 +24,11 @@ import java.util.function.Supplier;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * @author Michael Murray
@@ -117,7 +118,7 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Supplier<Evaluable<? extends Vector>> dp = v(d);
+				Producer<Vector> dp = v(d);
 
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -132,7 +133,7 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Supplier<Evaluable<? extends Vector>> dp = v(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -147,7 +148,7 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Supplier<Evaluable<? extends Vector>> dp = v(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
@@ -162,7 +163,7 @@ public class LSystem implements CodeFeatures {
 				
 				d = (Vector) d.clone();
 
-				Supplier<Evaluable<? extends Vector>> dp = v(d);
+				Producer<Vector> dp = v(d);
 				
 				dp = mx.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);
 				dp = my.transform(dp, TransformMatrix.TRANSFORM_AS_OFFSET);

@@ -47,13 +47,13 @@ public class Pinhole extends Plane implements Absorber, Fast {
 	public double getRadius() { return this.radius; }
 	
 	public boolean absorb(Vector x, Vector p, double energy) {
-		double d = Math.abs(x.dotProduct(this.normal.evaluate(new Object[0])));
+		double d = Math.abs(x.dotProduct(this.normal.get().evaluate()));
 		if (d > this.thick) return false;
 		
 		double y = Math.abs(x.dotProduct(new Vector(this.up)));
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(this.normal.evaluate(new Object[0])).toArray();
+			this.across = new Vector(this.up).crossProduct(this.normal.get().evaluate()).toArray();
 		
 		double z = Math.abs(x.dotProduct(new Vector(this.across)));
 		

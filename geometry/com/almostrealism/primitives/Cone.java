@@ -28,10 +28,12 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Provider;
 
 // TODO Add ParticleGroup implementation.
@@ -65,9 +67,9 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 * cone at the point represented by the specified Vector object.
 	 */
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
-		VectorEvaluable normal = multiply(point, vector(1.0, -1.0, 1.0).get());
-		return (Evaluable<Vector>) super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		Producer<Vector> normal = multiply(point, vector(1.0, -1.0, 1.0));
+		return super.getTransform(true).transform(normal, TransformMatrix.TRANSFORM_AS_NORMAL);
 	}
 
 	/**
@@ -75,16 +77,13 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 	 *          the specified {@link Ray} that intersection between the ray and the cone occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Evaluable ray) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		Supplier<Evaluable<? extends Ray>> r = () -> ray;
 		if (m != null) r = m.getInverse().transform(r);
 
 		final Supplier<Evaluable<? extends Ray>> fr = r;
 
-		Evaluable<Scalar> s = new Evaluable<Scalar>() {
-			@Override
-			public Scalar evaluate(Object[] args) {
+		Producer<Scalar> s = new DynamicProducer<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector d = ray.getDirection().divide(ray.getDirection().length());
@@ -111,21 +110,21 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 						double invC2 = 1.0 / c2;
 
 						double t = (-c1 - root) * invC2;
-						Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
+						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 
 						t = (-c1 + root) * invC2;
-						p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
+						p = ray.pointAt(scalar(t)).get().evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 					} else {
 						double t = -c1 / c2;
-						Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
+						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
 
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 					}
 				} else if (Math.abs(c1) >= Intersection.e) {
 					double t = -0.5 * c0 / c1;
-					Vector p = ray.pointAt(new Provider<>(new Scalar(t))).evaluate(args);
+					Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
 					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
 				} else if (Math.abs(c0) < Intersection.e) {
 					inter.add(new Double(0.0));
@@ -147,13 +146,9 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 					Scalar ts = new Scalar(t);
 					return ts;
 				}
-			}
+			});
 
-			@Override
-			public void compact() { }
-		};
-
-		return new ShadableIntersection(this, fr, () -> s);
+		return new ShadableIntersection(this, fr, s);
 	}
 
 	@Override

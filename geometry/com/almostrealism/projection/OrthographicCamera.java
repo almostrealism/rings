@@ -16,7 +16,6 @@
 
 package com.almostrealism.projection;
 
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.TransformMatrix;
@@ -25,12 +24,12 @@ import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.io.DecodePostProcessing;
-import org.almostrealism.relation.NameProvider;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * The {@link OrthographicCamera} provides an orthographic projection camera.
@@ -213,22 +212,24 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 	    return new TransformMatrix(matrix);
 	}
 	
-	/** @see org.almostrealism.algebra.Camera#rayAt(Evaluable, Evaluable) */
+	/** @see org.almostrealism.algebra.Camera#rayAt(Producer, Producer) */
 	@Override
-	public Evaluable<Ray> rayAt(Evaluable<Pair> pos, Evaluable<Pair> sd) {
-		return new Evaluable<Ray>() {
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+		return new Producer<Ray>() {
 			@Override
-			public Ray evaluate(Object[] args) {
-				Pair p = pos.evaluate(args);
-				Pair screenDim = sd.evaluate(args);
+			public Evaluable<Ray> get() {
+				return args -> {
+					Pair p = pos.get().evaluate(args);
+					Pair screenDim = sd.get().evaluate(args);
 
-				double x = getProjectionWidth() * ((p.getX() / screenDim.getX()) - 0.5);
-				double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
+					double x = getProjectionWidth() * ((p.getX() / screenDim.getX()) - 0.5);
+					double y = getProjectionHeight() * ((p.getY() / screenDim.getY()) - 0.5);
 
-				Vector o = getRotationMatrix().getInverse().transform(vector(x, y, 0.0),
-						TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
+					Vector o = getRotationMatrix().getInverse().transform(vector(x, y, 0.0),
+							TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
 
-				return new Ray(o, viewDirection);
+					return new Ray(o, viewDirection);
+				};
 			}
 
 			@Override
@@ -237,11 +238,6 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 				sd.compact();
 			}
 		};
-	}
-
-	@Override
-	public Scope<Ray> getScope(NameProvider p) {
-		throw new RuntimeException("getScope not implemented");
 	}
 
 	@Override

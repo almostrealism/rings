@@ -49,9 +49,9 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		for (Triangle t : getGeometry().triangles()) {
 			Vector v[] = t.getVertices();
 			Vector n[] = new Vector[] {
-						t.getNormalAt(v(v[0]).get()).evaluate(),
-						t.getNormalAt(v(v[1]).get()).evaluate(),
-						t.getNormalAt(v(v[2]).get()).evaluate()};
+						t.getNormalAt(v(v[0])).get().evaluate(),
+						t.getNormalAt(v(v[1])).get().evaluate(),
+						t.getNormalAt(v(v[2])).get().evaluate()};
 
 			vertices.add(v[0].getX());
 			vertices.add(v[0].getY());

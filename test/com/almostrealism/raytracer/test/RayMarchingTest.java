@@ -114,7 +114,7 @@ public class RayMarchingTest {
 			animation.render().start();
 		} else {
 			try {
-				ImageCanvas.encodeImageFile(new RayTracedScene(mandel, c).realize(params),
+				ImageCanvas.encodeImageFile(new RayTracedScene(mandel, c).realize(params).get(),
 						new File("test-march.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			} catch (FileNotFoundException fnf) {

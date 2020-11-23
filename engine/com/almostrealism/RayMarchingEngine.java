@@ -31,26 +31,26 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
-public class RayMarchingEngine extends ArrayList<Evaluable<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
+public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;
 
 	private DistanceEstimator estimator;
-	private Iterable<? extends Evaluable<RGB>> allSurfaces;
+	private Iterable<? extends Producer<RGB>> allSurfaces;
 	private Light allLights[];
 
 	private Light lights[];
 	private ShaderSet<? extends LightingContext> shaders;
 	
-	public RayMarchingEngine(Iterable<? extends Evaluable<RGB>> allSurfaces,
+	public RayMarchingEngine(Iterable<? extends Producer<RGB>> allSurfaces,
 							 Light allLights[], Light l, DistanceEstimator e, ShaderSet shaders) {
 		this.allSurfaces = allSurfaces;
 		this.allLights = allLights;
@@ -63,39 +63,36 @@ public class RayMarchingEngine extends ArrayList<Evaluable<Ray>> implements RayT
 	}
 
 	@Override
-	public Evaluable<RGB> trace(Evaluable<Ray> r) {
+	public Producer<RGB> trace(Producer<Ray> r) {
 		// TODO
 //		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
 		return null;
 	}
 
 	@Override
-	public Evaluable<RGB> getValueAt(Evaluable<Vector> point) {
-		return v(new RGB(0.8, 0.8, 0.8)).get();  // TODO  Support colors
+	public Producer<RGB> getValueAt(Producer<Vector> point) {
+		return rgb(0.8, 0.8, 0.8);  // TODO  Support colors
 	}
 
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
-		return compileProducer(new RayDirection(() -> iterator().next()));
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		return new RayDirection(iterator().next());
 	}
 
 	@Override
 	public RGB operate(Vector in) {
-		return getValueAt(v(in).get()).evaluate();
+		return getValueAt(v(in)).get().evaluate();
 	}
 
 	@Override
-	public Scope getScope(NameProvider prefix) { throw new RuntimeException("getScope is not implemented"); } // TODO
-	
-	@Override
-	public Maker<RGB> shade(ShaderContext parameters) {
-		Maker<RGB> c = null;
+	public Producer<RGB> shade(ShaderContext parameters) {
+		Producer<RGB> c = null;
 		
 		for (Shader s : shaders) {
 			if (c == null) {
 				c = s.shade(parameters, this);
 			} else {
-				final Maker<RGB> fc = c;
+				final Producer<RGB> fc = c;
 				c = () -> new RGBAdd(fc, s.shade(parameters, this));
 			}
 		}

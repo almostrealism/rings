@@ -110,7 +110,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 
 	@Override
 	public boolean absorb(Vector x, Vector p, double energy) {
-		double d = Math.abs(x.dotProduct(normal.evaluate(new Object[0])));
+		double d = Math.abs(x.dotProduct(normal.get().evaluate()));
 		double r = 1.0;
 //		if (AbsorptionPlane.verbose > 0.0) r = Math.random();
 //
@@ -123,7 +123,7 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 			this.energy = new double[this.w][this.h];
 		
 		if (this.across == null)
-			this.across = new Vector(this.up).crossProduct(normal.evaluate(new Object[0])).toArray();
+			this.across = new Vector(this.up).crossProduct(normal.get().evaluate()).toArray();
 		
 		if (this.image == null) {
 			this.image = new RGB[this.w][this.h];

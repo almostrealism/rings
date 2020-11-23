@@ -17,14 +17,15 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.color.RGB;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.relation.Producer;
 
 public class Pixel extends SuperSampler {
 	public Pixel(int ssWidth, int ssHeight) {
-		super(new Evaluable[ssWidth][ssHeight]);
+		super(new Producer[ssWidth][ssHeight]);
 	}
 
-	public synchronized void setSample(int sx, int sy, Evaluable<RGB> s) {
+	public synchronized void setSample(int sx, int sy, Producer<RGB> s) {
 		if (s == null) {
 			throw new IllegalArgumentException("Null sample not supported");
 		}

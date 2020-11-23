@@ -22,11 +22,11 @@ import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -128,19 +128,19 @@ public class PointLightGrid extends AbstractSurface implements Light {
 	
 	/** Returns a zero vector. */
 	@Override
-	public VectorEvaluable getNormalAt(Evaluable<Vector> point) {
-		return ZeroVector.getProducer();
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		return ZeroVector.getInstance();
 	}
 
 	/**
-	 * Delegates to {@link #getValueAt(Evaluable)}.
+	 * Delegates to {@link #getValueAt(Producer)}.
 	 */
 	@Override
-	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/** Returns null. */
 	@Override
-	public ShadableIntersection intersectAt(Evaluable ray) {
+	public ShadableIntersection intersectAt(Producer ray) {
 		return null;
 	}
 

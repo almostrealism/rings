@@ -21,9 +21,9 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.Plane;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.util.function.Supplier;
 
@@ -65,10 +65,10 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	}
 
 	/**
-	 * Delegates to {@link #getValueAt(Evaluable)}.
+	 * Delegates to {@link #getValueAt(Producer)}.
 	 */
 	@Override
-	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/**
 	 * Sets the number of samples to use for this RectangularLight object.

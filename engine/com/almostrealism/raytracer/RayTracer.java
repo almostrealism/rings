@@ -23,7 +23,8 @@ import java.util.concurrent.Future;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.relation.Producer;
 
 public class RayTracer {
 	private ExecutorService pool;
@@ -40,12 +41,12 @@ public class RayTracer {
 		this.pool = pool;
 	}
 
-	public Future<Evaluable<RGB>> trace(Evaluable<Ray> r) {
-		Callable<Evaluable<RGB>> c = () -> engine.trace(r);
+	public Future<Producer<RGB>> trace(Producer<Ray> r) {
+		Callable<Producer<RGB>> c = () -> engine.trace(r);
 		return pool.submit(c);
 	}
 
 	public interface Engine {
-		Evaluable<RGB> trace(Evaluable<Ray> r);
+		Producer<RGB> trace(Producer<Ray> r);
 	}
 }

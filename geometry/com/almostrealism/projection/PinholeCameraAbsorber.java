@@ -24,11 +24,13 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.Volume;
 import org.almostrealism.time.Clock;
 
+import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.PriorityQueue;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * @author  Michael Murray
@@ -74,7 +76,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 		this.pinhole = pinhole;
 		this.plane = plane;
 		
-		double norm[] = pinhole.getSurfaceNormal().evaluate().toArray();
+		double norm[] = pinhole.getSurfaceNormal().get().evaluate().toArray();
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
 	}
 
@@ -116,7 +118,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 
 	@Override
 	public Vector getViewingDirection() {
-		return plane.getSurfaceNormal().evaluate();
+		return plane.getSurfaceNormal().get().evaluate();
 	}
 
 	@Override
@@ -133,12 +135,10 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
 
 	@Override
-	public Evaluable<Ray> rayAt(Evaluable<Pair> pos, Evaluable<Pair> sd) {
-		return new Evaluable<Ray>() {
-			@Override
-			public Ray evaluate(Object[] args) {
-				Pair ij = pos.evaluate(args);
-				Pair screenDim = sd.evaluate(args);
+	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+		return new DynamicProducer<>(args -> {
+				Pair ij = pos.get().evaluate(args);
+				Pair screenDim = sd.get().evaluate(args);
 
 				double u = ij.getX() / (screenDim.getX());
 				double v = (ij.getY() / screenDim.getY());
@@ -200,13 +200,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 				vx.addTo(location);
 
 				return new Ray(vx, vd);
-			}
-
-			@Override
-			public void compact() {
-				// TODO
-			}
-		};
+			});
 	}
 
 	@Override
@@ -216,13 +210,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public Clock getClock() { return this.clock; }
 
 	@Override
-	public boolean inside(Evaluable<Vector> x) { return pinhole.inside(x) || plane.inside(x); }
+	public boolean inside(Producer<Vector> x) { return pinhole.inside(x) || plane.inside(x); }
 
 	@Override
-	public Evaluable getValueAt(Evaluable point) { return null; }
+	public Producer getValueAt(Producer point) { return null; }
 
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> x) { return plane.getNormalAt(x); }
+	public Producer<Vector> getNormalAt(Producer<Vector> x) { return plane.getNormalAt(x); }
 
 	@Override
 	public double intersect(Vector x, Vector p) {

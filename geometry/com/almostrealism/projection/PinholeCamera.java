@@ -19,10 +19,12 @@ package com.almostrealism.projection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.DynamicProducer;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the
@@ -153,20 +155,18 @@ public class PinholeCamera extends OrthographicCamera {
 	 * camera surface. This effect can be used to produce large images from small scenes while retaining accuracy.
 	 */
 	@Override
-	public Evaluable<Ray> rayAt(Evaluable<Pair> posP, Evaluable<Pair> sdP) {
+	public Producer<Ray> rayAt(Producer<Pair> posP, Producer<Pair> sdP) {
 		if (Settings.produceOutput && Settings.produceCameraOutput) {
 			Settings.cameraOut.println("CAMERA: U = " + this.u.toString() + ", V = " + this.v.toString() + ", W = " + this.w.toString());
 		}
 
 		if (enableHardwareAcceleration) {
-			return compileProducer(new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
-											blur, focalLength, u, v, w));
+			return new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
+											blur, focalLength, u, v, w);
 		} else {
-			return new Evaluable<Ray>() {
-				@Override
-				public Ray evaluate(Object[] args) {
-					Pair pos = posP.evaluate(args);
-					Pair screenDim = sdP.evaluate(args);
+			return new DynamicProducer<>(args -> {
+					Pair pos = posP.get().evaluate(args);
+					Pair screenDim = sdP.get().evaluate(args);
 
 					double au = -(getProjectionWidth() / 2);
 					double av = -(getProjectionHeight() / 2);
@@ -218,13 +218,7 @@ public class PinholeCamera extends OrthographicCamera {
 					}
 
 					return ray;
-				}
-
-				@Override
-				public void compact() {
-					// TODO
-				}
-			};
+				});
 		}
 	}
 	

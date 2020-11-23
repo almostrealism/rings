@@ -31,7 +31,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
@@ -42,7 +42,7 @@ import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.primitives.SurfaceUI;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface
@@ -180,17 +180,17 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	/**
-	 * Delegates to the {@link #getValueAt(Evaluable)} method of the underlying {@link AbstractSurface}.
+	 * Delegates to the {@link #getValueAt(Producer)} method of the underlying {@link AbstractSurface}.
 	 */
 	@Override
-	public Evaluable<RGB> getValueAt(Evaluable<Vector> point) { return getSurface().getValueAt(point); }
+	public Producer<RGB> getValueAt(Producer<Vector> point) { return getSurface().getValueAt(point); }
 
 	/**
 	 * Returns a Vector object that represents the vector normal to this surface
 	 * at the point represented by the specified {@link Vector}.
 	 */
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		return getSurface().getNormalAt(point);
 	}
 
@@ -200,18 +200,13 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * the surface occurs.
 	 */
 	@Override
-	public ContinuousField intersectAt(Evaluable ray) {
+	public ContinuousField intersectAt(Producer ray) {
 		return getSurface().intersectAt(ray);
 	}
 
 	@Override
 	public RGB operate(Vector triple) {
 		return getSurface().operate(triple);
-	}
-
-	@Override
-	public Scope getScope(NameProvider p) {
-		return getSurface().getScope(p);
 	}
 
 	@Override
@@ -248,7 +243,7 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	 * Returns the value of shade() obtained from the AbstractSurface object stored by this AbstractSurfaceUI.
 	 */
 	@Override
-	public Maker<RGB> shade(ShaderContext parameters) {
+	public Producer<RGB> shade(ShaderContext parameters) {
 		return this.surface.shade(parameters);
 	}
 

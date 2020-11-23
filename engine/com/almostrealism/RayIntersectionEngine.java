@@ -21,9 +21,10 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,10 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		this.fparams = fparams;
 	}
 	
-	public Evaluable<RGB> trace(Evaluable<Ray> r) {
+	public Producer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
-		return enableAcceleratedAggregator ? agg.getAccelerated() : agg;
+		return enableAcceleratedAggregator ? () -> agg.getAccelerated() : () -> agg;
 	}
 }

@@ -26,8 +26,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
-import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Producer;
+import org.almostrealism.relation.Evaluable;
 import static org.almostrealism.util.Ops.*;
 
 /**
@@ -106,7 +106,7 @@ public class DirectionalAmbientLight extends AmbientLight {
 	public static Evaluable<RGB> directionalAmbientLightingCalculation(ContinuousField intersection, Curve<RGB> surface,
 																	   Collection<Curve<RGB>> otherSurfaces, DirectionalAmbientLight light,
 																	   List<Light> otherLights, ShaderContext p) {
-		Maker<RGB> color;
+		Producer<RGB> color;
 		
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		

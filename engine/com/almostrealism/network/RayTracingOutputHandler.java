@@ -5,9 +5,10 @@ import io.almostrealism.db.QueryHandler;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.util.DynamicEvaluable;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.util.DynamicProducer;
+import org.almostrealism.relation.Evaluable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -85,7 +86,7 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 									}
 								}
 
-								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage().get(),
 										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
 										ImageCanvas.JPEGEncoding);
 							} catch (InterruptedException ie) {
@@ -129,7 +130,7 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 				}
 			}
 
-			ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage(),
+			ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage().get(),
 						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
 						ImageCanvas.JPEGEncoding);
 		} catch (IOException ioe) {
@@ -311,8 +312,8 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 		this.image = RayTracingJob.processOutput(data, this.image, x, y, dx, dy);
 	}
 
-	public synchronized Evaluable<RGB[][]> getImage() {
-		return new DynamicEvaluable<>(args -> {
+	public synchronized Producer<RGB[][]> getImage() {
+		return new DynamicProducer<>(args -> {
 			RGB copy[][] = new RGB[this.image.length][this.image[0].length];
 
 			for (int i = 0; i < copy.length; i++) {

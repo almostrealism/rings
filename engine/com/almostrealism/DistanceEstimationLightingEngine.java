@@ -27,10 +27,11 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Provider;
 
 import java.util.ArrayList;
@@ -90,26 +91,26 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		this.shaders = shaders;
 	}
 
-	public static class Locus extends ArrayList<Evaluable<Ray>>
-			implements ContinuousField, Callable<Evaluable<RGB>>, Shadable, HardwareFeatures {
+	public static class Locus extends ArrayList<Producer<Ray>>
+			implements ContinuousField, Callable<Producer<RGB>>, Shadable, HardwareFeatures, CodeFeatures {
 		private ShaderSet shaders;
 		private ShaderContext params;
 
 		public Locus(Vector location, Vector normal, ShaderSet s, ShaderContext p) {
-			this.add(new Provider<>(new Ray(location, normal)));
+			this.add(p(new Ray(location, normal)));
 			shaders = s;
 			params = p;
 		}
 
 		@Override
-		public Evaluable<Vector> getNormalAt(Evaluable<Vector> vector) {
-			return new RayDirection(() -> get(0)).get();
+		public Producer<Vector> getNormalAt(Producer<Vector> vector) {
+			return new RayDirection(get(0));
 		}
 
 		@Override
 		public Vector operate(Vector triple) {
 			try {
-				return get(0).evaluate(new Object[] { triple }).getOrigin();
+				return get(0).get().evaluate(new Object[] { triple }).getOrigin();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -117,11 +118,9 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 			return null;
 		}
 
-		@Override
-		public Scope getScope(NameProvider prefix) { throw new RuntimeException("getScope not implemented"); } // TODO
-
 		public ShaderSet getShaders() { return shaders; }
 
+		@Override
 		public String toString() {
 			try {
 				return String.valueOf(get(0));
@@ -133,9 +132,9 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Maker<RGB> shade(ShaderContext parameters) {
+		public Producer<RGB> shade(ShaderContext parameters) {
 			try {
-				Maker<RGB> color = null;
+				Producer<RGB> color = null;
 
 				if (shaders != null)
 					color = shaders.shade(parameters, this);
@@ -148,8 +147,8 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 		}
 
 		@Override
-		public Evaluable<RGB> call() {
-			return shade(params).get();
+		public Producer<RGB> call() {
+			return shade(params);
 		}
 	}
 }

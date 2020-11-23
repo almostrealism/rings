@@ -31,8 +31,9 @@ import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.swing.displays.ImageDisplay;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 import org.almostrealism.util.ProducerArgumentReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,7 +107,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void aggregateAcceleratedCompare() throws IOException {
 		RayIntersectionEngine.enableAcceleratedAggregator = false;
-		Evaluable<RGB> agg = getScene().getProducer();
+		Producer<RGB> agg = getScene().getProducer();
 		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
@@ -124,8 +125,8 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			RGB value = agg.evaluate(new Object[] { input.get(i), dim.get(i) });
-			if (value == null) value = RGBBlack.getProducer().evaluate();
+			RGB value = agg.get().evaluate(new Object[] { input.get(i), dim.get(i) });
+			if (value == null) value = RGBBlack.getEvaluable().evaluate();
 			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
 			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
 			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));

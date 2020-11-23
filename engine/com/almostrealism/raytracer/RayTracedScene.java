@@ -30,10 +30,11 @@ import org.almostrealism.color.RealizableImage;
 
 import io.almostrealism.lambda.Realization;
 import org.almostrealism.color.computations.RGBBlack;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.util.PassThroughEvaluable;
+import org.almostrealism.relation.Evaluable;
 
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
 	private RayTracer tracer;
@@ -65,14 +66,14 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 	public RenderParameters getRenderParameters() { return p; }
 
-	public Evaluable<RGB> operate(Evaluable<Pair> uv, Evaluable<Pair> sd) {
-		Future<Evaluable<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
+	public Producer<RGB> operate(Producer<Pair> uv, Producer<Pair> sd) {
+		Future<Producer<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
 
 		if (color == null) {
-			color = new Future<Evaluable<RGB>>() {
+			color = new Future<Producer<RGB>>() {
 				@Override
-				public Evaluable<RGB> get() {
-					return RGBBlack.getProducer();
+				public Producer<RGB> get() {
+					return RGBBlack.getInstance();
 				}
 
 				@Override
@@ -85,7 +86,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 				public boolean isDone() { return true; }
 
 				@Override
-				public Evaluable<RGB> get(long timeout, TimeUnit unit)
+				public Producer<RGB> get(long timeout, TimeUnit unit)
 						throws InterruptedException, ExecutionException, TimeoutException {
 					return get();
 				}
@@ -100,10 +101,10 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		}
 	}
 
-	public Evaluable<RGB> getProducer() { return getProducer(getRenderParameters()); }
+	public Producer<RGB> getProducer() { return getProducer(getRenderParameters()); }
 
-	public Evaluable<RGB> getProducer(RenderParameters p) {
-		Evaluable<RGB> producer = operate(new PassThroughProducer(0), pair(p.width, p.height).get());
+	public Producer<RGB> getProducer(RenderParameters p) {
+		Producer<RGB> producer = operate(v(Pair.class, 0), pair(p.width, p.height));
 
 		if (producer instanceof DimensionAware) {
 			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);
@@ -117,7 +118,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		this.p = p;
 
 		Pixel px = new Pixel(p.ssWidth, p.ssHeight);
-		Evaluable<RGB> producer = getProducer(p);
+		Producer<RGB> producer = getProducer(p);
 
 		for (int i = 0; i < p.ssWidth; i++) {
 			for (int j = 0; j < p.ssHeight; j++) {

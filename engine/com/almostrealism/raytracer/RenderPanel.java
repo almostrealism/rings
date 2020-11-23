@@ -46,7 +46,7 @@ import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
 import org.almostrealism.util.Pipeline;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * A {@link RenderPanel} object allows display of {@link Scene} previews and
@@ -137,7 +137,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 		evaluationThread = new Thread(() -> {
 			evaluationStart = System.currentTimeMillis();
-			renderedImageData = image.evaluate();
+			renderedImageData = image.get().evaluate();
 			System.out.println("Completed image realization after " + (System.currentTimeMillis() - evaluationStart) + " msec");
 
 			renderedImage = GraphicsConverter.convertToAWTImage(renderedImageData, RenderPanel.this);
@@ -340,8 +340,4 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 		return renderedImage;
 	}
-
-	/** Does nothing. */
-	@Override
-	public void compact() { }
 }

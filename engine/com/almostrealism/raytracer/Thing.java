@@ -5,10 +5,11 @@ import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.relation.Operator;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -18,11 +19,11 @@ public class Thing extends AbstractSurface {
 	private Plane p = new Plane(Plane.XY);
 
 	@Override
-	public ContinuousField intersectAt(Evaluable ray) {
+	public ContinuousField intersectAt(Producer ray) {
 		if (Math.random() > 0.5) {
 			return this.p.intersectAt(ray);
 		} else {
-			return new ShadableIntersection(this, () -> ray, scalar(-1));
+			return new ShadableIntersection(this, ray, scalar(-1));
 		}
 	}
 
@@ -42,7 +43,7 @@ public class Thing extends AbstractSurface {
 	}
 
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
-		return compileProducer(new ImmutableVector(0.0, 0.0, 1.0));
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		return new ImmutableVector(0.0, 0.0, 1.0);
 	}
 }

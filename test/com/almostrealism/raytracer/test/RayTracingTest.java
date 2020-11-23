@@ -74,7 +74,7 @@ public class RayTracingTest {
 
 			/* Shaders */
 			s1.addShader(new DiffuseShader());
-			s1.addShader(new ReflectionShader(1.0, RGBWhite.getProducer()));
+			s1.addShader(new ReflectionShader(1.0, RGBWhite.getInstance()));
 
 
 			/* Sphere 2 */
@@ -161,7 +161,7 @@ public class RayTracingTest {
 		RealizableImage img = generateImage();
 
 		try {
-			ImageCanvas.encodeImageFile(img, new File("test.jpeg"),
+			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			System.out.println("Wrote image");
 		} catch (FileNotFoundException fnf) {

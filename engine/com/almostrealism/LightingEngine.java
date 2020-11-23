@@ -34,22 +34,23 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.Evaluable;
-import org.almostrealism.util.ProducerWithRank;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.EvaluableWithRank;
 import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
+public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements EvaluableWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
-	private Supplier<Evaluable<Scalar>> distance;
+	private Producer<Scalar> distance;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
@@ -71,7 +72,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
 
 		if (LegacyRayTracingEngine.castShadows && light.castShadows) {
-			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(() -> intersections.get(0)).get());
+			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)).get());
 		} else {
 			shadow = RGBWhite.getInstance();
 		}
@@ -83,11 +84,11 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		context.setOtherSurfaces(otherSurfaces);
 
 		if (light instanceof SurfaceLight) {
-			shade = lightingCalculation(intersections, new RayOrigin(() -> intersections.get(0)).get(),
+			shade = lightingCalculation(intersections, new RayOrigin(intersections.get(0)).get(),
 										surface, otherSurfaces,
 										((SurfaceLight) light).getSamples(), p);
 		} else if (light instanceof PointLight) {
-			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, () -> intersections.get(0), context) : null;
+			shade = surface instanceof Shadable ? ((PointLight) light).forShadable((Shadable) surface, intersections.get(0), context) : null;
 		} else if (light instanceof DirectionalAmbientLight) {
 			DirectionalAmbientLight directionalLight = (DirectionalAmbientLight) light;
 
@@ -99,7 +100,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
-						new RayOrigin(() -> intersections.get(0)).get());
+						new RayOrigin(intersections.get(0)));
 		} else {
 			shade = RGBBlack.getInstance();
 		}
@@ -115,7 +116,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	}
 
 	@Override
-	public Iterable<Evaluable<Ray>> getDependencies() { return intersections; }
+	public Iterable<Producer<Ray>> getDependencies() { return intersections; }
 
 	public Curve<RGB> getSurface() { return surface; }
 
@@ -128,7 +129,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	@Override
 	public void compact() {
 		super.compact();
-		getRank().compact();
+		// getRank().compact();
 
 		System.out.println("Compacted LightingEngine");
 	}

@@ -22,10 +22,11 @@ import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBEvaluable;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.LightingContext;
+import org.almostrealism.util.Compactable;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value
@@ -33,8 +34,8 @@ import org.almostrealism.util.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements RGBEvaluable, Editable, Shader<LightingContext> {
-	private Evaluable<RGB> color;
+public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Shader<LightingContext> {
+	private Producer<RGB> color;
 
 	private String names[] = { "Color" };
 	private String desc[] = { "The color of the silhouette" };
@@ -44,7 +45,7 @@ public class SilhouetteShader implements RGBEvaluable, Editable, Shader<Lighting
 	/**
 	 * Constructs a new {@link SilhouetteShader} using black as a color.
 	 */
-	public SilhouetteShader() { this.color = RGBBlack.getProducer(); }
+	public SilhouetteShader() { this.color = RGBBlack.getInstance(); }
 	
 	/**
 	 * Constructs a new {@link SilhouetteShader} using the specified {@link RGB}
@@ -52,21 +53,21 @@ public class SilhouetteShader implements RGBEvaluable, Editable, Shader<Lighting
 	 * 
 	 * @param color  RGB Producer to use.
 	 */
-	public SilhouetteShader(Evaluable<RGB> color) { this.color = color; }
+	public SilhouetteShader(Producer<RGB> color) { this.color = color; }
 	
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
 	 */
 	@Override
-	public Maker<RGB> shade(LightingContext p, DiscreteField normals) {
-		return () -> GeneratedColorProducer.fromProducer(this, color);
+	public Producer<RGB> shade(LightingContext p, DiscreteField normals) {
+		return GeneratedColorProducer.fromProducer(this, color);
 	}
 
 	/**
 	 * @see ColorEvaluable#evaluate(java.lang.Object[])
 	 */
 	@Override
-	public RGB evaluate(Object args[]) { return this.color.evaluate(args); }
+	public RGB evaluate(Object args[]) { return this.color.get().evaluate(args); }
 
 	@Override
 	public void compact() { color.compact(); }
@@ -101,7 +102,7 @@ public class SilhouetteShader implements RGBEvaluable, Editable, Shader<Lighting
 	@Override
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
-			this.color = (ColorEvaluable)value;
+			this.color = (Producer<RGB>) value;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}
@@ -111,22 +112,22 @@ public class SilhouetteShader implements RGBEvaluable, Editable, Shader<Lighting
 	 */
 	@Override
 	public void setPropertyValues(Object values[]) {
-		if (values.length > 0) this.color = (ColorEvaluable)values[0];
+		if (values.length > 0) this.color = (Producer<RGB>) values[0];
 	}
 
 	/**
 	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
 	 */
 	@Override
-	public Evaluable[] getInputPropertyValues() { return new Evaluable[] { this.color }; }
+	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, Evaluable)
+	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, Producer)
 	 */
 	@Override
-	public void setInputPropertyValue(int index, Evaluable p) {
+	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)
-			this.color = (ColorEvaluable)p;
+			this.color = (Producer<RGB>) p;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}

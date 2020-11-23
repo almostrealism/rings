@@ -25,12 +25,13 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Constant;
 import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.Operator;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -107,11 +108,11 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 * by the specified Vector object.
 	 */
 	@Override
-	public Evaluable<Vector> getNormalAt(Evaluable<Vector> point) {
-		Evaluable<Vector> normal = add(() -> point, v(getLocation().minus())).get();
+	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+		Producer<Vector> normal = add(point, v(getLocation().minus()));
 		if (getTransform(true) != null) {
-			Evaluable<Vector> fnormal = normal;
-			normal = (Evaluable<Vector>) getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
+			Producer<Vector> fnormal = normal;
+			normal = getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);
 		}
 
 		return normal;
@@ -123,16 +124,16 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 * this {@link Sphere} occurs.
 	 */
 	@Override
-	public ShadableIntersection intersectAt(Evaluable r) {
+	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
 
-		Supplier<Evaluable<? extends Ray>> tr = () -> r;
+		Supplier<Evaluable<? extends Ray>> tr = r;
 		if (m != null) tr = m.getInverse().transform(tr);
 
 		final Supplier<Evaluable<? extends Ray>> fr = tr;
 
 		if (enableHardwareAcceleration) {
-			return new ShadableIntersection(this, () -> r, () -> new SphereIntersectAt(fr));
+			return new ShadableIntersection(this, r, () -> new SphereIntersectAt(fr));
 		} else {
 			Evaluable<Scalar> s = new Evaluable<Scalar>() {
 				@Override
@@ -175,14 +176,9 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 
 					return st;
 				}
-
-				@Override
-				public void compact() {
-					// TODO
-				}
 			};
 
-			return new ShadableIntersection(this, () -> r, () -> s);
+			return new ShadableIntersection(this, r, () -> s);
 		}
 	}
 
@@ -198,10 +194,6 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 			public Scalar evaluate(Object[] args) {
 				return new Scalar(getInput().evaluate(args).lengthSq());
 			}
-
-			@Override
-			public void compact() { }
-
 
 			@Override
 			public Scope<Scalar> getScope(NameProvider p) {

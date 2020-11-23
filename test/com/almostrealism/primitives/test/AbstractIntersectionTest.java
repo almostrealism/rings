@@ -22,8 +22,7 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.Provider;
+import org.almostrealism.util.PassThroughEvaluable;
 
 public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;
@@ -40,8 +39,8 @@ public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures 
 		Vector v = w.crossProduct(u);
 
 		return
-				new SphereIntersectAt(new PinholeCameraRayAt(new PassThroughProducer<>(0),
-						pair(width, height).get(),
+				new SphereIntersectAt(new PinholeCameraRayAt(v(Pair.class, 0),
+						pair(width, height),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,

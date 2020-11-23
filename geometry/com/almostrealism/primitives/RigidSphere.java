@@ -28,8 +28,8 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.RigidBody;
-import org.almostrealism.relation.Maker;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Producer;
+import org.almostrealism.relation.Evaluable;
 
 import java.awt.Graphics;
 
@@ -189,10 +189,10 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	}
 
 	/**
-	 * Delegates to {@link #getValueAt(Evaluable)}.
+	 * Delegates to {@link #getValueAt(Producer)}.
 	 */
 	@Override
-	public Maker<RGB> getColorAt(Maker<Vector> point) { return () -> getValueAt(point.get()); }
+	public Producer<RGB> getColorAt(Producer<Vector> point) { return getValueAt(point); }
 
 	/**
 	 * @see org.almostrealism.algebra.ParticleGroup#getParticleVertices()

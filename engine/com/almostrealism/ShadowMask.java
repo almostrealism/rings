@@ -26,7 +26,9 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.relation.Producer;
+import org.almostrealism.util.DynamicProducer;
 
 import java.util.function.Supplier;
 
@@ -64,18 +66,10 @@ public class ShadowMask implements Evaluable<RGB>, Supplier<Evaluable<? extends 
 
 		final Vector fdirection = direction;
 
-		Evaluable<Ray> shadowRay = new Evaluable() {
-			@Override
-			public Ray evaluate(Object[] args) {
-				return new Ray(p, fdirection);
-			}
-
-			@Override
-			public void compact() { }
-		};
+		Producer<Ray> shadowRay = new DynamicProducer<>(arguments -> new Ray(p, fdirection));
 
 		ClosestIntersection intersection = new ClosestIntersection(shadowRay, surfaces);
-		Ray r = intersection.get(0).evaluate(args);
+		Ray r = intersection.get(0).get().evaluate(args);
 		double intersect = 0.0;
 		if (r != null)
 			intersect = r.getOrigin().subtract(p).length();
@@ -93,10 +87,5 @@ public class ShadowMask implements Evaluable<RGB>, Supplier<Evaluable<? extends 
 
 			return new RGB(0.0, 0.0, 0.0);
 		}
-	}
-
-	@Override
-	public void compact() {
-
 	}
 }

@@ -29,10 +29,11 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.Evaluable;
-import org.almostrealism.util.ProducerWithRank;
+import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.EvaluableWithRank;
 import org.almostrealism.util.RankedChoiceProducerForRGB;
 
 import java.util.ArrayList;
@@ -48,11 +49,11 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 	private boolean kernel;
 	private int width, height, ssw, ssh;
 
-	public LightingEngineAggregator(Evaluable<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		this(r, surfaces, lights, context, false);
 	}
 
-	public LightingEngineAggregator(Evaluable<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context, boolean kernel) {
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context, boolean kernel) {
 		super(Intersection.e);
 		this.kernel = kernel;
 		init(r, surfaces, lights, context);
@@ -106,7 +107,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(new ScalarBank(input.getCount()));
-			get(i).getRank().compact();
+			// TODO  get(i).getRank().compact();
 			((KernelizedEvaluable) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
 		}
 	}
@@ -119,7 +120,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 	}
 
 	// TODO  Rename this class to SurfaceLightingAggregator and have LightingEngineAggregator sum the lights instead of rank choice them
-	protected void init(Evaluable<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+	protected void init(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
 		for (Curve<RGB> s : surfaces) {
 			for (Light l : lights) {
 				Collection<Curve<RGB>> otherSurfaces = CollectionUtils.separate(s, surfaces);
@@ -169,7 +170,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		// assert pos.equals(input.get(position));
 
 		r: for (int i = 0; i < size(); i++) {
-			ProducerWithRank<RGB> p = get(i);
+			EvaluableWithRank<RGB> p = get(i);
 
 			double r = ranks.get(i).get(position).getValue();
 			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);
@@ -196,9 +197,9 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 	}
 
 	@Override
-	public Iterable<Evaluable<RGB>> getDependencies() {
-		List<Evaluable<RGB>> p = new ArrayList<>();
-		p.addAll(this);
+	public Iterable<Producer<RGB>> getDependencies() {
+		List<Producer<RGB>> p = new ArrayList<>();
+		// TODO  p.addAll(this);
 		return p;
 	}
 }

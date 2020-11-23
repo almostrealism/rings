@@ -20,23 +20,24 @@ import com.almostrealism.primitives.Sphere;
 import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Provider;
 import org.junit.Test;
 
-public class SphereTest {
+public class SphereTest implements CodeFeatures {
 	@Test
 	public void intersectionTest() {
 		Sphere s = new Sphere();
-		ContinuousField f = s.intersectAt(new Provider(new Ray(new Vector(0.0, 0.0, 2.0), new Vector(0.0, 0.0, -1.0))));
-		Ray r = f.get(0).evaluate(new Object[0]);
+		ContinuousField f = s.intersectAt(ray(0.0, 0.0, 2.0, 0.0, 0.0, -1.0));
+		Ray r = f.get(0).get().evaluate();
 		System.out.println(r);
 	}
 
 	@Test
 	public void intersectionTest2() {
 		Sphere s = new Sphere();
-		ContinuousField f = s.intersectAt(new Provider(new Ray(new Vector(0.0, 0.0, -2.0), new Vector(57.22891566265059, 72.32037025267255, 404.1157064026493))));
-		Ray r = f.get(0).evaluate(new Object[0]);
+		ContinuousField f = s.intersectAt(ray(0.0, 0.0, -2.0, 57.22891566265059, 72.32037025267255, 404.1157064026493));
+		Ray r = f.get(0).get().evaluate();
 		System.out.println(r);
 	}
 }

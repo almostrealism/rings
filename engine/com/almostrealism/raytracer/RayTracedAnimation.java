@@ -39,7 +39,6 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.time.Animation;
-import org.almostrealism.util.Provider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -389,8 +388,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String rbstate = p.getProperty("bodies." + i + ".shade.rbstate");
 
 				if (rbstate != null) {
-					BlendingShader bs = new BlendingShader(rgb(0.8, 0.0, 0.0).get(),
-															rgb(0.0, 0.0, 0.8).get());
+					BlendingShader bs = new BlendingShader(rgb(0.8, 0.0, 0.0),
+															rgb(0.0, 0.0, 0.8));
 
 					if (rbstate.equals("force"))
 						s.addShader(new RigidBodyStateShader(RigidBodyStateShader.FORCE, 0.0, 1.0, bs));
@@ -401,7 +400,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String ref = p.getProperty("bodies." + i + ".shade.ref");
 
 				if (ref != null) {
-					s.addShader(new ReflectionShader(Double.parseDouble(ref), RGBWhite.getProducer()));
+					s.addShader(new ReflectionShader(Double.parseDouble(ref), RGBWhite.getInstance()));
 				}
 
 				s.addShader(DiffuseShader.defaultDiffuseShader);

@@ -26,8 +26,9 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.relation.Operator;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 
@@ -73,21 +74,21 @@ public class CSG extends AbstractSurface {
 	
     /** @return  null. */
     @Override
-    public VectorEvaluable getNormalAt(Evaluable<Vector> point) { return null; }
+    public Producer<Vector> getNormalAt(Producer<Vector> point) { return null; }
 
     /**
-     * @see  Intersectable#intersectAt(Evaluable)
+     * @see  Intersectable#intersectAt(Producer)
      */
     @Override
-    public ContinuousField intersectAt(Evaluable ray) {
+    public ContinuousField intersectAt(Producer ray) {
         TransformMatrix m  = getTransform(true);
-        Supplier<Evaluable<? extends Ray>> r = () -> ray;
+        Producer<Ray> r = ray;
         if (m != null) r = m.getInverse().transform(r);
 
         final Supplier<Evaluable<? extends Ray>> fr = r;
         
         if (this.type == CSG.UNION) {
-            return new ClosestIntersection(r.get(), Arrays.asList(this.sa, this.sb));
+            return new ClosestIntersection(r, Arrays.asList(this.sa, this.sb));
         } else if (this.type == CSG.DIFFERENCE) {
 			throw new RuntimeException("Not implemented");
         	/* TODO

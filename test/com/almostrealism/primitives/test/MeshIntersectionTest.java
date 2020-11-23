@@ -16,9 +16,10 @@ import org.almostrealism.graph.mesh.MeshData;
 import org.almostrealism.graph.mesh.Triangle;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.PassThroughProducer;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.util.PassThroughEvaluable;
+import org.almostrealism.relation.Evaluable;
 import org.almostrealism.util.RankedChoiceProducer;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,7 @@ import org.junit.Test;
 
 public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
-	private KernelizedEvaluable<Ray> ray;
+	private Producer<Ray> ray;
 
 	private int width, height;
 
@@ -44,7 +45,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		return new Mesh(data);
 	}
 
-	protected Evaluable<Ray> camera() {
+	protected Producer<Ray> camera() {
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
 		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
@@ -55,19 +56,19 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return c.rayAt(new PassThroughProducer<>(0), pair(width, height).get());
+		return c.rayAt(v(Pair.class, 0), pair(width, height));
 	}
 
 	@Before
 	public void init() {
 		data = mesh().getMeshData();
-		ray = (KernelizedEvaluable) camera();
+		ray = camera();
 		ray.compact();
 	}
 
 	@Test
 	public void intersectAt() {
-		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, ray);
+		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, (KernelizedEvaluable) ray.get());
 
 		PairBank input = RealizableImage.generateKernelInput(0, 0, width, height);
 		ScalarBank distances = new ScalarBank(input.getCount());

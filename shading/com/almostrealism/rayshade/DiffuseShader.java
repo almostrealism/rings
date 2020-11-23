@@ -17,19 +17,19 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.ScalarSupplier;
-import org.almostrealism.algebra.VectorSupplier;
+import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.math.bool.GreaterThanRGB;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -46,15 +46,15 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 	
 	/** Method specified by the {@link Shader} interface. */
 	@Override
-	public Maker<RGB> shade(ShaderContext p, DiscreteField normals) {
-		VectorSupplier point = origin(() -> normals.get(0));
-		VectorSupplier n = direction(() -> normals.get(0)).normalize();
-		ScalarSupplier scaleFront = n.dotProduct(p.getLightDirection());
-		ScalarSupplier scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
-		Maker<RGB> lightColor = p.getLight().getColorAt(point);
-		Maker<RGB> surfaceColor = () -> p.getSurface().getValueAt(point.get());
+	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
+		VectorProducer point = origin(normals.get(0));
+		VectorProducer n = direction(normals.get(0)).normalize();
+		ScalarProducer scaleFront = n.dotProduct(p.getLightDirection());
+		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
+		Producer<RGB> lightColor = p.getLight().getColorAt(point);
+		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 
-		Evaluable<RGB> front = null, back = null;
+		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThanRGB(scaleFront, scalar(0),
@@ -68,17 +68,14 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 							RGBBlack.getInstance());
 		}
 
-		Evaluable<RGB> ffront = front;
-		Evaluable<RGB> fback = back;
-
 		if (front != null && back != null) {
-			return () -> GeneratedColorProducer.fromProducer(this, cadd(ffront, fback));
+			return GeneratedColorProducer.fromProducer(this, cadd(front, back));
 		} else if (front != null) {
-			return () -> GeneratedColorProducer.fromProducer(this, ffront);
+			return GeneratedColorProducer.fromProducer(this, front);
 		} else if (back != null) {
-			return () -> GeneratedColorProducer.fromProducer(this, fback);
+			return GeneratedColorProducer.fromProducer(this, back);
 		} else {
-			return () -> GeneratedColorProducer.fromProducer(this, RGB.blank());
+			return GeneratedColorProducer.fromProducer(this, RGB.blank());
 		}
 	}
 	
@@ -114,11 +111,11 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 	 * @return  An empty array.
 	 */
 	@Override
-	public Evaluable[] getInputPropertyValues() { return new Evaluable[0]; }
+	public Producer[] getInputPropertyValues() { return new Producer[0]; }
 	
 	/** Does nothing. */
 	@Override
-	public void setInputPropertyValue(int index, Evaluable p) {}
+	public void setInputPropertyValue(int index, Producer p) {}
 	
 	/** Returns "Diffuse Shader". */
 	@Override

@@ -16,16 +16,16 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.ScalarSupplier;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorSupplier;
+import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
 
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
 
 /**
@@ -155,11 +155,11 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 * specified point as an RGB object.
 	 */
 	@Override
-	public Maker<RGB> getColorAt(Maker<Vector> point) {
-		ScalarSupplier d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
+	public Producer<RGB> getColorAt(Producer<Vector> point) {
+		ScalarProducer d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
 
 		RGB color = getColor().multiply(getIntensity());
-		return () -> GeneratedColorProducer.fromComputation(this, new Attenuation(da, db, dc, v(color), d));
+		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, v(color), d));
 	}
 
 	/** Returns the location of this {@link PointLight} as a {@link Vector}. */
@@ -193,9 +193,9 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 * based on intensity.
 	 */
 	// TODO  This should be a method of the Light interface
-	public Maker<RGB> forShadable(Shadable surface, Maker<Ray> intersection, ShaderContext context) {
-		VectorSupplier point = origin(intersection);
-		VectorSupplier direction = add(point, v(getLocation()).scalarMultiply(-1.0));
+	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
+		VectorProducer point = origin(intersection);
+		VectorProducer direction = add(point, v(getLocation()).scalarMultiply(-1.0));
 		direction = direction.normalize().scalarMultiply(-1.0);
 		context.setLightDirection(direction);
 		return surface.shade(context);

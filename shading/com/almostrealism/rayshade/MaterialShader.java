@@ -23,7 +23,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhotonFieldContext;
-import org.almostrealism.relation.Maker;
+import org.almostrealism.relation.Producer;
 
 /**
  * @author  Michael Murray
@@ -36,7 +36,7 @@ public class MaterialShader<T extends PhotonField> implements Shader<PhotonField
 	}
 	
 	@Override
-	public Maker<RGB> shade(PhotonFieldContext<T, AbsorptionPlane> parameters, DiscreteField normals) {
+	public Producer<RGB> shade(PhotonFieldContext<T, AbsorptionPlane> parameters, DiscreteField normals) {
 //		parameters.getFilm(). TODO
 		return null;
 	}

@@ -29,7 +29,7 @@ public class AbstractGLSceneTest {
 	public Scene createTestScene() {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(new PinholeCamera());
-		scene.add(new Sphere(ZeroVector.getProducer().evaluate(new Object[0]), Math.pow(10, 5), new RGB(0.0, 0.0, 1.0)).triangulate());
+		scene.add(new Sphere(ZeroVector.getEvaluable().evaluate(new Object[0]), Math.pow(10, 5), new RGB(0.0, 0.0, 1.0)).triangulate());
 		scene.getLights().add(new PointLight(Vector.Y_AXIS.multiply((Math.pow(10, 6)))));
 		return scene;
 	}

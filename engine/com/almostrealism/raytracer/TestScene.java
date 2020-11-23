@@ -22,18 +22,16 @@ import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.SilhouetteShader;
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
-import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.DefaultVertexData;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.io.FileDecoder;
-import org.almostrealism.relation.NameProvider;
 import org.almostrealism.relation.TripleFunction;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
@@ -42,7 +40,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Evaluable;
+import org.almostrealism.relation.Evaluable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,10 +60,10 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 		if (enableSphere) {
 			if (enableSilhouette) {
-				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
+				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
 			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
-						new ReflectionShader(0.6, rgb(0.6).get())
+						new ReflectionShader(0.6, rgb(0.6))
 				});
 			} else {
 				s.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
@@ -76,21 +74,21 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 			// add(s);
 
 			Sphere s2 = new Sphere();
-			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
+			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
 			s2.setLocation(new Vector(0.0, 2.4, -3.0));
 			s2.setColor(new RGB(0.8, 0.8, 0.8));
 			s2.setSize(0.25);
 			add(s2);
 
 			Sphere s3 = new Sphere();
-			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
+			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
 			s3.setLocation(new Vector(0.0, 1.4, -3.0));
 			s3.setColor(new RGB(0.8, 0.8, 0.8));
 			s3.setSize(0.25);
 			add(s3);
 
 			Sphere s4 = new Sphere();
-			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
+			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
 			s4.setLocation(new Vector(0.0, 0.4, -3.0));
 			s4.setColor(new RGB(0.8, 0.8, 0.8));
 			s4.setSize(0.25);
@@ -103,7 +101,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 			if (enableFloorReflection) {
 				p.setShaders(new Shader[] {
-						new ReflectionShader(0.65, RGBWhite.getProducer())
+						new ReflectionShader(0.65, RGBWhite.getInstance())
 				});
 			}
 
@@ -116,7 +114,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				ColorEvaluable p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
+				RGBProducer p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
 					@Override
 					public RGB operate(Triple t) {
 						Vector point = new Vector(t.getA(), t.getB(), 0.0);
@@ -130,30 +128,15 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 							return new RGB (0.0, 0.0, 0.5 + Math.random() / 2.0);
 						}
 					}
-
-					@Override
-					public Scope<RGB> getScope(NameProvider p) {
-						throw new RuntimeException("getScope");
-					}
 				});
 
-				public ColorEvaluable getColorAt() { return p; }
+				public RGBProducer getColorAt() { return p; }
 
 				public Evaluable<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
-				public RGB evaluate(Object args[]) { return this.getColorAt().evaluate(args); }
+				public RGB evaluate(Object args[]) { return this.getColorAt().get().evaluate(args); }
 
 				@Override
-				public void compact() {
-					// TODO
-				}
-
-				@Override
-				public RGB operate(Triple in) { return p.operate(in); }
-
-				@Override
-				public Scope<RGB> getScope(NameProvider p) {
-					throw new RuntimeException("getScope");
-				}
+				public RGB operate(Triple in) { return p.get().evaluate(in); }
 			};
 
 			s.addTexture(randomTex);
@@ -195,7 +178,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 					FileDecoder.PLYEncoding, false, null)).get(0);
 
 			if (enableSilhouette) {
-				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getProducer()) });
+				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
 			} else {
 				dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 			}
