@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,14 +40,14 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
 import org.almostrealism.relation.Evaluable;
-import org.almostrealism.util.EvaluableWithRank;
+import org.almostrealism.util.ProducerWithRank;
 import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements EvaluableWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
+public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
 	private Producer<Scalar> distance;
@@ -121,10 +121,13 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	public Curve<RGB> getSurface() { return surface; }
 
 	@Override
-	public Evaluable<RGB> getProducer() { return this; }
+	public Producer<RGB> getProducer() { return this; }
 
 	@Override
-	public Evaluable<Scalar> getRank() { return distance.get(); }
+	public Producer<Scalar> getRank() { return distance; }
+
+	@Override
+	public Evaluable<RGB> get() { return this; }
 
 	@Override
 	public void compact() {

@@ -33,7 +33,7 @@ import org.almostrealism.relation.Producer;
 import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.DimensionAware;
 import org.almostrealism.relation.Evaluable;
-import org.almostrealism.util.EvaluableWithRank;
+import org.almostrealism.util.ProducerWithRank;
 import org.almostrealism.util.RankedChoiceProducerForRGB;
 
 import java.util.ArrayList;
@@ -107,8 +107,8 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(new ScalarBank(input.getCount()));
-			// TODO  get(i).getRank().compact();
-			((KernelizedEvaluable) get(i).getRank()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
+			get(i).getRank().compact();
+			((KernelizedEvaluable) get(i).getRank().get()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
 		}
 	}
 
@@ -157,7 +157,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 
 		Pair pos = (Pair) args[0];
 
-		Evaluable<RGB> best = null;
+		Producer<RGB> best = null;
 		double rank = Double.MAX_VALUE;
 
 		boolean printLog = enableVerbose && Math.random() < 0.04;
@@ -170,7 +170,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		// assert pos.equals(input.get(position));
 
 		r: for (int i = 0; i < size(); i++) {
-			EvaluableWithRank<RGB> p = get(i);
+			ProducerWithRank<RGB> p = get(i);
 
 			double r = ranks.get(i).get(position).getValue();
 			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);
@@ -193,13 +193,13 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 
 		if (printLog) System.out.println(best + " was chosen\n----------");
 
-		return best == null ? null : best.evaluate(args);
+		return best == null ? null : best.get().evaluate(args);
 	}
 
 	@Override
 	public Iterable<Producer<RGB>> getDependencies() {
 		List<Producer<RGB>> p = new ArrayList<>();
-		// TODO  p.addAll(this);
+		p.addAll(this);
 		return p;
 	}
 }
