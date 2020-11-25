@@ -89,7 +89,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 						}
 
 						out[i][j] = new RGBBank(args[0].getCount());
-						((KernelizedEvaluable) samples[i][j]).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
+						((KernelizedEvaluable) samples[i][j].get()).kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
 					}
 				}
 
