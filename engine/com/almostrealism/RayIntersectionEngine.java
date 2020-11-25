@@ -18,13 +18,17 @@ package com.almostrealism;
 
 import com.almostrealism.raytracer.RayTracer;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.relation.Evaluable;
+import org.almostrealism.util.DimensionAware;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +47,30 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		this.scene = s;
 		this.fparams = fparams;
 	}
-	
+
+	@Override
 	public Producer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
-		return enableAcceleratedAggregator ? () -> agg.getAccelerated() : () -> agg;
+		return enableAcceleratedAggregator ? () -> agg.getAccelerated() : new Kernel(agg);
+	}
+
+	private class Kernel implements Producer<RGB>, DimensionAware {
+		private LightingEngineAggregator agg;
+
+		public Kernel(LightingEngineAggregator agg) {
+			this.agg = agg;
+		}
+
+		@Override
+		public Evaluable<RGB> get() {
+			return agg;
+		}
+
+		@Override
+		public void setDimensions(int width, int height, int ssw, int ssh) {
+			agg.setDimensions(width, height, ssw, ssh);
+		}
 	}
 }
