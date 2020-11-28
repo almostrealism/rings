@@ -29,6 +29,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.relation.Evaluable;
 import org.almostrealism.util.DimensionAware;
+import org.almostrealism.util.DimensionAwareKernel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,24 +54,6 @@ public class RayIntersectionEngine implements RayTracer.Engine {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
-		return enableAcceleratedAggregator ? () -> agg.getAccelerated() : new Kernel(agg);
-	}
-
-	private class Kernel implements Producer<RGB>, DimensionAware {
-		private LightingEngineAggregator agg;
-
-		public Kernel(LightingEngineAggregator agg) {
-			this.agg = agg;
-		}
-
-		@Override
-		public Evaluable<RGB> get() {
-			return agg;
-		}
-
-		@Override
-		public void setDimensions(int width, int height, int ssw, int ssh) {
-			agg.setDimensions(width, height, ssw, ssh);
-		}
+		return enableAcceleratedAggregator ? () -> agg.getAccelerated() : new DimensionAwareKernel<>(agg);
 	}
 }
