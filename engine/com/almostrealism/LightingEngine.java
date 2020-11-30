@@ -132,7 +132,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	@Override
 	public void compact() {
 		super.compact();
-		// getRank().compact();
+		getRank().compact();
 
 		System.out.println("Compacted LightingEngine");
 	}
