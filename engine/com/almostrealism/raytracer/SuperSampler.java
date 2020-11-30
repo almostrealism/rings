@@ -107,7 +107,6 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 
 	@Override
 	public void compact() {
-		// TODO  Hardware acceleration
 		for (int i = 0; i < samples.length; i++) {
 			for (int j = 0; j < samples[i].length; j++) {
 				samples[i][j].compact();
