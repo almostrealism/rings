@@ -20,8 +20,8 @@ import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
-import io.almostrealism.code.Expression;
-import io.almostrealism.code.InstanceReference;
+import io.almostrealism.code.expressions.Expression;
+import io.almostrealism.code.expressions.InstanceReference;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
@@ -38,7 +38,6 @@ import org.almostrealism.graph.mesh.Mesh;
 
 import org.almostrealism.graph.mesh.Triangle;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Provider;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeatures {
 	public RenderableMesh(Mesh m) { super(m); }
