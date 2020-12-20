@@ -3,7 +3,7 @@ package com.almostrealism.gl.shaders;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import org.almostrealism.relation.NameProvider;
+import io.almostrealism.relation.NameProvider;
 
 public class DotProductVertexShader extends VertexShader {
 	@Override

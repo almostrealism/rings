@@ -34,12 +34,12 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.algebra.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.util.ProducerWithRank;
 import static org.almostrealism.util.Ops.*;
 

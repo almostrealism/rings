@@ -22,11 +22,11 @@ import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBEvaluable;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.Compactable;
 import org.almostrealism.util.Editable;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value

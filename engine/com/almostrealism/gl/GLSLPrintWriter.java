@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import io.almostrealism.c.CPrintWriter;
+import org.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
 import io.almostrealism.code.Variable;
 import org.almostrealism.io.PrintStreamPrintWriter;

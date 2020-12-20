@@ -22,8 +22,8 @@ import org.almostrealism.color.Light;
 
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.color.RGB;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Evaluable;
 
 import java.util.function.Supplier;
 

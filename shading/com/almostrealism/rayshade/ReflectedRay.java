@@ -22,13 +22,12 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
-import org.almostrealism.geometry.RayEvaluable;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.relation.NameProvider;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.NameProvider;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Evaluable;
 
 import static org.almostrealism.util.Ops.*;
 

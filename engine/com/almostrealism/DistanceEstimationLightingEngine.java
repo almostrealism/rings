@@ -16,7 +16,6 @@
 
 package com.almostrealism;
 
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.color.Light;
@@ -27,12 +26,10 @@ import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.NameProvider;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Provider;
 
 import java.util.ArrayList;
 import java.util.Collection;

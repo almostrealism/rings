@@ -5,10 +5,9 @@ import io.almostrealism.db.QueryHandler;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.util.DynamicProducer;
-import org.almostrealism.relation.Evaluable;
 
 import java.io.File;
 import java.io.FileOutputStream;

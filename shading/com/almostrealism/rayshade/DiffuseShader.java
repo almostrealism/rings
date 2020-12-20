@@ -24,12 +24,11 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.math.bool.GreaterThanRGB;
-import org.almostrealism.relation.Producer;
+import org.almostrealism.bool.GreaterThanRGB;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Editable;
-import org.almostrealism.relation.Evaluable;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.

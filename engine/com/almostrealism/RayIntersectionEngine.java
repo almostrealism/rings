@@ -18,17 +18,12 @@ package com.almostrealism;
 
 import com.almostrealism.raytracer.RayTracer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.util.DimensionAware;
 import org.almostrealism.util.DimensionAwareKernel;
 
 import java.util.ArrayList;

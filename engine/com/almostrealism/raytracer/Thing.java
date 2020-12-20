@@ -4,12 +4,11 @@ import org.almostrealism.algebra.ContinuousField;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.relation.Operator;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Operator;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

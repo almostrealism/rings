@@ -19,7 +19,6 @@ package com.almostrealism;
 import java.util.ArrayList;
 
 import com.almostrealism.raytracer.RayTracer;
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.RayDirection;
 import org.almostrealism.color.Light;
@@ -31,12 +30,10 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.NameProvider;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.relation.Evaluable;
 
 public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements RayTracer.Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
 	private ShaderContext sparams;

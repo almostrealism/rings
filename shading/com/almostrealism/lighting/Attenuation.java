@@ -19,7 +19,7 @@ package com.almostrealism.lighting;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.ColorProduct;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 import java.util.function.Supplier;
 

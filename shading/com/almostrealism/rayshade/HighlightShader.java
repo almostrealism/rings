@@ -28,12 +28,12 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link HighlightShader} provides a shading method for highlights on surfaces.

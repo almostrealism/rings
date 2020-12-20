@@ -24,8 +24,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.geometry.RandomPair;
 import org.almostrealism.geometry.RayFromVectors;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 
 import static org.almostrealism.util.Ops.*;
 

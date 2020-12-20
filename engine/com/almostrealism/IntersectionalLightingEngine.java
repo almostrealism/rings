@@ -25,8 +25,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 
 import java.util.Collection;
 

@@ -39,7 +39,7 @@ import org.almostrealism.algebra.Camera;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.FileDecoder;
 import org.almostrealism.io.JobOutput;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
@@ -52,7 +52,6 @@ import com.almostrealism.RenderParameters;
 import io.flowtree.job.Job;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.relation.Evaluable;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}

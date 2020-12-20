@@ -18,15 +18,13 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.Operator;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableIntersection;
-import org.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

@@ -26,8 +26,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Evaluable;
 import static org.almostrealism.util.Ops.*;
 
 /**

@@ -17,8 +17,7 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.color.RGB;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 
 public class Pixel extends SuperSampler {
 	public Pixel(int ssWidth, int ssHeight) {

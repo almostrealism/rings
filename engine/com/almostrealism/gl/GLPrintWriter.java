@@ -27,7 +27,7 @@ import io.almostrealism.code.expressions.InstanceReference;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import io.almostrealism.js.JavaScriptPrintWriter;
+import org.almostrealism.js.JavaScriptPrintWriter;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;

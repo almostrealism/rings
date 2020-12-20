@@ -20,15 +20,13 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
-import java.util.function.Supplier;
 
 import org.almostrealism.algebra.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.relation.Evaluable;
 
 /**
  * @author Michael Murray

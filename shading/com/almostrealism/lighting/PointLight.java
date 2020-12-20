@@ -25,7 +25,7 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
 
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
 
 /**

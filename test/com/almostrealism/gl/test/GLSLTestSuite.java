@@ -21,8 +21,8 @@ import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.test.RayTracingTest;
 import io.almostrealism.code.DefaultNameProvider;
 import org.almostrealism.color.computations.ColorEvaluable;
-import org.almostrealism.relation.Computation;
-import org.almostrealism.relation.PairFunction;
+import io.almostrealism.relation.Computation;
+import io.almostrealism.relation.PairFunction;
 import org.junit.Test;
 
 import java.io.IOException;

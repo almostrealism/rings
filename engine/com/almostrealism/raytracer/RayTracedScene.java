@@ -30,11 +30,9 @@ import org.almostrealism.color.RealizableImage;
 
 import io.almostrealism.lambda.Realization;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.PassThroughEvaluable;
-import org.almostrealism.relation.Evaluable;
 
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
 	private RayTracer tracer;

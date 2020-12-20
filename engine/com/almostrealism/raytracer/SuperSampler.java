@@ -23,8 +23,8 @@ import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 
 import java.util.ArrayList;
 

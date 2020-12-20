@@ -23,10 +23,10 @@ import org.almostrealism.algebra.computations.DirectionDotDirection;
 import org.almostrealism.algebra.computations.OriginDotDirection;
 import org.almostrealism.algebra.computations.OriginDotOrigin;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.math.bool.AcceleratedConjunctionAdapter;
-import org.almostrealism.math.bool.GreaterThan;
-import org.almostrealism.math.bool.LessThanScalar;
-import org.almostrealism.relation.Evaluable;
+import org.almostrealism.bool.AcceleratedConjunctionAdapter;
+import org.almostrealism.bool.GreaterThan;
+import org.almostrealism.bool.LessThanScalar;
+import io.almostrealism.relation.Evaluable;
 
 import java.util.function.Supplier;
 

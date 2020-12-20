@@ -16,19 +16,15 @@
 
 package com.almostrealism.lighting;
 
-import io.almostrealism.code.Scope;
-import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;;
 import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBProducer;
 import org.almostrealism.geometry.Curve;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.NameProvider;
-import org.almostrealism.relation.TripleFunction;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.relation.Evaluable;
+
 import static org.almostrealism.util.Ops.*;
 
 /**

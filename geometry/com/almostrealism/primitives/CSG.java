@@ -25,10 +25,10 @@ import java.util.function.Supplier;
 import org.almostrealism.algebra.*;
 import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Operator;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Operator;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 // TODO  Add bounding solid to make intersection calculations faster.
 

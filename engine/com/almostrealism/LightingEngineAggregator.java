@@ -29,10 +29,9 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CollectionUtils;
 import org.almostrealism.util.DimensionAware;
-import org.almostrealism.relation.Evaluable;
 import org.almostrealism.util.ProducerWithRank;
 import org.almostrealism.util.RankedChoiceProducerForRGB;
 

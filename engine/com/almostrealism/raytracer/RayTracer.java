@@ -23,8 +23,7 @@ import java.util.concurrent.Future;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 
 public class RayTracer {
 	private ExecutorService pool;

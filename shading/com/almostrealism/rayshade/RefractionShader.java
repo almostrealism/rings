@@ -35,15 +35,14 @@ import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.DynamicProducer;
 import org.almostrealism.util.Editable;
-import org.almostrealism.relation.Evaluable;
-import org.almostrealism.util.Provider;
+import io.almostrealism.relation.Evaluable;
 
 // TODO  Fix refraction algorithm.
 

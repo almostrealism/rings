@@ -24,7 +24,7 @@ import org.almostrealism.color.ShaderContext;
 
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
-import org.almostrealism.relation.Producer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.space.LightingContext;
 import org.almostrealism.util.CodeFeatures;
 

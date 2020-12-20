@@ -32,7 +32,7 @@ import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.graph.mesh.DefaultVertexData;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.io.FileDecoder;
-import org.almostrealism.relation.TripleFunction;
+import io.almostrealism.relation.TripleFunction;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
@@ -40,7 +40,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 import java.io.File;
 import java.io.FileInputStream;

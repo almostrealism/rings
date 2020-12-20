@@ -26,14 +26,12 @@ import java.util.concurrent.TimeoutException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import io.almostrealism.code.Scope;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.relation.Producer;
-import org.almostrealism.relation.NameProvider;
-import org.almostrealism.relation.Operator;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.ShadableSurface;
@@ -42,7 +40,7 @@ import org.almostrealism.swing.Dialog;
 import org.almostrealism.texture.GraphicsConverter;
 
 import com.almostrealism.primitives.SurfaceUI;
-import org.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Evaluable;
 
 /**
  * AbstractSurfaceUI is an abstract implementation of the {@link SurfaceUI} interface
