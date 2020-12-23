@@ -20,8 +20,10 @@ import java.awt.Graphics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.almostrealism.graph.mesh.Mesh;
-import org.almostrealism.graph.mesh.Triangle;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Polynomial;
+import org.almostrealism.space.Triangle;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.SurfaceGroup;
@@ -64,8 +66,10 @@ public class SurfaceUIFactory {
 		/**
 		 * @see SurfaceUI#hasDialog()
 		 */
+		@Override
 		public boolean hasDialog() { return (this.dialog != null); }
-		
+
+		@Override
 		public Dialog getDialog() {
 		    try {
 		        Constructor c = this.dialog.getConstructor(SurfaceUI.class);
@@ -86,12 +90,14 @@ public class SurfaceUIFactory {
 		/**
 		 * @see SurfaceUI#getType()
 		 */
+		@Override
 		public String getType() { return this.type; }
 		
 		/**
 		 * Does nothing.
 		 * Perhaps someday this will be a useful method...
 		 */
+		@Override
 		public void draw(Graphics g, Camera camera) { }
 	}
 	

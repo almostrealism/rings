@@ -31,6 +31,7 @@ import com.almostrealism.primitives.RigidSphere;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
@@ -52,7 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> {
+public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> implements RGBFeatures {
 	private int imageWidth, imageHeight;
 	private Image image;
 

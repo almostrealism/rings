@@ -21,30 +21,28 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.almostrealism.LightingEngineAggregator;
-import org.almostrealism.algebra.DiscreteField;
+import io.almostrealism.relation.Editable;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.RayDirection;
-import org.almostrealism.algebra.computations.RayMatrixTransform;
+import org.almostrealism.geometry.computations.RayDirection;
+import org.almostrealism.geometry.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.computations.ScalarPow;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.algebra.computations.RayOrigin;
+import org.almostrealism.geometry.computations.RayOrigin;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DynamicRGBProducer;
-import org.almostrealism.util.Editable;
+import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
 
 /**

@@ -16,7 +16,7 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
@@ -25,7 +25,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.space.LightingContext;
+import org.almostrealism.color.LightingContext;
 import org.almostrealism.util.CodeFeatures;
 
 /**

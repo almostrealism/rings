@@ -16,7 +16,7 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.util.Editable;
+import io.almostrealism.relation.Editable;
 import org.almostrealism.util.EditableFactory;
 
 /**

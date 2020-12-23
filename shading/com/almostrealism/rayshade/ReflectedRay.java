@@ -25,7 +25,7 @@ import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import io.almostrealism.relation.NameProvider;
+import io.almostrealism.code.NameProvider;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 

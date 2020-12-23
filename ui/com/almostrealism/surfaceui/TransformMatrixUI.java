@@ -16,7 +16,7 @@
 
 package com.almostrealism.surfaceui;
 
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 
 /**
  * A {@link TransformMatrixUI} object stores extra data about
