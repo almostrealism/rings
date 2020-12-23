@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.algebra.Camera;
+import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;

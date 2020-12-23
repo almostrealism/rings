@@ -42,7 +42,7 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGBA;
-import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.geometry.BasicGeometry;
 
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;

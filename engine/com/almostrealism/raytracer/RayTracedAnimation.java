@@ -38,7 +38,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.time.Animation;
+import org.almostrealism.space.Animation;
 
 import javax.swing.*;
 import java.awt.*;

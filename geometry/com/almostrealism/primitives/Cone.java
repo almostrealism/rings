@@ -26,14 +26,16 @@ import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Operator;
+import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 
 // TODO Add ParticleGroup implementation.
 

@@ -21,7 +21,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;

@@ -16,8 +16,9 @@
 
 package com.almostrealism;
 
-import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.RayDirection;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;

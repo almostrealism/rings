@@ -17,7 +17,7 @@
 package com.almostrealism.gl.shaders;
 
 import io.almostrealism.code.Scope;
-import io.almostrealism.relation.NameProvider;
+import io.almostrealism.code.NameProvider;
 
 public class BaseFragmentShader extends FragmentShader {
 	@Override

@@ -18,18 +18,21 @@ package com.almostrealism.primitives;
 
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.graph.mesh.Mesh;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Constant;
-import io.almostrealism.relation.NameProvider;
-import io.almostrealism.relation.Operator;
+import io.almostrealism.code.Constant;
+import io.almostrealism.code.NameProvider;
+import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 

@@ -20,15 +20,15 @@ import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.geometry.ClosestIntersection;
-import org.almostrealism.algebra.Intersectable;
-import org.almostrealism.algebra.Intersection;
+import org.almostrealism.geometry.Intersectable;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 
 import java.util.function.Supplier;
 

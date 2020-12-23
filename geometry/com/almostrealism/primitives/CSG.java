@@ -24,9 +24,11 @@ import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.geometry.ClosestIntersection;
+import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Operator;
+import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.AbstractSurface;
 import io.almostrealism.relation.Evaluable;
 
@@ -77,7 +79,7 @@ public class CSG extends AbstractSurface {
     public Producer<Vector> getNormalAt(Producer<Vector> point) { return null; }
 
     /**
-     * @see  Intersectable#intersectAt(Producer)
+     * @see  org.almostrealism.geometry.Intersectable#intersectAt(Producer)
      */
     @Override
     public ContinuousField intersectAt(Producer ray) {

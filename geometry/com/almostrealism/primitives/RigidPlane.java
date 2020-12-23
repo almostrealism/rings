@@ -18,8 +18,8 @@ package com.almostrealism.primitives;
 
 import java.awt.Graphics;
 
-import org.almostrealism.algebra.Camera;
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.Plane;

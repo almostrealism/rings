@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import io.almostrealism.relation.PairFunction;
+import org.almostrealism.algebra.PairFunction;
 import org.almostrealism.color.RGB;
 
 /**

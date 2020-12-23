@@ -18,7 +18,8 @@ package com.almostrealism.primitives;
 
 import org.almostrealism.texture.ImageTexture;
 import org.almostrealism.texture.StripeTexture;
-import org.almostrealism.util.*;
+import io.almostrealism.relation.Editable;
+import org.almostrealism.util.EditableFactory;
 
 /**
  * The TextureFactory class provides static methods for constructing Texture objects.

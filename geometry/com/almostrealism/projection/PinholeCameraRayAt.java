@@ -23,8 +23,8 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.geometry.RandomPair;
-import org.almostrealism.geometry.RayFromVectors;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.geometry.computations.RayFromVectors;
 
 import static org.almostrealism.util.Ops.*;
 

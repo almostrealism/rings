@@ -20,7 +20,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
-import org.almostrealism.time.Clock;
+import org.almostrealism.physics.Clock;
 
 /**
  * A Pinhole is similar to an AbsorptionPlane except a hole with a specified radius

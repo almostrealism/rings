@@ -22,7 +22,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLArrayDataWrapper;
 import com.jogamp.opengl.util.GLBuffers;
-import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.geometry.BasicGeometry;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

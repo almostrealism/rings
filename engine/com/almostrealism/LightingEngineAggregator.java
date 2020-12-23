@@ -16,8 +16,9 @@
 
 package com.almostrealism;
 
-import org.almostrealism.algebra.Intersectable;
-import org.almostrealism.algebra.Intersection;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.geometry.Intersectable;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.ScalarBank;
@@ -30,10 +31,10 @@ import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CollectionUtils;
-import org.almostrealism.util.DimensionAware;
-import org.almostrealism.util.ProducerWithRank;
-import org.almostrealism.util.RankedChoiceProducerForRGB;
+import org.almostrealism.hardware.CollectionUtils;
+import org.almostrealism.geometry.DimensionAware;
+import io.almostrealism.relation.ProducerWithRank;
+import org.almostrealism.color.computations.RankedChoiceProducerForRGB;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -169,7 +170,7 @@ public class LightingEngineAggregator extends RankedChoiceProducerForRGB impleme
 		// assert pos.equals(input.get(position));
 
 		r: for (int i = 0; i < size(); i++) {
-			ProducerWithRank<RGB> p = get(i);
+			ProducerWithRank<RGB, Scalar> p = get(i);
 
 			double r = ranks.get(i).get(position).getValue();
 			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);

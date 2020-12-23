@@ -15,12 +15,27 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="FlowTreeAPI" />
-    <orderEntry type="module" module-name="Common" />
+    <orderEntry type="module" module-name="legacy" />
+    <orderEntry type="module" module-name="space" />
+    <orderEntry type="module" module-name="graph" />
+    <orderEntry type="module" module-name="time" />
+    <orderEntry type="module" module-name="heredity" />
+    <orderEntry type="module" module-name="physics" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
-    <orderEntry type="library" name="Maven: org.jocl:jocl:2.0.2" level="project" />
     <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="module" module-name="swing" />
+    <orderEntry type="module" module-name="color" />
+    <orderEntry type="module" module-name="geometry" />
+    <orderEntry type="module" module-name="algebra" />
+    <orderEntry type="module" module-name="hardware" />
+    <orderEntry type="module" module-name="code" />
+    <orderEntry type="module" module-name="relation" />
+    <orderEntry type="module" module-name="uml" />
+    <orderEntry type="module" module-name="io" />
+    <orderEntry type="library" name="Maven: org.jocl:jocl:2.0.2" level="project" />
+    <orderEntry type="module" module-name="stats" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />

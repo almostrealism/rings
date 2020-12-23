@@ -18,7 +18,7 @@ package com.almostrealism.projection;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
-import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
@@ -26,9 +26,9 @@ import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Volume;
-import org.almostrealism.time.Clock;
+import org.almostrealism.physics.Clock;
 
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 import org.almostrealism.util.PriorityQueue;
 import io.almostrealism.relation.Evaluable;
 

@@ -16,16 +16,16 @@
 
 package com.almostrealism.projection;
 
-import org.almostrealism.algebra.Camera;
+import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.io.DecodePostProcessing;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.uml.ModelEntity;
+import io.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import org.almostrealism.util.CodeFeatures;

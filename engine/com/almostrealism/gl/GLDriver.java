@@ -33,7 +33,9 @@ import io.almostrealism.code.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
-import org.almostrealism.graph.mesh.Triangle;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.space.Triangle;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.texture.ImageTexture;
 import org.joml.Matrix4d;
@@ -537,7 +539,7 @@ public class GLDriver {
 		}
 	}
 
-	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
+	/** It is recommended to use a {@link org.almostrealism.geometry.Camera} instead. */
 	@Deprecated
 	public void setViewport(int x, int y, int w, int h) {
 		System.out.println("Setting viewport to [" + x + ", " + y + "][" + w + ", " + h + "]");
@@ -556,7 +558,7 @@ public class GLDriver {
 		glu.gluOrtho2D(left, right, bottom, top);
 	}
 
-	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
+	/** It is recommended to use a {@link org.almostrealism.geometry.Camera} instead. */
 	@Deprecated public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
 		glu.gluLookAt(e.getX(), e.getY(), e.getZ(), c.getX(), c.getY(), c.getZ(), var13, var15, var17);
 	}

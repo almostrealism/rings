@@ -16,8 +16,8 @@
 
 package com.almostrealism;
 
-import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;

@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl.shaders;
 
-import io.almostrealism.relation.Computation;
+import io.almostrealism.code.Computation;
 
 public abstract class VertexShader implements Computation {
 }

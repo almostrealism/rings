@@ -18,7 +18,6 @@ package com.almostrealism.primitives.test;
 
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Provider;

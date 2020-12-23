@@ -18,11 +18,11 @@ package com.almostrealism.projection;
 
 import java.util.Hashtable;
 
-import org.almostrealism.algebra.Intersection;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.space.Scene;
 import org.almostrealism.texture.ImageCoordinates;
-import org.almostrealism.uml.ModelEntity;
+import io.almostrealism.uml.ModelEntity;
 
 /**
  * {@link PathCache} relates {@link ImageCoordinates} to {@link PathElement}s

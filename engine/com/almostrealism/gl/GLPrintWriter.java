@@ -27,8 +27,10 @@ import io.almostrealism.code.expressions.InstanceReference;
 import io.almostrealism.code.Method;
 import io.almostrealism.code.Scope;
 import io.almostrealism.code.Variable;
-import org.almostrealism.js.JavaScriptPrintWriter;
-import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.util.JavaScriptPrintWriter;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
@@ -651,7 +653,7 @@ public class GLPrintWriter extends GLDriver {
 		throw new RuntimeException("rasterPos");
 	}
 
-	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
+	/** It is recommended to use a {@link org.almostrealism.geometry.Camera} instead. */
 	@Override
 	@Deprecated
 	public void setViewport(int x, int y, int w, int h) {
@@ -667,7 +669,7 @@ public class GLPrintWriter extends GLDriver {
 		throw new RuntimeException("ortho2D");
 	}
 
-	/** It is recommended to use a {@link org.almostrealism.algebra.Camera} instead. */
+	/** It is recommended to use a {@link org.almostrealism.geometry.Camera} instead. */
 //	@Override
 //	public void gluLookAt(Vector e, Vector c, double var13, double var15, double var17) {
 //		if (glu != null) super.gluLookAt(e, c, var13, var15, var17);

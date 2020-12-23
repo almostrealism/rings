@@ -23,16 +23,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.RenderParameters;
-import org.almostrealism.algebra.Camera;
+import io.almostrealism.relation.Realization;
+import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 
-import io.almostrealism.lambda.Realization;
 import org.almostrealism.color.computations.RGBBlack;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DimensionAware;
+import org.almostrealism.geometry.DimensionAware;
 
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
 	private RayTracer tracer;

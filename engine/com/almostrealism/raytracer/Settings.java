@@ -24,7 +24,7 @@ import java.util.Properties;
 import javax.swing.Icon;
 
 import org.almostrealism.io.PrintWriter;
-import org.almostrealism.util.Defaults;
+import org.almostrealism.algebra.Defaults;
 
 /**
  * The {@link Settings} class provides access to settings that change the way the RayTracer and

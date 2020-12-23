@@ -16,16 +16,18 @@
 
 package com.almostrealism.primitives;
 
-import org.almostrealism.algebra.*;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Operator;
+import io.almostrealism.code.Operator;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

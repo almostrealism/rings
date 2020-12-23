@@ -20,7 +20,6 @@ import java.awt.Graphics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.almostrealism.algebra.*;
 import org.almostrealism.graph.mesh.Mesh;
 import org.almostrealism.graph.mesh.Triangle;
 import org.almostrealism.space.AbstractSurface;

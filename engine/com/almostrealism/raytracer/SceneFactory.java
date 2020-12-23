@@ -26,10 +26,10 @@ import org.almostrealism.color.computations.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
+import org.almostrealism.heredity.ProbabilisticFactory;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.Factory;
-import org.almostrealism.util.ProbabilisticFactory;
+import io.almostrealism.relation.Factory;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.OrthographicCamera;
@@ -71,7 +71,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 	private RGB color() { return new RGB(Math.random(), Math.random(), Math.random()); }
 	
 	/**
-	 * @see org.almostrealism.util.Factory#construct()
+	 * @see io.almostrealism.relation.Factory#construct()
 	 */
 	@Override
 	public Scene<ShadableSurface> construct() {

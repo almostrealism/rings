@@ -29,7 +29,7 @@ import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.time.Clock;
+import org.almostrealism.physics.Clock;
 
 /**
  * An {@link AbsorptionPlane} represents a plane in space that absorbs photons

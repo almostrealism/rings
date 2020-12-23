@@ -1,6 +1,6 @@
 package com.almostrealism.network;
 
-import org.almostrealism.io.FileDecoder;
+import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Scene;
 
 import java.io.FileInputStream;

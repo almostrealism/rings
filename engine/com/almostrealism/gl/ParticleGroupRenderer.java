@@ -19,7 +19,7 @@ package com.almostrealism.gl;
 import java.awt.Graphics;
 
 import org.almostrealism.algebra.ParticleGroup;
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 
 import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;

@@ -21,9 +21,9 @@ import com.almostrealism.lighting.SurfaceLight;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.gl.ParticleGroupRenderer;
 
-import org.almostrealism.algebra.Camera;
+import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.ParticleGroup;
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;

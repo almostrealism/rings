@@ -20,10 +20,10 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.uml.ModelEntity;
+import io.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the

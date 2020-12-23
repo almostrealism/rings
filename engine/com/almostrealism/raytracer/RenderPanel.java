@@ -30,7 +30,7 @@ import com.almostrealism.LegacyRayTracingEngine;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
 import org.almostrealism.color.RealizableImage;
-import org.almostrealism.color.computations.ColorEvaluable;
+import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -45,7 +45,7 @@ import com.almostrealism.event.SceneCloseEvent;
 import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
-import org.almostrealism.util.Pipeline;
+import io.almostrealism.relation.Pipeline;
 import io.almostrealism.relation.Evaluable;
 
 /**

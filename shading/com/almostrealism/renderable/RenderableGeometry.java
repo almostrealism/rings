@@ -20,7 +20,7 @@ import com.almostrealism.gl.GLPrintWriter;
 import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLMaterial;
 import io.almostrealism.code.CodePrintWriter;
-import org.almostrealism.space.BasicGeometry;
+import org.almostrealism.geometry.BasicGeometry;
 
 public abstract class RenderableGeometry<T extends BasicGeometry> extends RenderableGLAdapter 
 						implements RenderDelegate {

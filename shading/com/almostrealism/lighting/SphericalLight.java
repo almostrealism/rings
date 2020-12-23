@@ -16,7 +16,7 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 

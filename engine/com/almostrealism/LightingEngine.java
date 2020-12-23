@@ -17,8 +17,8 @@
 package com.almostrealism;
 
 import com.almostrealism.lighting.*;
-import org.almostrealism.algebra.ContinuousField;
-import org.almostrealism.algebra.Intersectable;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
@@ -31,23 +31,23 @@ import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.algebra.computations.RayOrigin;
+import org.almostrealism.geometry.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationProducer;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DimensionAware;
+import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.util.ProducerWithRank;
+import io.almostrealism.relation.ProducerWithRank;
 import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
+public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB, Scalar>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
 	private Producer<Scalar> distance;

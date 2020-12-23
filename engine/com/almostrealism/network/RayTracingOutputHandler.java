@@ -7,7 +7,7 @@ import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.util.DynamicProducer;
+import io.almostrealism.relation.DynamicProducer;
 
 import java.io.File;
 import java.io.FileOutputStream;
