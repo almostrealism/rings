@@ -17,6 +17,7 @@
 package com.almostrealism.webgl;
 
 import io.almostrealism.html.HTMLContent;
+import io.almostrealism.html.HTMLFragment;
 
 import java.util.ArrayList;
 

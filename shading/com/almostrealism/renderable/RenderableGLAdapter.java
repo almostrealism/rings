@@ -105,16 +105,22 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	@Override
 	public void setPosition(float x, float y, float z) {
-		position.setPosition(x, y, z);
+		position.setX(x);
+		position.setY(y);
+		position.setZ(z);
 	}
 
 	@Override
-	public float[] getPosition() { return position.getPosition(); }
+	public float[] getPosition() {
+		return new float[] { (float) position.getX(), (float) position.getY(), (float) position.getZ() };
+	}
 	
 	@Override
 	public void setOrientation(float angle, float x, float y, float z) {
 		orientationAngle = angle;
-		orientationVector.setPosition(x, y, z);
+		orientationVector.setX(x);
+		orientationVector.setY(y);
+		orientationVector.setZ(z);
 	}
 
 	@Override

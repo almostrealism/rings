@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="physics" />
     <orderEntry type="module" module-name="chemistry" />
     <orderEntry type="module" module-name="heredity" />
+    <orderEntry type="module" module-name="economics" />
     <orderEntry type="module" module-name="algebra" />
     <orderEntry type="module" module-name="hardware" />
     <orderEntry type="module" module-name="code" />
