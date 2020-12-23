@@ -21,7 +21,7 @@ import com.almostrealism.gl.GLPrintWriter;
 import com.almostrealism.gl.GLRenderingEngine;
 import com.almostrealism.gl.GLScene;
 import com.almostrealism.io.FilePrintWriter;
-import org.almostrealism.js.JavaScriptPrintWriter;
+import org.almostrealism.util.JavaScriptPrintWriter;
 import org.almostrealism.io.PrintWriter;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

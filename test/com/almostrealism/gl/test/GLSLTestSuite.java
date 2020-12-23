@@ -20,9 +20,9 @@ import com.almostrealism.gl.GLSLPrintWriter;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.test.RayTracingTest;
 import io.almostrealism.code.DefaultNameProvider;
-import org.almostrealism.color.computations.ColorEvaluable;
-import io.almostrealism.relation.Computation;
-import io.almostrealism.relation.PairFunction;
+import org.almostrealism.color.ColorEvaluable;
+import io.almostrealism.code.Computation;
+import org.almostrealism.algebra.PairFunction;
 import org.junit.Test;
 
 import java.io.IOException;

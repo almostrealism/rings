@@ -33,7 +33,7 @@ import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.swing.displays.ImageDisplay;
-import org.almostrealism.util.ProducerArgumentReference;
+import org.almostrealism.hardware.ProducerArgumentReference;
 import org.junit.Assert;
 import org.junit.Test;
 

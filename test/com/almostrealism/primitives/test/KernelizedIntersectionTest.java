@@ -6,7 +6,7 @@ import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.util.Provider;
+import io.almostrealism.relation.Provider;
 import org.junit.Assert;
 import org.junit.Test;
 
