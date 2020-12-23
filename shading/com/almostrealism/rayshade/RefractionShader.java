@@ -23,8 +23,10 @@ import java.util.function.Supplier;
 
 import com.almostrealism.LightingEngine;
 import com.almostrealism.LightingEngineAggregator;
-import org.almostrealism.algebra.DiscreteField;
-import org.almostrealism.algebra.Intersection;
+import io.almostrealism.relation.DynamicProducer;
+import io.almostrealism.relation.Editable;
+import org.almostrealism.geometry.DiscreteField;
+import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
@@ -40,8 +42,6 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DynamicProducer;
-import org.almostrealism.util.Editable;
 import io.almostrealism.relation.Evaluable;
 
 // TODO  Fix refraction algorithm.

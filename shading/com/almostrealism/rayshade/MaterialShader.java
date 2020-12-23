@@ -17,7 +17,7 @@
 package com.almostrealism.rayshade;
 
 import com.almostrealism.primitives.AbsorptionPlane;
-import org.almostrealism.algebra.DiscreteField;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.chem.Material;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;

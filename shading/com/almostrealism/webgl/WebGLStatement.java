@@ -16,7 +16,7 @@
 
 package com.almostrealism.webgl;
 
-import org.almostrealism.html.HTMLContent;
+import io.almostrealism.html.HTMLContent;
 
 public class WebGLStatement implements HTMLContent {
 	public String toHTML() { return null; }

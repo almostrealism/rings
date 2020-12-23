@@ -18,7 +18,11 @@ package com.almostrealism.projection;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
+import org.almostrealism.algebra.ImmutableVector;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorEvaluable;
+import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;

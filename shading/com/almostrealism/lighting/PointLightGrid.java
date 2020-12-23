@@ -22,9 +22,9 @@ import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Operator;
+import io.almostrealism.code.Operator;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableIntersection;
+import org.almostrealism.geometry.ShadableIntersection;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

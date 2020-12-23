@@ -16,10 +16,9 @@
 
 package com.almostrealism.webgl;
 
-import java.util.ArrayList;
+import io.almostrealism.html.HTMLContent;
 
-import org.almostrealism.html.HTMLContent;
-import org.almostrealism.html.HTMLFragment;
+import java.util.ArrayList;
 
 public class WebGLStatementList extends ArrayList<WebGLStatement> implements WebGLExportable {
 	@Override

@@ -16,8 +16,8 @@
 
 package com.almostrealism.webgl;
 
-import org.almostrealism.graph.mesh.Mesh;
-import org.almostrealism.html.HTMLContent;
+import io.almostrealism.html.HTMLContent;
+import org.almostrealism.space.Mesh;
 
 public class WebGLMeshGeometry implements WebGLExportable {
 	private Mesh.VertexData data;

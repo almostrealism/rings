@@ -4,7 +4,7 @@ import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.graph.mesh.Triangle;
+import org.almostrealism.space.Triangle;
 
 public class RenderableTriangle extends RenderableGeometry<Triangle> {
 	private RGB a, b, c;

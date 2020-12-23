@@ -32,11 +32,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.almostrealism.algebra.TransformMatrix;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.graph.mesh.Mesh;
 
-import org.almostrealism.graph.mesh.Triangle;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Triangle;
 import org.almostrealism.util.CodeFeatures;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeatures {

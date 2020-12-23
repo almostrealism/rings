@@ -18,9 +18,9 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;;
-import org.almostrealism.color.computations.ColorEvaluable;
+import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBProducer;
+import org.almostrealism.color.RGBProducer;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.util.CodeFeatures;

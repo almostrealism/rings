@@ -16,23 +16,23 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.algebra.DiscreteField;
+import io.almostrealism.relation.DynamicProducer;
+import io.almostrealism.relation.Editable;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.computations.RayDirection;
+import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorEvaluable;
+import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBEvaluable;
+import org.almostrealism.color.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.DynamicProducer;
-import org.almostrealism.util.Editable;
 import io.almostrealism.relation.Evaluable;
 
 /**

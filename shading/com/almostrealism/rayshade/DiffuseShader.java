@@ -16,7 +16,9 @@
 
 package com.almostrealism.rayshade;
 
-import org.almostrealism.algebra.DiscreteField;
+import io.almostrealism.relation.Editable;
+import org.almostrealism.color.computations.GreaterThanRGB;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -24,11 +26,9 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
-import org.almostrealism.bool.GreaterThanRGB;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Editable;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.

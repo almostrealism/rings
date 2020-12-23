@@ -19,7 +19,7 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.List;
 
-import org.almostrealism.algebra.ContinuousField;
+import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
