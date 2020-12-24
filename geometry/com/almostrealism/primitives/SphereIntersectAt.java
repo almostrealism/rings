@@ -46,7 +46,7 @@ public class SphereIntersectAt extends LessThanScalar {
 	}
 
 	private static AcceleratedConjunctionAdapter<Scalar> closest(PairProducer t) {
-		return new AcceleratedConjunctionAdapter<>(2, Scalar.blank(),
+		return new AcceleratedConjunctionAdapter<>(2, (Supplier<Scalar>) Scalar::new,
 				() -> new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
 				() -> new GreaterThan(2, () -> Scalar.blank(), t.x(),
 						ops().scalar(0.0),
