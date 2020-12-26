@@ -24,6 +24,7 @@ import io.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import io.almostrealism.relation.DynamicProducer;
+import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the
@@ -163,7 +164,7 @@ public class PinholeCamera extends OrthographicCamera {
 			return new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
 											blur, focalLength, u, v, w);
 		} else {
-			return new DynamicProducer<>(args -> {
+			return new DynamicProducerForMemWrapper<>(args -> {
 					Pair pos = posP.get().evaluate(args);
 					Pair screenDim = sdP.get().evaluate(args);
 

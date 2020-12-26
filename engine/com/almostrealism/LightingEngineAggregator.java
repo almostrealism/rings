@@ -34,13 +34,13 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.CollectionUtils;
 import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.ProducerWithRank;
-import org.almostrealism.color.computations.RankedChoiceProducerForRGB;
+import org.almostrealism.color.computations.RankedChoiceEvaluableForRGB;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LightingEngineAggregator extends RankedChoiceProducerForRGB implements PathElement<RGB, RGB>, DimensionAware {
+public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implements PathElement<RGB, RGB>, DimensionAware {
 	public static boolean enableVerbose = false;
 
 	private PairBank input;

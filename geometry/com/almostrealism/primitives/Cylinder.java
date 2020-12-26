@@ -23,6 +23,7 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.Operator;
 import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
@@ -94,7 +95,7 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 
 		final Supplier<Evaluable<? extends Ray>> fr = sr;
 
-		Producer<Scalar> s = new DynamicProducer<>(args -> {
+		Producer<Scalar> s = new DynamicProducerForMemWrapper<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector a = ray.getOrigin();

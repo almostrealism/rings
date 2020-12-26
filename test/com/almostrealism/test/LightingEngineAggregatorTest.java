@@ -28,7 +28,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
-import org.almostrealism.hardware.AcceleratedComputationProducer;
+import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
@@ -54,14 +54,14 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 	@Test
 	public void aggregate() throws IOException {
-		AcceleratedComputationProducer p = (AcceleratedComputationProducer) getScene().getProducer();
+		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
 		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
 	@Test
 	public void aggregateCompact() throws IOException {
-		AcceleratedComputationProducer p = (AcceleratedComputationProducer) getScene().getProducer();
+		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
 		p.compact();
 		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
@@ -69,7 +69,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 	@Test
 	public void aggregateKernelCompare() throws IOException {
-		AcceleratedComputationProducer<RGB> p = (AcceleratedComputationProducer<RGB>) getScene().getProducer();
+		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
 		p.compact();
 
 		PairBank input = getInput();
@@ -110,7 +110,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
-		AcceleratedComputationProducer<RGB> p = (AcceleratedComputationProducer<RGB>) getScene().getProducer();
+		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
 		p.compact();
 
 		PairBank input = getInput();

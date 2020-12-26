@@ -36,6 +36,7 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
@@ -205,7 +206,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 		// d = dv.minus();
 		
 		// if (entering) d.multiplyBy(-1.0);
-		Producer<Ray> r = new DynamicProducer<>(args -> new Ray(point, d));
+		Producer<Ray> r = new DynamicProducerForMemWrapper<>(args -> new Ray(point, d));
 		
 		List<Curve<RGB>> allSurfaces = Scene.combineSurfaces(surface, Arrays.asList(otherSurfaces));
 		
@@ -254,7 +255,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, Hardwa
 				d.multiplyBy(-1.0);
 			}
 			
-			Producer<Ray> r = new DynamicProducer<>(args -> new Ray(p, d));
+			Producer<Ray> r = new DynamicProducerForMemWrapper<>(args -> new Ray(p, d));
 
 			Intersection inter = (Intersection) s.intersectAt(r);
 			Scalar id = ((Evaluable<Scalar>) inter.getDistance().get()).evaluate();

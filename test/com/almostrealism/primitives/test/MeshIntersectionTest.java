@@ -9,7 +9,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
-import org.almostrealism.geometry.computations.RankedChoiceProducer;
+import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
@@ -114,7 +114,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		PairBank out = new PairBank(1);
 		PairBank conf = new PairBank(1);
 		conf.set(0, new Pair(1, Intersection.e));
-		RankedChoiceProducer.highestRank.kernelEvaluate(out, new MemoryBank[] { distances, conf });
+		RankedChoiceEvaluable.highestRank.kernelEvaluate(out, new MemoryBank[] { distances, conf });
 		System.out.println("highest rank: " + out.get(0));
 		Assert.assertEquals(1.0, out.get(0).getA(), Math.pow(10, -10));
 		Assert.assertEquals(0.0, out.get(0).getB(), Math.pow(10, -10));

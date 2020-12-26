@@ -26,6 +26,7 @@ import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
 import io.almostrealism.relation.Producer;
@@ -140,7 +141,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 
 	@Override
 	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
-		return new DynamicProducer<>(args -> {
+		return new DynamicProducerForMemWrapper<>(args -> {
 				Pair ij = pos.get().evaluate(args);
 				Pair screenDim = sd.get().evaluate(args);
 

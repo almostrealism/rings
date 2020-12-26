@@ -31,6 +31,7 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
@@ -84,7 +85,7 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 
 		final Supplier<Evaluable<? extends Ray>> fr = r;
 
-		Producer<Scalar> s = new DynamicProducer<>(args -> {
+		Producer<Scalar> s = new DynamicProducerForMemWrapper<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector d = ray.getDirection().divide(ray.getDirection().length());

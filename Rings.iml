@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="graph" />
     <orderEntry type="module" module-name="time" />
     <orderEntry type="module" module-name="physics" />
+    <orderEntry type="module" module-name="audio" />
     <orderEntry type="module" module-name="chemistry" />
     <orderEntry type="module" module-name="heredity" />
     <orderEntry type="module" module-name="economics" />

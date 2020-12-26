@@ -19,11 +19,12 @@ package com.almostrealism.primitives;
 import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.bool.AcceleratedConjunctionScalar;
+import org.almostrealism.bool.GreaterThanScalar;
 import org.almostrealism.geometry.computations.DirectionDotDirection;
 import org.almostrealism.geometry.computations.OriginDotDirection;
 import org.almostrealism.geometry.computations.OriginDotOrigin;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.bool.AcceleratedConjunctionAdapter;
 import org.almostrealism.bool.GreaterThan;
 import org.almostrealism.bool.LessThanScalar;
 import io.almostrealism.relation.Evaluable;
@@ -45,17 +46,17 @@ public class SphereIntersectAt extends LessThanScalar {
 		this(r, new OriginDotDirection(r), new OriginDotOrigin(r), new DirectionDotDirection(r));
 	}
 
-	private static AcceleratedConjunctionAdapter<Scalar> closest(PairProducer t) {
-		return new AcceleratedConjunctionAdapter<>(2, (Supplier<Scalar>) Scalar::new,
+	private static AcceleratedConjunctionScalar closest(PairProducer t) {
+		return new AcceleratedConjunctionScalar(
 				() -> new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
-				() -> new GreaterThan(2, () -> Scalar.blank(), t.x(),
+				() -> new GreaterThanScalar(t.x(),
 						ops().scalar(0.0),
 						t.x(), () -> new GreaterThan(2, () -> Scalar.blank(), t.y(),
 						ops().scalar(0.0), t.y(),
 						ops().scalar(-1.0), false), false),
-				new GreaterThan(2, ops().l(t),
+				new GreaterThanScalar(ops().l(t),
 						ops().scalar(0)),
-				new GreaterThan(2, ops().r(t),
+				new GreaterThanScalar(ops().r(t),
 						ops().scalar(0)));
 	}
 

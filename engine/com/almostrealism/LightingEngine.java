@@ -33,7 +33,7 @@ import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.hardware.AcceleratedComputationProducer;
+import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.space.ShadableSurface;
@@ -47,7 +47,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationProducer<RGB> implements ProducerWithRank<RGB, Scalar>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
+public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationEvaluable<RGB> implements ProducerWithRank<RGB, Scalar>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
 	private T intersections;
 	private Curve<RGB> surface;
 	private Producer<Scalar> distance;
