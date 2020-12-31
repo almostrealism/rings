@@ -119,7 +119,6 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, new FogParameters()), scene.getCamera(), rparams);
 				image = r.realize(rparams);
-				if (enableCompaction) image.compact();
 
 				evaluateImage();
 			});

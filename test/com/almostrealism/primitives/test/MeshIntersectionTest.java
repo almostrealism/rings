@@ -10,6 +10,7 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
@@ -26,7 +27,7 @@ import org.junit.Test;
 
 public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
-	private Producer<Ray> ray;
+	private KernelizedProducer<Ray> ray;
 
 	private int width, height;
 
@@ -44,7 +45,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		return new Mesh(data);
 	}
 
-	protected Producer<Ray> camera() {
+	protected KernelizedProducer<Ray> camera() {
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
 		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
@@ -55,19 +56,18 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return c.rayAt(v(Pair.class, 0), pair(width, height));
+		return (KernelizedProducer<Ray>) c.rayAt(v(Pair.class, 0), pair(width, height));
 	}
 
 	@Before
 	public void init() {
 		data = mesh().getMeshData();
 		ray = camera();
-		ray.compact();
 	}
 
 	@Test
 	public void intersectAt() {
-		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, (KernelizedEvaluable) ray.get());
+		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, ray);
 
 		PairBank input = RealizableImage.generateKernelInput(0, 0, width, height);
 		ScalarBank distances = new ScalarBank(input.getCount());

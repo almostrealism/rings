@@ -162,6 +162,7 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 
 	/** Updates the orthonormal vectors used to describe camera space for this {@link OrthographicCamera}. */
 	public void updateUVW() {
+		// Convert UVW to producers, so that these computations can be evaluated as part of the rendering tree
 		this.w = (this.viewDirection.divide(this.viewDirection.length())).minus();
 		
 		this.u = this.upDirection.crossProduct(this.w);
