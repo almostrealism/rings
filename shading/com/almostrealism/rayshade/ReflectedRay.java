@@ -98,7 +98,7 @@ public class ReflectedRay implements RayProducer {
 	}
 
 	@Override
-	public Scope<Ray> getScope(NameProvider provider) {
+	public Scope<Ray> getScope() {
 		throw new RuntimeException("Not implemented");
 	}
 

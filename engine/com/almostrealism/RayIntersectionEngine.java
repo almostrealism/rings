@@ -33,7 +33,7 @@ import java.util.List;
  * @author  Michael Murray
  */
 public class RayIntersectionEngine implements RayTracer.Engine {
-	public static boolean enableAcceleratedAggregator = false;
+	public static boolean enableAcceleratedAggregator = true;
 
 	private Scene<ShadableSurface> scene;
 	private ShaderContext sparams;

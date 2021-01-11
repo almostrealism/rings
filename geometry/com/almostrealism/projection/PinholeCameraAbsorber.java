@@ -26,6 +26,7 @@ import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayBank;
 import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
@@ -205,7 +206,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 				vx.addTo(location);
 
 				return new Ray(vx, vd);
-			});
+			}, RayBank::new);
 	}
 
 	@Override

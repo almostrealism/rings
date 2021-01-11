@@ -66,7 +66,6 @@ public class RayTracingJob implements Job, CodeFeatures {
 	public static final String htmlPost = ".jpg\"/> </center> </body> </html>";
 	
 	public static boolean verboseRender = false;
-	public static boolean enableCompaction = true;
 
 	public boolean local = false;
 	
@@ -528,7 +527,6 @@ public class RayTracingJob implements Job, CodeFeatures {
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) s,
 												new FogParameters()), s.getCamera(), p, getExecutorService());
 		Producer<RGB[][]> renderedImageData = r.realize(p);
-		if (enableCompaction) renderedImageData.compact();
 
 		RGB rgb[][] = renderedImageData.get().evaluate(x, y);
 		

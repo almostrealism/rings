@@ -48,10 +48,10 @@ public class SphereIntersectAt extends LessThanScalar {
 
 	private static AcceleratedConjunctionScalar closest(PairProducer t) {
 		return new AcceleratedConjunctionScalar(
-				() -> new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
-				() -> new GreaterThanScalar(t.x(),
+				new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
+				new GreaterThanScalar(t.x(),
 						ops().scalar(0.0),
-						t.x(), () -> new GreaterThan(2, () -> Scalar.blank(), t.y(),
+						t.x(), new GreaterThanScalar(t.y(),
 						ops().scalar(0.0), t.y(),
 						ops().scalar(-1.0), false), false),
 				new GreaterThanScalar(ops().l(t),

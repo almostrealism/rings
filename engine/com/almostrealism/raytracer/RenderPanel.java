@@ -55,8 +55,6 @@ import io.almostrealism.relation.Evaluable;
  * @author  Michael Murray
  */
 public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Pipeline {
-	public static final boolean enableCompaction = true;
-
 	private T scene;
 	private EventHandler handler;
 

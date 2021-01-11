@@ -374,7 +374,8 @@ public class GLDriver {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out);
-		this.vertexShader.getScope(new DefaultNameProvider("vshade")).write(p);
+		// TODO  Need it to be named vshade
+		this.vertexShader.getScope().write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_VERTEX_SHADER", shader);
 	}
@@ -386,7 +387,8 @@ public class GLDriver {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out);
-		this.fragmentShader.getScope(new DefaultNameProvider("fshade")).write(p);
+		// TODO  Need it to be named fshade
+		this.fragmentShader.getScope().write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_FRAGMENT_SHADER", shader);
 	}

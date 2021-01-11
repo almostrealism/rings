@@ -24,6 +24,7 @@ import io.almostrealism.uml.ModelEntity;
 
 import com.almostrealism.raytracer.Settings;
 import io.almostrealism.relation.DynamicProducer;
+import org.almostrealism.geometry.RayBank;
 import org.almostrealism.hardware.DynamicProducerForMemWrapper;
 
 /**
@@ -218,7 +219,7 @@ public class PinholeCamera extends OrthographicCamera {
 					}
 
 					return ray;
-				});
+				}, RayBank::new);
 		}
 	}
 	

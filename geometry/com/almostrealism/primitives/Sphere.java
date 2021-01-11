@@ -136,7 +136,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 		final Supplier<Evaluable<? extends Ray>> fr = tr;
 
 		if (enableHardwareAcceleration) {
-			return new ShadableIntersection(this, r, () -> new SphereIntersectAt(fr));
+			return new ShadableIntersection(this, r, new SphereIntersectAt(fr));
 		} else {
 			Evaluable<Scalar> s = new Evaluable<Scalar>() {
 				@Override
@@ -199,10 +199,10 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 			}
 
 			@Override
-			public Scope<Scalar> getScope(NameProvider p) {
+			public Scope<Scalar> getScope() {
 				// TODO  Not sure this is correct
 				Scope s = new Scope();
-				s.getVariables().add(new Variable(p.getFunctionName() + "scalar", evaluate(new Object[0])));
+				s.getVariables().add(new Variable("scalar", evaluate(new Object[0])));
 				return s;
 			}
 		};

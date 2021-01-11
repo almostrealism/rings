@@ -504,7 +504,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public Variable createProgram() {
 		String name = "program" + (varIndex++);
-		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createProgram",
+		Variable v = new Variable(name, new Method<>(String.class, glMember, "createProgram",
 				new ArrayList<>()));
 		p.println(v);
 		return v;
@@ -523,18 +523,18 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	public void mapProgramAttributes(Variable program) {
-		Variable pos = new Variable(program.getName() + ".positionAttribute", false, new Expression(String.class,
+		Variable pos = new Variable(program.getName() + ".positionAttribute", false,
 									new Method<String>(glMember, "getAttribLocation",
 														new InstanceReference(program),
-														new InstanceReference(null, "pos"))));
+														new InstanceReference(null, "pos")));
 		p.println(pos);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
 							new InstanceReference(new Variable(program.getName() + ".positionAttribute", ""))));
 
 		Variable norm = new Variable(program.getName() + ".normalAttribute", false,
-				new Expression(String.class, new Method<String>(glMember, "getAttribLocation",
-						new InstanceReference<>(program), new InstanceReference<>(Vector.class, "normal"))));
+				new Method<String>(glMember, "getAttribLocation",
+						new InstanceReference<>(program), new InstanceReference<>(Vector.class, "normal")));
 		p.println(norm);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
@@ -609,7 +609,7 @@ public class GLPrintWriter extends GLDriver {
 
 		List<Expression<?>> args = new ArrayList<>();
 		args.add(glParam("ARRAY_BUFFER"));
-		args.add(new Expression(n));
+		args.add(n);
 		args.add(glParam("STATIC_DRAW"));
 		p.println(new Method(glMember, "bufferData", args));
 	}

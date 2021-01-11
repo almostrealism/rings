@@ -7,7 +7,7 @@ import io.almostrealism.code.NameProvider;
 
 public class DotProductVertexShader extends VertexShader {
 	@Override
-	public Scope getScope(NameProvider p) {
+	public Scope getScope() {
 		Scope<Variable> s = new Scope();
 		s.getVariables().add(new Variable<Float>("test", 0.0f));
 		s.getMethods().add(new Method("gl", "dotProduct"));

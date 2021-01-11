@@ -24,7 +24,7 @@ import io.almostrealism.code.NameProvider;
 
 public class GLDiffuseShader extends VertexShader {
 	@Override
-	public Scope<? extends Variable> getScope(NameProvider p) {
+	public Scope<? extends Variable> getScope() {
 		Scope<Variable> s = new Scope<>();
 
 		Variable pos = new Variable("position", Vector.class, (Vector) null);

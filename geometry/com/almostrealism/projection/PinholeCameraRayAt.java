@@ -76,11 +76,11 @@ public class PinholeCameraRayAt extends RayFromVectors {
 	}
 
 	private static Producer<Vector> t(VectorProducer pqr) {
-		Producer<Vector> ft = () -> pqr.y().lessThanv(pqr.x()).and(pqr.y().lessThanv(pqr.z()),
+		Producer<Vector> ft = pqr.y().lessThanv(pqr.x()).and(pqr.y().lessThanv(pqr.z()),
 				ops().fromScalars(pqr.x(), ops().scalar(1.0), pqr.z()),
 				ops().fromScalars(pqr.x(), pqr.y(), ops().scalar(1.0)));
 
-		Producer<Vector> t = () -> pqr.x().lessThanv(pqr.y()).and(pqr.y().lessThanv(pqr.z()),
+		Producer<Vector> t = pqr.x().lessThanv(pqr.y()).and(pqr.y().lessThanv(pqr.z()),
 				ops().fromScalars(ops().scalar(1.0), pqr.y(), pqr.z()), ft);
 
 		return t;

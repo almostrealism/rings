@@ -21,7 +21,7 @@ import io.almostrealism.code.NameProvider;
 
 public class BaseFragmentShader extends FragmentShader {
 	@Override
-	public Scope getScope(NameProvider p) {
+	public Scope getScope() {
 		return new Scope();
 	}
 }

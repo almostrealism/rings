@@ -45,7 +45,7 @@ public class GLSLTestSuite {
 		}
 
 		GLSLPrintWriter p = new GLSLPrintWriter(System.out);
-		p.println(f.getScope(new DefaultNameProvider("test")));
+		p.println(f.getScope());
 	}
 
 	public static void main(String args[]) {
