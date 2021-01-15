@@ -25,9 +25,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.almostrealism.FogParameters;
-import com.almostrealism.RayIntersectionEngine;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.RayIntersectionEngine;
+import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.RGB;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  *  limitations under the License.
  */
 
-package com.almostrealism;
+package com.almostrealism.raytrace;
 
-import org.almostrealism.color.RGBA;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.color.RGB;
+import org.almostrealism.geometry.Ray;
 
-/**
- * A {@link FogParameters} instance stores configuration parameters for fog.
- */
-public class FogParameters {
-	public RGBA fogColor;
-	public double fogDensity = 0.0, fogRatio = 0.5;
+public interface Engine {
+	Producer<RGB> trace(Producer<Ray> r);
 }

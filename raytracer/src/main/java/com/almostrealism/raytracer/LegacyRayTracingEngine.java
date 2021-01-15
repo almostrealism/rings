@@ -22,9 +22,9 @@ package com.almostrealism.raytracer;
 
 import java.util.Collection;
 
-import com.almostrealism.FogParameters;
-import com.almostrealism.IntersectionalLightingEngine;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.IntersectionalLightingEngine;
+import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.Light;

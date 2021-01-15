@@ -18,7 +18,7 @@ package com.almostrealism.raytracer;
 
 import org.almostrealism.space.Scene;
 
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.RenderParameters;
 
 /**
  * A Project object stores a Scene object and keeps track

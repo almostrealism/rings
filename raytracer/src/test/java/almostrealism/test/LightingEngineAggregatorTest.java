@@ -16,9 +16,9 @@
 
 package almostrealism.test;
 
-import com.almostrealism.FogParameters;
-import com.almostrealism.RayIntersectionEngine;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.RayIntersectionEngine;
+import com.almostrealism.raytrace.RenderParameters;
 import almostrealism.primitives.test.KernelizedIntersectionTest;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.TestScene;

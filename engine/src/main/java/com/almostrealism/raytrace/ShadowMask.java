@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism;
+package com.almostrealism.raytrace;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;

@@ -22,8 +22,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.almostrealism.Engine;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.Engine;
+import com.almostrealism.raytrace.RenderParameters;
 import io.almostrealism.relation.Realization;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;

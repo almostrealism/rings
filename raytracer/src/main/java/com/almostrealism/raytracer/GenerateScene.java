@@ -19,15 +19,12 @@ package com.almostrealism.raytracer;
 import java.io.File;
 import java.io.IOException;
 
-import com.almostrealism.FogParameters;
-import com.almostrealism.RayIntersectionEngine;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.RayIntersectionEngine;
+import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
-
-import com.almostrealism.raytracer.SceneFactory;
-import com.almostrealism.raytracer.RayTracedScene;
 
 /**
  * @author  Michael Murray

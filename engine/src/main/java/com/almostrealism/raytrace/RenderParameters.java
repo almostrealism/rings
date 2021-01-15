@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism;
+package com.almostrealism.raytrace;
 
 import org.almostrealism.algebra.Pair;
 

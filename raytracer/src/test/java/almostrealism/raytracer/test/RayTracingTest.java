@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
-import com.almostrealism.FogParameters;
+import com.almostrealism.raytrace.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
@@ -22,9 +22,9 @@ import org.almostrealism.texture.ImageCanvas;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.RayIntersectionEngine;
+import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
-import com.almostrealism.RenderParameters;
+import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 
