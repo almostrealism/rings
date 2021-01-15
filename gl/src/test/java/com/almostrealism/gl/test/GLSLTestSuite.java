@@ -17,8 +17,6 @@
 package com.almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
-import com.almostrealism.raytracer.RayTracedScene;
-import almostrealism.raytracer.test.RayTracingTest;
 import org.almostrealism.color.ColorEvaluable;
 import io.almostrealism.code.Computation;
 import org.almostrealism.algebra.PairFunction;
@@ -30,12 +28,14 @@ import java.util.concurrent.Future;
 public class GLSLTestSuite {
 	@Test
 	public void encodeComputations() {
+		/*
 		try {
 			RayTracedScene s = RayTracingTest.generateScene();
 //			encodePairFunction(s); TODO
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		 */
 	}
 
 	public void encodePairFunction(PairFunction<Future<ColorEvaluable>> f) {
