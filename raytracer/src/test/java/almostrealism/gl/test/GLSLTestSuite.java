@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.gl.test;
+package almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
 import com.almostrealism.raytracer.RayTracedScene;
-import com.almostrealism.raytracer.test.RayTracingTest;
+import almostrealism.raytracer.test.RayTracingTest;
 import io.almostrealism.code.DefaultNameProvider;
 import org.almostrealism.color.ColorEvaluable;
 import io.almostrealism.code.Computation;

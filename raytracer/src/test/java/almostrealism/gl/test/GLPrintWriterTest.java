@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.gl.test;
+package almostrealism.gl.test;
 
 import com.almostrealism.gl.DefaultGLRenderingEngine;
 import com.almostrealism.gl.GLPrintWriter;

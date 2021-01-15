@@ -19,4 +19,4 @@
  * 
  * @author  Michael Murray
  */
-package com.almostrealism.gl.test;
+package almostrealism.gl.test;

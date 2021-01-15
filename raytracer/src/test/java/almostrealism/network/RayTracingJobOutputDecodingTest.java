@@ -1,4 +1,4 @@
-package com.almostrealism.network;
+package almostrealism.network;
 
 import org.almostrealism.io.JobOutput;
 import org.junit.Test;

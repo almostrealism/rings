@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.test;
+package almostrealism.test;
 
 import com.almostrealism.FogParameters;
 import com.almostrealism.RayIntersectionEngine;
 import com.almostrealism.RenderParameters;
-import com.almostrealism.primitives.test.KernelizedIntersectionTest;
+import almostrealism.primitives.test.KernelizedIntersectionTest;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytracer.TestScene;
 import org.almostrealism.algebra.Pair;

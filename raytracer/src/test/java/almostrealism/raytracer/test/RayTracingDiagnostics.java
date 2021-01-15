@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer.test;
+package almostrealism.raytracer.test;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

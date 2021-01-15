@@ -1,4 +1,4 @@
-package com.almostrealism.raytracer.test;
+package almostrealism.raytracer.test;
 
 import java.io.File;
 import java.io.FileInputStream;

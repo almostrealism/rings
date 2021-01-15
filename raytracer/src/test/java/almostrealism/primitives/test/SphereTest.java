@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.primitives.test;
+package almostrealism.primitives.test;
 
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.geometry.ContinuousField;

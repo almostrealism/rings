@@ -1,4 +1,4 @@
-package com.almostrealism.primitives.test;
+package almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
 import org.almostrealism.geometry.Intersection;
