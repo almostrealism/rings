@@ -39,7 +39,7 @@ public class SphereIntersectAt extends LessThanScalar {
 		super(discriminant(oDotD, oDotO, dDotD),
 				ops().scalar(0.0),
 				ops().scalar(-1.0),
-				() -> closest(t(oDotD, oDotO, dDotD)), false);
+				closest(t(oDotD, oDotO, dDotD)), false);
 	}
 
 	public SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r) {

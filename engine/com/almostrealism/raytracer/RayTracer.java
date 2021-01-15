@@ -17,6 +17,7 @@
 package com.almostrealism.raytracer;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,6 +27,8 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 
 public class RayTracer {
+	public static boolean enableThreadPool = false;
+
 	private ExecutorService pool;
 	private static long threadCount = 0;
 
@@ -41,8 +44,12 @@ public class RayTracer {
 	}
 
 	public Future<Producer<RGB>> trace(Producer<Ray> r) {
-		Callable<Producer<RGB>> c = () -> engine.trace(r);
-		return pool.submit(c);
+		if (enableThreadPool) {
+			Callable<Producer<RGB>> c = () -> engine.trace(r);
+			return pool.submit(c);
+		} else {
+			return CompletableFuture.completedFuture(engine.trace(r));
+		}
 	}
 
 	public interface Engine {

@@ -17,6 +17,9 @@
 package com.almostrealism;
 
 import com.almostrealism.lighting.*;
+import io.almostrealism.code.ArgumentMap;
+import io.almostrealism.code.ScopeInputManager;
+import io.almostrealism.code.ScopeLifecycle;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.algebra.Scalar;
@@ -45,6 +48,8 @@ import static org.almostrealism.util.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationEvaluable<RGB> implements ProducerWithRank<RGB, Scalar>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
@@ -128,6 +133,20 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 
 	@Override
 	public Evaluable<RGB> get() { return this; }
+
+	@Override
+	public void prepareArguments(ArgumentMap map) {
+		super.prepareArguments(map);
+		ScopeLifecycle.prepareArguments(Stream.of(getRank()), map);
+	}
+
+	@Override
+	public void prepareScope(ScopeInputManager manager) {
+		super.prepareScope(manager);
+		if (getArguments() != null) return;
+
+		ScopeLifecycle.prepareScope(Stream.of(getRank()), manager);
+	}
 
 	@Override
 	public void compact() {
@@ -292,30 +311,4 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 //
 //		return value;
 //	}
-
-	/**
-	 * Removes the Light at the specified index from the specified Light
-	 * array and returns the new array.
-	 */
-	public static Light[] separateLights(int index, Light allLights[]) {
-		Light otherLights[] = new Light[allLights.length - 1];
-
-		for (int i = 0; i < index; i++) { otherLights[i] = allLights[i]; }
-		for (int i = index + 1; i < allLights.length; i++) { otherLights[i - 1] = allLights[i]; }
-
-		return otherLights;
-	}
-
-	/**
-	 * Removes the Surface at the specified index from the specified Surface
-	 * array and returns the new array.
-	 */
-	public static ShadableSurface[] separateSurfaces(int index, ShadableSurface allSurfaces[]) {
-		ShadableSurface otherSurfaces[] = new ShadableSurface[allSurfaces.length - 1];
-
-		for (int i = 0; i < index; i++) { otherSurfaces[i] = allSurfaces[i]; }
-		for (int i = index + 1; i < allSurfaces.length; i++) { otherSurfaces[i - 1] = allSurfaces[i]; }
-
-		return otherSurfaces;
-	}
 }
