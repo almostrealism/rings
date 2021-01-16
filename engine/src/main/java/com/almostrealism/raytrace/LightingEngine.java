@@ -225,55 +225,6 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		}
 	}
 
-	/**
-	 * Refracts the specified Vector object based on the specified normal vector and 2 specified indices of refraction.
-	 *
-	 * @param vector  A Vector object representing a unit vector in the direction of the incident ray
-	 * @param normal  A Vector object representing a unit vector that is normal to the surface refracting the ray
-	 * @param ni  A double value representing the index of refraction of the incident medium
-	 * @param nr  A double value representing the index of refraction of the refracting medium
-	 */
-	public static Vector refract(Vector vector, Vector normal, double ni, double nr, boolean v) {
-		if (v) System.out.println("Vector = " + vector);
-
-		vector = vector.minus();
-
-		double p = -vector.dotProduct(normal);
-		double r = ni / nr;
-
-		if (v) System.out.println("p = " + p + " r = " + r);
-
-		vector = vector.minus();
-		if (vector.dotProduct(normal) < 0) {
-			if (v) System.out.println("LALA");
-			normal = normal.minus();
-			p = -p;
-		}
-		vector = vector.minus();
-
-		double s = Math.sqrt(1.0 - r * r * (1.0 - p * p));
-
-		if (v) System.out.println("s = " + s);
-
-		Vector refracted = vector.multiply(r);
-
-		if (v) System.out.println(refracted);
-
-		//	if (p >= 0.0) {
-		refracted.addTo(normal.multiply((p * r) - s));
-		//	} else {
-		//		refracted.addTo(normal.multiply((p * r) - s));
-		//	}
-
-		if (v) System.out.println(refracted);
-
-		// Vector refracted = ((vector.subtract(normal.multiply(p))).multiply(r)).subtract(normal.multiply(s));
-
-//		if (refracted.subtract(vector).length() > 0.001) System.out.println("!!"); TODO
-
-		return refracted.minus();
-	}
-
 //	public static double brdf(Vector ld, Vector vd, Vector n, double nv, double nu, double r) {
 //		ld = ld.divide(ld.length());
 //		vd = vd.divide(vd.length());
