@@ -20,11 +20,12 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class IntersectionalLightingEngineTest implements CodeFeatures {
+public class IntersectionalLightingEngineTest implements TestFeatures {
 	protected IntersectionalLightingEngine engine() {
 		Producer<Ray> r = ray(0.0, 0.0, 10.0, 0.0, 0.0, -1.0);
 		Light l = new PointLight(new Vector(0.0, 10.0, 10.0));
@@ -37,21 +38,25 @@ public class IntersectionalLightingEngineTest implements CodeFeatures {
 				new ArrayList<>(), l, new ArrayList<>(), c);
 	}
 
-	protected GeneratedColorProducer generatedColorProducer() {
+	protected GeneratedColorProducer extractGeneratedColorProducer() {
 		AcceleratedComputationEvaluable<RGB> engine = engine();
 		return (GeneratedColorProducer) ((OperationAdapter) engine.getComputation()).getInputs().get(2);
 	}
 
-	protected DotProduct dotProduct() {
-		return (DotProduct) ((OperationAdapter) generatedColorProducer().getProducer()).getInputs().get(1);
+	protected DotProduct extractDotProduct() {
+		return (DotProduct)
+				((OperationAdapter) extractGeneratedColorProducer().getProducer()).getInputs().get(1);
 	}
 
 	@Test
-	public void compileDotProduct() {
-		DotProduct dp = dotProduct();
+	public void dotProduct() {
+		DotProduct dp = extractDotProduct();
 		Evaluable<Scalar> ev = dp.get();
 		((OperationAdapter) ev).compile();
+
+		Scalar s = ev.evaluate();
 		System.out.println(ev.evaluate());
+		assertEquals(s.getValue(), -1.0);
 	}
 
 	@Test
