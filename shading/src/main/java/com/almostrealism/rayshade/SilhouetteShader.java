@@ -28,6 +28,7 @@ import org.almostrealism.color.LightingContext;
 import io.almostrealism.relation.Compactable;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value
@@ -36,7 +37,7 @@ import io.almostrealism.relation.Evaluable;
  * @author  Michael Murray
  */
 public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Shader<LightingContext> {
-	private Producer<RGB> color;
+	private KernelizedProducer<RGB> color;
 
 	private String names[] = { "Color" };
 	private String desc[] = { "The color of the silhouette" };
@@ -54,7 +55,7 @@ public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Sh
 	 * 
 	 * @param color  RGB Producer to use.
 	 */
-	public SilhouetteShader(Producer<RGB> color) { this.color = color; }
+	public SilhouetteShader(KernelizedProducer<RGB> color) { this.color = color; }
 	
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
@@ -103,7 +104,7 @@ public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Sh
 	@Override
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
-			this.color = (Producer<RGB>) value;
+			this.color = (KernelizedProducer<RGB>) value;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}
@@ -113,7 +114,7 @@ public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Sh
 	 */
 	@Override
 	public void setPropertyValues(Object values[]) {
-		if (values.length > 0) this.color = (Producer<RGB>) values[0];
+		if (values.length > 0) this.color = (KernelizedProducer<RGB>) values[0];
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Sh
 	@Override
 	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)
-			this.color = (Producer<RGB>) p;
+			this.color = (KernelizedProducer<RGB>) p;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}

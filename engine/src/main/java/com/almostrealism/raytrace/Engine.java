@@ -19,7 +19,8 @@ package com.almostrealism.raytrace;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.hardware.KernelizedProducer;
 
 public interface Engine {
-	Producer<RGB> trace(Producer<Ray> r);
+	KernelizedProducer<RGB> trace(Producer<Ray> r);
 }

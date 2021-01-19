@@ -112,7 +112,7 @@ public class Sphere extends AbstractSurface implements DistanceEstimator, CodeFe
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		Producer<Vector> normal = add(point, v(getLocation().minus()));
+		Producer<Vector> normal = add(point, v(getLocation()).minus());
 		if (getTransform(true) != null) {
 			Producer<Vector> fnormal = normal;
 			normal = getTransform(true).transform(fnormal, TransformMatrix.TRANSFORM_AS_NORMAL);

@@ -71,28 +71,30 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 
 			s.setLocation(new Vector(0.0, 3.4, -3.0));
 			s.setColor(new RGB(0.8, 0.8, 0.8));
-			// add(s);
+			add(s);
 
-			Sphere s2 = new Sphere();
-			s2.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
-			s2.setLocation(new Vector(0.0, 2.4, -3.0));
-			s2.setColor(new RGB(0.8, 0.8, 0.8));
-			s2.setSize(0.25);
-			add(s2);
+			if (enableSilhouette) {
+				Sphere s2 = new Sphere();
+				s2.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s2.setLocation(new Vector(0.0, 2.4, -3.0));
+				s2.setColor(new RGB(0.8, 0.8, 0.8));
+				s2.setSize(0.25);
+				add(s2);
 
-			Sphere s3 = new Sphere();
-			s3.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
-			s3.setLocation(new Vector(0.0, 1.4, -3.0));
-			s3.setColor(new RGB(0.8, 0.8, 0.8));
-			s3.setSize(0.25);
-			add(s3);
+				Sphere s3 = new Sphere();
+				s3.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s3.setLocation(new Vector(0.0, 1.4, -3.0));
+				s3.setColor(new RGB(0.8, 0.8, 0.8));
+				s3.setSize(0.25);
+				add(s3);
 
-			Sphere s4 = new Sphere();
-			s4.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
-			s4.setLocation(new Vector(0.0, 0.4, -3.0));
-			s4.setColor(new RGB(0.8, 0.8, 0.8));
-			s4.setSize(0.25);
-			// add(s4);
+				Sphere s4 = new Sphere();
+				s4.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s4.setLocation(new Vector(0.0, 0.4, -3.0));
+				s4.setColor(new RGB(0.8, 0.8, 0.8));
+				s4.setSize(0.25);
+				add(s4);
+			}
 		}
 
 		if (enableFloor) {

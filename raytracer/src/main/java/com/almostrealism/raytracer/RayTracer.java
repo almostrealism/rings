@@ -26,6 +26,7 @@ import com.almostrealism.raytrace.Engine;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.hardware.KernelizedProducer;
 
 public class RayTracer {
 	public static boolean enableThreadPool = false;
@@ -44,9 +45,9 @@ public class RayTracer {
 		this.pool = pool;
 	}
 
-	public Future<Producer<RGB>> trace(Producer<Ray> r) {
+	public Future<KernelizedProducer<RGB>> trace(Producer<Ray> r) {
 		if (enableThreadPool) {
-			Callable<Producer<RGB>> c = () -> engine.trace(r);
+			Callable<KernelizedProducer<RGB>> c = () -> engine.trace(r);
 			return pool.submit(c);
 		} else {
 			return CompletableFuture.completedFuture(engine.trace(r));

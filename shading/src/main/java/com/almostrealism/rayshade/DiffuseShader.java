@@ -27,6 +27,7 @@ import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.util.CodeFeatures;
 
@@ -53,7 +54,7 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatu
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
 		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 
-		Producer<RGB> front = null, back = null;
+		KernelizedProducer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			front = new GreaterThanRGB(scaleFront, scalar(0),

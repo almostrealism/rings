@@ -21,6 +21,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.geometry.DimensionAwareKernel;
@@ -44,7 +45,7 @@ public class RayIntersectionEngine implements Engine {
 	}
 
 	@Override
-	public Producer<RGB> trace(Producer<Ray> r) {
+	public KernelizedProducer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
 		for (ShadableSurface s : scene) surfaces.add(s);
 		LightingEngineAggregator agg = new LightingEngineAggregator(r, surfaces, scene.getLights(), sparams, true);
