@@ -19,6 +19,7 @@ package com.almostrealism.raytracer;
 import java.util.Arrays;
 import java.util.List;
 
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -50,7 +51,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 		this(new FloatingPointRandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
 	}
 	
-	public SceneFactory(Chromosome<Double> c) {
+	public SceneFactory(Chromosome<Scalar> c) {
 		List<Factory<ShadableSurface>> f =
 			Arrays.asList(
 				new Factory<ShadableSurface>() { public Sphere construct() { return new Sphere(location(), Math.random(), color()); } }
