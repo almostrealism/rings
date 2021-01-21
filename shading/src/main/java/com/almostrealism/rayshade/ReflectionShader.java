@@ -42,7 +42,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
-import com.almostrealism.LightingEngineAggregator;
+import com.almostrealism.raytrace.LightingEngineAggregator;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.

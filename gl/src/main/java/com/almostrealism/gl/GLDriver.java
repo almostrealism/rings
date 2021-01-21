@@ -20,7 +20,7 @@ import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
 import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.FogParameters;
+import com.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;

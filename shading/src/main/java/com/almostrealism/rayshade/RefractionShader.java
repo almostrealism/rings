@@ -21,9 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.almostrealism.LightingEngine;
-import com.almostrealism.LightingEngineAggregator;
-import io.almostrealism.relation.DynamicProducer;
+import com.almostrealism.raytrace.LightingEngine;
+import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Intersection;
