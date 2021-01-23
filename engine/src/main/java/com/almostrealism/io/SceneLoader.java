@@ -1,4 +1,4 @@
-package com.almostrealism.network;
+package com.almostrealism.io;
 
 import org.almostrealism.space.Scene;
 

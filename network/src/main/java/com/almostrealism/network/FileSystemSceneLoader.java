@@ -1,5 +1,6 @@
 package com.almostrealism.network;
 
+import com.almostrealism.io.SceneLoader;
 import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Scene;
 
