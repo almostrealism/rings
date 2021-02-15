@@ -22,7 +22,7 @@ import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.geometry.RandomPair;
+import org.almostrealism.algebra.computations.RandomPair;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.computations.RayFromVectors;
 
