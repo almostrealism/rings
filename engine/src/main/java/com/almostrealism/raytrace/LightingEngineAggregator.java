@@ -31,7 +31,7 @@ import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.CollectionUtils;
+import io.almostrealism.code.CollectionUtils;
 import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.ProducerWithRank;
 import org.almostrealism.color.computations.RankedChoiceEvaluableForRGB;
