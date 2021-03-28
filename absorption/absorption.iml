@@ -25,7 +25,7 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
     <orderEntry type="module" module-name="primitives" />
     <orderEntry type="module" module-name="TreeView" />
-    <orderEntry type="module" module-name="legacy" />
+    <orderEntry type="module" module-name="ar-utils" />
     <orderEntry type="module" module-name="space" />
     <orderEntry type="module" module-name="graph" />
     <orderEntry type="module" module-name="time" />

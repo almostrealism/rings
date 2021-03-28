@@ -19,8 +19,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>geometry</artifactId>
-			<version>0.13</version>
+			<artifactId>ar-geometry</artifactId>
+			<version>0.14</version>
 		</dependency>
 	</dependencies>
 </project>
