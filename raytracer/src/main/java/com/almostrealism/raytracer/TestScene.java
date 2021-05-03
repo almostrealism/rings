@@ -135,6 +135,7 @@ public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
 				public RGBProducer getColorAt() { return p; }
 
 				public Evaluable<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
+				@Override
 				public RGB evaluate(Object args[]) { return this.getColorAt().get().evaluate(args); }
 
 				@Override

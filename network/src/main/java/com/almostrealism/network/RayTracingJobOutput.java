@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import io.flowtree.job.JobFactory;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 
@@ -83,12 +84,12 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 
 		String originalData = data;
 
-		int index = data.indexOf(":");
+		int index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
 		
 		String value = null;
 		
 		j: for (int j = 0; ; j++) {
-			if (data.charAt(index + 1) == '/') index = data.indexOf(":", index + 1);
+			if (data.charAt(index + 1) == '/') index = data.indexOf(JobFactory.ENTRY_SEPARATOR, index + JobFactory.ENTRY_SEPARATOR.length());
 			
 			value = null;
 			
@@ -115,8 +116,8 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			
 			if (value == data) break j;
 			
-			data = data.substring(index + 1);
-			index = data.indexOf(":");
+			data = data.substring(index + JobFactory.ENTRY_SEPARATOR.length());
+			index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
 		}
 
 		if (dx == 0 || dy == 0) {
@@ -126,11 +127,10 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 
 	@Override
 	public String getOutput() {
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append(super.getOutput());
-		
-		Iterator itr = this.data.iterator();
-		while(itr.hasNext()) b.append(":" + itr.next().toString());
+		for (Object datum : this.data)
+			b.append(JobFactory.ENTRY_SEPARATOR).append(datum.toString());
 		
 		return b.toString();
 	}
@@ -157,6 +157,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	/** 
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeUTF(super.getUser());
 		out.writeUTF(super.getPassword());
@@ -176,6 +177,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 	/**
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		super.setUser(in.readUTF());
 		super.setPassword(in.readUTF());
@@ -197,10 +199,10 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 		
 		String originalData = data.toString();
 		
-		int index = data.indexOf(":");
+		int index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
 		
 		j: for (int j = 0; ; j++) {
-			if (data.charAt(index + 1) == '/') index = data.indexOf(":", index + 1);
+			if (data.charAt(index + 1) == '/') index = data.indexOf(JobFactory.ENTRY_SEPARATOR, index + JobFactory.ENTRY_SEPARATOR.length());
 			
 			String value = null;
 			
@@ -225,8 +227,8 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 				break j;
 			}
 			
-			data = data.substring(index + 1);
-			index = data.indexOf(":");
+			data = data.substring(index + JobFactory.ENTRY_SEPARATOR.length());
+			index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
 		}
 
 		if (dx == 0 || dy == 0) {

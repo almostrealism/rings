@@ -2,6 +2,7 @@ package com.almostrealism.network;
 
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
+import io.flowtree.job.JobFactory;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
@@ -260,12 +261,12 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 			for (int j = 0; j < h; j++) {
 				try {
 					if (this.image[i][j] == null) {
-						result.put(new Integer(n++), i + ":" + j);
+						result.put(new Integer(n++), i + JobFactory.ENTRY_SEPARATOR + j);
 					}
 				} catch (ArrayIndexOutOfBoundsException oob) {
 					System.out.println("RayTracingJobOutputHandler (" + this.taskId + "): " + oob);
 					oob.printStackTrace(System.out);
-					result.put(new Integer(n++), i + ":" + j);
+					result.put(new Integer(n++), i + JobFactory.ENTRY_SEPARATOR + j);
 				}
 			}
 		}

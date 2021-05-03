@@ -132,7 +132,7 @@ public class RayTracingJobFactory implements JobFactory {
 					
 					while (itr.hasNext()) {
 						String s = (String)itr.next();
-						int index = s.indexOf(":");
+						int index = s.indexOf(JobFactory.ENTRY_SEPARATOR);
 						
 						int x = Integer.parseInt(s.substring(0, index));
 						int y = Integer.parseInt(s.substring(index + 1));

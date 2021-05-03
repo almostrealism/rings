@@ -36,6 +36,7 @@ import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
+import io.flowtree.job.JobFactory;
 import io.flowtree.job.Output;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.color.RGB;
@@ -151,7 +152,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 		Iterator itr = data.iterator();
 
 		if (x + dx > image.length || y + dy > image[x].length) {
-			throw new IllegalArgumentException(x + "," + y + ":" + dx + "x" + dy + " is not contained in the image");
+			throw new IllegalArgumentException(x + "," + y + JobFactory.ENTRY_SEPARATOR + dx + "x" + dy + " is not contained in the image");
 		}
 		
 		j: for (int j = 0; itr.hasNext() ; j++) {
@@ -308,7 +309,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 	 */
 	@Override
 	public String encode() {
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		
 		s.append(this.getClass().getName());
 		s.append(":uri=");
@@ -551,9 +552,9 @@ public class RayTracingJob implements Job, CodeFeatures {
 		RayTracingJobOutput jo = new RayTracingJobOutput(
 									this.jobId,
 									user, passwd,
-									this.jobId + ":" +
-									this.x + ":" + this.y + ":" +
-									this.dx + ":" + this.dy);
+									this.jobId + JobFactory.ENTRY_SEPARATOR +
+									this.x + JobFactory.ENTRY_SEPARATOR + this.y + JobFactory.ENTRY_SEPARATOR +
+									this.dx + JobFactory.ENTRY_SEPARATOR + this.dy);
 		jo.setTime(time);
 		
 		for (int i = 0; i < rgb[0].length; i++) {

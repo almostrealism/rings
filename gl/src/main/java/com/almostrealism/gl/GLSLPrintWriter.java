@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,21 +30,10 @@ import java.io.PrintStream;
  * a shading language similar to C.
  */
 public class GLSLPrintWriter extends CPrintWriter {
-	public GLSLPrintWriter(OutputStream out) {
-		this(new PrintStreamPrintWriter(new PrintStream(out)));
-		// TODO  Move this to super class
-	}
+	public GLSLPrintWriter(OutputStream out) { super(out); }
 
 	/**
 	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
 	public GLSLPrintWriter(PrintWriter p) { super(p); }
-
-	public void println(Variable v) {
-		if (v.getAnnotation() != null) {
-			v = new Variable(v.getAnnotation() + " " + v.getName(), v.getType(), v.getProducer());
-		}
-
-		super.println(v);
-	}
 }
