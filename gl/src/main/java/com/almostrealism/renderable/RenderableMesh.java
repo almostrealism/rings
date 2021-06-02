@@ -146,7 +146,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<Variable>();
-		List<Variable<?>> vars = bufferBinding.getVariables();
+		List<Variable<?, ?>> vars = bufferBinding.getVariables();
 		Variable numC = new Variable("numComponents", Integer.class, 2);
 		vars.add(numC);
 

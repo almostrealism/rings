@@ -583,7 +583,7 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	@Override
-	public Variable<String> createBuffer() {
+	public Variable<String, ?> createBuffer() {
 		String name = "buffer" + (varIndex++);
 		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createBuffer"));
 		p.println(v);
@@ -850,7 +850,7 @@ public class GLPrintWriter extends GLDriver {
 		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<>();
-		List<Variable<?>> vars = bufferBinding.getVariables();
+		List<Variable<?, ?>> vars = bufferBinding.getVariables();
 		Variable numC = new Variable("numComponents", Integer.class, 2);
 		vars.add(numC);
 

@@ -28,9 +28,9 @@ public class GLDiffuseShader extends VertexShader {
 		Scope<Variable> s = new Scope<>();
 
 		Variable pos = new Variable("position", Vector.class, (Vector) null);
-		pos.setAnnotation("attribute");
+		// pos.setAnnotation("attribute");
 		Variable tex = new Variable("texcoord", Pair.class, (Vector) null);
-		pos.setAnnotation("varying");
+		// pos.setAnnotation("varying");
 		s.getVariables().add(tex);
 
 		Scope<Variable> main = new Scope();

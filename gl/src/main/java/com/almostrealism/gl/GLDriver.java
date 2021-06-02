@@ -477,7 +477,7 @@ public class GLDriver {
 		// TODO
 	}
 
-	public Variable<String> createBuffer() {
+	public Variable<String, ?> createBuffer() {
 		return null; // TODO
 	}
 

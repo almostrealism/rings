@@ -17,7 +17,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Maven: org.joml:joml:1.9.9" level="project" />
     <orderEntry type="module" module-name="engine" />
-    <orderEntry type="module" module-name="ar-utils" />
+    <orderEntry type="library" name="Maven: org.almostrealism:ar-utils:0.17" level="project" />
     <orderEntry type="library" name="Maven: org.almostrealism:ar-swing:0.16" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />

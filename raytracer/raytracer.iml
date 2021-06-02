@@ -24,8 +24,8 @@
     <orderEntry type="module" module-name="shading" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-main:2.3.2" level="project" />
-    <orderEntry type="module" module-name="ar-utils" />
-    <orderEntry type="module" module-name="swing" />
+    <orderEntry type="library" name="Maven: org.almostrealism:ar-utils:0.17" level="project" />
+    <orderEntry type="library" name="Maven: org.almostrealism:ar-swing:0.17" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
@@ -69,7 +69,7 @@
     <orderEntry type="library" name="Maven: org.dcache:oncrpc4j-core:2.3.4" level="project" />
     <orderEntry type="library" name="Maven: org.dcache.chimera:chimera-core:0.0.15-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.gmbal:gmbal:3.2.0-b003" level="project" />
-    <orderEntry type="module" module-name="geometry" />
+    <orderEntry type="library" name="Maven: org.almostrealism:ar-geometry:0.17" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-framework:2.3.12" level="project" />

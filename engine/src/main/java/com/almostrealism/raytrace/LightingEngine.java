@@ -146,7 +146,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	@Override
 	public void prepareScope(ScopeInputManager manager) {
 		super.prepareScope(manager);
-		if (getArguments() != null) return;
+		if (getArgumentVariables() != null) return;
 
 		ScopeLifecycle.prepareScope(Stream.of(getRank()), manager);
 	}
