@@ -57,7 +57,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 				new Factory<ShadableSurface>() { public Sphere construct() { return new Sphere(location(), Math.random(), color()); } }
 			);
 		
-		surfaces = new ProbabilisticFactory<>(f, c.getGene(0));
+		surfaces = new ProbabilisticFactory<>(f, c.valueAt(0));
 	}
 	
 	private int count() { return (int) (2 + Math.random() * 4); }
