@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="GraphPersist" />
     <orderEntry type="module" module-name="raytracer" />
     <orderEntry type="module" module-name="gl" />
     <orderEntry type="module" module-name="ui" />
@@ -73,7 +74,7 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:14" level="project" />
-    <orderEntry type="module" module-name="GraphPersist" />
+    <orderEntry type="module" module-name="ar-graphpersist" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
