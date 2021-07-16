@@ -16,7 +16,6 @@
 
 package com.almostrealism.rayshade;
 
-import io.almostrealism.relation.DynamicProducer;
 import io.almostrealism.relation.Editable;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
@@ -29,7 +28,7 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
-import org.almostrealism.hardware.DynamicProducerForMemWrapper;
+import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
@@ -103,7 +102,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 
 		Producer<RGB> fhc = hc;
 
-		return GeneratedColorProducer.fromProducer(this, new DynamicProducerForMemWrapper<>(args -> {
+		return GeneratedColorProducer.fromProducer(this, new DynamicProducerForMemoryData<>(args -> {
 			Producer<RGB> color = null;
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
