@@ -23,12 +23,11 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.Operator;
 import org.almostrealism.geometry.TransformMatrix;
-import org.almostrealism.hardware.DynamicProducerForMemWrapper;
+import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.DynamicProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +94,7 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 
 		final Supplier<Evaluable<? extends Ray>> fr = sr;
 
-		Producer<Scalar> s = new DynamicProducerForMemWrapper<>(args -> {
+		Producer<Scalar> s = new DynamicProducerForMemoryData<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector a = ray.getOrigin();

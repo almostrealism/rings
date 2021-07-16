@@ -31,12 +31,11 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.TransformMatrix;
-import org.almostrealism.hardware.DynamicProducerForMemWrapper;
+import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.util.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.DynamicProducer;
 
 // TODO Add ParticleGroup implementation.
 
@@ -85,7 +84,7 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 
 		final Supplier<Evaluable<? extends Ray>> fr = r;
 
-		Producer<Scalar> s = new DynamicProducerForMemWrapper<>(args -> {
+		Producer<Scalar> s = new DynamicProducerForMemoryData<>(args -> {
 				Ray ray = fr.get().evaluate(args);
 
 				Vector d = ray.getDirection().divide(ray.getDirection().length());
