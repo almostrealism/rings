@@ -28,9 +28,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.almostrealism</groupId>
-			<artifactId>GraphPersist</artifactId>
-			<version>0.4</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-graphpersist</artifactId>
+			<version>0.10</version>
 		</dependency>
 		
 		<dependency>
