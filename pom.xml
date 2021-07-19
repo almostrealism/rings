@@ -5,75 +5,32 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.10</version>
+	<version>0.11</version>
+	<modules>
+		<module>raytracer</module>
+		<module>engine</module>
+		<module>gl</module>
+		<module>shading</module>
+		<module>primitives</module>
+		<module>ui</module>
+		<module>network</module>
+		<module>absorption</module>
+	</modules>
 
 	<!-- Output to jar format -->
-	<packaging>jar</packaging>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>engine</source>
-								<source>geometry</source>
-								<source>shading</source>
-								<source>ui</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+	<packaging>pom</packaging>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.almostrealism</groupId>
-			<artifactId>FlowTreeAPI</artifactId>
-			<version>0.8</version>
-		</dependency>
-
-		<dependency>
 			<groupId>io.almostrealism</groupId>
 			<artifactId>TreeView</artifactId>
-			<version>0.3</version>
+			<version>0.4</version>
 		</dependency>
 
 		<dependency>
-			<groupId>io.almostrealism</groupId>
-			<artifactId>GraphPersist</artifactId>
-			<version>0.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jogamp.gluegen</groupId>
-			<artifactId>gluegen-rt-main</artifactId>
-			<version>2.3.2</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.jogamp.jogl</groupId>
-			<artifactId>jogl-all-main</artifactId>
-			<version>2.3.2</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-graphpersist</artifactId>
+			<version>0.10</version>
 		</dependency>
 		
 		<dependency>

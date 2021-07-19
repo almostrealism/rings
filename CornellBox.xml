@@ -264,7 +264,7 @@
          </void> 
         </void> 
         <void property="transforms">
-         <array class="org.almostrealism.algebra.TransformMatrix" length="2">
+         <array class="org.almostrealism.geometry.TransformMatrix" length="2">
           <void index="0"> 
            <object class="com.almostrealism.surfaceui.TransformMatrixUI">
             <void property="matrix"> 

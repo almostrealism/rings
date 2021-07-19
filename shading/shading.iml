@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_14">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/raytracer/src/main/engine" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/raytracer/src/main/geometry" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/raytracer/src/main/shading" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/raytracer/src/main/ui" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/engine" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="GraphPersist" />
-    <orderEntry type="module" module-name="TreeView" />
-    <orderEntry type="module" module-name="ar-utils" />
-    <orderEntry type="module" module-name="space" />
-    <orderEntry type="module" module-name="graph" />
-    <orderEntry type="module" module-name="time" />
-    <orderEntry type="module" module-name="physics" />
-    <orderEntry type="module" module-name="chemistry" />
-    <orderEntry type="module" module-name="heredity" />
-    <orderEntry type="module" module-name="economics" />
+    <orderEntry type="module" module-name="engine" />
+    <orderEntry type="module" module-name="geometry" />
     <orderEntry type="module" module-name="algebra" />
     <orderEntry type="module" module-name="hardware" />
     <orderEntry type="module" module-name="code" />
@@ -35,9 +24,17 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
+    <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="module" module-name="ar-utils" />
+    <orderEntry type="module" module-name="space" />
+    <orderEntry type="module" module-name="graph" />
+    <orderEntry type="module" module-name="time" />
+    <orderEntry type="module" module-name="physics" />
+    <orderEntry type="module" module-name="chemistry" />
+    <orderEntry type="module" module-name="heredity" />
+    <orderEntry type="module" module-name="economics" />
     <orderEntry type="module" module-name="swing" />
     <orderEntry type="module" module-name="color" />
-    <orderEntry type="module" module-name="geometry" />
     <orderEntry type="module" module-name="stats" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:14" level="project" />
