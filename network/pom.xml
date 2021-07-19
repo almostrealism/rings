@@ -25,8 +25,8 @@
 
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>FlowTreeAPI</artifactId>
-			<version>0.9</version>
+			<artifactId>ar-flowtreeapi</artifactId>
+			<version>0.10</version>
 		</dependency>
 	</dependencies>
 </project>
