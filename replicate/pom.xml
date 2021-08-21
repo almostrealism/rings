@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ar-audio-health</artifactId>
+	<artifactId>ar-replicate</artifactId>
 
 	<properties>
 		<maven.compiler.source>14</maven.compiler.source>
@@ -22,12 +22,10 @@
 			<artifactId>ar-audio</artifactId>
 			<version>1.27</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-optimalzoo</artifactId>
+			<artifactId>ar-photonfield</artifactId>
 			<version>0.12</version>
 		</dependency>
 	</dependencies>
-
 </project>

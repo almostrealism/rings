@@ -20,6 +20,7 @@
 		<module>audio-health</module>
 		<module>audio-optimize</module>
 		<module>synth</module>
+		<module>replicate</module>
 	</modules>
 
 	<!-- Output to jar format -->

@@ -11,7 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ar-treeview" />
+    <orderEntry type="module" module-name="ar-audio" />
     <orderEntry type="module" module-name="ar-utils" />
     <orderEntry type="module" module-name="ar-space" />
     <orderEntry type="module" module-name="ar-graph" />
@@ -30,6 +30,8 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
+    <orderEntry type="module" module-name="ar-optimalzoo" />
+    <orderEntry type="module" module-name="ar-treeview" />
     <orderEntry type="module" module-name="ar-swing" />
     <orderEntry type="module" module-name="ar-color" />
     <orderEntry type="module" module-name="ar-geometry" />
