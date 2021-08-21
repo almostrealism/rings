@@ -37,7 +37,7 @@ public abstract class Settings extends Defaults {
   /** String containing the version number of this software. */
   public static final String version = "0.4";
   
-  /** String containing "Written by Mike Murray". */
+  /** String containing "Written by Michael Murray". */
   public static final String writtenByInfo = "Written by Michael Murray";
   
   /** String containing "ashesfall@users.sf.net". */

@@ -44,7 +44,6 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 	public void kernel() {
 		SphereIntersectAt combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
-		ev.compile();
 
 		PairBank input = getInput();
 		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
@@ -57,7 +56,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 
 		System.out.println("KernelizedIntersectionTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			Scalar value = ev.evaluate(new Object[] { input.get(i), dim.get(i) });
+			Scalar value = ev.evaluate(input.get(i), dim.get(i));
 			Assert.assertEquals(value.getValue(), output.get(i).getValue(), Math.pow(10, -10));
 		}
 	}

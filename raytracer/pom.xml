@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.11</version>
+		<version>0.12</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>raytracer</artifactId>
+	<artifactId>ar-raytracer</artifactId>
 
 	<properties>
 		<maven.compiler.source>14</maven.compiler.source>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>gl</artifactId>
-			<version>0.11</version>
+			<version>0.12</version>
 		</dependency>
 	</dependencies>
 </project>

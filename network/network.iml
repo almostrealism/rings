@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="raytracer" />
     <orderEntry type="module" module-name="gl" />
     <orderEntry type="module" module-name="ui" />
-    <orderEntry type="module" module-name="primitives" />
+    <orderEntry type="library" name="Maven: com.almostrealism:primitives:0.12" level="project" />
     <orderEntry type="module" module-name="shading" />
     <orderEntry type="module" module-name="engine" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.3.2" level="project" />
@@ -63,7 +63,7 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.3" level="project" />
-    <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="module" module-name="ar-treeview" />
     <orderEntry type="module" module-name="swing" />
     <orderEntry type="module" module-name="color" />
     <orderEntry type="module" module-name="geometry" />

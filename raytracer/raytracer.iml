@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="GraphPersist" />
     <orderEntry type="module" module-name="gl" />
     <orderEntry type="module" module-name="ui" />
-    <orderEntry type="module" module-name="primitives" />
+    <orderEntry type="library" name="Maven: com.almostrealism:primitives:0.12" level="project" />
     <orderEntry type="module" module-name="shading" />
     <orderEntry type="module" module-name="engine" />
     <orderEntry type="module" module-name="geometry" />
@@ -48,7 +48,7 @@
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-solaris-i586:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-i586:2.3.2" level="project" />
-    <orderEntry type="module" module-name="TreeView" />
+    <orderEntry type="module" module-name="ar-treeview" />
     <orderEntry type="module" module-name="ar-utils" />
     <orderEntry type="module" module-name="space" />
     <orderEntry type="module" module-name="graph" />

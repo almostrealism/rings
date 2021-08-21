@@ -1,0 +1,96 @@
+/*
+ * Copyright 2018 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.almostrealism.chem;
+
+import com.almostrealism.physics.SphericalAbsorber;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorEvaluable;
+import org.almostrealism.physics.Atom;
+import org.almostrealism.physics.Clock;
+
+/**
+ * An {@link AtomicProtonCloud} object represents the positively charged portion of an {@link Atom}.
+ * 
+ * @author Mike Murray
+ */
+// TODO  Compute charge based on atomic number
+public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber {
+	private Atom atom;
+
+	public AtomicProtonCloud(Atom a) { this.atom = a; }
+
+	public void setPotentialMap(PotentialMap m) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public PotentialMap getPotentialMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setRadius(double r) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public double getRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public VectorEvaluable getDisplacement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean absorb(Vector x, Vector p, double energy) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public VectorEvaluable emit() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public double getEmitEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getNextEmit() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setClock(Clock c) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Clock getClock() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public VectorEvaluable getEmitPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

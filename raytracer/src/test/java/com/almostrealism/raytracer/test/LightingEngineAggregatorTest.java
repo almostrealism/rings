@@ -151,7 +151,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 
 				System.out.println("LightingEngineAggregatorTest: Comparing...");
 				for (int j = 0; j < output.getCount(); j++) {
-					Object value = kp.evaluate(new Object[] { input.get(j), dim.get(j) });
+					Object value = kp.evaluate(input.get(j), dim.get(j));
 					Assert.assertEquals(value, output.get(j));
 				}
 			} else {

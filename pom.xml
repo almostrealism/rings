@@ -5,7 +5,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.11</version>
+	<version>0.12</version>
 	<modules>
 		<module>raytracer</module>
 		<module>engine</module>
@@ -15,6 +15,11 @@
 		<module>ui</module>
 		<module>network</module>
 		<module>absorption</module>
+		<module>photonfield</module>
+		<module>optimalzoo</module>
+		<module>audio-health</module>
+		<module>audio-optimize</module>
+		<module>synth</module>
 	</modules>
 
 	<!-- Output to jar format -->
@@ -22,15 +27,15 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>io.almostrealism</groupId>
-			<artifactId>TreeView</artifactId>
-			<version>0.4</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-treeview</artifactId>
+			<version>0.11</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-graphpersist</artifactId>
-			<version>0.10</version>
+			<version>0.11</version>
 		</dependency>
 		
 		<dependency>
