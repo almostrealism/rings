@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 package org.almostrealism.organs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-import io.almostrealism.code.Setup;
 import org.almostrealism.graph.CachedStateCell;
 import org.almostrealism.graph.CachedStateCellGroup;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.graph.FilteredCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Chromosome;
@@ -40,25 +40,29 @@ public class SimpleOrgan<T> implements Organ<T> {
 
 	private List<Cell<T>> inputLayer;
 	private List<Cell<T>> processingLayer;
-	private Chromosome<T> chrom;
+	private Chromosome<T> transmission;
 	private CachedStateCellGroup<T> cacheGroup;
 	
 	protected SimpleOrgan() { }
 	
-	public SimpleOrgan(List<Cell<T>> inputLayer, List<Cell<T>> processingLayer, Chromosome<T> chrom) {
-		init(inputLayer, processingLayer, chrom);
+	public SimpleOrgan(List<Cell<T>> inputLayer, List<Cell<T>> processingLayer, Chromosome<T> transmission) {
+		this(inputLayer, processingLayer, transmission, IdentityFactor.chromosome(transmission.length(), 1));
+	}
+
+	public SimpleOrgan(List<Cell<T>> inputLayer, List<Cell<T>> processingLayer, Chromosome<T> transmission, Chromosome<T> filter) {
+		init(inputLayer, processingLayer, transmission, i -> new FilteredCell<>(filter.valueAt(i).valueAt(0)));
 	}
 	
-	protected void init(List<Cell<T>> inputLayer, List<Cell<T>> processingLayer, Chromosome<T> chrom) {
+	protected void init(List<Cell<T>> inputLayer, List<Cell<T>> processingLayer, Chromosome<T> transmission, IntFunction<Cell<T>> adapters) {
 		if (inputLayer != null && inputLayer.size() != processingLayer.size()) {
 			throw new IllegalArgumentException("Input and processing layers must have the same number of cells");
 		}
 
 		this.inputLayer = inputLayer;
 		this.processingLayer = processingLayer;
-		this.chrom = chrom;
+		this.transmission = transmission;
 		this.cacheGroup = new CachedStateCellGroup<>();
-		createPairs();
+		createPairs(adapters);
 	}
 
 	@Override
@@ -67,8 +71,8 @@ public class SimpleOrgan<T> implements Organ<T> {
 	@Override
 	public void setName(String name) { this.name = name; }
 
-	private void createPairs() {
-		if (chrom == null) {
+	private void createPairs(IntFunction<Cell<T>> adapters) {
+		if (transmission == null) {
 			System.out.println("WARN: " + getClass().getSimpleName() +
 					" has no chromosome and will not have pairs created");
 		}
@@ -94,15 +98,28 @@ public class SimpleOrgan<T> implements Organ<T> {
 
 			if (source != null) source.setReceptor(processing);
 
-			if (chrom != null) {
-				MultiCell<T> m = new MultiCell<>(processingLayer, chrom.valueAt(i.get()));
+			if (transmission != null) {
+				MultiCell<T> m = new MultiCell<>(processingLayer, transmission.valueAt(i.get()));
 				m.setName("SimpleOrgan[" + i + "]");
-				pairs.add(new CellPair<>(processing, m, null, new IdentityFactor<>()));
+
+				CellPair<T> pair = new CellPair<>(processing, m, null, new IdentityFactor<>());
+				pair.setAdapterB((protein, cell) -> {
+					Cell<T> adapter = adapters.get();
+
+					if (adapter instanceof CachedStateCell) {
+						cacheGroup.add((CachedStateCell<T>) adapter);
+					}
+
+					adapter.setReceptor(cell);
+					return adapter.push(protein);
+				});
+
+				pairs.add(pair);
 			}
 		}
 	}
 	
-	public Gene<T> getGene(int index) { return chrom.valueAt(index); }
+	public Gene<T> getGene(int index) { return transmission.valueAt(index); }
 
 	@Override
 	public Cell<T> getCell(int index) { return processingLayer.get(index); }

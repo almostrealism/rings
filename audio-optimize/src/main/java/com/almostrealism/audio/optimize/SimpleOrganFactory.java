@@ -74,18 +74,14 @@ public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>
 				(Chromosome<T>) genome.valueAt(2));
 	}
 
-	public SimpleOrgan<T> generateOrgan(Chromosome<Double> x, Chromosome<Double> y, Chromosome<T> z) {
-		List<Cell<T>> generatorCells = IntStream.range(0, x.length())
-				.mapToObj(i -> generator.generateCell(x.valueAt(i), config))
+	public SimpleOrgan<T> generateOrgan(Chromosome<Double> generators, Chromosome<Double> processors, Chromosome<T> transmission) {
+		List<Cell<T>> generatorCells = IntStream.range(0, generators.length())
+				.mapToObj(i -> generator.generateCell(generators.valueAt(i), config))
 				.collect(Collectors.toList());
-		List<Cell<T>> processorCells = IntStream.range(0, y.length())
-				.mapToObj(i -> processor.generateCell(y.valueAt(i), config))
+		List<Cell<T>> processorCells = IntStream.range(0, processors.length())
+				.mapToObj(i -> processor.generateCell(processors.valueAt(i), config))
 				.collect(Collectors.toList());
-
-		// Return a new organ with the specified cells
-		// plus the Z chromosome which controls the
-		// scale of expression for each cell
-		return new SimpleOrgan<>(generatorCells, processorCells, z);
+		return new SimpleOrgan<>(generatorCells, processorCells, transmission);
 	}
 
 	public static SimpleOrganFactory<Scalar, DesirablesProvider> getDefault(DesirablesProvider provider) {

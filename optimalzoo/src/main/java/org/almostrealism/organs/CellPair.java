@@ -22,6 +22,8 @@ import org.almostrealism.heredity.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -34,6 +36,8 @@ import java.util.function.Supplier;
 public class CellPair<T> implements Receptor<T> {
 	private final Cell<T> cellA, cellB;
 	private final Factor<T> factorA, factorB;
+
+	private BiFunction<Producer<T>, Cell<T>, Supplier<Runnable>> adapterA, adapterB;
 	
 	public CellPair(Cell<T> cellA, Cell<T> cellB, Factor<T> factorA, Factor<T> factorB) {
 		this.cellA = cellA;
@@ -43,6 +47,22 @@ public class CellPair<T> implements Receptor<T> {
 		
 		this.cellA.setReceptor(protein -> push(protein, false, true));
 		this.cellB.setReceptor(protein -> push(protein, true, false));
+	}
+
+	public BiFunction<Producer<T>, Cell<T>, Supplier<Runnable>> getAdapterA() {
+		return adapterA;
+	}
+
+	public void setAdapterA(BiFunction<Producer<T>, Cell<T>, Supplier<Runnable>> adapterA) {
+		this.adapterA = adapterA;
+	}
+
+	public BiFunction<Producer<T>, Cell<T>, Supplier<Runnable>> getAdapterB() {
+		return adapterB;
+	}
+
+	public void setAdapterB(BiFunction<Producer<T>, Cell<T>, Supplier<Runnable>> adapterB) {
+		this.adapterB = adapterB;
 	}
 
 	@Override

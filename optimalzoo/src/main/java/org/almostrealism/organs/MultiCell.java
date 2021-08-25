@@ -29,8 +29,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 
 public class MultiCell<T> extends CellAdapter<T> {
-	public static int pushWait = 0;
-	
 	private final List<Cell<T>> cells;
 	private final Gene<T> gene;
 	
@@ -48,14 +46,6 @@ public class MultiCell<T> extends CellAdapter<T> {
 	@Override
 	public Supplier<Runnable> push(Producer<T> protein) {
 		OperationList push = new OperationList();
-
-		if (pushWait != 0) {
-			push.add(() -> () -> {
-				try {
-					Thread.sleep(pushWait);
-				} catch (InterruptedException e) { }
-			});
-		}
 
 		Iterator<Cell<T>> itr = cells.iterator();
 
