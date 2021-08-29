@@ -71,17 +71,19 @@ public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>
 	public SimpleOrgan<T> generateOrgan(Genome genome) {
 		return generateOrgan((Chromosome<Double>) genome.valueAt(0),
 				(Chromosome<Double>) genome.valueAt(1),
-				(Chromosome<T>) genome.valueAt(2));
+				(Chromosome<T>) genome.valueAt(2),
+				(Chromosome<T>) genome.valueAt(3));
 	}
 
-	public SimpleOrgan<T> generateOrgan(Chromosome<Double> generators, Chromosome<Double> processors, Chromosome<T> transmission) {
+	public SimpleOrgan<T> generateOrgan(Chromosome<Double> generators, Chromosome<Double> processors,
+										Chromosome<T> transmission, Chromosome<T> filters) {
 		List<Cell<T>> generatorCells = IntStream.range(0, generators.length())
 				.mapToObj(i -> generator.generateCell(generators.valueAt(i), config))
 				.collect(Collectors.toList());
 		List<Cell<T>> processorCells = IntStream.range(0, processors.length())
 				.mapToObj(i -> processor.generateCell(processors.valueAt(i), config))
 				.collect(Collectors.toList());
-		return new SimpleOrgan<>(generatorCells, processorCells, transmission);
+		return new SimpleOrgan<>(generatorCells, processorCells, transmission, filters);
 	}
 
 	public static SimpleOrganFactory<Scalar, DesirablesProvider> getDefault(DesirablesProvider provider) {

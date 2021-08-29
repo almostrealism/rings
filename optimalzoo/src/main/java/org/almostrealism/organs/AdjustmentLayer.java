@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,14 @@ import org.almostrealism.graph.Adjustable;
 import org.almostrealism.graph.AdjustmentCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Adjustment;
+import org.almostrealism.graph.FilteredCell;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.IdentityFactor;
 
 public class AdjustmentLayer<T, R> extends SimpleOrgan<R> {
 
 	public AdjustmentLayer(List<Adjustable<T>> toAdjust, List<Adjustment<T>> adjustments, Chromosome<R> chrom) {
-		init(null, createAdjustmentCells(toAdjust, adjustments), chrom);
+		init(null, createAdjustmentCells(toAdjust, adjustments), chrom, i -> new FilteredCell<>(new IdentityFactor<>()));
 	}
 	
 	private List<Cell<R>> createAdjustmentCells(List<Adjustable<T>> toAdjust, List<Adjustment<T>> adjustments) {

@@ -104,7 +104,7 @@ public class SimpleOrgan<T> implements Organ<T> {
 
 				CellPair<T> pair = new CellPair<>(processing, m, null, new IdentityFactor<>());
 				pair.setAdapterB((protein, cell) -> {
-					Cell<T> adapter = adapters.get();
+					Cell<T> adapter = adapters.apply(i.get());
 
 					if (adapter instanceof CachedStateCell) {
 						cacheGroup.add((CachedStateCell<T>) adapter);

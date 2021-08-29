@@ -16,18 +16,17 @@
 
 package com.almostrealism.audio.optimize;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.function.Supplier;
 
 import com.almostrealism.audio.DesirablesProvider;
-import com.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.ChromosomeBreeder;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.SimpleOrgan;

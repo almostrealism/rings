@@ -22,18 +22,19 @@ import java.util.function.Supplier;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
-import com.almostrealism.audio.health.HealthComputationAdapter;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.filter.AudioFilterChromosomeFactory;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
@@ -61,18 +62,20 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		int dim = 3;
 
 		// Random genetic material generators
-		ChromosomeFactory<Scalar> xfactory = new FloatingPointRandomChromosomeFactory(); // GENERATORS
-		ChromosomeFactory<Scalar> yfactory = new FloatingPointRandomChromosomeFactory(); // DELAY
-		ChromosomeFactory<Scalar> zfactory = new FloatingPointRandomChromosomeFactory(); // ROUTING
+		ChromosomeFactory<Scalar> generators = new FloatingPointRandomChromosomeFactory(); // GENERATORS
+		ChromosomeFactory<Scalar> processors = new FloatingPointRandomChromosomeFactory(); // DELAY
+		ChromosomeFactory<Scalar> transmission = new FloatingPointRandomChromosomeFactory(); // ROUTING
+		ChromosomeFactory<Scalar> filters = new AudioFilterChromosomeFactory(); // FILTERS
 		ChromosomeFactory<Scalar> afactory = new FloatingPointRandomChromosomeFactory(); // PERIODIC
 		ChromosomeFactory<Scalar> bfactory = new FloatingPointRandomChromosomeFactory(); // EXPONENTIAL
-		xfactory.setChromosomeSize(dim, 2); // GENERATORS
-		yfactory.setChromosomeSize(dim, 2); // DELAY
-		zfactory.setChromosomeSize(dim, dim);      // ROUTING
+		generators.setChromosomeSize(dim, 2); // GENERATORS
+		processors.setChromosomeSize(dim, 2); // DELAY
+		transmission.setChromosomeSize(dim, dim);      // ROUTING
+		filters.setChromosomeSize(dim, 1);  // FILTERS
 		afactory.setChromosomeSize(dim, 3); // PERIODIC
 		bfactory.setChromosomeSize(dim, 2); // EXPONENTIAL
 
-		GenomeFromChromosomes generator = new GenomeFromChromosomes(xfactory, yfactory, zfactory, afactory); //, bfactory);
+		GenomeFromChromosomes generator = Genome.fromChromosomes(generators, processors, transmission, filters, afactory); //, bfactory);
 
 		TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
 		TieredCellAdjustmentFactory<Scalar, Scalar> tcb = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.EXPONENTIAL), tca);
@@ -82,6 +85,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // GENERATORS
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
+				null,  // FILTERS
 				Breeders.perturbationBreeder(0.005, ScaleFactor::new)); //,   // PERIODIC
 				// Breeders.perturbationBreeder(0.0001, ScaleFactor::new)); // EXPONENTIAL
 
