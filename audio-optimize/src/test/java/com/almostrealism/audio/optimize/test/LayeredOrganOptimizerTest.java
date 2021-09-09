@@ -12,6 +12,7 @@ import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.Genome;
@@ -63,9 +64,9 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 				Breeders.perturbationBreeder(0.005, ScaleFactor::new));  // PERIODIC
 
-		LayeredOrganOptimizer optimizer = new LayeredOrganOptimizer(null, breeder, null, 3);
+		LayeredOrganOptimizer optimizer = new LayeredOrganOptimizer(null, breeder, null, OutputLine.sampleRate, 2, 3);
 		optimizer.setChildrenFunction(g -> {
-			LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes);
+			LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, 2, OutputLine.sampleRate);
 			pop.init(factory, pop.getGenomes().get(0), ((AudioHealthComputation) optimizer.getHealthComputation()).getMonitor());
 			return pop;
 		});

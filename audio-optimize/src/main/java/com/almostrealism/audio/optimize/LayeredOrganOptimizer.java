@@ -27,6 +27,7 @@ import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioFilterChromosomeFactory;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.ChromosomeFactory;
@@ -48,11 +49,12 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	private HealthComputation<Scalar> health;
 
 	public LayeredOrganOptimizer(AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> f,
-								 GenomeBreeder breeder, Supplier<Genome> generator, int totalCycles) {
+								 GenomeBreeder breeder, Supplier<Genome> generator,
+								 int sampleRate, int cellCount, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(children);
+					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(children, cellCount, sampleRate);
 					pop.init(f, pop.getGenomes().get(0), ((AudioHealthComputation) getHealthComputation()).getMonitor());
 					return pop;
 				});
@@ -89,7 +91,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 				Breeders.perturbationBreeder(0.005, ScaleFactor::new)); //,   // PERIODIC
 				// Breeders.perturbationBreeder(0.0001, ScaleFactor::new)); // EXPONENTIAL
 
-		return new LayeredOrganOptimizer(factory, breeder, generator, cycles);
+		return new LayeredOrganOptimizer(factory, breeder, generator, OutputLine.sampleRate, dim, cycles);
 	}
 
 	/**

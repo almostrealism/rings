@@ -16,9 +16,11 @@
 
 package com.almostrealism.audio.health.test;
 
+import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.SimpleOrganFactory;
+import com.almostrealism.audio.optimize.SimpleOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.Scale;
 import com.almostrealism.tone.WesternChromatic;
@@ -46,6 +48,7 @@ import java.util.stream.IntStream;
 
 public class StableDurationHealthComputationTest extends AdjustableDelayCellTest {
 	public static final boolean enableDelay = true;
+	public static final boolean enableFilter = true;
 
 	@BeforeClass
 	public static void init() {
@@ -57,32 +60,56 @@ public class StableDurationHealthComputationTest extends AdjustableDelayCellTest
 		StableDurationHealthComputation.enableVerbose = false;
 	}
 
-	protected SimpleOrgan<Scalar> organ() {
-		ArrayListChromosome<Double> x = new ArrayListChromosome();
-		x.add(new ArrayListGene<>(0.4, 0.6));
-		x.add(new ArrayListGene<>(0.8, 0.2));
+	protected DefaultDesirablesProvider notes() {
+		Scale<WesternChromatic> scale = Scale.of(WesternChromatic.G4, WesternChromatic.A3);
+		return new DefaultDesirablesProvider<>(120, scale);
+	}
 
-		ArrayListChromosome<Double> y = new ArrayListChromosome();
-		y.add(new ArrayListGene<>(1.0, 0.4));
-		y.add(new ArrayListGene<>(1.0, 0.2));
+	protected DefaultDesirablesProvider samples() {
+		DefaultDesirablesProvider desirables = new DefaultDesirablesProvider(120);
+		desirables.getSamples().add(new File("src/test/resources/Snare Perc DD.wav"));
+		return desirables;
+	}
 
-		ArrayListChromosome<Scalar> z = new ArrayListChromosome();
+	protected SimpleOrgan<Scalar> organ(DesirablesProvider desirables) {
+		ArrayListChromosome<Double> generators = new ArrayListChromosome();
+		generators.add(new ArrayListGene<>(0.4, 0.6));
+		generators.add(new ArrayListGene<>(0.8, 0.2));
+
+		ArrayListChromosome<Double> processors = new ArrayListChromosome();
+		processors.add(new ArrayListGene<>(1.0, 0.4));
+		processors.add(new ArrayListGene<>(1.0, 0.2));
+
+		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 
 		if (enableDelay) {
-			z.add(new ArrayListGene<>(0.0, 0.4));
-			z.add(new ArrayListGene<>(0.4, 0.0));
+			transmission.add(new ArrayListGene<>(0.0, 0.4));
+			transmission.add(new ArrayListGene<>(0.4, 0.0));
 		} else {
-			z.add(new ArrayListGene<>(0.0, 0.0));
-			z.add(new ArrayListGene<>(0.0, 0.0));
+			transmission.add(new ArrayListGene<>(0.0, 0.0));
+			transmission.add(new ArrayListGene<>(0.0, 0.0));
+		}
+
+		ArrayListChromosome<Double> filters = new ArrayListChromosome();
+
+		if (enableFilter) {
+			filters.add(new ArrayListGene<>(0.15, 1.0));
+			filters.add(new ArrayListGene<>(0.15, 1.0));
+		} else {
+			filters.add(new ArrayListGene<>(0.0, 1.0));
+			filters.add(new ArrayListGene<>(0.0, 1.0));
 		}
 
 		ArrayListGenome genome = new ArrayListGenome();
-		genome.add(x);
-		genome.add(y);
-		genome.add(z);
+		genome.add(generators);
+		genome.add(processors);
+		genome.add(transmission);
+		genome.add(filters);
 
-		Scale<WesternChromatic> scale = Scale.of(WesternChromatic.G4, WesternChromatic.A3);
-		return SimpleOrganFactory.getDefault(new DefaultDesirablesProvider<>(120, scale)).generateOrgan(genome);
+		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
+		organGenome.assignTo(genome);
+
+		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome);
 	}
 
 	@Test
@@ -92,7 +119,7 @@ public class StableDurationHealthComputationTest extends AdjustableDelayCellTest
 		// WaveOutput output3 = new WaveOutput(new File("health/health-test-firstcell-processed.wav"));
 		// WaveOutput output4 = new WaveOutput(new File("health/health-test-lastcell-processed.wav"));
 
-		SimpleOrgan<Scalar> organ = organ();
+		SimpleOrgan<Scalar> organ = organ(notes());
 		((CellAdapter) organ.firstCell()).setMeter(output1);
 		((CellAdapter) organ.lastCell()).setMeter(output2);
 
@@ -119,12 +146,24 @@ public class StableDurationHealthComputationTest extends AdjustableDelayCellTest
 	}
 
 	@Test
-	public void simpleOrganHealth() {
+	public void simpleOrganHealthNotes() {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
-		health.setDebugOutputFile("health/simple-organ-test.wav");
+		health.setDebugOutputFile("health/simple-organ-notes-test.wav");
 
-		SimpleOrgan<Scalar> organ = organ();
+		SimpleOrgan<Scalar> organ = organ(notes());
+		organ.setMonitor(health.getMonitor());
+		organ.reset();
+		health.computeHealth(organ);
+	}
+
+	@Test
+	public void simpleOrganHealthSamples() {
+		StableDurationHealthComputation health = new StableDurationHealthComputation();
+		health.setMaxDuration(8);
+		health.setDebugOutputFile("health/simple-organ-samples-test.wav");
+
+		SimpleOrgan<Scalar> organ = organ(samples());
 		organ.setMonitor(health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);

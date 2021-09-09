@@ -32,6 +32,10 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 	private final Set<Frequency> frequencies;
 	private final Set<File> samples;
 
+	public DefaultDesirablesProvider(double bpm) {
+		this(bpm, Scale.of());
+	}
+
 	public DefaultDesirablesProvider(double bpm, Scale<T> scale) {
 		this(bpm, scale, new DefaultKeyboardTuning());
 	}
