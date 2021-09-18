@@ -19,12 +19,8 @@ package com.almostrealism.audio.test;
 import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.DynamicAudioCell;
 import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.filter.AudioCellAdapter;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
@@ -32,9 +28,6 @@ import org.almostrealism.audio.filter.BasicDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.computations.Loop;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
@@ -45,13 +38,11 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
+public class PolymorphicAudioCellTest implements TestFeatures {
 	private static final int DURATION_FRAMES = 10 * OutputLine.sampleRate;
 
 	protected Receptor<Scalar> loggingReceptor() {
@@ -60,41 +51,19 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 
 	protected Cell<Scalar> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
 
-	protected SineWaveCell choice(Scalar destination) {
-		SineWaveCell c = new SineWaveCell();
-		c.setFreq(0.5);
-		c.setAmplitude(1.0);
-		c.setReceptor(a(p(destination)));
-		return c;
-	}
+	protected PolymorphicAudioCell cell() {
+		SineWaveCell cell = new SineWaveCell();
+		cell.setFreq(new DefaultKeyboardTuning().getTone(WesternChromatic.G3).asHertz());
+		cell.setNoteLength(600);
+		cell.setAmplitude(0.1);
+		cell.setEnvelope(DefaultEnvelopeComputation::new);
 
-	protected DynamicAudioCell cell(Scalar choice) {
-		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
-
-		Function<PolymorphicAudioData, AudioCellAdapter> cell1 = data -> {
-			SineWaveCell c = new SineWaveCell(data);
-			c.setFreq(tuning.getTone(WesternChromatic.G3).asHertz());
-			c.setNoteLength(4000);
-			c.setAmplitude(0.1);
-			c.setEnvelope(DefaultEnvelopeComputation::new);
-			return c;
-		};
-
-		Function<PolymorphicAudioData, AudioCellAdapter> cell2 = data -> {
-			SineWaveCell c = new SineWaveCell(data);
-			c.setFreq(tuning.getTone(WesternChromatic.C3).asHertz());
-			c.setNoteLength(4000);
-			c.setAmplitude(0.1);
-			c.setEnvelope(DefaultEnvelopeComputation::new);
-			return c;
-		};
-
-		return new DynamicAudioCell(v(1).add(p(choice)).divide(2.0), Arrays.asList(cell1, cell2));
+		return new PolymorphicAudioCell(v(0.5), Collections.singletonList(data -> cell));
 	}
 
 	@Test
 	public void sineWave() {
-		DynamicAudioCell cell = cell(new Scalar());
+		PolymorphicAudioCell cell = cell();
 		cell.setReceptor(loggingReceptor());
 		Runnable push = cell.push(v(0.0)).get();
 		IntStream.range(0, 100).forEach(i -> push.run());
@@ -103,29 +72,22 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void withOutput() {
-		WaveOutput output = new WaveOutput(new File("health/dynamic-cell-test.wav"));
+		WaveOutput output = new WaveOutput(new File("health/polymorphic-cell-test.wav"));
 
-		Scalar choice = new Scalar();
-		SineWaveCell chooser = choice(choice);
-		DynamicAudioCell cell = cell(choice);
+		PolymorphicAudioCell cell = cell();
 		cell.setReceptor(output);
 
-		chooser.setup().get().run();
-		cell.setup().get().run();
+		Runnable push = cell.push(v(0.0)).get();
+		Runnable tick = cell.tick().get();
+		IntStream.range(0, DURATION_FRAMES).forEach(i -> {
+			push.run();
+			tick.run();
+			if ((i + 1) % 1000 == 0) System.out.println("PolymorphicAudioCellTest: " + (i + 1) + " iterations");
+		});
 
-		OperationList op = new OperationList();
-		op.add(chooser.push(v(0.0)));
-		op.add(chooser.tick());
-		op.add(cell.push(v(0.0)));
-		op.add(cell.tick());
-
-		AcceleratedComputationOperation o = (AcceleratedComputationOperation) loop(op, DURATION_FRAMES).get();
-		System.out.println(o.getFunctionDefinition());
-		o.run();
-
-		System.out.println("DynamicAudioCellTest: Writing WAV...");
+		System.out.println("PolymorphicAudioCellTest: Writing WAV...");
 		output.write().get().run();
-		System.out.println("DynamicAudioCellTest: Done");
+		System.out.println("PolymorphicAudioCellTest: Done");
 	}
 
 	protected Gene<Scalar> identityGene() {
@@ -146,7 +108,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void withCellPair() {
-		DynamicAudioCell cell = cell(new Scalar());
+		PolymorphicAudioCell cell = cell();
 		loggingCellPair(cell);
 
 		Runnable push = cell.push(null).get();
@@ -158,7 +120,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		BasicDelayCell delay = new BasicDelayCell(1);
 		delay.setReceptor(loggingReceptor());
 
-		DynamicAudioCell cell = cell(new Scalar());
+		PolymorphicAudioCell cell = cell();
 		cell.setReceptor(delay);
 
 		Runnable push = cell.push(null).get();

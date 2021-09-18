@@ -17,7 +17,6 @@
 package com.almostrealism.audio.optimize;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -28,7 +27,7 @@ import java.util.stream.IntStream;
 import com.almostrealism.audio.DesirablesProvider;
 import io.almostrealism.code.ProducerComputation;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.DynamicAudioCell;
+import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.PolymorphicAudioDataBank;
 import org.almostrealism.audio.filter.AudioCellAdapter;
@@ -37,9 +36,7 @@ import org.almostrealism.audio.sources.SineWaveCellFactory;
 import org.almostrealism.audio.sources.WavCellFactory;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellFactory;
-import org.almostrealism.graph.ProbabilityDensityCellFactory;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.OrganFactory;
 import org.almostrealism.organs.SimpleOrgan;
@@ -115,7 +112,7 @@ public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>
 		};
 
 		return new SimpleOrganFactory((CellFactory<Scalar, Scalar, Supplier<PolymorphicAudioData>>) (g, config) ->
-				new DynamicAudioCell(config.get(), (ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
+				new PolymorphicAudioCell(config.get(), (ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
 					choices.stream()
 							.map(c ->
 									(Function<PolymorphicAudioData, ? extends AudioCellAdapter>) data -> (AudioCellAdapter) c.generateCell(g, data))
