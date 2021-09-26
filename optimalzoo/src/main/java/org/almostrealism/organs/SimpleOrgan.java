@@ -23,17 +23,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-import org.almostrealism.graph.CachedStateCell;
-import org.almostrealism.graph.CachedStateCellGroup;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.graph.CellPair;
 import org.almostrealism.graph.FilteredCell;
+import org.almostrealism.graph.MultiCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.time.Temporal;
+import org.almostrealism.time.TemporalList;
 
 public class SimpleOrgan<T> implements Organ<T> {
 	private String name;
@@ -41,7 +43,7 @@ public class SimpleOrgan<T> implements Organ<T> {
 	private List<Cell<T>> inputLayer;
 	private List<Cell<T>> processingLayer;
 	private Chromosome<T> transmission;
-	private CachedStateCellGroup<T> cacheGroup;
+	private TemporalList temporals;
 	
 	protected SimpleOrgan() { }
 	
@@ -61,7 +63,7 @@ public class SimpleOrgan<T> implements Organ<T> {
 		this.inputLayer = inputLayer;
 		this.processingLayer = processingLayer;
 		this.transmission = transmission;
-		this.cacheGroup = new CachedStateCellGroup<>();
+		this.temporals = new TemporalList();
 		createPairs(adapters);
 	}
 
@@ -82,39 +84,30 @@ public class SimpleOrgan<T> implements Organ<T> {
 			Cell<T> source = Optional.ofNullable(inputLayer).map(l -> l.get(i.get())).orElse(null);
 			Cell<T> processing = processingLayer.get(i.get());
 			
-			if (source instanceof CachedStateCell<?>) {
-				this.cacheGroup.add((CachedStateCell<T>) source);
+			if (source instanceof Temporal) {
+				this.temporals.add((Temporal) source);
 			} else if (source != null) {
 				System.out.println("WARN: " + source.getClass().getSimpleName() +
-						" is not a CachedStateCell and will not have tick() triggered");
+						" is not a Temporal and will not have tick() triggered");
 			}
 
-			if (processing instanceof CachedStateCell<?>) {
-				this.cacheGroup.add((CachedStateCell<T>) processing);
+			if (processing instanceof Temporal) {
+				this.temporals.add((Temporal) processing);
 			} else {
 				System.out.println("WARN: " + processing.getClass().getSimpleName() +
-						" is not a CachedStateCell and will not have tick() triggered");
+						" is not a Temporal and will not have tick() triggered");
 			}
 
 			if (source != null) source.setReceptor(processing);
 
 			if (transmission != null) {
-				MultiCell<T> m = new MultiCell<>(processingLayer, transmission.valueAt(i.get()));
-				m.setName("SimpleOrgan[" + i + "]");
+				Cell<T> adapter = adapters.apply(i.get());
 
-				CellPair<T> pair = new CellPair<>(processing, m, null, new IdentityFactor<>());
-				pair.setAdapterB((protein, cell) -> {
-					Cell<T> adapter = adapters.apply(i.get());
+				if (adapter instanceof Temporal) {
+					temporals.add((Temporal) adapter);
+				}
 
-					if (adapter instanceof CachedStateCell) {
-						cacheGroup.add((CachedStateCell<T>) adapter);
-					}
-
-					adapter.setReceptor(cell);
-					return adapter.push(protein);
-				});
-
-				pairs.add(pair);
+				pairs.add(MultiCell.split(processing, adapter, processingLayer, transmission.valueAt(i.get())));
 			}
 		}
 	}
@@ -147,7 +140,9 @@ public class SimpleOrgan<T> implements Organ<T> {
 	}
 
 	@Override
-	public Supplier<Runnable> tick() { return this.cacheGroup.tick(); }
+	public Supplier<Runnable> tick() {
+		return this.temporals.tick();
+	}
 
 	@Override
 	public Supplier<Runnable> push(Producer<T> protein) {

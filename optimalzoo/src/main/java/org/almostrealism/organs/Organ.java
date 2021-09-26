@@ -16,14 +16,12 @@
 
 package org.almostrealism.organs;
 
-import io.almostrealism.code.Setup;
 import io.almostrealism.relation.Nameable;
-import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.time.Temporal;
+import org.almostrealism.heredity.TemporalCellular;
 
-public interface Organ<T> extends Receptor<T>, Temporal, Setup, Lifecycle, Nameable {
+public interface Organ<T> extends Receptor<T>, TemporalCellular, Nameable {
 	Cell<T> getCell(int index);
 	
 	int size();

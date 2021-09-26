@@ -30,8 +30,8 @@ import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
-import org.almostrealism.organs.CellPair;
-import org.almostrealism.organs.MultiCell;
+import org.almostrealism.graph.CellPair;
+import org.almostrealism.graph.MultiCell;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 

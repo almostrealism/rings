@@ -20,7 +20,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.graph.ScalarCachedStateCell;
 import org.almostrealism.hardware.DynamicAcceleratedOperation;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.organs.CellPair;
+import org.almostrealism.graph.CellPair;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
