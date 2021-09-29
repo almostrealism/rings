@@ -138,7 +138,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 
 		MultiCell<Scalar> m = new MultiCell<>(cells, identityGene());
 		m.setName("LoggingMultiCell");
-		new CellPair<>(input, m, null, new IdentityFactor<>());
+		new CellPair<>(input, m, null, new IdentityFactor<>()).init();
 	}
 
 	@Test

@@ -32,6 +32,7 @@ public class CellPairTest implements TestFeatures {
 		ScalarCachedStateCell cellB = new ScalarCachedStateCell();
 
 		CellPair<Scalar> pair = new CellPair<>(cellA, cellB, v -> scalar(3.0), v -> scalarsMultiply(v, scalar(2.0)));
+		pair.init();
 
 		// A = 6
 		DynamicAcceleratedOperation op = (DynamicAcceleratedOperation) cellA.push(v(6.0)).get();
@@ -73,6 +74,7 @@ public class CellPairTest implements TestFeatures {
 		ScalarCachedStateCell cellB = new ScalarCachedStateCell();
 
 		CellPair<Scalar> pair = new CellPair<>(cellA, cellB, v -> scalar(3.0), v -> scalarsMultiply(v, scalar(2.0)));
+		pair.init();
 
 		OperationList ops = new OperationList();
 		ops.add(cellA.push(v(6.0))); // A = 6

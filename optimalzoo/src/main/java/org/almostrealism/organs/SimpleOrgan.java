@@ -79,7 +79,6 @@ public class SimpleOrgan<T> implements Organ<T> {
 					" has no chromosome and will not have pairs created");
 		}
 
-		List<CellPair<T>> pairs = new ArrayList<>();
 		for (AtomicInteger i = new AtomicInteger(); i.get() < processingLayer.size(); i.incrementAndGet()) {
 			Cell<T> source = Optional.ofNullable(inputLayer).map(l -> l.get(i.get())).orElse(null);
 			Cell<T> processing = processingLayer.get(i.get());
@@ -101,13 +100,7 @@ public class SimpleOrgan<T> implements Organ<T> {
 			if (source != null) source.setReceptor(processing);
 
 			if (transmission != null) {
-				Cell<T> adapter = adapters.apply(i.get());
-
-				if (adapter instanceof Temporal) {
-					temporals.add((Temporal) adapter);
-				}
-
-				pairs.add(MultiCell.split(processing, adapter, processingLayer, transmission.valueAt(i.get())));
+				temporals.add(MultiCell.split(processing, adapters.apply(i.get()), processingLayer, transmission.valueAt(i.get())));
 			}
 		}
 	}
@@ -140,11 +133,6 @@ public class SimpleOrgan<T> implements Organ<T> {
 	}
 
 	@Override
-	public Supplier<Runnable> tick() {
-		return this.temporals.tick();
-	}
-
-	@Override
 	public Supplier<Runnable> push(Producer<T> protein) {
 		if (inputLayer == null) {
 			OperationList push = new OperationList();
@@ -155,6 +143,11 @@ public class SimpleOrgan<T> implements Organ<T> {
 		OperationList push = new OperationList();
 		inputLayer.stream().map(c -> c.push(protein)).forEach(push::add);
 		return push;
+	}
+
+	@Override
+	public Supplier<Runnable> tick() {
+		return this.temporals.tick();
 	}
 
 	@Override
