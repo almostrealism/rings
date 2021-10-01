@@ -19,7 +19,7 @@ package com.almostrealism.audio.optimize;
 import org.almostrealism.audio.OutputLine;
 
 public class LayeredOrganGenome extends SimpleOrganGenome {
-	private static final int ADJUSTMENT = 4;
+	public static final int ADJUSTMENT = 4;
 
 	public LayeredOrganGenome(int cells) {
 		this(cells, OutputLine.sampleRate);

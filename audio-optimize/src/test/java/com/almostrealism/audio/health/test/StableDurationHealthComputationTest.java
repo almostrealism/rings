@@ -77,8 +77,8 @@ public class StableDurationHealthComputationTest extends AdjustableDelayCellTest
 		generators.add(new ArrayListGene<>(0.8, 0.2));
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
-		processors.add(new ArrayListGene<>(1.0, 0.4));
-		processors.add(new ArrayListGene<>(1.0, 0.2));
+		processors.add(new ArrayListGene<>(1.0, 0.35));
+		processors.add(new ArrayListGene<>(1.0, 0.31));
 
 		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 

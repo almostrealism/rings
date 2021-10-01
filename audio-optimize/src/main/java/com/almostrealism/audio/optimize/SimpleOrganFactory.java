@@ -44,9 +44,6 @@ import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Ops;
 
 public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>, CodeFeatures {
-	public static final int minDelay = 40;
-	public static final int maxDelay = 8000;
-
 	public static final int minNoteLength = 40;
 	public static final int maxNoteLength = 800;
 	
@@ -116,6 +113,6 @@ public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>
 					choices.stream()
 							.map(c ->
 									(Function<PolymorphicAudioData, ? extends AudioCellAdapter>) data -> (AudioCellAdapter) c.generateCell(g, data))
-							.collect(Collectors.toList())), new DelayCellFactory(minDelay, maxDelay, 1), dataSupplier);
+							.collect(Collectors.toList())), new DelayCellFactory(1), dataSupplier);
 	}
 }

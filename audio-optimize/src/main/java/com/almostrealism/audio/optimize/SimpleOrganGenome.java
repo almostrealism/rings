@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.breeding.AssignableGenome;
@@ -31,10 +32,10 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	private static double defaultResonance = 0.1; // TODO
 	private static double maxFrequency = 20000;
 
-	private static final int GENERATORS = 0;
-	private static final int PROCESSORS = 1;
-	private static final int TRANSMISSION = 2;
-	private static final int FILTERS = 3;
+	public static final int GENERATORS = 0;
+	public static final int PROCESSORS = 1;
+	public static final int TRANSMISSION = 2;
+	public static final int FILTERS = 3;
 
 	private AssignableGenome data;
 	private int cells, length;
@@ -74,10 +75,51 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 
 	@Override
 	public Chromosome<?> valueAt(int pos) {
-		if (pos == FILTERS) {
+		if (pos == PROCESSORS) {
+			return new DelayChromosome(pos);
+		} else if (pos == FILTERS) {
 			return new FilterChromosome(pos);
 		} else {
 			return data.valueAt(pos);
+		}
+	}
+
+	protected class DelayChromosome implements Chromosome<Scalar> {
+		private final int index;
+
+		public DelayChromosome(int index) {
+			this.index = index;
+		}
+
+		@Override
+		public int length() {
+			return data.length(index);
+		}
+
+		@Override
+		public Gene<Scalar> valueAt(int pos) {
+			return new DelayGene(index, pos);
+		}
+	}
+
+	protected class DelayGene implements Gene<Scalar> {
+		private final int chromosome;
+		private final int index;
+
+		public DelayGene(int chromosome, int index) {
+			this.chromosome = chromosome;
+			this.index = index;
+		}
+
+		@Override
+		public int length() { return 1; }
+
+		@Override
+		public Factor<Scalar> valueAt(int pos) {
+			return protein -> {
+				ScalarProducer cube = pow(() -> args -> data.get(chromosome, index, pos), v(3));
+				return cube.minus().add(1.0).pow(-1.0).subtract(1.0).multiply(protein);
+			};
 		}
 	}
 
