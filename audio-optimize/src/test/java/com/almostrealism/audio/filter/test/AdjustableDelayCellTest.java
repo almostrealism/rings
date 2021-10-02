@@ -39,7 +39,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 
 	@BeforeClass
 	public static void init() {
-		AcceleratedTimeSeries.defaultCacheLevel = MemoryBankAdapter.CacheLevel.ALL;
+		// AcceleratedTimeSeries.defaultCacheLevel = MemoryBankAdapter.CacheLevel.ALL;
 	}
 
 	@AfterClass

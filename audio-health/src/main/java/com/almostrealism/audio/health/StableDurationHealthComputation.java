@@ -18,6 +18,7 @@ package com.almostrealism.audio.health;
 
 import io.almostrealism.code.OperationAdapter;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
@@ -39,7 +40,7 @@ import java.util.function.Consumer;
  * 
  * @author  Michael Murray
  */
-public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CodeFeatures {
+public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableLoop = true;
 
 	private long max = standardDuration;
@@ -77,39 +78,21 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 //		AverageAmplitude avg = new AverageAmplitude();
 //		meter.addListener(avg);
 
-		Runnable iterate = null;
+		OrganRunner runner = null;
+		Runnable start;
+		Runnable iterate;
 
 		try {
-			organ.setup().get().run();
-
-			Runnable push = null;
-			Runnable tick = null;
-
-			if (iter > 1) {
-				OperationList iterateList = new OperationList();
-				iterateList.add(organ.push(v(0.0)));
-				iterateList.add(organ.tick());
-
-				iterate = iter > 1 ? new Loop(iterateList, iter).get() : iterateList.get();
-
-				if (enableVerbose)
-					System.out.println(((AcceleratedComputationOperation) iterate).getFunctionDefinition());
-			} else {
-				push = organ.push(v(0.0)).get();
-				tick = organ.tick().get();
-			}
+			runner = new OrganRunner(organ, iter);
+			start = runner.get();
+			iterate = runner.getContinue();
 
 			long l;
 
 			l:
 			for (l = 0; l < max; l = l + iter) {
 				try {
-					if (iterate != null) {
-						iterate.run();
-					} else {
-						push.run();
-						tick.run();
-					}
+					(l == 0 ? start : iterate).run();
 				} catch (HardwareException e) {
 					System.out.println(e.getProgram());
 					throw e;
@@ -150,9 +133,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			((WaveOutput) getMeter().getForwarding()).write().get().run();
 			((WaveOutput) getMeter().getForwarding()).reset();
 			getMeter().reset();
-			if (iterate instanceof OperationAdapter) {
-				((OperationAdapter) iterate).destroy();
-			}
+			runner.destroy();
 
 			ProducerCache.destroyEvaluableCache();
 		}

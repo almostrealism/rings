@@ -21,6 +21,7 @@ import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.SimpleOrganFactory;
 import com.almostrealism.audio.optimize.SimpleOrganGenome;
+import com.almostrealism.audio.optimize.test.SimpleOrganFactoryTest;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.Scale;
 import com.almostrealism.tone.WesternChromatic;
@@ -46,9 +47,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
-public class StableDurationHealthComputationTest extends AdjustableDelayCellTest {
-	public static final boolean enableDelay = true;
-	public static final boolean enableFilter = true;
+public class StableDurationHealthComputationTest extends SimpleOrganFactoryTest {
 
 	@BeforeClass
 	public static void init() {
@@ -58,58 +57,6 @@ public class StableDurationHealthComputationTest extends AdjustableDelayCellTest
 	@AfterClass
 	public static void shutdown() {
 		StableDurationHealthComputation.enableVerbose = false;
-	}
-
-	protected DefaultDesirablesProvider notes() {
-		Scale<WesternChromatic> scale = Scale.of(WesternChromatic.G4, WesternChromatic.A3);
-		return new DefaultDesirablesProvider<>(120, scale);
-	}
-
-	protected DefaultDesirablesProvider samples() {
-		DefaultDesirablesProvider desirables = new DefaultDesirablesProvider(120);
-		desirables.getSamples().add(new File("src/test/resources/Snare Perc DD.wav"));
-		return desirables;
-	}
-
-	protected SimpleOrgan<Scalar> organ(DesirablesProvider desirables) {
-		ArrayListChromosome<Double> generators = new ArrayListChromosome();
-		generators.add(new ArrayListGene<>(0.4, 0.6));
-		generators.add(new ArrayListGene<>(0.8, 0.2));
-
-		ArrayListChromosome<Double> processors = new ArrayListChromosome();
-		processors.add(new ArrayListGene<>(1.0, 0.35));
-		processors.add(new ArrayListGene<>(1.0, 0.31));
-
-		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
-
-		if (enableDelay) {
-			transmission.add(new ArrayListGene<>(0.0, 0.4));
-			transmission.add(new ArrayListGene<>(0.4, 0.0));
-		} else {
-			transmission.add(new ArrayListGene<>(0.0, 0.0));
-			transmission.add(new ArrayListGene<>(0.0, 0.0));
-		}
-
-		ArrayListChromosome<Double> filters = new ArrayListChromosome();
-
-		if (enableFilter) {
-			filters.add(new ArrayListGene<>(0.15, 1.0));
-			filters.add(new ArrayListGene<>(0.15, 1.0));
-		} else {
-			filters.add(new ArrayListGene<>(0.0, 1.0));
-			filters.add(new ArrayListGene<>(0.0, 1.0));
-		}
-
-		ArrayListGenome genome = new ArrayListGenome();
-		genome.add(generators);
-		genome.add(processors);
-		genome.add(transmission);
-		genome.add(filters);
-
-		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
-		organGenome.assignTo(genome);
-
-		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome);
 	}
 
 	@Test
