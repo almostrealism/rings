@@ -47,6 +47,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private int iter;
 
 	private boolean encounteredSilence;
+
+	private Organ<Scalar> organ;
+	private OrganRunner runner;
 	
 	public StableDurationHealthComputation() {
 		super(6);
@@ -72,18 +75,23 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public double computeHealth(Organ<Scalar> organ) {
 		super.init();
 
+		if (this.organ == null) {
+			this.organ = organ;
+			this.runner = new OrganRunner(organ, iter);
+		} else if (this.organ != organ) {
+			throw new IllegalArgumentException("Health computation cannot be reused");
+		}
+
 		encounteredSilence = false;
 
 //		TODO  Restore average amplitude computation
 //		AverageAmplitude avg = new AverageAmplitude();
 //		meter.addListener(avg);
 
-		OrganRunner runner = null;
 		Runnable start;
 		Runnable iterate;
 
 		try {
-			runner = new OrganRunner(organ, iter);
 			start = runner.get();
 			iterate = runner.getContinue();
 
@@ -133,7 +141,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			((WaveOutput) getMeter().getForwarding()).write().get().run();
 			((WaveOutput) getMeter().getForwarding()).reset();
 			getMeter().reset();
-			runner.destroy();
 
 			ProducerCache.destroyEvaluableCache();
 		}

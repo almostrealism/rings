@@ -24,7 +24,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.ChromosomeBreeder;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
-import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
+import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
@@ -59,8 +59,8 @@ public class SimpleOrganOptimizer extends AudioPopulationOptimizer<SimpleOrgan<S
 		if (args.length > 3) max = Double.parseDouble(args[3]);
 		
 		// Random genetic material generators
-		FloatingPointRandomChromosomeFactory xfactory = new FloatingPointRandomChromosomeFactory();
-		FloatingPointRandomChromosomeFactory yfactory = new FloatingPointRandomChromosomeFactory();
+		RandomChromosomeFactory xfactory = new RandomChromosomeFactory();
+		RandomChromosomeFactory yfactory = new RandomChromosomeFactory();
 		xfactory.setChromosomeSize(dim, 2);
 		yfactory.setChromosomeSize(dim, dim);
 		

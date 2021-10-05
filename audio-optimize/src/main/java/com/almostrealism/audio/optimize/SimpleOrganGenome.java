@@ -84,6 +84,14 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 		}
 	}
 
+	public static double factorForDelay(double seconds) {
+		return Math.pow(1 - (1 / ((seconds / 60) + 1)), 1.0 / 3);
+	}
+
+	public static double factorForFilterFrequency(double hertz) {
+		return hertz / 20000;
+	}
+
 	protected class DelayChromosome implements Chromosome<Scalar> {
 		private final int index;
 

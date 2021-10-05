@@ -74,18 +74,30 @@ public class AudioPopulationOptimizer<O extends Organ<Scalar>> extends Populatio
 			((StableDurationHealthComputation) getHealthComputation()).setDebugOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
 
+		List<Genome> genomes;
+
 		if (new File(file).exists()) {
-			setPopulation(getChildrenFunction().apply(read(new FileInputStream(file))));
+			genomes = read(new FileInputStream(file));
 			PopulationOptimizer.console.println("Read chromosome data from " + file);
 		} else {
-			List<Genome> genomes = Optional.ofNullable(getGenerator())
+			genomes = Optional.ofNullable(getGenerator())
 					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
 						.mapToObj(i -> gen.get()).collect(Collectors.toList()))
 					.orElseGet(ArrayList::new);
-			setPopulation(getChildrenFunction().apply(genomes));
 			PopulationOptimizer.console.println("Generated initial population");
 		}
 
+		init(genomes);
+	}
+
+	public void init(List<Genome> genomes) {
+		if (enableWavOutput) {
+			AtomicInteger count = new AtomicInteger();
+			((StableDurationHealthComputation) getHealthComputation()).setDebugOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
+		}
+
+		setPopulation(getChildrenFunction().apply(genomes));
+		PopulationOptimizer.console.println("Loaded genomes");
 		PopulationOptimizer.console.println(getPopulation().size() + " organs in population");
 	}
 
@@ -109,8 +121,10 @@ public class AudioPopulationOptimizer<O extends Organ<Scalar>> extends Populatio
 	}
 
 	private void store(OutputStream s) {
-		List<Genome> genomes = getPopulation().getGenomes();
+		store(getPopulation().getGenomes(), s);
+	}
 
+	public static void store(List<Genome> genomes, OutputStream s) {
 		try (XMLEncoder enc = new XMLEncoder(s)) {
 			for (int i = 0; i < genomes.size(); i++) {
 				enc.writeObject(genomes.get(i));
@@ -120,7 +134,7 @@ public class AudioPopulationOptimizer<O extends Organ<Scalar>> extends Populatio
 		}
 	}
 
-	private List<Genome> read(InputStream in) {
+	public static List<Genome> read(InputStream in) {
 		List<Genome> genomes = new ArrayList<>();
 
 		try (XMLDecoder dec = new XMLDecoder(in)) {

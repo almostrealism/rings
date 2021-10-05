@@ -26,7 +26,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.FloatingPointRandomChromosomeFactory;
+import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.ProbabilisticFactory;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -48,7 +48,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 	private ProbabilisticFactory<ShadableSurface> surfaces;
 	
 	public SceneFactory() {
-		this(new FloatingPointRandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
+		this(new RandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
 	}
 	
 	public SceneFactory(Chromosome<Scalar> c) {
