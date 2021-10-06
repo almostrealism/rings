@@ -28,6 +28,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 
 public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
+	public static final boolean enableAdjustment = false;
+
 	private String name;
 
 	private final Organ<O> adjustable;
@@ -61,21 +63,6 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 	public void setName(String name) { this.name = name; }
 
 	@Override
-	public Supplier<Runnable> setup() {
-		Runnable r = adjustable.setup().get();
-		Runnable a = adjust.setup().get();
-		return () -> () -> { r.run(); a.run(); };
-	}
-
-	@Override
-	public Supplier<Runnable> tick() {
-		OperationList tick = new OperationList();
-		tick.add(adjust.tick());
-		tick.add(adjustable.tick());
-		return tick;
-	}
-
-	@Override
 	public Cell<O> getCell(int index) { return adjustable.getCell(index); }
 
 	@Override
@@ -107,11 +94,26 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 	}
 
 	@Override
+	public Supplier<Runnable> setup() {
+		Runnable r = adjustable.setup().get();
+		Runnable a = adjust.setup().get();
+		return () -> () -> { r.run(); a.run(); };
+	}
+
+	@Override
 	public Supplier<Runnable> push(Producer<O> protein) {
 		OperationList push = new OperationList();
-		push.add(adjust.push(null));
+		if (enableAdjustment) push.add(adjust.push(null));
 		push.add(adjustable.push(protein));
 		return push;
+	}
+
+	@Override
+	public Supplier<Runnable> tick() {
+		OperationList tick = new OperationList();
+		if (enableAdjustment) tick.add(adjust.tick());
+		tick.add(adjustable.tick());
+		return tick;
 	}
 
 	@Override

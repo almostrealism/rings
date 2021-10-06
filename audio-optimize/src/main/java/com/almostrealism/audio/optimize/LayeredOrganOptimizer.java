@@ -134,8 +134,9 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 * @see  LayeredOrganOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
-		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116, WesternScales.major(WesternChromatic.G3, 1));
-		provider.getSamples().add(new File("audio-health/src/main/resources/health-test-in.wav"));
+//		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116, WesternScales.major(WesternChromatic.G3, 1));
+		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
+		provider.getSamples().add(new File("Library/Snare Perc DD.wav"));
 
 		LayeredOrganOptimizer opt = build(provider, 25);
 		opt.init();

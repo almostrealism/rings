@@ -50,7 +50,7 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 	public static final double delayParam = 0.35;
 	public static final double delay = 60 * ((1 / (1 - Math.pow(delayParam, 3))) - 1);
 
-	public static final double feedbackParam = 0.3;
+	public static final double feedbackParam = 0.1;
 
 	public static final String sampleFile = "src/test/resources/Snare Perc DD.wav";
 
