@@ -44,7 +44,6 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar>> {
-	private HealthComputation<Scalar> health;
 
 	public LayeredOrganOptimizer(AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> f,
 								 GenomeBreeder breeder, Supplier<Genome> generator,
@@ -52,7 +51,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(children, cellCount, sampleRate);
+					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, cellCount, sampleRate);
 					pop.init(f, pop.getGenomes().get(0), ((AudioHealthComputation) getHealthComputation()).getMonitor());
 					return pop;
 				});
@@ -77,13 +76,11 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
 								SimpleOrganGenome.factorForDelay(config.maxDelay));
 		IntStream.range(0, dim).forEach(i -> processors.setRange(i, 1, delayRange));
-		System.out.println("LayeredOrganOptimizer: delay - " + delayRange);
 
 		transmission.setChromosomeSize(dim, dim);    // ROUTING
 		Pair transmissionRange = new Pair(config.minTransmission, config.maxTransmission);
 		IntStream.range(0, dim).forEach(i -> IntStream.range(0, dim)
 				.forEach(j -> transmission.setRange(i, j, transmissionRange)));
-		System.out.println("LayeredOrganOptimizer: transmission - " + transmissionRange);
 
 		filters.setChromosomeSize(dim, 2);    // FILTERS
 		Pair hpRange = new Pair(SimpleOrganGenome.factorForFilterFrequency(config.minHighPass),
@@ -94,7 +91,6 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			filters.setRange(i, 0, hpRange);
 			filters.setRange(i, 1, lpRange);
 		});
-		System.out.println("LayeredOrganOptimizer: filters - " + hpRange + " " + lpRange);
 
 		afactory.setChromosomeSize(dim, 3);   // PERIODIC
 		bfactory.setChromosomeSize(dim, 2);   // EXPONENTIAL
@@ -103,7 +99,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 3, cycles);
+		return build(desirables, 4, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {

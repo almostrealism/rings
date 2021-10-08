@@ -135,7 +135,8 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 
 		console.println("Generating new population with " + genomes.size() + " children");
 
-		this.population = children.apply(genomes);
+		this.population.getGenomes().clear();
+		this.population.getGenomes().addAll(genomes);
 
 		if (generator != null && add > 0) {
 			console.println("Adding an additional " + add + " members");
@@ -231,87 +232,4 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 		if (decimalString.length() < 2) decimalString = "0" + decimalString;
 		return cents + "." + decimalString + "%";
 	}
-
-	/*
-	public static void main(String args[]) throws FileNotFoundException {
-		if (args.length > 0 && args[0].equals("help")) {
-			console.println("Usage:");
-			console.println("SimpleOrganOptimizer [total iterations] [population size] [minimum cell feedback] [maximum cell feedback]");
-		}
-
-		int tot = 1000;
-		int dim = 4;
-
-		double min = defaultMinFeedback;
-		double max = defaultMaxFeedback;
-
-		if (args.length > 0) tot = Integer.parseInt(args[0]);
-		if (args.length > 1) { popSize = Integer.parseInt(args[1]); maxPop = popSize; }
-		if (args.length > 2) min = Double.parseDouble(args[2]);
-		if (args.length > 3) max = Double.parseDouble(args[3]);
-
-		// Audio protein
-		AudioProteinCache.addWait = 0;
-		AudioProteinCache cache = new AudioProteinCache();
-
-		// Random genetic material generators
-		FloatingPointRandomChromosomeFactory xfactory = new FloatingPointRandomChromosomeFactory();
-		DefaultRandomChromosomeFactory yfactory = new DefaultRandomChromosomeFactory(min, max);
-		xfactory.setChromosomeSize(dim, dim);
-		yfactory.setChromosomeSize(dim, dim);
-
-		// Population of organs
-		SimpleOrganPopulationGenerator<Long> generator = new SimpleOrganPopulationGenerator<Long>(xfactory, yfactory);
-		SimpleOrganPopulation<Long> pop;
-
-		if (new File("Population.xml").exists()) {
-			pop = new SimpleOrganPopulation<>();
-			pop.read(new FileInputStream("Population.xml"));
-			console.println("Read chromosome data from Population.xml");
-		} else {
-			pop = generator.generatePopulation(popSize, 1.0, 1.0);
-			console.println("Generated initial population");
-		}
-
-		pop.init(SimpleOrganFactory.defaultFactory);
-		pop.setProteinCache(cache);
-
-		console.println(pop.size() + " organs in population");
-
-		// Health calculation algorithm
-		AverageHealthComputationSet<Long> health = new AverageHealthComputationSet<>();
-		health.add(new StableDurationHealthComputation(cache));
-
-		if (enableSilenceDurationHealthComputation)
-			health.add(new SilenceDurationHealthComputation(cache, 3));
-
-		// Create and run the optimizer
-		SimpleOrganOptimizer<Long> opt = new SimpleOrganOptimizer<Long>(cache, pop, SimpleOrganFactory.defaultFactory, health,
-														Breeders.randomChoiceBreeder(), Breeders.randomChoiceBreeder());
-		opt.setGenerator(generator);
-
-		if (enableWavOutput) {
-			health.addListener((hc, o) -> {
-				if (hc instanceof StableDurationHealthComputation) {
-					((StableDurationHealthComputation) hc)
-							.setDebugOutputFile("health/Organ-" + opt.getPopulation().indexOf((SimpleOrgan) o) + ".wav");
-				}
-			});
-		}
-
-		for (int i = 0; i < tot; i++) {
-			opt.iterate();
-
-			if (i != 0 && i % 10 == 0) {
-				opt.getPopulation().store(new FileOutputStream("Population.xml"));
-				console.println("Wrote Population.xml");
-			}
-
-			System.gc();
-		}
-
-		opt.getPopulation().store(new FileOutputStream("Population.xml"));
-		console.println("Wrote Population.xml");
-	}
-	 */
 }

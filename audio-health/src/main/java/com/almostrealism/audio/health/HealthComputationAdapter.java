@@ -33,7 +33,6 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.optimize.HealthComputation;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation {
-	public static boolean enableGenerator = false;
 	public static int standardDuration = (int) (60 * OutputLine.sampleRate);
 
 	private AudioMeter meter;

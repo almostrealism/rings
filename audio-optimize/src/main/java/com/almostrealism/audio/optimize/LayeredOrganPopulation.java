@@ -16,16 +16,10 @@
 
 package com.almostrealism.audio.optimize;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.AudioMeter;
-import org.almostrealism.breeding.AssignableGenome;
-import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.OrganFactory;
@@ -37,6 +31,10 @@ public class LayeredOrganPopulation<G, O, A, R> implements Population<O, Adjustm
 	private final LayeredOrganGenome genome;
 	private Genome currentGenome;
 	private AdjustmentLayerOrganSystem<G, O, A, R> organ;
+
+	public LayeredOrganPopulation(List<Genome> population, int cellCount) {
+		this(population, cellCount, OutputLine.sampleRate);
+	}
 
 	public LayeredOrganPopulation(List<Genome> population, int cellCount, int sampleRate) {
 		this.pop = population;

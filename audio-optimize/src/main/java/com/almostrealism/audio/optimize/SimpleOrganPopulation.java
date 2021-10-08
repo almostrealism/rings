@@ -68,6 +68,7 @@ public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 			throw new IllegalStateException();
 		}
 
+		// TODO  This won't work - a simple organ genome must be used
 		currentOrgan = factory.generateOrgan(getGenomes().get(index));
 		return currentOrgan;
 	}

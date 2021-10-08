@@ -29,6 +29,7 @@ import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
+import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.SimpleOrgan;
@@ -43,7 +44,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTes
 		return new AdjustmentLayerOrganSystemFactory(tca, SimpleOrganFactory.getDefault(desirables));
 	}
 
-	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables) {
+	protected Genome layeredOrganGenome() {
 		ArrayListChromosome<Double> generators = new ArrayListChromosome();
 		generators.add(new ArrayListGene<>(0.4, 0.6));
 		generators.add(new ArrayListGene<>(0.8, 0.2));
@@ -79,14 +80,19 @@ public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTes
 		genome.add(filters);
 		genome.add(c(g(0.0, 0.0, 0.0), g(0.0, 0.0, 0.0)));
 
-		LayeredOrganGenome organGenome = new LayeredOrganGenome(2);
-		organGenome.assignTo(genome);
+		return genome;
+	}
 
+	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables) {
+		LayeredOrganGenome organGenome = new LayeredOrganGenome(2);
+		organGenome.assignTo(layeredOrganGenome());
 		return factory(desirables).generateOrgan(organGenome);
 	}
 
-	public AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> randomOrgan(DesirablesProvider desirables) {
-		return factory(desirables).generateOrgan(LayeredOrganOptimizer.generator(2).get());
+	public AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables) {
+		LayeredOrganGenome g = new LayeredOrganGenome(2);
+		g.assignTo(LayeredOrganOptimizer.generator(2).get());
+		return factory(desirables).generateOrgan(g);
 	}
 
 	@Test
@@ -126,7 +132,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTes
 	@Test
 	public void layeredRandom() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-factory-rand-test.wav")).get(0);
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomOrgan(samples());
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples());
 		organ.setMonitor(out);
 		organ.reset();
 

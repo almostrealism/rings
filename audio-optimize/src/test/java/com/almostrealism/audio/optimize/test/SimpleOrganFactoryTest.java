@@ -19,6 +19,7 @@ package com.almostrealism.audio.optimize.test;
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
 import com.almostrealism.audio.health.OrganRunner;
+import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.SimpleOrganFactory;
 import com.almostrealism.audio.optimize.SimpleOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
@@ -35,6 +36,8 @@ import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
+import org.almostrealism.heredity.Genome;
+import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.time.Temporal;
 import org.junit.Test;
@@ -106,6 +109,26 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome);
 	}
 
+	public SimpleOrgan<Scalar> randomOrgan(DesirablesProvider desirables) {
+		LayeredOrganOptimizer.GeneratorConfiguration conf = new LayeredOrganOptimizer.GeneratorConfiguration();
+		conf.minDelay = delay;
+		conf.maxDelay = delay;
+		conf.minTransmission = feedbackParam;
+		conf.maxTransmission = feedbackParam;
+		conf.minHighPass = 0;
+		conf.maxHighPass = 0;
+		conf.minLowPass = 20000;
+		conf.maxLowPass = 20000;
+
+		Genome g = LayeredOrganOptimizer.generator(2, conf).get();
+		System.out.println(g);
+
+		SimpleOrganGenome sog = new SimpleOrganGenome(2);
+		sog.assignTo(g);
+
+		return SimpleOrganFactory.getDefault(desirables).generateOrgan(sog);
+	}
+
 	@Test
 	public void comparison() throws IOException {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-test-a.wav")).get(0);
@@ -125,6 +148,18 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		organRun.run();
 		listRun.run();
 
+		((WaveOutput) out.getReceptor()).write().get().run();
+	}
+
+	@Test
+	public void random() {
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-rand-test.wav")).get(0);
+		SimpleOrgan<Scalar> organ = randomOrgan(samples());
+		organ.setMonitor(out);
+		organ.reset();
+
+		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		organRun.run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}
 }
