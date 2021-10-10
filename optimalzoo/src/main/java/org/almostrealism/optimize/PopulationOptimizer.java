@@ -35,17 +35,18 @@ import org.almostrealism.io.Console;
 import org.almostrealism.organs.Organ;
 
 import org.almostrealism.population.Population;
+import org.almostrealism.util.CodeFeatures;
 
-public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Supplier<Genome>, PopulationOptimizer> {
+public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Supplier<Genome>, PopulationOptimizer>, CodeFeatures {
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
 
 	public static int popSize = 60;
-	public static int maxChildren = 50;
-	public static double secondaryOffspringPotential = 0.0;
-	public static double teriaryOffspringPotential = 0.0;
-	public static double quaternaryOffspringPotential = 0.0;
+	public static int maxChildren = popSize + 5;
+	public static double secondaryOffspringPotential = 0.25;
+	public static double teriaryOffspringPotential = 0.25;
+	public static double quaternaryOffspringPotential = 0.25;
 	public static double lowestHealth = 0.0;
 
 	private Population<T, O> population;
@@ -90,7 +91,7 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 		long start = System.currentTimeMillis();
 
 		// Sort the population
-		SortedSet<Genome> sorted = orderByHealth(population);
+		SortedSet<Genome> sorted = cc(() -> orderByHealth(population));
 
 		// Fresh genetic material
 		List<Genome> genomes = new ArrayList<>();
@@ -141,11 +142,9 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 		if (generator != null && add > 0) {
 			console.println("Adding an additional " + add + " members");
 
-			List<Genome> addGenomes = IntStream.range(0, add)
+			IntStream.range(0, add)
 					.mapToObj(i -> generator.get())
-					.collect(Collectors.toList());
-			Population<T, O> addPop = children.apply(addGenomes);
-			this.population.merge(addPop);
+					.forEach(this.population.getGenomes()::add);
 		}
 
 		long sec = (System.currentTimeMillis() - start) / 1000;
@@ -164,16 +163,25 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 		double highestHealth = 0;
 		double totalHealth = 0;
 
-		console.print("Calculating health.");
-		if (enableVerbose) console.println();
+		console.print("Calculating health");
+		if (enableVerbose) {
+			console.println("...");
+		} else {
+			console.print(".");
+		}
 
 		for (int i = 0; i < pop.size(); i++) {
+			double health = -1;
+
 			try {
-				System.out.println();
-				System.out.println("Enabling genome:");
-				System.out.println(pop.getGenomes().get(i));
+				if (enableVerbose) {
+					console.println();
+					console.println("Enabling genome:");
+					console.println(String.valueOf(pop.getGenomes().get(i)));
+				}
+
 				O o = pop.enableGenome(i);
-				double health = this.health.computeHealth(o);
+				health = this.health.computeHealth(o);
 
 				if (health > highestHealth) highestHealth = health;
 
@@ -185,6 +193,7 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 			}
 
 			if (enableVerbose) {
+				console.println();
 				console.println("Health of Organ " + i + " is " + health);
 			} else {
 				console.print(".");
@@ -196,7 +205,8 @@ public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Sup
 		if (!enableVerbose) console.println();
 
 		console.println("Average health for this round is " +
-				percent(totalHealth / pop.size()) + ", max " + highestHealth);
+				percent(totalHealth / pop.size()) + ", max " +
+				percent(highestHealth));
 		TreeSet<Genome> sorted = new TreeSet<>((g1, g2) -> {
 			double h1 = healthTable.get(g1);
 			double h2 = healthTable.get(g2);

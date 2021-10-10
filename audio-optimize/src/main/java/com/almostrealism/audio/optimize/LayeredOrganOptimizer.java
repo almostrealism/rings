@@ -18,11 +18,14 @@ package com.almostrealism.audio.optimize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
+import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
@@ -30,7 +33,9 @@ import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.WavFile;
 import org.almostrealism.breeding.Breeders;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.RandomChromosomeFactory;
@@ -39,6 +44,7 @@ import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.HealthComputation;
+import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
@@ -58,7 +64,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static GenomeFromChromosomes generator(int dim) {
-		return generator(dim, new GeneratorConfiguration());
+		return generator(dim, new GeneratorConfiguration(dim));
 	}
 
 	public static GenomeFromChromosomes generator(int dim, GeneratorConfiguration config) {
@@ -99,7 +105,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 4, cycles);
+		return build(desirables, 6, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
@@ -112,7 +118,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> factory = new AdjustmentLayerOrganSystemFactory(tca, SimpleOrganFactory.getDefault(desirables));
 
 		DefaultGenomeBreeder breeder = new DefaultGenomeBreeder(
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // GENERATORS
+				Breeders.randomChoiceBreeder(),  // GENERATORS
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
@@ -130,9 +136,18 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 * @see  LayeredOrganOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
-//		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116, WesternScales.major(WesternChromatic.G3, 1));
+		Hardware.enableVerbose = true;
+		PopulationOptimizer.enableVerbose = true;
+
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
-		provider.getSamples().add(new File("Library/Snare Perc DD.wav"));
+
+		Stream.of(new File("Library").listFiles()).map(f -> {
+			try {
+				return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
+			} catch (Exception e) {
+				return null;
+			}
+		}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
 
 		LayeredOrganOptimizer opt = build(provider, 25);
 		opt.init();
@@ -145,10 +160,12 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
 
-		public GeneratorConfiguration() {
+		public GeneratorConfiguration() { this(1); }
+
+		public GeneratorConfiguration(int scale) {
 			minTransmission = 0.0;
-			maxTransmission = 1.0;
-			minDelay = 0.1;
+			maxTransmission = 1.0 / scale;
+			minDelay = 0.5;
 			maxDelay = 120;
 			minHighPass = 0;
 			maxHighPass = 0;
