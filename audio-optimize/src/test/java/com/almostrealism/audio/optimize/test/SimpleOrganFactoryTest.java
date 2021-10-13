@@ -29,8 +29,10 @@ import io.almostrealism.code.Setup;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListChromosome;
@@ -68,10 +70,14 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		return desirables;
 	}
 
-	protected SimpleOrgan<Scalar> organ(DesirablesProvider desirables) {
+	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter) {
 		ArrayListChromosome<Double> generators = new ArrayListChromosome();
 		generators.add(new ArrayListGene<>(0.4, 0.6));
 		generators.add(new ArrayListGene<>(0.8, 0.2));
+
+		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
+		volume.add(g(0.8));
+		volume.add(g(0.8));
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
 		processors.add(new ArrayListGene<>(1.0, delayParam));
@@ -99,6 +105,7 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 
 		ArrayListGenome genome = new ArrayListGenome();
 		genome.add(generators);
+		genome.add(volume);
 		genome.add(processors);
 		genome.add(transmission);
 		genome.add(filters);
@@ -106,10 +113,10 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
 		organGenome.assignTo(genome);
 
-		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome);
+		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome, meter);
 	}
 
-	public SimpleOrgan<Scalar> randomOrgan(DesirablesProvider desirables) {
+	public Cells randomOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
 		LayeredOrganOptimizer.GeneratorConfiguration conf = new LayeredOrganOptimizer.GeneratorConfiguration();
 		conf.minDelay = delay;
 		conf.maxDelay = delay;
@@ -126,14 +133,13 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		SimpleOrganGenome sog = new SimpleOrganGenome(2);
 		sog.assignTo(g);
 
-		return SimpleOrganFactory.getDefault(desirables).generateOrgan(sog);
+		return SimpleOrganFactory.getDefault(desirables).generateOrgan(sog, meter);
 	}
 
 	@Test
 	public void comparison() throws IOException {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-test-a.wav")).get(0);
-		SimpleOrgan<Scalar> organ = organ(samples());
-		organ.setMonitor(out);
+		Cells organ = organ(samples(), out);
 		organ.reset();
 
 		CellList list = w(sampleFile, sampleFile)
@@ -146,16 +152,18 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		Runnable listRun = list.sec(8).get();
 
 		organRun.run();
-		listRun.run();
-
 		((WaveOutput) out.getReceptor()).write().get().run();
+
+		organRun.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+
+		listRun.run();
 	}
 
 	@Test
 	public void random() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-rand-test.wav")).get(0);
-		SimpleOrgan<Scalar> organ = randomOrgan(samples());
-		organ.setMonitor(out);
+		Cells organ = randomOrgan(samples(), out);
 		organ.reset();
 
 		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();

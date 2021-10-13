@@ -23,21 +23,21 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.almostrealism.organs.Organ;
+import org.almostrealism.time.Temporal;
 
 public class AverageHealthComputationSet<T> extends HashSet<HealthComputation<T>> implements HealthComputation<T> {
-	private final List<BiConsumer<HealthComputation<T>, Organ<T>>> listeners;
+	private final List<BiConsumer<HealthComputation<T>, Temporal>> listeners;
 
 	public AverageHealthComputationSet() {
 		listeners = new ArrayList<>();
 	}
 
-	public void addListener(BiConsumer<HealthComputation<T>, Organ<T>> listener) {
+	public void addListener(BiConsumer<HealthComputation<T>, Temporal> listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public double computeHealth(Organ<T> organ) {
+	public double computeHealth(Temporal organ) {
 		double total = 0;
 
 		for (HealthComputation<T> hc : this) {

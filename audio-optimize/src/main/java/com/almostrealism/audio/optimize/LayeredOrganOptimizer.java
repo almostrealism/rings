@@ -70,13 +70,18 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	public static GenomeFromChromosomes generator(int dim, GeneratorConfiguration config) {
 		// Random genetic material generators
 		RandomChromosomeFactory generators = new RandomChromosomeFactory();   // GENERATORS
+		RandomChromosomeFactory volume = new RandomChromosomeFactory();       // VOLUME
 		RandomChromosomeFactory processors = new RandomChromosomeFactory();   // DELAY
 		RandomChromosomeFactory transmission = new RandomChromosomeFactory(); // ROUTING
 		RandomChromosomeFactory filters = new RandomChromosomeFactory();      // FILTERS
 		RandomChromosomeFactory afactory = new RandomChromosomeFactory();     // PERIODIC
 		RandomChromosomeFactory bfactory = new RandomChromosomeFactory();     // EXPONENTIAL
 
-		generators.setChromosomeSize(dim, 2); // GENERATORS
+		generators.setChromosomeSize(dim, 1); // GENERATORS
+
+		volume.setChromosomeSize(dim, 1);     // VOLUME
+		Pair volumeRange = new Pair(config.minVolume, config.maxVolume);
+		IntStream.range(0, dim).forEach(i -> volume.setRange(i, 0, volumeRange));
 
 		processors.setChromosomeSize(dim, 2); // DELAY
 		Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
@@ -101,7 +106,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		afactory.setChromosomeSize(dim, 3);   // PERIODIC
 		bfactory.setChromosomeSize(dim, 2);   // EXPONENTIAL
 
-		return Genome.fromChromosomes(generators, processors, transmission, filters, afactory); //, bfactory);
+		return Genome.fromChromosomes(generators, volume, processors, transmission, filters, afactory); //, bfactory);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
@@ -118,7 +123,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> factory = new AdjustmentLayerOrganSystemFactory(tca, SimpleOrganFactory.getDefault(desirables));
 
 		DefaultGenomeBreeder breeder = new DefaultGenomeBreeder(
-				Breeders.randomChoiceBreeder(),  // GENERATORS
+				Breeders.randomChoiceBreeder(),  								  // GENERATORS
+				Breeders.averageBreeder(),  									  // VOLUME
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
@@ -155,6 +161,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static class GeneratorConfiguration {
+		public double minVolume, maxVolume;
 		public double minTransmission, maxTransmission;
 		public double minDelay, maxDelay;
 		public double minHighPass, maxHighPass;
@@ -163,6 +170,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public GeneratorConfiguration() { this(1); }
 
 		public GeneratorConfiguration(int scale) {
+			minVolume = 0.0;
+			maxVolume = 1.0 / scale;
 			minTransmission = 0.0;
 			maxTransmission = 1.0 / scale;
 			minDelay = 0.5;

@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
-import org.almostrealism.graph.CellPair;
 import org.almostrealism.graph.FilteredCell;
 import org.almostrealism.graph.MultiCell;
 import org.almostrealism.graph.Receptor;
@@ -34,12 +33,12 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
+import org.almostrealism.util.CodeFeatures;
 
-public class SimpleOrgan<T> implements Organ<T> {
-	private String name;
-
+public class SimpleOrgan<T> implements TemporalCellular, CodeFeatures {
 	private List<Cell<T>> inputLayer;
 	private List<Cell<T>> processingLayer;
 	private Chromosome<T> transmission;
@@ -66,12 +65,6 @@ public class SimpleOrgan<T> implements Organ<T> {
 		this.temporals = new TemporalList();
 		createPairs(adapters);
 	}
-
-	@Override
-	public String getName() { return name; }
-
-	@Override
-	public void setName(String name) { this.name = name; }
 
 	private void createPairs(IntFunction<Cell<T>> adapters) {
 		if (transmission == null) {
@@ -107,19 +100,16 @@ public class SimpleOrgan<T> implements Organ<T> {
 	
 	public Gene<T> getGene(int index) { return transmission.valueAt(index); }
 
-	@Override
 	public Cell<T> getCell(int index) { return processingLayer.get(index); }
 	
 	/**
 	 * Returns the total number of {@link Cell}s which make up
 	 * this {@link SimpleOrgan}.
 	 */
-	@Override
 	public int size() { return this.processingLayer.size(); }
 	
 	public List<Cell<T>> getProcessingLayer() { return processingLayer; }
 
-	@Override
 	public void setMonitor(Receptor<T> monitor) {
 		((CellAdapter<T>) processingLayer.get(size() - 1)).setMeter(monitor);
 	}
@@ -132,8 +122,7 @@ public class SimpleOrgan<T> implements Organ<T> {
 		return () -> () -> toSetup.forEach(Runnable::run);
 	}
 
-	@Override
-	public Supplier<Runnable> push(Producer<T> protein) {
+	private Supplier<Runnable> push(Producer<T> protein) {
 		if (inputLayer == null) {
 			OperationList push = new OperationList();
 			processingLayer.stream().map(c -> c.push(protein)).forEach(push::add);
@@ -147,12 +136,15 @@ public class SimpleOrgan<T> implements Organ<T> {
 
 	@Override
 	public Supplier<Runnable> tick() {
-		return this.temporals.tick();
+		OperationList tick = new OperationList();
+		tick.add(push(null));
+		tick.add(temporals.tick());
+		return tick;
 	}
 
 	@Override
 	public void reset() {
-		Organ.super.reset();
+		TemporalCellular.super.reset();
 		if (inputLayer != null) inputLayer.forEach(Cell::reset);
 		processingLayer.forEach(Cell::reset);
 	}

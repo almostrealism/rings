@@ -16,25 +16,10 @@
 
 package org.almostrealism.organs;
 
-import io.almostrealism.relation.Nameable;
-import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.heredity.Genome;
+import org.almostrealism.time.Temporal;
 
-public interface Organ<T> extends Receptor<T>, TemporalCellular, Nameable {
-	Cell<T> getCell(int index);
-	
-	int size();
-
-	default Cell<T> firstCell() {
-		if (size() <= 0) throw new IllegalArgumentException("Empty Organ");
-		return getCell(0);
-	}
-
-	default Cell<T> lastCell() {
-		if (size() <= 0) throw new IllegalArgumentException("Empty Organ");
-		return getCell(size() - 1);
-	}
-
-	void setMonitor(Receptor<T> monitor);
+public interface GeneticTemporalFactory<T, O extends Temporal> {
+	O generateOrgan(Genome genome, Receptor<T> meter);
 }

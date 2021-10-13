@@ -24,20 +24,18 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import io.almostrealism.relation.Generated;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
-import org.almostrealism.organs.OrganFactory;
 import org.almostrealism.io.Console;
-import org.almostrealism.organs.Organ;
 
 import org.almostrealism.population.Population;
+import org.almostrealism.time.Temporal;
 import org.almostrealism.util.CodeFeatures;
 
-public class PopulationOptimizer<T, O extends Organ<T>> implements Generated<Supplier<Genome>, PopulationOptimizer>, CodeFeatures {
+public class PopulationOptimizer<T, O extends Temporal> implements Generated<Supplier<Genome>, PopulationOptimizer>, CodeFeatures {
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;

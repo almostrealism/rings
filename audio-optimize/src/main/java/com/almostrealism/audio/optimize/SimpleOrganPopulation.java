@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.OrganFactory;
+import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.population.Population;
 import io.almostrealism.uml.ModelEntity;
@@ -30,8 +30,10 @@ import io.almostrealism.uml.ModelEntity;
 @ModelEntity
 public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 	private final List<Genome> genomes;
-	private OrganFactory<T, SimpleOrgan<T>> factory;
+	private GeneticTemporalFactory<T, SimpleOrgan<T>> factory;
 	private SimpleOrgan<T> currentOrgan;
+
+	private Receptor<T> measure;
 	
 	public SimpleOrganPopulation() {
 		this(new ArrayList<>());
@@ -50,8 +52,9 @@ public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 	}
 
 	@Override
-	public void init(OrganFactory<T, SimpleOrgan<T>> factory, Genome templateGenome, Receptor<T> measure) {
+	public void init(GeneticTemporalFactory<T, SimpleOrgan<T>> factory, Genome templateGenome, Receptor<T> measure) {
 		this.factory = factory;
+		this.measure = measure;
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 		}
 
 		// TODO  This won't work - a simple organ genome must be used
-		currentOrgan = factory.generateOrgan(getGenomes().get(index));
+		currentOrgan = factory.generateOrgan(getGenomes().get(index), measure);
 		return currentOrgan;
 	}
 

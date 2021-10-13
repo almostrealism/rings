@@ -16,13 +16,15 @@
 
 package org.almostrealism.organs;
 
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.time.Temporal;
 
-public class AdjustmentLayerOrganSystemFactory<G, O, A, R> implements OrganFactory<O, AdjustmentLayerOrganSystem<G, O, A, R>> {
+public class AdjustmentLayerOrganSystemFactory<G, O, A, R> implements GeneticTemporalFactory<O, AdjustmentLayerOrganSystem<G, O, A, R>> {
 	private final TieredCellAdjustmentFactory<G, A> adjustmentFactory;
-	private final OrganFactory<R, Organ> parentLayer;
+	private final GeneticTemporalFactory<R, Temporal> parentLayer;
 
-	public AdjustmentLayerOrganSystemFactory(TieredCellAdjustmentFactory<G, A> adjustmentFactory, OrganFactory simpleFactory) {
+	public AdjustmentLayerOrganSystemFactory(TieredCellAdjustmentFactory<G, A> adjustmentFactory, GeneticTemporalFactory simpleFactory) {
 		this.adjustmentFactory = adjustmentFactory;
 
 		if (adjustmentFactory.getParent() == null) {
@@ -33,8 +35,8 @@ public class AdjustmentLayerOrganSystemFactory<G, O, A, R> implements OrganFacto
 	}
 
 	@Override
-	public AdjustmentLayerOrganSystem<G, O, A, R> generateOrgan(Genome genome) {
-		Organ<R> suborg = parentLayer.generateOrgan(genome.getHeadSubset());
+	public AdjustmentLayerOrganSystem<G, O, A, R> generateOrgan(Genome genome, Receptor<O> meter) {
+		Temporal suborg = parentLayer.generateOrgan(genome.getHeadSubset(), (Receptor) meter); //  TODO Looks like O must equal R?
 		return new AdjustmentLayerOrganSystem(suborg, adjustmentFactory,
 											genome.getLastChromosome(), null);
 	}

@@ -18,18 +18,13 @@ package org.almostrealism.population;
 
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.io.Storable;
-import org.almostrealism.organs.Organ;
-import org.almostrealism.organs.OrganFactory;
+import org.almostrealism.organs.GeneticTemporalFactory;
+import org.almostrealism.time.Temporal;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
-public interface Population<T, O extends Organ<T>> {
-	void init(OrganFactory<T, O> factory, Genome templateGenome, Receptor<T> measure);
+public interface Population<T, O extends Temporal> {
+	void init(GeneticTemporalFactory<T, O> factory, Genome templateGenome, Receptor<T> measure);
 
 	void merge(Population<T, O> pop);
 

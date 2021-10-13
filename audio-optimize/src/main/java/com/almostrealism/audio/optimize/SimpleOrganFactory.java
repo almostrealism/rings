@@ -27,6 +27,9 @@ import java.util.stream.IntStream;
 import com.almostrealism.audio.DesirablesProvider;
 import io.almostrealism.code.ProducerComputation;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.PolymorphicAudioDataBank;
@@ -35,15 +38,20 @@ import org.almostrealism.audio.filter.DelayCellFactory;
 import org.almostrealism.audio.sources.SineWaveCellFactory;
 import org.almostrealism.audio.sources.WavCellFactory;
 import org.almostrealism.graph.Cell;
+import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.CellFactory;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Factor;
+import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.OrganFactory;
+import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.Ops;
 
-public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>, CodeFeatures {
+// TODO  I suspect uses of this class can just be replaced with a lambda that implements GeneticTemporalFactory::generateOrgan directly
+public class SimpleOrganFactory<T, C> implements GeneticTemporalFactory<T, Cells>, CellFeatures {
 	public static final int minNoteLength = 40;
 	public static final int maxNoteLength = 800;
 	
@@ -62,22 +70,28 @@ public class SimpleOrganFactory<T, C> implements OrganFactory<T, SimpleOrgan<T>>
 	}
 
 	@Override
-	public SimpleOrgan<T> generateOrgan(Genome genome) {
+	public Cells generateOrgan(Genome genome, Receptor<T> meter) {
 		return generateOrgan((Chromosome<Double>) genome.valueAt(0),
-				(Chromosome<Double>) genome.valueAt(1),
-				(Chromosome<T>) genome.valueAt(2),
-				(Chromosome<T>) genome.valueAt(3));
+				(Chromosome<T>) genome.valueAt(1),
+				(Chromosome<Double>) genome.valueAt(2),
+				(Chromosome<T>) genome.valueAt(3),
+				(Chromosome<T>) genome.valueAt(4), meter);
 	}
 
-	public SimpleOrgan<T> generateOrgan(Chromosome<Double> generators, Chromosome<Double> processors,
-										Chromosome<T> transmission, Chromosome<T> filters) {
-		List<Cell<T>> generatorCells = IntStream.range(0, generators.length())
-				.mapToObj(i -> generator.generateCell(generators.valueAt(i), config))
-				.collect(Collectors.toList());
-		List<Cell<T>> processorCells = IntStream.range(0, processors.length())
-				.mapToObj(i -> processor.generateCell(processors.valueAt(i), config))
-				.collect(Collectors.toList());
-		return new SimpleOrgan<>(generatorCells, processorCells, transmission, filters);
+	public Cells generateOrgan(Chromosome<Double> generators, Chromosome<T> volume, Chromosome<Double> processors,
+							   Chromosome<T> transmission, Chromosome<T> filters, Receptor<T> meter) {
+		CellList cells =
+				// Generators
+				cells(generators.length(), i -> (Cell) generator.generateCell(generators.valueAt(i), config))
+				// Volume adjustment
+				.f(i -> (Factor) volume.valueAt(i).valueAt(0))
+				// Processing
+				.map(i -> (Cell) processor.generateCell(processors.valueAt(i), config))
+				// Feedback grid
+				.mself(fc(i -> (Factor) filters.valueAt(i).valueAt(0)), i -> (Gene<Scalar>) transmission.valueAt(i));
+
+		((CellAdapter) cells.get(cells.size() - 1)).setMeter(meter);
+		return cells;
 	}
 
 	public static SimpleOrganFactory<Scalar, DesirablesProvider> getDefault(DesirablesProvider provider) {

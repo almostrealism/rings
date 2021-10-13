@@ -36,6 +36,7 @@ import org.almostrealism.audio.filter.CellAdjustment;
 import org.almostrealism.audio.filter.PeriodicAdjustment;
 import org.almostrealism.graph.AdjustmentCell;
 import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
@@ -43,6 +44,7 @@ import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
+import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.util.CodeFeatures;
@@ -70,7 +72,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		StableDurationHealthComputation.enableVerbose = false;
 	}
 
-	protected AdjustmentLayerOrganSystemFactory<Scalar, Long, Scalar, Long> factory() {
+	protected AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Scalar, Scalar> factory() {
 		TieredCellAdjustmentFactory<Scalar, Scalar> tca =
 				new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
 
@@ -80,7 +82,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		return new AdjustmentLayerOrganSystemFactory<>(tca, SimpleOrganFactory.getDefault(provider));
 	}
 
-	protected AdjustmentLayerOrganSystem organ(boolean adjust) {
+	protected AdjustmentLayerOrganSystem organ(boolean adjust, Receptor<Scalar> meter) {
 		ArrayListChromosome<Scalar> x = new ArrayListChromosome();
 		x.add(new ArrayListGene<>(0.4, 0.6));
 		x.add(new ArrayListGene<>(0.8, 0.2));
@@ -109,21 +111,20 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		genome.add(z);
 		genome.add(a);
 
-		return factory().generateOrgan(genome);
+		return factory().generateOrgan(genome, meter);
 	}
 
 	@Test
 	public void adjustment() {
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = organ(true);
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = organ(true, null);
 
 		Runnable setup = organ.setup().get();
-		Runnable push = organ.push(v(0.0)).get();
 		Runnable tick = organ.tick().get();
 
 		List<Supplier<Evaluable<? extends Pair>>> bounds =
 				IntStream.range(0, 2)
 					.mapToObj(i ->
-						(PeriodicAdjustment) ((AdjustmentCell) organ.getOrgan(1).getCell(i)).getAdjustment())
+						(PeriodicAdjustment) ((AdjustmentCell) ((SimpleOrgan) organ.getOrgan(1)).getCell(i)).getAdjustment())
 					.map(CellAdjustment::getBounds).collect(Collectors.toList());
 
 		PairFromScalars s = (PairFromScalars) bounds.get(0);
@@ -142,7 +143,6 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		IntStream.range(0, 20).forEach(i -> {
 			setup.run();
 			assertEquals(1.0, r.get().evaluate());
-			push.run();
 			tick.run();
 		});
 
@@ -155,7 +155,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/periodic-test-noadjust.wav");
 
-		AdjustmentLayerOrganSystem organ = organ(false);
+		AdjustmentLayerOrganSystem organ = organ(false, health.getMonitor());
 		organ.setMonitor(health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);
@@ -167,7 +167,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/periodic-test-adjust.wav");
 
-		AdjustmentLayerOrganSystem organ = organ(true);
+		AdjustmentLayerOrganSystem organ = organ(true, health.getMonitor());
 		organ.setMonitor(health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);

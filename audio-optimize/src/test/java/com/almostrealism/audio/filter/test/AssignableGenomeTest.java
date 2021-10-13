@@ -26,6 +26,7 @@ import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.breeding.AssignableGenome;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
@@ -55,7 +56,7 @@ public class AssignableGenomeTest {
 		StableDurationHealthComputation.enableVerbose = false;
 	}
 
-	protected AdjustmentLayerOrganSystemFactory<Scalar, Long, Scalar, Long> factory() {
+	protected AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Scalar, Scalar> factory() {
 		TieredCellAdjustmentFactory<Scalar, Scalar> tca =
 				new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
 
@@ -121,9 +122,9 @@ public class AssignableGenomeTest {
 		return genome;
 	}
 
-	protected AdjustmentLayerOrganSystem organ(AssignableGenome genome) {
+	protected AdjustmentLayerOrganSystem organ(AssignableGenome genome, Receptor<Scalar> meter) {
 		genome.assignTo(genome(0.0, 0.0, 0.0, 0.0, false));
-		return factory().generateOrgan(genome);
+		return factory().generateOrgan(genome, meter);
 	}
 
 	@Test
@@ -132,8 +133,7 @@ public class AssignableGenomeTest {
 		health.setMaxDuration(8);
 
 		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome);
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
 
 		genome.assignTo(genome1());
 		health.setDebugOutputFile("health/genome1.wav");
@@ -147,8 +147,7 @@ public class AssignableGenomeTest {
 		health.setMaxDuration(8);
 
 		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome);
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
 
 		genome.assignTo(genome(0.4, 0.6, 0.8, 0.2, false));
 		health.setDebugOutputFile("health/assignable-genome-test-noadjust-1.wav");
@@ -167,8 +166,7 @@ public class AssignableGenomeTest {
 		health.setMaxDuration(8);
 
 		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome);
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
 
 		genome.assignTo(genome(0.4, 0.6, 0.8, 0.2, true));
 		health.setDebugOutputFile("health/assignable-genome-test-adjust-1.wav");

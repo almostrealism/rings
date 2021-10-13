@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.almostrealism.optimize;
 
 import io.almostrealism.uml.Lifecycle;
-import org.almostrealism.organs.Organ;
+import org.almostrealism.time.Temporal;
 
 public interface HealthComputation<T> extends Lifecycle {
-	double computeHealth(Organ<T> organ);
+	double computeHealth(Temporal organ);
 }

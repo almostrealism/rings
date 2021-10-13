@@ -20,8 +20,8 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.AudioMeter;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.CellAdapter;
-import org.almostrealism.organs.Organ;
 import org.almostrealism.organs.SimpleOrgan;
+import org.almostrealism.time.Temporal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,16 +74,16 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	}
 
 	@Override
-	public double computeHealth(Organ<Scalar> organ) {
+	public double computeHealth(Temporal organ) {
 		super.init();
 		
 		long l;
 
-		Runnable push = organ.push(null).get();
+		// Runnable push = organ.push(null).get();
 		Runnable tick = organ.tick().get();
 		
 		l: for (l = 0; l < max; l++) {
-			push.run();
+			// push.run();
 			
 			// If silence occurs for too long, report the health score
 			if (checkForSilence(getMeter())) {

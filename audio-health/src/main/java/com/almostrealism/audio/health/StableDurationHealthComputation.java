@@ -17,6 +17,7 @@
 package com.almostrealism.audio.health;
 
 import io.almostrealism.code.OperationAdapter;
+import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
@@ -26,7 +27,7 @@ import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.ProducerCache;
 import org.almostrealism.hardware.computations.Loop;
-import org.almostrealism.organs.Organ;
+import org.almostrealism.time.Temporal;
 import org.almostrealism.util.CodeFeatures;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.function.Consumer;
 
 /**
  * The {@link StableDurationHealthComputation} is a {@link HealthComputationAdapter} which
- * computes a health score based on the duration that an {@link Organ} can be used before
+ * computes a health score based on the duration that a {@link Temporal} can be used before
  * a min or max clip value is reached.
  * 
  * @author  Michael Murray
@@ -48,7 +49,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	private boolean encounteredSilence;
 
-	private Organ<Scalar> organ;
+	private Temporal organ;
 	private OrganRunner runner;
 	
 	public StableDurationHealthComputation() {
@@ -72,7 +73,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 	@Override
-	public double computeHealth(Organ<Scalar> organ) {
+	public double computeHealth(Temporal organ) {
 		super.init();
 
 		if (this.organ == null) {
@@ -141,6 +142,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			((WaveOutput) getMeter().getForwarding()).write().get().run();
 			((WaveOutput) getMeter().getForwarding()).reset();
 			getMeter().reset();
+			((Lifecycle) organ).reset();
 
 			ProducerCache.destroyEvaluableCache();
 		}

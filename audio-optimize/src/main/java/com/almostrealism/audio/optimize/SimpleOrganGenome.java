@@ -33,9 +33,10 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	private static double maxFrequency = 20000;
 
 	public static final int GENERATORS = 0;
-	public static final int PROCESSORS = 1;
-	public static final int TRANSMISSION = 2;
-	public static final int FILTERS = 3;
+	public static final int VOLUME = 1;
+	public static final int PROCESSORS = 2;
+	public static final int TRANSMISSION = 3;
+	public static final int FILTERS = 4;
 
 	private AssignableGenome data;
 	private int cells, length;

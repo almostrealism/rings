@@ -22,8 +22,8 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.optimize.PopulationOptimizer;
-import org.almostrealism.organs.Organ;
 import org.almostrealism.population.Population;
+import org.almostrealism.time.Temporal;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class AudioPopulationOptimizer<O extends Organ<Scalar>> extends PopulationOptimizer<Scalar, O> implements Runnable {
+public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<Scalar, O> implements Runnable {
 	public static final boolean enableWavOutput = true;
 
 	private final String file;

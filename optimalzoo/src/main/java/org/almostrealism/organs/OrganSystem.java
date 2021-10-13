@@ -17,12 +17,16 @@
 package org.almostrealism.organs;
 
 
-public interface OrganSystem<T> extends Organ<T> {
-	Organ<T> getOrgan(int index);
+import io.almostrealism.code.Setup;
+import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.time.Temporal;
+
+public interface OrganSystem<T> extends TemporalCellular {
+	Temporal getOrgan(int index);
 
 	int getDepth();
 
-	default Organ<T> last() {
+	default Temporal last() {
 		return getOrgan(getDepth());
 	}
 }

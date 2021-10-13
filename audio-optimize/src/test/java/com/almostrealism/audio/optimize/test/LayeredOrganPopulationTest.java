@@ -10,7 +10,6 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.OrganFactory;
 import org.junit.Test;
 
 import java.io.File;

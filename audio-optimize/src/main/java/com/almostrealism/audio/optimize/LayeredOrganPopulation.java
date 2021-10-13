@@ -22,7 +22,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.OrganFactory;
+import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.population.Population;
 import org.almostrealism.util.CodeFeatures;
 
@@ -42,10 +42,9 @@ public class LayeredOrganPopulation<G, O, A, R> implements Population<O, Adjustm
 	}
 
 	@Override
-	public void init(OrganFactory<O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome templateGenome, Receptor<O> meter) {
+	public void init(GeneticTemporalFactory<O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome templateGenome, Receptor<O> meter) {
 		enableGenome(templateGenome);
-		this.organ = organFactory.generateOrgan(genome);
-		this.organ.setMonitor(meter);
+		this.organ = organFactory.generateOrgan(genome, meter);
 		disableGenome();
 	}
 

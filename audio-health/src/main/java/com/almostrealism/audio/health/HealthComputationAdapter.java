@@ -44,7 +44,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	@Override
 	public Receptor<Scalar> getMonitor() { return getMeter(); }
 	
-	protected AudioMeter getMeter() {
+	protected synchronized AudioMeter getMeter() {
 		if (meter != null) return meter;
 
 		meter = new AudioMeter();

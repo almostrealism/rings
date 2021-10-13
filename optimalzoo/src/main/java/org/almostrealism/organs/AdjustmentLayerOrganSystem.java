@@ -20,26 +20,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import io.almostrealism.code.Setup;
+import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Adjustment;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Chromosome;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.time.Temporal;
 
 public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 	public static final boolean enableAdjustment = false;
 
-	private String name;
-
-	private final Organ<O> adjustable;
+	private final Temporal adjustable;
 	private final AdjustmentLayer<A, R> adjust;
 
-	public AdjustmentLayerOrganSystem(Organ<O> adjustable, CellAdjustmentFactory<G, A> factory,
+	public AdjustmentLayerOrganSystem(Temporal adjustable, CellAdjustmentFactory<G, A> factory,
 									  Chromosome<G> adjustChromosome, Chromosome<O> organChromosome) {
 		this.adjustable = adjustable;
 
-		Organ<O> o = adjustable;
+		Temporal o = adjustable;
 
 		if (o instanceof OrganSystem) {
 			o = ((OrganSystem) o).last();
@@ -48,27 +49,20 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 		List<Cell<O>> c = new ArrayList<>();
 		List<Adjustment<A>> l = new ArrayList<>();
 
-		for (int i = 0; i < adjustable.size(); i++) {
-			c.add(o.getCell(i));
+		for (int i = 0; i < ((List) adjustable).size(); i++) {
+			c.add((Cell) ((List) o).get(i));
 			l.add(factory.generateAdjustment(adjustChromosome.valueAt(i)));
 		}
 		
 		this.adjust = new AdjustmentLayer(c, l, organChromosome);
 	}
 
-	@Override
-	public String getName() { return name; }
+	public Cell<O> getCell(int index) { return ((SimpleOrgan) adjustable).getCell(index); }
 
 	@Override
-	public void setName(String name) { this.name = name; }
-
-	@Override
-	public Cell<O> getCell(int index) { return adjustable.getCell(index); }
-
-	@Override
-	public Organ<O> getOrgan(int index) {
+	public Temporal getOrgan(int index) {
 		if (index >= getDepth()) {
-			return (Organ<O>) adjust;
+			return adjust;
 		} else if (adjustable instanceof OrganSystem) {
 			return ((OrganSystem) adjustable).getOrgan(index);
 		} else {
@@ -76,12 +70,10 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 		}
 	}
 
-	@Override
-	public int size() { return adjustable.size(); }
+	public int size() { return ((SimpleOrgan) adjustable).size(); }
 
-	@Override
 	public void setMonitor(Receptor<O> monitor) {
-		this.adjustable.setMonitor(monitor);
+		((SimpleOrgan) this.adjustable).setMonitor(monitor);
 	}
 
 	@Override
@@ -95,17 +87,10 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 	@Override
 	public Supplier<Runnable> setup() {
-		Runnable r = adjustable.setup().get();
-		Runnable a = adjust.setup().get();
-		return () -> () -> { r.run(); a.run(); };
-	}
-
-	@Override
-	public Supplier<Runnable> push(Producer<O> protein) {
-		OperationList push = new OperationList();
-		if (enableAdjustment) push.add(adjust.push(null));
-		push.add(adjustable.push(protein));
-		return push;
+		OperationList setup = new OperationList();
+		setup.add(((Setup) adjustable).setup());
+		setup.add(adjust.setup());
+		return setup;
 	}
 
 	@Override
@@ -120,6 +105,6 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 	public void reset() {
 		OrganSystem.super.reset();
 		adjust.reset();
-		adjustable.reset();
+		((Lifecycle) adjustable).reset();
 	}
 }

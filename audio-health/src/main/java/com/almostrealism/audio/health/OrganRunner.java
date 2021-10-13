@@ -27,7 +27,6 @@ import io.almostrealism.relation.Compactable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.organs.Organ;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.util.Ops;
 
@@ -39,13 +38,13 @@ public class OrganRunner implements Setup, Temporal, OperationComputation<Void>,
 	private Supplier<Runnable> setup, run;
 	private Runnable s, r;
 
-	public OrganRunner(Organ<Scalar> o, int iter) {
-		this(o.setup(), o.push(Ops.ops().v(0.0)), o.tick(), iter);
+	public OrganRunner(Temporal o, int iter) {
+		this(((Setup) o).setup(), null, o.tick(), iter);
 	}
 
 	public OrganRunner(Supplier<Runnable> setup, Supplier<Runnable> push, Supplier<Runnable> tick, int iter) {
 		OperationList list = new OperationList();
-		list.add(push);
+		if (push != null) list.add(push);
 		list.add(tick);
 		this.run = loop(list, iter);
 		this.setup = setup;

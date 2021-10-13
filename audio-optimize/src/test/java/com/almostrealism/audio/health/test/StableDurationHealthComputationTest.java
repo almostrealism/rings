@@ -30,6 +30,8 @@ import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import io.almostrealism.code.OperationAdapter;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
@@ -69,20 +71,17 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		// WaveOutput output3 = new WaveOutput(new File("health/health-test-firstcell-processed.wav"));
 		// WaveOutput output4 = new WaveOutput(new File("health/health-test-lastcell-processed.wav"));
 
-		SimpleOrgan<Scalar> organ = organ(notes());
-		((CellAdapter) organ.firstCell()).setMeter(output1);
-		((CellAdapter) organ.lastCell()).setMeter(output2);
+		CellList organ = (CellList) organ(notes(), null);
+		((CellAdapter) organ.get(0)).setMeter(output1);
+		((CellAdapter) organ.get(1)).setMeter(output2);
 
 		organ.setup().get().run();
-		Runnable push = organ.push(v(0.0)).get();
-		((OperationAdapter) push).compile();
 
 		Runnable tick = organ.tick().get();
 		((OperationAdapter) tick).compile();
 		System.out.println(((DynamicAcceleratedOperation) tick).getFunctionDefinition());
 
 		IntStream.range(0, 5 * OutputLine.sampleRate).forEach(i -> {
-			push.run();
 			tick.run();
 			if ((i + 1) % 1000 == 0) System.out.println("StableDurationHealthComputationTest: " + (i + 1) + " iterations");
 		});
@@ -101,8 +100,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/simple-organ-notes-test.wav");
 
-		SimpleOrgan<Scalar> organ = organ(notes());
-		organ.setMonitor(health.getMonitor());
+		Cells organ = organ(notes(), health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);
 	}
@@ -113,9 +111,8 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/simple-organ-samples-test.wav");
 
-		SimpleOrgan<Scalar> organ = organ(samples());
-		organ.setMonitor(health.getMonitor());
-		organ.reset();
+		Cells organ = organ(samples(), health.getMonitor());
+		health.computeHealth(organ);
 		health.computeHealth(organ);
 	}
 
@@ -125,8 +122,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/layered-organ-samples-test.wav");
 
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples());
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);
 	}
@@ -137,8 +133,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/layered-organ-samples-rand-test.wav");
 
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples());
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);
 	}
