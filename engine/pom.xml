@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.12</version>
+		<version>0.13</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-geometry</artifactId>
-			<version>0.40</version>
+			<version>0.41</version>
 		</dependency>
 	</dependencies>
 </project>
