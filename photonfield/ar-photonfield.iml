@@ -225,7 +225,6 @@
     <orderEntry type="module" module-name="ar-raytracer" />
     <orderEntry type="module" module-name="gl" />
     <orderEntry type="module" module-name="ui" />
-    <orderEntry type="library" name="Maven: com.almostrealism:primitives:0.12" level="project" />
     <orderEntry type="module" module-name="shading" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.3.2" level="project" />

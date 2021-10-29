@@ -12,7 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ui" />
-    <orderEntry type="library" name="Maven: com.almostrealism:primitives:0.12" level="project" />
+    <orderEntry type="module" module-name="ar-primitives" />
     <orderEntry type="module" module-name="shading" />
     <orderEntry type="module" module-name="engine" />
     <orderEntry type="module" module-name="ar-geometry" />
