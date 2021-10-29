@@ -16,34 +16,63 @@
 
 package com.almostrealism.audio.filter.test;
 
+import com.almostrealism.audio.health.OrganRunner;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
-import com.almostrealism.audio.optimize.SimpleOrganFactory;
+import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
+import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
+import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
+import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.PolymorphicAudioCell;
+import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.audio.data.PolymorphicAudioDataBank;
+import org.almostrealism.audio.filter.AdjustableDelayCell;
+import org.almostrealism.audio.filter.AudioCellAdapter;
+import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.breeding.AssignableGenome;
+import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
+import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.hardware.ProducerCache;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Factor;
+import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
+import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.time.AcceleratedTimeSeries;
+import org.almostrealism.time.Temporal;
+import org.almostrealism.util.Ops;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class AssignableGenomeTest {
+public class AssignableGenomeTest implements CellFeatures {
 	@BeforeClass
 	public static void init() {
 		// AcceleratedTimeSeries.defaultCacheLevel = CacheLevel.ALL;
@@ -56,28 +85,42 @@ public class AssignableGenomeTest {
 		StableDurationHealthComputation.enableVerbose = false;
 	}
 
-	protected AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Scalar, Scalar> factory() {
+	protected GeneticTemporalFactory<Scalar, Cells> factory() {
+		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
+
+		/*
 		TieredCellAdjustmentFactory<Scalar, Scalar> tca =
 				new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
+		return new AdjustmentLayerOrganSystemFactory<>(tca, new GeneticTemporalFactoryFromDesirables().from(provider));
+		 */
 
-		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
-//		provider.getSamples().add(new File("src/main/resources/health-test-in.wav"));
-
-		return new AdjustmentLayerOrganSystemFactory<>(tca, SimpleOrganFactory.getDefault(provider));
+		return new GeneticTemporalFactoryFromDesirables().from(provider);
 	}
 
-	protected Genome genome(double x1a, double x1b, double x2a, double x2b, boolean adjust) {
-		ArrayListChromosome<Scalar> x = new ArrayListChromosome();
-		x.add(new ArrayListGene<>(x1a, x1b));
-		x.add(new ArrayListGene<>(x2a, x2b));
+	public static Genome genome(double x1a, double x2a, boolean adjust) {
+		return genome(x1a, x2a, 0.5, 0.5, adjust);
+	}
 
-		ArrayListChromosome<Scalar> y = new ArrayListChromosome();
-		y.add(new ArrayListGene<>(1.0, 0.2));
-		y.add(new ArrayListGene<>(1.0, 0.2));
+	public static Genome genome(double x1a, double x2a, double v1a, double v2a, boolean adjust) {
+		ArrayListChromosome<Scalar> generators = new ArrayListChromosome<>();
+		generators.add(new ArrayListGene<>(x1a));
+		generators.add(new ArrayListGene<>(x2a));
 
-		ArrayListChromosome<Scalar> z = new ArrayListChromosome();
-		z.add(new ArrayListGene<>(0.0, 1.0));
-		z.add(new ArrayListGene<>(1.0, 0.0));
+		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
+		volume.add(new ArrayListGene<>(v1a));
+		volume.add(new ArrayListGene<>(v2a));
+
+		ArrayListChromosome<Scalar> processing = new ArrayListChromosome();
+		processing.add(new ArrayListGene<>(1.0, 0.2));
+		processing.add(new ArrayListGene<>(1.0, 0.2));
+
+		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
+		transmission.add(new ArrayListGene<>(0.0, 1.0));
+		transmission.add(new ArrayListGene<>(1.0, 0.0));
+
+		ArrayListChromosome<Scalar> filters = new ArrayListChromosome();
+		filters.add(new ArrayListGene<>(0.0, 1.0));
+		filters.add(new ArrayListGene<>(0.0, 1.0));
 
 		ArrayListChromosome<Scalar> a = new ArrayListChromosome();
 
@@ -90,9 +133,11 @@ public class AssignableGenomeTest {
 		}
 
 		ArrayListGenome genome = new ArrayListGenome();
-		genome.add(x);
-		genome.add(y);
-		genome.add(z);
+		genome.add(generators);
+		genome.add(volume);
+		genome.add(processing);
+		genome.add(transmission);
+		genome.add(filters);
 		genome.add(a);
 		return genome;
 	}
@@ -122,22 +167,96 @@ public class AssignableGenomeTest {
 		return genome;
 	}
 
-	protected AdjustmentLayerOrganSystem organ(AssignableGenome genome, Receptor<Scalar> meter) {
-		genome.assignTo(genome(0.0, 0.0, 0.0, 0.0, false));
+	protected Temporal organ(LayeredOrganGenome genome, Receptor<Scalar> meter) {
+		genome.assignTo(genome(0.0, 0.0, false));
 		return factory().generateOrgan(genome, meter);
+	}
+
+	protected Cells cells(Receptor<Scalar> meter) {
+		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
+
+		CellList cells =
+					w(provider.getFrequencies().iterator().next(), provider.getFrequencies().iterator().next())
+							.d(i -> new Scalar(1.0))
+							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, v(0.0), v(0.1), true)
+										.andThen(new AudioPassFilter(OutputLine.sampleRate, v(20000), v(0.1), false))),
+									i -> {
+										if (i == 0) {
+											return g(0.0, 1.0);
+										} else {
+											return g(1.0, 0.0);
+										}
+									});
+
+			((CellAdapter) cells.get(cells.size() - 1)).setMeter(meter);
+			return cells;
+	}
+
+	@Test
+	public void cellExamples() {
+		AcceleratedTimeSeries.defaultCacheLevel = CacheLevel.ALL;
+
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("assignable-genome-cells-example.wav")).get(0);
+
+		Cells organ = cells(out);
+
+		OrganRunner runner = new OrganRunner(organ, 8 * OutputLine.sampleRate);
+		Runnable run = runner.get();
+
+		run.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+		((WaveOutput) out.getReceptor()).reset();
+		organ.reset();
+
+		run.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+		((WaveOutput) out.getReceptor()).reset();
+		organ.reset();
 	}
 
 	@Test
 	public void examples() {
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("assignable-genome-example.wav")).get(0);
+
+		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		Temporal organ = organ(genome, out);
+
+		OrganRunner runner = new OrganRunner(organ, 8 * OutputLine.sampleRate);
+		Runnable run = runner.get();
+
+		genome.assignTo(genome(0.0, 0.0, false));
+		System.out.println(genome);
+		run.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+		((WaveOutput) out.getReceptor()).reset();
+		((Lifecycle) organ).reset();
+
+		genome.assignTo(genome(0.0, 0.0, 0.0, 0.0, false));
+		System.out.println(genome);
+		run.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+		((WaveOutput) out.getReceptor()).reset();
+		((Lifecycle) organ).reset();
+
+		genome.assignTo(genome(0.0, 0.0, false));
+		System.out.println(genome);
+		run.run();
+		((WaveOutput) out.getReceptor()).write().get().run();
+		((WaveOutput) out.getReceptor()).reset();
+		((Lifecycle) organ).reset();
+	}
+
+	@Test
+	public void examplesHealth() {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
+		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		Temporal organ = organ(genome, health.getMonitor());
 
 		genome.assignTo(genome1());
 		health.setDebugOutputFile("health/genome1.wav");
-		organ.reset();
+		((Lifecycle) organ).reset();
 		health.computeHealth(organ);
 	}
 
@@ -146,17 +265,17 @@ public class AssignableGenomeTest {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
+		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		Temporal organ = organ(genome, health.getMonitor());
 
-		genome.assignTo(genome(0.4, 0.6, 0.8, 0.2, false));
+		genome.assignTo(genome(0.4, 0.8, false));
 		health.setDebugOutputFile("health/assignable-genome-test-noadjust-1.wav");
-		organ.reset();
+		((Lifecycle) organ).reset();
 		health.computeHealth(organ);
 
-		genome.assignTo(genome(0.8, 0.3, 0.8, 0.2, false));
+		genome.assignTo(genome(0.8, 0.8, false));
 		health.setDebugOutputFile("health/assignable-genome-test-noadjust-2.wav");
-		organ.reset();
+		((Lifecycle) organ).reset();
 		health.computeHealth(organ);
 	}
 
@@ -165,17 +284,17 @@ public class AssignableGenomeTest {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		AssignableGenome genome = new AssignableGenome();
-		AdjustmentLayerOrganSystem organ = organ(genome, health.getMonitor());
+		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		Temporal organ = organ(genome, health.getMonitor());
 
-		genome.assignTo(genome(0.4, 0.6, 0.8, 0.2, true));
+		genome.assignTo(genome(0.4, 0.8, true));
 		health.setDebugOutputFile("health/assignable-genome-test-adjust-1.wav");
-		organ.reset();
+		((Lifecycle) organ).reset();
 		health.computeHealth(organ);
 
-		genome.assignTo(genome(0.8, 0.3, 0.8, 0.2, true));
+		genome.assignTo(genome(0.8, 0.8, true));
 		health.setDebugOutputFile("health/assignable-genome-test-adjust-2.wav");
-		organ.reset();
+		((Lifecycle) organ).reset();
 		health.computeHealth(organ);
 	}
 }

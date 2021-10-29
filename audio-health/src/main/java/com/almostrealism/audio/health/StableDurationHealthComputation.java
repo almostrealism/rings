@@ -74,7 +74,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	@Override
 	public double computeHealth(Temporal organ) {
-		super.init();
+		init();
 
 		if (this.organ == null) {
 			this.organ = organ;
@@ -144,8 +144,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			getMeter().reset();
 			((Lifecycle) organ).reset();
 
-			ProducerCache.destroyEvaluableCache();
+//			ProducerCache.destroyEvaluableCache();
 		}
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		if (organ instanceof Lifecycle) ((Lifecycle) organ).reset();
 	}
 
 	private class AverageAmplitude implements Consumer<Scalar> {

@@ -43,53 +43,68 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 	public static int popSize = 60;
 	public static int maxChildren = popSize + 5;
 	public static double secondaryOffspringPotential = 0.25;
-	public static double teriaryOffspringPotential = 0.25;
+	public static double tertiaryOffspringPotential = 0.25;
 	public static double quaternaryOffspringPotential = 0.25;
 	public static double lowestHealth = 0.0;
 
 	private Population<T, O> population;
 	private Function<List<Genome>, Population> children;
+
+	private Supplier<Supplier<Genome>> generatorSupplier;
 	private Supplier<Genome> generator;
 
+	private Supplier<HealthComputation<T>> healthSupplier;
 	private HealthComputation<T> health;
-	private GenomeBreeder breeder;
 
-	public PopulationOptimizer(HealthComputation<T> h,
+	private Supplier<GenomeBreeder> breeder;
+
+	public PopulationOptimizer(Supplier<HealthComputation<T>> h,
 							   Function<List<Genome>, Population> children,
-							   GenomeBreeder breeder, Supplier<Genome> generator) {
+							   Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator) {
 		this(null, h, children, breeder, generator);
 	}
 
-	public PopulationOptimizer(Population<T, O> p, HealthComputation<T> h,
+	public PopulationOptimizer(Population<T, O> p, Supplier<HealthComputation<T>> h,
 							   Function<List<Genome>, Population> children,
-							   GenomeBreeder breeder, Supplier<Genome> generator) {
+							   Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator) {
 		this.population = p;
-		this.health = h;
+		this.healthSupplier = h;
 		this.children = children;
 		this.breeder = breeder;
-		this.generator = generator;
+		this.generatorSupplier = generator;
 	}
 
 	public void setPopulation(Population<T, O> population) { this.population = population; }
 
 	public Population<T, O> getPopulation() { return this.population; }
 
-	public void setHealthComputation(HealthComputation<T> h) { this.health = h; }
+	public void resetHealth() { health = null; }
 
-	public HealthComputation<T> getHealthComputation() { return health; }
+	public HealthComputation<T> getHealthComputation() {
+		if (health == null) health = healthSupplier.get();
+		return health;
+	}
 
 	public void setChildrenFunction(Function<List<Genome>, Population> pop) { this.children = pop; }
 
 	public Function<List<Genome>, Population> getChildrenFunction() { return children; }
 
+	public void resetGenerator() {
+		generator = null;
+	}
+
 	@Override
-	public Supplier<Genome> getGenerator() { return generator; }
+	public Supplier<Genome> getGenerator() {
+		if (generator == null && generatorSupplier != null)
+			generator = generatorSupplier.get();
+		return generator;
+	}
 
 	public void iterate() {
 		long start = System.currentTimeMillis();
 
 		// Sort the population
-		SortedSet<Genome> sorted = cc(() -> orderByHealth(population));
+		SortedSet<Genome> sorted = orderByHealth(population);
 
 		// Fresh genetic material
 		List<Genome> genomes = new ArrayList<>();
@@ -115,7 +130,7 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 				continue w;
 			}
 
-			if (StrictMath.random() < teriaryOffspringPotential && genomes.size() < maxChildren) {
+			if (StrictMath.random() < tertiaryOffspringPotential && genomes.size() < maxChildren) {
 				// Combine chromosomes to produce a third offspring
 				breed(genomes, g1, g2);
 			} else {
@@ -152,7 +167,7 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 	}
 
 	public void breed(List<Genome> genomes, Genome g1, Genome g2) {
-		genomes.add(breeder.combine(g1, g2));
+		genomes.add(breeder.get().combine(g1, g2));
 	}
 
 	private SortedSet<Genome> orderByHealth(Population<T, O> pop) {
@@ -192,12 +207,10 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 
 			if (enableVerbose) {
 				console.println();
-				console.println("Health of Organ " + i + " is " + health);
+				console.println("Health of Organ " + i + " is " + percent(health));
 			} else {
 				console.print(".");
 			}
-
-			System.gc();
 		}
 
 		if (!enableVerbose) console.println();

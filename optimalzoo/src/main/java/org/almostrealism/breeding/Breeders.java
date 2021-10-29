@@ -36,7 +36,7 @@ public class Breeders {
 
 	public static ChromosomeBreeder<Scalar> averageBreeder() {
 		return byCombiningFactors((f1, f2) ->
-				new ScaleFactor((((ScaleFactor) f1).getScale() + ((ScaleFactor) f1).getScale()) / 2.0));
+				new ScaleFactor((((ScaleFactor) f1).getScale().getValue() + ((ScaleFactor) f1).getScale().getValue()) / 2.0));
 	}
 
 	public static <T> ChromosomeBreeder<T> perturbationBreeder(double magnitude, DoubleFunction<Factor<T>> factory) {
@@ -51,8 +51,8 @@ public class Breeders {
 //				s2 = ((ScaleFactor) f1).getScale();
 //			}
 
-			s1 = ((ScaleFactor) f1).getScale();
-			s2 = ((ScaleFactor) f2).getScale();
+			s1 = ((ScaleFactor) f1).getScale().getValue();
+			s2 = ((ScaleFactor) f2).getScale().getValue();
 
 			double m = magnitude;
 			if (s2 > s1) {

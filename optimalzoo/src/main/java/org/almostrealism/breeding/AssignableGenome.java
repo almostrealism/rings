@@ -23,6 +23,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.util.CodeFeatures;
 
 public class AssignableGenome extends Tensor<Scalar> implements Genome, Delegated<Tensor<Scalar>>, CodeFeatures {
@@ -47,7 +48,19 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome, Delegate
 				Gene<Scalar> g = c.valueAt(y);
 
 				for (int z = 0; z < g.length(); z++) {
-					insert(g.valueAt(z).getResultant(v(1.0)).get().evaluate(), x, y, z);
+					Scalar v;
+
+					if (g.valueAt(z) instanceof ScaleFactor) {
+						v = ((ScaleFactor) g.valueAt(z)).getScale();
+					} else {
+						v = g.valueAt(z).getResultant(v(1.0)).get().evaluate();
+					}
+
+					if (v == null) {
+						throw new IllegalArgumentException();
+					}
+
+					insert(v, x, y, z);
 				}
 			}
 		}

@@ -85,6 +85,9 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 		}
 	}
 
+	@Override
+	public String toString() {return data.toString(); }
+
 	public static double factorForDelay(double seconds) {
 		return Math.pow(1 - (1 / ((seconds / 60) + 1)), 1.0 / 3);
 	}

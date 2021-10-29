@@ -17,15 +17,14 @@
 package com.almostrealism.audio.health.test;
 
 import com.almostrealism.audio.DesirablesProvider;
-import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
+import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
-import com.almostrealism.audio.optimize.SimpleOrganFactory;
-import com.almostrealism.audio.optimize.SimpleOrganGenome;
-import com.almostrealism.audio.optimize.test.AdjustmentLayerOrganSystemFactoryTest;
+import com.almostrealism.audio.optimize.AudioPopulationOptimizer;
+import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
+import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
+import com.almostrealism.audio.optimize.LayeredOrganPopulation;
 import com.almostrealism.audio.optimize.test.LayeredOrganPopulationTest;
-import com.almostrealism.audio.optimize.test.SimpleOrganFactoryTest;
 import com.almostrealism.sound.DefaultDesirablesProvider;
-import com.almostrealism.tone.Scale;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import io.almostrealism.code.OperationAdapter;
@@ -33,23 +32,26 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.hardware.DynamicAcceleratedOperation;
-import org.almostrealism.heredity.ArrayListChromosome;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.SimpleOrgan;
+import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
+import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Collections;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class StableDurationHealthComputationTest extends LayeredOrganPopulationTest {
@@ -96,13 +98,19 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 
 	@Test
 	public void simpleOrganHealthNotes() {
-		StableDurationHealthComputation health = new StableDurationHealthComputation();
-		health.setMaxDuration(8);
-		health.setDebugOutputFile("health/simple-organ-notes-test.wav");
+		AtomicInteger index = new AtomicInteger();
 
-		Cells organ = organ(notes(), health.getMonitor());
-		organ.reset();
-		health.computeHealth(organ);
+		dc(() -> {
+			StableDurationHealthComputation health = new StableDurationHealthComputation();
+			health.setMaxDuration(8);
+			health.setDebugOutputFile(() -> "health/simple-organ-notes-test" + index.incrementAndGet() + ".wav");
+
+			Cells organ = organ(notes(), health.getMonitor(), false);
+			organ.reset();
+			health.computeHealth(organ);
+			organ.reset();
+			health.computeHealth(organ);
+		});
 	}
 
 	@Test
@@ -113,7 +121,9 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 
 		Cells organ = organ(samples(), health.getMonitor());
 		health.computeHealth(organ);
+		health.reset();
 		health.computeHealth(organ);
+		health.reset();
 	}
 
 	@Test
@@ -123,6 +133,8 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setDebugOutputFile("health/layered-organ-samples-test.wav");
 
 		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), health.getMonitor());
+		organ.reset();
+		health.computeHealth(organ);
 		organ.reset();
 		health.computeHealth(organ);
 	}
@@ -139,12 +151,43 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 	}
 
 	@Test
-	public void layeredOrganHealthSamplesPopulation() {
-		StableDurationHealthComputation health = new StableDurationHealthComputation();
-		health.setMaxDuration(8);
-		health.setDebugOutputFile("health/layered-organ-samples-pop-test.wav");
+	public void layeredOrganHealthSamplesPopulation() throws FileNotFoundException {
+		Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> factorySupplier = () -> {
+			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(DefaultCellAdjustmentFactory.Type.PERIODIC));
+			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(samples()));
+		};
 
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = organFromPopulation(samples(), health.getMonitor());
-		health.computeHealth(organ);
+		AtomicInteger index = new AtomicInteger();
+
+		List<Genome> genomes = new ArrayList<>();
+		genomes.add(layeredOrganGenome());
+		genomes.add(layeredOrganGenome());
+
+		AudioPopulationOptimizer.store(genomes, new FileOutputStream("Population.xml"));
+
+		IntStream.range(0, 3).forEach(j ->
+			dc(() -> {
+				StableDurationHealthComputation health = new StableDurationHealthComputation();
+				health.setMaxDuration(8);
+
+				health.setDebugOutputFile(() -> "health/layered-organ-samples-pop-test-" + index.incrementAndGet() + ".wav");
+
+				System.out.println("Creating LayeredOrganPopulation...");
+				LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop =
+						new LayeredOrganPopulation<>(AudioPopulationOptimizer.read(new FileInputStream("Population.xml")), 2, OutputLine.sampleRate);
+				pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMonitor());
+
+				IntStream.range(0, 2).forEach(i -> {
+					AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = pop.enableGenome(i);
+					try {
+						health.computeHealth(organ);
+					} finally {
+						health.reset();
+						pop.disableGenome();
+					}
+				});
+
+				return null;
+			}));
 	}
 }

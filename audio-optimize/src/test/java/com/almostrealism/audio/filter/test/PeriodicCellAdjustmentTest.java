@@ -19,7 +19,7 @@ package com.almostrealism.audio.filter.test;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
-import com.almostrealism.audio.optimize.SimpleOrganFactory;
+import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
@@ -30,12 +30,10 @@ import org.almostrealism.algebra.computations.PairFromScalars;
 import org.almostrealism.algebra.computations.ScalarProduct;
 import org.almostrealism.algebra.computations.ScalarSum;
 import org.almostrealism.algebra.computations.StaticScalarComputation;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.audio.filter.CellAdjustment;
 import org.almostrealism.audio.filter.PeriodicAdjustment;
 import org.almostrealism.graph.AdjustmentCell;
-import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
@@ -47,13 +45,11 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.time.AcceleratedTimeSeries;
-import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.TestFeatures;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -79,7 +75,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 //		provider.getSamples().add(new File("src/main/resources/health-test-in.wav"));
 
-		return new AdjustmentLayerOrganSystemFactory<>(tca, SimpleOrganFactory.getDefault(provider));
+		return new AdjustmentLayerOrganSystemFactory<>(tca, new GeneticTemporalFactoryFromDesirables().from(provider));
 	}
 
 	protected AdjustmentLayerOrganSystem organ(boolean adjust, Receptor<Scalar> meter) {

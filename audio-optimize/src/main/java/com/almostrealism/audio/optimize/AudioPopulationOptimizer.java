@@ -47,33 +47,36 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	private final String file;
 	private final int tot;
+	private final AtomicInteger count;
 
 	public AudioPopulationOptimizer(Function<List<Genome>, Population> children,
-									GenomeBreeder breeder, Supplier<Genome> generator, String file) {
+									Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator, String file) {
 		this(children, breeder, generator, file, 100);
 	}
 
 	public AudioPopulationOptimizer(Function<List<Genome>, Population> children,
-									GenomeBreeder breeder, Supplier<Genome> generator,
+									Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator,
 									String file, int iterationsPerRun) {
-		this(healthComputation(), children, breeder, generator, file, iterationsPerRun);
+		this(AudioPopulationOptimizer::healthComputation, children, breeder, generator, file, iterationsPerRun);
 	}
 
-	public AudioPopulationOptimizer(HealthComputation<Scalar> health,
-				Function<List<Genome>, Population> children,
-				GenomeBreeder breeder, Supplier<Genome> generator,
+	public AudioPopulationOptimizer(Supplier<HealthComputation<Scalar>> health,
+									Function<List<Genome>, Population> children,
+									Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator,
 									String file, int iterationsPerRun) {
 		super(health, children, breeder, generator);
 		this.file = file;
 		this.tot = iterationsPerRun;
+		this.count = new AtomicInteger();
 	}
 
-	public void init() throws FileNotFoundException {
+	public void init() {
 		if (enableWavOutput) {
-			AtomicInteger count = new AtomicInteger();
 			((StableDurationHealthComputation) getHealthComputation()).setDebugOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
+	}
 
+	public void readPopulation() throws FileNotFoundException {
 		List<Genome> genomes;
 
 		if (new File(file).exists()) {
@@ -82,18 +85,9 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		} else {
 			genomes = Optional.ofNullable(getGenerator())
 					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
-						.mapToObj(i -> gen.get()).collect(Collectors.toList()))
+							.mapToObj(i -> gen.get()).collect(Collectors.toList()))
 					.orElseGet(ArrayList::new);
 			PopulationOptimizer.console.println("Generated initial population");
-		}
-
-		init(genomes);
-	}
-
-	public void init(List<Genome> genomes) {
-		if (enableWavOutput) {
-			AtomicInteger count = new AtomicInteger();
-			((StableDurationHealthComputation) getHealthComputation()).setDebugOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
 
 		setPopulation(getChildrenFunction().apply(genomes));
@@ -104,9 +98,16 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	@Override
 	public void run() {
 		for (int i = 0; i < tot; i++) {
-			iterate();
-			storePopulation();
+			dc(() -> {
+				init();
+				readPopulation();
+				iterate();
+				storePopulation();
+				return null;
+			});
 
+			resetHealth();
+			resetGenerator();
 			System.gc();
 		}
 	}

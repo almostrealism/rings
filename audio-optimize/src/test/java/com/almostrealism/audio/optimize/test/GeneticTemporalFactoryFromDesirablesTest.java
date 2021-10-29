@@ -20,35 +20,30 @@ import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
 import com.almostrealism.audio.health.OrganRunner;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
-import com.almostrealism.audio.optimize.SimpleOrganFactory;
+import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.audio.optimize.SimpleOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.Scale;
 import com.almostrealism.tone.WesternChromatic;
-import io.almostrealism.code.Setup;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.SimpleOrgan;
-import org.almostrealism.time.Temporal;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
-public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements CellFeatures {
+public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCellTest implements CellFeatures {
 	public static final boolean enableDelay = true;
 	public static final boolean enableFilter = true;
 
@@ -71,6 +66,10 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 	}
 
 	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter) {
+		return organ(desirables, meter, enableFilter);
+	}
+
+	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter, boolean filter) {
 		ArrayListChromosome<Double> generators = new ArrayListChromosome();
 		generators.add(new ArrayListGene<>(0.4, 0.6));
 		generators.add(new ArrayListGene<>(0.8, 0.2));
@@ -95,7 +94,7 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 
 		ArrayListChromosome<Double> filters = new ArrayListChromosome();
 
-		if (enableFilter) {
+		if (filter) {
 			filters.add(new ArrayListGene<>(0.15, 1.0));
 			filters.add(new ArrayListGene<>(0.15, 1.0));
 		} else {
@@ -113,7 +112,7 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
 		organGenome.assignTo(genome);
 
-		return SimpleOrganFactory.getDefault(desirables).generateOrgan(organGenome, meter);
+		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(organGenome, meter);
 	}
 
 	public Cells randomOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
@@ -127,25 +126,24 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		conf.minLowPass = 20000;
 		conf.maxLowPass = 20000;
 
-		Genome g = LayeredOrganOptimizer.generator(2, conf).get();
+		Genome g = LayeredOrganOptimizer.generator(2, conf).get().get();
 		System.out.println(g);
 
 		SimpleOrganGenome sog = new SimpleOrganGenome(2);
 		sog.assignTo(g);
 
-		return SimpleOrganFactory.getDefault(desirables).generateOrgan(sog, meter);
+		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(sog, meter);
 	}
 
-	@Test
-	public void comparison() throws IOException {
+	public void comparison(boolean twice) {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-test-a.wav")).get(0);
 		Cells organ = organ(samples(), out);
 		organ.reset();
 
-		CellList list = w(sampleFile, sampleFile)
-				.d(i -> new Scalar(delay))
-				.m(fc(i -> hp(2000, 0.1)),
-						c(g(0.0, feedbackParam), g(feedbackParam, 0.0)))
+		CellList list = poly(2, PolymorphicAudioData::new, i -> v(0.5), sampleFile, sampleFile)
+				 .d(i -> new Scalar(delay))
+//				 .m(fc(i -> hp(2000, 0.1)),
+//						c(g(0.0, feedbackParam), g(feedbackParam, 0.0)))
 				.o(i -> new File("organ-factory-test-b" + i + ".wav"));
 
 		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
@@ -154,10 +152,32 @@ public class SimpleOrganFactoryTest extends AdjustableDelayCellTest implements C
 		organRun.run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 
-		organRun.run();
-		((WaveOutput) out.getReceptor()).write().get().run();
+		if (twice) {
+			organRun.run();
+			((WaveOutput) out.getReceptor()).write().get().run();
+		}
 
 		listRun.run();
+	}
+
+	@Test
+	public void comparisonOnce() { comparison(false); }
+
+	@Test
+	public void comparisonTwice() { comparison(true); }
+
+	@Test
+	public void many() {
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
+		Cells organ = organ(samples(), out);
+
+		Runnable run = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+
+		IntStream.range(0, 10).forEach(i -> {
+			run.run();
+			((WaveOutput) out.getReceptor()).write().get().run();
+			organ.reset();
+		});
 	}
 
 	@Test

@@ -21,7 +21,7 @@ import com.almostrealism.audio.health.OrganRunner;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
 import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
-import com.almostrealism.audio.optimize.SimpleOrganFactory;
+import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
@@ -34,16 +34,15 @@ import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
-import org.almostrealism.organs.SimpleOrgan;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.junit.Test;
 
 import java.io.File;
 
-public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTest {
+public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactoryFromDesirablesTest {
 	protected AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> factory(DesirablesProvider desirables) {
 		TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(DefaultCellAdjustmentFactory.Type.PERIODIC));
-		return new AdjustmentLayerOrganSystemFactory(tca, SimpleOrganFactory.getDefault(desirables));
+		return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(desirables));
 	}
 
 	protected Genome layeredOrganGenome() {
@@ -77,7 +76,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTes
 
 		ArrayListGenome genome = new ArrayListGenome();
 		genome.add(generators);
-		genome.add(c(g(0.8), g(0.8)));
+		genome.add(c(g(0.8), g(0.8))); // VOLUME
 		genome.add(processors);
 		genome.add(transmission);
 		genome.add(filters);
@@ -94,28 +93,30 @@ public class AdjustmentLayerOrganSystemFactoryTest extends SimpleOrganFactoryTes
 
 	public AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
 		LayeredOrganGenome g = new LayeredOrganGenome(2);
-		g.assignTo(LayeredOrganOptimizer.generator(2).get());
+		g.assignTo(LayeredOrganOptimizer.generator(2).get().get());
 		return factory(desirables).generateOrgan(g, meter);
 	}
 
 	@Test
 	public void compare() {
-		ReceptorCell outa = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-a.wav")).get(0);
-		Cells organa = organ(samples(), outa);
-		organa.reset();
+		dc(() -> {
+			ReceptorCell outa = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-a.wav")).get(0);
+			Cells organa = organ(samples(), outa);
+			organa.reset();
 
-		ReceptorCell outb = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-b.wav")).get(0);
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organb = layeredOrgan(samples(), outb);
-		organb.reset();
+			ReceptorCell outb = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-b.wav")).get(0);
+			AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organb = layeredOrgan(samples(), outb);
+			organb.reset();
 
-		Runnable organRunA = new OrganRunner(organa, 8 * OutputLine.sampleRate).get();
-		Runnable organRunB = new OrganRunner(organb, 8 * OutputLine.sampleRate).get();
+			Runnable organRunA = new OrganRunner(organa, 8 * OutputLine.sampleRate).get();
+			Runnable organRunB = new OrganRunner(organb, 8 * OutputLine.sampleRate).get();
 
-		organRunA.run();
-		((WaveOutput) outa.getReceptor()).write().get().run();
+			organRunA.run();
+			((WaveOutput) outa.getReceptor()).write().get().run();
 
-		organRunB.run();
-		((WaveOutput) outb.getReceptor()).write().get().run();
+			organRunB.run();
+			((WaveOutput) outb.getReceptor()).write().get().run();
+		});
 	}
 
 	@Test

@@ -19,8 +19,8 @@ package com.almostrealism.audio.optimize;
 import java.io.FileNotFoundException;
 import java.util.function.Supplier;
 
-import com.almostrealism.audio.DesirablesProvider;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.heredity.ChromosomeBreeder;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
@@ -29,16 +29,18 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.PopulationOptimizer;
+import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.organs.SimpleOrgan;
 
 public class SimpleOrganOptimizer extends AudioPopulationOptimizer<SimpleOrgan<Scalar>> {
 	private static double defaultMinFeedback = 0.01;
 	private static double defaultMaxFeedback = 0.5;
-	
-	public SimpleOrganOptimizer(SimpleOrganFactory<Scalar, DesirablesProvider> f,
+
+	// TODO  The factory is ignored?
+	public SimpleOrganOptimizer(GeneticTemporalFactory<Scalar, Cells> f,
 								ChromosomeBreeder<Scalar> xb, ChromosomeBreeder<Scalar> yb,
-								Supplier<Genome> generator) {
-		super(SimpleOrganPopulation::new, new DefaultGenomeBreeder(xb, yb), generator, "Population.xml");
+								Supplier<Supplier<Genome>> generator) {
+		super(SimpleOrganPopulation::new, () -> new DefaultGenomeBreeder(xb, yb), generator, "Population.xml");
 	}
 
 	public static void main(String args[]) throws FileNotFoundException {
@@ -57,21 +59,22 @@ public class SimpleOrganOptimizer extends AudioPopulationOptimizer<SimpleOrgan<S
 		if (args.length > 1) { PopulationOptimizer.popSize = Integer.parseInt(args[1]); PopulationOptimizer.maxChildren = PopulationOptimizer.popSize; }
 		if (args.length > 2) min = Double.parseDouble(args[2]);
 		if (args.length > 3) max = Double.parseDouble(args[3]);
-		
-		// Random genetic material generators
-		RandomChromosomeFactory xfactory = new RandomChromosomeFactory();
-		RandomChromosomeFactory yfactory = new RandomChromosomeFactory();
-		xfactory.setChromosomeSize(dim, 2);
-		yfactory.setChromosomeSize(dim, dim);
-		
-		// Population of organs
-		GenomeFromChromosomes generator = new GenomeFromChromosomes(xfactory, yfactory);
 
 		// Create and run the optimizer
-		SimpleOrganOptimizer opt = new SimpleOrganOptimizer(SimpleOrganFactory.getDefault(null),
+		SimpleOrganOptimizer opt = new SimpleOrganOptimizer(new GeneticTemporalFactoryFromDesirables().from(null),
 													Breeders.perturbationBreeder(0.0005, ScaleFactor::new),
 													Breeders.perturbationBreeder(0.0005, ScaleFactor::new),
-													generator);
+													() -> {
+
+														// Random genetic material generators
+														RandomChromosomeFactory xfactory = new RandomChromosomeFactory();
+														RandomChromosomeFactory yfactory = new RandomChromosomeFactory();
+														xfactory.setChromosomeSize(dim, 2);
+														yfactory.setChromosomeSize(dim, dim);
+
+														// Population of organs
+														return new GenomeFromChromosomes(xfactory, yfactory);
+													});
 		opt.init();
 		opt.run();
 	}

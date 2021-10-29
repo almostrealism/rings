@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import java.util.List;
 
+import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
@@ -59,6 +60,7 @@ public class LayeredOrganPopulation<G, O, A, R> implements Population<O, Adjustm
 	@Override
 	public AdjustmentLayerOrganSystem<G, O, A, R> enableGenome(int index) {
 		enableGenome(getGenomes().get(index));
+		organ.reset();
 		return organ;
 	}
 

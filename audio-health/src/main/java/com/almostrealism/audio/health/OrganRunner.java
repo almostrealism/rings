@@ -17,6 +17,7 @@
 package com.almostrealism.audio.health;
 
 import io.almostrealism.code.ArgumentMap;
+import io.almostrealism.code.Computation;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.code.OperationComputation;
 import io.almostrealism.code.Scope;
@@ -24,11 +25,9 @@ import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.code.ScopeLifecycle;
 import io.almostrealism.code.Setup;
 import io.almostrealism.relation.Compactable;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.time.Temporal;
-import org.almostrealism.util.Ops;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -39,14 +38,11 @@ public class OrganRunner implements Setup, Temporal, OperationComputation<Void>,
 	private Runnable s, r;
 
 	public OrganRunner(Temporal o, int iter) {
-		this(((Setup) o).setup(), null, o.tick(), iter);
+		this(((Setup) o).setup(), o.tick(), iter);
 	}
 
-	public OrganRunner(Supplier<Runnable> setup, Supplier<Runnable> push, Supplier<Runnable> tick, int iter) {
-		OperationList list = new OperationList();
-		if (push != null) list.add(push);
-		list.add(tick);
-		this.run = loop(list, iter);
+	public OrganRunner(Supplier<Runnable> setup, Supplier<Runnable> tick, int iter) {
+		this.run = loop((Computation<Void>) tick, iter);
 		this.setup = setup;
 	}
 
