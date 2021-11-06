@@ -16,19 +16,14 @@
 
 package com.almostrealism.audio.health;
 
-import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.HardwareException;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.ProducerCache;
-import org.almostrealism.hardware.computations.Loop;
 import org.almostrealism.time.Temporal;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.time.TemporalRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +45,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private boolean encounteredSilence;
 
 	private Temporal organ;
-	private OrganRunner runner;
+	private TemporalRunner runner;
 	
 	public StableDurationHealthComputation() {
 		super(6);
@@ -78,7 +73,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 		if (this.organ == null) {
 			this.organ = organ;
-			this.runner = new OrganRunner(organ, iter);
+			this.runner = new TemporalRunner(organ, iter);
 		} else if (this.organ != organ) {
 			throw new IllegalArgumentException("Health computation cannot be reused");
 		}

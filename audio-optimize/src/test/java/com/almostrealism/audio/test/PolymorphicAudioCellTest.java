@@ -16,7 +16,7 @@
 
 package com.almostrealism.audio.test;
 
-import com.almostrealism.audio.health.OrganRunner;
+import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
 import io.almostrealism.code.Computation;
@@ -47,9 +47,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
@@ -102,7 +100,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		cells.get(0).setReceptor(output);
 
 		if (enableRunner) {
-			OrganRunner runner = new OrganRunner(cells, DURATION_FRAMES);
+			TemporalRunner runner = new TemporalRunner(cells, DURATION_FRAMES);
 			runner.get().run();
 		} else {
 			AudioCellAdapter cell = (AudioCellAdapter) cells.get(0);

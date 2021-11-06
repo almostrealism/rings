@@ -2,16 +2,14 @@ package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AssignableGenomeTest;
-import com.almostrealism.audio.health.OrganRunner;
+import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.LayeredOrganPopulation;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.time.Temporal;
 import org.junit.Test;
 
@@ -39,7 +37,7 @@ public class LayeredOrganPopulationTest extends AdjustmentLayerOrganSystemFactor
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-pop-test.wav")).get(0);
 		LayeredOrganPopulation pop = population(notes(), out);
 
-		OrganRunner organRun = new OrganRunner(pop.enableGenome(0), OutputLine.sampleRate);
+		TemporalRunner organRun = new TemporalRunner(pop.enableGenome(0), OutputLine.sampleRate);
 		pop.disableGenome();
 
 		IntStream.range(0, 4).forEach(i -> {

@@ -19,6 +19,8 @@ package com.almostrealism.audio.test;
 import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
@@ -32,6 +34,8 @@ import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.graph.CellPair;
 import org.almostrealism.graph.MultiCell;
+import org.almostrealism.time.Frequency;
+import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -40,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class SineWaveCellTest implements TestFeatures {
+public class SineWaveCellTest implements CellFeatures, TestFeatures {
 	protected static final int DURATION_FRAMES = 10 * OutputLine.sampleRate;
 
 	protected Receptor<Scalar> loggingReceptor() {
@@ -51,12 +55,10 @@ public class SineWaveCellTest implements TestFeatures {
 
 	protected SineWaveCell cell() {
 		SineWaveCell cell = new SineWaveCell();
-		// cell.setFreq(196.00);
 		cell.setFreq(new DefaultKeyboardTuning().getTone(WesternChromatic.G3).asHertz());
 		cell.setNoteLength(600);
 		cell.setAmplitude(0.1);
 		cell.setEnvelope(DefaultEnvelopeComputation::new);
-
 		return cell;
 	}
 
@@ -87,6 +89,15 @@ public class SineWaveCellTest implements TestFeatures {
 		System.out.println("SineWaveCellTest: Writing WAV...");
 		output.write().get().run();
 		System.out.println("SineWaveCellTest: Done");
+	}
+
+	@Test
+	public void csv() {
+		CellList cells = w(new Frequency(1.0)).csv(i -> new File("sine-wave-cell-test.csv"));
+
+		TemporalRunner runner = new TemporalRunner(cells, OutputLine.sampleRate);
+		runner.get().run();
+		cells.reset();
 	}
 
 	protected Gene<Scalar> identityGene() {

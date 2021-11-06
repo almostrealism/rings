@@ -17,7 +17,7 @@
 package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
-import com.almostrealism.audio.health.OrganRunner;
+import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
 import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
@@ -108,8 +108,8 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 			AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organb = layeredOrgan(samples(), outb);
 			organb.reset();
 
-			Runnable organRunA = new OrganRunner(organa, 8 * OutputLine.sampleRate).get();
-			Runnable organRunB = new OrganRunner(organb, 8 * OutputLine.sampleRate).get();
+			Runnable organRunA = new TemporalRunner(organa, 8 * OutputLine.sampleRate).get();
+			Runnable organRunB = new TemporalRunner(organb, 8 * OutputLine.sampleRate).get();
 
 			organRunA.run();
 			((WaveOutput) outa.getReceptor()).write().get().run();
@@ -125,7 +125,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), out);
 		organ.reset();
 
-		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 
@@ -139,7 +139,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), out);
 		organ.reset();
 
-		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}

@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.13</version>
+		<version>${rings.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -20,12 +20,12 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-audio</artifactId>
-			<version>1.29</version>
+			<version>${ichos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-photonfield</artifactId>
-			<version>0.13</version>
+			<version>${rings.version}</version>
 		</dependency>
 	</dependencies>
 </project>

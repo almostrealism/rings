@@ -18,7 +18,7 @@ package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
-import com.almostrealism.audio.health.OrganRunner;
+import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.audio.optimize.SimpleOrganGenome;
@@ -146,7 +146,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 //						c(g(0.0, feedbackParam), g(feedbackParam, 0.0)))
 				.o(i -> new File("organ-factory-test-b" + i + ".wav"));
 
-		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		Runnable listRun = list.sec(8).get();
 
 		organRun.run();
@@ -171,7 +171,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
 		Cells organ = organ(samples(), out);
 
-		Runnable run = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		Runnable run = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 
 		IntStream.range(0, 10).forEach(i -> {
 			run.run();
@@ -186,7 +186,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		Cells organ = randomOrgan(samples(), out);
 		organ.reset();
 
-		Runnable organRun = new OrganRunner(organ, 8 * OutputLine.sampleRate).get();
+		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}

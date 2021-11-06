@@ -16,61 +16,37 @@
 
 package com.almostrealism.audio.filter.test;
 
-import com.almostrealism.audio.health.OrganRunner;
+import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
-import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
-import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
-import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
-import io.almostrealism.code.ProducerComputation;
-import io.almostrealism.relation.Producer;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.PolymorphicAudioDataBank;
-import org.almostrealism.audio.filter.AdjustableDelayCell;
-import org.almostrealism.audio.filter.AudioCellAdapter;
 import org.almostrealism.audio.filter.AudioPassFilter;
-import org.almostrealism.breeding.AssignableGenome;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.ProducerCache;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
-import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.GeneticTemporalFactory;
-import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.Temporal;
-import org.almostrealism.util.Ops;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class AssignableGenomeTest implements CellFeatures {
 	@BeforeClass
@@ -200,7 +176,7 @@ public class AssignableGenomeTest implements CellFeatures {
 
 		Cells organ = cells(out);
 
-		OrganRunner runner = new OrganRunner(organ, 8 * OutputLine.sampleRate);
+		TemporalRunner runner = new TemporalRunner(organ, 8 * OutputLine.sampleRate);
 		Runnable run = runner.get();
 
 		run.run();
@@ -221,7 +197,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		LayeredOrganGenome genome = new LayeredOrganGenome(2);
 		Temporal organ = organ(genome, out);
 
-		OrganRunner runner = new OrganRunner(organ, 8 * OutputLine.sampleRate);
+		TemporalRunner runner = new TemporalRunner(organ, 8 * OutputLine.sampleRate);
 		Runnable run = runner.get();
 
 		genome.assignTo(genome(0.0, 0.0, false));
