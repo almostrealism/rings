@@ -88,13 +88,13 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
 		LayeredOrganGenome organGenome = new LayeredOrganGenome(2);
 		organGenome.assignTo(layeredOrganGenome());
-		return factory(desirables).generateOrgan(organGenome, meter);
+		return factory(desirables).generateOrgan((Genome) organGenome, meter);
 	}
 
-	public AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
+	public AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
 		LayeredOrganGenome g = new LayeredOrganGenome(2);
 		g.assignTo(LayeredOrganOptimizer.generator(2).get().get());
-		return factory(desirables).generateOrgan(g, meter);
+		return factory(desirables).generateOrgan((Genome) g, meter);
 	}
 
 	@Test

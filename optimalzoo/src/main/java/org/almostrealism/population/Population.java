@@ -23,12 +23,12 @@ import org.almostrealism.time.Temporal;
 
 import java.util.List;
 
-public interface Population<T, O extends Temporal> {
-	void init(GeneticTemporalFactory<T, O> factory, Genome templateGenome, Receptor<T> measure);
+public interface Population<G, T, O extends Temporal> {
+	void init(GeneticTemporalFactory<G, T, O> factory, Genome<G> templateGenome, Receptor<T> measure);
 
-	void merge(Population<T, O> pop);
+	void merge(Population<G, T, O> pop);
 
-	List<Genome> getGenomes();
+	List<Genome<G>> getGenomes();
 	
 	int size();
 

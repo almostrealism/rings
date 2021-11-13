@@ -27,35 +27,35 @@ import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.population.Population;
 import org.almostrealism.util.CodeFeatures;
 
-public class LayeredOrganPopulation<G, O, A, R> implements Population<O, AdjustmentLayerOrganSystem<G, O, A, R>>, CodeFeatures {
-	private final List<Genome> pop;
+public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>>, CodeFeatures {
+	private final List<Genome<G>> pop;
 	private final LayeredOrganGenome genome;
 	private Genome currentGenome;
 	private AdjustmentLayerOrganSystem<G, O, A, R> organ;
 
-	public LayeredOrganPopulation(List<Genome> population, int cellCount) {
+	public LayeredOrganPopulation(List<Genome<G>> population, int cellCount) {
 		this(population, cellCount, OutputLine.sampleRate);
 	}
 
-	public LayeredOrganPopulation(List<Genome> population, int cellCount, int sampleRate) {
+	public LayeredOrganPopulation(List<Genome<G>> population, int cellCount, int sampleRate) {
 		this.pop = population;
 		this.genome = new LayeredOrganGenome(cellCount, sampleRate);
 	}
 
 	@Override
-	public void init(GeneticTemporalFactory<O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome templateGenome, Receptor<O> meter) {
+	public void init(GeneticTemporalFactory<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome<G> templateGenome, Receptor<O> meter) {
 		enableGenome(templateGenome);
-		this.organ = organFactory.generateOrgan(genome, meter);
+		this.organ = organFactory.generateOrgan((Genome) genome, meter);
 		disableGenome();
 	}
 
 	@Override
-	public void merge(Population<O, AdjustmentLayerOrganSystem<G, O, A, R>> pop) {
+	public void merge(Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> pop) {
 		this.pop.addAll(pop.getGenomes());
 	}
 
 	@Override
-	public List<Genome> getGenomes() { return pop; }
+	public List<Genome<G>> getGenomes() { return pop; }
 
 	@Override
 	public AdjustmentLayerOrganSystem<G, O, A, R> enableGenome(int index) {

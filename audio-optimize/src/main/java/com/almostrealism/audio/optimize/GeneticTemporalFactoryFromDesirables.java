@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -37,15 +38,18 @@ import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.audio.filter.AudioCellAdapter;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.graph.SummationCell;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.util.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
-	public GeneticTemporalFactory<Scalar, Cells> from(DesirablesProvider provider) {
+	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
 		Supplier<PolymorphicAudioData> dataSupplier = new Supplier<>() {
-			private final int SIZE = 50;
+			private final int SIZE = 100;
 			private final PolymorphicAudioDataBank bank = new PolymorphicAudioDataBank(SIZE);
 			private int count = 0;
 
@@ -56,32 +60,58 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			}
 		};
 
-		List<Function<PolymorphicAudioData, ? extends AudioCellAdapter>> choices = new ArrayList<>();
+		List<Function<Gene<Scalar>, AudioCellAdapter>> choices = new ArrayList<>();
 
 		if (!provider.getFrequencies().isEmpty()) {
-			provider.getFrequencies().forEach(f -> choices.add(data -> (AudioCellAdapter) w(() -> data, f).get(0)));
+			provider.getFrequencies().forEach(f -> choices.add(g -> (AudioCellAdapter) w(dataSupplier, f).get(0)));
 		}
 
 		if (!provider.getSamples().isEmpty()) {
-			provider.getSamples().forEach(f -> choices.add(data -> (AudioCellAdapter) w(() -> data, f).get(0)));
+			provider.getSamples().forEach(f -> choices.add(g -> {
+				Producer<Scalar> duration = g.valueAt(2).getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
+				return (AudioCellAdapter) w(dataSupplier, g.valueAt(1).getResultant(duration), duration, f).get(0);
+			}));
 		}
 
 		Function<Gene<Scalar>, PolymorphicAudioCell> generator = g ->
-				new PolymorphicAudioCell(dataSupplier.get(), (ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)), choices);
+				new PolymorphicAudioCell(
+						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
+						choices.stream().map(c -> c.apply(g)).collect(Collectors.toList()));
 
 		return (genome, meter) -> {
-			CellList cells =
-					// Generators
-					cells(genome.valueAt(0).length(), i -> generator.apply((Gene) genome.valueAt(0).valueAt(i)))
-							// Volume adjustment
-							.f(i -> (Factor) genome.valueAt(1).valueAt(i).valueAt(0))
-							// Processing
-							.map(i -> new AdjustableDelayCell((Scalar) genome.valueAt(2).valueAt(i).valueAt(1).getResultant((Producer) v(60)).get().evaluate()))
-							// Feedback grid
-							.mself(fc(i -> (Factor) genome.valueAt(4).valueAt(i).valueAt(0)), i -> (Gene<Scalar>) genome.valueAt(3).valueAt(i));
+			// Generators
+			CellList cells = cells(genome.valueAt(SimpleOrganGenome.GENERATORS).length(),
+								i -> generator.apply(genome.valueAt(SimpleOrganGenome.GENERATORS, i)));
 
-			((CellAdapter) cells.get(cells.size() - 1)).setMeter(meter);
-			return cells;
+			// Volume adjustment
+			CellList branch[] = cells.branch(
+									fc(i -> genome.valueAt(1, i, 0)),
+									fc(i -> new ScaleFactor(0.0)));
+									// fc(i -> genome.valueAt(1, i, 1)
+									//		.andThen(genome.valueAt(SimpleOrganGenome.FILTERS, i, 0))));
+
+			CellList main = branch[0];
+			CellList efx = branch[1];
+
+			main = main.sum();
+
+			efx = efx
+					// Processing
+					.map(i ->
+							new AdjustableDelayCell(genome.valueAt(SimpleOrganGenome.PROCESSORS, i, 1).getResultant(v(60)).get().evaluate()))
+					// Feedback grid
+					.mself(fi(),
+							genome.valueAt(SimpleOrganGenome.TRANSMISSION),
+							fc(genome.valueAt(SimpleOrganGenome.WET, 0)))
+					.sum();
+
+			// Mix efx with main
+			efx.get(0).setReceptor(main.get(0));
+
+			// Deliver main to the meter
+			main = main.map(i -> new ReceptorCell<>(meter));
+
+			return cells(main, efx);
 		};
 	}
 }

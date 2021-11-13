@@ -116,10 +116,14 @@ public class SimpleOrgan<T> implements TemporalCellular, CodeFeatures {
 
 	@Override
 	public Supplier<Runnable> setup() {
-		List<Runnable> toSetup = new ArrayList<>();
-		if (inputLayer != null) inputLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
-		processingLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
-		return () -> () -> toSetup.forEach(Runnable::run);
+//		List<Runnable> toSetup = new ArrayList<>();
+//		if (inputLayer != null) inputLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
+//		processingLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
+//		return () -> () -> toSetup.forEach(Runnable::run);
+		OperationList toSetup = new OperationList();
+		if (inputLayer != null) inputLayer.stream().map(Cell::setup).forEach(toSetup::add);
+		processingLayer.stream().map(Cell::setup).forEach(toSetup::add);
+		return toSetup;
 	}
 
 	private Supplier<Runnable> push(Producer<T> protein) {

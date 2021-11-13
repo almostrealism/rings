@@ -35,7 +35,7 @@ import org.almostrealism.population.Population;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.util.CodeFeatures;
 
-public class PopulationOptimizer<T, O extends Temporal> implements Generated<Supplier<Genome>, PopulationOptimizer>, CodeFeatures {
+public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<Supplier<Genome<G>>, PopulationOptimizer>, CodeFeatures {
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
@@ -47,26 +47,26 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 	public static double quaternaryOffspringPotential = 0.25;
 	public static double lowestHealth = 0.0;
 
-	private Population<T, O> population;
-	private Function<List<Genome>, Population> children;
+	private Population<G, T, O> population;
+	private Function<List<Genome<G>>, Population> children;
 
-	private Supplier<Supplier<Genome>> generatorSupplier;
-	private Supplier<Genome> generator;
+	private Supplier<Supplier<Genome<G>>> generatorSupplier;
+	private Supplier<Genome<G>> generator;
 
 	private Supplier<HealthComputation<T>> healthSupplier;
 	private HealthComputation<T> health;
 
-	private Supplier<GenomeBreeder> breeder;
+	private Supplier<GenomeBreeder<G>> breeder;
 
 	public PopulationOptimizer(Supplier<HealthComputation<T>> h,
-							   Function<List<Genome>, Population> children,
-							   Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator) {
+							   Function<List<Genome<G>>, Population> children,
+							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this(null, h, children, breeder, generator);
 	}
 
-	public PopulationOptimizer(Population<T, O> p, Supplier<HealthComputation<T>> h,
-							   Function<List<Genome>, Population> children,
-							   Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator) {
+	public PopulationOptimizer(Population<G, T, O> p, Supplier<HealthComputation<T>> h,
+							   Function<List<Genome<G>>, Population> children,
+							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this.population = p;
 		this.healthSupplier = h;
 		this.children = children;
@@ -74,9 +74,9 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 		this.generatorSupplier = generator;
 	}
 
-	public void setPopulation(Population<T, O> population) { this.population = population; }
+	public void setPopulation(Population<G, T, O> population) { this.population = population; }
 
-	public Population<T, O> getPopulation() { return this.population; }
+	public Population<G, T, O> getPopulation() { return this.population; }
 
 	public void resetHealth() { health = null; }
 
@@ -85,16 +85,16 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 		return health;
 	}
 
-	public void setChildrenFunction(Function<List<Genome>, Population> pop) { this.children = pop; }
+	public void setChildrenFunction(Function<List<Genome<G>>, Population> pop) { this.children = pop; }
 
-	public Function<List<Genome>, Population> getChildrenFunction() { return children; }
+	public Function<List<Genome<G>>, Population> getChildrenFunction() { return children; }
 
 	public void resetGenerator() {
 		generator = null;
 	}
 
 	@Override
-	public Supplier<Genome> getGenerator() {
+	public Supplier<Genome<G>> getGenerator() {
 		if (generator == null && generatorSupplier != null)
 			generator = generatorSupplier.get();
 		return generator;
@@ -107,7 +107,7 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 		SortedSet<Genome> sorted = orderByHealth(population);
 
 		// Fresh genetic material
-		List<Genome> genomes = new ArrayList<>();
+		List<Genome<G>> genomes = new ArrayList<>();
 
 		// Mate in order of health
 		Iterator<Genome> itr = sorted.iterator();
@@ -166,11 +166,11 @@ public class PopulationOptimizer<T, O extends Temporal> implements Generated<Sup
 			console.println("Iteration completed after " + sec + " seconds");
 	}
 
-	public void breed(List<Genome> genomes, Genome g1, Genome g2) {
+	public void breed(List<Genome<G>> genomes, Genome g1, Genome g2) {
 		genomes.add(breeder.get().combine(g1, g2));
 	}
 
-	private SortedSet<Genome> orderByHealth(Population<T, O> pop) {
+	private SortedSet<Genome> orderByHealth(Population<G, T, O> pop) {
 		final HashMap<Genome, Double> healthTable = new HashMap<>();
 
 		double highestHealth = 0;

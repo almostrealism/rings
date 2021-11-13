@@ -61,7 +61,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		StableDurationHealthComputation.enableVerbose = false;
 	}
 
-	protected GeneticTemporalFactory<Scalar, Cells> factory() {
+	protected GeneticTemporalFactory<Scalar, Scalar, Cells> factory() {
 		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 
 		/*

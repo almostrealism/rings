@@ -80,7 +80,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		gcell.setAmplitude(0.1);
 		gcell.setEnvelope(DefaultEnvelopeComputation::new);
 
-		return new PolymorphicAudioCell(v(0.5), Arrays.asList(data -> fcell, data -> gcell));
+		return new PolymorphicAudioCell(v(0.5), Arrays.asList(fcell, gcell));
 	}
 
 	@Test

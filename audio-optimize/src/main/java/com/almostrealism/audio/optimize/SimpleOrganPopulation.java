@@ -28,9 +28,9 @@ import org.almostrealism.population.Population;
 import io.almostrealism.uml.ModelEntity;
 
 @ModelEntity
-public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
-	private final List<Genome> genomes;
-	private GeneticTemporalFactory<T, SimpleOrgan<T>> factory;
+public class SimpleOrganPopulation<G, T> implements Population<G, T, SimpleOrgan<T>> {
+	private final List<Genome<G>> genomes;
+	private GeneticTemporalFactory<G, T, SimpleOrgan<T>> factory;
 	private SimpleOrgan<T> currentOrgan;
 
 	private Receptor<T> measure;
@@ -39,7 +39,7 @@ public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 		this(new ArrayList<>());
 	}
 	
-	public SimpleOrganPopulation(List<Genome> g) {
+	public SimpleOrganPopulation(List<Genome<G>> g) {
 		genomes = g;
 	}
 
@@ -52,18 +52,18 @@ public class SimpleOrganPopulation<T> implements Population<T, SimpleOrgan<T>> {
 	}
 
 	@Override
-	public void init(GeneticTemporalFactory<T, SimpleOrgan<T>> factory, Genome templateGenome, Receptor<T> measure) {
+	public void init(GeneticTemporalFactory<G, T, SimpleOrgan<T>> factory, Genome<G> templateGenome, Receptor<T> measure) {
 		this.factory = factory;
 		this.measure = measure;
 	}
 
 	@Override
-	public void merge(Population<T, SimpleOrgan<T>> pop) {
+	public void merge(Population<G, T, SimpleOrgan<T>> pop) {
 		this.genomes.addAll(pop.getGenomes());
 	}
 
 	@Override
-	public List<Genome> getGenomes() { return genomes; }
+	public List<Genome<G>> getGenomes() { return genomes; }
 
 	@Override
 	public SimpleOrgan<T> enableGenome(int index) {

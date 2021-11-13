@@ -26,7 +26,7 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.util.CodeFeatures;
 
-public class AssignableGenome extends Tensor<Scalar> implements Genome, Delegated<Tensor<Scalar>>, CodeFeatures {
+public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, Delegated<Tensor<Scalar>>, CodeFeatures {
 	private final Tensor<Scalar> delegate;
 	private final int count;
 
@@ -89,7 +89,7 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome, Delegate
 	}
 
 	@Override
-	public Chromosome<?> valueAt(int pos) {
+	public Chromosome<Scalar> valueAt(int pos) {
 		return new AssignableChromosome(pos);
 	}
 

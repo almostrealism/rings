@@ -33,6 +33,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.Hardware;
+import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
@@ -44,40 +45,44 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
-public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar>> {
+public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
 
-	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> f,
-								 Supplier<GenomeBreeder> breeder, Supplier<Supplier<Genome>> generator,
+	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
+								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
 								 int sampleRate, int cellCount, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, cellCount, sampleRate);
+					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, cellCount, sampleRate);
 					pop.init(f.get(), pop.getGenomes().get(0), ((AudioHealthComputation) getHealthComputation()).getMonitor());
 					return pop;
 				});
 	}
 
-	public static Supplier<Supplier<Genome>> generator(int dim) {
+	public static Supplier<Supplier<Genome<Scalar>>> generator(int dim) {
 		return generator(dim, new GeneratorConfiguration(dim));
 	}
 
-	public static Supplier<Supplier<Genome>> generator(int dim, GeneratorConfiguration config) {
+	public static Supplier<Supplier<Genome<Scalar>>> generator(int dim, GeneratorConfiguration config) {
 		return () -> {
 			// Random genetic material generators
-			RandomChromosomeFactory generators = new RandomChromosomeFactory();   // GENERATORS
+			ChromosomeFactory<Scalar> generators = SimpleOrganGenome.generatorFactory();   // GENERATORS
 			RandomChromosomeFactory volume = new RandomChromosomeFactory();       // VOLUME
 			RandomChromosomeFactory processors = new RandomChromosomeFactory();   // DELAY
 			RandomChromosomeFactory transmission = new RandomChromosomeFactory(); // ROUTING
+			RandomChromosomeFactory wet = new RandomChromosomeFactory();		  // WET
 			RandomChromosomeFactory filters = new RandomChromosomeFactory();      // FILTERS
 			RandomChromosomeFactory afactory = new RandomChromosomeFactory();     // PERIODIC
 			RandomChromosomeFactory bfactory = new RandomChromosomeFactory();     // EXPONENTIAL
 
 			generators.setChromosomeSize(dim, 1); // GENERATORS
 
-			volume.setChromosomeSize(dim, 1);     // VOLUME
+			volume.setChromosomeSize(dim, 2);     // VOLUME
 			Pair volumeRange = new Pair(config.minVolume, config.maxVolume);
-			IntStream.range(0, dim).forEach(i -> volume.setRange(i, 0, volumeRange));
+			IntStream.range(0, dim).forEach(i -> {
+				volume.setRange(i, 0, volumeRange);
+				volume.setRange(i, 1, volumeRange);
+			});
 
 			processors.setChromosomeSize(dim, 2); // DELAY
 			Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
@@ -88,6 +93,10 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			Pair transmissionRange = new Pair(config.minTransmission, config.maxTransmission);
 			IntStream.range(0, dim).forEach(i -> IntStream.range(0, dim)
 					.forEach(j -> transmission.setRange(i, j, transmissionRange)));
+
+			wet.setChromosomeSize(1, dim);		 // WET
+			Pair wetRange = new Pair(config.minWet, config.maxWet);
+			IntStream.range(0, dim).forEach(i -> wet.setRange(0, i, wetRange));
 
 			filters.setChromosomeSize(dim, 2);    // FILTERS
 			Pair hpRange = new Pair(SimpleOrganGenome.factorForFilterFrequency(config.minHighPass),
@@ -102,29 +111,30 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			afactory.setChromosomeSize(dim, 3);   // PERIODIC
 			bfactory.setChromosomeSize(dim, 2);   // EXPONENTIAL
 
-			return Genome.fromChromosomes(generators, volume, processors, transmission, filters, afactory); //, bfactory);
+			return Genome.fromChromosomes(generators, volume, processors, transmission, wet, filters, afactory); //, bfactory);
 		};
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 6, cycles);
+		return build(desirables, 3, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
 		return build(generator(dim), desirables, dim, cycles);
 	}
 
-	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome>> generator, DesirablesProvider desirables, int dim, int cycles) {
+	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables, int dim, int cycles) {
 		return new LayeredOrganOptimizer(() -> {
 			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
 			TieredCellAdjustmentFactory<Scalar, Scalar> tcb = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.EXPONENTIAL), tca);
 			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(desirables));
 		}, () -> {
 			return new DefaultGenomeBreeder(
-					Breeders.randomChoiceBreeder(),  								  // GENERATORS
-					Breeders.averageBreeder(),  									  // VOLUME
+					Breeders.randomChoiceBreeder(),  								   // GENERATORS
+					Breeders.averageBreeder(),  									   // VOLUME
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
+					Breeders.averageBreeder(),  									   // WET
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
 					Breeders.perturbationBreeder(0.005, ScaleFactor::new)); //,   // PERIODIC
 			// Breeders.perturbationBreeder(0.0001, ScaleFactor::new)); // EXPONENTIAL
@@ -161,6 +171,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public double minVolume, maxVolume;
 		public double minTransmission, maxTransmission;
 		public double minDelay, maxDelay;
+		public double minWet, maxWet;
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
 
@@ -173,6 +184,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			maxTransmission = 1.0 / scale;
 			minDelay = 0.5;
 			maxDelay = 120;
+			minWet = 0.0;
+			maxWet = 1.0;
 			minHighPass = 0;
 			maxHighPass = 0;
 			minLowPass = 20000;

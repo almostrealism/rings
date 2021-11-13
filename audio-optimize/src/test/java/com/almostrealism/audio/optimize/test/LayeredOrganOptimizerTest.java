@@ -52,7 +52,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
-	protected Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> factorySupplier() {
+	protected Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier() {
 		return () -> {
 			DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 
@@ -65,13 +65,13 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 		int dim = 2;
 		int cycles = 1;
 
-		List<Genome> genomes = new ArrayList<>();
+		List<Genome<Scalar>> genomes = new ArrayList<>();
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 
-		Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
+		Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
 
 		LayeredOrganOptimizer optimizer = new LayeredOrganOptimizer(null, () -> {
 			return new DefaultGenomeBreeder(
@@ -85,7 +85,7 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating LayeredOrganPopulation...");
-			LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, dim, OutputLine.sampleRate);
+			LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, dim, OutputLine.sampleRate);
 			pop.init(factorySupplier.get(), pop.getGenomes().get(0), ((AudioHealthComputation) optimizer.getHealthComputation()).getMonitor());
 			return pop;
 		});
@@ -102,11 +102,11 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 
 	@Test
 	public void healthTest() throws FileNotFoundException {
-		Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
+		Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome> genomes = new ArrayList<>();
+		List<Genome<Scalar>> genomes = new ArrayList<>();
 		genomes.add(genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, 0.0, 0.0, false));
@@ -122,12 +122,12 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 					health.setDebugOutputFile(() -> "health/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
 
 					System.out.println("Creating LayeredOrganPopulation...");
-					LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop =
+					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop =
 							new LayeredOrganPopulation<>(AudioPopulationOptimizer.read(new FileInputStream("Population.xml")), 2, OutputLine.sampleRate);
 					pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMonitor());
 
 					IntStream.range(0, 4).forEach(i -> {
-						AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = pop.enableGenome(i);
+						AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> organ = pop.enableGenome(i);
 						try {
 							health.computeHealth(organ);
 						} finally {

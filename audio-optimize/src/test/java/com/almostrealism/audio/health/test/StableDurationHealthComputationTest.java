@@ -145,21 +145,21 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setDebugOutputFile("health/layered-organ-samples-rand-test.wav");
 
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), health.getMonitor());
+		AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), health.getMonitor());
 		organ.reset();
 		health.computeHealth(organ);
 	}
 
 	@Test
 	public void layeredOrganHealthSamplesPopulation() throws FileNotFoundException {
-		Supplier<AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar>> factorySupplier = () -> {
+		Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier = () -> {
 			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(DefaultCellAdjustmentFactory.Type.PERIODIC));
 			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(samples()));
 		};
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome> genomes = new ArrayList<>();
+		List<Genome<Scalar>> genomes = new ArrayList<>();
 		genomes.add(layeredOrganGenome());
 		genomes.add(layeredOrganGenome());
 
@@ -173,12 +173,12 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 				health.setDebugOutputFile(() -> "health/layered-organ-samples-pop-test-" + index.incrementAndGet() + ".wav");
 
 				System.out.println("Creating LayeredOrganPopulation...");
-				LayeredOrganPopulation<Double, Scalar, Double, Scalar> pop =
+				LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop =
 						new LayeredOrganPopulation<>(AudioPopulationOptimizer.read(new FileInputStream("Population.xml")), 2, OutputLine.sampleRate);
 				pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMonitor());
 
 				IntStream.range(0, 2).forEach(i -> {
-					AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = pop.enableGenome(i);
+					AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> organ = pop.enableGenome(i);
 					try {
 						health.computeHealth(organ);
 					} finally {

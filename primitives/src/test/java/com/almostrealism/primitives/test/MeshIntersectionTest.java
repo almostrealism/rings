@@ -1,6 +1,7 @@
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
@@ -10,6 +11,7 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
+import org.almostrealism.graph.mesh.TrianglePointData;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
@@ -102,7 +104,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 	}
 
 	@Test
-	public void triangleIntersectAt() {
+	public void triangleIntersectAtKernel() {
 		RayBank in = new RayBank(1);
 		ScalarBank distances = new ScalarBank(1);
 

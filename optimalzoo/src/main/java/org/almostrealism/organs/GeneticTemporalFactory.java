@@ -20,6 +20,6 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.Temporal;
 
-public interface GeneticTemporalFactory<T, O extends Temporal> {
-	O generateOrgan(Genome genome, Receptor<T> meter);
+public interface GeneticTemporalFactory<G, T, O extends Temporal> {
+	O generateOrgan(Genome<G> genome, Receptor<T> meter);
 }

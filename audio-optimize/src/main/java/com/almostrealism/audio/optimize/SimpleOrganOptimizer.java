@@ -37,9 +37,9 @@ public class SimpleOrganOptimizer extends AudioPopulationOptimizer<SimpleOrgan<S
 	private static double defaultMaxFeedback = 0.5;
 
 	// TODO  The factory is ignored?
-	public SimpleOrganOptimizer(GeneticTemporalFactory<Scalar, Cells> f,
+	public SimpleOrganOptimizer(GeneticTemporalFactory<Scalar, Scalar, Cells> f,
 								ChromosomeBreeder<Scalar> xb, ChromosomeBreeder<Scalar> yb,
-								Supplier<Supplier<Genome>> generator) {
+								Supplier<Supplier<Genome<Scalar>>> generator) {
 		super(SimpleOrganPopulation::new, () -> new DefaultGenomeBreeder(xb, yb), generator, "Population.xml");
 	}
 

@@ -22,13 +22,20 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.breeding.AssignableGenome;
+import org.almostrealism.heredity.ArrayListChromosome;
+import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.util.CodeFeatures;
 
-public class SimpleOrganGenome implements Genome, CodeFeatures {
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class SimpleOrganGenome implements Genome<Scalar>, CodeFeatures {
 	private static double defaultResonance = 0.1; // TODO
 	private static double maxFrequency = 20000;
 
@@ -36,7 +43,8 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	public static final int VOLUME = 1;
 	public static final int PROCESSORS = 2;
 	public static final int TRANSMISSION = 3;
-	public static final int FILTERS = 4;
+	public static final int WET = 4;
+	public static final int FILTERS = 5;
 
 	private AssignableGenome data;
 	private int cells, length;
@@ -47,7 +55,7 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	}
 
 	public SimpleOrganGenome(int cells, int sampleRate) {
-		this(cells, 4, sampleRate);
+		this(cells, 6, sampleRate);
 	}
 
 	protected SimpleOrganGenome(int cells, int length, int sampleRate) {
@@ -75,9 +83,13 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	public int count() { return length; }
 
 	@Override
-	public Chromosome<?> valueAt(int pos) {
-		if (pos == PROCESSORS) {
+	public Chromosome<Scalar> valueAt(int pos) {
+		if (pos == GENERATORS) {
+			return new GeneratorChromosome(pos);
+		} else if (pos == PROCESSORS) {
 			return new DelayChromosome(pos);
+		} else if (pos == WET) {
+			return data.valueAt(pos);
 		} else if (pos == FILTERS) {
 			return new FilterChromosome(pos);
 		} else {
@@ -88,12 +100,59 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 	@Override
 	public String toString() {return data.toString(); }
 
+	public static double factorForRepeat(double beats) {
+		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
+	}
+
 	public static double factorForDelay(double seconds) {
 		return Math.pow(1 - (1 / ((seconds / 60) + 1)), 1.0 / 3);
 	}
 
 	public static double factorForFilterFrequency(double hertz) {
 		return hertz / 20000;
+	}
+
+	protected class GeneratorChromosome implements Chromosome<Scalar> {
+		private final int index;
+
+		public GeneratorChromosome(int index) {
+			this.index = index;
+		}
+
+		@Override
+		public int length() {
+			return data.length(index);
+		}
+
+		@Override
+		public Gene<Scalar> valueAt(int pos) {
+			return new GeneratorGene(index, pos);
+		}
+	}
+
+	protected class GeneratorGene implements Gene<Scalar> {
+		private final int chromosome;
+		private final int index;
+
+		public GeneratorGene(int chromosome, int index) {
+			this.chromosome = chromosome;
+			this.index = index;
+		}
+
+		@Override
+		public int length() { return 1; }
+
+		@Override
+		public Factor<Scalar> valueAt(int pos) {
+			if (pos < 2) {
+				return protein -> scalarsMultiply(protein, () -> args -> data.get(chromosome, index, pos));
+			} else {
+				return protein ->
+					pow(v(2.0), v(16).multiply(v(-0.5)
+								.add(() -> args -> data.get(chromosome, index, pos))))
+							.multiply(protein);
+			}
+		}
 	}
 
 	protected class DelayChromosome implements Chromosome<Scalar> {
@@ -172,5 +231,50 @@ public class SimpleOrganGenome implements Genome, CodeFeatures {
 			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
 		}
+	}
+
+	public static ChromosomeFactory<Scalar> generatorFactory() {
+		double offsetChoices[] = IntStream.range(0, 7)
+				.mapToDouble(i -> Math.pow(2, -i))
+				.toArray();
+		offsetChoices[0] = 0.0;
+
+		double repeatChoices[] = IntStream.range(0, 13)
+				.map(i -> i - 6)
+				.mapToDouble(i -> Math.pow(2, i))
+				.map(SimpleOrganGenome::factorForRepeat)
+				.toArray();
+
+		return new ChromosomeFactory<>() {
+			private int genes, factors;
+
+			@Override
+			public ChromosomeFactory<Scalar> setChromosomeSize(int genes, int factors) {
+				this.genes = genes;
+				this.factors = factors;
+				return this;
+			}
+
+			@Override
+			public Chromosome<Scalar> generateChromosome(double arg) {
+				return IntStream.range(0, genes)
+						.mapToObj(i -> IntStream.range(0, 3)
+								.mapToObj(j -> new ScaleFactor(value(i, j)))
+								.collect(Collectors.toCollection(ArrayListGene::new)))
+						.collect(Collectors.toCollection(ArrayListChromosome::new));
+			}
+
+			private double value(int gene, int factor) {
+				if (factor == 0) {
+					return Math.random();
+				} else if (factor == 1) {
+					return offsetChoices[(int) (Math.random() * offsetChoices.length)];
+				} else if (factor == 2) {
+					return repeatChoices[(int) (Math.random() * repeatChoices.length)];
+				} else {
+					throw new IllegalArgumentException();
+				}
+			}
+		};
 	}
 }
