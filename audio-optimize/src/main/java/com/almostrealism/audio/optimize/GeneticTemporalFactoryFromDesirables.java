@@ -38,6 +38,7 @@ import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.audio.filter.AudioCellAdapter;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.SummationCell;
 import org.almostrealism.heredity.Factor;
@@ -78,7 +79,7 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
 						choices.stream().map(c -> c.apply(g)).collect(Collectors.toList()));
 
-		return (genome, meter) -> {
+		return (genome, measures, output) -> {
 			// Generators
 			CellList cells = cells(genome.valueAt(SimpleOrganGenome.GENERATORS).length(),
 								i -> generator.apply(genome.valueAt(SimpleOrganGenome.GENERATORS, i)));
@@ -86,9 +87,8 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			// Volume adjustment
 			CellList branch[] = cells.branch(
 									fc(i -> genome.valueAt(1, i, 0)),
-									fc(i -> new ScaleFactor(0.0)));
-									// fc(i -> genome.valueAt(1, i, 1)
-									//		.andThen(genome.valueAt(SimpleOrganGenome.FILTERS, i, 0))));
+									fc(i -> genome.valueAt(1, i, 1)
+											.andThen(genome.valueAt(SimpleOrganGenome.FILTERS, i, 0))));
 
 			CellList main = branch[0];
 			CellList efx = branch[1];
@@ -105,11 +105,11 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 							fc(genome.valueAt(SimpleOrganGenome.WET, 0)))
 					.sum();
 
-			// Mix efx with main
-			efx.get(0).setReceptor(main.get(0));
+			// Mix efx with main and measure #2
+			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 
-			// Deliver main to the meter
-			main = main.map(i -> new ReceptorCell<>(meter));
+			// Deliver main to the output and measure #1
+			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
 
 			return cells(main, efx);
 		};

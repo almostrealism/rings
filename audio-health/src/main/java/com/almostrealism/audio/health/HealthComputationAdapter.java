@@ -17,51 +17,63 @@
 package com.almostrealism.audio.health;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.AudioMeter;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.filter.AudioCellAdapter;
-import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
-import org.almostrealism.audio.sources.WavCell;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.optimize.HealthComputation;
+import org.almostrealism.heredity.TemporalCellular;
 
-public abstract class HealthComputationAdapter implements AudioHealthComputation {
+public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
+	public static final int MEASURE_COUNT = 2;
 	public static int standardDuration = (int) (60 * OutputLine.sampleRate);
 
-	private AudioMeter meter;
+	private TemporalCellular target;
+
+	private AudioMeter outputMeter;
 	private WaveOutput out;
 	private Supplier<String> debugFile;
-	
-	protected void init() { }
+
+	private List<AudioMeter> measures;
+
+	public TemporalCellular getTarget() { return target; }
 
 	@Override
-	public Receptor<Scalar> getMonitor() { return getMeter(); }
-	
-	protected synchronized AudioMeter getMeter() {
-		if (meter != null) return meter;
+	public void setTarget(TemporalCellular target) { this.target = target; }
 
-		meter = new AudioMeter();
+	@Override
+	public synchronized Receptor<Scalar> getOutput() {
+		if (outputMeter != null) return outputMeter;
+
+		outputMeter = new AudioMeter();
 		out = new WaveOutput(() ->
 				Optional.ofNullable(debugFile).map(Supplier::get).map(File::new).orElse(null),
 				standardDuration, 24);
-		meter.setForwarding(out);
-		return meter;
+		outputMeter.setForwarding(out);
+		return outputMeter;
 	}
 
-	public void setDebugOutputFile(String file) { setDebugOutputFile(() -> file); }
-	public void setDebugOutputFile(Supplier<String> file) { this.debugFile = file; }
+	@Override
+	public List<AudioMeter> getMeasures() {
+		if (measures != null) return measures;
+		measures = IntStream.range(0, MEASURE_COUNT).mapToObj(i -> new AudioMeter()).collect(Collectors.toList());
+		return measures;
+	}
+
+	public void setOutputFile(String file) { setOutputFile(() -> file); }
+	public void setOutputFile(Supplier<String> file) { this.debugFile = file; }
 
 	@Override
 	public void reset() {
 		AudioHealthComputation.super.reset();
-		meter.reset();
+		outputMeter.reset();
+		measures.forEach(AudioMeter::reset);
 		out.reset();
 	}
 }

@@ -38,6 +38,7 @@ import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 
 public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactoryFromDesirablesTest {
 	protected AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> factory(DesirablesProvider desirables) {
@@ -85,16 +86,16 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 		return genome;
 	}
 
-	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
+	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
 		LayeredOrganGenome organGenome = new LayeredOrganGenome(2);
 		organGenome.assignTo(layeredOrganGenome());
-		return factory(desirables).generateOrgan((Genome) organGenome, meter);
+		return factory(desirables).generateOrgan((Genome) organGenome, measures, meter);
 	}
 
-	public AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
+	public AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables,  List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
 		LayeredOrganGenome g = new LayeredOrganGenome(2);
 		g.assignTo(LayeredOrganOptimizer.generator(2).get().get());
-		return factory(desirables).generateOrgan((Genome) g, meter);
+		return factory(desirables).generateOrgan((Genome) g, measures, meter);
 	}
 
 	@Test
@@ -105,7 +106,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 			organa.reset();
 
 			ReceptorCell outb = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-b.wav")).get(0);
-			AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organb = layeredOrgan(samples(), outb);
+			AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organb = layeredOrgan(samples(), null, outb); // TODO
 			organb.reset();
 
 			Runnable organRunA = new TemporalRunner(organa, 8 * OutputLine.sampleRate).get();
@@ -122,7 +123,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	@Test
 	public void layered() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-factory-test.wav")).get(0);
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), out);
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), null, out); // TODO
 		organ.reset();
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
@@ -136,7 +137,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	@Test
 	public void layeredRandom() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-factory-rand-test.wav")).get(0);
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), out);
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = randomLayeredOrgan(samples(), null, out); // TODO
 		organ.reset();
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();

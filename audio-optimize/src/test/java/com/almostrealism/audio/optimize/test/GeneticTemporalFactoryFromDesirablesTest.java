@@ -43,6 +43,7 @@ import org.almostrealism.heredity.Genome;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCellTest implements CellFeatures {
@@ -70,10 +71,10 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	}
 
 	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter) {
-		return organ(desirables, meter, enableFilter);
+		return organ(desirables, null, meter, enableFilter); // TODO
 	}
 
-	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter, boolean filter) {
+	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
 		ArrayListChromosome<Double> generators = new ArrayListChromosome();
 		generators.add(new ArrayListGene<>(0.4, 0.5, SimpleOrganGenome.factorForRepeat(1)));
 		generators.add(new ArrayListGene<>(0.8, 0.0, SimpleOrganGenome.factorForRepeat(4)));
@@ -120,10 +121,10 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
 		organGenome.assignTo(genome);
 
-		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(organGenome, meter);
+		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(organGenome, measures, output);
 	}
 
-	public Cells randomOrgan(DesirablesProvider desirables, Receptor<Scalar> meter) {
+	public Cells randomOrgan(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output) {
 		LayeredOrganOptimizer.GeneratorConfiguration conf = new LayeredOrganOptimizer.GeneratorConfiguration();
 		conf.minDelay = delay;
 		conf.maxDelay = delay;
@@ -143,7 +144,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		System.out.println("0, 0, 2 = " + sog.valueAt(SimpleOrganGenome.GENERATORS, 0).valueAt(2).getResultant(v(1.0)).get().evaluate());
 		System.out.println("0, 1, 2 = " + sog.valueAt(SimpleOrganGenome.GENERATORS, 1).valueAt(2).getResultant(v(1.0)).get().evaluate());
 
-		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(sog, meter);
+		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(sog, measures, output);
 	}
 
 	@Test
@@ -202,7 +203,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	@Test
 	public void random() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("factory-rand-test.wav")).get(0);
-		Cells organ = randomOrgan(samples(), out);
+		Cells organ = randomOrgan(samples(), null, out);  // TODO
 		organ.reset();
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();

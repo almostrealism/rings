@@ -20,6 +20,8 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.Temporal;
 
+import java.util.List;
+
 public interface GeneticTemporalFactory<G, T, O extends Temporal> {
-	O generateOrgan(Genome<G> genome, Receptor<T> meter);
+	O generateOrgan(Genome<G> genome, List<? extends Receptor<T>> measures, Receptor<T> output);
 }

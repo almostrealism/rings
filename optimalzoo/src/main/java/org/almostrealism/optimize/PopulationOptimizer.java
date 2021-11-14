@@ -29,6 +29,7 @@ import java.util.stream.IntStream;
 import io.almostrealism.relation.Generated;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 
 import org.almostrealism.population.Population;
@@ -53,18 +54,18 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 	private Supplier<Supplier<Genome<G>>> generatorSupplier;
 	private Supplier<Genome<G>> generator;
 
-	private Supplier<HealthComputation<T>> healthSupplier;
-	private HealthComputation<T> health;
+	private Supplier<HealthComputation<O>> healthSupplier;
+	private HealthComputation<O> health;
 
 	private Supplier<GenomeBreeder<G>> breeder;
 
-	public PopulationOptimizer(Supplier<HealthComputation<T>> h,
+	public PopulationOptimizer(Supplier<HealthComputation<O>> h,
 							   Function<List<Genome<G>>, Population> children,
 							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this(null, h, children, breeder, generator);
 	}
 
-	public PopulationOptimizer(Population<G, T, O> p, Supplier<HealthComputation<T>> h,
+	public PopulationOptimizer(Population<G, T, O> p, Supplier<HealthComputation<O>> h,
 							   Function<List<Genome<G>>, Population> children,
 							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this.population = p;
@@ -80,7 +81,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 
 	public void resetHealth() { health = null; }
 
-	public HealthComputation<T> getHealthComputation() {
+	public HealthComputation<?> getHealthComputation() {
 		if (health == null) health = healthSupplier.get();
 		return health;
 	}
@@ -193,8 +194,8 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 					console.println(String.valueOf(pop.getGenomes().get(i)));
 				}
 
-				O o = pop.enableGenome(i);
-				health = this.health.computeHealth(o);
+				this.health.setTarget(pop.enableGenome(i));
+				health = this.health.computeHealth();
 
 				if (health > highestHealth) highestHealth = health;
 

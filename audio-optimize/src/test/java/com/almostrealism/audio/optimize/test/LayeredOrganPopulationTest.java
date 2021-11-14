@@ -10,7 +10,6 @@ import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.time.Temporal;
 import org.junit.Test;
 
 import java.io.File;
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class LayeredOrganPopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
-	protected LayeredOrganPopulation population(DesirablesProvider desirables, Receptor meter) {
+	protected LayeredOrganPopulation population(DesirablesProvider desirables, List<Receptor> measures, Receptor output) {
 		List<Genome> genomes = new ArrayList<>();
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, false));
@@ -28,14 +27,14 @@ public class LayeredOrganPopulationTest extends AdjustmentLayerOrganSystemFactor
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, false));
 
 		LayeredOrganPopulation pop = new LayeredOrganPopulation(genomes, 2);
-		pop.init(factory(desirables), genomes.get(0), meter);
+		pop.init(factory(desirables), genomes.get(0), measures, output);
 		return pop;
 	}
 
 	@Test
 	public void genomesFromPopulation() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-pop-test.wav")).get(0);
-		LayeredOrganPopulation pop = population(notes(), out);
+		LayeredOrganPopulation pop = population(notes(), null, out); // TODO
 
 		TemporalRunner organRun = new TemporalRunner(pop.enableGenome(0), OutputLine.sampleRate);
 		pop.disableGenome();
@@ -61,13 +60,13 @@ public class LayeredOrganPopulationTest extends AdjustmentLayerOrganSystemFactor
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
-		health.setDebugOutputFile(() -> "layered-organ-pop-health-test" + index.incrementAndGet() + ".wav");
+		health.setOutputFile(() -> "layered-organ-pop-health-test" + index.incrementAndGet() + ".wav");
 
-		LayeredOrganPopulation pop = population(notes(), health.getMonitor());
+		LayeredOrganPopulation pop = population(notes(), null, health.getOutput()); // TODO
 
 		IntStream.range(0, 4).forEach(i -> {
-			Temporal organ = pop.enableGenome(i);
-			health.computeHealth(organ);
+			health.setTarget(pop.enableGenome(i));
+			health.computeHealth();
 			pop.disableGenome();
 		});
 	}

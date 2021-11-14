@@ -18,6 +18,7 @@ package com.almostrealism.audio.health;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.AudioMeter;
+import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.organs.SimpleOrgan;
@@ -56,12 +57,10 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }
 
 	@Override
-	public AudioMeter getMeter() {
-		AudioMeter meter = super.getMeter();
-//		meter.setTextOutputEnabled(false);
-//		meter.setReportingFrequency(100);
-		meter.setSilenceValue(silenceValue);
-		return meter;
+	public List<AudioMeter> getMeasures() {
+		List<AudioMeter> measures = super.getMeasures();
+		measures.forEach(m -> m.setSilenceValue(silenceValue));
+		return measures;
 	}
 
 	public boolean checkForSilence(AudioMeter meter) {
@@ -74,20 +73,20 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	}
 
 	@Override
-	public double computeHealth(Temporal organ) {
-		super.init();
-		
+	public double computeHealth() {
 		long l;
 
 		// Runnable push = organ.push(null).get();
-		Runnable tick = organ.tick().get();
+		Runnable tick = getTarget().tick().get();
 		
 		l: for (l = 0; l < max; l++) {
 			// push.run();
-			
-			// If silence occurs for too long, report the health score
-			if (checkForSilence(getMeter())) {
-				return (double) l / standardDuration;
+
+			for (AudioMeter m : getMeasures()) {
+				// If silence occurs for too long, report the health score
+				if (checkForSilence(m)) {
+					return (double) l / standardDuration;
+				}
 			}
 			
 			tick.run();

@@ -25,11 +25,21 @@ import java.util.function.Consumer;
 
 import org.almostrealism.time.Temporal;
 
-public class AverageHealthComputationSet<T> extends HashSet<HealthComputation<T>> implements HealthComputation<T> {
+public class AverageHealthComputationSet<T extends Temporal> extends HashSet<HealthComputation<T>> implements HealthComputation<T> {
 	private final List<BiConsumer<HealthComputation<T>, Temporal>> listeners;
+
+	private T target;
 
 	public AverageHealthComputationSet() {
 		listeners = new ArrayList<>();
+	}
+
+	public T getTarget() { return target; }
+
+	@Override
+	public void setTarget(T target) {
+		this.target = target;
+		forEach(c -> c.setTarget(target));
 	}
 
 	public void addListener(BiConsumer<HealthComputation<T>, Temporal> listener) {
@@ -37,12 +47,12 @@ public class AverageHealthComputationSet<T> extends HashSet<HealthComputation<T>
 	}
 
 	@Override
-	public double computeHealth(Temporal organ) {
+	public double computeHealth() {
 		double total = 0;
 
 		for (HealthComputation<T> hc : this) {
-			listeners.forEach(l -> l.accept(hc, organ));
-			total += hc.computeHealth(organ);
+			listeners.forEach(l -> l.accept(hc, getTarget()));
+			total += hc.computeHealth();
 		}
 		
 		return total / size();

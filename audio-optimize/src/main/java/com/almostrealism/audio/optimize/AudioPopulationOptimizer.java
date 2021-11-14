@@ -60,7 +60,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		this(AudioPopulationOptimizer::healthComputation, children, breeder, generator, file, iterationsPerRun);
 	}
 
-	public AudioPopulationOptimizer(Supplier<HealthComputation<Scalar>> health,
+	public AudioPopulationOptimizer(Supplier<HealthComputation<O>> health,
 									Function<List<Genome<Scalar>>, Population> children,
 									Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
 									String file, int iterationsPerRun) {
@@ -72,7 +72,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void init() {
 		if (enableWavOutput) {
-			((StableDurationHealthComputation) getHealthComputation()).setDebugOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
+			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
 	}
 
@@ -151,7 +151,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		return genomes;
 	}
 
-	public static HealthComputation<Scalar> healthComputation() {
-		return new StableDurationHealthComputation();
+	public static <O extends Temporal> HealthComputation<O> healthComputation() {
+		return (HealthComputation<O>) new StableDurationHealthComputation();
 	}
 }

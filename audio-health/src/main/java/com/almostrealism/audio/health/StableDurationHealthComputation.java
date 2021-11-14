@@ -16,12 +16,13 @@
 
 package com.almostrealism.audio.health;
 
-import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.AudioMeter;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.hardware.HardwareException;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalRunner;
 
@@ -44,7 +45,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	private boolean encounteredSilence;
 
-	private Temporal organ;
 	private TemporalRunner runner;
 	
 	public StableDurationHealthComputation() {
@@ -67,17 +67,17 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		standardDuration = (int) (sec * OutputLine.sampleRate);
 	}
 
-	@Override
-	public double computeHealth(Temporal organ) {
-		init();
-
-		if (this.organ == null) {
-			this.organ = organ;
-			this.runner = new TemporalRunner(organ, iter);
-		} else if (this.organ != organ) {
+	public void setTarget(TemporalCellular target) {
+		if (getTarget() == null) {
+			super.setTarget(target);
+			this.runner = new TemporalRunner(target, iter);
+		} else if (getTarget() != target) {
 			throw new IllegalArgumentException("Health computation cannot be reused");
 		}
+	}
 
+	@Override
+	public double computeHealth() {
 		encounteredSilence = false;
 
 //		TODO  Restore average amplitude computation
@@ -102,20 +102,22 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 					throw e;
 				}
 
-				checkForSilence(getMeter());
+				getMeasures().forEach(m -> {
+					checkForSilence(m);
 
-				if (getMeter().getClipCount() > 0) {
-					System.out.print("C");
-					if (enableVerbose) System.out.println();
-				}
+					if (m.getClipCount() > 0) {
+						System.out.print("C");
+						if (enableVerbose) System.out.println();
+					}
 
-				if (encounteredSilence) {
-					System.out.print("S");
-					if (enableVerbose) System.out.println();
-				}
+					if (encounteredSilence) {
+						System.out.print("S");
+						if (enableVerbose) System.out.println();
+					}
+				});
 
 				// If clipping or silence occurs, report the health score
-				if (getMeter().getClipCount() > 0 || encounteredSilence) break l;
+				if (getMeasures().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
 
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
@@ -134,10 +136,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			return (double) l / standardDuration;
 		} finally {
 //			meter.removeListener(avg);
-			((WaveOutput) getMeter().getForwarding()).write().get().run();
-			((WaveOutput) getMeter().getForwarding()).reset();
-			getMeter().reset();
-			((Lifecycle) organ).reset();
+			((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).write().get().run();
+			((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).reset();
+			reset();
 
 //			ProducerCache.destroyEvaluableCache();
 		}
@@ -146,7 +147,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	@Override
 	public void reset() {
 		super.reset();
-		if (organ instanceof Lifecycle) ((Lifecycle) organ).reset();
+		getTarget().reset();
 	}
 
 	private class AverageAmplitude implements Consumer<Scalar> {

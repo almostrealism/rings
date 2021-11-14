@@ -78,7 +78,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		return new AdjustmentLayerOrganSystemFactory<>(tca, new GeneticTemporalFactoryFromDesirables().from(provider));
 	}
 
-	protected AdjustmentLayerOrganSystem organ(boolean adjust, Receptor<Scalar> meter) {
+	protected AdjustmentLayerOrganSystem organ(boolean adjust, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output) {
 		ArrayListChromosome<Scalar> x = new ArrayListChromosome();
 		x.add(new ArrayListGene<>(0.4, 0.6));
 		x.add(new ArrayListGene<>(0.8, 0.2));
@@ -107,12 +107,12 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		genome.add(z);
 		genome.add(a);
 
-		return factory().generateOrgan(genome, meter);
+		return factory().generateOrgan(genome, measures, output);
 	}
 
 	@Test
 	public void adjustment() {
-		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = organ(true, null);
+		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = organ(true, null, null); // TODO
 
 		Runnable setup = organ.setup().get();
 		Runnable tick = organ.tick().get();
@@ -149,23 +149,25 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 	public void healthTestNoAdjustment() {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
-		health.setDebugOutputFile("health/periodic-test-noadjust.wav");
+		health.setOutputFile("health/periodic-test-noadjust.wav");
 
-		AdjustmentLayerOrganSystem organ = organ(false, health.getMonitor());
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem organ = organ(false, health.getMeasures(), health.getOutput());
+		organ.setMonitor(health.getOutput());
 		organ.reset();
-		health.computeHealth(organ);
+		health.setTarget(organ);
+		health.computeHealth();
 	}
 
 	@Test
 	public void healthTestWithAdjustment() {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
-		health.setDebugOutputFile("health/periodic-test-adjust.wav");
+		health.setOutputFile("health/periodic-test-adjust.wav");
 
-		AdjustmentLayerOrganSystem organ = organ(true, health.getMonitor());
-		organ.setMonitor(health.getMonitor());
+		AdjustmentLayerOrganSystem organ = organ(true, health.getMeasures(), health.getOutput());
+		organ.setMonitor(health.getOutput());
 		organ.reset();
-		health.computeHealth(organ);
+		health.setTarget(organ);
+		health.computeHealth();
 	}
 }

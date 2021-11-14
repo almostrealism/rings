@@ -38,7 +38,6 @@ import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
-import org.almostrealism.heredity.GenomeFromChromosomes;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
@@ -54,7 +53,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		setChildrenFunction(
 				children -> {
 					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, cellCount, sampleRate);
-					pop.init(f.get(), pop.getGenomes().get(0), ((AudioHealthComputation) getHealthComputation()).getMonitor());
+					AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
+					pop.init(f.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 					return pop;
 				});
 	}
@@ -181,7 +181,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			minVolume = 0.0;
 			maxVolume = 1.0 / scale;
 			minTransmission = 0.0;
-			maxTransmission = 1.0 / scale;
+			maxTransmission = 1.0;
 			minDelay = 0.5;
 			maxDelay = 120;
 			minWet = 0.0;

@@ -17,9 +17,15 @@
 package com.almostrealism.audio.health;
 
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.CellList;
 import org.almostrealism.graph.Receptor;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.HealthComputation;
 
-public interface AudioHealthComputation extends HealthComputation<Scalar> {
-	Receptor<Scalar> getMonitor();
+import java.util.List;
+
+public interface AudioHealthComputation<T extends TemporalCellular> extends HealthComputation<T> {
+	Receptor<Scalar> getOutput();
+
+	List<? extends Receptor<Scalar>> getMeasures();
 }

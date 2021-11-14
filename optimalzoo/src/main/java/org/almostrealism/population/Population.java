@@ -24,7 +24,7 @@ import org.almostrealism.time.Temporal;
 import java.util.List;
 
 public interface Population<G, T, O extends Temporal> {
-	void init(GeneticTemporalFactory<G, T, O> factory, Genome<G> templateGenome, Receptor<T> measure);
+	void init(GeneticTemporalFactory<G, T, O> factory, Genome<G> templateGenome, List<? extends Receptor<T>> measures, Receptor<T> output);
 
 	void merge(Population<G, T, O> pop);
 

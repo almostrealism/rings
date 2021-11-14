@@ -20,6 +20,8 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.Temporal;
 
+import java.util.List;
+
 public class AdjustmentLayerOrganSystemFactory<G, O, A, R> implements GeneticTemporalFactory<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> {
 	private final TieredCellAdjustmentFactory<G, A> adjustmentFactory;
 	private final GeneticTemporalFactory<G, R, Temporal> parentLayer;
@@ -35,8 +37,8 @@ public class AdjustmentLayerOrganSystemFactory<G, O, A, R> implements GeneticTem
 	}
 
 	@Override
-	public AdjustmentLayerOrganSystem<G, O, A, R> generateOrgan(Genome<G> genome, Receptor<O> meter) {
-		Temporal suborg = parentLayer.generateOrgan(genome.getHeadSubset(), (Receptor) meter); //  TODO Looks like O must equal R?
+	public AdjustmentLayerOrganSystem<G, O, A, R> generateOrgan(Genome<G> genome, List<? extends Receptor<O>> measures, Receptor<O> output) {
+		Temporal suborg = parentLayer.generateOrgan(genome.getHeadSubset(), (List) measures, (Receptor) output); //  TODO Looks like O must equal R?
 		return new AdjustmentLayerOrganSystem(suborg, adjustmentFactory,
 											genome.getLastChromosome(), null);
 	}

@@ -86,7 +86,8 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating LayeredOrganPopulation...");
 			LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, dim, OutputLine.sampleRate);
-			pop.init(factorySupplier.get(), pop.getGenomes().get(0), ((AudioHealthComputation) optimizer.getHealthComputation()).getMonitor());
+			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
+			pop.init(factorySupplier.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 			return pop;
 		});
 
@@ -119,17 +120,18 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 					StableDurationHealthComputation health = new StableDurationHealthComputation();
 					health.setMaxDuration(8);
 
-					health.setDebugOutputFile(() -> "health/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
+					health.setOutputFile(() -> "health/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
 
 					System.out.println("Creating LayeredOrganPopulation...");
 					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop =
 							new LayeredOrganPopulation<>(AudioPopulationOptimizer.read(new FileInputStream("Population.xml")), 2, OutputLine.sampleRate);
-					pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMonitor());
+					pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMeasures(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {
 						AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> organ = pop.enableGenome(i);
 						try {
-							health.computeHealth(organ);
+							health.setTarget(organ);
+							health.computeHealth();
 						} finally {
 							health.reset();
 							pop.disableGenome();

@@ -33,7 +33,8 @@ public class SimpleOrganPopulation<G, T> implements Population<G, T, SimpleOrgan
 	private GeneticTemporalFactory<G, T, SimpleOrgan<T>> factory;
 	private SimpleOrgan<T> currentOrgan;
 
-	private Receptor<T> measure;
+	private List<? extends Receptor<T>> measures;
+	private Receptor<T> output;
 	
 	public SimpleOrganPopulation() {
 		this(new ArrayList<>());
@@ -52,9 +53,10 @@ public class SimpleOrganPopulation<G, T> implements Population<G, T, SimpleOrgan
 	}
 
 	@Override
-	public void init(GeneticTemporalFactory<G, T, SimpleOrgan<T>> factory, Genome<G> templateGenome, Receptor<T> measure) {
+	public void init(GeneticTemporalFactory<G, T, SimpleOrgan<T>> factory, Genome<G> templateGenome, List<? extends Receptor<T>> measures, Receptor<T> output) {
 		this.factory = factory;
-		this.measure = measure;
+		this.measures = measures;
+		this.output = output;
 	}
 
 	@Override
@@ -72,7 +74,7 @@ public class SimpleOrganPopulation<G, T> implements Population<G, T, SimpleOrgan
 		}
 
 		// TODO  This won't work - a simple organ genome must be used
-		currentOrgan = factory.generateOrgan(getGenomes().get(index), measure);
+		currentOrgan = factory.generateOrgan(getGenomes().get(index), measures, output);
 		return currentOrgan;
 	}
 

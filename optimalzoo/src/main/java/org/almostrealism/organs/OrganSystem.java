@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2021 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.almostrealism.organs;
 
-
-import io.almostrealism.code.Setup;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
 

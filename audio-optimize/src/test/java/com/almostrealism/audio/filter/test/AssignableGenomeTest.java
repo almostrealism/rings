@@ -47,6 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 
 public class AssignableGenomeTest implements CellFeatures {
 	@BeforeClass
@@ -143,9 +144,9 @@ public class AssignableGenomeTest implements CellFeatures {
 		return genome;
 	}
 
-	protected Temporal organ(LayeredOrganGenome genome, Receptor<Scalar> meter) {
+	protected Temporal organ(LayeredOrganGenome genome, List<Receptor<Scalar>> measures, Receptor<Scalar> meter) {
 		genome.assignTo(genome(0.0, 0.0, false));
-		return factory().generateOrgan(genome, meter);
+		return factory().generateOrgan(genome, measures, meter);
 	}
 
 	protected Cells cells(Receptor<Scalar> meter) {
@@ -195,7 +196,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("assignable-genome-example.wav")).get(0);
 
 		LayeredOrganGenome genome = new LayeredOrganGenome(2);
-		Temporal organ = organ(genome, out);
+		Temporal organ = organ(genome, null, out); // TODO
 
 		TemporalRunner runner = new TemporalRunner(organ, 8 * OutputLine.sampleRate);
 		Runnable run = runner.get();
@@ -228,12 +229,13 @@ public class AssignableGenomeTest implements CellFeatures {
 		health.setMaxDuration(8);
 
 		LayeredOrganGenome genome = new LayeredOrganGenome(2);
-		Temporal organ = organ(genome, health.getMonitor());
+		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome1());
-		health.setDebugOutputFile("health/genome1.wav");
+		health.setOutputFile("health/genome1.wav");
 		((Lifecycle) organ).reset();
-		health.computeHealth(organ);
+		health.setTarget(organ);
+		health.computeHealth();
 	}
 
 	@Test
@@ -242,17 +244,19 @@ public class AssignableGenomeTest implements CellFeatures {
 		health.setMaxDuration(8);
 
 		LayeredOrganGenome genome = new LayeredOrganGenome(2);
-		Temporal organ = organ(genome, health.getMonitor());
+		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome(0.4, 0.8, false));
-		health.setDebugOutputFile("health/assignable-genome-test-noadjust-1.wav");
-		((Lifecycle) organ).reset();
-		health.computeHealth(organ);
+		health.setOutputFile("health/assignable-genome-test-noadjust-1.wav");
+		organ.reset();
+		health.setTarget(organ);
+		health.computeHealth();
 
 		genome.assignTo(genome(0.8, 0.8, false));
-		health.setDebugOutputFile("health/assignable-genome-test-noadjust-2.wav");
-		((Lifecycle) organ).reset();
-		health.computeHealth(organ);
+		health.setOutputFile("health/assignable-genome-test-noadjust-2.wav");
+		organ.reset();
+		health.setTarget(organ);
+		health.computeHealth();
 	}
 
 	@Test
@@ -261,16 +265,18 @@ public class AssignableGenomeTest implements CellFeatures {
 		health.setMaxDuration(8);
 
 		LayeredOrganGenome genome = new LayeredOrganGenome(2);
-		Temporal organ = organ(genome, health.getMonitor());
+		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome(0.4, 0.8, true));
-		health.setDebugOutputFile("health/assignable-genome-test-adjust-1.wav");
-		((Lifecycle) organ).reset();
-		health.computeHealth(organ);
+		health.setOutputFile("health/assignable-genome-test-adjust-1.wav");
+		organ.reset();
+		health.setTarget(organ);
+		health.computeHealth();
 
 		genome.assignTo(genome(0.8, 0.8, true));
-		health.setDebugOutputFile("health/assignable-genome-test-adjust-2.wav");
-		((Lifecycle) organ).reset();
-		health.computeHealth(organ);
+		health.setOutputFile("health/assignable-genome-test-adjust-2.wav");
+		organ.reset();
+		health.setTarget(organ);
+		health.computeHealth();
 	}
 }

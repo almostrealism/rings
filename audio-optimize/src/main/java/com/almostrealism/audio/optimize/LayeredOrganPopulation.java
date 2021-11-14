@@ -43,9 +43,9 @@ public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, Adju
 	}
 
 	@Override
-	public void init(GeneticTemporalFactory<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome<G> templateGenome, Receptor<O> meter) {
+	public void init(GeneticTemporalFactory<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome<G> templateGenome, List<? extends Receptor<O>> measures, Receptor<O> output) {
 		enableGenome(templateGenome);
-		this.organ = organFactory.generateOrgan((Genome) genome, meter);
+		this.organ = organFactory.generateOrgan((Genome) genome, measures, output);
 		disableGenome();
 	}
 
