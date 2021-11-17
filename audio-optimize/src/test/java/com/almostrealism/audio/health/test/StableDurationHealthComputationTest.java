@@ -43,6 +43,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -67,7 +68,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		// WaveOutput output3 = new WaveOutput(new File("health/health-test-firstcell-processed.wav"));
 		// WaveOutput output4 = new WaveOutput(new File("health/health-test-lastcell-processed.wav"));
 
-		CellList organ = (CellList) organ(notes(), null);
+		CellList organ = (CellList) organ(notes(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), null);
 		((CellAdapter) organ.get(0)).setMeter(output1);
 		((CellAdapter) organ.get(1)).setMeter(output2);
 
@@ -116,7 +117,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setMaxDuration(8);
 		health.setOutputFile("health/simple-organ-samples-test.wav");
 
-		Cells organ = organ(samples(), health.getOutput());
+		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), health.getOutput());
 
 		health.setTarget(organ);
 		health.computeHealth();

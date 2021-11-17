@@ -38,6 +38,7 @@ import org.almostrealism.organs.TieredCellAdjustmentFactory;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactoryFromDesirablesTest {
@@ -102,7 +103,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	public void compare() {
 		dc(() -> {
 			ReceptorCell outa = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-a.wav")).get(0);
-			Cells organa = organ(samples(), outa);
+			Cells organa = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), outa);
 			organa.reset();
 
 			ReceptorCell outb = (ReceptorCell) o(1, i -> new File("layered-organ-factory-comp-b.wav")).get(0);

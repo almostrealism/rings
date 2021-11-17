@@ -154,7 +154,7 @@ public class AssignableGenomeTest implements CellFeatures {
 
 		CellList cells =
 					w(provider.getFrequencies().iterator().next(), provider.getFrequencies().iterator().next())
-							.d(i -> new Scalar(1.0))
+							.d(i -> v(1.0))
 							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, v(0.0), v(0.1), true)
 										.andThen(new AudioPassFilter(OutputLine.sampleRate, v(20000), v(0.1), false))),
 									i -> {

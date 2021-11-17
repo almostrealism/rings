@@ -84,10 +84,10 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 				volume.setRange(i, 1, volumeRange);
 			});
 
-			processors.setChromosomeSize(dim, 2); // DELAY
+			processors.setChromosomeSize(dim, 3); // DELAY
 			Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
 									SimpleOrganGenome.factorForDelay(config.maxDelay));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 1, delayRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 0, delayRange));
 
 			transmission.setChromosomeSize(dim, dim);    // ROUTING
 			Pair transmissionRange = new Pair(config.minTransmission, config.maxTransmission);

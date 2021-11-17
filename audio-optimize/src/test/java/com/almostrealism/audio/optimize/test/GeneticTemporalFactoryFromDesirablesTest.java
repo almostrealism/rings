@@ -43,6 +43,7 @@ import org.almostrealism.heredity.Genome;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -52,8 +53,10 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	public static final double delayParam = 0.35;
 	public static final double delay = 60 * ((1 / (1 - Math.pow(delayParam, 3))) - 1);
+	public static final double rateParam1 = 0.9;
+	public static final double rateParam2 = 0.1;
 
-	public static final double feedbackParam = 0.2;
+	public static final double feedbackParam = 0.5;
 
 	public static final String sampleFile1 = "src/test/resources/Snare Perc DD.wav";
 	public static final String sampleFile2 = "src/test/resources/GT_HAT_31.wav";
@@ -70,8 +73,8 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		return desirables;
 	}
 
-	protected Cells organ(DesirablesProvider desirables, Receptor<Scalar> meter) {
-		return organ(desirables, null, meter, enableFilter); // TODO
+	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
+		return organ(desirables, measures, meter, enableFilter);
 	}
 
 	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
@@ -80,12 +83,12 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		generators.add(new ArrayListGene<>(0.8, 0.0, SimpleOrganGenome.factorForRepeat(4)));
 
 		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
-		volume.add(g(0.8, 1.0));
-		volume.add(g(0.4, 0.0));
+		volume.add(g(0.0, 0.0));
+		volume.add(g(0.0, 1.0));
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
-		processors.add(new ArrayListGene<>(1.0, delayParam));
-		processors.add(new ArrayListGene<>(1.0, delayParam));
+		processors.add(new ArrayListGene<>(delayParam, rateParam1, 0.5));
+		processors.add(new ArrayListGene<>(delayParam, rateParam2, 0.5));
 
 		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 
@@ -98,7 +101,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		}
 
 		ArrayListChromosome<Scalar> wet = new ArrayListChromosome<>();
-		wet.add(g(0.2, 0.5));
+		wet.add(g(0.0, 0.5));
 
 		ArrayListChromosome<Double> filters = new ArrayListChromosome();
 
@@ -150,18 +153,18 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	@Test
 	public void withOutput() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("genetic-factory-test.wav")).get(0);
-		Cells organ = organ(samples(), out);
+		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
 		organ.sec(6).get().run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}
 
 	public void comparison(boolean twice) {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-test-a.wav")).get(0);
-		Cells organ = organ(samples(), out);
+		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 		organ.reset();
 
 		CellList list = poly(2, PolymorphicAudioData::new, i -> v(0.5), sampleFile1, sampleFile2)
-				 .d(i -> new Scalar(delay))
+				 .d(i -> v(delay))
 //				 .m(fc(i -> hp(2000, 0.1)),
 //						c(g(0.0, feedbackParam), g(feedbackParam, 0.0)))
 				.o(i -> new File("organ-factory-test-b" + i + ".wav"));
@@ -189,7 +192,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	@Test
 	public void many() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
-		Cells organ = organ(samples(), out);
+		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 
 		Runnable run = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 

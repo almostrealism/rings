@@ -19,11 +19,14 @@ package com.almostrealism.audio.optimize;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
+import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.breeding.AssignableGenome;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
+import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.Factor;
@@ -35,7 +38,7 @@ import org.almostrealism.util.CodeFeatures;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SimpleOrganGenome implements Genome<Scalar>, CodeFeatures {
+public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 	private static double defaultResonance = 0.1; // TODO
 	private static double maxFrequency = 20000;
 
@@ -88,8 +91,6 @@ public class SimpleOrganGenome implements Genome<Scalar>, CodeFeatures {
 			return new GeneratorChromosome(pos);
 		} else if (pos == PROCESSORS) {
 			return new DelayChromosome(pos);
-		} else if (pos == WET) {
-			return data.valueAt(pos);
 		} else if (pos == FILTERS) {
 			return new FilterChromosome(pos);
 		} else {
@@ -187,10 +188,24 @@ public class SimpleOrganGenome implements Genome<Scalar>, CodeFeatures {
 
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
-			return protein -> {
-				ScalarProducer cube = pow(() -> args -> data.get(chromosome, index, pos), v(3));
-				return cube.minus().add(1.0).pow(-1.0).subtract(1.0).multiply(protein);
-			};
+			if (pos == 0) {
+				return protein -> {
+					ScalarProducer cube = pow(() -> args -> data.get(chromosome, index, pos), v(3));
+					return cube.minus().add(1.0).pow(-1.0).subtract(1.0).multiply(protein);
+				};
+			} else {
+				ScalarProducer pow = pow(() -> args -> data.get(chromosome, index, 1), v(1.0 / 19.0));
+				Producer<Scalar> amp = () -> args -> data.get(chromosome, index, 2);
+
+				SineWaveCell generator = new SineWaveCell();
+				generator.setPhase(0.5);
+				generator.setNoteLength(0);
+				generator.addSetup(generator.setFreq(v(1.0).subtract(pow).multiply(v(30.0))));
+				generator.addSetup(generator.setAmplitude(amp));
+
+				Scalar a = new Scalar(0.0);
+				return generator.toFactor(() -> a, SimpleOrganGenome.this::a).andThen(v -> scalarAdd(amp, v));
+			}
 		}
 	}
 

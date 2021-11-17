@@ -19,6 +19,7 @@ package com.almostrealism.audio.filter.test;
 import com.almostrealism.audio.test.SineWaveCellTest;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
@@ -48,9 +49,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 	}
 
 	protected AdjustableDelayCell adjustableDelay() {
-		AdjustableDelayCell cell = new AdjustableDelayCell(1);
-		cell.setDelayInFrames(DELAY_FRAMES);
-		return cell;
+		return new AdjustableDelayCell(((double) DELAY_FRAMES) / OutputLine.sampleRate);
 	}
 
 	public OperationList computation(AdjustableDelayCell delay) {
@@ -105,7 +104,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 		assertEquals(DELAY_FRAMES + 25, cursors.getDelayCursor());
 
 		AcceleratedTimeSeries buffer = delay.getBuffer();
-		TemporalScalar t = buffer.valueAt(delay.getDelayInFrames());
+		TemporalScalar t = buffer.valueAt(delay.getDelay().get().evaluate().getValue() * OutputLine.sampleRate);
 		System.out.println(t);
 		assertEquals(0.1, t.getValue());
 	}

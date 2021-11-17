@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.almostrealism.audio.DesirablesProvider;
 import io.almostrealism.code.ProducerComputation;
@@ -44,6 +45,7 @@ import org.almostrealism.graph.SummationCell;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.util.Ops;
 
@@ -86,8 +88,8 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 
 			// Volume adjustment
 			CellList branch[] = cells.branch(
-									fc(i -> genome.valueAt(1, i, 0)),
-									fc(i -> genome.valueAt(1, i, 1)
+									fc(i -> genome.valueAt(SimpleOrganGenome.VOLUME, i, 0)),
+									fc(i -> genome.valueAt(SimpleOrganGenome.VOLUME, i, 1)
 											.andThen(genome.valueAt(SimpleOrganGenome.FILTERS, i, 0))));
 
 			CellList main = branch[0];
@@ -95,10 +97,16 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 
 			main = main.sum();
 
+			TemporalFactor<Scalar> adjust[] = IntStream.range(0, efx.size())
+					.mapToObj(i -> genome.valueAt(SimpleOrganGenome.PROCESSORS, i, 1))
+					.toArray(TemporalFactor[]::new);
+
 			efx = efx
 					// Processing
 					.map(i ->
-							new AdjustableDelayCell(genome.valueAt(SimpleOrganGenome.PROCESSORS, i, 1).getResultant(v(60)).get().evaluate()))
+							new AdjustableDelayCell(genome.valueAt(SimpleOrganGenome.PROCESSORS, i, 0).getResultant(v(60)),
+													adjust[i].getResultant(v(1.0))))
+					.addRequirements(adjust)
 					// Feedback grid
 					.mself(fi(),
 							genome.valueAt(SimpleOrganGenome.TRANSMISSION),
