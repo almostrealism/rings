@@ -73,7 +73,6 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			RandomChromosomeFactory wet = new RandomChromosomeFactory();		  // WET
 			RandomChromosomeFactory filters = new RandomChromosomeFactory();      // FILTERS
 			RandomChromosomeFactory afactory = new RandomChromosomeFactory();     // PERIODIC
-			RandomChromosomeFactory bfactory = new RandomChromosomeFactory();     // EXPONENTIAL
 
 			generators.setChromosomeSize(dim, 1); // GENERATORS
 
@@ -84,10 +83,34 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 				volume.setRange(i, 1, volumeRange);
 			});
 
-			processors.setChromosomeSize(dim, 3); // DELAY
+			processors.setChromosomeSize(dim, 7); // DELAYr
 			Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
 									SimpleOrganGenome.factorForDelay(config.maxDelay));
+			Pair periodicSpeedUpDurationRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpDurationMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpDurationMax));
+			Pair periodicSpeedUpPercentageRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpPercentageMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpPercentageMax));
+			Pair periodicSlowDownDurationRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMax));
+			Pair periodicSlowDownPercentageRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownPercentageMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownPercentageMax));
+			Pair overallSpeedUpDurationRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpDurationMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpDurationMax));
+			Pair overallSpeedUpExponentRange = new Pair(
+					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpExponentMin),
+					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpExponentMax));
 			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 0, delayRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 1, periodicSpeedUpDurationRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 2, periodicSpeedUpPercentageRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 3, periodicSlowDownDurationRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 4, periodicSlowDownPercentageRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 5, overallSpeedUpDurationRange));
+			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 6, overallSpeedUpExponentRange));
 
 			transmission.setChromosomeSize(dim, dim);    // ROUTING
 			Pair transmissionRange = new Pair(config.minTransmission, config.maxTransmission);
@@ -109,9 +132,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			});
 
 			afactory.setChromosomeSize(dim, 3);   // PERIODIC
-			bfactory.setChromosomeSize(dim, 2);   // EXPONENTIAL
 
-			return Genome.fromChromosomes(generators, volume, processors, transmission, wet, filters, afactory); //, bfactory);
+			return Genome.fromChromosomes(generators, volume, processors, transmission, wet, filters, afactory);
 		};
 	}
 
@@ -171,6 +193,14 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public double minVolume, maxVolume;
 		public double minTransmission, maxTransmission;
 		public double minDelay, maxDelay;
+
+		public double periodicSpeedUpDurationMin, periodicSpeedUpDurationMax;
+		public double periodicSpeedUpPercentageMin, periodicSpeedUpPercentageMax;
+		public double periodicSlowDownDurationMin, periodicSlowDownDurationMax;
+		public double periodicSlowDownPercentageMin, periodicSlowDownPercentageMax;
+		public double overallSpeedUpDurationMin, overallSpeedUpDurationMax;
+		public double overallSpeedUpExponentMin, overallSpeedUpExponentMax;
+
 		public double minWet, maxWet;
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
@@ -184,6 +214,18 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			maxTransmission = 1.0;
 			minDelay = 0.5;
 			maxDelay = 120;
+			periodicSpeedUpDurationMin = 0.1;
+			periodicSpeedUpDurationMax = 180;
+			periodicSpeedUpPercentageMin = 0.0;
+			periodicSpeedUpPercentageMax = 100;
+			periodicSlowDownDurationMin = 0.1;
+			periodicSlowDownDurationMax = 180;
+			periodicSlowDownPercentageMin = 0.0;
+			periodicSlowDownPercentageMax = 0.9999;
+			overallSpeedUpDurationMin = 0.1;
+			overallSpeedUpDurationMax = 180;
+			overallSpeedUpExponentMin = 0;
+			overallSpeedUpExponentMax = 10;
 			minWet = 0.0;
 			maxWet = 1.0;
 			minHighPass = 0;

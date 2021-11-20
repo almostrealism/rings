@@ -27,6 +27,7 @@ import org.almostrealism.time.Temporal;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;
@@ -73,7 +74,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	}
 
 	@Override
-	public double computeHealth() {
+	public AudioHealthScore computeHealth() {
 		long l;
 
 		// Runnable push = organ.push(null).get();
@@ -85,7 +86,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 			for (AudioMeter m : getMeasures()) {
 				// If silence occurs for too long, report the health score
 				if (checkForSilence(m)) {
-					return (double) l / standardDuration;
+					return new AudioHealthScore((double) l / standardDuration);
 				}
 			}
 			
@@ -99,6 +100,6 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 		
 		// If no silence which was too long in duration
 		// has occurred, return a perfect health score.
-		return 1.0;
+		return new AudioHealthScore(1.0);
 	}
 }

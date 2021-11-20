@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -36,7 +38,7 @@ import org.almostrealism.population.Population;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.util.CodeFeatures;
 
-public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<Supplier<Genome<G>>, PopulationOptimizer>, CodeFeatures {
+public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore> implements Generated<Supplier<Genome<G>>, PopulationOptimizer>, CodeFeatures {
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
@@ -54,18 +56,20 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 	private Supplier<Supplier<Genome<G>>> generatorSupplier;
 	private Supplier<Genome<G>> generator;
 
-	private Supplier<HealthComputation<O>> healthSupplier;
-	private HealthComputation<O> health;
+	private Supplier<HealthComputation<O, S>> healthSupplier;
+	private HealthComputation<O, S> health;
 
 	private Supplier<GenomeBreeder<G>> breeder;
 
-	public PopulationOptimizer(Supplier<HealthComputation<O>> h,
+	private BiConsumer<String, S> healthListener;
+
+	public PopulationOptimizer(Supplier<HealthComputation<O, S>> h,
 							   Function<List<Genome<G>>, Population> children,
 							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this(null, h, children, breeder, generator);
 	}
 
-	public PopulationOptimizer(Population<G, T, O> p, Supplier<HealthComputation<O>> h,
+	public PopulationOptimizer(Population<G, T, O> p, Supplier<HealthComputation<O, S>> h,
 							   Function<List<Genome<G>>, Population> children,
 							   Supplier<GenomeBreeder<G>> breeder, Supplier<Supplier<Genome<G>>> generator) {
 		this.population = p;
@@ -81,7 +85,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 
 	public void resetHealth() { health = null; }
 
-	public HealthComputation<?> getHealthComputation() {
+	public HealthComputation<?, ?> getHealthComputation() {
 		if (health == null) health = healthSupplier.get();
 		return health;
 	}
@@ -89,6 +93,10 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 	public void setChildrenFunction(Function<List<Genome<G>>, Population> pop) { this.children = pop; }
 
 	public Function<List<Genome<G>>, Population> getChildrenFunction() { return children; }
+
+	public BiConsumer<String, S> getHealthListener() { return healthListener; }
+
+	public void setHealthListener(BiConsumer<String, S> healthListener) { this.healthListener = healthListener; }
 
 	public void resetGenerator() {
 		generator = null;
@@ -105,13 +113,13 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 		long start = System.currentTimeMillis();
 
 		// Sort the population
-		SortedSet<Genome> sorted = orderByHealth(population);
+		List<Genome<G>> sorted = population.getGenomes();
 
 		// Fresh genetic material
 		List<Genome<G>> genomes = new ArrayList<>();
 
 		// Mate in order of health
-		Iterator<Genome> itr = sorted.iterator();
+		Iterator<Genome<G>> itr = sorted.iterator();
 
 		Genome g1;
 		Genome g2 = itr.next();
@@ -163,6 +171,9 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 
 		long sec = (System.currentTimeMillis() - start) / 1000;
 
+		// Sort the population
+		orderByHealth(population);
+
 		if (enableVerbose)
 			console.println("Iteration completed after " + sec + " seconds");
 	}
@@ -171,7 +182,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 		genomes.add(breeder.get().combine(g1, g2));
 	}
 
-	private SortedSet<Genome> orderByHealth(Population<G, T, O> pop) {
+	private void orderByHealth(Population<G, T, O> pop) {
 		final HashMap<Genome, Double> healthTable = new HashMap<>();
 
 		double highestHealth = 0;
@@ -185,7 +196,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 		}
 
 		for (int i = 0; i < pop.size(); i++) {
-			double health = -1;
+			S health = null;
 
 			try {
 				if (enableVerbose) {
@@ -197,10 +208,12 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 				this.health.setTarget(pop.enableGenome(i));
 				health = this.health.computeHealth();
 
-				if (health > highestHealth) highestHealth = health;
+				if (health.getScore() > highestHealth) highestHealth = health.getScore();
 
-				healthTable.put(pop.getGenomes().get(i), health);
-				totalHealth += health;
+				healthTable.put(pop.getGenomes().get(i), health.getScore());
+				totalHealth += health.getScore();
+
+				if (healthListener != null) healthListener.accept(pop.getGenomes().get(i).signature(), health);
 			} finally {
 				this.health.reset();
 				pop.disableGenome();
@@ -208,7 +221,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 
 			if (enableVerbose) {
 				console.println();
-				console.println("Health of Organ " + i + " is " + percent(health));
+				console.println("Health of Organ " + i + " is " + percent(health.getScore()));
 			} else {
 				console.print(".");
 			}
@@ -219,7 +232,7 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 		console.println("Average health for this round is " +
 				percent(totalHealth / pop.size()) + ", max " +
 				percent(highestHealth));
-		TreeSet<Genome> sorted = new TreeSet<>((g1, g2) -> {
+		TreeSet<Genome<G>> sorted = new TreeSet<>((g1, g2) -> {
 			double h1 = healthTable.get(g1);
 			double h2 = healthTable.get(g2);
 
@@ -241,7 +254,8 @@ public class PopulationOptimizer<G, T, O extends Temporal> implements Generated<
 			if (healthTable.get(g) >= lowestHealth) sorted.add(g);
 		}
 
-		return sorted;
+		pop.getGenomes().clear();
+		pop.getGenomes().addAll(sorted);
 	}
 
 	public Console getConsole() { return console; }

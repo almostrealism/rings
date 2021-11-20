@@ -14,12 +14,29 @@
  * limitations under the License.
  */
 
-package org.almostrealism.optimize;
+package com.almostrealism.audio.health;
 
-import io.almostrealism.uml.Lifecycle;
-import org.almostrealism.time.Temporal;
+import org.almostrealism.optimize.HealthScore;
 
-public interface HealthComputation<T extends Temporal, S extends HealthScore> extends Lifecycle {
-	void setTarget(T target);
-	S computeHealth();
+import java.io.File;
+
+public class AudioHealthScore implements HealthScore {
+	private double score;
+	private File output;
+
+	public AudioHealthScore() { this(0.0, null); }
+
+	public AudioHealthScore(double score) {
+		this(score, null);
+	}
+
+	public AudioHealthScore(double score, File output) {
+		this.score = score;
+		this.output = output;
+	}
+
+	@Override
+	public double getScore() { return score; }
+
+	public File getOutput() { return output; }
 }

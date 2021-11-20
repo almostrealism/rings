@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.optimize;
 
+import com.almostrealism.audio.health.AudioHealthScore;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.heredity.Genome;
@@ -42,7 +43,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<Scalar, Scalar, O> implements Runnable {
+public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<Scalar, Scalar, O, AudioHealthScore> implements Runnable {
 	public static final boolean enableWavOutput = true;
 
 	private final String file;
@@ -60,7 +61,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		this(AudioPopulationOptimizer::healthComputation, children, breeder, generator, file, iterationsPerRun);
 	}
 
-	public AudioPopulationOptimizer(Supplier<HealthComputation<O>> health,
+	public AudioPopulationOptimizer(Supplier<HealthComputation<O, AudioHealthScore>> health,
 									Function<List<Genome<Scalar>>, Population> children,
 									Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
 									String file, int iterationsPerRun) {
@@ -151,7 +152,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		return genomes;
 	}
 
-	public static <O extends Temporal> HealthComputation<O> healthComputation() {
-		return (HealthComputation<O>) new StableDurationHealthComputation();
+	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation() {
+		return (HealthComputation<O, AudioHealthScore>) new StableDurationHealthComputation();
 	}
 }

@@ -25,8 +25,8 @@ import java.util.function.Consumer;
 
 import org.almostrealism.time.Temporal;
 
-public class AverageHealthComputationSet<T extends Temporal> extends HashSet<HealthComputation<T>> implements HealthComputation<T> {
-	private final List<BiConsumer<HealthComputation<T>, Temporal>> listeners;
+public class AverageHealthComputationSet<T extends Temporal> extends HashSet<HealthComputation<T, ?>> implements HealthComputation<T, HealthScore> {
+	private final List<BiConsumer<HealthComputation<T, ?>, Temporal>> listeners;
 
 	private T target;
 
@@ -42,19 +42,20 @@ public class AverageHealthComputationSet<T extends Temporal> extends HashSet<Hea
 		forEach(c -> c.setTarget(target));
 	}
 
-	public void addListener(BiConsumer<HealthComputation<T>, Temporal> listener) {
+	public void addListener(BiConsumer<HealthComputation<T, ?>, Temporal> listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public double computeHealth() {
+	public HealthScore computeHealth() {
 		double total = 0;
 
-		for (HealthComputation<T> hc : this) {
+		for (HealthComputation<T, ?> hc : this) {
 			listeners.forEach(l -> l.accept(hc, getTarget()));
-			total += hc.computeHealth();
+			total += hc.computeHealth().getScore();
 		}
-		
-		return total / size();
+
+		double score = total / size();
+		return () -> score;
 	}
 }

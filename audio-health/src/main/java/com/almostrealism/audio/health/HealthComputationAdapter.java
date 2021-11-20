@@ -38,7 +38,8 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	private AudioMeter outputMeter;
 	private WaveOutput out;
-	private Supplier<String> debugFile;
+	private Supplier<String> outputFileSupplier;
+	private File outputFile;
 
 	private List<AudioMeter> measures;
 
@@ -53,7 +54,10 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 		outputMeter = new AudioMeter();
 		out = new WaveOutput(() ->
-				Optional.ofNullable(debugFile).map(Supplier::get).map(File::new).orElse(null),
+				Optional.ofNullable(outputFileSupplier).map(s -> {
+					outputFile = new File(s.get());
+					return outputFile;
+				}).orElse(null),
 				standardDuration, 24);
 		outputMeter.setForwarding(out);
 		return outputMeter;
@@ -67,7 +71,9 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	}
 
 	public void setOutputFile(String file) { setOutputFile(() -> file); }
-	public void setOutputFile(Supplier<String> file) { this.debugFile = file; }
+	public void setOutputFile(Supplier<String> file) { this.outputFileSupplier = file; }
+
+	protected File getOutputFile() { return outputFile; }
 
 	@Override
 	public void reset() {

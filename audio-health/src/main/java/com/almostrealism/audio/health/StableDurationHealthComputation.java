@@ -77,12 +77,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 	@Override
-	public double computeHealth() {
+	public AudioHealthScore computeHealth() {
 		encounteredSilence = false;
 
 //		TODO  Restore average amplitude computation
 //		AverageAmplitude avg = new AverageAmplitude();
 //		meter.addListener(avg);
+
+		double score = 0.0;
 
 		Runnable start;
 		Runnable iterate;
@@ -133,7 +135,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			// average value
 //			return ((double) l) / standardDuration -
 //					((double) avg.framesUntilAverage()) / standardDuration;
-			return (double) l / standardDuration;
+			score = (double) l / standardDuration;
 		} finally {
 //			meter.removeListener(avg);
 			((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).write().get().run();
@@ -142,6 +144,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 //			ProducerCache.destroyEvaluableCache();
 		}
+
+		return new AudioHealthScore(score, getOutputFile());
 	}
 
 	@Override

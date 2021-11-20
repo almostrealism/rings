@@ -53,8 +53,18 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	public static final double delayParam = 0.35;
 	public static final double delay = 60 * ((1 / (1 - Math.pow(delayParam, 3))) - 1);
-	public static final double rateParam1 = 0.9;
-	public static final double rateParam2 = 0.1;
+	public static final double speedUpDuration1 = 10.0;
+	public static final double speedUpPercentage1 = 0.0;
+	public static final double slowDownDuration1 = 10.0;
+	public static final double slowDownPercentage1 = 0.0;
+	public static final double polySpeedUpDuration1 = 3;
+	public static final double polySpeedUpExponent1 = 1.5;
+	public static final double speedUpDuration2 = 10.0;
+	public static final double speedUpPercentage2 = 0.0;
+	public static final double slowDownDuration2 = 10.0;
+	public static final double slowDownPercentage2 = 0.0;
+	public static final double polySpeedUpDuration2 = 2;
+	public static final double polySpeedUpExponent2 = 1.1;
 
 	public static final double feedbackParam = 0.5;
 
@@ -87,8 +97,20 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		volume.add(g(0.0, 1.0));
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
-		processors.add(new ArrayListGene<>(delayParam, rateParam1, 0.5));
-		processors.add(new ArrayListGene<>(delayParam, rateParam2, 0.5));
+		processors.add(new ArrayListGene<>(delayParam,
+				SimpleOrganGenome.factorForSpeedUpDuration(speedUpDuration1),
+				SimpleOrganGenome.factorForSpeedUpPercentage(speedUpPercentage1),
+				SimpleOrganGenome.factorForSlowDownDuration(slowDownDuration1),
+				SimpleOrganGenome.factorForSlowDownPercentage(slowDownPercentage1),
+				SimpleOrganGenome.factorForPolySpeedUpDuration(polySpeedUpDuration1),
+				SimpleOrganGenome.factorForPolySpeedUpExponent(polySpeedUpExponent1)));
+		processors.add(new ArrayListGene<>(delayParam,
+				SimpleOrganGenome.factorForSpeedUpDuration(speedUpDuration2),
+				SimpleOrganGenome.factorForSpeedUpPercentage(speedUpPercentage2),
+				SimpleOrganGenome.factorForSlowDownDuration(slowDownDuration2),
+				SimpleOrganGenome.factorForSlowDownPercentage(slowDownPercentage2),
+				SimpleOrganGenome.factorForPolySpeedUpDuration(polySpeedUpDuration2),
+				SimpleOrganGenome.factorForPolySpeedUpExponent(polySpeedUpExponent2)));
 
 		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 
@@ -154,7 +176,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	public void withOutput() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("genetic-factory-test.wav")).get(0);
 		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
-		organ.sec(6).get().run();
+		organ.sec(20).get().run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}
 

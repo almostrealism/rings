@@ -22,6 +22,7 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
+import org.almostrealism.audio.sources.PolynomialCell;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.breeding.AssignableGenome;
 import org.almostrealism.heredity.ArrayListChromosome;
@@ -29,11 +30,14 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ChromosomeFactory;
+import org.almostrealism.heredity.CombinedFactor;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.space.Polynomial;
 import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.Ops;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -106,11 +110,48 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 	}
 
 	public static double factorForDelay(double seconds) {
-		return Math.pow(1 - (1 / ((seconds / 60) + 1)), 1.0 / 3);
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double factorForSpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double factorForSpeedUpPercentage(double decimal) {
+		return invertOneToInfinity(decimal, 10, 0.5);
+	}
+
+	public static double factorForSlowDownDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double factorForSlowDownPercentage(double decimal) {
+		return decimal;
+	}
+
+	public static double factorForPolySpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double factorForPolySpeedUpExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
 	}
 
 	public static double factorForFilterFrequency(double hertz) {
 		return hertz / 20000;
+	}
+
+	public static double invertOneToInfinity(double target, double multiplier, double exp) {
+		return Math.pow(1 - (1 / ((target / multiplier) + 1)), 1.0 / exp);
+	}
+
+	public static ScalarProducer oneToInfinity(Producer<Scalar> arg, double exp) {
+		return oneToInfinity(arg, Ops.ops().v(exp));
+	}
+
+	public static ScalarProducer oneToInfinity(Producer<Scalar> arg, Producer<Scalar> exp) {
+		ScalarProducer pow = Ops.ops().pow(arg, exp);
+		return pow.minus().add(1.0).pow(-1.0).subtract(1.0);
 	}
 
 	protected class GeneratorChromosome implements Chromosome<Scalar> {
@@ -189,22 +230,63 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
 			if (pos == 0) {
-				return protein -> {
-					ScalarProducer cube = pow(() -> args -> data.get(chromosome, index, pos), v(3));
-					return cube.minus().add(1.0).pow(-1.0).subtract(1.0).multiply(protein);
-				};
+				return protein -> oneToInfinity(() -> args -> data.get(chromosome, index, pos), 3.0).multiply(v(60));
 			} else {
-				ScalarProducer pow = pow(() -> args -> data.get(chromosome, index, 1), v(1.0 / 19.0));
-				Producer<Scalar> amp = () -> args -> data.get(chromosome, index, 2);
+				Producer<Scalar> speedUpDuration = () -> args -> data.get(chromosome, index, 1);
+				Producer<Scalar> speedUpPercentage = () -> args -> data.get(chromosome, index, 2);
+				Producer<Scalar> slowDownDuration = () -> args -> data.get(chromosome, index, 3);
+				Producer<Scalar> slowDownPercentage = () -> args -> data.get(chromosome, index, 4);
+				Producer<Scalar> polySpeedUpDuration = () -> args -> data.get(chromosome, index, 5);
+				Producer<Scalar> polySpeedUpExponent = () -> args -> data.get(chromosome, index, 6);
 
-				SineWaveCell generator = new SineWaveCell();
-				generator.setPhase(0.5);
-				generator.setNoteLength(0);
-				generator.addSetup(generator.setFreq(v(1.0).subtract(pow).multiply(v(30.0))));
-				generator.addSetup(generator.setAmplitude(amp));
+				SineWaveCell speedUpGenerator = new SineWaveCell();
+				ScalarProducer speedUpWavelength = oneToInfinity(speedUpDuration, 3).multiply(60);
+				ScalarProducer speedUpAmp = oneToInfinity(speedUpPercentage, 0.5).multiply(10);
+				speedUpGenerator.setNoteLength(0);
+				speedUpGenerator.addSetup(speedUpGenerator.setFreq(speedUpWavelength.pow(-1.0)));
+				speedUpGenerator.addSetup(speedUpGenerator.setAmplitude(speedUpAmp));
 
-				Scalar a = new Scalar(0.0);
-				return generator.toFactor(() -> a, SimpleOrganGenome.this::a).andThen(v -> scalarAdd(amp, v));
+				SineWaveCell slowDownGenerator = new SineWaveCell();
+				ScalarProducer slowDownWavelength = oneToInfinity(slowDownDuration, 3).multiply(60);
+				Producer<Scalar> slowDownAmp = slowDownPercentage;
+				slowDownGenerator.setNoteLength(0);
+				slowDownGenerator.addSetup(slowDownGenerator.setFreq(slowDownWavelength.pow(-1.0)));
+				slowDownGenerator.addSetup(slowDownGenerator.setAmplitude(slowDownAmp));
+
+				PolynomialCell polySpeedUpGenerator = new PolynomialCell();
+				ScalarProducer polySpeedUpWaveLength = oneToInfinity(polySpeedUpDuration, 3).multiply(60);
+				ScalarProducer polySpeedUpExp = oneToInfinity(polySpeedUpExponent, 1).multiply(10);
+				polySpeedUpGenerator.addSetup(polySpeedUpGenerator.setWaveLength(polySpeedUpWaveLength));
+				polySpeedUpGenerator.addSetup(polySpeedUpGenerator.setExponent(polySpeedUpExp));
+
+				Scalar up = new Scalar(0.0);
+				CellularTemporalFactor<Scalar> speedUpFactor =
+						speedUpGenerator.toFactor(() -> up, SimpleOrganGenome.this::a)
+							.andThen(v -> v(1.0).add(pow(v, 2.0)));
+
+				Scalar down = new Scalar(0.0);
+				CellularTemporalFactor<Scalar> slowDownFactor =
+						slowDownGenerator.toFactor(() -> down, SimpleOrganGenome.this::a)
+								.andThen(v -> v(1.0).subtract(pow(v, 2.0)));
+
+				Scalar poly = new Scalar(0.0);
+				CellularTemporalFactor<Scalar> polyFactor =
+						polySpeedUpGenerator.toFactor(() -> poly, SimpleOrganGenome.this::a)
+								.andThen(v -> v(1.0).add(v));
+
+				CombinedFactor<Scalar> upAndDown = new CombinedFactor<>(speedUpFactor, slowDownFactor) {
+					@Override
+					public Producer<Scalar> getResultant(Producer<Scalar> value) {
+						return scalarsMultiply(getA().getResultant(value), getB().getResultant(value));
+					}
+				};
+
+				return new CombinedFactor<>(upAndDown, polyFactor) {
+					@Override
+					public Producer<Scalar> getResultant(Producer<Scalar> value) {
+						return scalarsMultiply(getA().getResultant(value), getB().getResultant(value));
+					}
+				};
 			}
 		}
 	}

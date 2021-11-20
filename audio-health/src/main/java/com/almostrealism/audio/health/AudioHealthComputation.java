@@ -24,7 +24,7 @@ import org.almostrealism.optimize.HealthComputation;
 
 import java.util.List;
 
-public interface AudioHealthComputation<T extends TemporalCellular> extends HealthComputation<T> {
+public interface AudioHealthComputation<T extends TemporalCellular> extends HealthComputation<T, AudioHealthScore> {
 	Receptor<Scalar> getOutput();
 
 	List<? extends Receptor<Scalar>> getMeasures();
