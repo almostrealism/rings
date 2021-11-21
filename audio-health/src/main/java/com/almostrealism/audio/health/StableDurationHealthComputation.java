@@ -145,7 +145,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 //			ProducerCache.destroyEvaluableCache();
 		}
 
-		return new AudioHealthScore(score, getOutputFile());
+		return new AudioHealthScore(score, getOutputFile().getPath());
 	}
 
 	@Override

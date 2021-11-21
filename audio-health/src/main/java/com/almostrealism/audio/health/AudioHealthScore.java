@@ -22,7 +22,7 @@ import java.io.File;
 
 public class AudioHealthScore implements HealthScore {
 	private double score;
-	private File output;
+	private String output;
 
 	public AudioHealthScore() { this(0.0, null); }
 
@@ -30,7 +30,7 @@ public class AudioHealthScore implements HealthScore {
 		this(score, null);
 	}
 
-	public AudioHealthScore(double score, File output) {
+	public AudioHealthScore(double score, String output) {
 		this.score = score;
 		this.output = output;
 	}
@@ -38,5 +38,9 @@ public class AudioHealthScore implements HealthScore {
 	@Override
 	public double getScore() { return score; }
 
-	public File getOutput() { return output; }
+	public void setScore(double score) { this.score = score; }
+
+	public String getOutput() { return output; }
+
+	public void setOutput(String output) { this.output = output; }
 }
