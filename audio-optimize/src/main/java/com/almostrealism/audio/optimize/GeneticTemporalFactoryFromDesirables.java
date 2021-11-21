@@ -16,12 +16,9 @@
 
 package com.almostrealism.audio.optimize;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,46 +30,27 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.PolymorphicAudioCell;
-import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.PolymorphicAudioDataBank;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.audio.filter.AudioCellAdapter;
-import org.almostrealism.graph.Cell;
-import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.graph.SummationCell;
-import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.util.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
-		Supplier<PolymorphicAudioData> dataSupplier = new Supplier<>() {
-			private final int SIZE = 100;
-			private final PolymorphicAudioDataBank bank = new PolymorphicAudioDataBank(SIZE);
-			private int count = 0;
-
-			@Override
-			public PolymorphicAudioData get() {
-				if (count >= SIZE) throw new IllegalArgumentException("No more audio data space available");
-				return bank.get(count++);
-			}
-		};
-
 		List<Function<Gene<Scalar>, AudioCellAdapter>> choices = new ArrayList<>();
 
 		if (!provider.getFrequencies().isEmpty()) {
-			provider.getFrequencies().forEach(f -> choices.add(g -> (AudioCellAdapter) w(dataSupplier, f).get(0)));
+			provider.getFrequencies().forEach(f -> choices.add(g -> (AudioCellAdapter) w(f).get(0)));
 		}
 
 		if (!provider.getSamples().isEmpty()) {
 			provider.getSamples().forEach(f -> choices.add(g -> {
 				Producer<Scalar> duration = g.valueAt(2).getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-				return (AudioCellAdapter) w(dataSupplier, g.valueAt(1).getResultant(duration), duration, f).get(0);
+				return (AudioCellAdapter) w(g.valueAt(1).getResultant(duration), duration, f).get(0);
 			}));
 		}
 
