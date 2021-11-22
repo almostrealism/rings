@@ -60,7 +60,11 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, 
 						throw new IllegalArgumentException();
 					}
 
-					insert(v, x, y, z);
+					if (get(x, y, z) == null) {
+						insert(new Scalar(), x, y, z);
+					}
+
+					get(x, y, z).setValue(v.getValue());
 				}
 			}
 		}
@@ -135,7 +139,7 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, 
 
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
-			return value -> scalarsMultiply(() -> args -> AssignableGenome.this.get(chromosome, index, pos), value);
+			return value -> scalarsMultiply(p(AssignableGenome.this.get(chromosome, index, pos)), value);
 		}
 	}
 }

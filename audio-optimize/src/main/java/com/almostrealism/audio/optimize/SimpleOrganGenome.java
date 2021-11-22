@@ -187,11 +187,11 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
 			if (pos < 2) {
-				return protein -> scalarsMultiply(protein, () -> args -> data.get(chromosome, index, pos));
+				return protein -> data.valueAt(chromosome, index, pos).getResultant(protein);
 			} else {
 				return protein ->
 					pow(v(2.0), v(16).multiply(v(-0.5)
-								.add(() -> args -> data.get(chromosome, index, pos))))
+								.add(data.valueAt(chromosome, index, pos).getResultant(v(1.0)))))
 							.multiply(protein);
 			}
 		}
@@ -230,14 +230,14 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
 			if (pos == 0) {
-				return protein -> oneToInfinity(() -> args -> data.get(chromosome, index, pos), 3.0).multiply(v(60));
+				return protein -> oneToInfinity(data.valueAt(chromosome, index, pos).getResultant(v(1.0)), 3.0).multiply(v(60));
 			} else {
-				Producer<Scalar> speedUpDuration = () -> args -> data.get(chromosome, index, 1);
-				Producer<Scalar> speedUpPercentage = () -> args -> data.get(chromosome, index, 2);
-				Producer<Scalar> slowDownDuration = () -> args -> data.get(chromosome, index, 3);
-				Producer<Scalar> slowDownPercentage = () -> args -> data.get(chromosome, index, 4);
-				Producer<Scalar> polySpeedUpDuration = () -> args -> data.get(chromosome, index, 5);
-				Producer<Scalar> polySpeedUpExponent = () -> args -> data.get(chromosome, index, 6);
+				Producer<Scalar> speedUpDuration = data.valueAt(chromosome, index, 1).getResultant(v(1.0));
+				Producer<Scalar> speedUpPercentage = data.valueAt(chromosome, index, 2).getResultant(v(1.0));
+				Producer<Scalar> slowDownDuration = data.valueAt(chromosome, index, 3).getResultant(v(1.0));
+				Producer<Scalar> slowDownPercentage = data.valueAt(chromosome, index, 4).getResultant(v(1.0));
+				Producer<Scalar> polySpeedUpDuration = data.valueAt(chromosome, index, 5).getResultant(v(1.0));
+				Producer<Scalar> polySpeedUpExponent = data.valueAt(chromosome, index, 6).getResultant(v(1.0));
 
 				SineWaveCell speedUpGenerator = new SineWaveCell();
 				ScalarProducer speedUpWavelength = oneToInfinity(speedUpDuration, 3).multiply(60);
@@ -323,8 +323,8 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
-			Producer<Scalar> lowFrequency = scalarsMultiply(v(maxFrequency), () -> args -> data.get(chromosome, index, 0));
-			Producer<Scalar> highFrequency = scalarsMultiply(v(maxFrequency), () -> args -> data.get(chromosome, index, 1));
+			Producer<Scalar> lowFrequency = scalarsMultiply(v(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(v(1.0)));
+			Producer<Scalar> highFrequency = scalarsMultiply(v(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(v(1.0)));
 			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
 		}
