@@ -16,6 +16,8 @@
 
 package com.almostrealism.physics;
 
+import io.almostrealism.relation.Evaluable;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
 
@@ -36,7 +38,7 @@ public class MonochromeBody extends BlackBody {
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public VectorEvaluable getEmitPosition() { return ZeroVector.getEvaluable(); }
+	public Evaluable<Vector> getEmitPosition() { return ZeroVector.getEvaluable(); }
 
 	@Override
 	public double getNextEmit() {

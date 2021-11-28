@@ -58,10 +58,8 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }
 
 	@Override
-	public List<AudioMeter> getMeasures() {
-		List<AudioMeter> measures = super.getMeasures();
+	protected void configureMeasures(List<AudioMeter> measures) {
 		measures.forEach(m -> m.setSilenceValue(silenceValue));
-		return measures;
 	}
 
 	public boolean checkForSilence(AudioMeter meter) {

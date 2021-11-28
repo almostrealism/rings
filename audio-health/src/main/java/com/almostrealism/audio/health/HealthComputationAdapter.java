@@ -67,8 +67,11 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	public List<AudioMeter> getMeasures() {
 		if (measures != null) return measures;
 		measures = IntStream.range(0, MEASURE_COUNT).mapToObj(i -> new AudioMeter()).collect(Collectors.toList());
+		configureMeasures(measures);
 		return measures;
 	}
+
+	protected void configureMeasures(List<AudioMeter> measures) { }
 
 	public void setOutputFile(String file) { setOutputFile(() -> file); }
 	public void setOutputFile(Supplier<String> file) { this.outputFileSupplier = file; }

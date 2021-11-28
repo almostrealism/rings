@@ -29,6 +29,7 @@ import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.breeding.Breeders;
@@ -138,7 +139,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 3, cycles);
+		return build(desirables, 8, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
@@ -173,6 +174,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	public static void main(String args[]) throws FileNotFoundException {
 		Hardware.enableVerbose = true;
 		PopulationOptimizer.enableVerbose = true;
+		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
@@ -180,6 +182,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			try {
 				return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
 			} catch (Exception e) {
+				e.printStackTrace();
 				return null;
 			}
 		}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
@@ -211,7 +214,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			minVolume = 0.0;
 			maxVolume = 1.0 / scale;
 			minTransmission = 0.0;
-			maxTransmission = 1.0;
+			maxTransmission = 1.0 / Math.pow(scale, 1.5);
 			minDelay = 0.5;
 			maxDelay = 120;
 			periodicSpeedUpDurationMin = 0.1;
