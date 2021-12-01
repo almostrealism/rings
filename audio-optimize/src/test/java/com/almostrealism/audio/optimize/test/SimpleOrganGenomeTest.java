@@ -34,8 +34,10 @@ public class SimpleOrganGenomeTest implements HeredityFeatures, TestFeatures {
 
 		ArrayListGenome genome = new ArrayListGenome();
 		genome.add(generators);
+		genome.add(c(g(1.0), g(1.0))); // VOLUME
 		genome.add(processors);
 		genome.add(transmission);
+		genome.add(c(g(1.0), g(1.0))); // WET
 		genome.add(filters);
 
 		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);

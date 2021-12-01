@@ -68,8 +68,8 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	public static final double feedbackParam = 0.5;
 
-	public static final String sampleFile1 = "src/test/resources/Snare Perc DD.wav";
-	public static final String sampleFile2 = "src/test/resources/GT_HAT_31.wav";
+	public static final String sampleFile1 = "Library/Snare Perc DD.wav";
+	public static final String sampleFile2 = "Library/GT_HAT_31.wav";
 
 	protected DefaultDesirablesProvider notes() {
 		Scale<WesternChromatic> scale = Scale.of(WesternChromatic.G4, WesternChromatic.A3);
@@ -174,9 +174,9 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	@Test
 	public void withOutput() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("genetic-factory-test.wav")).get(0);
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/genetic-factory-test.wav")).get(0);
 		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
-		organ.sec(20).get().run();
+		organ.sec(6).get().run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}
 

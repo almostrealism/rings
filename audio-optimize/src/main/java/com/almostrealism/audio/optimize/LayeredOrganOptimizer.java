@@ -139,7 +139,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 8, cycles);
+		return build(desirables, 3, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
@@ -214,7 +214,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			minVolume = 0.0;
 			maxVolume = 1.0 / scale;
 			minTransmission = 0.0;
-			maxTransmission = 1.0 / Math.pow(scale, 1.5);
+			maxTransmission = 1.0 / Math.pow(scale, 2);
 			minDelay = 0.5;
 			maxDelay = 120;
 			periodicSpeedUpDurationMin = 0.1;

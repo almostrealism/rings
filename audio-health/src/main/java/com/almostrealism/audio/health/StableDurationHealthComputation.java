@@ -50,7 +50,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public StableDurationHealthComputation() {
 		super(6);
 		addSilenceListener(() -> encounteredSilence = true);
-		setBatchSize(enableLoop ? OutputLine.sampleRate : 1);
+		setBatchSize(enableLoop ? (OutputLine.sampleRate / 2) : 1);
 	}
 
 	public void setBatchSize(int iter) {
