@@ -31,6 +31,7 @@ import java.util.function.BiFunction;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;
+	public static boolean enableSilenceCheck = true;
 	
 	private int maxSilence;
 	private double silenceValue = 0.001; // Lowest permissable volume
@@ -63,9 +64,11 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	}
 
 	public boolean checkForSilence(AudioMeter meter) {
-		if (meter.getSilenceDuration() > maxSilence) {
-			silenceListeners.forEach(Runnable::run);
-			return true;
+		if (enableSilenceCheck) {
+			if (meter.getSilenceDuration() > maxSilence) {
+				silenceListeners.forEach(Runnable::run);
+				return true;
+			}
 		}
 
 		return false;
