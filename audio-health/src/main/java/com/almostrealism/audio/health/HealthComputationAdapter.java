@@ -32,7 +32,7 @@ import org.almostrealism.heredity.TemporalCellular;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
 	public static final int MEASURE_COUNT = 2;
-	public static int standardDuration = (int) (70 * OutputLine.sampleRate);
+	public static int standardDuration = (int) (75 * OutputLine.sampleRate);
 
 	private TemporalCellular target;
 
@@ -58,7 +58,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 					outputFile = new File(s.get());
 					return outputFile;
 				}).orElse(null),
-				standardDuration, 24);
+				(int) (1.5 * standardDuration), 24);
 		outputMeter.setForwarding(out);
 		return outputMeter;
 	}

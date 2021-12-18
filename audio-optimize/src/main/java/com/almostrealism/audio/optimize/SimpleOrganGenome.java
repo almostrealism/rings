@@ -336,8 +336,14 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 				.toArray();
 		offsetChoices[0] = 0.0;
 
-		double repeatChoices[] = IntStream.range(0, 13)
-				.map(i -> i - 6)
+//		double repeatChoices[] = IntStream.range(0, 13)
+//				.map(i -> i - 6)
+//				.mapToDouble(i -> Math.pow(2, i))
+//				.map(SimpleOrganGenome::factorForRepeat)
+//				.toArray();
+
+		double repeatChoices[] = IntStream.range(0, 9)
+				.map(i -> i - 2)
 				.mapToDouble(i -> Math.pow(2, i))
 				.map(SimpleOrganGenome::factorForRepeat)
 				.toArray();

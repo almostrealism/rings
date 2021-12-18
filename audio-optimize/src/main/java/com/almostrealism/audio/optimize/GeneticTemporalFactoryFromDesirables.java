@@ -40,6 +40,8 @@ import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.util.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
+	public static final boolean enableRepeat = true;
+
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
 		List<Function<Gene<Scalar>, AudioCellAdapter>> choices = new ArrayList<>();
 
@@ -50,7 +52,7 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 		if (!provider.getSamples().isEmpty()) {
 			provider.getSamples().forEach(f -> choices.add(g -> {
 				Producer<Scalar> duration = g.valueAt(2).getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-				return (AudioCellAdapter) w(g.valueAt(1).getResultant(duration), duration, f).get(0);
+				return (AudioCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
 			}));
 		}
 

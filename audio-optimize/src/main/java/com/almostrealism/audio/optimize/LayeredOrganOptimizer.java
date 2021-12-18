@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
+import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import org.almostrealism.algebra.Pair;
@@ -32,8 +33,11 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.cl.HardwareOperator;
+import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.RandomChromosomeFactory;
@@ -46,6 +50,7 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
+	public static final int verbosity = 0;
 
 	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
 								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
@@ -139,7 +144,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 3, cycles);
+		return build(desirables, 6, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
@@ -172,8 +177,13 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 * @see  LayeredOrganOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
-		Hardware.enableVerbose = true;
-		PopulationOptimizer.enableVerbose = true;
+		PopulationOptimizer.enableVerbose = verbosity > 0;
+		Hardware.enableVerbose = verbosity > 1;
+		WaveOutput.enableVerbose = verbosity > 1;
+		NativeComputeContext.enableVerbose = verbosity > 2;
+		HardwareOperator.enableVerboseLog = verbosity > 2;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
+
 		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
@@ -214,26 +224,35 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			minVolume = 0.0;
 			maxVolume = 1.0 / scale;
 			minTransmission = 0.0;
-			maxTransmission = 1.0 / Math.pow(scale, 2);
+			maxTransmission = 0.5; // / Math.pow(scale, 1.3);
 			minDelay = 0.5;
-			maxDelay = 120;
-			periodicSpeedUpDurationMin = 0.1;
+			maxDelay = 60;
+
+			periodicSpeedUpDurationMin = 0.5;
 			periodicSpeedUpDurationMax = 180;
 			periodicSpeedUpPercentageMin = 0.0;
-			periodicSpeedUpPercentageMax = 100;
-			periodicSlowDownDurationMin = 0.1;
+			// periodicSpeedUpPercentageMax = 100;
+			periodicSpeedUpPercentageMax = 10;
+
+			periodicSlowDownDurationMin = 1;
 			periodicSlowDownDurationMax = 180;
 			periodicSlowDownPercentageMin = 0.0;
-			periodicSlowDownPercentageMax = 0.9999;
-			overallSpeedUpDurationMin = 0.1;
+			periodicSlowDownPercentageMax = 0.9;
+			// periodicSlowDownPercentageMax = 0.0;
+
+			// overallSpeedUpDurationMin = 0.1;
+			overallSpeedUpDurationMin = 10;
 			overallSpeedUpDurationMax = 180;
-			overallSpeedUpExponentMin = 0;
-			overallSpeedUpExponentMax = 10;
-			minWet = 0.0;
+
+			overallSpeedUpExponentMin = 1;
+			// overallSpeedUpExponentMax = 10;
+			overallSpeedUpExponentMax = 1;
+
+			minWet = 0.8;
 			maxWet = 1.0;
 			minHighPass = 0;
-			maxHighPass = 0;
-			minLowPass = 20000;
+			maxHighPass = 20000;
+			minLowPass = 0;
 			maxLowPass = 20000;
 		}
 	}

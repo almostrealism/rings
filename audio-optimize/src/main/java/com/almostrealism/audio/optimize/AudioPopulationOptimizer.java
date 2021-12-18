@@ -92,25 +92,30 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		}
 
 		setPopulation(getChildrenFunction().apply(genomes));
-		PopulationOptimizer.console.println("Loaded genomes");
+		storePopulation();
 		PopulationOptimizer.console.println(getPopulation().size() + " organs in population");
 	}
 
 	@Override
 	public void run() {
 		for (int i = 0; i < tot; i++) {
-			dc(() -> {
+			dc(() -> cc(() -> {
 				init();
 				readPopulation();
 				iterate();
 				storePopulation();
 				return null;
-			});
+			}));
 
 			resetHealth();
 			resetGenerator();
 			System.gc();
 		}
+	}
+
+	@Override
+	public void breedingComplete() {
+		storePopulation();
 	}
 
 	public void storePopulation() {

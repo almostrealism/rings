@@ -12,7 +12,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>${rings.version}</version>
+	<version>0.14</version>
 
 	<modules>
 		<module>raytracer</module>

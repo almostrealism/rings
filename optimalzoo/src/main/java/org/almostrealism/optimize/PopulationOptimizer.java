@@ -16,10 +16,12 @@
 
 package org.almostrealism.optimize;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
@@ -42,6 +44,9 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
+	public static boolean enableBreeding = true;
+
+	public static OptionalInt targetGenome = OptionalInt.empty();
 
 	public static int popSize = 60;
 	public static int maxChildren = popSize + 5;
@@ -115,58 +120,63 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 		// Sort the population
 		List<Genome<G>> sorted = population.getGenomes();
 
-		// Fresh genetic material
-		List<Genome<G>> genomes = new ArrayList<>();
+		if (enableBreeding) {
+			// Fresh genetic material
+			List<Genome<G>> genomes = new ArrayList<>();
 
-		// Mate in order of health
-		Iterator<Genome<G>> itr = sorted.iterator();
+			// Mate in order of health
+			Iterator<Genome<G>> itr = sorted.iterator();
 
-		Genome g1;
-		Genome g2 = itr.next();
+			Genome g1;
+			Genome g2 = itr.next();
 
-		w: for (int i = 0; itr.hasNext(); i++) {
-			g1 = g2;
-			if (genomes.size() >= maxChildren || itr.hasNext() == false) break w;
-			g2 = itr.next();
+			w:
+			for (int i = 0; itr.hasNext(); i++) {
+				g1 = g2;
+				if (genomes.size() >= maxChildren || itr.hasNext() == false) break w;
+				g2 = itr.next();
 
-			// Combine chromosomes to produce new offspring
-			breed(genomes, g1, g2);
-
-			if (StrictMath.random() < secondaryOffspringPotential && genomes.size() < maxChildren) {
-				// Combine chromosomes to produce a second offspring
+				// Combine chromosomes to produce new offspring
 				breed(genomes, g1, g2);
-			} else {
-				continue w;
+
+				if (StrictMath.random() < secondaryOffspringPotential && genomes.size() < maxChildren) {
+					// Combine chromosomes to produce a second offspring
+					breed(genomes, g1, g2);
+				} else {
+					continue w;
+				}
+
+				if (StrictMath.random() < tertiaryOffspringPotential && genomes.size() < maxChildren) {
+					// Combine chromosomes to produce a third offspring
+					breed(genomes, g1, g2);
+				} else {
+					continue w;
+				}
+
+				if (StrictMath.random() < quaternaryOffspringPotential && genomes.size() < maxChildren) {
+					// Combine chromosomes to produce a fourth offspring
+					breed(genomes, g1, g2);
+				} else {
+					continue w;
+				}
 			}
 
-			if (StrictMath.random() < tertiaryOffspringPotential && genomes.size() < maxChildren) {
-				// Combine chromosomes to produce a third offspring
-				breed(genomes, g1, g2);
-			} else {
-				continue w;
+			int add = popSize - genomes.size();
+
+			console.println("Generating new population with " + genomes.size() + " children");
+
+			this.population.getGenomes().clear();
+			this.population.getGenomes().addAll(genomes);
+
+			if (generator != null && add > 0) {
+				console.println("Adding an additional " + add + " members");
+
+				IntStream.range(0, add)
+						.mapToObj(i -> generator.get())
+						.forEach(this.population.getGenomes()::add);
 			}
 
-			if (StrictMath.random() < quaternaryOffspringPotential && genomes.size() < maxChildren) {
-				// Combine chromosomes to produce a fourth offspring
-				breed(genomes, g1, g2);
-			} else {
-				continue w;
-			}
-		}
-
-		int add = popSize - genomes.size();
-
-		console.println("Generating new population with " + genomes.size() + " children");
-
-		this.population.getGenomes().clear();
-		this.population.getGenomes().addAll(genomes);
-
-		if (generator != null && add > 0) {
-			console.println("Adding an additional " + add + " members");
-
-			IntStream.range(0, add)
-					.mapToObj(i -> generator.get())
-					.forEach(this.population.getGenomes()::add);
+			breedingComplete();
 		}
 
 		long sec = (System.currentTimeMillis() - start) / 1000;
@@ -178,6 +188,8 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 			console.println("Iteration completed after " + sec + " seconds");
 	}
 
+	public void breedingComplete() { }
+
 	public void breed(List<Genome<G>> genomes, Genome g1, Genome g2) {
 		genomes.add(breeder.get().combine(g1, g2));
 	}
@@ -188,7 +200,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 		double highestHealth = 0;
 		double totalHealth = 0;
 
-		console.print("Calculating health");
+		console.print("[" + Instant.now() + "] Calculating health");
 		if (enableVerbose) {
 			console.println("...");
 		} else {
@@ -202,18 +214,18 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 				if (enableVerbose) {
 					console.println();
 					console.println("Enabling genome:");
-					console.println(String.valueOf(pop.getGenomes().get(i)));
+					console.println(String.valueOf(pop.getGenomes().get(targetGenome.orElse(i))));
 				}
 
-				this.health.setTarget(pop.enableGenome(i));
+				this.health.setTarget(pop.enableGenome(targetGenome.orElse(i)));
 				health = this.health.computeHealth();
 
 				if (health.getScore() > highestHealth) highestHealth = health.getScore();
 
-				healthTable.put(pop.getGenomes().get(i), health.getScore());
+				healthTable.put(pop.getGenomes().get(targetGenome.orElse(i)), health.getScore());
 				totalHealth += health.getScore();
 
-				if (healthListener != null) healthListener.accept(pop.getGenomes().get(i).signature(), health);
+				if (healthListener != null) healthListener.accept(pop.getGenomes().get(targetGenome.orElse(i)).signature(), health);
 			} finally {
 				this.health.reset();
 				pop.disableGenome();
@@ -221,7 +233,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 
 			if (enableVerbose) {
 				console.println();
-				console.println("Health of Organ " + i + " is " + percent(health.getScore()));
+				console.println("[" + Instant.now().toString() + "] Health of Network " + i + " is " + percent(health.getScore()));
 			} else {
 				console.print(".");
 			}
