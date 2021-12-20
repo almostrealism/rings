@@ -72,7 +72,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	public static Supplier<Supplier<Genome<Scalar>>> generator(int dim, GeneratorConfiguration config) {
 		return () -> {
 			// Random genetic material generators
-			ChromosomeFactory<Scalar> generators = SimpleOrganGenome.generatorFactory();   // GENERATORS
+			ChromosomeFactory<Scalar> generators = SimpleOrganGenome.generatorFactory(config.offsetChoices, config.repeatChoices);   // GENERATORS
 			RandomChromosomeFactory volume = new RandomChromosomeFactory();       // VOLUME
 			RandomChromosomeFactory processors = new RandomChromosomeFactory();   // DELAY
 			RandomChromosomeFactory transmission = new RandomChromosomeFactory(); // ROUTING
@@ -218,6 +218,9 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
 
+		public double offsetChoices[];
+		public double repeatChoices[];
+
 		public GeneratorConfiguration() { this(1); }
 
 		public GeneratorConfiguration(int scale) {
@@ -254,6 +257,23 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			maxHighPass = 20000;
 			minLowPass = 0;
 			maxLowPass = 20000;
+
+			offsetChoices = IntStream.range(0, 7)
+					.mapToDouble(i -> Math.pow(2, -i))
+					.toArray();
+			offsetChoices[0] = 0.0;
+
+//			repeatChoices = IntStream.range(0, 13)
+//				.map(i -> i - 6)
+//				.mapToDouble(i -> Math.pow(2, i))
+//				.map(SimpleOrganGenome::factorForRepeat)
+//				.toArray();
+
+			repeatChoices = IntStream.range(0, 9)
+					.map(i -> i - 2)
+					.mapToDouble(i -> Math.pow(2, i))
+					.map(SimpleOrganGenome::factorForRepeat)
+					.toArray();
 		}
 	}
 }

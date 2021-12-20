@@ -116,6 +116,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	@Override
 	public void breedingComplete() {
 		storePopulation();
+		count.set(0);
 	}
 
 	public void storePopulation() {

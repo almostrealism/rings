@@ -330,24 +330,7 @@ public class SimpleOrganGenome implements Genome<Scalar>, CellFeatures {
 		}
 	}
 
-	public static ChromosomeFactory<Scalar> generatorFactory() {
-		double offsetChoices[] = IntStream.range(0, 7)
-				.mapToDouble(i -> Math.pow(2, -i))
-				.toArray();
-		offsetChoices[0] = 0.0;
-
-//		double repeatChoices[] = IntStream.range(0, 13)
-//				.map(i -> i - 6)
-//				.mapToDouble(i -> Math.pow(2, i))
-//				.map(SimpleOrganGenome::factorForRepeat)
-//				.toArray();
-
-		double repeatChoices[] = IntStream.range(0, 9)
-				.map(i -> i - 2)
-				.mapToDouble(i -> Math.pow(2, i))
-				.map(SimpleOrganGenome::factorForRepeat)
-				.toArray();
-
+	public static ChromosomeFactory<Scalar> generatorFactory(double offsetChoices[], double repeatChoices[]) {
 		return new ChromosomeFactory<>() {
 			private int genes, factors;
 

@@ -67,6 +67,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 	private Supplier<GenomeBreeder<G>> breeder;
 
 	private BiConsumer<String, S> healthListener;
+	private double averageScore, maxScore;
 
 	public PopulationOptimizer(Supplier<HealthComputation<O, S>> h,
 							   Function<List<Genome<G>>, Population> children,
@@ -113,6 +114,10 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 			generator = generatorSupplier.get();
 		return generator;
 	}
+
+	public double getAverageScore() { return averageScore; }
+
+	public double getMaxScore() { return maxScore; }
 
 	public void iterate() {
 		long start = System.currentTimeMillis();
@@ -241,9 +246,11 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 
 		if (!enableVerbose) console.println();
 
+		this.averageScore = totalHealth / pop.size();
+		this.maxScore = highestHealth;
+
 		console.println("Average health for this round is " +
-				percent(totalHealth / pop.size()) + ", max " +
-				percent(highestHealth));
+				percent(averageScore) + ", max " + percent(maxScore));
 		TreeSet<Genome<G>> sorted = new TreeSet<>((g1, g2) -> {
 			double h1 = healthTable.get(g1);
 			double h2 = healthTable.get(g2);
