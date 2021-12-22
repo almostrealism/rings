@@ -50,7 +50,7 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 1;
 
 	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
 								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
@@ -178,8 +178,9 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
 		PopulationOptimizer.enableVerbose = verbosity > 0;
-		Hardware.enableVerbose = verbosity > 1;
+		Hardware.enableVerbose = verbosity > 0;
 		WaveOutput.enableVerbose = verbosity > 1;
+		PopulationOptimizer.enableDisplayGenomes = verbosity > 1;
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		HardwareOperator.enableVerboseLog = verbosity > 2;
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;

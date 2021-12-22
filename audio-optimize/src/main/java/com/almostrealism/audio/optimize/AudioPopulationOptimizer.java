@@ -50,6 +50,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	private final int tot;
 	private final AtomicInteger count;
 
+	private Runnable cycleListener;
+
 	public AudioPopulationOptimizer(Function<List<Genome<Scalar>>, Population> children,
 									Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator, String file) {
 		this(children, breeder, generator, file, 100);
@@ -75,6 +77,10 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		if (enableWavOutput) {
 			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
+	}
+
+	public void setCycleListener(Runnable r) {
+		this.cycleListener = r;
 	}
 
 	public void readPopulation() throws FileNotFoundException {
@@ -107,6 +113,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				return null;
 			}));
 
+			if (cycleListener != null) cycleListener.run();
 			resetHealth();
 			resetGenerator();
 			System.gc();

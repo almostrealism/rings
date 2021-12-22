@@ -219,7 +219,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			}
 
 			((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).reset();
-			reset();
+ 			reset();
 
 //			ProducerCache.destroyEvaluableCache();
 		}

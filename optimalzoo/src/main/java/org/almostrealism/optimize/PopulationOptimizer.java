@@ -44,6 +44,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
+	public static boolean enableDisplayGenomes = false;
 	public static boolean enableBreeding = true;
 
 	public static OptionalInt targetGenome = OptionalInt.empty();
@@ -216,7 +217,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 			S health = null;
 
 			try {
-				if (enableVerbose) {
+				if (enableVerbose && enableDisplayGenomes) {
 					console.println();
 					console.println("Enabling genome:");
 					console.println(String.valueOf(pop.getGenomes().get(targetGenome.orElse(i))));
