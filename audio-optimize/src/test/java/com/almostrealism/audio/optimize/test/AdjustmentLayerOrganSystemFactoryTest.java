@@ -17,9 +17,9 @@
 package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
+import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
-import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import org.almostrealism.algebra.Scalar;
@@ -88,14 +88,14 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	}
 
 	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
-		LayeredOrganGenome organGenome = new LayeredOrganGenome(2);
+		DefaultAudioGenome organGenome = new DefaultAudioGenome(2, 2);
 		organGenome.assignTo(layeredOrganGenome());
 		return factory(desirables).generateOrgan((Genome) organGenome, measures, meter);
 	}
 
 	public AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> randomLayeredOrgan(DesirablesProvider desirables,  List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
-		LayeredOrganGenome g = new LayeredOrganGenome(2);
-		g.assignTo(LayeredOrganOptimizer.generator(2).get().get());
+		DefaultAudioGenome g = new DefaultAudioGenome(2, 2);
+		g.assignTo(LayeredOrganOptimizer.generator(2, 2).get().get());
 		return factory(desirables).generateOrgan((Genome) g, measures, meter);
 	}
 

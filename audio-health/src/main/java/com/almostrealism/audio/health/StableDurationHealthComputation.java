@@ -173,7 +173,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				try {
 					(l == 0 ? start : iterate).run();
 				} catch (HardwareException e) {
-					System.out.println(e.getProgram());
+					System.out.println("StableDurationHealthComputation: \n" + e.getProgram());
 					throw e;
 				}
 

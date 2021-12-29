@@ -17,7 +17,9 @@
 package org.almostrealism.breeding;
 
 import io.almostrealism.relation.Delegated;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Tensor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
@@ -25,6 +27,7 @@ import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.util.Ops;
 
 public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, Delegated<Tensor<Scalar>>, CodeFeatures {
 	private final Tensor<Scalar> delegate;
@@ -139,7 +142,11 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, 
 
 		@Override
 		public Factor<Scalar> valueAt(int pos) {
-			return value -> scalarsMultiply(p(AssignableGenome.this.get(chromosome, index, pos)), value);
+			return value -> {
+				Scalar v = AssignableGenome.this.get(chromosome, index, pos);
+				if (v == null) throw new NullPointerException();
+				return scalarsMultiply(p(v), value);
+			};
 		}
 	}
 }

@@ -45,7 +45,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 
 	public static boolean enableVerbose = false;
 	public static boolean enableDisplayGenomes = false;
-	public static boolean enableBreeding = true;
+	public static boolean enableBreeding = false;
 
 	public static OptionalInt targetGenome = OptionalInt.empty();
 

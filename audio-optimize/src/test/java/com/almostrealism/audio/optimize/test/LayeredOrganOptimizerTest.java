@@ -62,7 +62,8 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 	}
 
 	protected LayeredOrganOptimizer optimizer() {
-		int dim = 2;
+		int sources = 2;
+		int delayLayers = 2;
 		int cycles = 1;
 
 		List<Genome<Scalar>> genomes = new ArrayList<>();
@@ -81,11 +82,11 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 					Breeders.averageBreeder(),  									   // FILTER
 					Breeders.perturbationBreeder(0.005, ScaleFactor::new));  // PERIODIC
-		}, null, OutputLine.sampleRate, dim, cycles);
+		}, null, OutputLine.sampleRate, sources, delayLayers, cycles);
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating LayeredOrganPopulation...");
-			LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, dim, OutputLine.sampleRate);
+			LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, sources, delayLayers, OutputLine.sampleRate);
 			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
 			pop.init(factorySupplier.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 			return pop;

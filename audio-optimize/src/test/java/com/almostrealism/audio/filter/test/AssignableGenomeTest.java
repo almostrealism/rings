@@ -16,10 +16,10 @@
 
 package com.almostrealism.audio.filter.test;
 
+import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
-import com.almostrealism.audio.optimize.LayeredOrganGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
@@ -144,7 +144,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		return genome;
 	}
 
-	protected Temporal organ(LayeredOrganGenome genome, List<Receptor<Scalar>> measures, Receptor<Scalar> meter) {
+	protected Temporal organ(DefaultAudioGenome genome, List<Receptor<Scalar>> measures, Receptor<Scalar> meter) {
 		genome.assignTo(genome(0.0, 0.0, false));
 		return factory().generateOrgan(genome, measures, meter);
 	}
@@ -195,7 +195,7 @@ public class AssignableGenomeTest implements CellFeatures {
 	public void examples() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("assignable-genome-example.wav")).get(0);
 
-		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		DefaultAudioGenome genome = new DefaultAudioGenome(2, 2);
 		Temporal organ = organ(genome, null, out); // TODO
 
 		TemporalRunner runner = new TemporalRunner(organ, 8 * OutputLine.sampleRate);
@@ -228,7 +228,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		DefaultAudioGenome genome = new DefaultAudioGenome(2, 2);
 		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome1());
@@ -243,7 +243,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		DefaultAudioGenome genome = new DefaultAudioGenome(2, 2);
 		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome(0.4, 0.8, false));
@@ -264,7 +264,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setMaxDuration(8);
 
-		LayeredOrganGenome genome = new LayeredOrganGenome(2);
+		DefaultAudioGenome genome = new DefaultAudioGenome(2, 2);
 		CellList organ = (CellList) organ(genome, null, health.getOutput()); // TODO
 
 		genome.assignTo(genome(0.4, 0.8, true));

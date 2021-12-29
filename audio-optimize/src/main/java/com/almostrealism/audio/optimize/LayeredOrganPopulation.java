@@ -29,17 +29,17 @@ import org.almostrealism.util.CodeFeatures;
 
 public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>>, CodeFeatures {
 	private final List<Genome<G>> pop;
-	private final LayeredOrganGenome genome;
+	private final DefaultAudioGenome genome;
 	private Genome currentGenome;
 	private AdjustmentLayerOrganSystem<G, O, A, R> organ;
 
-	public LayeredOrganPopulation(List<Genome<G>> population, int cellCount) {
-		this(population, cellCount, OutputLine.sampleRate);
+	public LayeredOrganPopulation(List<Genome<G>> population, int sources, int delayLayers) {
+		this(population, sources, delayLayers, OutputLine.sampleRate);
 	}
 
-	public LayeredOrganPopulation(List<Genome<G>> population, int cellCount, int sampleRate) {
+	public LayeredOrganPopulation(List<Genome<G>> population, int sources, int delayLayers, int sampleRate) {
 		this.pop = population;
-		this.genome = new LayeredOrganGenome(cellCount, sampleRate);
+		this.genome = new DefaultAudioGenome(sources, delayLayers, sampleRate);
 	}
 
 	@Override

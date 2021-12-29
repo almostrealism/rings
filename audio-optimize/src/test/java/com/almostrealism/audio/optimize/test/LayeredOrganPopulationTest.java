@@ -26,7 +26,7 @@ public class LayeredOrganPopulationTest extends AdjustmentLayerOrganSystemFactor
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, false));
 
-		LayeredOrganPopulation pop = new LayeredOrganPopulation(genomes, 2);
+		LayeredOrganPopulation pop = new LayeredOrganPopulation(genomes, 2, 2);
 		pop.init(factory(desirables), genomes.get(0), measures, output);
 		return pop;
 	}

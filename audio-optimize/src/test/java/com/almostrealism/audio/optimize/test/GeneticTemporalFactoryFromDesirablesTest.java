@@ -18,12 +18,10 @@ package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.heredity.Factor;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
-import com.almostrealism.audio.optimize.SimpleOrganGenome;
+import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.Scale;
 import com.almostrealism.tone.WesternChromatic;
@@ -89,8 +87,8 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
 		ArrayListChromosome<Double> generators = new ArrayListChromosome();
-		generators.add(new ArrayListGene<>(0.4, 0.5, SimpleOrganGenome.factorForRepeat(1)));
-		generators.add(new ArrayListGene<>(0.8, 0.0, SimpleOrganGenome.factorForRepeat(4)));
+		generators.add(new ArrayListGene<>(0.4, 0.5, DefaultAudioGenome.factorForRepeat(1)));
+		generators.add(new ArrayListGene<>(0.8, 0.0, DefaultAudioGenome.factorForRepeat(4)));
 
 		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
 		volume.add(g(0.0, 0.0));
@@ -98,19 +96,19 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
 		processors.add(new ArrayListGene<>(delayParam,
-				SimpleOrganGenome.factorForSpeedUpDuration(speedUpDuration1),
-				SimpleOrganGenome.factorForSpeedUpPercentage(speedUpPercentage1),
-				SimpleOrganGenome.factorForSlowDownDuration(slowDownDuration1),
-				SimpleOrganGenome.factorForSlowDownPercentage(slowDownPercentage1),
-				SimpleOrganGenome.factorForPolySpeedUpDuration(polySpeedUpDuration1),
-				SimpleOrganGenome.factorForPolySpeedUpExponent(polySpeedUpExponent1)));
+				DefaultAudioGenome.factorForSpeedUpDuration(speedUpDuration1),
+				DefaultAudioGenome.factorForSpeedUpPercentage(speedUpPercentage1),
+				DefaultAudioGenome.factorForSlowDownDuration(slowDownDuration1),
+				DefaultAudioGenome.factorForSlowDownPercentage(slowDownPercentage1),
+				DefaultAudioGenome.factorForPolySpeedUpDuration(polySpeedUpDuration1),
+				DefaultAudioGenome.factorForPolySpeedUpExponent(polySpeedUpExponent1)));
 		processors.add(new ArrayListGene<>(delayParam,
-				SimpleOrganGenome.factorForSpeedUpDuration(speedUpDuration2),
-				SimpleOrganGenome.factorForSpeedUpPercentage(speedUpPercentage2),
-				SimpleOrganGenome.factorForSlowDownDuration(slowDownDuration2),
-				SimpleOrganGenome.factorForSlowDownPercentage(slowDownPercentage2),
-				SimpleOrganGenome.factorForPolySpeedUpDuration(polySpeedUpDuration2),
-				SimpleOrganGenome.factorForPolySpeedUpExponent(polySpeedUpExponent2)));
+				DefaultAudioGenome.factorForSpeedUpDuration(speedUpDuration2),
+				DefaultAudioGenome.factorForSpeedUpPercentage(speedUpPercentage2),
+				DefaultAudioGenome.factorForSlowDownDuration(slowDownDuration2),
+				DefaultAudioGenome.factorForSlowDownPercentage(slowDownPercentage2),
+				DefaultAudioGenome.factorForPolySpeedUpDuration(polySpeedUpDuration2),
+				DefaultAudioGenome.factorForPolySpeedUpExponent(polySpeedUpExponent2)));
 
 		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 
@@ -143,7 +141,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		genome.add(wet);
 		genome.add(filters);
 
-		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
+		DefaultAudioGenome organGenome = new DefaultAudioGenome(2, 2);
 		organGenome.assignTo(genome);
 
 		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(organGenome, measures, output);
@@ -160,14 +158,14 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		conf.minLowPass = 20000;
 		conf.maxLowPass = 20000;
 
-		Genome g = LayeredOrganOptimizer.generator(2, conf).get().get();
+		Genome g = LayeredOrganOptimizer.generator(2, 2, conf).get().get();
 		System.out.println(g);
 
-		SimpleOrganGenome sog = new SimpleOrganGenome(2);
+		DefaultAudioGenome sog = new DefaultAudioGenome(2, 2);
 		sog.assignTo(g);
 
-		System.out.println("0, 0, 2 = " + sog.valueAt(SimpleOrganGenome.GENERATORS, 0).valueAt(2).getResultant(v(1.0)).get().evaluate());
-		System.out.println("0, 1, 2 = " + sog.valueAt(SimpleOrganGenome.GENERATORS, 1).valueAt(2).getResultant(v(1.0)).get().evaluate());
+		System.out.println("0, 0, 2 = " + sog.valueAt(DefaultAudioGenome.GENERATORS, 0).valueAt(2).getResultant(v(1.0)).get().evaluate());
+		System.out.println("0, 1, 2 = " + sog.valueAt(DefaultAudioGenome.GENERATORS, 1).valueAt(2).getResultant(v(1.0)).get().evaluate());
 
 		return new GeneticTemporalFactoryFromDesirables().from(desirables).generateOrgan(sog, measures, output);
 	}

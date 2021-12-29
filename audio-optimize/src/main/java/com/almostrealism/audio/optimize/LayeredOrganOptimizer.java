@@ -35,6 +35,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.breeding.Breeders;
+import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
@@ -54,104 +55,124 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 
 	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
 								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
-								 int sampleRate, int cellCount, int totalCycles) {
+								 int sampleRate, int sources, int delayLayers, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, cellCount, sampleRate);
+					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, sources, delayLayers, sampleRate);
 					AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
 					pop.init(f.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 					return pop;
 				});
 	}
 
-	public static Supplier<Supplier<Genome<Scalar>>> generator(int dim) {
-		return generator(dim, new GeneratorConfiguration(dim));
+	public static Supplier<Supplier<Genome<Scalar>>> generator(int sources, int delayLayers) {
+		return generator(sources, delayLayers, new GeneratorConfiguration(sources));
 	}
 
-	public static Supplier<Supplier<Genome<Scalar>>> generator(int dim, GeneratorConfiguration config) {
+	public static Supplier<Supplier<Genome<Scalar>>> generator(int sources, int delayLayers, GeneratorConfiguration config) {
 		return () -> {
 			// Random genetic material generators
-			ChromosomeFactory<Scalar> generators = SimpleOrganGenome.generatorFactory(config.offsetChoices, config.repeatChoices);   // GENERATORS
+			ChromosomeFactory<Scalar> generators = DefaultAudioGenome.generatorFactory(config.offsetChoices, config.repeatChoices,
+													config.repeatSpeedUpDurationMin, config.repeatSpeedUpDurationMax);   // GENERATORS
 			RandomChromosomeFactory volume = new RandomChromosomeFactory();       // VOLUME
+			RandomChromosomeFactory filterUp = new RandomChromosomeFactory();     // MAIN FILTER UP
+			RandomChromosomeFactory wetIn = new RandomChromosomeFactory();		  // WET IN
 			RandomChromosomeFactory processors = new RandomChromosomeFactory();   // DELAY
 			RandomChromosomeFactory transmission = new RandomChromosomeFactory(); // ROUTING
-			RandomChromosomeFactory wet = new RandomChromosomeFactory();		  // WET
+			RandomChromosomeFactory wetOut = new RandomChromosomeFactory();		  // WET OUT
 			RandomChromosomeFactory filters = new RandomChromosomeFactory();      // FILTERS
-			RandomChromosomeFactory afactory = new RandomChromosomeFactory();     // PERIODIC
 
-			generators.setChromosomeSize(dim, 1); // GENERATORS
+			generators.setChromosomeSize(sources, 0); // GENERATORS
 
-			volume.setChromosomeSize(dim, 2);     // VOLUME
+			volume.setChromosomeSize(sources, 2);     // VOLUME
 			Pair volumeRange = new Pair(config.minVolume, config.maxVolume);
-			IntStream.range(0, dim).forEach(i -> {
+			IntStream.range(0, sources).forEach(i -> {
 				volume.setRange(i, 0, volumeRange);
 				volume.setRange(i, 1, volumeRange);
 			});
 
-			processors.setChromosomeSize(dim, 7); // DELAYr
-			Pair delayRange = new Pair(SimpleOrganGenome.factorForDelay(config.minDelay),
-									SimpleOrganGenome.factorForDelay(config.maxDelay));
-			Pair periodicSpeedUpDurationRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpDurationMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpDurationMax));
-			Pair periodicSpeedUpPercentageRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpPercentageMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSpeedUpPercentageMax));
-			Pair periodicSlowDownDurationRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMax));
-			Pair periodicSlowDownPercentageRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownPercentageMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.periodicSlowDownPercentageMax));
-			Pair overallSpeedUpDurationRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpDurationMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpDurationMax));
-			Pair overallSpeedUpExponentRange = new Pair(
-					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpExponentMin),
-					SimpleOrganGenome.factorForSlowDownDuration(config.overallSpeedUpExponentMax));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 0, delayRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 1, periodicSpeedUpDurationRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 2, periodicSpeedUpPercentageRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 3, periodicSlowDownDurationRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 4, periodicSlowDownPercentageRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 5, overallSpeedUpDurationRange));
-			IntStream.range(0, dim).forEach(i -> processors.setRange(i, 6, overallSpeedUpExponentRange));
+			filterUp.setChromosomeSize(sources, 3); // MAIN FILTER UP
+			Pair periodicFilterUpDurationRange = new Pair(
+					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicFilterUpDurationMin),
+					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicFilterUpDurationMax));
+			Pair overallFilterUpDurationRange = new Pair(
+					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallFilterUpDurationMin),
+					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallFilterUpDurationMax));
+			Pair overallFilterUpExponentRange = new Pair(
+					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallFilterUpExponentMin),
+					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallFilterUpExponentMax));
+			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 0, periodicFilterUpDurationRange));
+			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 1, overallFilterUpDurationRange));
+			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 2, overallFilterUpExponentRange));
 
-			transmission.setChromosomeSize(dim, dim);    // ROUTING
+			wetIn.setChromosomeSize(sources, delayLayers);		 // WET IN
+			Pair wetInRange = new Pair(config.minWetIn, config.maxWetIn);
+			IntStream.range(0, sources).forEach(i ->
+					IntStream.range(0, delayLayers).forEach(j -> wetIn.setRange(i, j, wetInRange)));
+
+			processors.setChromosomeSize(delayLayers, 7); // DELAY
+			Pair delayRange = new Pair(DefaultAudioGenome.factorForDelay(config.minDelay),
+									DefaultAudioGenome.factorForDelay(config.maxDelay));
+			Pair periodicSpeedUpDurationRange = new Pair(
+					DefaultAudioGenome.factorForSpeedUpDuration(config.periodicSpeedUpDurationMin),
+					DefaultAudioGenome.factorForSpeedUpDuration(config.periodicSpeedUpDurationMax));
+			Pair periodicSpeedUpPercentageRange = new Pair(
+					DefaultAudioGenome.factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMin),
+					DefaultAudioGenome.factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMax));
+			Pair periodicSlowDownDurationRange = new Pair(
+					DefaultAudioGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMin),
+					DefaultAudioGenome.factorForSlowDownDuration(config.periodicSlowDownDurationMax));
+			Pair periodicSlowDownPercentageRange = new Pair(
+					DefaultAudioGenome.factorForSlowDownPercentage(config.periodicSlowDownPercentageMin),
+					DefaultAudioGenome.factorForSlowDownPercentage(config.periodicSlowDownPercentageMax));
+			Pair overallSpeedUpDurationRange = new Pair(
+					DefaultAudioGenome.factorForPolySpeedUpDuration(config.overallSpeedUpDurationMin),
+					DefaultAudioGenome.factorForPolySpeedUpDuration(config.overallSpeedUpDurationMax));
+			Pair overallSpeedUpExponentRange = new Pair(
+					DefaultAudioGenome.factorForPolySpeedUpExponent(config.overallSpeedUpExponentMin),
+					DefaultAudioGenome.factorForPolySpeedUpExponent(config.overallSpeedUpExponentMax));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 0, delayRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 1, periodicSpeedUpDurationRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 2, periodicSpeedUpPercentageRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 3, periodicSlowDownDurationRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 4, periodicSlowDownPercentageRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 5, overallSpeedUpDurationRange));
+			IntStream.range(0, delayLayers).forEach(i -> processors.setRange(i, 6, overallSpeedUpExponentRange));
+
+			transmission.setChromosomeSize(delayLayers, delayLayers);    // ROUTING
 			Pair transmissionRange = new Pair(config.minTransmission, config.maxTransmission);
-			IntStream.range(0, dim).forEach(i -> IntStream.range(0, dim)
+			IntStream.range(0, delayLayers).forEach(i -> IntStream.range(0, delayLayers)
 					.forEach(j -> transmission.setRange(i, j, transmissionRange)));
 
-			wet.setChromosomeSize(1, dim);		 // WET
-			Pair wetRange = new Pair(config.minWet, config.maxWet);
-			IntStream.range(0, dim).forEach(i -> wet.setRange(0, i, wetRange));
+			wetOut.setChromosomeSize(1, delayLayers);		 // WET OUT
+			Pair wetOutRange = new Pair(config.minWetOut, config.maxWetOut);
+			IntStream.range(0, delayLayers).forEach(i -> wetOut.setRange(0, i, wetOutRange));
 
-			filters.setChromosomeSize(dim, 2);    // FILTERS
-			Pair hpRange = new Pair(SimpleOrganGenome.factorForFilterFrequency(config.minHighPass),
-					SimpleOrganGenome.factorForFilterFrequency(config.maxHighPass));
-			Pair lpRange = new Pair(SimpleOrganGenome.factorForFilterFrequency(config.minLowPass),
-					SimpleOrganGenome.factorForFilterFrequency(config.maxLowPass));
-			IntStream.range(0, dim).forEach(i -> {
+			filters.setChromosomeSize(sources, 2);    // FILTERS
+			Pair hpRange = new Pair(DefaultAudioGenome.factorForFilterFrequency(config.minHighPass),
+					DefaultAudioGenome.factorForFilterFrequency(config.maxHighPass));
+			Pair lpRange = new Pair(DefaultAudioGenome.factorForFilterFrequency(config.minLowPass),
+					DefaultAudioGenome.factorForFilterFrequency(config.maxLowPass));
+			IntStream.range(0, sources).forEach(i -> {
 				filters.setRange(i, 0, hpRange);
 				filters.setRange(i, 1, lpRange);
 			});
 
-			afactory.setChromosomeSize(dim, 3);   // PERIODIC
-
-			return Genome.fromChromosomes(generators, volume, processors, transmission, wet, filters, afactory);
+			return Genome.fromChromosomes(generators, volume, filterUp, wetIn, processors, transmission, wetOut, filters);
 		};
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 6, cycles);
+		return build(desirables, 8, 4, cycles);
 	}
 
-	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int dim, int cycles) {
-		return build(generator(dim), desirables, dim, cycles);
+	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int sources, int delayLayers, int cycles) {
+		return build(generator(sources, delayLayers), desirables, sources, delayLayers, cycles);
 	}
 
-	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables, int dim, int cycles) {
+	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables,
+											  int sources, int delayLayers, int cycles) {
 		return new LayeredOrganOptimizer(() -> {
 			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
 			TieredCellAdjustmentFactory<Scalar, Scalar> tcb = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.EXPONENTIAL), tca);
@@ -160,13 +181,13 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			return new DefaultGenomeBreeder(
 					Breeders.randomChoiceBreeder(),  								   // GENERATORS
 					Breeders.averageBreeder(),  									   // VOLUME
+					Breeders.averageBreeder(),  									   // MAIN FILTER UP
+					Breeders.averageBreeder(),  									   // WET IN
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
-					Breeders.averageBreeder(),  									   // WET
-					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-					Breeders.perturbationBreeder(0.005, ScaleFactor::new)); //,   // PERIODIC
-			// Breeders.perturbationBreeder(0.0001, ScaleFactor::new)); // EXPONENTIAL
-		}, generator, OutputLine.sampleRate, dim, cycles);
+					Breeders.averageBreeder(),  									   // WET OUT
+					Breeders.perturbationBreeder(0.0005, ScaleFactor::new)); // FILTERS
+		}, generator, OutputLine.sampleRate, sources, delayLayers, cycles);
 	}
 
 	/**
@@ -191,20 +212,28 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 
 		Stream.of(new File("Library").listFiles()).map(f -> {
 			try {
+				if (".DS_Store".equals(f.getName())) return null;
 				return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
 			} catch (Exception e) {
+				System.out.println("Error loading " + f.getName());
 				e.printStackTrace();
 				return null;
 			}
 		}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
 
-		LayeredOrganOptimizer opt = build(provider, 25);
+		LayeredOrganOptimizer opt = build(provider, 1);
 		opt.init();
 		opt.run();
 	}
 
 	public static class GeneratorConfiguration {
+		public double repeatSpeedUpDurationMin, repeatSpeedUpDurationMax;
+
 		public double minVolume, maxVolume;
+		public double periodicFilterUpDurationMin, periodicFilterUpDurationMax;
+		public double overallFilterUpDurationMin, overallFilterUpDurationMax;
+		public double overallFilterUpExponentMin, overallFilterUpExponentMax;
+
 		public double minTransmission, maxTransmission;
 		public double minDelay, maxDelay;
 
@@ -215,7 +244,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public double overallSpeedUpDurationMin, overallSpeedUpDurationMax;
 		public double overallSpeedUpExponentMin, overallSpeedUpExponentMax;
 
-		public double minWet, maxWet;
+		public double minWetIn, maxWetIn;
+		public double minWetOut, maxWetOut;
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
 
@@ -225,35 +255,43 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		public GeneratorConfiguration() { this(1); }
 
 		public GeneratorConfiguration(int scale) {
+			repeatSpeedUpDurationMin = 1;
+			repeatSpeedUpDurationMax = 90;
+
 			minVolume = 0.0;
 			maxVolume = 1.0 / scale;
+
+			periodicFilterUpDurationMin = 0.5;
+			periodicFilterUpDurationMax = 180;
+			overallFilterUpDurationMin = 10;
+			overallFilterUpDurationMax = 180;
+			overallFilterUpExponentMin = 0.5;
+			overallFilterUpExponentMax = 3.5;
+
 			minTransmission = 0.0;
-			maxTransmission = 0.5; // / Math.pow(scale, 1.3);
+			maxTransmission = 0.5;
 			minDelay = 0.5;
 			maxDelay = 60;
 
 			periodicSpeedUpDurationMin = 0.5;
 			periodicSpeedUpDurationMax = 180;
 			periodicSpeedUpPercentageMin = 0.0;
-			// periodicSpeedUpPercentageMax = 100;
 			periodicSpeedUpPercentageMax = 10;
 
 			periodicSlowDownDurationMin = 1;
 			periodicSlowDownDurationMax = 180;
 			periodicSlowDownPercentageMin = 0.0;
 			periodicSlowDownPercentageMax = 0.9;
-			// periodicSlowDownPercentageMax = 0.0;
 
-			// overallSpeedUpDurationMin = 0.1;
 			overallSpeedUpDurationMin = 10;
 			overallSpeedUpDurationMax = 180;
-
 			overallSpeedUpExponentMin = 1;
-			// overallSpeedUpExponentMax = 10;
 			overallSpeedUpExponentMax = 1;
 
-			minWet = 0.8;
-			maxWet = 1.0;
+			minWetIn = 0.5;
+			maxWetIn = 1.0;
+			minWetOut = 0.8;
+			maxWetOut = 1.0;
 			minHighPass = 0;
 			maxHighPass = 20000;
 			minLowPass = 0;
@@ -273,7 +311,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			repeatChoices = IntStream.range(0, 9)
 					.map(i -> i - 2)
 					.mapToDouble(i -> Math.pow(2, i))
-					.map(SimpleOrganGenome::factorForRepeat)
+					.map(DefaultAudioGenome::factorForRepeat)
 					.toArray();
 		}
 	}

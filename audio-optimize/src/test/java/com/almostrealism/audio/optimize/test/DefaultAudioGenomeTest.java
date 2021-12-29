@@ -1,6 +1,6 @@
 package com.almostrealism.audio.optimize.test;
 
-import com.almostrealism.audio.optimize.SimpleOrganGenome;
+import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.heredity.ArrayListChromosome;
@@ -8,12 +8,11 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
-import org.almostrealism.util.CodeFeatures;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SimpleOrganGenomeTest implements HeredityFeatures, TestFeatures {
+public class DefaultAudioGenomeTest implements HeredityFeatures, TestFeatures {
 	@Test
 	public void delay() {
 		ArrayListChromosome<Scalar> generators = new ArrayListChromosome();
@@ -40,10 +39,10 @@ public class SimpleOrganGenomeTest implements HeredityFeatures, TestFeatures {
 		genome.add(c(g(1.0), g(1.0))); // WET
 		genome.add(filters);
 
-		SimpleOrganGenome organGenome = new SimpleOrganGenome(2);
+		DefaultAudioGenome organGenome = new DefaultAudioGenome(2, 2);
 		organGenome.assignTo(genome);
 
-		Gene<?> delayGene = organGenome.valueAt(SimpleOrganGenome.PROCESSORS).valueAt(0);
+		Gene<?> delayGene = organGenome.valueAt(DefaultAudioGenome.PROCESSORS).valueAt(0);
 		Scalar result = (Scalar) delayGene.valueAt(1).getResultant((Producer) v(60)).get().evaluate();
 		System.out.println(result);
 		Assert.assertTrue(Math.abs(2.687736711 - result.getValue()) < 0.001);

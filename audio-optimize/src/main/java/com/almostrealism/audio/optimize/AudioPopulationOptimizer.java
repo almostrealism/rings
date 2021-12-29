@@ -99,7 +99,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 		setPopulation(getChildrenFunction().apply(genomes));
 		storePopulation();
-		PopulationOptimizer.console.println(getPopulation().size() + " organs in population");
+		PopulationOptimizer.console.println(getPopulation().size() + " networks in population");
 	}
 
 	@Override
