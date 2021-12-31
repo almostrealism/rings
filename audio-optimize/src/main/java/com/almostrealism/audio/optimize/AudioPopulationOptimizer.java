@@ -105,6 +105,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	@Override
 	public void run() {
 		for (int i = 0; i < tot; i++) {
+			if (cycleListener != null) cycleListener.run();
+
 			dc(() -> cc(() -> {
 				init();
 				readPopulation();
@@ -113,7 +115,6 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				return null;
 			}));
 
-			if (cycleListener != null) cycleListener.run();
 			resetHealth();
 			resetGenerator();
 			System.gc();

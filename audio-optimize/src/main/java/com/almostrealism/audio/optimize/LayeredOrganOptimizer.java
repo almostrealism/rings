@@ -179,7 +179,10 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(desirables));
 		}, () -> {
 			return new DefaultGenomeBreeder(
-					Breeders.randomChoiceBreeder(),  								   // GENERATORS
+					Breeders.of(Breeders.randomChoiceBreeder(),
+							Breeders.randomChoiceBreeder(),
+							Breeders.randomChoiceBreeder(),
+							Breeders.averageBreeder()), 							   // GENERATORS
 					Breeders.averageBreeder(),  									   // VOLUME
 					Breeders.averageBreeder(),  									   // MAIN FILTER UP
 					Breeders.averageBreeder(),  									   // WET IN
@@ -221,7 +224,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 			}
 		}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
 
-		LayeredOrganOptimizer opt = build(provider, 1);
+		LayeredOrganOptimizer opt = build(provider, PopulationOptimizer.enableBreeding ? 25 : 1);
 		opt.init();
 		opt.run();
 	}

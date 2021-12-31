@@ -208,7 +208,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			// average value
 //			return ((double) l) / standardDuration -
 //					((double) avg.framesUntilAverage()) / standardDuration;
-			score = (double) l / standardDuration;
+			score = (double) (l + iter) / standardDuration;
 
 //			System.out.println("\nScore computed after " + (System.currentTimeMillis() - startTime) + " msec");
 		} finally {

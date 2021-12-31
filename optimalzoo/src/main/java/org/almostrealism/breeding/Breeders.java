@@ -73,6 +73,24 @@ public class Breeders {
 		});
 	}
 
+	public static <T> ChromosomeBreeder<T> of(ChromosomeBreeder<T>... factorBreeders) {
+		return (c1, c2) -> {
+			ArrayListChromosome<T> chrom = new ArrayListChromosome<>();
+
+			for (int i = 0; i < c1.length() && i < c2.length(); i++) {
+				ArrayListGene<T> gene = new ArrayListGene<>();
+
+				for (int j = 0; j < factorBreeders.length; j++) {
+					gene.add(factorBreeders[j].combine(c1, c2).apply(i).apply(j));
+				}
+
+				chrom.add(gene);
+			}
+
+			return chrom;
+		};
+	}
+
 	public static <T> ChromosomeBreeder<T> byCombiningGenes(BiFunction<Gene<T>, Gene<T>, Gene<T>> combine) {
 		return (c1, c2) -> {
 			ArrayListChromosome<T> chrom = new ArrayListChromosome<>();
