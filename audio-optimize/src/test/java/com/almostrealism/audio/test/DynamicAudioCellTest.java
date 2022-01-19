@@ -110,7 +110,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		chooser.setup().get().run();
 		cell.setup().get().run();
 
-		OperationList op = new OperationList();
+		OperationList op = new OperationList("Chooser and Cells");
 		op.add(chooser.push(v(0.0)));
 		op.add(chooser.tick());
 		op.add(cell.push(v(0.0)));

@@ -81,16 +81,24 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		this.delayLayers = delayLayers;
 		this.length = length;
 		this.sampleRate = sampleRate;
-		this.generatorChromosome = new GeneratorChromosome(GENERATORS);
-		this.mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP);
-		this.delayChromosome = new DelayChromosome(PROCESSORS);
 	}
 
-	public void assignTo(Genome g) { data.assignTo(g); }
+	protected void initChromosomes() {
+		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS);
+		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP);
+		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS);
+	}
+
+	public void assignTo(Genome g) {
+		data.assignTo(g);
+		initChromosomes();
+	}
 
 	@Override
 	public Genome getHeadSubset() {
-		return new DefaultAudioGenome(data, sources, delayLayers, length - 1, sampleRate);
+		DefaultAudioGenome g = new DefaultAudioGenome(data, sources, delayLayers, length - 1, sampleRate);
+		g.initChromosomes();
+		return g;
 	}
 
 	@Override
@@ -115,7 +123,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList();
+		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
 		setup.add(mainFilterUpChromosome.expand());
 		setup.add(delayChromosome.expand());

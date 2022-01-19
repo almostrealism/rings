@@ -76,7 +76,7 @@ public class CellPairTest implements TestFeatures {
 		CellPair<Scalar> pair = new CellPair<>(cellA, cellB, v -> scalar(3.0), v -> scalarsMultiply(v, scalar(2.0)));
 		pair.init();
 
-		OperationList ops = new OperationList();
+		OperationList ops = new OperationList("Cell Pushes and Ticks");
 		ops.add(cellA.push(v(6.0))); // A = 6
 		ops.add(cellB.push(v(9.0))); // B = 9
 		ops.add(cellA.tick());             // A(6) -> Pair(*2) -> B = 12

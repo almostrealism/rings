@@ -52,8 +52,8 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	
 	public void setMaxSilence(int sec) { this.maxSilence = (int) (sec * OutputLine.sampleRate); }
 	
-	public void setStandardDuration(int sec) {
-		this.standardDuration = (int) (sec * OutputLine.sampleRate);
+	public static void setStandardDuration(int sec) {
+		standardDuration = (int) (sec * OutputLine.sampleRate);
 	}
 
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }

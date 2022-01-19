@@ -144,7 +144,10 @@ public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, 
 		public Factor<Scalar> valueAt(int pos) {
 			return value -> {
 				Scalar v = AssignableGenome.this.get(chromosome, index, pos);
-				if (v == null) throw new NullPointerException();
+				if (v == null) {
+					throw new NullPointerException();
+				}
+
 				return scalarsMultiply(p(v), value);
 			};
 		}

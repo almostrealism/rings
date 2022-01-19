@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.optimize;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,16 +26,22 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.almostrealism.audio.DesirablesProvider;
+import com.almostrealism.audio.health.HealthComputationAdapter;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.PolymorphicAudioCell;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.audio.filter.AudioCellAdapter;
+import org.almostrealism.audio.filter.BasicDelayCell;
+import org.almostrealism.audio.sources.WavCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Factor;
@@ -44,7 +51,12 @@ import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.util.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
+	public static final int mixdownDuration = 140;
+
 	public static final boolean enableRepeat = true;
+	public static boolean enableMainFilterUp = true;
+	public static boolean enableEfxFilters = true;
+	public static boolean enableEfx = true;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
 		List<Function<Gene<Scalar>, AudioCellAdapter>> choices = new ArrayList<>();
@@ -56,7 +68,23 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 		List<TemporalFactor<Scalar>> temporals = new ArrayList<>();
 
 		if (!provider.getSamples().isEmpty()) {
-			provider.getSamples().forEach(f -> choices.add(g -> {
+			List<WaveData> samples = provider.getSamples().stream().map(s -> {
+				try {
+					WaveData d = WaveData.load(s);
+
+					if (d.getSampleRate() != OutputLine.sampleRate) {
+						System.out.println("WARN: The sample rate of " + s.getName() + " (" + d.getSampleRate() + ") is not " + OutputLine.sampleRate);
+						return null;
+					}
+
+					return d;
+				} catch (IOException e) {
+					System.out.println("WARN: Unable to load " + s.getName());
+					return null;
+				}
+			}).filter(Objects::nonNull).collect(Collectors.toList());
+
+			samples.forEach(f -> choices.add(g -> {
 				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
 				temporals.add(tf);
 				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
@@ -76,21 +104,30 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 
 			// Generators
 			CellList cells = cells(genome.valueAt(DefaultAudioGenome.GENERATORS).length(),
-								i -> generator.apply(genome.valueAt(DefaultAudioGenome.GENERATORS, i)))
-					// Apply dynamic high pass filters
-					.map(fc(i -> {
-						TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-						mainFilterUp.add(f);
-						return hp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
-					})).addRequirements(mainFilterUp.toArray(TemporalFactor[]::new))
+								i -> generator.apply(genome.valueAt(DefaultAudioGenome.GENERATORS, i)));
+
+			if (enableMainFilterUp) {
+				// Apply dynamic high pass filters
+				cells = cells.map(fc(i -> {
+					TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
+					mainFilterUp.add(f);
+					return hp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
+				})).addRequirements(mainFilterUp.toArray(TemporalFactor[]::new));
+			}
+
+			cells = cells
 					.addRequirements(temporals.toArray(TemporalFactor[]::new))
 					.addSetup(() -> genomeSetup);
+
+			cells = cells.mixdown(mixdownDuration);
 
 			// Volume adjustment
 			CellList branch[] = cells.branch(
 									fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)),
-									fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 1)
-											.andThen(genome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))));
+									enableEfxFilters ?
+											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 1)
+											.andThen(genome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
+											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 1)));
 
 			CellList main = branch[0];
 			CellList efx = branch[1];
@@ -98,49 +135,39 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			// Sum the main layer
 			main = main.sum();
 
-			// Create the delay layers
-			int delayLayers = genome.valueAt(DefaultAudioGenome.PROCESSORS).length();
-			TemporalFactor<Scalar> adjust[] = IntStream.range(0, delayLayers)
-					.mapToObj(i -> genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1))
-					.map(factor -> factor instanceof TemporalFactor ? ((TemporalFactor) factor) : null)
-					.filter(Objects::nonNull)
-					.toArray(TemporalFactor[]::new);
-			CellList delays = IntStream.range(0, delayLayers)
-								.mapToObj(i -> new AdjustableDelayCell(
-										genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
-										genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(v(1.0))))
-								.collect(CellList.collector());
+			if (enableEfx) {
+				// Create the delay layers
+				int delayLayers = genome.valueAt(DefaultAudioGenome.PROCESSORS).length();
+				TemporalFactor<Scalar> adjust[] = IntStream.range(0, delayLayers)
+						.mapToObj(i -> genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1))
+						.map(factor -> factor instanceof TemporalFactor ? ((TemporalFactor) factor) : null)
+						.filter(Objects::nonNull)
+						.toArray(TemporalFactor[]::new);
+				CellList delays = IntStream.range(0, delayLayers)
+						 	.mapToObj(i -> new AdjustableDelayCell(
+								 genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
+								 genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(v(1.0))))
+						.collect(CellList.collector());
 
-			// Route each line to each delay layer
-			efx = efx.m(fi(), delays, genome.valueAt(DefaultAudioGenome.WET_IN)::valueAt)
-					.addRequirements(adjust)
-					// Feedback grid
-					.mself(fi(),
-							genome.valueAt(DefaultAudioGenome.TRANSMISSION),
-							fc(genome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
-					.sum();
+				// Route each line to each delay layer
+				efx = efx.m(fi(), delays, genome.valueAt(DefaultAudioGenome.WET_IN)::valueAt)
+						.addRequirements(adjust)
+						// Feedback grid
+						.mself(fi(), genome.valueAt(DefaultAudioGenome.TRANSMISSION),
+								 fc(genome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
+						.sum();
 
-			/*
-			efx = efx
-					// Processing
-					.map(i ->
-							new AdjustableDelayCell(genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(60)),
-													adjust[i].getResultant(v(1.0))))
-					.addRequirements(adjust)
-					// Feedback grid
-					.mself(fi(),
-							genome.valueAt(DefaultAudioGenome.TRANSMISSION),
-							fc(genome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
-					.sum();
-			 */
+				// Mix efx with main and measure #2
+				efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 
-			// Mix efx with main and measure #2
-			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+				// Deliver main to the output and measure #1
+				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
 
-			// Deliver main to the output and measure #1
-			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
-
-			return cells(main, efx);
+				return cells(main, efx);
+			} else {
+				// Deliver main to the output and measure #1 and #2
+				return main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+			}
 		};
 	}
 }

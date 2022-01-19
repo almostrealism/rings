@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.SilenceDurationHealthComputation;
+import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import org.almostrealism.algebra.Pair;
@@ -37,6 +38,7 @@ import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.cl.CLDataContext;
 import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.heredity.ChromosomeFactory;
@@ -51,7 +53,17 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
-	public static final int verbosity = 1;
+	public static final int verbosity = 0;
+
+	public static String LIBRARY = "Library";
+
+	static {
+		String env = System.getenv("AR_RINGS_LIBRARY");
+		if (env != null) LIBRARY = env;
+
+		String arg = System.getProperty("AR_RINGS_LIBRARY");
+		if (arg != null) LIBRARY = arg;
+	}
 
 	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
 								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
@@ -164,7 +176,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
-		return build(desirables, 8, 4, cycles);
+		return build(desirables, 6, 3, cycles);
 	}
 
 	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int sources, int delayLayers, int cycles) {
@@ -201,19 +213,27 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 * @see  LayeredOrganOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
+		CLDataContext.enableFastQueue = true;
+		StableDurationHealthComputation.enableTimeout = true;
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
+		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
+
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
 		WaveOutput.enableVerbose = verbosity > 1;
-		PopulationOptimizer.enableDisplayGenomes = verbosity > 1;
+		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
-		HardwareOperator.enableVerboseLog = verbosity > 2;
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
+		HardwareOperator.enableVerboseLog = verbosity > 3;
+
+		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
+		PopulationOptimizer.enableBreeding = verbosity < 3;
 
 		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
-		Stream.of(new File("Library").listFiles()).map(f -> {
+		Stream.of(new File(LIBRARY).listFiles()).map(f -> {
 			try {
 				if (".DS_Store".equals(f.getName())) return null;
 				return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;

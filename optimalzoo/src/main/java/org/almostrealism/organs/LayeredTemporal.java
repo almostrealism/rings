@@ -19,7 +19,7 @@ package org.almostrealism.organs;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
 
-public interface OrganSystem<T> extends TemporalCellular {
+public interface LayeredTemporal<T> extends TemporalCellular {
 	Temporal getOrgan(int index);
 
 	int getDepth();

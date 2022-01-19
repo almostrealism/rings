@@ -48,7 +48,7 @@ public class AdjustmentCellAdapter<T> extends AdjustmentCell<T, Scalar> implemen
 
 	@Override
 	public Supplier<Runnable> push(Producer<Scalar> protein) {
-		OperationList r = new OperationList();
+		OperationList r = new OperationList("AdjustmentCellAdapter Push");
 
 		// By pushing the adjuster, a new value
 		// is set for the factor

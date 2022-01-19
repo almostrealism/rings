@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.health.test;
 
+import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.AudioPopulationOptimizer;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
@@ -30,6 +31,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.hardware.DynamicAcceleratedOperation;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
@@ -114,7 +116,6 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 	@Test
 	public void simpleOrganHealthSamples() {
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
-		health.setMaxDuration(8);
 		health.setOutputFile("health/simple-organ-samples-test.wav");
 
 		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), health.getOutput());
@@ -130,8 +131,13 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 
 	@Test
 	public void layeredOrganHealthSamples() {
+		SilenceDurationHealthComputation.enableSilenceCheck = false;
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
+		GeneticTemporalFactoryFromDesirables.enableEfxFilters = false;
+		Hardware.getLocalHardware().setMaximumOperationDepth(9);
+		StableDurationHealthComputation.setStandardDuration(150);
+
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
-		health.setMaxDuration(8);
 		health.setOutputFile("health/layered-organ-samples-test.wav");
 
 		AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> organ = layeredOrgan(samples(), health.getMeasures(), health.getOutput());
@@ -140,9 +146,9 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		health.setTarget(organ);
 		health.computeHealth();
 
-		organ.reset();
-		health.setTarget(organ);
-		health.computeHealth();
+//		organ.reset();
+//		health.setTarget(organ);
+//		health.computeHealth();
 	}
 
 	@Test

@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -33,7 +35,6 @@ import java.util.stream.IntStream;
 import io.almostrealism.relation.Generated;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
-import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 
 import org.almostrealism.population.Population;
@@ -41,6 +42,8 @@ import org.almostrealism.time.Temporal;
 import org.almostrealism.util.CodeFeatures;
 
 public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore> implements Generated<Supplier<Genome<G>>, PopulationOptimizer>, CodeFeatures {
+	public static int THREADS = 1;
+
 	public static Console console = new Console();
 
 	public static boolean enableVerbose = false;
@@ -68,7 +71,7 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 	private Supplier<GenomeBreeder<G>> breeder;
 
 	private BiConsumer<String, S> healthListener;
-	private double averageScore, maxScore;
+	private HealthScoring scoring;
 
 	public PopulationOptimizer(Supplier<HealthComputation<O, S>> h,
 							   Function<List<Genome<G>>, Population> children,
@@ -116,9 +119,9 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 		return generator;
 	}
 
-	public double getAverageScore() { return averageScore; }
+	public double getAverageScore() { return scoring.getAverageScore(); }
 
-	public double getMaxScore() { return maxScore; }
+	public double getMaxScore() { return scoring.getMaxScore(); }
 
 	public void iterate() {
 		long start = System.currentTimeMillis();
@@ -200,11 +203,14 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 		genomes.add(breeder.get().combine(g1, g2));
 	}
 
-	private void orderByHealth(Population<G, T, O> pop) {
+	private synchronized void orderByHealth(Population<G, T, O> pop) {
+		if (THREADS > 1) throw new UnsupportedOperationException();
+
+		CompletionService<S> executor = new ExecutorCompletionService<S>(Executors.newFixedThreadPool(THREADS));
+
 		final HashMap<Genome, Double> healthTable = new HashMap<>();
 
-		double highestHealth = 0;
-		double totalHealth = 0;
+		scoring = new HealthScoring(pop.size());
 
 		console.print("[" + Instant.now() + "] Calculating health");
 		if (enableVerbose) {
@@ -213,45 +219,46 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 			console.print(".");
 		}
 
-		for (int i = 0; i < pop.size(); i++) {
-			S health = null;
+		int count = pop.size();
 
-			try {
-				if (enableVerbose && enableDisplayGenomes) {
+		for (int i = 0; i < count; i++) {
+			int fi = i;
+
+			executor.submit(new HealthCallable<O, S>(() -> pop.enableGenome(targetGenome.orElse(fi)), health, scoring, h -> {
+				healthTable.put(pop.getGenomes().get(targetGenome.orElse(fi)), h.getScore());
+
+				if (healthListener != null)
+					healthListener.accept(pop.getGenomes().get(targetGenome.orElse(fi)).signature(), h);
+
+				if (enableVerbose) {
 					console.println();
-					console.println("Enabling genome:");
-					console.println(String.valueOf(pop.getGenomes().get(targetGenome.orElse(i))));
+					console.println("[" + Instant.now().toString() + "] Health of Network " + fi + " is " + percent(h.getScore()));
+				} else {
+					console.print(".");
 				}
+			}, pop::disableGenome));
+		}
 
-				this.health.setTarget(pop.enableGenome(targetGenome.orElse(i)));
-				health = this.health.computeHealth();
-
-				if (health.getScore() > highestHealth) highestHealth = health.getScore();
-
-				healthTable.put(pop.getGenomes().get(targetGenome.orElse(i)), health.getScore());
-				totalHealth += health.getScore();
-
-				if (healthListener != null) healthListener.accept(pop.getGenomes().get(targetGenome.orElse(i)).signature(), health);
-			} finally {
-				this.health.reset();
-				pop.disableGenome();
-			}
-
-			if (enableVerbose) {
-				console.println();
-				console.println("[" + Instant.now().toString() + "] Health of Network " + i + " is " + percent(health.getScore()));
-			} else {
-				console.print(".");
+		for (int i = 0; i < count; i++) {
+			try {
+				executor.take().get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				if (e.getCause() instanceof RuntimeException) {
+					throw (RuntimeException) e.getCause();
+				} else if (e.getCause() != null) {
+					throw new RuntimeException(e.getCause());
+				} else {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 
 		if (!enableVerbose) console.println();
 
-		this.averageScore = totalHealth / pop.size();
-		this.maxScore = highestHealth;
-
 		console.println("Average health for this round is " +
-				percent(averageScore) + ", max " + percent(maxScore));
+				percent(scoring.getAverageScore()) + ", max " + percent(scoring.getMaxScore()));
 		TreeSet<Genome<G>> sorted = new TreeSet<>((g1, g2) -> {
 			double h1 = healthTable.get(g1);
 			double h2 = healthTable.get(g2);

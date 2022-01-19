@@ -23,6 +23,7 @@ import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.ScalarTable;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.sources.WavCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.MemoryDataTemporalCellularChromosomeExpansion;
@@ -37,21 +38,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromosomeExpansion<ScalarBank, Scalar, Scalar> implements CellFeatures {
-	public static int defaultTimelineFrames = (int) (HealthComputationAdapter.standardDuration * 1.5);
-
-	private static ContextSpecific<ScalarBank> timeline;
-
-	static {
-		timeline = new ContextSpecific<>(
-				() -> {
-					ScalarBank data = new ScalarBank(defaultTimelineFrames);
-					List<Double> values = IntStream.range(0, defaultTimelineFrames)
-							.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
-					for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
-					return data;
-				}, ScalarBank::destroy);
-		timeline.init();
-	}
 
 	private int sampleRate;
 
@@ -62,7 +48,7 @@ public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromo
 
 	@Override
 	public Supplier<Runnable> setup() {
-		return () -> () -> setTimeline(timeline.getValue());
+		return () -> () -> setTimeline(WaveOutput.timeline.getValue());
 	}
 
 	@Override

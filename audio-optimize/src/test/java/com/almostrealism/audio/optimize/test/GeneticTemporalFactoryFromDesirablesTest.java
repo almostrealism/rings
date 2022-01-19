@@ -64,7 +64,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	public static final double polySpeedUpDuration2 = 2;
 	public static final double polySpeedUpExponent2 = 1.1;
 
-	public static final double feedbackParam = 0.5;
+	public static final double feedbackParam = 0.1;
 
 	public static final String sampleFile1 = "Library/Snare Perc DD.wav";
 	public static final String sampleFile2 = "Library/GT_HAT_31.wav";
@@ -86,13 +86,23 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	}
 
 	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
-		ArrayListChromosome<Double> generators = new ArrayListChromosome();
-		generators.add(new ArrayListGene<>(0.4, 0.5, DefaultAudioGenome.factorForRepeat(1)));
-		generators.add(new ArrayListGene<>(0.8, 0.0, DefaultAudioGenome.factorForRepeat(4)));
+		ArrayListChromosome<Scalar> generators = new ArrayListChromosome();
+		generators.add(g(0.4, 0.5,
+				DefaultAudioGenome.factorForRepeat(1),
+				DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
+		generators.add(g(0.8, 0.0,
+				DefaultAudioGenome.factorForRepeat(4),
+				DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
 
 		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
 		volume.add(g(0.0, 0.0));
 		volume.add(g(0.0, 1.0));
+
+		ArrayListChromosome<Scalar> mainFilterUp = new ArrayListChromosome<>();
+		IntStream.range(0, 2).mapToObj(i ->
+				g(DefaultAudioGenome.factorForPeriodicFilterUpDuration(10),
+						DefaultAudioGenome.factorForPolyFilterUpDuration(180),
+						DefaultAudioGenome.factorForPolyFilterUpDuration(1.0))).forEach(mainFilterUp::add);
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
 		processors.add(new ArrayListGene<>(delayParam,
@@ -120,9 +130,6 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 			transmission.add(new ArrayListGene<>(0.0, 0.0));
 		}
 
-		ArrayListChromosome<Scalar> wet = new ArrayListChromosome<>();
-		wet.add(g(0.0, 0.5));
-
 		ArrayListChromosome<Double> filters = new ArrayListChromosome();
 
 		if (filter) {
@@ -136,9 +143,11 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		ArrayListGenome genome = new ArrayListGenome();
 		genome.add(generators);
 		genome.add(volume);
+		genome.add(mainFilterUp);
+		genome.add(c(g(1.0, 0.0), g(0.0, 1.0)));
 		genome.add(processors);
 		genome.add(transmission);
-		genome.add(wet);
+		genome.add(c(g(0.0, 0.5)));
 		genome.add(filters);
 
 		DefaultAudioGenome organGenome = new DefaultAudioGenome(2, 2);

@@ -44,6 +44,7 @@ import java.util.function.Consumer;
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
 	public static boolean enableLoop = true;
+	public static boolean enableTimeout = true;
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
 
@@ -74,8 +75,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	/**
 	 * This setting impacts all health computations, even though it is not a static method.
 	 */
-	@Override
-	public void setStandardDuration(int sec) {
+	public static void setStandardDuration(int sec) {
 		standardDuration = (int) (sec * OutputLine.sampleRate);
 	}
 
@@ -142,7 +142,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 	protected boolean isTimeout() {
-		return System.currentTimeMillis() - startTime > timeout;
+		return enableTimeout && System.currentTimeMillis() - startTime > timeout;
 	}
 
 	@Override
@@ -155,6 +155,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 //		meter.addListener(avg);
 
 		double score = 0.0;
+		double errorMultiplier = 1.0;
 
 		Runnable start;
 		Runnable iterate;
@@ -164,7 +165,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			iterate = runner.getContinue();
 
 			startTime = System.currentTimeMillis();
-			startTimeoutTrigger();
+			if (enableTimeout) startTimeoutTrigger();
 
 			long l;
 
@@ -173,8 +174,19 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				try {
 					(l == 0 ? start : iterate).run();
 				} catch (HardwareException e) {
-					System.out.println("StableDurationHealthComputation: \n" + e.getProgram());
+					if (e.getProgram() != null) System.out.println("StableDurationHealthComputation: \n" + e.getProgram());
 					throw e;
+				}
+
+				if ((int) getWaveOut().getCursor().getCursor() != l + iter) {
+					if (enableVerbose) {
+						System.out.println("StableDurationHealthComputation: Cursor out of sync (" +
+								(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
+					} else {
+						System.out.print("N");
+					}
+					errorMultiplier *= 0.55;
+					break l;
 				}
 
 				getMeasures().forEach(m -> {
@@ -202,23 +214,28 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				}
 			}
 
+			if (isTimeout())
+				errorMultiplier *= 0.75;
+
 			// Report the health score as a combination of
 			// the percentage of the expected duration
 			// elapsed and the time it takes to reach the
 			// average value
 //			return ((double) l) / standardDuration -
 //					((double) avg.framesUntilAverage()) / standardDuration;
-			score = (double) (l + iter) / standardDuration;
+			score = (double) (l + iter) * errorMultiplier / (standardDuration + iter);
 
-//			System.out.println("\nScore computed after " + (System.currentTimeMillis() - startTime) + " msec");
+			if (enableVerbose)
+				System.out.println("\nStableDurationHealthComputation: Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
 		} finally {
 			endTimeoutTrigger();
 //			meter.removeListener(avg);
 			if (enableOutput && score > 0) {
-				((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).write().get().run();
+				if (enableVerbose) System.out.println("StableDurationHealthComputation: Cursor = " + getWaveOut().getCursor().getCursor());
+				getWaveOut().write().get().run();
 			}
 
-			((WaveOutput) ((AudioMeter) getOutput()).getForwarding()).reset();
+			getWaveOut().reset();
  			reset();
 
 //			ProducerCache.destroyEvaluableCache();

@@ -26,11 +26,11 @@ import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Adjustment;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Chromosome;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.time.Temporal;
 
-public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
+@Deprecated
+public class AdjustmentLayerOrganSystem<G, O, A, R> implements LayeredTemporal<O> {
 	public static final boolean enableAdjustment = false;
 
 	private final Temporal adjustable;
@@ -42,8 +42,8 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 		Temporal o = adjustable;
 
-		if (o instanceof OrganSystem) {
-			o = ((OrganSystem) o).last();
+		if (o instanceof LayeredTemporal) {
+			o = ((LayeredTemporal) o).last();
 		}
 
 		List<Cell<O>> c = new ArrayList<>();
@@ -63,8 +63,8 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 	public Temporal getOrgan(int index) {
 		if (index >= getDepth()) {
 			return adjust;
-		} else if (adjustable instanceof OrganSystem) {
-			return ((OrganSystem) adjustable).getOrgan(index);
+		} else if (adjustable instanceof LayeredTemporal) {
+			return ((LayeredTemporal) adjustable).getOrgan(index);
 		} else {
 			return adjustable;
 		}
@@ -78,8 +78,8 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 	@Override
 	public int getDepth() {
-		if (adjust instanceof OrganSystem) {
-			return ((OrganSystem) adjust).getDepth() + 1;
+		if (adjust instanceof LayeredTemporal) {
+			return ((LayeredTemporal) adjust).getDepth() + 1;
 		}
 
 		return 1;
@@ -87,7 +87,7 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 	@Override
 	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList();
+		OperationList setup = new OperationList("AdjustmentLayerOrganSystem Setup");
 		setup.add(((Setup) adjustable).setup());
 		setup.add(adjust.setup());
 		return setup;
@@ -95,7 +95,7 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 	@Override
 	public Supplier<Runnable> tick() {
-		OperationList tick = new OperationList();
+		OperationList tick = new OperationList("AdjustmentLayerOrganSystem Tick");
 		if (enableAdjustment) tick.add(adjust.tick());
 		tick.add(adjustable.tick());
 		return tick;
@@ -103,7 +103,7 @@ public class AdjustmentLayerOrganSystem<G, O, A, R> implements OrganSystem<O> {
 
 	@Override
 	public void reset() {
-		OrganSystem.super.reset();
+		LayeredTemporal.super.reset();
 		adjust.reset();
 		((Lifecycle) adjustable).reset();
 	}

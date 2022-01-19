@@ -40,6 +40,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactoryFromDesirablesTest {
 	protected AdjustmentLayerOrganSystemFactory<Double, Scalar, Double, Scalar> factory(DesirablesProvider desirables) {
@@ -48,13 +49,44 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	}
 
 	protected Genome layeredOrganGenome() {
-		ArrayListChromosome<Double> generators = new ArrayListChromosome();
-		generators.add(new ArrayListGene<>(0.4, 0.6));
-		generators.add(new ArrayListGene<>(0.8, 0.2));
+		int dim = 2;
 
-		ArrayListChromosome<Double> processors = new ArrayListChromosome();
-		processors.add(new ArrayListGene<>(1.0, delayParam));
-		processors.add(new ArrayListGene<>(1.0, delayParam));
+		ArrayListChromosome<Scalar> generators = new ArrayListChromosome();
+		generators.add(g(0.4, 0.6, DefaultAudioGenome.factorForRepeat(8),
+				DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
+
+		for (int i = 0; i < dim - 1; i++) {
+			generators.add(g(0.8, 0.2, DefaultAudioGenome.factorForRepeat(8),
+					DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
+		}
+
+		ArrayListChromosome<Scalar> volume = new ArrayListChromosome<>();
+		IntStream.range(0, dim).mapToObj(i -> g(0.02, 0.01)).forEach(volume::add);
+
+		ArrayListChromosome<Scalar> mainFilterUp = new ArrayListChromosome<>();
+		IntStream.range(0, dim).mapToObj(i ->
+				g(DefaultAudioGenome.factorForPeriodicFilterUpDuration(10),
+						DefaultAudioGenome.factorForPolyFilterUpDuration(180),
+						DefaultAudioGenome.factorForPolyFilterUpDuration(1.0))).forEach(mainFilterUp::add);
+
+		ArrayListChromosome<Scalar> wetIn = new ArrayListChromosome<>();
+		IntStream.range(0, dim).mapToObj(i -> g(0.1, 0.0)).forEach(wetIn::add);
+
+		ArrayListChromosome<Scalar> processors = new ArrayListChromosome();
+		processors.add(g(delayParam,
+				DefaultAudioGenome.factorForSpeedUpDuration(360),
+				DefaultAudioGenome.factorForSpeedUpPercentage(1.0),
+				DefaultAudioGenome.factorForSlowDownDuration(360),
+				DefaultAudioGenome.factorForSlowDownPercentage(1.0),
+				DefaultAudioGenome.factorForPolySpeedUpDuration(360),
+				DefaultAudioGenome.factorForPolySpeedUpExponent(1.0)));
+		processors.add(g(delayParam,
+				DefaultAudioGenome.factorForSpeedUpDuration(360),
+				DefaultAudioGenome.factorForSpeedUpPercentage(1.0),
+				DefaultAudioGenome.factorForSlowDownDuration(360),
+				DefaultAudioGenome.factorForSlowDownPercentage(1.0),
+				DefaultAudioGenome.factorForPolySpeedUpDuration(360),
+				DefaultAudioGenome.factorForPolySpeedUpExponent(1.0)));
 
 		ArrayListChromosome<Scalar> transmission = new ArrayListChromosome();
 
@@ -78,9 +110,12 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 
 		ArrayListGenome genome = new ArrayListGenome();
 		genome.add(generators);
-		genome.add(c(g(0.8), g(0.8))); // VOLUME
+		genome.add(volume);
+		genome.add(mainFilterUp);
+		genome.add(wetIn);
 		genome.add(processors);
 		genome.add(transmission);
+		genome.add(c(g(0.0, 0.1)));  // WET OUT
 		genome.add(filters);
 		genome.add(c(g(0.0, 0.0, 0.0), g(0.0, 0.0, 0.0)));
 
@@ -88,7 +123,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 	}
 
 	protected AdjustmentLayerOrganSystem<Double, Scalar, Double, Scalar> layeredOrgan(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
-		DefaultAudioGenome organGenome = new DefaultAudioGenome(2, 2);
+		DefaultAudioGenome organGenome = new DefaultAudioGenome(8, 2);
 		organGenome.assignTo(layeredOrganGenome());
 		return factory(desirables).generateOrgan((Genome) organGenome, measures, meter);
 	}

@@ -4,15 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-		<common.version>0.43</common.version>
-		<ichos.version>1.31</ichos.version>
+		<common.version>0.44</common.version>
+		<ichos.version>1.32</ichos.version>
 		<flowtree.version>0.13</flowtree.version>
-		<rings.version>0.15</rings.version>
+		<rings.version>0.16</rings.version>
 	</properties>
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.15</version>
+	<version>0.16</version>
 
 	<modules>
 		<module>raytracer</module>
@@ -29,6 +29,7 @@
 		<module>audio-optimize</module>
 		<module>synth</module>
 		<module>replicate</module>
+		<module>tensorflow</module>
 	</modules>
 
 	<!-- Output to jar format -->

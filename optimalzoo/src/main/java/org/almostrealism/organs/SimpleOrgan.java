@@ -120,7 +120,7 @@ public class SimpleOrgan<T> implements TemporalCellular, CodeFeatures {
 //		if (inputLayer != null) inputLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
 //		processingLayer.stream().map(Cell::setup).map(Supplier::get).forEach(toSetup::add);
 //		return () -> () -> toSetup.forEach(Runnable::run);
-		OperationList toSetup = new OperationList();
+		OperationList toSetup = new OperationList("SimpleOrgan Setup");
 		if (inputLayer != null) inputLayer.stream().map(Cell::setup).forEach(toSetup::add);
 		processingLayer.stream().map(Cell::setup).forEach(toSetup::add);
 		return toSetup;
@@ -128,19 +128,19 @@ public class SimpleOrgan<T> implements TemporalCellular, CodeFeatures {
 
 	private Supplier<Runnable> push(Producer<T> protein) {
 		if (inputLayer == null) {
-			OperationList push = new OperationList();
+			OperationList push = new OperationList("SimpleOrgan Push");
 			processingLayer.stream().map(c -> c.push(protein)).forEach(push::add);
 			return push;
 		}
 
-		OperationList push = new OperationList();
+		OperationList push = new OperationList("SimplyOrgan Push");
 		inputLayer.stream().map(c -> c.push(protein)).forEach(push::add);
 		return push;
 	}
 
 	@Override
 	public Supplier<Runnable> tick() {
-		OperationList tick = new OperationList();
+		OperationList tick = new OperationList("SimpleOrgan Tick");
 		tick.add(push(null));
 		tick.add(temporals.tick());
 		return tick;

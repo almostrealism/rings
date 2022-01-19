@@ -105,7 +105,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		} else {
 			AudioCellAdapter cell = (AudioCellAdapter) cells.get(0);
 
-			OperationList list = new OperationList();
+			OperationList list = new OperationList("PolymorphicAudioCell Push and Tick");
 			list.add(cell.push(v(0.0)));
 			list.add(cell.tick());
 			Loop loop = (Loop) loop(list, enableLoop ? DURATION_FRAMES : 1);
@@ -139,7 +139,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		AudioCellAdapter cell2 = (AudioCellAdapter) cells2.get(0);
 
 		/* One */
-		OperationList list1 = new OperationList();
+		OperationList list1 = new OperationList("One");
 		list1.add(cell1.push(v(0.0)));
 		list1.add(cell1.tick());
 		Loop loop1 = (Loop) loop(list1, DURATION_FRAMES);
