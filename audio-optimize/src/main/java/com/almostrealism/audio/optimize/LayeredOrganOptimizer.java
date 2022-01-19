@@ -53,7 +53,7 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 3;
 
 	public static String LIBRARY = "Library";
 

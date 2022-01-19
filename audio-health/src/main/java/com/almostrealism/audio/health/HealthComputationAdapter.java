@@ -59,8 +59,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 				Optional.ofNullable(outputFileSupplier).map(s -> {
 					outputFile = new File(s.get());
 					return outputFile;
-				}).orElse(null),
-				(int) (1.5 * standardDuration), 24);
+				}).orElse(null), 24);
 		outputMeter.setForwarding(out);
 		return outputMeter;
 	}

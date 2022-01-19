@@ -171,12 +171,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 			l:
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
-				try {
-					(l == 0 ? start : iterate).run();
-				} catch (HardwareException e) {
-					if (e.getProgram() != null) System.out.println("StableDurationHealthComputation: \n" + e.getProgram());
-					throw e;
-				}
+				(l == 0 ? start : iterate).run();
 
 				if ((int) getWaveOut().getCursor().getCursor() != l + iter) {
 					if (enableVerbose) {
