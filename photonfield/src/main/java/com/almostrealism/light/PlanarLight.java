@@ -26,7 +26,7 @@ import com.almostrealism.lighting.SurfaceLight;
 import org.almostrealism.geometry.Locatable;
 import org.almostrealism.geometry.UniformSphericalRandom;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, CodeFeatures {

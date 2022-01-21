@@ -24,7 +24,6 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.code.Constant;
-import io.almostrealism.code.NameProvider;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.TransformMatrix;
@@ -33,7 +32,7 @@ import org.almostrealism.space.BoundingSolid;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.geometry.ShadableIntersection;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 import java.util.concurrent.ExecutionException;

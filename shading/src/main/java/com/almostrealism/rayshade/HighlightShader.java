@@ -32,7 +32,7 @@ import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 /**
@@ -41,7 +41,7 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, HardwareFeatures, CodeFeatures {
+public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
   private static final String propNames[] = {"Highlight Color", "Highlight Exponent"};
   private static final String propDesc[] = {"The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)"};
   private static final Class propTypes[] = {ColorEvaluable.class, Double.class};

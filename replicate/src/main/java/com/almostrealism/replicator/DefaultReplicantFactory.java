@@ -21,7 +21,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.geometry.BasicGeometry;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class DefaultReplicantFactory<S extends ShadableSurface> implements ReplicantFactory<Double, S>, CodeFeatures {
 	@Override

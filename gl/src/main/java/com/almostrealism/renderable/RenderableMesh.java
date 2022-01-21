@@ -37,7 +37,7 @@ import org.almostrealism.algebra.Vector;
 
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Triangle;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeatures {
 	public RenderableMesh(Mesh m) { super(m); }

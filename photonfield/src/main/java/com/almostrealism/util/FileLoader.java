@@ -45,7 +45,7 @@ import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.physics.Clock;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;
 import io.almostrealism.relation.Nameable;
 import org.xml.sax.Attributes;

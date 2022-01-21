@@ -28,7 +28,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 /**
  * A DirectionAmbientLight object represents an ambient light source that always

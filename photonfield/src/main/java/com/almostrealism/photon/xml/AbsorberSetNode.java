@@ -41,7 +41,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

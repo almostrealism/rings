@@ -40,7 +40,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 import com.almostrealism.raytrace.LightingEngineAggregator;
 
@@ -51,7 +51,7 @@ import com.almostrealism.raytrace.LightingEngineAggregator;
  * 
  * @author  Michael Murray
  */
-public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, HardwareFeatures, CodeFeatures {
+public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
   public static int maxReflections = 4;
   
   private static final String propNames[] = {"Reflectivity", "Reflective Color",

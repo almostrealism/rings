@@ -19,7 +19,7 @@ package com.almostrealism.stats;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 public class RefractiveProbabilityDistribution implements SphericalProbabilityDistribution, CodeFeatures {

@@ -24,7 +24,7 @@ import org.almostrealism.audio.filter.PeriodicAdjustment;
 import org.almostrealism.graph.Adjustment;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.organs.CellAdjustmentFactory;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 import java.util.function.BiFunction;
 

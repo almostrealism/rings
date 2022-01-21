@@ -38,9 +38,9 @@ import com.almostrealism.physics.AbsorberHashSet;
 import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
 import com.almostrealism.light.PlanarLight;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 /**
  * 

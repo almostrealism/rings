@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.computations.GreaterThanRGB;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
@@ -29,7 +30,7 @@ import org.almostrealism.color.ShaderContext;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
@@ -37,7 +38,7 @@ import org.almostrealism.util.CodeFeatures;
  * 
  * @author Michael Murray
  */
-public class DiffuseShader implements Shader<ShaderContext>, Editable, CodeFeatures {
+public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
 	public static DiffuseShader defaultDiffuseShader = new DiffuseShader();
 	public static boolean produceOutput = false;
 

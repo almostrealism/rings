@@ -23,7 +23,8 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.DynamicAudioCell;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.filter.AudioCellAdapter;
+import org.almostrealism.graph.temporal.DefaultWaveCellData;
+import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
@@ -68,7 +69,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 	protected DynamicAudioCell cell(Scalar choice) {
 		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
 
-		Function<PolymorphicAudioData, AudioCellAdapter> cell1 = data -> {
+		Function<PolymorphicAudioData, ScalarTemporalCellAdapter> cell1 = data -> {
 			SineWaveCell c = new SineWaveCell(data);
 			c.setFreq(tuning.getTone(WesternChromatic.G3).asHertz());
 			c.setNoteLength(4000);
@@ -77,7 +78,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 			return c;
 		};
 
-		Function<PolymorphicAudioData, AudioCellAdapter> cell2 = data -> {
+		Function<PolymorphicAudioData, ScalarTemporalCellAdapter> cell2 = data -> {
 			SineWaveCell c = new SineWaveCell(data);
 			c.setFreq(tuning.getTone(WesternChromatic.C3).asHertz());
 			c.setNoteLength(4000);

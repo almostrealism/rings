@@ -41,7 +41,7 @@ import org.almostrealism.physics.Clock;
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.LightBulb;
 
-import static org.almostrealism.util.Ops.ops;
+import static org.almostrealism.Ops.ops;
 
 /**
  * A {@link BlackBody} absorbs all photons it detects and keeps track of

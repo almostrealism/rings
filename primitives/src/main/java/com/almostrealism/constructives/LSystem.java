@@ -26,7 +26,7 @@ import org.almostrealism.algebra.Vector;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * @author Michael Murray

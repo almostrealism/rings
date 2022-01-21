@@ -24,7 +24,7 @@ import org.almostrealism.tensorflow.TensorFlowArgument;
 import org.almostrealism.tensorflow.TensorFlowComputeContext;
 import org.almostrealism.tensorflow.TensorFlowConstant;
 import org.almostrealism.tensorflow.TensorFlowInstructionSet;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
 import java.util.function.Consumer;

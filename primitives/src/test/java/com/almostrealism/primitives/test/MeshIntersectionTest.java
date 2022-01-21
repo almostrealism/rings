@@ -1,7 +1,6 @@
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
@@ -11,17 +10,14 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
-import org.almostrealism.graph.mesh.TrianglePointData;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.MeshData;
 import org.almostrealism.space.Triangle;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 import org.junit.Assert;
 import org.junit.Before;

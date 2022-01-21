@@ -16,7 +16,6 @@
 
 package org.almostrealism.organs;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,7 +35,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class SimpleOrgan<T> implements TemporalCellular, CodeFeatures {
 	private List<Cell<T>> inputLayer;

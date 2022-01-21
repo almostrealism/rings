@@ -30,10 +30,10 @@ import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.Clock;
 
 import com.almostrealism.light.LightBulb;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
-import static org.almostrealism.util.Ops.ops;
+import static org.almostrealism.Ops.ops;
 
 /**
  * A HarmonicAbsorber object represents a spherical absorber that stores

@@ -19,8 +19,7 @@ package com.almostrealism.primitives.test;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.util.CodeFeatures;
-import io.almostrealism.relation.Provider;
+import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
 public class SphereTest implements CodeFeatures {

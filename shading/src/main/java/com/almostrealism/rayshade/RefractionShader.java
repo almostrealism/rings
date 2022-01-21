@@ -44,7 +44,7 @@ import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 // TODO  Fix refraction algorithm.
@@ -54,7 +54,7 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class RefractionShader implements Shader<ShaderContext>, Editable, HardwareFeatures, CodeFeatures {
+public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
 	public static Vector lastRay;
 	
 	public static boolean produceOutput = false;

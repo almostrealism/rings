@@ -27,7 +27,7 @@ import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
-public class WavCellChromosomeExpansionTest implements CellFeatures, TestFeatures {
+public class WaveCellChromosomeExpansionTest implements CellFeatures, TestFeatures {
 	@Test
 	public void expand() {
 		Chromosome<Scalar> input = c(g(0.5, 0.7), g(1.0, 0.9), g(1.5, 1.1));

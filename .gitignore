@@ -1,4 +1,7 @@
+**.DS_Store
 **/target/**
+**/*.versionsBackup
+**/hs_err*
 /audio-optimize/health/**
 /audio-optimize/Library/**
 /audio-optimize/results/**

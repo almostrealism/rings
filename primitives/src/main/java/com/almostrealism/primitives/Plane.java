@@ -22,7 +22,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Volume;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {

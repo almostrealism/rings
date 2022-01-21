@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
@@ -31,7 +32,7 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.ArrayListChromosome;

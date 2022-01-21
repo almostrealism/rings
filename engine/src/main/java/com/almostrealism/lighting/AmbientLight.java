@@ -23,9 +23,9 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGBProducer;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.
@@ -33,7 +33,7 @@ import static org.almostrealism.util.Ops.*;
  * 
  * @author  Michael Murray
  */
-public class AmbientLight implements Light, CodeFeatures {
+public class AmbientLight implements Light, RGBFeatures, CodeFeatures {
 	private double intensity;
 	private RGB color;
 
@@ -102,8 +102,8 @@ public class AmbientLight implements Light, CodeFeatures {
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static RGBProducer ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
-		RGBProducer color = ops().v(light.getColor())
-				.multiply(ops().cfromScalar(light.getIntensity()));
+		RGBProducer color = RGBFeatures.getInstance().v(light.getColor())
+				.multiply(RGBFeatures.getInstance().cfromScalar(light.getIntensity()));
 		color = color.multiply(surface.getValueAt(point));
 		
 		return color;

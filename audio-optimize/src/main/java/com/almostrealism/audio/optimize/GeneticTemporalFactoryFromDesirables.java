@@ -26,12 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.almostrealism.audio.DesirablesProvider;
-import com.almostrealism.audio.health.HealthComputationAdapter;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
@@ -39,16 +37,13 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
-import org.almostrealism.audio.filter.AudioCellAdapter;
-import org.almostrealism.audio.filter.BasicDelayCell;
-import org.almostrealism.audio.sources.WavCell;
+import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.organs.GeneticTemporalFactory;
-import org.almostrealism.util.Ops;
+import org.almostrealism.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static final int mixdownDuration = 140;
@@ -59,10 +54,10 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableEfx = true;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
-		List<Function<Gene<Scalar>, AudioCellAdapter>> choices = new ArrayList<>();
+		List<Function<Gene<Scalar>, ScalarTemporalCellAdapter>> choices = new ArrayList<>();
 
 		if (!provider.getFrequencies().isEmpty()) {
-			provider.getFrequencies().forEach(f -> choices.add(g -> (AudioCellAdapter) w(f).get(0)));
+			provider.getFrequencies().forEach(f -> choices.add(g -> (ScalarTemporalCellAdapter) w(f).get(0)));
 		}
 
 		List<TemporalFactor<Scalar>> temporals = new ArrayList<>();
@@ -88,7 +83,7 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
 				temporals.add(tf);
 				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-				return (AudioCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
+				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
 			}));
 		}
 

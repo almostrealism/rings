@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ import org.almostrealism.space.*;
 import org.almostrealism.stats.BRDF;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
 import org.almostrealism.physics.Clock;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;
 import io.almostrealism.relation.Nameable;
 
@@ -67,7 +67,8 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> implements AbsorberSet<AbsorberHashSet.StoredItem>, ShadableSurface, Colorable, CodeFeatures {
+public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> implements AbsorberSet<AbsorberHashSet.StoredItem>,
+																		ShadableSurface, Colorable, RGBFeatures, CodeFeatures {
 	public static final boolean enableFrontBackDetection = false;
 
 	@Override

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.almostrealism.photon.test;
 
 import com.almostrealism.lighting.PointLight;
@@ -11,6 +27,7 @@ import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Plane;
@@ -18,7 +35,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.StripeTexture;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
 import java.io.File;
@@ -26,7 +43,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class CausticTest implements Runnable, CodeFeatures {
+public class CausticTest implements Runnable, RGBFeatures, CodeFeatures {
     public static boolean useStripedFloor = false;
     public static boolean useCornellBox = false;
     public static boolean displaySpheres = true;

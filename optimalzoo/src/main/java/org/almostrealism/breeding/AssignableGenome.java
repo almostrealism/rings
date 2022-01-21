@@ -17,17 +17,14 @@
 package org.almostrealism.breeding;
 
 import io.almostrealism.relation.Delegated;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Tensor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.util.CodeFeatures;
-import org.almostrealism.util.Ops;
+import org.almostrealism.CodeFeatures;
 
 public class AssignableGenome extends Tensor<Scalar> implements Genome<Scalar>, Delegated<Tensor<Scalar>>, CodeFeatures {
 	private final Tensor<Scalar> delegate;

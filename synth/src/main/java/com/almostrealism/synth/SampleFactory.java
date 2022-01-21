@@ -23,7 +23,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.almostrealism.audio.filter.AudioCellAdapter;
+import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.OutputLine;
 
@@ -47,7 +47,7 @@ public class SampleFactory {
 		double period = (double) OutputLine.sampleRate / freq;
 		for (int i = 0; i < output.getCount(); i++) {
 			double angle = 2.0 * Math.PI * i / period;
-			output.get(i).setValue(Math.sin(angle) * AudioCellAdapter.depth);
+			output.get(i).setValue(Math.sin(angle) * ScalarTemporalCellAdapter.depth);
 		}
 
 		return new Sample(output);

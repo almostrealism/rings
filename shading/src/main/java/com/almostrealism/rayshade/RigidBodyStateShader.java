@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
@@ -26,7 +27,7 @@ import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * A RigidBodyStateShader object can be used to modify the display of other shaders based on a property
@@ -35,7 +36,7 @@ import org.almostrealism.util.CodeFeatures;
  * 
  * @author  Michael Murray
  */
-public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>, CodeFeatures {
+public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>, RGBFeatures, CodeFeatures {
 	public static final int VELOCITY = 1;
 	public static final int FORCE = 2;
 	

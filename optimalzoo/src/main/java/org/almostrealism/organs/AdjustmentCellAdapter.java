@@ -22,7 +22,7 @@ import org.almostrealism.graph.AdjustmentCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Adjustment;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.function.Supplier;

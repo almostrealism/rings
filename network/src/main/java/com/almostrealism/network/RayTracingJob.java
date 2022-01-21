@@ -53,7 +53,7 @@ import com.almostrealism.raytracer.Settings;
 
 import io.flowtree.job.Job;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job}

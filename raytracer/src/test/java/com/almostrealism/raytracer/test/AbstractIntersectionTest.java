@@ -21,7 +21,7 @@ import com.almostrealism.projection.PinholeCameraRayAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;

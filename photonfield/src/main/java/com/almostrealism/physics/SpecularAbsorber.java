@@ -39,11 +39,11 @@ import org.almostrealism.physics.Clock;
 import com.almostrealism.stats.UniformHemisphericalDistribution;
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.PlanarLight;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.util.PriorityQueue;
 import io.almostrealism.relation.Evaluable;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 import java.lang.Math;
 

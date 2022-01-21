@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Nameable;
 import io.almostrealism.relation.Evaluable;
 

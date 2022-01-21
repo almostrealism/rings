@@ -18,7 +18,7 @@ package com.almostrealism.light;
 
 import com.almostrealism.texture.IntensityMap;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 public class CubeLight extends LightBulb implements CodeFeatures {

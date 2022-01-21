@@ -31,7 +31,7 @@ import org.almostrealism.physics.Clock;
 
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.LightBulb;
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 public class RandomLights {
 	public static double verbose = 0.01;

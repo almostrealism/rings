@@ -24,7 +24,7 @@ import org.almostrealism.geometry.TransformMatrix;
 import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 /**
  * @author Michael Murray

@@ -20,7 +20,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.UniformSphericalRandom;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 public class UniformHemisphericalDistribution implements SphericalProbabilityDistribution, Length, CodeFeatures {

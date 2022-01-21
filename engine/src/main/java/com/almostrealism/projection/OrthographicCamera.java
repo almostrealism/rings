@@ -27,7 +27,7 @@ import org.almostrealism.io.DecodePostProcessing;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.uml.ModelEntity;
 
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 /**

@@ -41,7 +41,7 @@ import com.almostrealism.physics.VolumeAbsorber;
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.LightBulb;
 import com.almostrealism.light.PlanarLight;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * @author  Michael Murray

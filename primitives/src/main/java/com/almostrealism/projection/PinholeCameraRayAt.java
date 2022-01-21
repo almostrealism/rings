@@ -26,7 +26,7 @@ import org.almostrealism.algebra.computations.RandomPair;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.computations.RayFromVectors;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 public class PinholeCameraRayAt extends RayFromVectors {
 	private PinholeCameraRayAt(Vector location, VectorProducer direction) {

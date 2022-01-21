@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.LightingContext;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.Light;
@@ -34,9 +35,9 @@ import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.DistanceEstimator;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
-public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engine, ShadableCurve, DiscreteField, HardwareFeatures, CodeFeatures {
+public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engine, ShadableCurve, DiscreteField, RGBFeatures, CodeFeatures {
 	private ShaderContext sparams;
 	private RenderParameters params;
 	private FogParameters fparams;

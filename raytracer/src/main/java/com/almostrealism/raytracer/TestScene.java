@@ -25,6 +25,7 @@ import com.almostrealism.rayshade.SilhouetteShader;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGBProducer;
@@ -39,14 +40,14 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class TestScene extends Scene<ShadableSurface> implements CodeFeatures {
+public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, CodeFeatures {
 	public TestScene(boolean enableCornellBox, boolean enableRandomThing, boolean enableDragon,
 					 boolean enableSphere, boolean enableTriangles, boolean enableFloor,
 					 boolean enableSilhouette,

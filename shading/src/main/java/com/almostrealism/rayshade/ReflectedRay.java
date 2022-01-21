@@ -25,11 +25,10 @@ import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import io.almostrealism.code.NameProvider;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 public class ReflectedRay implements RayProducer {
 	private Producer<Vector> point;

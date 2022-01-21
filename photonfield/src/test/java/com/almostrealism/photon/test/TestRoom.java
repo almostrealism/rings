@@ -35,7 +35,7 @@ import org.almostrealism.physics.Clock;
 
 import com.almostrealism.geometry.Box;
 import com.almostrealism.light.PlanarLight;
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 /**
  * The TestRoom is a room which is based off the Cornell Box.

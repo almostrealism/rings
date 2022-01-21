@@ -18,14 +18,13 @@ package com.almostrealism.audio.optimize;
 
 import java.util.List;
 
-import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.GeneticTemporalFactory;
 import org.almostrealism.population.Population;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>>, CodeFeatures {
 	private final List<Genome<G>> pop;

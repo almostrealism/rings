@@ -30,7 +30,7 @@ import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.DistanceEstimator;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 import java.util.ArrayList;
 import java.util.Collection;

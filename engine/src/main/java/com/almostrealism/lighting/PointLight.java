@@ -26,7 +26,7 @@ import org.almostrealism.geometry.Positioned;
 
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.

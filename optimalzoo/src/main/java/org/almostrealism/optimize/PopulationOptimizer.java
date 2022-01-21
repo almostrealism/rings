@@ -39,7 +39,7 @@ import org.almostrealism.io.Console;
 
 import org.almostrealism.population.Population;
 import org.almostrealism.time.Temporal;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 
 public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore> implements Generated<Supplier<Genome<G>>, PopulationOptimizer>, CodeFeatures {
 	public static int THREADS = 1;

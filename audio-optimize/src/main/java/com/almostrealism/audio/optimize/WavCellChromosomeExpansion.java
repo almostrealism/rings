@@ -16,25 +16,20 @@
 
 package com.almostrealism.audio.optimize;
 
-import com.almostrealism.audio.health.HealthComputationAdapter;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.ScalarTable;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.sources.WavCell;
+import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.MemoryDataTemporalCellularChromosomeExpansion;
-import org.almostrealism.hardware.ContextSpecific;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromosomeExpansion<ScalarBank, Scalar, Scalar> implements CellFeatures {
@@ -53,7 +48,7 @@ public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromo
 
 	@Override
 	protected Cell<Scalar> cell(ScalarBank data) {
-		return new WavCell(data, sampleRate);
+		return new WaveCell(data, sampleRate);
 	}
 
 	@Override

@@ -42,11 +42,11 @@ import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.ShadableIntersection;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.ProducerWithRank;
-import static org.almostrealism.util.Ops.*;
+import static org.almostrealism.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;

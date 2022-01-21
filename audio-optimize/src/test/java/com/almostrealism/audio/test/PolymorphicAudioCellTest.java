@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.test;
 
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.WesternChromatic;
@@ -25,8 +26,8 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.filter.AudioCellAdapter;
+import org.almostrealism.graph.temporal.DefaultWaveCellData;
+import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
@@ -67,7 +68,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 				new DefaultKeyboardTuning().getTone(WesternChromatic.G3));
 	}
 
-	protected AudioCellAdapter cell() {
+	protected ScalarTemporalCellAdapter cell() {
 		SineWaveCell fcell = new SineWaveCell();
 		fcell.setFreq(new DefaultKeyboardTuning().getTone(WesternChromatic.F3).asHertz());
 		fcell.setNoteLength(600);
@@ -85,7 +86,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void sineWave() {
-		AudioCellAdapter cell = cell();
+		ScalarTemporalCellAdapter cell = cell();
 		cell.setReceptor(loggingReceptor());
 		Runnable push = cell.push(v(0.0)).get();
 		IntStream.range(0, 100).forEach(i -> push.run());
@@ -103,7 +104,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 			TemporalRunner runner = new TemporalRunner(cells, DURATION_FRAMES);
 			runner.get().run();
 		} else {
-			AudioCellAdapter cell = (AudioCellAdapter) cells.get(0);
+			ScalarTemporalCellAdapter cell = (ScalarTemporalCellAdapter) cells.get(0);
 
 			OperationList list = new OperationList("PolymorphicAudioCell Push and Tick");
 			list.add(cell.push(v(0.0)));
@@ -135,8 +136,8 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		CellList cells2 = cells(1);
 		cells1.get(0).setReceptor(output1);
 		cells2.get(0).setReceptor(output2);
-		AudioCellAdapter cell1 = (AudioCellAdapter) cells1.get(0);
-		AudioCellAdapter cell2 = (AudioCellAdapter) cells2.get(0);
+		ScalarTemporalCellAdapter cell1 = (ScalarTemporalCellAdapter) cells1.get(0);
+		ScalarTemporalCellAdapter cell2 = (ScalarTemporalCellAdapter) cells2.get(0);
 
 		/* One */
 		OperationList list1 = new OperationList("One");
@@ -228,7 +229,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void withCellPair() {
-		AudioCellAdapter cell = cell();
+		ScalarTemporalCellAdapter cell = cell();
 		loggingCellPair(cell);
 
 		Runnable push = cell.push(null).get();
@@ -240,7 +241,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		BasicDelayCell delay = new BasicDelayCell(1);
 		delay.setReceptor(loggingReceptor());
 
-		AudioCellAdapter cell = cell();
+		ScalarTemporalCellAdapter cell = cell();
 		cell.setReceptor(delay);
 
 		Runnable push = cell.push(null).get();

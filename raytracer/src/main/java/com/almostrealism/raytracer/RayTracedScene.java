@@ -33,7 +33,7 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.computations.RGBBlack;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
-import org.almostrealism.util.CodeFeatures;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
 
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
