@@ -18,7 +18,7 @@ package org.almostrealism.tensorflow.test;
 
 import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.DefaultScopeInputManager;
-import io.almostrealism.code.Scope;
+import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.tensorflow.TensorFlowArgument;
 import org.almostrealism.tensorflow.TensorFlowComputeContext;

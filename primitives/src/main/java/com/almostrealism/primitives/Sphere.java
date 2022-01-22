@@ -16,8 +16,8 @@
 
 package com.almostrealism.primitives;
 
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
+import io.almostrealism.scope.Scope;
+import io.almostrealism.scope.Variable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;

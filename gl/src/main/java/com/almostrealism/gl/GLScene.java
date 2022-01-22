@@ -20,7 +20,7 @@ import com.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.code.CodePrintWriter;
-import io.almostrealism.code.Variable;
+import io.almostrealism.scope.Variable;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

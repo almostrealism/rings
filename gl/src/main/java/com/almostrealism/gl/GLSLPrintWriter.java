@@ -18,12 +18,9 @@ package com.almostrealism.gl;
 
 import org.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
-import io.almostrealism.code.Variable;
-import org.almostrealism.io.PrintStreamPrintWriter;
 import org.almostrealism.io.PrintWriter;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 /**
  * {@link GLSLPrintWriter} is a {@link CodePrintWriter} implementation for writing GLSL,

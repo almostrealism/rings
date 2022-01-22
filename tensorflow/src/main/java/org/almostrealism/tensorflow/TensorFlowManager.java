@@ -16,7 +16,7 @@
 
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.Variable;
+import io.almostrealism.scope.Variable;
 import org.tensorflow.Operand;
 import org.tensorflow.Signature;
 import org.tensorflow.op.Ops;

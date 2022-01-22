@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import com.almostrealism.audio.health.AudioHealthScore;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
+import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
@@ -38,6 +39,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -108,13 +110,21 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		for (int i = 0; i < tot; i++) {
 			if (cycleListener != null) cycleListener.run();
 
-			dc(() -> cc(() -> {
+			Callable<Void> c = () -> {
 				init();
 				readPopulation();
 				iterate();
 				storePopulation();
 				return null;
-			}));
+			};
+
+			// dc(c);
+
+			try {
+				c.call();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 
 			resetHealth();
 			resetGenerator();

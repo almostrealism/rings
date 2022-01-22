@@ -1,6 +1,6 @@
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.expressions.Expression;
+import io.almostrealism.expression.Expression;
 import org.tensorflow.Operand;
 import org.tensorflow.types.TFloat64;
 

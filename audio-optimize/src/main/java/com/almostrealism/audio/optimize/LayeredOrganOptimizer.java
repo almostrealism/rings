@@ -29,6 +29,7 @@ import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
+import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
@@ -47,6 +48,7 @@ import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
@@ -215,8 +217,9 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	public static void main(String args[]) throws FileNotFoundException {
 		CLDataContext.enableFastQueue = true;
 		StableDurationHealthComputation.enableTimeout = true;
-		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
-		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = false;
+		GeneticTemporalFactoryFromDesirables.enableEfxFilters = false;
+		SilenceDurationHealthComputation.enableSilenceCheck = false;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -228,6 +231,8 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = verbosity < 3;
+
+		HealthCallable.setComputeRequirements(ComputeRequirement.C);
 
 		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 

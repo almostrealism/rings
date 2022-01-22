@@ -16,11 +16,10 @@
 
 package com.almostrealism.gl.shaders;
 
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
+import io.almostrealism.scope.Scope;
+import io.almostrealism.scope.Variable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
-import io.almostrealism.code.NameProvider;
 
 public class GLDiffuseShader extends VertexShader {
 	@Override

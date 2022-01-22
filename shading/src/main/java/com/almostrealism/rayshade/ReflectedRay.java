@@ -16,7 +16,7 @@
 
 package com.almostrealism.rayshade;
 
-import io.almostrealism.code.Scope;
+import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;

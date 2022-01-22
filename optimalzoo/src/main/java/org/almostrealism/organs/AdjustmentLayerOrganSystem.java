@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import io.almostrealism.code.Setup;
+import io.almostrealism.cycle.Setup;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Adjustment;

@@ -1,6 +1,6 @@
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.ArrayVariable;
+import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.NameProvider;
 import io.almostrealism.relation.Evaluable;
 

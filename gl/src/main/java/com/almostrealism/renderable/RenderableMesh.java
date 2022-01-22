@@ -20,11 +20,11 @@ import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
-import io.almostrealism.code.expressions.Expression;
-import io.almostrealism.code.expressions.InstanceReference;
-import io.almostrealism.code.Method;
-import io.almostrealism.code.Scope;
-import io.almostrealism.code.Variable;
+import io.almostrealism.expression.Expression;
+import io.almostrealism.expression.InstanceReference;
+import io.almostrealism.scope.Method;
+import io.almostrealism.scope.Scope;
+import io.almostrealism.scope.Variable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

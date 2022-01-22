@@ -16,7 +16,7 @@
 
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.Variable;
+import io.almostrealism.scope.Variable;
 
 public class TensorFlowVariable extends Variable<Double, TensorFlowVariable> {
 	public TensorFlowVariable(String name, TensorFlowConstant expression) {

@@ -16,15 +16,13 @@
 
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.Argument;
+import io.almostrealism.scope.Argument;
 import io.almostrealism.code.InstructionSet;
-import io.almostrealism.code.Scope;
-import org.almostrealism.hardware.MemoryData;
+import io.almostrealism.scope.Scope;
 import org.tensorflow.ConcreteFunction;
 import org.tensorflow.Signature;
 import org.tensorflow.Tensor;
 import org.tensorflow.ndarray.Shape;
-import org.tensorflow.ndarray.impl.dense.DenseNdArray;
 import org.tensorflow.ndarray.impl.dense.DoubleDenseNdArray;
 import org.tensorflow.types.TFloat64;
 

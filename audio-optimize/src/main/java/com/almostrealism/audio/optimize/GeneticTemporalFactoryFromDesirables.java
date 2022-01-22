@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
 
 import com.almostrealism.audio.DesirablesProvider;
 import io.almostrealism.code.ProducerComputation;
-import io.almostrealism.code.Setup;
+import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;

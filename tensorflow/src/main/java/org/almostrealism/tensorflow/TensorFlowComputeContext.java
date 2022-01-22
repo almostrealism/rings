@@ -16,14 +16,21 @@
 
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.ComputeContext;
-import io.almostrealism.code.Scope;
+import io.almostrealism.scope.Scope;
+import org.almostrealism.hardware.AbstractComputeContext;
 
-public class TensorFlowComputeContext implements ComputeContext {
+public class TensorFlowComputeContext extends AbstractComputeContext {
+	public TensorFlowComputeContext() {
+		super(null, false, false);
+	}
+
 	@Override
 	public TensorFlowInstructionSet deliver(Scope scope) {
 		return new TensorFlowInstructionSet(scope);
 	}
+
+	@Override
+	public boolean isKernelSupported() { return false; }
 
 	@Override
 	public void destroy() {
