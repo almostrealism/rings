@@ -36,6 +36,7 @@ import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.Hardware;
@@ -55,7 +56,7 @@ import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
-	public static final int verbosity = 3;
+	public static final int verbosity = 1;
 
 	public static String LIBRARY = "Library";
 
@@ -217,9 +218,11 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	public static void main(String args[]) throws FileNotFoundException {
 		CLDataContext.enableFastQueue = true;
 		StableDurationHealthComputation.enableTimeout = true;
-		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = false;
-		GeneticTemporalFactoryFromDesirables.enableEfxFilters = false;
-		SilenceDurationHealthComputation.enableSilenceCheck = false;
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
+		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
+		SilenceDurationHealthComputation.enableSilenceCheck = true;
+
+		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -232,8 +235,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = verbosity < 3;
 
-		HealthCallable.setComputeRequirements(ComputeRequirement.C);
-
+		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
 		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);

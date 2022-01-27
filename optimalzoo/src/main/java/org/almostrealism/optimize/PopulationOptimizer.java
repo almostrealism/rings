@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -206,83 +207,88 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 	private synchronized void orderByHealth(Population<G, T, O> pop) {
 		if (THREADS > 1) throw new UnsupportedOperationException();
 
-		CompletionService<S> executor = new ExecutorCompletionService<S>(Executors.newFixedThreadPool(THREADS));
+		ExecutorService s = Executors.newFixedThreadPool(THREADS);
+		ExecutorCompletionService<S> executor = new ExecutorCompletionService<S>(s);
 
-		final HashMap<Genome, Double> healthTable = new HashMap<>();
+		try {
+			final HashMap<Genome, Double> healthTable = new HashMap<>();
 
-		scoring = new HealthScoring(pop.size());
+			scoring = new HealthScoring(pop.size());
 
-		console.print("[" + Instant.now() + "] Calculating health");
-		if (enableVerbose) {
-			console.println("...");
-		} else {
-			console.print(".");
-		}
-
-		int count = pop.size();
-
-		for (int i = 0; i < count; i++) {
-			int fi = i;
-
-			executor.submit(new HealthCallable<O, S>(() -> pop.enableGenome(targetGenome.orElse(fi)), health, scoring, h -> {
-				healthTable.put(pop.getGenomes().get(targetGenome.orElse(fi)), h.getScore());
-
-				if (healthListener != null)
-					healthListener.accept(pop.getGenomes().get(targetGenome.orElse(fi)).signature(), h);
-
-				if (enableVerbose) {
-					console.println();
-					console.println("[" + Instant.now().toString() + "] Health of Network " + fi + " is " + percent(h.getScore()));
-				} else {
-					console.print(".");
-				}
-			}, pop::disableGenome));
-		}
-
-		for (int i = 0; i < count; i++) {
-			try {
-				executor.take().get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				if (e.getCause() instanceof RuntimeException) {
-					throw (RuntimeException) e.getCause();
-				} else if (e.getCause() != null) {
-					throw new RuntimeException(e.getCause());
-				} else {
-					throw new RuntimeException(e);
-				}
+			console.print("[" + Instant.now() + "] Calculating health");
+			if (enableVerbose) {
+				console.println("...");
+			} else {
+				console.print(".");
 			}
-		}
 
-		if (!enableVerbose) console.println();
+			int count = pop.size();
 
-		console.println("Average health for this round is " +
-				percent(scoring.getAverageScore()) + ", max " + percent(scoring.getMaxScore()));
-		TreeSet<Genome<G>> sorted = new TreeSet<>((g1, g2) -> {
-			double h1 = healthTable.get(g1);
-			double h2 = healthTable.get(g2);
+			for (int i = 0; i < count; i++) {
+				int fi = i;
 
-			int i = (int) ((h2 - h1) * 10000000);
+				executor.submit(new HealthCallable<O, S>(() -> pop.enableGenome(targetGenome.orElse(fi)), health, scoring, h -> {
+					healthTable.put(pop.getGenomes().get(targetGenome.orElse(fi)), h.getScore());
 
-			if (i == 0) {
-				if (h1 > h2) {
-					return -1;
-				} else {
-					return 1;
+					if (healthListener != null)
+						healthListener.accept(pop.getGenomes().get(targetGenome.orElse(fi)).signature(), h);
+
+					if (enableVerbose) {
+						console.println();
+						console.println("[" + Instant.now().toString() + "] Health of Network " + fi + " is " + percent(h.getScore()));
+					} else {
+						console.print(".");
+					}
+				}, pop::disableGenome));
+			}
+
+			for (int i = 0; i < count; i++) {
+				try {
+					executor.take().get();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					if (e.getCause() instanceof RuntimeException) {
+						throw (RuntimeException) e.getCause();
+					} else if (e.getCause() != null) {
+						throw new RuntimeException(e.getCause());
+					} else {
+						throw new RuntimeException(e);
+					}
 				}
 			}
 
-			return i;
-		});
+			if (!enableVerbose) console.println();
 
-		for (int i = 0; i < pop.size(); i++) {
-			Genome g = pop.getGenomes().get(i);
-			if (healthTable.get(g) >= lowestHealth) sorted.add(g);
+			console.println("Average health for this round is " +
+					percent(scoring.getAverageScore()) + ", max " + percent(scoring.getMaxScore()));
+			TreeSet<Genome<G>> sorted = new TreeSet<>((g1, g2) -> {
+				double h1 = healthTable.get(g1);
+				double h2 = healthTable.get(g2);
+
+				int i = (int) ((h2 - h1) * 10000000);
+
+				if (i == 0) {
+					if (h1 > h2) {
+						return -1;
+					} else {
+						return 1;
+					}
+				}
+
+				return i;
+			});
+
+			for (int i = 0; i < pop.size(); i++) {
+				Genome g = pop.getGenomes().get(i);
+				if (healthTable.get(g) >= lowestHealth) sorted.add(g);
+			}
+
+			pop.getGenomes().clear();
+			pop.getGenomes().addAll(sorted);
+		} finally {
+			s.shutdown();
 		}
-
-		pop.getGenomes().clear();
-		pop.getGenomes().addAll(sorted);
 	}
 
 	public Console getConsole() { return console; }

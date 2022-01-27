@@ -4,6 +4,7 @@ import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.time.Temporal;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -26,8 +27,8 @@ public class HealthCallable<T extends Temporal, S extends HealthScore> implement
 	}
 
 	@Override
-	public S call() {
-		return cc(() -> {
+	public S call() throws Exception {
+		Callable<S> call = () -> {
 			S health = null;
 
 			try {
@@ -44,7 +45,13 @@ public class HealthCallable<T extends Temporal, S extends HealthScore> implement
 			}
 
 			return health;
-		}, computeRequirements);
+		};
+
+		if (computeRequirements == null || computeRequirements.length <= 0) {
+			return call.call();
+		} else {
+			return cc(call, computeRequirements);
+		}
 	}
 
 	public static void setComputeRequirements(ComputeRequirement... expectations) {

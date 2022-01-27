@@ -30,6 +30,8 @@
 		<module>synth</module>
 		<module>replicate</module>
 		<module>tensorflow</module>
+		<module>torch</module>
+		<module>openai</module>
 	</modules>
 
 	<!-- Output to jar format -->

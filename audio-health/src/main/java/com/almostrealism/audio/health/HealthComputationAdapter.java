@@ -36,7 +36,6 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	private TemporalCellular target;
 
-	private AudioMeter outputMeter;
 	private WaveOutput out;
 	private Supplier<String> outputFileSupplier;
 	private File outputFile;
@@ -52,16 +51,15 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	@Override
 	public synchronized Receptor<Scalar> getOutput() {
-		if (outputMeter != null) return outputMeter;
+		if (out == null) {
+			out = new WaveOutput(() ->
+					Optional.ofNullable(outputFileSupplier).map(s -> {
+						outputFile = new File(s.get());
+						return outputFile;
+					}).orElse(null), 24);
+		}
 
-		outputMeter = new AudioMeter();
-		out = new WaveOutput(() ->
-				Optional.ofNullable(outputFileSupplier).map(s -> {
-					outputFile = new File(s.get());
-					return outputFile;
-				}).orElse(null), 24);
-		outputMeter.setForwarding(out);
-		return outputMeter;
+		return out;
 	}
 
 	@Override
@@ -82,7 +80,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	@Override
 	public void reset() {
 		AudioHealthComputation.super.reset();
-		outputMeter.reset();
+		out.reset();
 		measures.forEach(AudioMeter::reset);
 		out.reset();
 	}

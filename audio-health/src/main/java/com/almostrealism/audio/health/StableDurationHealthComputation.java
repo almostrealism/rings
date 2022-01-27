@@ -177,6 +177,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 					if (enableVerbose) {
 						System.out.println("StableDurationHealthComputation: Cursor out of sync (" +
 								(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
+						System.exit(1);
 					} else {
 						System.out.print("N");
 					}
