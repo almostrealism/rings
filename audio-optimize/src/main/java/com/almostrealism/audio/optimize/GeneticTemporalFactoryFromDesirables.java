@@ -42,7 +42,7 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
-import org.almostrealism.organs.GeneticTemporalFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.Ops;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {

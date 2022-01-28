@@ -27,11 +27,11 @@ import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
-import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
@@ -48,11 +48,9 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.PopulationOptimizer;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
-import org.almostrealism.organs.TieredCellAdjustmentFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
-public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
+public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static String LIBRARY = "Library";
@@ -65,13 +63,13 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		if (arg != null) LIBRARY = arg;
 	}
 
-	public LayeredOrganOptimizer(Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> f,
+	public LayeredOrganOptimizer(Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> f,
 								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
 								 int sampleRate, int sources, int delayLayers, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation(children, sources, delayLayers, sampleRate);
+					LayeredOrganPopulation<Scalar, Scalar> pop = new LayeredOrganPopulation<>(children, sources, delayLayers, sampleRate);
 					AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
 					pop.init(f.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 					return pop;
@@ -185,11 +183,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 
 	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables,
 											  int sources, int delayLayers, int cycles) {
-		return new LayeredOrganOptimizer(() -> {
-			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
-			TieredCellAdjustmentFactory<Scalar, Scalar> tcb = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.EXPONENTIAL), tca);
-			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(desirables));
-		}, () -> {
+		return new LayeredOrganOptimizer(() -> new GeneticTemporalFactoryFromDesirables().from(desirables), () -> {
 			return new DefaultGenomeBreeder(
 					Breeders.of(Breeders.randomChoiceBreeder(),
 							Breeders.randomChoiceBreeder(),

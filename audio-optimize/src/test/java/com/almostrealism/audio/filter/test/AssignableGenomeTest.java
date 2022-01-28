@@ -39,7 +39,7 @@ import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.GeneticTemporalFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.Temporal;
 import org.junit.AfterClass;

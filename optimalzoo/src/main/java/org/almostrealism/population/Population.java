@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@ package org.almostrealism.population;
 
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.GeneticTemporalFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.time.Temporal;
 
 import java.util.List;
 
 public interface Population<G, T, O extends Temporal> {
 	void init(GeneticTemporalFactory<G, T, O> factory, Genome<G> templateGenome, List<? extends Receptor<T>> measures, Receptor<T> output);
-
-	void merge(Population<G, T, O> pop);
 
 	List<Genome<G>> getGenomes();
 	

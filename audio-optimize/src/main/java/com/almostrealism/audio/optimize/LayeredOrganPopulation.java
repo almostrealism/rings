@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,19 @@ package com.almostrealism.audio.optimize;
 
 import java.util.List;
 
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.GeneticTemporalFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.population.Population;
 import org.almostrealism.CodeFeatures;
 
-public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>>, CodeFeatures {
+public class LayeredOrganPopulation<G, O> implements Population<G, O, Cells>, CodeFeatures {
 	private final List<Genome<G>> pop;
 	private final DefaultAudioGenome genome;
 	private Genome currentGenome;
-	private AdjustmentLayerOrganSystem<G, O, A, R> organ;
+	private Cells organ;
 
 	public LayeredOrganPopulation(List<Genome<G>> population, int sources, int delayLayers) {
 		this(population, sources, delayLayers, OutputLine.sampleRate);
@@ -42,22 +42,17 @@ public class LayeredOrganPopulation<G, O, A, R> implements Population<G, O, Adju
 	}
 
 	@Override
-	public void init(GeneticTemporalFactory<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> organFactory, Genome<G> templateGenome, List<? extends Receptor<O>> measures, Receptor<O> output) {
+	public void init(GeneticTemporalFactory<G, O, Cells> organFactory, Genome<G> templateGenome, List<? extends Receptor<O>> measures, Receptor<O> output) {
 		enableGenome(templateGenome);
 		this.organ = organFactory.generateOrgan((Genome) genome, measures, output);
 		disableGenome();
 	}
 
 	@Override
-	public void merge(Population<G, O, AdjustmentLayerOrganSystem<G, O, A, R>> pop) {
-		this.pop.addAll(pop.getGenomes());
-	}
-
-	@Override
 	public List<Genome<G>> getGenomes() { return pop; }
 
 	@Override
-	public AdjustmentLayerOrganSystem<G, O, A, R> enableGenome(int index) {
+	public Cells enableGenome(int index) {
 		enableGenome(getGenomes().get(index));
 		organ.reset();
 		return organ;

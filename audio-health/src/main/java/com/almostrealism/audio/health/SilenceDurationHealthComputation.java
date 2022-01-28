@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,11 @@
 
 package com.almostrealism.audio.health;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.AudioMeter;
-import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.graph.CellAdapter;
-import org.almostrealism.organs.SimpleOrgan;
-import org.almostrealism.time.Temporal;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;

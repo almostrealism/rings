@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import com.almostrealism.audio.filter.test.AssignableGenomeTest;
 import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.AudioPopulationOptimizer;
-import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory;
-import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
 import com.almostrealism.audio.optimize.LayeredOrganPopulation;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
@@ -30,6 +28,7 @@ import com.almostrealism.sound.DefaultDesirablesProvider;
 import com.almostrealism.tone.WesternChromatic;
 import com.almostrealism.tone.WesternScales;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.Hardware;
@@ -37,9 +36,7 @@ import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.optimize.PopulationOptimizer;
-import org.almostrealism.organs.AdjustmentLayerOrganSystem;
-import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
-import org.almostrealism.organs.TieredCellAdjustmentFactory;
+import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -52,13 +49,9 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
-	protected Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier() {
-		return () -> {
-			DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
-
-			TieredCellAdjustmentFactory<Scalar, Scalar> tca = new TieredCellAdjustmentFactory<>(new DefaultCellAdjustmentFactory(Type.PERIODIC));
-			return new AdjustmentLayerOrganSystemFactory(tca, new GeneticTemporalFactoryFromDesirables().from(desirables));
-		};
+	protected Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> factorySupplier() {
+		DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
+		return () -> new GeneticTemporalFactoryFromDesirables().from(desirables);
 	}
 
 	protected LayeredOrganOptimizer optimizer() {
@@ -72,7 +65,7 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 
-		Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
+		Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> factorySupplier = factorySupplier();
 
 		LayeredOrganOptimizer optimizer = new LayeredOrganOptimizer(null, () -> {
 			return new DefaultGenomeBreeder(
@@ -86,7 +79,7 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating LayeredOrganPopulation...");
-			LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop = new LayeredOrganPopulation<>(genomes, sources, delayLayers, OutputLine.sampleRate);
+			LayeredOrganPopulation<Scalar, Scalar> pop = new LayeredOrganPopulation<>(genomes, sources, delayLayers, OutputLine.sampleRate);
 			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
 			pop.init(factorySupplier.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
 			return pop;
@@ -104,7 +97,7 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 
 	@Test
 	public void healthTest() throws FileNotFoundException {
-		Supplier<AdjustmentLayerOrganSystemFactory<Scalar, Scalar, Double, Scalar>> factorySupplier = factorySupplier();
+		Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> factorySupplier = factorySupplier();
 
 		AtomicInteger index = new AtomicInteger();
 
@@ -124,12 +117,13 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 					health.setOutputFile(() -> "health/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
 
 					System.out.println("Creating LayeredOrganPopulation...");
-					LayeredOrganPopulation<Scalar, Scalar, Double, Scalar> pop =
+					LayeredOrganPopulation<Scalar, Scalar> pop =
 							new LayeredOrganPopulation<>(AudioPopulationOptimizer.read(new FileInputStream("Population.xml")), 2, OutputLine.sampleRate);
 					pop.init(factorySupplier.get(), pop.getGenomes().get(0), health.getMeasures(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {
-						AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar> organ = pop.enableGenome(i);
+						Cells organ = pop.enableGenome(i);
+
 						try {
 							health.setTarget(organ);
 							health.computeHealth();
