@@ -78,7 +78,6 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 
 		Runnable tick = organ.tick().get();
 		((OperationAdapter) tick).compile();
-		System.out.println(((DynamicAcceleratedOperation) tick).getFunctionDefinition());
 
 		IntStream.range(0, 5 * OutputLine.sampleRate).forEach(i -> {
 			tick.run();

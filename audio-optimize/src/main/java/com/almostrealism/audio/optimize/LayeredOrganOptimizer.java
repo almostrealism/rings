@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.DefaultCellAdjustmentFactory.Type;
 import com.almostrealism.sound.DefaultDesirablesProvider;
-import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
@@ -38,9 +37,8 @@ import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.breeding.Breeders;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.hardware.cl.CLDataContext;
+import org.almostrealism.hardware.cl.CLComputeContext;
 import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.heredity.ChromosomeFactory;
@@ -49,14 +47,13 @@ import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.organs.AdjustmentLayerOrganSystem;
 import org.almostrealism.organs.AdjustmentLayerOrganSystemFactory;
 import org.almostrealism.organs.TieredCellAdjustmentFactory;
 
 public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLayerOrganSystem<Scalar, Scalar, Double, Scalar>> {
-	public static final int verbosity = 1;
+	public static final int verbosity = 0;
 
 	public static String LIBRARY = "Library";
 
@@ -216,13 +213,11 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 	 * @see  LayeredOrganOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
-		CLDataContext.enableFastQueue = true;
+		CLComputeContext.enableFastQueue = true;
 		StableDurationHealthComputation.enableTimeout = true;
 		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
 		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = true;
-
-		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -235,7 +230,11 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<AdjustmentLa
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = verbosity < 3;
 
+		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
+		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
+		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
+
 		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
