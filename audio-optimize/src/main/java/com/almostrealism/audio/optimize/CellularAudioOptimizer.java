@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -28,6 +29,7 @@ import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.sound.DefaultDesirablesProvider;
+import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
@@ -35,6 +37,7 @@ import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.Waves;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.Hardware;
@@ -47,13 +50,16 @@ import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
-public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
+	public static final int verbosity = 3;
+	public static final boolean enableStems = true;
 
 	public static String LIBRARY = "Library";
+	public static String STEMS = "Stems";
 
 	static {
 		String env = System.getenv("AR_RINGS_LIBRARY");
@@ -61,11 +67,17 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		String arg = System.getProperty("AR_RINGS_LIBRARY");
 		if (arg != null) LIBRARY = arg;
+		
+		env = System.getenv("AR_RINGS_STEMS");
+		if (env != null) STEMS = env;
+
+		arg = System.getProperty("AR_RINGS_STEMS");
+		if (arg != null) STEMS = arg;
 	}
 
-	public LayeredOrganOptimizer(Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> f,
-								 Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
-								 int sampleRate, int sources, int delayLayers, int totalCycles) {
+	public CellularAudioOptimizer(Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> f,
+								  Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
+								  int sampleRate, int sources, int delayLayers, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
@@ -173,17 +185,17 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 		};
 	}
 
-	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int cycles) {
+	public static CellularAudioOptimizer build(DesirablesProvider desirables, int cycles) {
 		return build(desirables, 6, 3, cycles);
 	}
 
-	public static LayeredOrganOptimizer build(DesirablesProvider desirables, int sources, int delayLayers, int cycles) {
+	public static CellularAudioOptimizer build(DesirablesProvider desirables, int sources, int delayLayers, int cycles) {
 		return build(generator(sources, delayLayers), desirables, sources, delayLayers, cycles);
 	}
 
-	public static LayeredOrganOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables,
-											  int sources, int delayLayers, int cycles) {
-		return new LayeredOrganOptimizer(() -> new GeneticTemporalFactoryFromDesirables().from(desirables), () -> {
+	public static CellularAudioOptimizer build(Supplier<Supplier<Genome<Scalar>>> generator, DesirablesProvider desirables,
+											   int sources, int delayLayers, int cycles) {
+		return new CellularAudioOptimizer(() -> new GeneticTemporalFactoryFromDesirables().from(desirables), () -> {
 			return new DefaultGenomeBreeder(
 					Breeders.of(Breeders.randomChoiceBreeder(),
 							Breeders.randomChoiceBreeder(),
@@ -200,11 +212,11 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 	}
 
 	/**
-	 * Build a {@link LayeredOrganOptimizer} and initialize and run it.
+	 * Build a {@link CellularAudioOptimizer} and initialize and run it.
 	 *
-	 * @see  LayeredOrganOptimizer#build(DesirablesProvider, int)
-	 * @see  LayeredOrganOptimizer#init
-	 * @see  LayeredOrganOptimizer#run()
+	 * @see  CellularAudioOptimizer#build(DesirablesProvider, int)
+	 * @see  CellularAudioOptimizer#init
+	 * @see  CellularAudioOptimizer#run()
 	 */
 	public static void main(String args[]) throws FileNotFoundException {
 		CLComputeContext.enableFastQueue = true;
@@ -225,7 +237,7 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.enableBreeding = verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
+		HealthCallable.setComputeRequirements(ComputeRequirement.C);
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
@@ -233,18 +245,24 @@ public class LayeredOrganOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
-		Stream.of(new File(LIBRARY).listFiles()).map(f -> {
-			try {
-				if (".DS_Store".equals(f.getName())) return null;
-				return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
-			} catch (Exception e) {
-				System.out.println("Error loading " + f.getName());
-				e.printStackTrace();
-				return null;
-			}
-		}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
+		if (enableStems) {
+			Waves sources = new Waves();
+			sources.addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, 0.5, 1.0, 2.0, 4.0, 8.0);
+			provider.getWaves().addAll(sources.getAllBanks());
+		} else {
+			Stream.of(new File(LIBRARY).listFiles()).map(f -> {
+				try {
+					if (".DS_Store".equals(f.getName())) return null;
+					return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
+				} catch (Exception e) {
+					System.out.println("Error loading " + f.getName());
+					e.printStackTrace();
+					return null;
+				}
+			}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
+		}
 
-		LayeredOrganOptimizer opt = build(provider, PopulationOptimizer.enableBreeding ? 25 : 1);
+		CellularAudioOptimizer opt = build(provider, PopulationOptimizer.enableBreeding ? 25 : 1);
 		opt.init();
 		opt.run();
 	}

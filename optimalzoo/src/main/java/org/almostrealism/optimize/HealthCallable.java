@@ -39,6 +39,9 @@ public class HealthCallable<T extends Temporal, S extends HealthScore> implement
 				if (healthListener != null) {
 					healthListener.accept(health);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw e;
 			} finally {
 				this.health.reset();
 				this.cleanup.run();

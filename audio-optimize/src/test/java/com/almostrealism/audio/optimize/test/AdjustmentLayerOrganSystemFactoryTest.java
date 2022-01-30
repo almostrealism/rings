@@ -20,7 +20,7 @@ import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.time.TemporalRunner;
-import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
+import com.almostrealism.audio.optimize.CellularAudioOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
@@ -126,7 +126,7 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 
 	public Cells randomLayeredOrgan(DesirablesProvider desirables,  List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
 		DefaultAudioGenome g = new DefaultAudioGenome(2, 2);
-		g.assignTo(LayeredOrganOptimizer.generator(2, 2).get().get());
+		g.assignTo(CellularAudioOptimizer.generator(2, 2).get().get());
 		return factory(desirables).generateOrgan((Genome) g, measures, meter);
 	}
 

@@ -20,7 +20,7 @@ import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.time.TemporalRunner;
-import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
+import com.almostrealism.audio.optimize.CellularAudioOptimizer;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.audio.optimize.DefaultAudioGenome;
 import com.almostrealism.sound.DefaultDesirablesProvider;
@@ -32,7 +32,6 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.ArrayListChromosome;
@@ -158,7 +157,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	}
 
 	public Cells randomOrgan(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output) {
-		LayeredOrganOptimizer.GeneratorConfiguration conf = new LayeredOrganOptimizer.GeneratorConfiguration();
+		CellularAudioOptimizer.GeneratorConfiguration conf = new CellularAudioOptimizer.GeneratorConfiguration();
 		conf.minDelay = delay;
 		conf.maxDelay = delay;
 		conf.minTransmission = feedbackParam;
@@ -168,7 +167,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 		conf.minLowPass = 20000;
 		conf.maxLowPass = 20000;
 
-		Genome g = LayeredOrganOptimizer.generator(2, 2, conf).get().get();
+		Genome g = CellularAudioOptimizer.generator(2, 2, conf).get().get();
 		System.out.println(g);
 
 		DefaultAudioGenome sog = new DefaultAudioGenome(2, 2);

@@ -87,6 +87,16 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			}));
 		}
 
+		if (!provider.getWaves().isEmpty()) {
+			provider.getWaves().forEach(f -> choices.add(g -> {
+				WaveData data = new WaveData(f, OutputLine.sampleRate);
+				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
+				temporals.add(tf);
+				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
+				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, data).get(0);
+			}));
+		}
+
 		Function<Gene<Scalar>, PolymorphicAudioCell> generator = g ->
 				new PolymorphicAudioCell(
 						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),

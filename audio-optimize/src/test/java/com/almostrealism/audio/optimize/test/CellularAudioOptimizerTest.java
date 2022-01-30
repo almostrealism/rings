@@ -21,7 +21,7 @@ import com.almostrealism.audio.filter.test.AssignableGenomeTest;
 import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.audio.optimize.AudioPopulationOptimizer;
-import com.almostrealism.audio.optimize.LayeredOrganOptimizer;
+import com.almostrealism.audio.optimize.CellularAudioOptimizer;
 import com.almostrealism.audio.optimize.LayeredOrganPopulation;
 import com.almostrealism.audio.optimize.GeneticTemporalFactoryFromDesirables;
 import com.almostrealism.sound.DefaultDesirablesProvider;
@@ -48,13 +48,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
+public class CellularAudioOptimizerTest extends AssignableGenomeTest {
 	protected Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> factorySupplier() {
 		DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 		return () -> new GeneticTemporalFactoryFromDesirables().from(desirables);
 	}
 
-	protected LayeredOrganOptimizer optimizer() {
+	protected CellularAudioOptimizer optimizer() {
 		int sources = 2;
 		int delayLayers = 2;
 		int cycles = 1;
@@ -67,7 +67,7 @@ public class LayeredOrganOptimizerTest extends AssignableGenomeTest {
 
 		Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> factorySupplier = factorySupplier();
 
-		LayeredOrganOptimizer optimizer = new LayeredOrganOptimizer(null, () -> {
+		CellularAudioOptimizer optimizer = new CellularAudioOptimizer(null, () -> {
 			return new DefaultGenomeBreeder(
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // GENERATORS
 					Breeders.averageBreeder(),  									   // VOLUME

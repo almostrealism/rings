@@ -16,9 +16,11 @@
 
 package com.almostrealism.audio;
 
+import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.time.Frequency;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Set;
 
 public interface DesirablesProvider {
@@ -27,4 +29,6 @@ public interface DesirablesProvider {
 	Set<Frequency> getFrequencies();
 
 	Set<File> getSamples();
+
+	Collection<ScalarBank> getWaves();
 }

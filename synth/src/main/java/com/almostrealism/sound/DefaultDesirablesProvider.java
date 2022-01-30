@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,21 @@ import com.almostrealism.tone.DefaultKeyboardTuning;
 import com.almostrealism.tone.KeyPosition;
 import com.almostrealism.tone.KeyboardTuning;
 import com.almostrealism.tone.Scale;
+import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.time.Frequency;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements DesirablesProvider {
 	private final double bpm;
 	private final Set<Frequency> frequencies;
 	private final Set<File> samples;
+	private final List<ScalarBank> waves;
 
 	public DefaultDesirablesProvider(double bpm) {
 		this(bpm, Scale.of());
@@ -45,6 +50,7 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 		this.frequencies = new HashSet<>();
 		this.frequencies.addAll(tuning.getTones(scale));
 		this.samples = new HashSet<>();
+		this.waves = new ArrayList<>();
 	}
 
 	@Override
@@ -55,4 +61,7 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 
 	@Override
 	public Set<File> getSamples() { return samples; }
+
+	@Override
+	public Collection<ScalarBank> getWaves() { return waves; }
 }
