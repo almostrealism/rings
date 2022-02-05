@@ -53,8 +53,8 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 
 	public static OptionalInt targetGenome = OptionalInt.empty();
 
-	public static int popSize = 60;
-	public static int maxChildren = popSize + 5;
+	public static int popSize = 100;
+	public static int maxChildren = (int) (popSize * 1.10);
 	public static double secondaryOffspringPotential = 0.25;
 	public static double tertiaryOffspringPotential = 0.25;
 	public static double quaternaryOffspringPotential = 0.25;

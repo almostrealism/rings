@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
@@ -54,53 +55,65 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableEfx = true;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
-		List<Function<Gene<Scalar>, ScalarTemporalCellAdapter>> choices = new ArrayList<>();
-
-		if (!provider.getFrequencies().isEmpty()) {
-			provider.getFrequencies().forEach(f -> choices.add(g -> (ScalarTemporalCellAdapter) w(f).get(0)));
-		}
+//		List<Function<Gene<Scalar>, ScalarTemporalCellAdapter>> choices = new ArrayList<>();
+//
+//		if (!provider.getFrequencies().isEmpty()) {
+//			provider.getFrequencies().forEach(f -> choices.add(g -> (ScalarTemporalCellAdapter) w(f).get(0)));
+//		}
 
 		List<TemporalFactor<Scalar>> temporals = new ArrayList<>();
 
-		if (!provider.getSamples().isEmpty()) {
-			List<WaveData> samples = provider.getSamples().stream().map(s -> {
-				try {
-					WaveData d = WaveData.load(s);
+//		if (!provider.getSamples().isEmpty()) {
+//			List<WaveData> samples = provider.getSamples().stream().map(s -> {
+//				try {
+//					WaveData d = WaveData.load(s);
+//
+//					if (d.getSampleRate() != OutputLine.sampleRate) {
+//						System.out.println("WARN: The sample rate of " + s.getName() + " (" + d.getSampleRate() + ") is not " + OutputLine.sampleRate);
+//						return null;
+//					}
+//
+//					return d;
+//				} catch (IOException e) {
+//					System.out.println("WARN: Unable to load " + s.getName());
+//					return null;
+//				}
+//			}).filter(Objects::nonNull).collect(Collectors.toList());
+//
+//			samples.forEach(f -> choices.add(g -> {
+//				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
+//				temporals.add(tf);
+//				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
+//				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
+//			}));
+//		}
+//
+//		if (!provider.getWaves().isEmpty()) {
+//			provider.getWaves().forEach(f -> choices.add(g -> {
+//				WaveData data = new WaveData(f, OutputLine.sampleRate);
+//				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
+//				temporals.add(tf);
+//				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
+//				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, data).get(0);
+//			}));
+//		}
 
-					if (d.getSampleRate() != OutputLine.sampleRate) {
-						System.out.println("WARN: The sample rate of " + s.getName() + " (" + d.getSampleRate() + ") is not " + OutputLine.sampleRate);
-						return null;
-					}
+//		Function<Gene<Scalar>, PolymorphicAudioCell> generator = g ->
+//				new PolymorphicAudioCell(
+//						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
+//						choices.stream().map(c -> c.apply(g)).collect(Collectors.toList()));
 
-					return d;
-				} catch (IOException e) {
-					System.out.println("WARN: Unable to load " + s.getName());
-					return null;
-				}
-			}).filter(Objects::nonNull).collect(Collectors.toList());
-
-			samples.forEach(f -> choices.add(g -> {
+		Function<Gene<Scalar>, WaveCell> generator = g -> {
 				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
 				temporals.add(tf);
-				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
-			}));
-		}
 
-		if (!provider.getWaves().isEmpty()) {
-			provider.getWaves().forEach(f -> choices.add(g -> {
-				WaveData data = new WaveData(f, OutputLine.sampleRate);
-				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
-				temporals.add(tf);
 				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, data).get(0);
-			}));
-		}
 
-		Function<Gene<Scalar>, PolymorphicAudioCell> generator = g ->
-				new PolymorphicAudioCell(
-						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
-						choices.stream().map(c -> c.apply(g)).collect(Collectors.toList()));
+				return provider.getWaves().getChoiceCell(
+						g.valueAt(0).getResultant(Ops.ops().v(1.0)),
+						g.valueAt(1).getResultant(duration),
+						enableRepeat ? duration : null);
+		};
 
 		return (genome, measures, output) -> {
 			Supplier<Runnable> genomeSetup = genome instanceof Setup ? ((Setup) genome).setup() : () -> () -> { };

@@ -19,6 +19,7 @@ package com.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -55,7 +56,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
 public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 3;
+	public static final int verbosity = 0;
 	public static final boolean enableStems = true;
 
 	public static String LIBRARY = "Library";
@@ -237,7 +238,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.enableBreeding = verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-		HealthCallable.setComputeRequirements(ComputeRequirement.C);
+		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
@@ -246,20 +247,21 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
 		if (enableStems) {
-			Waves sources = new Waves();
-			sources.addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, 0.5, 1.0, 2.0, 4.0, 8.0);
-			provider.getWaves().addAll(sources.getAllBanks());
+			provider.getWaves().addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, 1.0, 2.0, 4.0);
+//			provider.getWaves().addSplits(List.of(new File("/Users/michael/AlmostRealism/ringsdesktop/Stems/001 Kicks 1.7_1.wav")),
+//					116.0, 1.0);
 		} else {
-			Stream.of(new File(LIBRARY).listFiles()).map(f -> {
-				try {
-					if (".DS_Store".equals(f.getName())) return null;
-					return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
-				} catch (Exception e) {
-					System.out.println("Error loading " + f.getName());
-					e.printStackTrace();
-					return null;
-				}
-			}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
+//			Stream.of(new File(LIBRARY).listFiles()).map(f -> {
+//				try {
+//					if (".DS_Store".equals(f.getName())) return null;
+//					return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
+//				} catch (Exception e) {
+//					System.out.println("Error loading " + f.getName());
+//					e.printStackTrace();
+//					return null;
+//				}
+//			}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
+			throw new UnsupportedOperationException();
 		}
 
 		CellularAudioOptimizer opt = build(provider, PopulationOptimizer.enableBreeding ? 25 : 1);

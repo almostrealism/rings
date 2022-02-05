@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.CellFeatures;
@@ -137,8 +138,27 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
 	}
 
+	public static double[] repeatForFactor(Factor<Scalar> f) {
+		double v = Ops.ops().v(16)
+				.multiply(Ops.ops().v(-0.5).add(f.getResultant(Ops.ops().v(1.0)))).get().evaluate().getValue();
+
+		if (v == 0) {
+			return new double[] { 1.0, 1.0 };
+		} else if (v > 0) {
+			return new double[] { Math.pow(2.0, v), 1.0 };
+		} else if (v < 0) {
+			return new double[] { 1.0, Math.pow(2.0, -v) };
+		}
+
+		return null;
+	}
+
 	public static double factorForRepeatSpeedUpDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double repeatSpeedUpDurationForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
 	}
 
 	public static double factorForPeriodicFilterUpDuration(double seconds) {
@@ -149,6 +169,10 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
 	}
 
+	public static double polyFilterUpDurationForFactor(Factor<Scalar> factor) {
+		return HeredityFeatures.getInstance().oneToInfinity(factor, 3).get().evaluate().getValue() * 60;
+	}
+
 	public static double factorForPolyFilterUpExponent(double exp) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(exp, 10, 1);
 	}
@@ -157,32 +181,64 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
 	}
 
+	public static double delayForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
+	}
+
 	public static double factorForSpeedUpDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double speedUpDurationForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
 	}
 
 	public static double factorForSpeedUpPercentage(double decimal) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(decimal, 10, 0.5);
 	}
 
+	public static double speedUpPercentageForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 0.5).get().evaluate().getValue() * 10;
+	}
+
 	public static double factorForSlowDownDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double slowDownDurationForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
 	}
 
 	public static double factorForSlowDownPercentage(double decimal) {
 		return decimal;
 	}
 
+	public static double slowDownPercentageForFactor(Factor<Scalar> f) {
+		return f.getResultant(Ops.ops().v(1.0)).get().evaluate().getValue();
+	}
+
 	public static double factorForPolySpeedUpDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public static double polySpeedUpDurationForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
 	}
 
 	public static double factorForPolySpeedUpExponent(double exp) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(exp, 10, 1);
 	}
 
+	public static double polySpeedUpExponentForFactor(Factor<Scalar> f) {
+		return HeredityFeatures.getInstance().oneToInfinity(f, 1).get().evaluate().getValue() * 10;
+	}
+
 	public static double factorForFilterFrequency(double hertz) {
 		return hertz / 20000;
+	}
+
+	public static double filterFrequencyForFactor(Factor<Scalar> f) {
+		return f.getResultant(Ops.ops().v(1.0)).get().evaluate().getValue() * 20000;
 	}
 
 	protected class GeneratorChromosome extends WavCellChromosomeExpansion {

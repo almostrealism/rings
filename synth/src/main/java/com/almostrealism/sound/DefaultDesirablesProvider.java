@@ -22,6 +22,7 @@ import com.almostrealism.tone.KeyPosition;
 import com.almostrealism.tone.KeyboardTuning;
 import com.almostrealism.tone.Scale;
 import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.audio.Waves;
 import org.almostrealism.time.Frequency;
 
 import java.io.File;
@@ -34,8 +35,7 @@ import java.util.Set;
 public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements DesirablesProvider {
 	private final double bpm;
 	private final Set<Frequency> frequencies;
-	private final Set<File> samples;
-	private final List<ScalarBank> waves;
+	private final Waves waves;
 
 	public DefaultDesirablesProvider(double bpm) {
 		this(bpm, Scale.of());
@@ -49,8 +49,7 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 		this.bpm = bpm;
 		this.frequencies = new HashSet<>();
 		this.frequencies.addAll(tuning.getTones(scale));
-		this.samples = new HashSet<>();
-		this.waves = new ArrayList<>();
+		this.waves = new Waves();
 	}
 
 	@Override
@@ -60,8 +59,5 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 	public Set<Frequency> getFrequencies() { return frequencies; }
 
 	@Override
-	public Set<File> getSamples() { return samples; }
-
-	@Override
-	public Collection<ScalarBank> getWaves() { return waves; }
+	public Waves getWaves() { return waves; }
 }
