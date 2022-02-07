@@ -424,7 +424,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		}
 	}
 
-	protected class DelayChromosome extends WavCellChromosomeExpansion {
+	public class DelayChromosome extends WavCellChromosomeExpansion {
 		public DelayChromosome(int index) {
 			super(data.valueAt(index), data.length(index), 7, sampleRate);
 			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(v(1.0)), 3.0).multiply(v(60.0)));
@@ -514,7 +514,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 				} else if (factor == 1) {
 					return offsetChoices[(int) (Math.random() * offsetChoices.length)];
 				} else if (factor == 2) {
-					return repeatChoices[(int) (Math.random() * repeatChoices.length)];
+					return factorForRepeat(repeatChoices[(int) (Math.random() * repeatChoices.length)]);
 				} else if (factor == 3) {
 					double min = factorForRepeatSpeedUpDuration(repeatSpeedUpDurationMin);
 					double max = factorForRepeatSpeedUpDuration(repeatSpeedUpDurationMax);

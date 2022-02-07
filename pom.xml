@@ -32,6 +32,7 @@
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>openai</module>
+		<module>keyframing</module>
 	</modules>
 
 	<!-- Output to jar format -->
