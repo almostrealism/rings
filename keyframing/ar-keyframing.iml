@@ -40,6 +40,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="ar-torch" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacv:1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.19-1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:opencv:4.5.5-1.5.7-SNAPSHOT" level="project" />
