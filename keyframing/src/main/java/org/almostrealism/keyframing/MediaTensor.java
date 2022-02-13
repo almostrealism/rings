@@ -1,91 +1,116 @@
 package org.almostrealism.keyframing;
 
-import org.almostrealism.texture.GraphicsConverter;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class MediaTensor {
-	public static final int histogramBuckets = 64;
+	private MediaProvider media;
+	private KeyFramer keyFramer;
+	private Map<Integer, BufferedImage> frames;
 
-	private double fps;
-	private List<BufferedImage> frames;
+	private List<KeyFrame> keyFrames;
 
-	private int keyFrameCollapseWindow;
-	private List<double[]> histograms;
-	private List<Integer> keyFrames;
-	private List<Integer> collapsedKeyFrames;
-
-	private MediaTensor(List<BufferedImage> frames, double fps) {
-		this.frames = frames;
-		this.fps = fps;
-		// this.keyFrameCollapseWindow = (int) fps;
-		this.keyFrameCollapseWindow = 6;
-		computeHistograms();
-		computeKeyFrames();
-		collapseKeyFrames();
+	public MediaTensor() {
+		frames = new HashMap<>();
 	}
 
-	public Image getFrame(int index) { return frames.get(index); }
-
-	public double getFrameRate() { return fps; }
-
-	public int getCount() { return frames.size(); }
-
-	public List<Integer> getCollapsedKeyFrames() {
-		return collapsedKeyFrames;
+	private MediaTensor(MediaProvider media, double salientRatio, double collapseWindowSeconds) {
+		this.media = media;
+		this.frames = new HashMap<>();
+		initKeyFramer(salientRatio, collapseWindowSeconds);
 	}
 
-	public static MediaTensor load(String movieFile, int maxFrames) throws FFmpegFrameGrabber.Exception {
-		FFmpegFrameGrabber g = new FFmpegFrameGrabber(movieFile);
-		g.start();
-		double fps = g.getVideoFrameRate();
+	@JsonIgnore
+	public void setMedia(MediaProvider media) { this.media = media; }
 
-		int total = Math.min(maxFrames, g.getLengthInFrames());
+	@JsonIgnore
+	public MediaProvider getMedia() { return media; }
 
-		MediaPreprocessor prep = new MediaPreprocessor();
+	public BufferedImage getFrame(int index) { return frames.get(index); }
 
-		return new MediaTensor(IntStream.range(0, total).mapToObj(i -> {
-			try {
-				return prep.convertFrameToBuffer(g.grab());
-			} catch (FFmpegFrameGrabber.Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}).filter(Objects::nonNull).collect(Collectors.toList()), fps);
+	public void initKeyFramer(double salientRatio, double collapseWindowSeconds) {
+		this.keyFramer = new KeyFramer(salientRatio / media.getFrameRate(), (int) (collapseWindowSeconds * media.getFrameRate()));
 	}
 
-	private void computeHistograms() {
-		histograms = frames.stream().map(f ->
-					GraphicsConverter.histogram(f, 0, 0, f.getWidth(), f.getHeight(), histogramBuckets))
-				.collect(Collectors.toList());
+	public void loadAllFrames() {
+		loadFrames(0, getMedia().getCount());
 	}
 
-	private void computeKeyFrames() {
-		keyFrames = new KeyFramer().process(histograms);
+	public void loadFrames(int index, int length) {
+		System.out.println("MediaTensor: Loading " + length + " frames...");
+		media.setPosition(index);
+		media.stream(true).limit(length).forEach(frame -> frames.put(frame.getFrame(), frame.getImage()));
 	}
 
-	private void collapseKeyFrames() {
-		Collections.sort(keyFrames);
+	// TODO  Remove
+	public void setSalientRatio(double salientRatio) { }
 
-		collapsedKeyFrames = new ArrayList<>();
-		int currentKeyFrame = keyFrames.get(0);
-		for (int i = 1; i < keyFrames.size(); i++) {
-			if (keyFrames.get(i) - currentKeyFrame < keyFrameCollapseWindow) {
-				currentKeyFrame = keyFrames.get(i);
-			} else {
-				collapsedKeyFrames.add(currentKeyFrame);
-				currentKeyFrame = keyFrames.get(i);
-			}
+	// TODO  Remove
+	public void setKeyFrameCollapseWindow(int keyFrameCollapseWindow) { }
+
+	public void setKeyFrames(List<KeyFrame> keyFrameData) { this.keyFrames = keyFrameData; }
+	public List<KeyFrame> getKeyFrames() { return keyFrames; }
+
+	public void computeKeyFrames() {
+		this.keyFrames = computeKeyFrames(computeHistograms());
+	}
+
+	public void ocrKeyFrames() {
+		FrameOCR ocr = new FrameOCR(media);
+		ocr.init();
+		keyFrames.forEach(frame -> frame.loadText(media, ocr));
+		keyFrames = keyFramer.reduceByTopWords(keyFrames, media.getCount());
+	}
+
+	public String asJson() throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(this);
+	}
+
+	private List<VideoImage> computeHistograms() {
+		return media.stream(true).map(frame -> {
+			frames.put(frame.getFrame(), frame.getImage());
+			return frame;
+		}).filter(VideoImage::hasImage).map(VideoImage::computeHistogram).collect(Collectors.toList());
+	}
+
+	private List<KeyFrame> computeKeyFrames(List<VideoImage> histograms) {
+		return keyFramer.process(histograms, media.getCount());
+	}
+
+	public static MediaTensor load(String movieFile, int inclusion, double salientRatio, double collapseWindowSeconds) {
+		return load(movieFile, movieFile + ".json", inclusion, salientRatio, collapseWindowSeconds);
+	}
+
+	public static MediaTensor load(String movieFile, String tensorFile, int inclusion, double salientRatio, double collapseWindowSeconds) {
+		try {
+			File existing = new File(tensorFile);
+			MediaProvider media = new MediaProvider(movieFile, 0.4, inclusion);
+			MediaTensor tensor = existing.exists() ?
+					new ObjectMapper().readValue(new File(tensorFile).toURI().toURL(), MediaTensor.class) :
+					new MediaTensor();
+			tensor.setMedia(media);
+			tensor.initKeyFramer(salientRatio, collapseWindowSeconds);
+			return tensor;
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (JsonMappingException e) {
+			throw new RuntimeException(e);
+		} catch (JsonParseException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-		System.out.println(collapsedKeyFrames.size() + " collapsed key frames");
 	}
 }

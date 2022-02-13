@@ -11,21 +11,37 @@ public class MediaPreprocessor {
 	private AffineTransform at = new AffineTransform();
 	private AffineTransformOp scaleOp;
 	private int count;
+	private double scale;
 
-	public MediaPreprocessor() {
-		at.scale(0.25, 0.25);
-		scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+	public MediaPreprocessor(double scale) {
+		this.scale = scale;
+
+		if (scale != 1.0) {
+			at.scale(scale, scale);
+			scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+		}
 	}
 
-	protected BufferedImage convertFrameToBuffer(Frame f) {
+	protected BufferedImage convertFrameToBuffer(Frame f, boolean enableScale) {
+		if (f == null) {
+			System.out.println("WARN: Null frame");
+			return null;
+		}
+
+		if (!f.getTypes().contains(Frame.Type.VIDEO)) return null;
 		count++;
 
 		try {
 			BufferedImage before = new Java2DFrameConverter().convert(f);
-			int w = before.getWidth();
-			int h = before.getHeight();
-			BufferedImage after = new BufferedImage(w / 4, h / 4, BufferedImage.TYPE_INT_ARGB);
-			return scaleOp.filter(before, after);
+
+			if (scaleOp == null || !enableScale) {
+				return before;
+			} else {
+				int w = before.getWidth();
+				int h = before.getHeight();
+				BufferedImage after = new BufferedImage((int) (w * scale), (int) (h * scale), BufferedImage.TYPE_INT_ARGB);
+				return scaleOp.filter(before, after);
+			}
 		} finally {
 			if (count % 100 == 0) {
 				System.out.println("MediaPreprocessor: " + count + " frames processed");

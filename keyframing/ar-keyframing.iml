@@ -56,10 +56,6 @@
     <orderEntry type="library" name="Maven: org.bytedeco:flandmark:1.07-1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:leptonica:1.82.0-1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:tesseract:5.0.1-1.5.7-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:11" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacv-platform:1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.19-1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:android-arm:0.3.19-1.5.7-SNAPSHOT" level="project" />
@@ -225,17 +221,27 @@
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:macosx-x86_64:1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86:1.5.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:windows-x86_64:1.5.7-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:mkl-dnn:0.21.5-1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:mkl-dnn-platform:0.21.5-1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:mkl-dnn:linux-x86_64:0.21.5-1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:mkl-dnn:macosx-x86_64:0.21.5-1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:mkl-dnn:windows-x86_64:0.21.5-1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.jwordnet:jwnl:1.4_rc3" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="module" module-name="ar-treeview" />
     <orderEntry type="module" module-name="ar-swing" />
     <orderEntry type="module" module-name="ar-color" />
     <orderEntry type="module" module-name="ar-stats" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac:14" level="project" />
     <orderEntry type="module" module-name="ar-graphpersist" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.2" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.dcache:nfs4j-core:0.10.6" level="project" />
     <orderEntry type="library" name="Maven: jline:jline:1.0" level="project" />
