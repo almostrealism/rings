@@ -11,7 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ar-raytracer" />
+    <orderEntry type="library" name="Maven: com.almostrealism:ar-raytracer:0.17" level="project" />
     <orderEntry type="module" module-name="gl" />
     <orderEntry type="module" module-name="ui" />
     <orderEntry type="module" module-name="ar-primitives" />
