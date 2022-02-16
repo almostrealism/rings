@@ -18,6 +18,9 @@ package com.almostrealism.audio.optimize.test;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.filter.test.AdjustableDelayCellTest;
+import org.almostrealism.algebra.ScalarBankHeap;
+import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.Waves;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.CellularAudioOptimizer;
@@ -41,6 +44,7 @@ import org.almostrealism.heredity.Genome;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -75,28 +79,42 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	}
 
 	protected DefaultDesirablesProvider samples() {
-		DefaultDesirablesProvider desirables = new DefaultDesirablesProvider(120);
-		desirables.getSamples().add(new File(sampleFile1));
-		desirables.getSamples().add(new File(sampleFile2));
-		return desirables;
+		try {
+			DefaultDesirablesProvider desirables = new DefaultDesirablesProvider(120);
+			desirables.getWaves().getChildren().add(Waves.loadAudio(new File(sampleFile1)));
+			desirables.getWaves().getChildren().add(Waves.loadAudio(new File(sampleFile2)));
+			return desirables;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
-		return organ(desirables, measures, meter, enableFilter);
+	protected DefaultDesirablesProvider sources() {
+		try {
+			DefaultDesirablesProvider desirables = new DefaultDesirablesProvider(116);
+			desirables.getWaves().getChildren().add(Waves.load(new File("/Users/michael/AlmostRealism/ringsdesktop/sources.json")));
+			return desirables;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	protected Cells organ(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
+	protected Cells cells(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> meter) {
+		return cells(desirables, measures, meter, enableFilter);
+	}
+
+	protected Cells cells(DesirablesProvider desirables, List<? extends Receptor<Scalar>> measures, Receptor<Scalar> output, boolean filter) {
 		ArrayListChromosome<Scalar> generators = new ArrayListChromosome();
-		generators.add(g(0.4, 0.5,
+		generators.add(g(0.2, 0.5,
 				DefaultAudioGenome.factorForRepeat(1),
 				DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
-		generators.add(g(0.8, 0.0,
-				DefaultAudioGenome.factorForRepeat(4),
+		generators.add(g(0.5, 0.0,
+				DefaultAudioGenome.factorForRepeat(1),
 				DefaultAudioGenome.factorForRepeatSpeedUpDuration(180)));
 
 		ArrayListChromosome<Scalar> volume = new ArrayListChromosome();
-		volume.add(g(0.0, 0.0));
-		volume.add(g(0.0, 1.0));
+		volume.add(g(0.7, 0.0));
+		volume.add(g(2.5, 1.0));
 
 		ArrayListChromosome<Scalar> mainFilterUp = new ArrayListChromosome<>();
 		IntStream.range(0, 2).mapToObj(i ->
@@ -181,22 +199,27 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 	@Test
 	public void withOutput() {
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = false;
+		GeneticTemporalFactoryFromDesirables.enableEfxFilters = false;
+		GeneticTemporalFactoryFromDesirables.enableEfx = false;
+
+		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/genetic-factory-test.wav")).get(0);
-		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
+		Cells organ = cells(sources(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
 		organ.sec(6).get().run();
 		((WaveOutput) out.getReceptor()).write().get().run();
 	}
 
 	public void comparison(boolean twice) {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-test-a.wav")).get(0);
-		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/genetic-factory-test-a.wav")).get(0);
+		Cells organ = cells(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 		organ.reset();
 
 		CellList list = poly(2, PolymorphicAudioData::new, i -> v(0.5), sampleFile1, sampleFile2)
 				 .d(i -> v(delay))
 //				 .m(fc(i -> hp(2000, 0.1)),
 //						c(g(0.0, feedbackParam), g(feedbackParam, 0.0)))
-				.o(i -> new File("organ-factory-test-b" + i + ".wav"));
+				.o(i -> new File("results/genetic-factory-test-b" + i + ".wav"));
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		Runnable listRun = list.sec(8).get();
@@ -213,7 +236,10 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	}
 
 	@Test
-	public void comparisonOnce() { comparison(false); }
+	public void comparisonOnce() {
+		WavFile.setHeap(() -> new ScalarBankHeap(600 * OutputLine.sampleRate), ScalarBankHeap::destroy);
+		comparison(false);
+	}
 
 	@Test
 	public void comparisonTwice() { comparison(true); }
@@ -221,7 +247,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 	@Test
 	public void many() {
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
-		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
+		Cells organ = cells(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 
 		Runnable run = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 

@@ -66,7 +66,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		// WaveOutput output3 = new WaveOutput(new File("health/health-test-firstcell-processed.wav"));
 		// WaveOutput output4 = new WaveOutput(new File("health/health-test-lastcell-processed.wav"));
 
-		CellList organ = (CellList) organ(notes(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), null);
+		CellList organ = (CellList) cells(notes(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), null);
 		((CellAdapter) organ.get(0)).setMeter(output1);
 		((CellAdapter) organ.get(1)).setMeter(output2);
 
@@ -97,7 +97,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 			health.setMaxDuration(8);
 			health.setOutputFile(() -> "health/simple-organ-notes-test" + index.incrementAndGet() + ".wav");
 
-			Cells organ = organ(notes(), health.getMeasures(), health.getOutput(), false);
+			Cells organ = cells(notes(), health.getMeasures(), health.getOutput(), false);
 			organ.reset();
 			health.setTarget(organ);
 			health.computeHealth();
@@ -113,7 +113,7 @@ public class StableDurationHealthComputationTest extends LayeredOrganPopulationT
 		StableDurationHealthComputation health = new StableDurationHealthComputation();
 		health.setOutputFile("health/simple-organ-samples-test.wav");
 
-		Cells organ = organ(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), health.getOutput());
+		Cells organ = cells(samples(), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), health.getOutput());
 
 		health.setTarget(organ);
 		health.computeHealth();

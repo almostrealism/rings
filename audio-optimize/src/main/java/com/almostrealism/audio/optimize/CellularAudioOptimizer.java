@@ -247,7 +247,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
 		if (enableStems) {
-			provider.getWaves().addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, 1.0, 2.0, 4.0);
+			provider.getWaves().addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, Math.pow(10, -6), 1.0, 2.0, 4.0);
 //			provider.getWaves().addSplits(List.of(new File("/Users/michael/AlmostRealism/ringsdesktop/Stems/001 Kicks 1.7_1.wav")),
 //					116.0, 1.0);
 		} else {
