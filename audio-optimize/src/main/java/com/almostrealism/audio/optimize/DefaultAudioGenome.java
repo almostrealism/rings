@@ -62,6 +62,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 
 	private GeneratorChromosome generatorChromosome;
 	private AdjustmentChromosome mainFilterUpChromosome;
+	private AdjustmentChromosome wetInChromosome;
 	private DelayChromosome delayChromosome;
 
 	public DefaultAudioGenome(int sources, int delayLayers) {
@@ -87,6 +88,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS);
 		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP);
+		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN);
 		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS);
 	}
 
@@ -114,6 +116,8 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 			return generatorChromosome;
 		} else if (pos == MAIN_FILTER_UP) {
 			return mainFilterUpChromosome;
+		} else if (pos == WET_IN) {
+			return wetInChromosome;
 		} else if (pos == PROCESSORS) {
 			return delayChromosome;
 		} else if (pos == FX_FILTERS) {
@@ -127,6 +131,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
 		setup.add(mainFilterUpChromosome.expand());
+		setup.add(wetInChromosome.expand());
 		setup.add(delayChromosome.expand());
 		return setup;
 	}
@@ -262,79 +267,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		}
 	}
 
-	protected class LegacyGeneratorChromosome implements Chromosome<Scalar> {
-		private final int index;
-
-		public LegacyGeneratorChromosome(int index) {
-			this.index = index;
-		}
-
-		@Override
-		public int length() {
-			return data.length(index);
-		}
-
-		@Override
-		public Gene<Scalar> valueAt(int pos) {
-			return new GeneratorGene(index, pos);
-		}
-	}
-
-	protected class GeneratorGene implements Gene<Scalar> {
-		private final int chromosome;
-		private final int index;
-
-		public GeneratorGene(int chromosome, int index) {
-			this.chromosome = chromosome;
-			this.index = index;
-		}
-
-		@Override
-		public int length() { return 4; }
-
-		@Override
-		public Factor<Scalar> valueAt(int pos) {
-			if (pos < 2) {
-				// Choice & Offset (0.0 to 1.0)
-				return protein -> data.valueAt(chromosome, index, pos).getResultant(protein);
-			} else {
-				// Repeat
-				/*
-				ScalarBank time = timeline.getValue();
-
-				KernelList values = new KernelList<Scalar>(ScalarBank::new, ScalarTable::new, p -> {
-					ScalarProducer repeat = scalar(p, 0);
-					ScalarProducer speedUpDuration = scalar(p, 1);
-
-					ScalarProducer initial = pow(v(2.0), v(16).multiply(v(-0.5).add(repeat)));
-					ScalarProducer speedUp = oneToInfinity(speedUpDuration, 3).multiply(60);
-
-					Producer<Scalar> in = value(Scalar.class, 0);
-					// return initial.multiply(pow(v(2.0), floor(speedUp.pow(-1.0).multiply(in))));
-					return initial;
-				}, 1, 2);
-				values.setInput(time);
-
-				Producer<Scalar> repeat = data.valueAt(chromosome, index, 2).getResultant(v(1.0));
-				Producer<Scalar> speedUpDuration = data.valueAt(chromosome, index, 3).getResultant(v(1.0));
-				values.setParameters(0, scalars(repeat, speedUpDuration));
-
-				WavCell generator = new WavCell((ScalarBank) values.valueAt(0), sampleRate);
-				generator.addSetup(values);
-
-				Scalar v = new Scalar();
-				return generator.toFactor(() -> v, DefaultAudioGenome.this::a, DefaultAudioGenome.this::scalarsMultiply);
-				*/
-
-				return protein ->
-					pow(v(2.0), v(16).multiply(v(-0.5)
-								.add(data.valueAt(chromosome, index, pos).getResultant(v(1.0)))))
-							.multiply(protein);
-			}
-		}
-	}
-
-	protected class AdjustmentChromosome extends WavCellChromosomeExpansion {
+	public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 		public AdjustmentChromosome(int index) {
 			super(data.valueAt(index), data.length(index), 3, sampleRate);
 			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(60.0));
@@ -353,77 +286,6 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		}
 	}
 
-	protected class LegacyAdjustmentChromosome implements Chromosome<Scalar> {
-		private final int index;
-
-		public LegacyAdjustmentChromosome(int index) {
-			this.index = index;
-		}
-
-		@Override
-		public int length() {
-			return data.length(index);
-		}
-
-		@Override
-		public Gene<Scalar> valueAt(int pos) {
-			return new AdjustmentGene(index, pos);
-		}
-	}
-
-	protected class AdjustmentGene implements Gene<Scalar> {
-		private final int chromosome;
-		private final int index;
-
-		public AdjustmentGene(int chromosome, int index) {
-			this.chromosome = chromosome;
-			this.index = index;
-		}
-
-		@Override
-		public int length() { return 1; }
-
-		@Override
-		public Factor<Scalar> valueAt(int pos) {
-			Producer<Scalar> periodicDuration = data.valueAt(chromosome, index, 0).getResultant(v(1.0));
-			Producer<Scalar> polyDuration = data.valueAt(chromosome, index, 1).getResultant(v(1.0));
-			Producer<Scalar> polyExponent = data.valueAt(chromosome, index, 2).getResultant(v(1.0));
-
-			SineWaveCell periodicGenerator = new SineWaveCell();
-			ScalarProducer periodicWavelength = oneToInfinity(periodicDuration, 3).multiply(60);
-			ScalarProducer periodicAmp = v(1.0);
-			periodicGenerator.setNoteLength(0);
-			periodicGenerator.addSetup(periodicGenerator.setFreq(periodicWavelength.pow(-1.0)));
-			periodicGenerator.addSetup(periodicGenerator.setAmplitude(periodicAmp));
-
-			PolynomialCell polyGenerator = new PolynomialCell();
-			ScalarProducer polyWaveLength = oneToInfinity(polyDuration, 3).multiply(60);
-			ScalarProducer polyExp = oneToInfinity(polyExponent, 1).multiply(10);
-			polyGenerator.addSetup(polyGenerator.setWaveLength(polyWaveLength));
-			polyGenerator.addSetup(polyGenerator.setExponent(polyExp));
-
-			Scalar periodic = new Scalar(0.0);
-			CellularTemporalFactor<Scalar> periodicFactor =
-					periodicGenerator.toFactor(() -> periodic, DefaultAudioGenome.this::a)
-							.andThen(v -> v(1.0).add(pow(v, 2.0)));
-
-			Scalar poly = new Scalar(0.0);
-			CellularTemporalFactor<Scalar> polyFactor =
-					polyGenerator.toFactor(() -> poly, DefaultAudioGenome.this::a);
-
-			/*
-			return new CombinedFactor<>(periodicFactor, polyFactor) {
-				@Override
-				public Producer<Scalar> getResultant(Producer<Scalar> value) {
-					return scalarsMultiply(getA().getResultant(value), getB().getResultant(value));
-				}
-			};
-			 */
-
-			return polyFactor;
-		}
-	}
-
 	public class DelayChromosome extends WavCellChromosomeExpansion {
 		public DelayChromosome(int index) {
 			super(data.valueAt(index), data.length(index), 7, sampleRate);
@@ -436,9 +298,9 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(v(1.0)), 1.0).multiply(v(10.0)));
 			addFactor(g -> g.valueAt(0).getResultant(v(1.0)));
 			addFactor((p, in) -> {
-				ScalarProducer speedUpWavelength = scalar(p, 1);
+				ScalarProducer speedUpWavelength = scalar(p, 1).multiply(2.0);
 				ScalarProducer speedUpAmp = scalar(p, 2);
-				ScalarProducer slowDownWavelength = scalar(p, 3);
+				ScalarProducer slowDownWavelength = scalar(p, 3).multiply(2.0);
 				ScalarProducer slowDownAmp = scalar(p, 4);
 				ScalarProducer polySpeedUpWaveLength = scalar(p, 5);
 				ScalarProducer polySpeedUpExp = scalar(p, 6);

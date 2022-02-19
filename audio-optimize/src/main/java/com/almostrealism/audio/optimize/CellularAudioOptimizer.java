@@ -18,6 +18,7 @@ package com.almostrealism.audio.optimize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +58,6 @@ import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
 public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
-	public static final boolean enableStems = true;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -129,10 +129,19 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 1, overallFilterUpDurationRange));
 			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 2, overallFilterUpExponentRange));
 
-			wetIn.setChromosomeSize(sources, delayLayers);		 // WET IN
-			Pair wetInRange = new Pair(config.minWetIn, config.maxWetIn);
-			IntStream.range(0, sources).forEach(i ->
-					IntStream.range(0, delayLayers).forEach(j -> wetIn.setRange(i, j, wetInRange)));
+			wetIn.setChromosomeSize(sources, 3);		 // WET IN
+			Pair periodicWetInDurationRange = new Pair(
+					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicWetInDurationMin),
+					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicWetInDurationMax));
+			Pair overallWetInDurationRange = new Pair(
+					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallWetInDurationMin),
+					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallWetInDurationMax));
+			Pair overallWetInExponentRange = new Pair(
+					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallWetInExponentMin),
+					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallWetInExponentMax));
+			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 0, periodicWetInDurationRange));
+			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 1, overallWetInDurationRange));
+			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 2, overallWetInExponentRange));
 
 			processors.setChromosomeSize(delayLayers, 7); // DELAY
 			Pair delayRange = new Pair(DefaultAudioGenome.factorForDelay(config.minDelay),
@@ -219,12 +228,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  CellularAudioOptimizer#init
 	 * @see  CellularAudioOptimizer#run()
 	 */
-	public static void main(String args[]) throws FileNotFoundException {
+	public static void main(String args[]) throws IOException {
 		CLComputeContext.enableFastQueue = true;
 		StableDurationHealthComputation.enableTimeout = true;
 		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
 		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
-		SilenceDurationHealthComputation.enableSilenceCheck = true;
+		GeneticTemporalFactoryFromDesirables.disableClean = true;
+		SilenceDurationHealthComputation.enableSilenceCheck = false;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -235,7 +245,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = verbosity < 3;
+		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
@@ -246,22 +256,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		DefaultDesirablesProvider provider = new DefaultDesirablesProvider<>(116);
 
-		if (enableStems) {
-			provider.getWaves().addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, Math.pow(10, -6), 1.0, 2.0, 4.0);
-//			provider.getWaves().addSplits(List.of(new File("/Users/michael/AlmostRealism/ringsdesktop/Stems/001 Kicks 1.7_1.wav")),
-//					116.0, 1.0);
+		File sources = new File("sources.json");
+		if (sources.exists()) {
+			provider.setWaves(Waves.load(sources));
 		} else {
-//			Stream.of(new File(LIBRARY).listFiles()).map(f -> {
-//				try {
-//					if (".DS_Store".equals(f.getName())) return null;
-//					return WavFile.openWavFile(f).getSampleRate() == OutputLine.sampleRate ? f : null;
-//				} catch (Exception e) {
-//					System.out.println("Error loading " + f.getName());
-//					e.printStackTrace();
-//					return null;
-//				}
-//			}).filter(Objects::nonNull).forEach(provider.getSamples()::add);
-			throw new UnsupportedOperationException();
+			provider.getWaves().addSplits(Arrays.asList(new File(STEMS).listFiles()), 116.0, Math.pow(10, -6), 1.0, 2.0, 4.0);
 		}
 
 		CellularAudioOptimizer opt = build(provider, PopulationOptimizer.enableBreeding ? 25 : 1);
@@ -287,7 +286,10 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		public double overallSpeedUpDurationMin, overallSpeedUpDurationMax;
 		public double overallSpeedUpExponentMin, overallSpeedUpExponentMax;
 
-		public double minWetIn, maxWetIn;
+		public double periodicWetInDurationMin, periodicWetInDurationMax;
+		public double overallWetInDurationMin, overallWetInDurationMax;
+		public double overallWetInExponentMin, overallWetInExponentMax;
+
 		public double minWetOut, maxWetOut;
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
@@ -331,8 +333,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			overallSpeedUpExponentMin = 1;
 			overallSpeedUpExponentMax = 1;
 
-			minWetIn = 0.5;
-			maxWetIn = 1.0;
+			periodicWetInDurationMin = 0.5;
+			periodicWetInDurationMax = 180;
+			overallWetInDurationMin = 5;
+			overallWetInDurationMax = 240;
+			overallWetInExponentMin = 0.5;
+			overallWetInExponentMax = 2.5;
+
 			minWetOut = 0.8;
 			maxWetOut = 1.0;
 			minHighPass = 0;
@@ -344,12 +351,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					.mapToDouble(i -> Math.pow(2, -i))
 					.toArray();
 			offsetChoices[0] = 0.0;
-
-//			repeatChoices = IntStream.range(0, 13)
-//				.map(i -> i - 6)
-//				.mapToDouble(i -> Math.pow(2, i))
-//				.map(SimpleOrganGenome::factorForRepeat)
-//				.toArray();
 
 			repeatChoices = IntStream.range(0, 9)
 					.map(i -> i - 2)

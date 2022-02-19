@@ -41,6 +41,7 @@ import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.temporal.WaveCell;
+import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
@@ -53,55 +54,10 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
+	public static boolean disableClean = false;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
-//		List<Function<Gene<Scalar>, ScalarTemporalCellAdapter>> choices = new ArrayList<>();
-//
-//		if (!provider.getFrequencies().isEmpty()) {
-//			provider.getFrequencies().forEach(f -> choices.add(g -> (ScalarTemporalCellAdapter) w(f).get(0)));
-//		}
-
 		List<TemporalFactor<Scalar>> temporals = new ArrayList<>();
-
-//		if (!provider.getSamples().isEmpty()) {
-//			List<WaveData> samples = provider.getSamples().stream().map(s -> {
-//				try {
-//					WaveData d = WaveData.load(s);
-//
-//					if (d.getSampleRate() != OutputLine.sampleRate) {
-//						System.out.println("WARN: The sample rate of " + s.getName() + " (" + d.getSampleRate() + ") is not " + OutputLine.sampleRate);
-//						return null;
-//					}
-//
-//					return d;
-//				} catch (IOException e) {
-//					System.out.println("WARN: Unable to load " + s.getName());
-//					return null;
-//				}
-//			}).filter(Objects::nonNull).collect(Collectors.toList());
-//
-//			samples.forEach(f -> choices.add(g -> {
-//				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
-//				temporals.add(tf);
-//				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-//				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, f).get(0);
-//			}));
-//		}
-//
-//		if (!provider.getWaves().isEmpty()) {
-//			provider.getWaves().forEach(f -> choices.add(g -> {
-//				WaveData data = new WaveData(f, OutputLine.sampleRate);
-//				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
-//				temporals.add(tf);
-//				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-//				return (ScalarTemporalCellAdapter) w(g.valueAt(1).getResultant(duration), enableRepeat ? duration : null, data).get(0);
-//			}));
-//		}
-
-//		Function<Gene<Scalar>, PolymorphicAudioCell> generator = g ->
-//				new PolymorphicAudioCell(
-//						(ProducerComputation<Scalar>) g.valueAt(0).getResultant(Ops.ops().v(1.0)),
-//						choices.stream().map(c -> c.apply(g)).collect(Collectors.toList()));
 
 		Function<Gene<Scalar>, WaveCell> generator = g -> {
 				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
@@ -157,7 +113,9 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 				// Create the delay layers
 				int delayLayers = genome.valueAt(DefaultAudioGenome.PROCESSORS).length();
 				TemporalFactor<Scalar> adjust[] = IntStream.range(0, delayLayers)
-						.mapToObj(i -> genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1))
+						.mapToObj(i -> List.of(genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1),
+								genome.valueAt(DefaultAudioGenome.WET_IN, i, 0)))
+						.flatMap(List::stream)
 						.map(factor -> factor instanceof TemporalFactor ? ((TemporalFactor) factor) : null)
 						.filter(Objects::nonNull)
 						.toArray(TemporalFactor[]::new);
@@ -168,24 +126,42 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 						.collect(CellList.collector());
 
 				// Route each line to each delay layer
-				efx = efx.m(fi(), delays, genome.valueAt(DefaultAudioGenome.WET_IN)::valueAt)
+				efx = efx.m(fi(), delays, i -> delayGene(delayLayers, genome.valueAt(DefaultAudioGenome.WET_IN, i)))
 						.addRequirements(adjust)
 						// Feedback grid
 						.mself(fi(), genome.valueAt(DefaultAudioGenome.TRANSMISSION),
 								 fc(genome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
 						.sum();
 
-				// Mix efx with main and measure #2
-				efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+				if (disableClean) {
+					efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
+					return efx;
+				} else {
+					// Mix efx with main and measure #2
+					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 
-				// Deliver main to the output and measure #1
-				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+					// Deliver main to the output and measure #1
+					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
 
-				return cells(main, efx);
+					return cells(main, efx);
+				}
 			} else {
 				// Deliver main to the output and measure #1 and #2
 				return main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 			}
 		};
+	}
+
+	/**
+	 * Create a {@link Gene} for routing delays.
+	 * The current implementation delivers audio to
+	 * the first delay based on the wet level, and
+	 * delivers nothing to the others.
+	 */
+	private Gene<Scalar> delayGene(int delays, Gene<Scalar> wet) {
+		ArrayListGene<Scalar> gene = new ArrayListGene<>();
+		gene.add(wet.valueAt(0));
+		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> v(0.0)));
+		return gene;
 	}
 }

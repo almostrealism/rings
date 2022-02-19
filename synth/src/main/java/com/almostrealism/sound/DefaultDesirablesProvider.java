@@ -35,7 +35,7 @@ import java.util.Set;
 public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements DesirablesProvider {
 	private final double bpm;
 	private final Set<Frequency> frequencies;
-	private final Waves waves;
+	private Waves waves;
 
 	public DefaultDesirablesProvider(double bpm) {
 		this(bpm, Scale.of());
@@ -57,6 +57,8 @@ public class DefaultDesirablesProvider<T extends KeyPosition<T>> implements Desi
 
 	@Override
 	public Set<Frequency> getFrequencies() { return frequencies; }
+
+	public void setWaves(Waves waves) { this.waves = waves; }
 
 	@Override
 	public Waves getWaves() { return waves; }
