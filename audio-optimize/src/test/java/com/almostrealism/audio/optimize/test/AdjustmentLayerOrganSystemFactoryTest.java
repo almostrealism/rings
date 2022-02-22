@@ -61,9 +61,9 @@ public class AdjustmentLayerOrganSystemFactoryTest extends GeneticTemporalFactor
 
 		ArrayListChromosome<Scalar> mainFilterUp = new ArrayListChromosome<>();
 		IntStream.range(0, dim).mapToObj(i ->
-				g(DefaultAudioGenome.factorForPeriodicFilterUpDuration(10),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(180),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(1.0))).forEach(mainFilterUp::add);
+				g(DefaultAudioGenome.factorForPeriodicAdjustmentDuration(10),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(180),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(1.0))).forEach(mainFilterUp::add);
 
 		ArrayListChromosome<Scalar> wetIn = new ArrayListChromosome<>();
 		IntStream.range(0, dim).mapToObj(i -> g(0.1, 0.0)).forEach(wetIn::add);

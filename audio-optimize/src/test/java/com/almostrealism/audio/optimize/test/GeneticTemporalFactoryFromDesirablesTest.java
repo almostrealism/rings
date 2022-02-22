@@ -24,11 +24,9 @@ import org.almostrealism.Ops;
 import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.Waves;
-import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.TemporalRunner;
 import com.almostrealism.audio.optimize.CellularAudioOptimizer;
@@ -126,15 +124,15 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 
 		ArrayListChromosome<Scalar> mainFilterUp = new ArrayListChromosome<>();
 		IntStream.range(0, 2).mapToObj(i ->
-				g(DefaultAudioGenome.factorForPeriodicFilterUpDuration(10),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(180),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(1.0))).forEach(mainFilterUp::add);
+				g(DefaultAudioGenome.factorForPeriodicAdjustmentDuration(10),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(180),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(1.0))).forEach(mainFilterUp::add);
 
 		ArrayListChromosome<Scalar> wetIn = new ArrayListChromosome<>();
 		IntStream.range(0, 2).mapToObj(i ->
-				g(DefaultAudioGenome.factorForPeriodicFilterUpDuration(10),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(10),
-						DefaultAudioGenome.factorForPolyFilterUpDuration(1.0))).forEach(wetIn::add);
+				g(DefaultAudioGenome.factorForPeriodicAdjustmentDuration(10),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(10),
+						DefaultAudioGenome.factorForPolyAdjustmentDuration(1.0))).forEach(wetIn::add);
 
 		ArrayListChromosome<Double> processors = new ArrayListChromosome();
 		processors.add(new ArrayListGene<>(delayParam,

@@ -24,13 +24,10 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
-import org.almostrealism.audio.sources.PolynomialCell;
-import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.breeding.AssignableGenome;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ChromosomeFactory;
 import org.almostrealism.heredity.Factor;
@@ -52,6 +49,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	public static final int TRANSMISSION = 5;
 	public static final int WET_OUT = 6;
 	public static final int FX_FILTERS = 7;
+	public static final int MASTER_FILTER_DOWN = 8;
 
 	public static double defaultResonance = 0.1; // TODO
 	private static double maxFrequency = 20000;
@@ -61,16 +59,18 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	private int sampleRate;
 
 	private GeneratorChromosome generatorChromosome;
+	private AdjustmentChromosome volumeChromosome;
 	private AdjustmentChromosome mainFilterUpChromosome;
 	private AdjustmentChromosome wetInChromosome;
 	private DelayChromosome delayChromosome;
+	private AdjustmentChromosome masterFilterDownChromosome;
 
 	public DefaultAudioGenome(int sources, int delayLayers) {
 		this(sources, delayLayers, OutputLine.sampleRate);
 	}
 
 	public DefaultAudioGenome(int sources, int delayLayers, int sampleRate) {
-		this(sources, delayLayers, 8, sampleRate);
+		this(sources, delayLayers, 9, sampleRate);
 	}
 
 	protected DefaultAudioGenome(int sources, int delayLayers, int length, int sampleRate) {
@@ -87,9 +87,11 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS);
+		if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME);
 		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP);
 		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN);
 		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS);
+		if (masterFilterDownChromosome == null) masterFilterDownChromosome = new AdjustmentChromosome(MASTER_FILTER_DOWN);
 	}
 
 	public void assignTo(Genome g) {
@@ -114,6 +116,8 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	public Chromosome<Scalar> valueAt(int pos) {
 		if (pos == GENERATORS) {
 			return generatorChromosome;
+		} else if (pos == VOLUME) {
+			return volumeChromosome;
 		} else if (pos == MAIN_FILTER_UP) {
 			return mainFilterUpChromosome;
 		} else if (pos == WET_IN) {
@@ -122,6 +126,8 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 			return delayChromosome;
 		} else if (pos == FX_FILTERS) {
 			return new FixedFilterChromosome(pos);
+		} else if (pos == MASTER_FILTER_DOWN) {
+			return masterFilterDownChromosome;
 		} else {
 			return data.valueAt(pos);
 		}
@@ -130,9 +136,11 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
+		setup.add(volumeChromosome.expand());
 		setup.add(mainFilterUpChromosome.expand());
 		setup.add(wetInChromosome.expand());
 		setup.add(delayChromosome.expand());
+		setup.add(masterFilterDownChromosome.expand());
 		return setup;
 	}
 
@@ -166,11 +174,11 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
 	}
 
-	public static double factorForPeriodicFilterUpDuration(double seconds) {
+	public static double factorForPeriodicAdjustmentDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
 	}
 
-	public static double factorForPolyFilterUpDuration(double seconds) {
+	public static double factorForPolyAdjustmentDuration(double seconds) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
 	}
 
@@ -178,8 +186,12 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 		return HeredityFeatures.getInstance().oneToInfinity(factor, 3).get().evaluate().getValue() * 60;
 	}
 
-	public static double factorForPolyFilterUpExponent(double exp) {
+	public static double factorForPolyAdjustmentExponent(double exp) {
 		return HeredityFeatures.getInstance().invertOneToInfinity(exp, 10, 1);
+	}
+
+	public static double factorForAdjustmentInitial(double value) {
+		return HeredityFeatures.getInstance().invertOneToInfinity(value, 10, 1);
 	}
 
 	public static double factorForDelay(double seconds) {
@@ -269,19 +281,23 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 
 	public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 		public AdjustmentChromosome(int index) {
-			super(data.valueAt(index), data.length(index), 3, sampleRate);
+			super(data.valueAt(index), data.length(index), 5, sampleRate);
 			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(60.0));
 			setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(60.0));
 			setTransform(2, g -> oneToInfinity(g.valueAt(2), 1.0).multiply(10.0));
+			setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0).multiply(10.0));
+			setTransform(4, g -> g.valueAt(4).getResultant(v(1.0)));
 			addFactor((p, in) -> {
 				ScalarProducer periodicWavelength = scalar(p, 0);
 				ScalarProducer periodicAmp = v(1.0);
 				ScalarProducer polyWaveLength = scalar(p, 1);
 				ScalarProducer polyExp = scalar(p, 2);
+				ScalarProducer initial = scalar(p, 3);
+				ScalarProducer scale = scalar(p, 4);
 
 //				return sinw(in, periodicWavelength, periodicAmp).pow(2.0)
 //						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
-				return polyWaveLength.pow(-1.0).multiply(in).pow(polyExp);
+				return polyWaveLength.pow(-1.0).multiply(in).pow(polyExp).multiply(scale).add(initial);
 			});
 		}
 	}

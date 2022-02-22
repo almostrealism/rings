@@ -54,6 +54,7 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
+	public static boolean enableMasterFilterDown = true;
 	public static boolean disableClean = false;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
@@ -95,13 +96,17 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 
 			cells = cells.mixdown(mixdownDuration);
 
+			List<TemporalFactor<Scalar>> volume = new ArrayList<>();
+			IntStream.range(0, cells.size()).mapToObj(i -> (TemporalFactor) genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)).forEach(volume::add);
+			cells = cells.addRequirements(volume.toArray(TemporalFactor[]::new));
+
 			// Volume adjustment
 			CellList branch[] = cells.branch(
 									fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)),
 									enableEfxFilters ?
-											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 1)
+											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)
 											.andThen(genome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 1)));
+											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)));
 
 			CellList main = branch[0];
 			CellList efx = branch[1];
@@ -139,6 +144,16 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 				} else {
 					// Mix efx with main and measure #2
 					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+
+					if (enableMasterFilterDown) {
+						List<TemporalFactor<Scalar>> masterFilterDown = new ArrayList<>();
+						// Apply dynamic low pass filter
+						main = main.map(fc(i -> {
+							TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
+							masterFilterDown.add(f);
+							return lp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
+						})).addRequirements(masterFilterDown.toArray(TemporalFactor[]::new));
+					}
 
 					// Deliver main to the output and measure #1
 					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));

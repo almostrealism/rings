@@ -17,21 +17,16 @@
 package com.almostrealism.audio.optimize;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.almostrealism.audio.DesirablesProvider;
 import com.almostrealism.audio.health.AudioHealthComputation;
 import com.almostrealism.audio.health.SilenceDurationHealthComputation;
 import com.almostrealism.audio.health.StableDurationHealthComputation;
 import com.almostrealism.sound.DefaultDesirablesProvider;
-import io.almostrealism.code.ComputeRequirement;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBankHeap;
@@ -52,7 +47,6 @@ import org.almostrealism.heredity.RandomChromosomeFactory;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
@@ -105,43 +99,60 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			RandomChromosomeFactory transmission = new RandomChromosomeFactory(); // ROUTING
 			RandomChromosomeFactory wetOut = new RandomChromosomeFactory();		  // WET OUT
 			RandomChromosomeFactory filters = new RandomChromosomeFactory();      // FILTERS
+			RandomChromosomeFactory masterFilterDown = new RandomChromosomeFactory(); // MASTER FILTER DOWN
 
 			generators.setChromosomeSize(sources, 0); // GENERATORS
 
-			volume.setChromosomeSize(sources, 2);     // VOLUME
-			Pair volumeRange = new Pair(config.minVolume, config.maxVolume);
-			IntStream.range(0, sources).forEach(i -> {
-				volume.setRange(i, 0, volumeRange);
-				volume.setRange(i, 1, volumeRange);
-			});
+			volume.setChromosomeSize(sources, 5);     // VOLUME
+			Pair periodicVolumeDurationRange = new Pair(
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
+			Pair overallVolumeDurationRange = new Pair(
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
+			Pair overallVolumeExponentRange = new Pair(
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
+			Pair overallVolumeInitialRange = new Pair(
+					DefaultAudioGenome.factorForAdjustmentInitial(config.minVolume),
+					DefaultAudioGenome.factorForAdjustmentInitial(config.maxVolume));
+			IntStream.range(0, sources).forEach(i -> volume.setRange(i, 0, periodicVolumeDurationRange));
+			IntStream.range(0, sources).forEach(i -> volume.setRange(i, 1, overallVolumeDurationRange));
+			IntStream.range(0, sources).forEach(i -> volume.setRange(i, 2, overallVolumeExponentRange));
+			IntStream.range(0, sources).forEach(i -> volume.setRange(i, 3, overallVolumeInitialRange));
+			IntStream.range(0, sources).forEach(i -> volume.setRange(i, 4, new Pair(-1.0, -1.0)));
 
-			filterUp.setChromosomeSize(sources, 3); // MAIN FILTER UP
+			filterUp.setChromosomeSize(sources, 5); // MAIN FILTER UP
 			Pair periodicFilterUpDurationRange = new Pair(
-					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicFilterUpDurationMin),
-					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicFilterUpDurationMax));
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicFilterUpDurationMin),
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicFilterUpDurationMax));
 			Pair overallFilterUpDurationRange = new Pair(
-					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallFilterUpDurationMin),
-					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallFilterUpDurationMax));
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallFilterUpDurationMin),
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallFilterUpDurationMax));
 			Pair overallFilterUpExponentRange = new Pair(
-					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallFilterUpExponentMin),
-					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallFilterUpExponentMax));
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallFilterUpExponentMin),
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallFilterUpExponentMax));
 			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 0, periodicFilterUpDurationRange));
 			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 1, overallFilterUpDurationRange));
 			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 2, overallFilterUpExponentRange));
+			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 3, new Pair(0.0, 0.0)));
+			IntStream.range(0, sources).forEach(i -> filterUp.setRange(i, 4, new Pair(1.0, 1.0)));
 
-			wetIn.setChromosomeSize(sources, 3);		 // WET IN
+			wetIn.setChromosomeSize(sources, 5);		 // WET IN
 			Pair periodicWetInDurationRange = new Pair(
-					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicWetInDurationMin),
-					DefaultAudioGenome.factorForPeriodicFilterUpDuration(config.periodicWetInDurationMax));
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMin),
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMax));
 			Pair overallWetInDurationRange = new Pair(
-					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallWetInDurationMin),
-					DefaultAudioGenome.factorForPolyFilterUpDuration(config.overallWetInDurationMax));
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallWetInDurationMin),
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallWetInDurationMax));
 			Pair overallWetInExponentRange = new Pair(
-					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallWetInExponentMin),
-					DefaultAudioGenome.factorForPolyFilterUpExponent(config.overallWetInExponentMax));
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallWetInExponentMin),
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallWetInExponentMax));
 			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 0, periodicWetInDurationRange));
 			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 1, overallWetInDurationRange));
 			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 2, overallWetInExponentRange));
+			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 3, new Pair(0.0, 0.0)));
+			IntStream.range(0, sources).forEach(i -> wetIn.setRange(i, 4, new Pair(1.0, 1.0)));
 
 			processors.setChromosomeSize(delayLayers, 7); // DELAY
 			Pair delayRange = new Pair(DefaultAudioGenome.factorForDelay(config.minDelay),
@@ -191,7 +202,26 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				filters.setRange(i, 1, lpRange);
 			});
 
-			return Genome.fromChromosomes(generators, volume, filterUp, wetIn, processors, transmission, wetOut, filters);
+			masterFilterDown.setChromosomeSize(sources, 5);     // VOLUME
+			Pair periodicMasterFilterDownDurationRange = new Pair(
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMin),
+					DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMax));
+			Pair overallMasterFilterDownDurationRange = new Pair(
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMin),
+					DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMax));
+			Pair overallMasterFilterDownExponentRange = new Pair(
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMin),
+					DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMax));
+			Pair overallMasterFilterDownInitialRange = new Pair(
+					DefaultAudioGenome.factorForAdjustmentInitial(1.0),
+					DefaultAudioGenome.factorForAdjustmentInitial(1.0));
+			IntStream.range(0, sources).forEach(i -> masterFilterDown.setRange(i, 0, periodicMasterFilterDownDurationRange));
+			IntStream.range(0, sources).forEach(i -> masterFilterDown.setRange(i, 1, overallMasterFilterDownDurationRange));
+			IntStream.range(0, sources).forEach(i -> masterFilterDown.setRange(i, 2, overallMasterFilterDownExponentRange));
+			IntStream.range(0, sources).forEach(i -> masterFilterDown.setRange(i, 3, overallMasterFilterDownInitialRange));
+			IntStream.range(0, sources).forEach(i -> masterFilterDown.setRange(i, 4, new Pair(-1.0, -1.0)));
+
+			return Genome.fromChromosomes(generators, volume, filterUp, wetIn, processors, transmission, wetOut, filters, masterFilterDown);
 		};
 	}
 
@@ -217,7 +247,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 					Breeders.averageBreeder(),  									   // WET OUT
-					Breeders.perturbationBreeder(0.0005, ScaleFactor::new)); // FILTERS
+					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
+					Breeders.averageBreeder());  									   // MAIN FILTER UP
 		}, generator, OutputLine.sampleRate, sources, delayLayers, cycles);
 	}
 
@@ -234,7 +265,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
 		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
 		GeneticTemporalFactoryFromDesirables.disableClean = true;
-		SilenceDurationHealthComputation.enableSilenceCheck = false;
+		SilenceDurationHealthComputation.enableSilenceCheck = true;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -272,6 +303,10 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		public double repeatSpeedUpDurationMin, repeatSpeedUpDurationMax;
 
 		public double minVolume, maxVolume;
+		public double periodicVolumeDurationMin, periodicVolumeDurationMax;
+		public double overallVolumeDurationMin, overallVolumeDurationMax;
+		public double overallVolumeExponentMin, overallVolumeExponentMax;
+
 		public double periodicFilterUpDurationMin, periodicFilterUpDurationMax;
 		public double overallFilterUpDurationMin, overallFilterUpDurationMax;
 		public double overallFilterUpExponentMin, overallFilterUpExponentMax;
@@ -294,6 +329,10 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		public double minHighPass, maxHighPass;
 		public double minLowPass, maxLowPass;
 
+		public double periodicMasterFilterDownDurationMin, periodicMasterFilterDownDurationMax;
+		public double overallMasterFilterDownDurationMin, overallMasterFilterDownDurationMax;
+		public double overallMasterFilterDownExponentMin, overallMasterFilterDownExponentMax;
+
 		public double offsetChoices[];
 		public double repeatChoices[];
 
@@ -303,8 +342,14 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			repeatSpeedUpDurationMin = 1;
 			repeatSpeedUpDurationMax = 90;
 
-			minVolume = 0.0;
-			maxVolume = 1.0 / scale;
+			minVolume = 0.5 / scale;
+			maxVolume = 1 / scale;
+			periodicVolumeDurationMin = 0.5;
+			periodicVolumeDurationMax = 180;
+			overallVolumeDurationMin = 40;
+			overallVolumeDurationMax = 240;
+			overallVolumeExponentMin = 1;
+			overallVolumeExponentMax = 1;
 
 			periodicFilterUpDurationMin = 0.5;
 			periodicFilterUpDurationMax = 180;
@@ -335,7 +380,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			periodicWetInDurationMin = 0.5;
 			periodicWetInDurationMax = 180;
-			overallWetInDurationMin = 5;
+			overallWetInDurationMin = 40;
 			overallWetInDurationMax = 240;
 			overallWetInExponentMin = 0.5;
 			overallWetInExponentMax = 2.5;
@@ -346,6 +391,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			maxHighPass = 20000;
 			minLowPass = 0;
 			maxLowPass = 20000;
+
+			periodicMasterFilterDownDurationMin = 0.5;
+			periodicMasterFilterDownDurationMax = 180;
+			overallMasterFilterDownDurationMin = 30;
+			overallMasterFilterDownDurationMax = 180;
+			overallMasterFilterDownExponentMin = 0.5;
+			overallMasterFilterDownExponentMax = 3.5;
 
 			offsetChoices = IntStream.range(0, 7)
 					.mapToDouble(i -> Math.pow(2, -i))
