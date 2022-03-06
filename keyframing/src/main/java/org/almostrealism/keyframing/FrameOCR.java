@@ -42,6 +42,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -96,14 +97,16 @@ public class FrameOCR {
 		}
 	}
 
-	public List<String> processImage(VideoImage image, KeyFrame destination) {
+	public List<String> processImage(VideoImage image, KeyFrame destination, String name) {
 		if (image == null || image.getImage() == null) {
-			System.out.println("WARN: Frame " + image.getFrame() + " was targeted for OCR, but was not included in media");
+			System.out.println("WARN: Frame " + image.getTimestamp() + " was targeted for OCR, but was not included in media");
 			return Collections.emptyList();
 		}
 
 		try {
-			List<Word> words = processImage(image.getImage()).stream()
+			long timestamp = (long) (destination.getStartTime() * Math.pow(10, 6));
+			List<Word> words = processImage(image.getImage(),
+						() -> "Videos/samples/" + name + "-" + timestamp + ".png").stream()
 					.map(Word::split).flatMap(List::stream)
 					.filter(w -> w.getText().length() > 2)
 					.collect(Collectors.toList());
@@ -138,7 +141,7 @@ public class FrameOCR {
 		}
 	}
 
-	public List<Word> processImage(BufferedImage f) throws IOException {
+	public List<Word> processImage(BufferedImage f, Supplier<String> imageLogFile) throws IOException {
 		if (enableDebugImages) ImageIO.write(f, "png", new File("/Users/michael/Desktop/pre-ocr.png"));
 
 		List<Word> texts = new ArrayList<>();
@@ -213,6 +216,7 @@ public class FrameOCR {
 		}
 
 		if (enableDebugImages) Imgcodecs.imwrite("/Users/michael/Desktop/post-ocr.png", frame);
+		if (imageLogFile != null) Imgcodecs.imwrite(imageLogFile.get(), frame);
 
 		scores.release();
 		geometry.release();

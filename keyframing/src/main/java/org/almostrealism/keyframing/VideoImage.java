@@ -7,23 +7,20 @@ import java.awt.image.BufferedImage;
 public class VideoImage implements Comparable<VideoImage> {
 	public static final int histogramBuckets = 64;
 
-	private int frame;
 	private BufferedImage image;
 	private double[] histogram;
 	private double histogramDelta;
+	private long timestamp;
+	private boolean isLast;
 
-	public VideoImage(int frame, BufferedImage image) {
-		setFrame(frame);
+	public VideoImage(long timestamp, BufferedImage image) {
+		setTimestamp(timestamp);
 		setImage(image);
 	}
 
-	public int getFrame() {
-		return frame;
-	}
+	public long getTimestamp() { return timestamp; }
 
-	public void setFrame(int frame) {
-		this.frame = frame;
-	}
+	public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
 	public BufferedImage getImage() {
 		return image;
@@ -34,6 +31,14 @@ public class VideoImage implements Comparable<VideoImage> {
 	}
 
 	public boolean hasImage() { return getImage() != null; }
+
+	public boolean isLast() {
+		return isLast;
+	}
+
+	public void setLast(boolean last) {
+		isLast = last;
+	}
 
 	public VideoImage computeHistogram() {
 		getHistogram();
@@ -59,6 +64,6 @@ public class VideoImage implements Comparable<VideoImage> {
 
 	@Override
 	public int compareTo(VideoImage o) {
-		return this.getFrame() - o.getFrame();
+		return (int) (this.getTimestamp() - o.getTimestamp());
 	}
 }

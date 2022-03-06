@@ -5,16 +5,18 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class MediaProvider implements Supplier<Frame> {
+	private String movieFile;
 	private MediaPreprocessor preprocessor;
 	private FFmpegFrameGrabber media;
 	private double fps;
-	private int index;
-	private int total;
+	private double index;
+	private double total;
 	private int inclusion;
 
 	private Frame current;
@@ -22,24 +24,27 @@ public class MediaProvider implements Supplier<Frame> {
 	public MediaProvider() { }
 
 	public MediaProvider(String movieFile, double scale, int inclusion) {
+		this.movieFile = movieFile;
 		this.inclusion = inclusion;
 		preprocessor = new MediaPreprocessor(scale);
 		media = new FFmpegFrameGrabber(movieFile);
 		start();
 	}
 
+	public String getName() { return new File(movieFile).getName(); }
+
 	public void setFrameRate(double fps) { this.fps = fps; }
 	public double getFrameRate() { return fps; }
 
-	public void setCount(int count) { this.total = count; }
-	public int getCount() { return total; }
+	public void setTotalDuration(double seconds) { this.total = seconds; }
+	public double getTotalDuration() { return total; }
 
 	public void start() {
 		try {
 			media.start();
 			index = -1;
 			fps = media.getVideoFrameRate();
-			total = media.getLengthInFrames();
+			total = media.getLengthInFrames() / fps;
 		} catch (FFmpegFrameGrabber.Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -48,7 +53,7 @@ public class MediaProvider implements Supplier<Frame> {
 	public void restart() {
 		try {
 			media.restart();
-			index = -1;
+			index = 0;
 		} catch (FrameGrabber.Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -57,13 +62,14 @@ public class MediaProvider implements Supplier<Frame> {
 	public void next() {
 		try {
 			current = media.grab();
-			index++;
+			if (current != null)
+				index = current.timestamp;
 		} catch (FFmpegFrameGrabber.Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void setPosition(int index) {
+	public void setPosition(double index) {
 		if (this.index == index) return;
 		if (index < this.index) {
 			restart();
@@ -75,18 +81,20 @@ public class MediaProvider implements Supplier<Frame> {
 	public Frame get() { return current; }
 
 	public Stream<VideoImage> stream(boolean enableScale) {
-		return Stream.generate(() -> { next(); return getImage(enableScale); }).limit(getCount()).filter(Objects::nonNull);
+		return Stream.generate(() -> { next(); return getImage(enableScale); })
+				.takeWhile(v -> v == null || !v.isLast()).filter(Objects::nonNull);
 	}
 
 	public VideoImage getImage(KeyFrame frame) {
-		setPosition(frame.getFrameIndex());
+		setPosition(frame.getStartTime());
 		return getImage(false);
 	}
 
 	public VideoImage getImage(boolean enableScale) {
-		if (index % inclusion != 0) return new VideoImage(index, null);
-		BufferedImage img = preprocessor.convertFrameToBuffer(get(), enableScale);
-		if (img == null) return null;
-		return new VideoImage(index, img);
+		Frame f = get();
+		BufferedImage img = preprocessor.convertFrameToBuffer(f, enableScale);
+		VideoImage v = new VideoImage(f.timestamp, img);
+		v.setLast(f == null);
+		return v;
 	}
 }

@@ -248,7 +248,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
 					Breeders.averageBreeder(),  									   // WET OUT
 					Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-					Breeders.averageBreeder());  									   // MAIN FILTER UP
+					Breeders.averageBreeder());  									   // MASTER FILTER DOWN
 		}, generator, OutputLine.sampleRate, sources, delayLayers, cycles);
 	}
 
@@ -393,9 +393,9 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			maxLowPass = 20000;
 
 			periodicMasterFilterDownDurationMin = 0.5;
-			periodicMasterFilterDownDurationMax = 180;
+			periodicMasterFilterDownDurationMax = 90;
 			overallMasterFilterDownDurationMin = 30;
-			overallMasterFilterDownDurationMax = 180;
+			overallMasterFilterDownDurationMax = 90;
 			overallMasterFilterDownExponentMin = 0.5;
 			overallMasterFilterDownExponentMax = 3.5;
 

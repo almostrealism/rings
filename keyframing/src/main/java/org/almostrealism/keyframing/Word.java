@@ -54,6 +54,14 @@ public class Word {
 	private static String clean(String text) {
 		return text
 				.replaceAll("\\|", "")
+				.replaceAll("\\[", "")
+				.replaceAll("]", "")
+				.replaceAll("\\(", "")
+				.replaceAll("\\)", "")
+				.replaceAll("<", "")
+				.replaceAll(">", "")
+				.replaceAll(":", "")
+				.replaceAll("\\.", "")
 				.replaceAll("!", "");
 	}
 }

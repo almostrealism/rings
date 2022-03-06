@@ -118,13 +118,13 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				return null;
 			};
 
-			// dc(c);
+			dc(c);
 
-			try {
-				c.call();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+//			try {
+//				c.call();
+//			} catch (Exception e) {
+//				throw new RuntimeException(e);
+//			}
 
 			resetHealth();
 			resetGenerator();

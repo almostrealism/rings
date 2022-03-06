@@ -1,7 +1,10 @@
 package org.almostrealism.keyframing;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -9,41 +12,37 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class KeyFrame {
-	private int frameIndex;
-	private int framesToNextKey;
+	private double startTime;
+	private double duration;
 	private BufferedImage image;
 	private List<Word> words;
 
 	public KeyFrame() { }
 
-	public KeyFrame(int frameIndex) {
-		this.frameIndex = frameIndex;
+	public KeyFrame(double startTime) {
+		this.startTime = startTime;
 	}
 
 	public KeyFrame(VideoImage img) {
-		this(img.getFrame());
+		this(img.getTimestamp() * Math.pow(10, -6));
 		this.image = img.getImage();
 	}
 
 	public void loadText(MediaProvider media, FrameOCR ocr) {
-		ocr.processImage(media.getImage(this), this);
+		try {
+			ocr.processImage(media.getImage(this), this, media.getName());
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
-	public int getFrameIndex() {
-		return frameIndex;
-	}
+	public double getStartTime() { return startTime; }
 
-	public void setFrameIndex(int frameIndex) {
-		this.frameIndex = frameIndex;
-	}
+	public void setStartTime(double startTime) { this.startTime = startTime; }
 
-	public int getFramesToNextKey() {
-		return framesToNextKey;
-	}
+	public double getDuration() { return duration; }
 
-	public void setFramesToNextKey(int framesToNextKey) {
-		this.framesToNextKey = framesToNextKey;
-	}
+	public void setDuration(double duration) { this.duration = duration; }
 
 	public List<Word> getWords() {
 		return words;
@@ -53,19 +52,24 @@ public class KeyFrame {
 		this.words = words;
 	}
 
-	public List<String> getText() { return words.stream().map(Word::getText).collect(Collectors.toList()); }
+	@JsonIgnore
+	public List<String> getText() { return words == null ? null : words.stream().map(Word::getText).collect(Collectors.toList()); }
 
+	@JsonIgnore
 	public List<String> getSizeOrderedText() {
-		return words.stream()
+		return words == null ? null : words.stream()
 				.sorted(Comparator.comparing(Word::getSize).reversed())
 				.map(Word::getText).collect(Collectors.toList());
 	}
 
+	@JsonIgnore
 	public List<String> getSizeOrderedEnglishText() {
 		return getSizeOrderedEnglishText(-1);
 	}
 
 	public List<String> getSizeOrderedEnglishText(int max) {
+		if (words == null) return Collections.emptyList();
+
 		Stream<String> w = words.stream().filter(Word::isEnglish)
 				.sorted(Comparator.comparing(Word::getSize).reversed())
 				.map(Word::getText);
@@ -73,14 +77,8 @@ public class KeyFrame {
 		return (max > 0 ? w.limit(max) : w).collect(Collectors.toList());
 	}
 
-	// TODO  Remove
-	public void setText(List<String> text) {  }
-
+	@JsonIgnore
 	public List<String> getEnglishText() {
-		return words.stream().filter(w -> w.isEnglish()).map(Word::getText).collect(Collectors.toList());
-	}
-
-	// TODO  Remove
-	public void setEnglishText(List<String> englishText) {
+		return words == null ? null : words.stream().filter(w -> w.isEnglish()).map(Word::getText).collect(Collectors.toList());
 	}
 }
