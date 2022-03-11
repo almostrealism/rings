@@ -30,7 +30,9 @@ public class KeyFramer {
 		KeyFrame next = frames.get(0);
 
 		for (int i = 1; i < frames.size(); i++) {
-			if (diff(frames.get(i).getSizeOrderedEnglishText(6), next.getSizeOrderedEnglishText(6)) < 4) {
+			if (frames.get(i).getSizeOrderedEnglishText().size() > 0 &&
+					next.getSizeOrderedEnglishText().size() > 0 &&
+					diff(frames.get(i).getSizeOrderedEnglishText(6), next.getSizeOrderedEnglishText(6)) < 4) {
 				next = frames.get(i);
 			} else {
 				collapsed.add(current);

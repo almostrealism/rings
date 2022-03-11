@@ -63,7 +63,7 @@ public class MediaProvider implements Supplier<Frame> {
 		try {
 			current = media.grab();
 			if (current != null)
-				index = current.timestamp;
+				index = current.timestamp * Math.pow(10, -6);
 		} catch (FFmpegFrameGrabber.Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -76,6 +76,7 @@ public class MediaProvider implements Supplier<Frame> {
 		}
 
 		while (this.index < index) next();
+		while (!get().getTypes().contains(Frame.Type.VIDEO)) next();
 	}
 
 	public Frame get() { return current; }
@@ -93,7 +94,7 @@ public class MediaProvider implements Supplier<Frame> {
 	public VideoImage getImage(boolean enableScale) {
 		Frame f = get();
 		BufferedImage img = preprocessor.convertFrameToBuffer(f, enableScale);
-		VideoImage v = new VideoImage(f.timestamp, img);
+		VideoImage v = new VideoImage(f == null ? -1 : f.timestamp, img);
 		v.setLast(f == null);
 		return v;
 	}

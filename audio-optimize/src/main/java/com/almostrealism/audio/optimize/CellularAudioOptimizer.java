@@ -266,6 +266,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
 		GeneticTemporalFactoryFromDesirables.disableClean = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = true;
+		AudioPopulationOptimizer.enableIsolatedContext = false;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;

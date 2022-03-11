@@ -147,13 +147,28 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	@Override
 	public String toString() { return data.toString(); }
 
+	public static double valueForFactor(Factor<Scalar> value) {
+		if (value instanceof ScaleFactor) {
+			return ((ScaleFactor) value).getScaleValue();
+		} else {
+			return value.getResultant(Ops.ops().v(1.0)).get().evaluate().getValue();
+		}
+	}
+
+	public static double valueForFactor(Factor<Scalar> value, double exp, double multiplier) {
+		if (value instanceof ScaleFactor) {
+			return HeredityFeatures.getInstance().oneToInfinity(((ScaleFactor) value).getScaleValue(), exp) * multiplier;
+		} else {
+			return HeredityFeatures.getInstance().oneToInfinity(value, exp).get().evaluate().getValue() * multiplier;
+		}
+	}
+
 	public static double factorForRepeat(double beats) {
 		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
 	}
 
 	public static double[] repeatForFactor(Factor<Scalar> f) {
-		double v = Ops.ops().v(16)
-				.multiply(Ops.ops().v(-0.5).add(f.getResultant(Ops.ops().v(1.0)))).get().evaluate().getValue();
+		double v = 16 * (valueForFactor(f) - 0.5);
 
 		if (v == 0) {
 			return new double[] { 1.0, 1.0 };
@@ -199,7 +214,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double delayForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
+		return valueForFactor(f, 3, 60);
 	}
 
 	public static double factorForSpeedUpDuration(double seconds) {
@@ -207,7 +222,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double speedUpDurationForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
+		return valueForFactor(f, 3, 60);
 	}
 
 	public static double factorForSpeedUpPercentage(double decimal) {
@@ -215,7 +230,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double speedUpPercentageForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 0.5).get().evaluate().getValue() * 10;
+		return valueForFactor(f, 0.5, 10);
 	}
 
 	public static double factorForSlowDownDuration(double seconds) {
@@ -223,7 +238,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double slowDownDurationForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
+		return valueForFactor(f, 3, 60);
 	}
 
 	public static double factorForSlowDownPercentage(double decimal) {
@@ -231,7 +246,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double slowDownPercentageForFactor(Factor<Scalar> f) {
-		return f.getResultant(Ops.ops().v(1.0)).get().evaluate().getValue();
+		return valueForFactor(f);
 	}
 
 	public static double factorForPolySpeedUpDuration(double seconds) {
@@ -239,7 +254,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double polySpeedUpDurationForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 3).get().evaluate().getValue() * 60;
+		return valueForFactor(f, 3, 60);
 	}
 
 	public static double factorForPolySpeedUpExponent(double exp) {
@@ -247,7 +262,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double polySpeedUpExponentForFactor(Factor<Scalar> f) {
-		return HeredityFeatures.getInstance().oneToInfinity(f, 1).get().evaluate().getValue() * 10;
+		return valueForFactor(f, 1, 10);
 	}
 
 	public static double factorForFilterFrequency(double hertz) {
@@ -255,7 +270,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public static double filterFrequencyForFactor(Factor<Scalar> f) {
-		return f.getResultant(Ops.ops().v(1.0)).get().evaluate().getValue() * 20000;
+		return valueForFactor(f) * 20000;
 	}
 
 	protected class GeneratorChromosome extends WavCellChromosomeExpansion {

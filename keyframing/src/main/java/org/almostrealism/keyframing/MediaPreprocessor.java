@@ -43,7 +43,7 @@ public class MediaPreprocessor {
 				return scaleOp.filter(before, after);
 			}
 		} finally {
-			if (count % 100 == 0) {
+			if (count % 1000 == 0) {
 				System.out.println("MediaPreprocessor: " + count + " frames processed");
 			}
 		}

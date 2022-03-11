@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import java.util.stream.IntStream;
 
 public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<Scalar, Scalar, O, AudioHealthScore> implements Runnable {
 	public static final boolean enableWavOutput = true;
+	public static boolean enableIsolatedContext = false;
 
 	private final String file;
 	private final int tot;
@@ -118,13 +119,17 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				return null;
 			};
 
-			dc(c);
-
-//			try {
-//				c.call();
-//			} catch (Exception e) {
-//				throw new RuntimeException(e);
-//			}
+			if (enableIsolatedContext) {
+				dc(c);
+			} else {
+				try {
+					c.call();
+				} catch (RuntimeException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
 
 			resetHealth();
 			resetGenerator();

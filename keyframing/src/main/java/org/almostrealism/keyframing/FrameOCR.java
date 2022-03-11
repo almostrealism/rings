@@ -115,6 +115,7 @@ public class FrameOCR {
 			for (Word w : words) w.setEnglish(english.lookupAllIndexWords(w.getText()).size() > 0);
 
 			destination.setWords(words);
+			System.out.println("FrameOCR: " + words.size() + " words");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JWNLException e) {

@@ -17,7 +17,7 @@
 package org.almostrealism.tensorflow;
 
 import io.almostrealism.scope.Scope;
-import org.almostrealism.hardware.AbstractComputeContext;
+import org.almostrealism.hardware.ctx.AbstractComputeContext;
 
 public class TensorFlowComputeContext extends AbstractComputeContext {
 	public TensorFlowComputeContext() {
