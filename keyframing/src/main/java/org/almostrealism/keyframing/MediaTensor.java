@@ -132,7 +132,7 @@ public class MediaTensor {
 	}
 
 	public static MediaTensor load(String movieFile) {
-		MediaTensor tensor = MediaTensor.load(movieFile, 8, 0.02, 12);
+		MediaTensor tensor = MediaTensor.load(movieFile, 8, 0.02, 30);
 
 		if (tensor.getKeyFrames() == null || tensor.getKeyFrames().isEmpty()) {
 			tensor.computeKeyFrames();

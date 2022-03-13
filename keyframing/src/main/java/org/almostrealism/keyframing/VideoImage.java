@@ -64,6 +64,12 @@ public class VideoImage implements Comparable<VideoImage> {
 
 	@Override
 	public int compareTo(VideoImage o) {
-		return (int) (this.getTimestamp() - o.getTimestamp());
+		if (this.getTimestamp() > o.getTimestamp()) {
+			return 1;
+		} else if (this.getTimestamp() < o.getTimestamp()) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 }

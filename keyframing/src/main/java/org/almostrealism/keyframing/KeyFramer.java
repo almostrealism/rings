@@ -65,12 +65,14 @@ public class KeyFramer {
 		Collections.sort(frames);
 
 		List<VideoImage> collapsedKeyFrames = new ArrayList<>();
+		VideoImage lastKeyFrame = frames.get(0);
 		VideoImage currentKeyFrame = frames.get(0);
 		for (int i = 1; i < frames.size(); i++) {
 			if (frames.get(i).getTimestamp() - currentKeyFrame.getTimestamp() < collapseWindow) {
 				currentKeyFrame = frames.get(i);
 			} else {
-				collapsedKeyFrames.add(currentKeyFrame);
+				collapsedKeyFrames.add(lastKeyFrame);
+				lastKeyFrame = frames.get(i);
 				currentKeyFrame = frames.get(i);
 			}
 		}
