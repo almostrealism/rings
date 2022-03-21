@@ -94,7 +94,9 @@ public class PopulationOptimizer<G, T, O extends Temporal, S extends HealthScore
 
 	public Population<G, T, O> getPopulation() { return this.population; }
 
-	public void resetHealth() { health = null; }
+	public void resetHealth() {
+		health = null;
+	}
 
 	public HealthComputation<?, ?> getHealthComputation() {
 		if (health == null) health = healthSupplier.get();

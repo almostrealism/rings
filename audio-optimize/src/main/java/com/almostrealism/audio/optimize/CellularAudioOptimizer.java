@@ -51,7 +51,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 
 public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 2;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -70,16 +70,23 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		if (arg != null) STEMS = arg;
 	}
 
+	private LayeredOrganPopulation<Scalar, Scalar> population;
+
 	public CellularAudioOptimizer(Supplier<GeneticTemporalFactory<Scalar, Scalar, Cells>> f,
 								  Supplier<GenomeBreeder<Scalar>> breeder, Supplier<Supplier<Genome<Scalar>>> generator,
 								  int sampleRate, int sources, int delayLayers, int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
-					LayeredOrganPopulation<Scalar, Scalar> pop = new LayeredOrganPopulation<>(children, sources, delayLayers, sampleRate);
-					AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
-					pop.init(f.get(), pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
-					return pop;
+					if (population == null) {
+						population = new LayeredOrganPopulation<>(children, sources, delayLayers, sampleRate);
+						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
+						population.init(f.get(), population.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
+					} else {
+						population.setGenomes(children);
+					}
+
+					return population;
 				});
 	}
 
@@ -262,9 +269,12 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static void main(String args[]) throws IOException {
 		CLComputeContext.enableFastQueue = true;
 		StableDurationHealthComputation.enableTimeout = true;
-		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = true;
+		GeneticTemporalFactoryFromDesirables.enableMainFilterUp = false;
 		GeneticTemporalFactoryFromDesirables.enableEfxFilters = true;
+		GeneticTemporalFactoryFromDesirables.enableEfx = true;
+		GeneticTemporalFactoryFromDesirables.enableMasterFilterDown = true;
 		GeneticTemporalFactoryFromDesirables.disableClean = true;
+		GeneticTemporalFactoryFromDesirables.enableSourcesOnly = false;
 		SilenceDurationHealthComputation.enableSilenceCheck = true;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 
@@ -347,7 +357,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			maxVolume = 1 / scale;
 			periodicVolumeDurationMin = 0.5;
 			periodicVolumeDurationMax = 180;
-			overallVolumeDurationMin = 40;
+			overallVolumeDurationMin = 60;
 			overallVolumeDurationMax = 240;
 			overallVolumeExponentMin = 1;
 			overallVolumeExponentMax = 1;
@@ -381,8 +391,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			periodicWetInDurationMin = 0.5;
 			periodicWetInDurationMax = 180;
-			overallWetInDurationMin = 40;
-			overallWetInDurationMax = 240;
+			overallWetInDurationMin = 10;
+			overallWetInDurationMax = 120;
 			overallWetInExponentMin = 0.5;
 			overallWetInExponentMax = 2.5;
 
@@ -395,7 +405,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			periodicMasterFilterDownDurationMin = 0.5;
 			periodicMasterFilterDownDurationMax = 90;
-			overallMasterFilterDownDurationMin = 30;
+			overallMasterFilterDownDurationMin = 5;
 			overallMasterFilterDownDurationMax = 90;
 			overallMasterFilterDownExponentMin = 0.5;
 			overallMasterFilterDownExponentMax = 3.5;

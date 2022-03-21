@@ -23,6 +23,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.ctx.GlobalContextDebugFlags;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.Temporal;
@@ -181,6 +182,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 					} else {
 						System.out.print("N");
 					}
+
+					// TODO  This should just throw an exception: working around it should no longer be necessary
 					errorMultiplier *= 0.55;
 					break l;
 				}

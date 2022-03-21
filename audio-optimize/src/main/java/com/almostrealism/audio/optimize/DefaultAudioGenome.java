@@ -87,11 +87,11 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS);
-		if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME);
-		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP);
-		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN);
+		if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME, 0.0, 1.0, true);
+		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP, 0.0, 1.0, false);
+		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN, 0.0, 1.0, false);
 		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS);
-		if (masterFilterDownChromosome == null) masterFilterDownChromosome = new AdjustmentChromosome(MASTER_FILTER_DOWN);
+		if (masterFilterDownChromosome == null) masterFilterDownChromosome = new AdjustmentChromosome(MASTER_FILTER_DOWN, 0.0, 1.0, false);
 	}
 
 	public void assignTo(Genome g) {
@@ -295,7 +295,7 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 	}
 
 	public class AdjustmentChromosome extends WavCellChromosomeExpansion {
-		public AdjustmentChromosome(int index) {
+		public AdjustmentChromosome(int index, double min, double max, boolean relative) {
 			super(data.valueAt(index), data.length(index), 5, sampleRate);
 			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(60.0));
 			setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(60.0));
@@ -312,7 +312,8 @@ public class DefaultAudioGenome implements Genome<Scalar>, CellFeatures, Setup {
 
 //				return sinw(in, periodicWavelength, periodicAmp).pow(2.0)
 //						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
-				return polyWaveLength.pow(-1.0).multiply(in).pow(polyExp).multiply(scale).add(initial);
+				if (relative) scale = scale.multiply(initial);
+				return bound(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp).multiply(scale).add(initial), min, max);
 			});
 		}
 	}

@@ -27,7 +27,7 @@ import org.almostrealism.population.Population;
 import org.almostrealism.CodeFeatures;
 
 public class LayeredOrganPopulation<G, O> implements Population<G, O, Cells>, CodeFeatures {
-	private final List<Genome<G>> pop;
+	private List<Genome<G>> pop;
 	private final DefaultAudioGenome genome;
 	private Genome currentGenome;
 	private Cells organ;
@@ -50,6 +50,8 @@ public class LayeredOrganPopulation<G, O> implements Population<G, O, Cells>, Co
 
 	@Override
 	public List<Genome<G>> getGenomes() { return pop; }
+
+	public void setGenomes(List<Genome<G>> pop) { this.pop = pop; }
 
 	@Override
 	public Cells enableGenome(int index) {

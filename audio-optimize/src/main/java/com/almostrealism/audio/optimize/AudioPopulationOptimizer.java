@@ -51,7 +51,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static boolean enableIsolatedContext = false;
 
 	private final String file;
-	private final int tot;
+	private int tot;
 	private final AtomicInteger count;
 
 	private Runnable cycleListener;
@@ -82,6 +82,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
 		}
 	}
+
+	public void setIterationsPerRun(int tot) { this.tot = tot; }
 
 	public void setCycleListener(Runnable r) {
 		this.cycleListener = r;
@@ -131,8 +133,11 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				}
 			}
 
-			resetHealth();
-			resetGenerator();
+			if (enableIsolatedContext) {
+				resetHealth();
+				resetGenerator();
+			}
+
 			System.gc();
 		}
 	}

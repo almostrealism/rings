@@ -54,7 +54,9 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
-	public static boolean enableMasterFilterDown = true;
+	public static boolean enableMasterFilterDown = false;
+
+	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
 
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
@@ -93,6 +95,10 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			cells = cells
 					.addRequirements(temporals.toArray(TemporalFactor[]::new))
 					.addSetup(() -> genomeSetup);
+
+			if (enableSourcesOnly) {
+				return cells.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+			}
 
 			cells = cells.mixdown(mixdownDuration);
 
@@ -151,7 +157,8 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 						main = main.map(fc(i -> {
 							TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
 							masterFilterDown.add(f);
-							return lp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
+//							return lp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
+							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
 						})).addRequirements(masterFilterDown.toArray(TemporalFactor[]::new));
 					}
 
