@@ -33,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class AdjustableDelayCellTest extends SineWaveCellTest {
@@ -80,10 +81,13 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 	@Test
 	public void computationTogether() {
 		AdjustableDelayCell delay = adjustableDelay();
+		Supplier<Runnable> setupOp = delay.setup();
 		OperationList ops = computation(delay);
 
+		Runnable setup = setupOp.get();
 		Runnable op = ops.get();
 
+		setup.run();
 		IntStream.range(0, 25).forEach(i -> op.run());
 		assertions(delay);
 	}

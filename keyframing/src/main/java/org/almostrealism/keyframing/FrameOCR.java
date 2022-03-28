@@ -105,17 +105,15 @@ public class FrameOCR {
 
 		try {
 			long timestamp = (long) (destination.getStartTime() * Math.pow(10, 6));
-			List<Word> words = processImage(image.getImage(),
-						() -> "Videos/samples/" + name + "-" + timestamp + ".png").stream()
-					.map(Word::split).flatMap(List::stream)
-					.filter(w -> w.getText().length() > 2)
-					.collect(Collectors.toList());
-			words = new ArrayList<>(new LinkedHashSet<>(words));
+			OCRResult words = processImage(image.getImage(),
+						() -> "Videos/samples/" + name + "-" + timestamp + ".png");
 
-			for (Word w : words) w.setEnglish(english.lookupAllIndexWords(w.getText()).size() > 0);
+			for (Word w : words.getWords()) {
+				w.setEnglish(english.lookupAllIndexWords(w.getText()).size() > 0);
+			}
 
 			destination.setWords(words);
-			System.out.println("FrameOCR: " + words.size() + " words");
+			System.out.println("FrameOCR: " + words.getWords().size() + " words");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JWNLException e) {
@@ -142,7 +140,7 @@ public class FrameOCR {
 		}
 	}
 
-	public List<Word> processImage(BufferedImage f, Supplier<String> imageLogFile) throws IOException {
+	public OCRResult processImage(BufferedImage f, Supplier<String> imageLogFile) throws IOException {
 		if (enableDebugImages) ImageIO.write(f, "png", new File("/Users/michael/Desktop/pre-ocr.png"));
 
 		List<Word> texts = new ArrayList<>();
@@ -216,15 +214,22 @@ public class FrameOCR {
 			}
 		}
 
-		if (enableDebugImages) Imgcodecs.imwrite("/Users/michael/Desktop/post-ocr.png", frame);
-		if (imageLogFile != null) Imgcodecs.imwrite(imageLogFile.get(), frame);
+		OCRResult result = new OCRResult();
+
+		if (imageLogFile != null) {
+			String name = imageLogFile.get();
+			Imgcodecs.imwrite(name, frame);
+			result.setImage(name);
+		}
+
+		result.setWords(texts);
 
 		scores.release();
 		geometry.release();
 		blob.release();
 
 		System.out.println("FrameOCR(" + tot++ + "): Extracted " + texts.size() + " texts");
-		return texts;
+		return result;
 	}
 
 	private Point paddedPoint(int vIdx, double rW, double rH, double x, double y) {

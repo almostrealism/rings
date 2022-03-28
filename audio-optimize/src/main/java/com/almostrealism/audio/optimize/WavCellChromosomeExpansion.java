@@ -28,6 +28,9 @@ import org.almostrealism.graph.MemoryDataTemporalCellularChromosomeExpansion;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;

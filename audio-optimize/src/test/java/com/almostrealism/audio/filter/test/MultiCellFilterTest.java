@@ -2,6 +2,7 @@ package com.almostrealism.audio.filter.test;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.util.TestFeatures;
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 public class MultiCellFilterTest implements CellFeatures, TestFeatures {
 	@Test
@@ -32,11 +34,12 @@ public class MultiCellFilterTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void identityDelayFeedback() {
-		w("src/test/resources/Snare Perc DD.wav", "src/test/resources/Snare Perc DD.wav")
+		CellList c = w("Library/Snare Perc DD.wav", "Library/Snare Perc DD.wav")
 				.d(i -> v(2))
 				.m(fi(), c(g(0.0, 0.4), g(0.4, 0.0)))
-				.om(i -> new File("identity-delay-feedback-test-" + i + ".wav"))
-				.sec(8).get().run();
+				.om(i -> new File("results/identity-delay-feedback-test-" + i + ".wav"));
+		Supplier<Runnable> op = c.sec(8);
+		op.get().run();
 	}
 
 	@Test

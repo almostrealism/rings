@@ -15,7 +15,7 @@ public class KeyFrame {
 	private double startTime;
 	private double duration;
 	private BufferedImage image;
-	private List<Word> words;
+	private OCRResult words;
 
 	public KeyFrame() { }
 
@@ -44,20 +44,20 @@ public class KeyFrame {
 
 	public void setDuration(double duration) { this.duration = duration; }
 
-	public List<Word> getWords() {
+	public OCRResult getWords() {
 		return words;
 	}
 
-	public void setWords(List<Word> words) {
+	public void setWords(OCRResult words) {
 		this.words = words;
 	}
 
 	@JsonIgnore
-	public List<String> getText() { return words == null ? null : words.stream().map(Word::getText).collect(Collectors.toList()); }
+	public List<String> getText() { return words == null ? null : words.getWords().stream().map(Word::getText).collect(Collectors.toList()); }
 
 	@JsonIgnore
 	public List<String> getSizeOrderedText() {
-		return words == null ? null : words.stream()
+		return words == null ? null : words.getWords().stream()
 				.sorted(Comparator.comparing(Word::getSize).reversed())
 				.map(Word::getText).collect(Collectors.toList());
 	}
@@ -70,7 +70,7 @@ public class KeyFrame {
 	public List<String> getSizeOrderedEnglishText(int max) {
 		if (words == null) return Collections.emptyList();
 
-		Stream<String> w = words.stream().filter(Word::isEnglish)
+		Stream<String> w = words.getWords().stream().filter(Word::isEnglish)
 				.sorted(Comparator.comparing(Word::getSize).reversed())
 				.map(Word::getText);
 
@@ -79,6 +79,6 @@ public class KeyFrame {
 
 	@JsonIgnore
 	public List<String> getEnglishText() {
-		return words == null ? null : words.stream().filter(w -> w.isEnglish()).map(Word::getText).collect(Collectors.toList());
+		return words == null ? null : words.getWords().stream().filter(w -> w.isEnglish()).map(Word::getText).collect(Collectors.toList());
 	}
 }

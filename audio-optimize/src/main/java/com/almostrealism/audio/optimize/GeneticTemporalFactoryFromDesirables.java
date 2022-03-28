@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.optimize;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +36,23 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.PolymorphicAudioCell;
+import org.almostrealism.audio.Waves;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AdjustableDelayCell;
+import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.temporal.WaveCell;
+import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListGene;
+import org.almostrealism.heredity.CellularTemporalFactor;
+import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.graph.temporal.GeneticTemporalFactory;
 import org.almostrealism.Ops;
+import org.almostrealism.time.Temporal;
 
 public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static final int mixdownDuration = 140;
@@ -54,65 +61,64 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
+	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = false;
 
+	public static boolean enableMixdown = false;
 	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
 
+	public static Waves sourceOverride = null;
+
 	public GeneticTemporalFactory<Scalar, Scalar, Cells> from(DesirablesProvider provider) {
-		List<TemporalFactor<Scalar>> temporals = new ArrayList<>();
-
 		Function<Gene<Scalar>, WaveCell> generator = g -> {
-				TemporalFactor<Scalar> tf = (TemporalFactor<Scalar>) g.valueAt(2);
-				temporals.add(tf);
+				Producer<Scalar> duration = g.valueAt(2).getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
 
-				Producer<Scalar> duration = tf.getResultant(v(bpm(provider.getBeatPerMinute()).l(1)));
-
-				return provider.getWaves().getChoiceCell(
-						g.valueAt(0).getResultant(Ops.ops().v(1.0)),
-						g.valueAt(1).getResultant(duration),
-						enableRepeat ? duration : null);
+				if (sourceOverride == null) {
+					return provider.getWaves().getChoiceCell(
+							g.valueAt(0).getResultant(Ops.ops().v(1.0)),
+							g.valueAt(1).getResultant(duration),
+							enableRepeat ? duration : null);
+				} else {
+					return sourceOverride.getChoiceCell(g.valueAt(0).getResultant(Ops.ops().v(1.0)), v(0.0), null);
+				}
 		};
 
 		return (genome, measures, output) -> {
 			Supplier<Runnable> genomeSetup = genome instanceof Setup ? ((Setup) genome).setup() : () -> () -> { };
 
-			List<TemporalFactor<Scalar>> mainFilterUp = new ArrayList<>();
-
 			// Generators
 			CellList cells = cells(genome.valueAt(DefaultAudioGenome.GENERATORS).length(),
 								i -> generator.apply(genome.valueAt(DefaultAudioGenome.GENERATORS, i)));
+
+			cells.addSetup(() -> genomeSetup);
 
 			if (enableMainFilterUp) {
 				// Apply dynamic high pass filters
 				cells = cells.map(fc(i -> {
 					TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-					mainFilterUp.add(f);
 					return hp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
-				})).addRequirements(mainFilterUp.toArray(TemporalFactor[]::new));
+				}));
 			}
 
 			cells = cells
-					.addRequirements(temporals.toArray(TemporalFactor[]::new))
-					.addSetup(() -> genomeSetup);
+					.addRequirements(((DefaultAudioGenome) genome).getTemporals().toArray(TemporalFactor[]::new));
 
 			if (enableSourcesOnly) {
-				return cells.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+				return cells.map(fc(i -> factor(genome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
+						.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 			}
 
-			cells = cells.mixdown(mixdownDuration);
-
-			List<TemporalFactor<Scalar>> volume = new ArrayList<>();
-			IntStream.range(0, cells.size()).mapToObj(i -> (TemporalFactor) genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)).forEach(volume::add);
-			cells = cells.addRequirements(volume.toArray(TemporalFactor[]::new));
+			if (enableMixdown)
+				cells = cells.mixdown(mixdownDuration);
 
 			// Volume adjustment
 			CellList branch[] = cells.branch(
-									fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)),
+									fc(i -> factor(genome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
 									enableEfxFilters ?
-											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)
+											fc(i -> factor(genome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
 											.andThen(genome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-											fc(i -> genome.valueAt(DefaultAudioGenome.VOLUME, i, 0)));
+											fc(i -> factor(genome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
 
 			CellList main = branch[0];
 			CellList efx = branch[1];
@@ -123,13 +129,6 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 			if (enableEfx) {
 				// Create the delay layers
 				int delayLayers = genome.valueAt(DefaultAudioGenome.PROCESSORS).length();
-				TemporalFactor<Scalar> adjust[] = IntStream.range(0, delayLayers)
-						.mapToObj(i -> List.of(genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1),
-								genome.valueAt(DefaultAudioGenome.WET_IN, i, 0)))
-						.flatMap(List::stream)
-						.map(factor -> factor instanceof TemporalFactor ? ((TemporalFactor) factor) : null)
-						.filter(Objects::nonNull)
-						.toArray(TemporalFactor[]::new);
 				CellList delays = IntStream.range(0, delayLayers)
 						 	.mapToObj(i -> new AdjustableDelayCell(
 								 genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
@@ -138,7 +137,6 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 
 				// Route each line to each delay layer
 				efx = efx.m(fi(), delays, i -> delayGene(delayLayers, genome.valueAt(DefaultAudioGenome.WET_IN, i)))
-						.addRequirements(adjust)
 						// Feedback grid
 						.mself(fi(), genome.valueAt(DefaultAudioGenome.TRANSMISSION),
 								 fc(genome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
@@ -152,14 +150,12 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 
 					if (enableMasterFilterDown) {
-						List<TemporalFactor<Scalar>> masterFilterDown = new ArrayList<>();
 						// Apply dynamic low pass filter
 						main = main.map(fc(i -> {
 							TemporalFactor<Scalar> f = (TemporalFactor<Scalar>) genome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
-							masterFilterDown.add(f);
-//							return lp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
-							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
-						})).addRequirements(masterFilterDown.toArray(TemporalFactor[]::new));
+							return lp(scalarsMultiply(v(20000), f.getResultant(v(1.0))), v(DefaultAudioGenome.defaultResonance));
+//							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
+						}));
 					}
 
 					// Deliver main to the output and measure #1
@@ -175,6 +171,18 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	}
 
 	/**
+	 * This method wraps the specified {@link Factor} to prevent it from
+	 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
+	 * that would proceed to invoke the {@link Temporal#tick()} operation.
+	 * This is not a good solution, and this process needs to be reworked so
+	 * it is clear who bears the responsibility for invoking {@link Temporal#tick()}
+	 * and it doesn't get invoked multiple times.
+	 */
+	private Factor<Scalar> factor(Factor<Scalar> f) {
+		return v -> f.getResultant(v);
+	}
+
+	/**
 	 * Create a {@link Gene} for routing delays.
 	 * The current implementation delivers audio to
 	 * the first delay based on the wet level, and
@@ -182,7 +190,13 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 	 */
 	private Gene<Scalar> delayGene(int delays, Gene<Scalar> wet) {
 		ArrayListGene<Scalar> gene = new ArrayListGene<>();
-		gene.add(wet.valueAt(0));
+
+		if (enableWetInAdjustment) {
+			gene.add(factor(wet.valueAt(0)));
+		} else {
+			gene.add(p -> v(0.2).multiply(p));
+		}
+
 		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> v(0.0)));
 		return gene;
 	}

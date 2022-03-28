@@ -12,8 +12,13 @@ public class Word {
 	public Word() { }
 
 	public Word(String text, double size) {
+		this(text, size, false);
+	}
+
+	public Word(String text, double size, boolean english) {
 		setText(text);
 		setSize(size);
+		setEnglish(english);
 	}
 
 	public String getText() {
@@ -41,7 +46,7 @@ public class Word {
 	}
 
 	public List<Word> split() {
-		return Stream.of(text.split(" ")).map(t -> new Word(t, getSize())).collect(Collectors.toList());
+		return Stream.of(text.split(" ")).map(t -> new Word(t, getSize(), english)).collect(Collectors.toList());
 	}
 
 	public boolean equals(Object o) {

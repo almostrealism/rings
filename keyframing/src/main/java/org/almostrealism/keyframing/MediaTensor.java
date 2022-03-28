@@ -79,7 +79,9 @@ public class MediaTensor {
 	}
 
 	public boolean hasWords() {
-		return keyFrames.stream().map(KeyFrame::getWords).filter(Objects::nonNull).flatMap(List::stream).findAny().isPresent();
+		return keyFrames.stream().map(KeyFrame::getWords).filter(Objects::nonNull)
+								.map(OCRResult::getWords).filter(Objects::nonNull)
+								.flatMap(List::stream).findAny().isPresent();
 	}
 
 	public void computeKeyFrames() {
