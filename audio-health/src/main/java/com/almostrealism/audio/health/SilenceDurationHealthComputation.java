@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;
-	public static boolean enableSilenceCheck = true;
+	public static boolean enableSilenceCheck = false;
 	
 	private int maxSilence;
 	private double silenceValue = 0.001; // Lowest permissable volume
