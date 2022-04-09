@@ -24,7 +24,7 @@ import org.almostrealism.Ops;
 import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.Waves;
-import org.almostrealism.audio.filter.AdjustableDelayCell;
+import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
@@ -296,7 +296,7 @@ public class GeneticTemporalFactoryFromDesirablesTest extends AdjustableDelayCel
 					.filter(Objects::nonNull)
 					.toArray(TemporalFactor[]::new);
 		CellList delays = IntStream.range(0, delayLayers)
-					.mapToObj(i -> new AdjustableDelayCell(
+					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
 							genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
 							genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(v(1.0))))
 					.collect(CellList.collector());

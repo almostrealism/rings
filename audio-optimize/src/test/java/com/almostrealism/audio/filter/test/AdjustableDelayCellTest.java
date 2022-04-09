@@ -22,7 +22,7 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.sources.SineWaveCell;
-import org.almostrealism.audio.filter.AdjustableDelayCell;
+import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.mem.MemoryBankAdapter;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.time.AcceleratedTimeSeries;
@@ -50,7 +50,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 	}
 
 	protected AdjustableDelayCell adjustableDelay() {
-		return new AdjustableDelayCell(((double) DELAY_FRAMES) / OutputLine.sampleRate);
+		return new AdjustableDelayCell(OutputLine.sampleRate, ((double) DELAY_FRAMES) / OutputLine.sampleRate);
 	}
 
 	public OperationList computation(AdjustableDelayCell delay) {

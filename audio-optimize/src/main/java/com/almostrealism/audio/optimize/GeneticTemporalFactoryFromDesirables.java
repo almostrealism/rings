@@ -16,18 +16,11 @@
 
 package com.almostrealism.audio.optimize;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.almostrealism.audio.DesirablesProvider;
-import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
@@ -35,18 +28,12 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.PolymorphicAudioCell;
 import org.almostrealism.audio.Waves;
-import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.filter.AdjustableDelayCell;
-import org.almostrealism.audio.sources.SineWaveCell;
-import org.almostrealism.graph.temporal.ScalarTemporalCellAdapter;
+import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
@@ -130,8 +117,8 @@ public class GeneticTemporalFactoryFromDesirables implements CellFeatures {
 				// Create the delay layers
 				int delayLayers = genome.valueAt(DefaultAudioGenome.PROCESSORS).length();
 				CellList delays = IntStream.range(0, delayLayers)
-						 	.mapToObj(i -> new AdjustableDelayCell(
-								 genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
+						 	.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
+									genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(v(1.0)),
 								 genome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(v(1.0))))
 						.collect(CellList.collector());
 

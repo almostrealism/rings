@@ -35,7 +35,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.Waves;
-import org.almostrealism.audio.filter.AdjustableDelayCell;
+import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.breeding.Breeders;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.cl.CLComputeContext;
