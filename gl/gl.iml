@@ -57,6 +57,7 @@
     <orderEntry type="module" module-name="ar-time" />
     <orderEntry type="module" module-name="ar-chemistry" />
     <orderEntry type="module" module-name="ar-heredity" />
+    <orderEntry type="module" module-name="ar-optimize" />
     <orderEntry type="module" module-name="ar-economics" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />

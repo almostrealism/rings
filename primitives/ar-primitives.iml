@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="ar-time" />
     <orderEntry type="module" module-name="ar-chemistry" />
     <orderEntry type="module" module-name="ar-heredity" />
+    <orderEntry type="module" module-name="ar-optimize" />
     <orderEntry type="module" module-name="ar-economics" />
     <orderEntry type="module" module-name="ar-swing" />
     <orderEntry type="module" module-name="ar-color" />

@@ -24,10 +24,6 @@
 		<module>network</module>
 		<module>absorption</module>
 		<module>photonfield</module>
-		<module>optimalzoo</module>
-		<module>audio-health</module>
-		<module>audio-optimize</module>
-		<module>synth</module>
 		<module>replicate</module>
 		<module>tensorflow</module>
 		<module>torch</module>
