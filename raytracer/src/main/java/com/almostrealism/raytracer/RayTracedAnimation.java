@@ -27,6 +27,8 @@ import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RigidBodyStateShader;
 import com.almostrealism.primitives.RigidSphere;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -40,10 +42,12 @@ import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.space.Animation;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -85,7 +89,8 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			String fn = this.getOutputDirectory() + "/frame_" + instance + "." + i + ".jpeg";
 			File f = new File(fn);
 
-			RGB image[][] = LegacyRayTracingEngine.render(this, this.imageWidth, this.imageHeight, 1, 1, null);
+			RenderParameters p = new RenderParameters(imageWidth, imageHeight, 1, 1);
+			RGB image[][] = new RayTracedScene(this, new FogParameters(), p).realize(p).get().evaluate();
 			this.image = GraphicsConverter.convertToAWTImage(image);
 
 			BufferedImage buff = new BufferedImage(this.imageWidth, this.imageHeight, BufferedImage.TYPE_INT_RGB);
@@ -95,16 +100,13 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			g.setFont(new Font("Monospaced", Font.PLAIN, 16));
 			// g.drawString(this.bodies[0].toString(), 10, this.imageHeight - 30);
 
-//			TODO  Write image
-//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(new FileOutputStream(f));
-//			JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(buff);
-//			param.setQuality(1.0f, true);
-//			encoder.encode(buff, param);
+			ImageIO.write(buff, "jpg", new FileOutputStream(f));
 
 			this.inputFiles.add(f);
 			System.out.println(fn);
 		} catch (Exception ioe) {
 			System.err.println("Error writing image file for frame " + i + " : " + ioe.toString());
+			ioe.printStackTrace();
 		}
 	}
 

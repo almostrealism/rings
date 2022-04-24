@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.raytrace.Engine;
+import com.almostrealism.raytrace.FogParameters;
+import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import io.almostrealism.relation.Realization;
 import org.almostrealism.geometry.Camera;
@@ -35,6 +37,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurface;
 
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
 	private RayTracer tracer;
@@ -62,6 +66,10 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		this.tracer = pool == null ? new RayTracer(t) : new RayTracer(t, pool);
 		this.camera = c;
 		this.p = p;
+	}
+
+	public RayTracedScene(Scene<? extends ShadableSurface> scene, FogParameters fog, RenderParameters p) {
+		this(new RayIntersectionEngine(scene, fog), scene.getCamera(), p, null);
 	}
 
 	public RenderParameters getRenderParameters() { return p; }

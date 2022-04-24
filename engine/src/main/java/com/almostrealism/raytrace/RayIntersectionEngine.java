@@ -35,11 +35,11 @@ import java.util.List;
 public class RayIntersectionEngine implements Engine {
 	public static boolean enableAcceleratedAggregator = false;
 
-	private Scene<ShadableSurface> scene;
+	private Scene<? extends ShadableSurface> scene;
 	private ShaderContext sparams;
 	private FogParameters fparams;
 	
-	public RayIntersectionEngine(Scene<ShadableSurface> s, FogParameters fparams) {
+	public RayIntersectionEngine(Scene<? extends ShadableSurface> s, FogParameters fparams) {
 		this.scene = s;
 		this.fparams = fparams;
 	}

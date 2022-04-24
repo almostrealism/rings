@@ -28,7 +28,11 @@ import java.util.function.Function;
  */
 public class RenderParameters {
 	public RenderParameters() { }
-	
+
+	public RenderParameters(int w, int h, int ssw, int ssh) {
+		this(0, 0, w, h, w, h, ssw, ssh);
+	}
+
 	public RenderParameters(int x, int y, int dx, int dy, int w, int h, int ssw, int ssh) {
 		this.x = x;
 		this.y = y;
