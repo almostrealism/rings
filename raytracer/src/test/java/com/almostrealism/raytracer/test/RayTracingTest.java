@@ -13,6 +13,8 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.computations.RGBWhite;
+import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Plane;
@@ -27,6 +29,7 @@ import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
+import org.junit.Test;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
@@ -164,6 +167,23 @@ public class RayTracingTest {
 			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			System.out.println("Wrote image");
+		} catch (FileNotFoundException fnf) {
+			System.out.println("ERROR: Output file not found");
+		} catch (IOException ioe) {
+			System.out.println("IO ERROR");
+		}
+	}
+
+	@Test
+	public void test() throws IOException {
+		RealizableImage img = generateImage();
+
+		try {
+			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
+					ImageCanvas.JPEGEncoding);
+			System.out.println("Wrote image");
+		} catch (HardwareException e) {
+			e.printStackTrace();
 		} catch (FileNotFoundException fnf) {
 			System.out.println("ERROR: Output file not found");
 		} catch (IOException ioe) {

@@ -105,7 +105,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			this.inputFiles.add(f);
 			System.out.println(fn);
 		} catch (Exception ioe) {
-			System.err.println("Error writing image file for frame " + i + " : " + ioe.toString());
+			System.err.println("Error writing image file for frame " + i + " : " + ioe.getMessage());
 			ioe.printStackTrace();
 		}
 	}
@@ -151,7 +151,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 
 	/**
 	 * @return  A Properties object containing all of the data required to reconstruct the current state
-	 *          of the RigidBody objects stored by this Simulation object.
+	 *          of the {@link RigidBody}s stored by this {@link RayTracedAnimation}.
 	 */
 	public Properties generateProperties() {
 		Properties p = super.generateProperties();
@@ -322,6 +322,12 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 		if (ph != null) c.setProjectionHeight(Double.parseDouble(ph));
 
 		c.updateUVW();
+
+		int expectedHeight = (int) (imageWidth * c.getProjectionHeight() / c.getProjectionWidth());
+		if (imageHeight != expectedHeight) {
+			System.out.println("WARN: Correcting image height (" + expectedHeight + ") due to camera projection dimensions");
+			imageHeight = expectedHeight;
+		}
 
 		int len = Integer.parseInt(p.getProperty("bodies.length", "0"));
 
