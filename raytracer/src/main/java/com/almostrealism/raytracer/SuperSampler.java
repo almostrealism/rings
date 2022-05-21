@@ -26,6 +26,7 @@ import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.hardware.MemoryData;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -79,24 +80,24 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 			}
 
 			@Override
-			public void kernelEvaluate(MemoryBank destination, MemoryBank[] args) {
+			public void kernelEvaluate(MemoryBank destination, MemoryData... args) {
 				int w = ev.length;
 				int h = ev[0].length;
 
-				PairBank allSamples = new PairBank(args[0].getCount());
+				PairBank allSamples = new PairBank(((MemoryBank) args[0]).getCount());
 				RGBBank out[][] = new RGBBank[w][h];
 
 				System.out.println("SuperSampler: Evaluating sample kernels...");
 				for (int i = 0; i < ev.length; i++) {
 					j: for (int j = 0; j < ev[i].length; j++) {
-						for (int k = 0; k < args[0].getCount(); k++) {
-							Pair pos = (Pair) args[0].get(k);
+						for (int k = 0; k < ((MemoryBank) args[0]).getCount(); k++) {
+							Pair pos = (Pair) ((MemoryBank) args[0]).get(k);
 							double r = pos.getX() + ((double) i / (double) ev.length);
 							double q = pos.getY() + ((double) j / (double) ev[i].length);
 							allSamples.set(k, r, q);
 						}
 
-						out[i][j] = new RGBBank(args[0].getCount());
+						out[i][j] = new RGBBank(((MemoryBank) args[0]).getCount());
 						ev[i][j].kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
 					}
 				}
