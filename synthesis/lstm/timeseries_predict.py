@@ -33,5 +33,5 @@ for i in range(300):
 print(prediction)
 
 prediction = np.reshape(np.asarray([prediction]), (-1, 1))
-tf.io.write_file("output/timeseries-prediction.wav", tf.audio.encode_wav(prediction, 22050))
+tf.io.write_file("../output/timeseries-prediction.wav", tf.audio.encode_wav(prediction, 22050))
 print("Wrote wav")

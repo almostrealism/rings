@@ -20,11 +20,9 @@ import numpy as np
 split_fraction = 0.715
 step = 1
 
-# past = 120
-past = 1200
-# future = 72
-future = 720
-
+past = 120
+# past = 22050
+future = 72
 learning_rate = 0.001
 batch_size = 256
 epochs = 5
@@ -79,6 +77,13 @@ print(len(y_train))
 
 sequence_length = int(past / step)
 
+"""
+The `timeseries_dataset_from_array` function takes in a sequence of data-points gathered at
+equal intervals, along with time series parameters such as length of the
+sequences/windows, spacing between two sequence/windows, etc., to produce batches of
+sub-timeseries inputs and targets sampled from the main timeseries.
+"""
+
 dataset_train = keras.preprocessing.timeseries_dataset_from_array(
     x_train,
     y_train,
@@ -86,13 +91,6 @@ dataset_train = keras.preprocessing.timeseries_dataset_from_array(
     sampling_rate=step,
     batch_size=batch_size,
 )
-
-# dataset_train_in = tf.keras.preprocessing.timeseries_dataset_from_array(
-#     x_train, None, sequence_length=sequence_length)
-# dataset_train_target = tf.keras.preprocessing.timeseries_dataset_from_array(
-#     y_train, None, sequence_length=sequence_length)
-#
-# dataset_train = zip(dataset_train_in, dataset_train_target)
 
 """
 ## Validation dataset
@@ -119,10 +117,6 @@ dataset_val = keras.preprocessing.timeseries_dataset_from_array(
     batch_size=batch_size,
 )
 
-# for v in dataset_train_in.take(1):
-#     inputs = v
-# for v in dataset_train_target.take(1):
-#     targets = v
 
 for batch in dataset_train.take(1):
     inputs, targets = batch
@@ -130,13 +124,60 @@ for batch in dataset_train.take(1):
 print("Input shape:", inputs.numpy().shape)
 print("Target shape:", targets.numpy().shape)
 
-# Model ##########################################################################
 
-inputs = keras.layers.Input(shape=(inputs.shape[1], inputs.shape[2]))
-lstm_out = keras.layers.LSTM(128)(inputs)
-outputs = keras.layers.Dense(1, activation="tanh")(lstm_out)
+def transformer_encoder(inputs, head_size, num_heads, ff_dim, dropout=0):
+    # Attention and Normalization
+    x = keras.layers.MultiHeadAttention(
+        key_dim=head_size, num_heads=num_heads, dropout=dropout
+    )(inputs, inputs)
+    x = keras.layers.Dropout(dropout)(x)
+    x = keras.layers.LayerNormalization(epsilon=1e-6)(x)
+    res = x + inputs
 
-model = keras.Model(inputs=inputs, outputs=outputs)
+    # Feed Forward Part
+    x = keras.layers.Conv1D(filters=ff_dim, kernel_size=1, activation="relu")(res)
+    x = keras.layers.Dropout(dropout)(x)
+    x = keras.layers.Conv1D(filters=inputs.shape[-1], kernel_size=1)(x)
+    x = keras.layers.LayerNormalization(epsilon=1e-6)(x)
+    return x + res
+
+def build_model(
+        input_shape,
+        head_size,
+        num_heads,
+        ff_dim,
+        num_transformer_blocks,
+        mlp_units,
+        dropout=0,
+        mlp_dropout=0,
+):
+    inputs = keras.Input(shape=input_shape)
+    x = inputs
+    for _ in range(num_transformer_blocks):
+        x = transformer_encoder(x, head_size, num_heads, ff_dim, dropout)
+
+    x = keras.layers.GlobalAveragePooling1D(data_format="channels_first")(x)
+    outputs = keras.layers.Dense(1, activation="tanh")(x)
+    return keras.Model(inputs, outputs)
+
+model = build_model(
+    (inputs.shape[1], inputs.shape[2]),
+    head_size=256,
+    num_heads=4,
+    ff_dim=4,
+    num_transformer_blocks=4,
+    mlp_units=[128],
+    mlp_dropout=0.4,
+    dropout=0.25,
+)
+
+model.summary()
+
+# lstm_out = keras.layers.LSTM(32)(inputs)
+# outputs = keras.layers.Dense(1)(lstm_out)
+#
+# model = keras.Model(inputs=inputs, outputs=outputs)
+
 model.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate), loss="mse")
 model.summary()
 
@@ -146,7 +187,7 @@ the `EarlyStopping` callback to interrupt training when the validation loss
 is not longer improving.
 """
 
-path_checkpoint = "models/timeseries_checkpoint.h5"
+path_checkpoint = "../models/timeseries_checkpoint.h5"
 es_callback = keras.callbacks.EarlyStopping(monitor="val_loss", min_delta=0, patience=5)
 
 modelckpt_callback = keras.callbacks.ModelCheckpoint(
@@ -160,11 +201,11 @@ modelckpt_callback = keras.callbacks.ModelCheckpoint(
 history = model.fit(
     dataset_train,
     epochs=epochs,
-    # validation_data=dataset_val,
+    validation_data=dataset_val,
     # callbacks=[es_callback, modelckpt_callback],
 )
 
-model.save("models/timeseries_model.h5")
+model.save("models/timeseries_transformer_model_tanh.h5")
 
 def show_plot(plot_data, delta, title):
     labels = ["History", "True Future", "Model Prediction"]
