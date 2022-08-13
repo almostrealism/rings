@@ -142,7 +142,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	public double getFNumber() { return getFocalLength() / (2.0 * this.pinhole.getRadius()); }
 
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+	public Producer<Ray> rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd) {
 		return new DynamicProducerForMemoryData<>(args -> {
 				Pair ij = pos.get().evaluate(args);
 				Pair screenDim = sd.get().evaluate(args);

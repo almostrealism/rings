@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-		<common.version>0.47</common.version>
-		<ichos.version>1.35</ichos.version>
+		<common.version>0.48</common.version>
+		<ichos.version>1.36</ichos.version>
 		<flowtree.version>0.13</flowtree.version>
 	</properties>
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.19</version>
+	<version>0.20</version>
 
 	<modules>
 		<module>raytracer</module>

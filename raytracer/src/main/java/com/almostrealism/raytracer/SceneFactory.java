@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RandomColorGenerator;
@@ -51,10 +52,10 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 		this(new RandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
 	}
 	
-	public SceneFactory(Chromosome<Scalar> c) {
+	public SceneFactory(Chromosome<PackedCollection<?>> c) {
 		List<Factory<ShadableSurface>> f =
 			Arrays.asList(
-				new Factory<ShadableSurface>() { public Sphere construct() { return new Sphere(location(), Math.random(), color()); } }
+					() -> new Sphere(location(), Math.random(), color())
 			);
 		
 		surfaces = new ProbabilisticFactory<>(f, c.valueAt(0));

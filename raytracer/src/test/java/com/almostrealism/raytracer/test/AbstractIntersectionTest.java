@@ -18,6 +18,7 @@ package com.almostrealism.raytracer.test;
 
 import com.almostrealism.primitives.SphereIntersectAt;
 import com.almostrealism.projection.PinholeCameraRayAt;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
@@ -38,7 +39,7 @@ public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures 
 		Vector v = w.crossProduct(u);
 
 		return
-				new SphereIntersectAt(new PinholeCameraRayAt(v(Pair.class, 0),
+				new SphereIntersectAt(new PinholeCameraRayAt((Producer) v(Pair.class, 0),
 						pair(width, height),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),

@@ -18,6 +18,7 @@ package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.bool.AcceleratedConjunctionScalar;
 import org.almostrealism.bool.GreaterThanScalar;
 import org.almostrealism.geometry.computations.DirectionDotDirection;
@@ -32,8 +33,8 @@ import java.util.function.Supplier;
 import static org.almostrealism.Ops.*;
 
 public class SphereIntersectAt extends LessThanScalar {
-	private SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r, ScalarProducer oDotD,
-							  ScalarProducer oDotO, ScalarProducer dDotD) {
+	private SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r, ScalarProducerBase oDotD,
+							  ScalarProducerBase oDotO, ScalarProducerBase dDotD) {
 		super(discriminant(oDotD, oDotO, dDotD),
 				ops().scalar(0.0),
 				ops().scalar(-1.0),
@@ -58,25 +59,25 @@ public class SphereIntersectAt extends LessThanScalar {
 						ops().scalar(0)));
 	}
 
-	private static PairProducer t(ScalarProducer oDotD,
-								  ScalarProducer oDotO,
-								  ScalarProducer dDotD) {
-		ScalarProducer dS = discriminantSqrt(oDotD, oDotO, dDotD);
-		ScalarProducer minusODotD = oDotD.multiply(-1.0);
-		ScalarProducer dDotDInv = dDotD.pow(-1.0);
+	private static PairProducer t(ScalarProducerBase oDotD,
+								  ScalarProducerBase oDotO,
+								  ScalarProducerBase dDotD) {
+		ScalarProducerBase dS = discriminantSqrt(oDotD, oDotO, dDotD);
+		ScalarProducerBase minusODotD = oDotD.multiply(-1.0);
+		ScalarProducerBase dDotDInv = dDotD.pow(-1.0);
 		return ops().fromScalars(minusODotD.add(dS).multiply(dDotDInv),
 								minusODotD.add(dS.multiply(-1.0)).multiply(dDotDInv));
 	}
 
-	private static ScalarProducer discriminant(ScalarProducer oDotD,
-											   ScalarProducer oDotO,
-											   ScalarProducer dDotD) {
+	private static ScalarProducerBase discriminant(ScalarProducerBase oDotD,
+											   ScalarProducerBase oDotO,
+											   ScalarProducerBase dDotD) {
 		return oDotD.pow(2.0).add(dDotD.multiply(oDotO.add(-1.0)).multiply(-1));
 	}
 
-	private static ScalarProducer discriminantSqrt(ScalarProducer oDotD,
-												   ScalarProducer oDotO,
-												   ScalarProducer dDotD) {
+	private static ScalarProducerBase discriminantSqrt(ScalarProducerBase oDotD,
+												   ScalarProducerBase oDotO,
+												   ScalarProducerBase dDotD) {
 		return discriminant(oDotD, oDotO, dDotD).pow(0.5);
 	}
 }

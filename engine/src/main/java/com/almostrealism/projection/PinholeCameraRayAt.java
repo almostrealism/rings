@@ -20,6 +20,7 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairEvaluable;
 import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.computations.RandomPair;
@@ -55,8 +56,8 @@ public class PinholeCameraRayAt extends RayFromVectors {
 		ScalarProducer y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
 		ScalarProducer z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
 
-		VectorProducer pqr = ops().fromScalars(x, y, z);
-		ScalarProducer len = pqr.length();
+		VectorProducer pqr = Ops.ops().fromScalars(x, y, z);
+		ScalarProducerBase len = pqr.length();
 		
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
 			VectorProducer wv = pqr.normalize();

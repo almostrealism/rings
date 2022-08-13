@@ -1,6 +1,7 @@
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
@@ -54,7 +55,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return (KernelizedProducer<Ray>) c.rayAt(v(Pair.class, 0), pair(width, height));
+		return (KernelizedProducer<Ray>) c.rayAt((Producer) v(Pair.class, 0), pair(width, height));
 	}
 
 	@Before

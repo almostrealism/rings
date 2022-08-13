@@ -20,6 +20,7 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
@@ -194,8 +195,8 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 */
 	// TODO  This should be a method of the Light interface
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
-		VectorProducer point = origin(intersection);
-		VectorProducer direction = add(point, v(getLocation()).scalarMultiply(-1.0));
+		VectorProducerBase point = origin(intersection);
+		VectorProducerBase direction = add(point, v(getLocation()).scalarMultiply(-1.0));
 		direction = direction.normalize().scalarMultiply(-1.0);
 		context.setLightDirection(direction);
 		return surface.shade(context);

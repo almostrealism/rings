@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.VectorProducer;
@@ -113,12 +114,12 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		final Producer<RGB> fr = r;
 
-		VectorProducer point = new RayOrigin(p.getIntersection().get(0));
+		VectorProducerBase point = new RayOrigin(p.getIntersection().get(0));
 		VectorProducer n = new RayDirection(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
-		VectorProducer loc = origin(transform);
+		VectorProducerBase loc = origin(transform);
 
 		ScalarProducer cp = length(nor).multiply(length(n));
 

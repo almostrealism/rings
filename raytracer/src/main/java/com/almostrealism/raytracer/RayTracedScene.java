@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 
 	public RenderParameters getRenderParameters() { return p; }
 
-	public KernelizedProducer<RGB> operate(Producer<Pair> uv, Producer<Pair> sd) {
+	public KernelizedProducer<RGB> operate(Producer<Pair<?>> uv, Producer<Pair<?>> sd) {
 		Future<KernelizedProducer<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
 
 		if (color == null) {
@@ -112,7 +112,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	public Producer<RGB> getProducer() { return getProducer(getRenderParameters()); }
 
 	public KernelizedProducer<RGB> getProducer(RenderParameters p) {
-		KernelizedProducer<RGB> producer = operate(v(Pair.class, 0), pair(p.width, p.height));
+		KernelizedProducer<RGB> producer = operate((Producer) v(Pair.class, 0), pair(p.width, p.height));
 
 		if (producer instanceof DimensionAware) {
 			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);

@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.computations.GreaterThanRGB;
 import org.almostrealism.geometry.DiscreteField;
@@ -48,8 +49,8 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 	/** Method specified by the {@link Shader} interface. */
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
-		VectorProducer point = origin(normals.get(0));
-		VectorProducer n = direction(normals.get(0)).normalize();
+		VectorProducerBase point = origin(normals.get(0));
+		VectorProducerBase n = direction(normals.get(0)).normalize();
 		ScalarProducer scaleFront = n.dotProduct(p.getLightDirection());
 		ScalarProducer scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
