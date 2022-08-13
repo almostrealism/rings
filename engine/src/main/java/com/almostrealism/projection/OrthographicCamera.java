@@ -211,10 +211,12 @@ public class OrthographicCamera implements Camera, Positioned, DecodePostProcess
 	    
 	    return new TransformMatrix(matrix);
 	}
-	
-	/** @see org.almostrealism.algebra.Camera#rayAt(Producer, Producer) */
+
+	/**
+	 * @see org.almostrealism.geometry.Camera#rayAt(io.almostrealism.relation.Producer, io.almostrealism.relation.Producer)
+	 */
 	@Override
-	public Producer<Ray> rayAt(Producer<Pair> pos, Producer<Pair> sd) {
+	public Producer<Ray> rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd) {
 		return new Producer<Ray>() {
 			@Override
 			public Evaluable<Ray> get() {
