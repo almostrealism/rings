@@ -48,6 +48,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, CodeFeatures {
+	public TestScene() throws IOException {
+		this(false, false, false, true, false, false, false, false, false);
+	}
+
 	public TestScene(boolean enableCornellBox, boolean enableRandomThing, boolean enableDragon,
 					 boolean enableSphere, boolean enableTriangles, boolean enableFloor,
 					 boolean enableSilhouette,

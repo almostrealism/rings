@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.geometry.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.computations.ScalarPow;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
@@ -36,7 +34,6 @@ import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.computations.RayOrigin;
-import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
@@ -115,13 +112,13 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		final Producer<RGB> fr = r;
 
 		VectorProducerBase point = new RayOrigin(p.getIntersection().get(0));
-		VectorProducer n = new RayDirection(normals.iterator().next());
+		VectorProducerBase n = new RayDirection(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
 		VectorProducerBase loc = origin(transform);
 
-		ScalarProducer cp = length(nor).multiply(length(n));
+		ScalarProducerBase cp = length(nor).multiply(length(n));
 
 		Evaluable<RGB> tc = null;
 
@@ -145,9 +142,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = v(reflectivity).add(v(1 - reflectivity)
-							.multiply(compileProducer(new ScalarPow(c, v(5.0)))));
+			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarProducerBase reflective = v(reflectivity).add(v(1 - reflectivity)
+							.multiply(compileProducer(pow(c, v(5.0)))));
 			Evaluable<RGB> fcolor = color;
 			color = cfromScalar(reflective).multiply(fr).multiply(() -> fcolor).get();
 
@@ -179,8 +176,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducer c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
-			ScalarProducer reflective = v(reflectivity).add(
+			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarProducerBase reflective = v(reflectivity).add(
 					v(1 - reflectivity).multiply(pow(c, v(5.0))));
 			Evaluable<RGB> fcolor = color;
 			color = cmultiply(() -> fcolor, cmultiply(fr, cfromScalar(reflective))).get();
@@ -263,7 +260,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	 * Returns the values of the properties of this ReflectionShader object as an Object array.
 	 */
 	public Object[] getPropertyValues() {
-		return new Object[] {new Double(this.reflectivity), this.reflectiveColor, new Double(this.blur), this.eMap};
+		return new Object[] {Double.valueOf(this.reflectivity), this.reflectiveColor, Double.valueOf(this.blur), this.eMap};
 	}
 	
 	/**

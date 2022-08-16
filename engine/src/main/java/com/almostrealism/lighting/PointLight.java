@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -157,7 +156,7 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		ScalarProducer d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
+		ScalarProducerBase d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
 
 		RGB color = getColor().multiply(getIntensity());
 		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, v(color), d));

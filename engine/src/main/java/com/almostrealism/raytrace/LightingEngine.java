@@ -23,6 +23,7 @@ import com.almostrealism.lighting.SurfaceLight;
 import io.almostrealism.code.ArgumentMap;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.code.ScopeLifecycle;
+import org.almostrealism.Ops;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.algebra.Scalar;
@@ -103,7 +104,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			Vector l = (directionalLight.getDirection().divide(
 					directionalLight.getDirection().length())).minus();
 
-			context.setLightDirection(ops().v(l));
+			context.setLightDirection(Ops.ops().v(l));
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {

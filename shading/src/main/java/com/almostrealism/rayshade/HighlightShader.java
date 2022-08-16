@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.algebra.ScalarProducerBase;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
@@ -91,14 +93,14 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n = scalarMultiply(n, length(n).pow(-1.0));
-		VectorProducer h = add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection());
+		VectorProducerBase h = add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection());
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(new Object[] {p}));
 		if (super.size() > 0) hc = cmultiply(hc, super.shade(p, normals));
 
-		ScalarProducer cFront = h.dotProduct(n);
-		ScalarProducer cBack = h.dotProduct(scalarMultiply(n, -1.0));
+		ScalarProducerBase cFront = h.dotProduct(n);
+		ScalarProducerBase cBack = h.dotProduct(scalarMultiply(n, -1.0));
 
 		Producer<RGB> fhc = hc;
 
@@ -178,7 +180,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	 * Returns the values of the properties of this HighlightShader object as an Object array.
 	 */
 	public Object[] getPropertyValues() {
-		return new Object[] {this.highlightColor, new Double(this.highlightExponent)};
+		return new Object[] {this.highlightColor, Double.valueOf(this.highlightExponent)};
 	}
 	
 	/**

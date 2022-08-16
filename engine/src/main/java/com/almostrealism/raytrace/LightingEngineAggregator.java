@@ -95,7 +95,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 
 	/**
 	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available, using
-	 * {@link KernelizedEvaluable#kernelEvaluate(MemoryBank, MemoryBank[])}.
+	 * {@link KernelizedEvaluable#kernelEvaluate(MemoryBank, org.almostrealism.hardware.MemoryData[])}.
 	 */
 	public synchronized void initRankCache() {
 		if (this.ranks != null) return;

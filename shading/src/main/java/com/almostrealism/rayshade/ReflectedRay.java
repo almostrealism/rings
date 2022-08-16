@@ -18,8 +18,10 @@ package com.almostrealism.rayshade;
 
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
@@ -106,8 +108,8 @@ public class ReflectedRay implements RayProducer {
 	 * second specified {@link Vector} and returns the result.
 	 */
 	public static VectorProducer reflect(Producer<Vector> vector, Producer<Vector> normal) {
-		VectorProducer newVector = ops().minus(vector);
-		ScalarProducer s = ops().scalar(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
+		VectorProducerBase newVector = ops().minus(vector);
+		ScalarProducerBase s = ops().scalar(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
 		return newVector.subtract(ops().scalarMultiply(normal, s));
 	}
 }

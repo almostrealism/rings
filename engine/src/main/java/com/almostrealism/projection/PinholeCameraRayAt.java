@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.algebra.computations.RandomPair;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.computations.RayFromVectors;
@@ -32,7 +33,7 @@ import org.almostrealism.hardware.HardwareFeatures;
 import static org.almostrealism.Ops.*;
 
 public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatures {
-	private PinholeCameraRayAt(Vector location, VectorProducer direction) {
+	private PinholeCameraRayAt(Vector location, VectorProducerBase direction) {
 		super(Ops.ops().v(location), direction);
 	}
 
@@ -41,30 +42,30 @@ public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatur
 		this(location, direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
-	private static VectorProducer direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
+	private static VectorProducerBase direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
 											Vector u, Vector v, Vector w, Pair blur) {
 		PairProducer pd = Ops.ops().v(projectionDimensions);
 
 		ScalarProducer sdx = Ops.ops().l(sd);
 		ScalarProducerBase sdy = Ops.ops().r(sd);
 
-		ScalarProducer p = pd.x().multiply(Ops.ops().l(pos))
+		ScalarProducerBase p = pd.x().multiply(Ops.ops().l(pos))
 								.multiply(sdx.add(-1.0).pow(-1.0)).add(pd.x().multiply(-0.5));
-		ScalarProducer q = pd.y().multiply(Ops.ops().r(pos))
+		ScalarProducerBase q = pd.y().multiply(Ops.ops().r(pos))
 								.multiply(sdy.add(-1.0).pow(-1.0)).add(pd.y().multiply(-0.5));
-		ScalarProducer r = Ops.ops().scalar(-focalLength);
+		ScalarProducerBase r = Ops.ops().scalar(-focalLength);
 
-		ScalarProducer x = p.multiply(u.getX()).add(q.multiply(v.getX())).add(r.multiply(w.getX()));
-		ScalarProducer y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
-		ScalarProducer z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
+		ScalarProducerBase x = p.multiply(u.getX()).add(q.multiply(v.getX())).add(r.multiply(w.getX()));
+		ScalarProducerBase y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
+		ScalarProducerBase z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
 
-		VectorProducer pqr = Ops.ops().fromScalars(x, y, z);
+		VectorProducerBase pqr = Ops.ops().fromScalars(x, y, z);
 		ScalarProducerBase len = pqr.length();
 		
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
-			VectorProducer wv = pqr.normalize();
-			VectorProducer uv = u(wv, t(pqr));
-			VectorProducer vv = v(wv, uv);
+			VectorProducerBase wv = pqr.normalize();
+			VectorProducerBase uv = u(wv, t(pqr));
+			VectorProducerBase vv = v(wv, uv);
 
 			PairEvaluable random = new RandomPair();
 			PairEvaluable frandom = Ops.ops().fromScalars(random.x().add(-0.5), random.y().add(-0.5));
@@ -78,7 +79,7 @@ public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatur
 		return pqr;
 	}
 
-	private static Producer<Vector> t(VectorProducer pqr) {
+	private static Producer<Vector> t(VectorProducerBase pqr) {
 		Producer<Vector> ft = pqr.y().lessThanv(pqr.x()).and(pqr.y().lessThanv(pqr.z()),
 				Ops.ops().fromScalars(pqr.x(), Ops.ops().scalar(1.0), pqr.z()),
 				Ops.ops().fromScalars(pqr.x(), pqr.y(), Ops.ops().scalar(1.0)));
@@ -89,17 +90,17 @@ public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatur
 		return t;
 	}
 
-	private static VectorProducer u(VectorProducer w, Producer<Vector> t) {
-		ScalarProducer x = Ops.ops().y(t).multiply(w.z()).add(Ops.ops().z(t).multiply(w.y()).multiply(-1.0));
-		ScalarProducer y = Ops.ops().z(t).multiply(w.x()).add(Ops.ops().x(t).multiply(w.z()).multiply(-1.0));
-		ScalarProducer z = Ops.ops().x(t).multiply(w.y()).add(Ops.ops().y(t).multiply(w.x()).multiply(-1.0));
+	private static VectorProducerBase u(VectorProducerBase w, Producer<Vector> t) {
+		ScalarProducerBase x = Ops.ops().y(t).multiply(w.z()).add(Ops.ops().z(t).multiply(w.y()).multiply(-1.0));
+		ScalarProducerBase y = Ops.ops().z(t).multiply(w.x()).add(Ops.ops().x(t).multiply(w.z()).multiply(-1.0));
+		ScalarProducerBase z = Ops.ops().x(t).multiply(w.y()).add(Ops.ops().y(t).multiply(w.x()).multiply(-1.0));
 		return Ops.ops().fromScalars(x, y, z).normalize();
 	}
 
-	private static VectorProducer v(VectorProducer w, VectorProducer u) {
-		ScalarProducer x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
-		ScalarProducer y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
-		ScalarProducer z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
+	private static VectorProducerBase v(VectorProducerBase w, VectorProducerBase u) {
+		ScalarProducerBase x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
+		ScalarProducerBase y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
+		ScalarProducerBase z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
 		return Ops.ops().fromScalars(x, y, z);
 	}
 }

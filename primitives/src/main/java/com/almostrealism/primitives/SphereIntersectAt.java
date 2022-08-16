@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package com.almostrealism.primitives;
 
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.PairProducer;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.bool.AcceleratedConjunctionScalar;
 import org.almostrealism.bool.GreaterThanScalar;
-import org.almostrealism.geometry.computations.DirectionDotDirection;
-import org.almostrealism.geometry.computations.OriginDotDirection;
-import org.almostrealism.geometry.computations.OriginDotOrigin;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.bool.LessThanScalar;
 import io.almostrealism.relation.Evaluable;
@@ -33,16 +30,16 @@ import java.util.function.Supplier;
 import static org.almostrealism.Ops.*;
 
 public class SphereIntersectAt extends LessThanScalar {
-	private SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r, ScalarProducerBase oDotD,
+	private SphereIntersectAt(ScalarProducerBase oDotD,
 							  ScalarProducerBase oDotO, ScalarProducerBase dDotD) {
 		super(discriminant(oDotD, oDotO, dDotD),
-				ops().scalar(0.0),
-				ops().scalar(-1.0),
+				Ops.ops().scalar(0.0),
+				Ops.ops().scalar(-1.0),
 				closest(t(oDotD, oDotO, dDotD)), false);
 	}
 
 	public SphereIntersectAt(Supplier<Evaluable<? extends Ray>> r) {
-		this(r, new OriginDotDirection(r), new OriginDotOrigin(r), new DirectionDotDirection(r));
+		this(Ops.ops().oDotd(r), Ops.ops().oDoto(r), Ops.ops().dDotd(r));
 	}
 
 	private static AcceleratedConjunctionScalar closest(PairProducer t) {

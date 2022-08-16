@@ -48,7 +48,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	/**
 	 * Controls whether the color of a point light source will be adjusted based on the
 	 * intensity of the point light or whether this will be left up to the shader.
-	 * By default set to true.
+	 * By default it is set to true.
 	 */
 	public static boolean premultiplyIntensity = true;
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.almostrealism.rayshade;
 
+import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
@@ -80,8 +81,8 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 		
 		Supplier<Evaluable<? extends Vector>> l = p.getLightDirection();
 
-		ScalarProducer k = direction(n).dotProduct(l).add(1.0);
-		ScalarProducer oneMinusK = scalar(1.0).subtract(k);
+		ScalarProducerBase k = direction(n).dotProduct(l).add(1.0);
+		ScalarProducerBase oneMinusK = scalar(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.get().evaluate(p);
 		RGB cc = this.coldColor.get().evaluate(p);
