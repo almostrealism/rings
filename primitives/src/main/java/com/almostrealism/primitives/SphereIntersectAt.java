@@ -46,14 +46,14 @@ public class SphereIntersectAt extends LessThanScalar {
 		return new AcceleratedConjunctionScalar(
 				new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
 				new GreaterThanScalar(t.x(),
-						ops().scalar(0.0),
+						Ops.ops().scalar(0.0),
 						t.x(), new GreaterThanScalar(t.y(),
-						ops().scalar(0.0), t.y(),
-						ops().scalar(-1.0), false), false),
-				new GreaterThanScalar(ops().l(t),
-						ops().scalar(0)),
-				new GreaterThanScalar(ops().r(t),
-						ops().scalar(0)));
+						Ops.ops().scalar(0.0), t.y(),
+						Ops.ops().scalar(-1.0), false), false),
+				new GreaterThanScalar(Ops.ops().l(t),
+						Ops.ops().scalar(0)),
+				new GreaterThanScalar(Ops.ops().r(t),
+						Ops.ops().scalar(0)));
 	}
 
 	private static PairProducer t(ScalarProducerBase oDotD,
@@ -62,7 +62,7 @@ public class SphereIntersectAt extends LessThanScalar {
 		ScalarProducerBase dS = discriminantSqrt(oDotD, oDotO, dDotD);
 		ScalarProducerBase minusODotD = oDotD.multiply(-1.0);
 		ScalarProducerBase dDotDInv = dDotD.pow(-1.0);
-		return ops().fromScalars(minusODotD.add(dS).multiply(dDotDInv),
+		return Ops.ops().fromScalars(minusODotD.add(dS).multiply(dDotDInv),
 								minusODotD.add(dS.multiply(-1.0)).multiply(dDotDInv));
 	}
 
