@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2022 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.scope.Scope;
-import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducer;
@@ -107,9 +107,9 @@ public class ReflectedRay implements RayProducer {
 	 * Reflects the specified {@link Vector} across the normal vector represented by the
 	 * second specified {@link Vector} and returns the result.
 	 */
-	public static VectorProducer reflect(Producer<Vector> vector, Producer<Vector> normal) {
-		VectorProducerBase newVector = ops().minus(vector);
-		ScalarProducerBase s = ops().scalar(2).multiply(newVector.dotProduct(normal).divide(ops().lengthSq(normal)));
-		return newVector.subtract(ops().scalarMultiply(normal, s));
+	public static VectorProducerBase reflect(Producer<Vector> vector, Producer<Vector> normal) {
+		VectorProducerBase newVector = Ops.ops().minus(vector);
+		ScalarProducerBase s = Ops.ops().scalar(2).multiply(newVector.dotProduct(normal).divide(Ops.ops().lengthSq(normal)));
+		return newVector.subtract(Ops.ops().scalarMultiply(normal, s));
 	}
 }

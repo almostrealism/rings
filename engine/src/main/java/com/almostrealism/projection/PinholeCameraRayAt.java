@@ -46,7 +46,7 @@ public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatur
 											Vector u, Vector v, Vector w, Pair blur) {
 		PairProducer pd = Ops.ops().v(projectionDimensions);
 
-		ScalarProducer sdx = Ops.ops().l(sd);
+		ScalarProducerBase sdx = Ops.ops().l(sd);
 		ScalarProducerBase sdy = Ops.ops().r(sd);
 
 		ScalarProducerBase p = pd.x().multiply(Ops.ops().l(pos))

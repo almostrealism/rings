@@ -22,7 +22,6 @@ import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.computations.GreaterThanRGB;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGB;

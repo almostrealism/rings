@@ -18,7 +18,6 @@ package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.*;
