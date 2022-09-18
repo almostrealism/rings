@@ -182,7 +182,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 		}
 
 		if (enableDragon) {
-			Mesh dragon = (Mesh) ((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("resources/dragon.ply")),
+			Mesh dragon = (Mesh) ((Scene<ShadableSurface>) FileDecoder.decodeScene(getClass().getClassLoader().getResourceAsStream("dragon.ply"),
 					FileDecoder.PLYEncoding, false, null)).get(0);
 
 			if (enableSilhouette) {
@@ -193,7 +193,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 			dragon.setColor(new RGB(0.3, 0.4, 0.8));
 			dragon.setLocation(new Vector(0.0, -2.4, 0.0));
-			dragon.setSize(25);
+			dragon.setSize(25); // TODO  Size does not appear to be taking effect
 			add(dragon);
 		}
 
