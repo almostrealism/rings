@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>Rings</artifactId>
+		<groupId>com.almostrealism</groupId>
+		<version>0.23</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ar-audio</artifactId>
+
+	<properties>
+		<maven.compiler.source>15</maven.compiler.source>
+		<maven.compiler.target>15</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<!-- TODO  This is redundant, it shuld not be required -->
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-algebra</artifactId>
+			<version>${common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-utils</artifactId>
+			<version>${common.version}</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -5,15 +5,15 @@
 
 	<properties>
 		<common.version>0.50</common.version>
-		<ichos.version>1.38</ichos.version>
 		<flowtree.version>0.14</flowtree.version>
 	</properties>
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.22</version>
+	<version>0.23</version>
 
 	<modules>
+		<module>audio</module>
 		<module>raytracer</module>
 		<module>engine</module>
 		<module>gl</module>
