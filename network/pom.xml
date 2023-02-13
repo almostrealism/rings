@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.21</version>
+		<version>0.22</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -20,11 +20,11 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-raytracer</artifactId>
-			<version>0.21</version>
+			<version>0.22</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.almostrealism</groupId>
+			<groupId>io.flowtree</groupId>
 			<artifactId>ar-flowtreeapi</artifactId>
 			<version>${flowtree.version}</version>
 		</dependency>
