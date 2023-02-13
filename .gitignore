@@ -2,3 +2,9 @@
 **/target/**
 **/*.versionsBackup
 **/hs_err*
+
+audio/results/**
+audio/Kit/**
+audio/Library/**
+audio/pattern-factory.json
+audio/Population.xml

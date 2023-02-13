@@ -40,7 +40,6 @@ import io.flowtree.job.JobFactory;
 import io.flowtree.job.Output;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.FileDecoder;
 import org.almostrealism.io.JobOutput;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;

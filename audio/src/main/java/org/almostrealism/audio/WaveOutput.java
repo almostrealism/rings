@@ -209,9 +209,12 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				return;
 			}
 
+			double frameData[] = data.toArray(data.getAtomicMemLength(), data.getAtomicMemLength() * frames);
+
 			for (int i = 0; i < frames; i++) {
 				// double value = data.valueAt(i).getValue();
-				double value = data.get(i + 1).getValue();
+				// double value = data.get(i + 1).getValue();
+				double value = frameData[2 * i + 1];
 
 				try {
 					wav.writeFrames(new double[][]{{value}, {value}}, 1);

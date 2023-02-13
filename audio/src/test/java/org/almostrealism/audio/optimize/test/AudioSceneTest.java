@@ -225,7 +225,7 @@ public class AudioSceneTest implements CellFeatures {
 	}
 
 	public Cells randomOrgan(AudioScene<?> scene, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
-		CellularAudioOptimizer.GeneratorConfiguration conf = new CellularAudioOptimizer.GeneratorConfiguration();
+		AudioSceneGenome.GeneratorConfiguration conf = new AudioSceneGenome.GeneratorConfiguration();
 		conf.minDelay = delay;
 		conf.maxDelay = delay;
 		conf.minTransmission = feedbackParam;

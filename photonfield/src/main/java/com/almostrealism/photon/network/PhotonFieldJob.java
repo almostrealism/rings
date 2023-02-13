@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.almostrealism.primitives.AbsorptionPlane;
-import io.almostrealism.code.Resource;
+import io.almostrealism.resource.Resource;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.util.KeyUtils;
 import org.xml.sax.SAXException;

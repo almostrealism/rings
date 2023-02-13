@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.io.SystemUtils;
 import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.optimize.Population;
@@ -46,6 +47,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore> implements Runnable {
+	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
+
 	public static final boolean enableWavOutput = true;
 	public static boolean enableIsolatedContext = false;
 
@@ -78,7 +81,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void init() {
 		if (enableWavOutput) {
-			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> "health/Output-" + count.incrementAndGet() + ".wav");
+			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> outputDir + "/Output-" + count.incrementAndGet() + ".wav");
 		}
 	}
 

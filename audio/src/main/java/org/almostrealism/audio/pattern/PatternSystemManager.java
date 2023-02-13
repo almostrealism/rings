@@ -47,6 +47,8 @@ import java.util.stream.IntStream;
 // 	     3. The duration of each layer
 
 public class PatternSystemManager implements CodeFeatures {
+	public static boolean enableWarnings = true;
+
 	private List<PatternFactoryChoice> choices;
 	private List<PatternLayerManager> patterns;
 	private ConfigurableGenome genome;
@@ -147,7 +149,7 @@ public class PatternSystemManager implements CodeFeatures {
 				.boxed().collect(Collectors.toList());
 
 		if (patternsForChannel.isEmpty()) {
-			System.out.println("PatternSystemManager: No patterns");
+			if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
 			return;
 		}
 

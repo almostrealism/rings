@@ -1,9 +1,26 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.arrange.test;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.arrange.DefaultChannelSection;
+import org.almostrealism.audio.arrange.ChannelSection;
+import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
@@ -18,9 +35,9 @@ public class DefaultChannelSectionTest implements CellFeatures {
 	public void section() throws IOException {
 		int samples = 2 * 8 * OutputLine.sampleRate;
 
-		DefaultChannelSection.Factory factory = new DefaultChannelSection.Factory(new ConfigurableGenome(),
+		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ConfigurableGenome(),
 											1, () -> 2.0, 8, OutputLine.sampleRate);
-		DefaultChannelSection section = factory.createSection(0);
+		ChannelSection section = factory.createSection(0);
 
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
 		PackedCollection<?> input = new PackedCollection<>(samples);

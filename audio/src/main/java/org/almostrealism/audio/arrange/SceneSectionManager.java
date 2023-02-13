@@ -57,7 +57,7 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public SceneSection addSection(int position, int length) {
-		DefaultChannelSection.Factory channelFactory = new DefaultChannelSection.Factory(genome, channels, measureDuration, length, sampleRate);
+		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, measureDuration, length, sampleRate);
 		SceneSection s = SceneSection.createSection(position, length, channels, () -> channelFactory.createSection(position));
 		sections.add(s);
 		setup.add(channelFactory.setup());
