@@ -3,6 +3,7 @@ package com.almostrealism.network;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.resource.ResourceTranscoder;
 import io.almostrealism.resource.UnicodeResource;
+import org.almostrealism.space.Mesh;
 
 import java.io.BufferedReader;
 import java.io.File;

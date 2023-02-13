@@ -1,10 +1,11 @@
-package com.almostrealism.raytracer.test;
+package com.almostrealism.network.test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.almostrealism.network.FileDecoder;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
@@ -16,7 +17,6 @@ import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.space.Mesh;
-import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

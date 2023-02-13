@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer.test;
+package com.almostrealism.network.test;
 
 import com.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;

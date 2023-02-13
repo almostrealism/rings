@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer;
+package com.almostrealism.network;
 
 import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.primitives.Sphere;
@@ -22,6 +22,7 @@ import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.SilhouetteShader;
+import com.almostrealism.raytracer.Thing;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
@@ -32,7 +33,6 @@ import org.almostrealism.color.RGBProducer;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
-import org.almostrealism.space.FileDecoder;
 import org.almostrealism.algebra.TripleFunction;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;

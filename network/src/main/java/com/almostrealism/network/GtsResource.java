@@ -3,6 +3,8 @@ package com.almostrealism.network;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.resource.UnicodeResource;
 import io.almostrealism.resource.ResourceTranscoder;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Triangle;
 
 import java.io.*;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.almostrealism.raytracer.test;
+package com.almostrealism.network.test;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.primitives.Sphere;

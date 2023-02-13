@@ -18,6 +18,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-color</artifactId>
+			<version>${common.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>engine</artifactId>
 			<version>0.23</version>

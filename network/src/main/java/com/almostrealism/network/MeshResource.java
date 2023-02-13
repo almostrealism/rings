@@ -6,6 +6,8 @@ import io.almostrealism.resource.IOStreams;
 import io.almostrealism.resource.Permissions;
 import io.almostrealism.resource.Resource;
 import io.almostrealism.resource.ResourceTranscoder;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Triangle;
 
 import java.io.IOException;
 import java.io.InputStream;

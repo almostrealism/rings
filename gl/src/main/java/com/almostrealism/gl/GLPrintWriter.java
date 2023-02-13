@@ -27,10 +27,10 @@ import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
+import io.almostrealism.uml.Function;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.TransformMatrix;
-import org.almostrealism.util.JavaScriptPrintWriter;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
@@ -40,6 +40,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * {@link GLPrintWriter} allows for convenient encoding of GL variables and methods using
@@ -50,6 +51,9 @@ import java.util.*;
  * {@link GLPrintWriter}.
  */
 public class GLPrintWriter extends GLDriver {
+	// TODO  this is not ideal
+	public static Predicate<Object> isJs = p -> p.getClass().getSimpleName().equals("JavaScriptPrintWriter");
+
 	private String glMember;
 
 	private String matrixMember="mat4";
@@ -72,7 +76,7 @@ public class GLPrintWriter extends GLDriver {
 		}
 		this.name = name;
 		this.p = p;
-		this.enableDoublePrecision = p instanceof JavaScriptPrintWriter;
+		this.enableDoublePrecision = isJs.test(p);
 	}
 
 	@Override
@@ -940,12 +944,12 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	public Method<?> glMethod(String name, Expression<?>... args) {
-		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, Arrays.asList(args));
+		return glMethod(glMember, isJs.test(p), name, Arrays.asList(args));
 	}
 
 	//should be protected - Kristen changed for experiment
 	public Method<?> glMethod(String name, List<Expression<?>> args) {
-		return glMethod(glMember, p instanceof JavaScriptPrintWriter, name, args);
+		return glMethod(glMember, isJs.test(p), name, args);
 	}
 
 //	protected Method gluMethod(String name, List<Variable> args) {

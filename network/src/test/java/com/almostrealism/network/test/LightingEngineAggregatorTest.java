@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytracer.test;
+package com.almostrealism.network.test;
 
+import com.almostrealism.network.TestScene;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
-import com.almostrealism.raytracer.TestScene;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.color.RGB;

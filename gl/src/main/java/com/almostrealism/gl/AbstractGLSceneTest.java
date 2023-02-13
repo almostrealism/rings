@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.gl.test;
+package com.almostrealism.gl;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.primitives.Sphere;

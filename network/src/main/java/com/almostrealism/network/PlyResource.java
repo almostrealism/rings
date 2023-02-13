@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 
 import io.almostrealism.resource.ResourceTranscoder;
 import io.almostrealism.resource.UnicodeResource;
+import org.almostrealism.space.DefaultVertexData;
+import org.almostrealism.space.Mesh;
 
 public class PlyResource extends UnicodeResource {
 	public static boolean enableVerbose = false;

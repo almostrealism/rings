@@ -5,6 +5,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import io.almostrealism.resource.UnicodeResource;
 import io.almostrealism.resource.ResourceTranscoder;
+import org.almostrealism.space.Scene;
 import org.almostrealism.space.Triangle;
 
 import java.io.BufferedReader;

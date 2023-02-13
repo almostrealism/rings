@@ -17,6 +17,7 @@
 package com.almostrealism.photon.test;
 
 import com.almostrealism.lighting.PointLight;
+import com.almostrealism.network.FileDecoder;
 import com.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.ReflectionShader;
@@ -29,7 +30,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

@@ -1,9 +1,9 @@
 package com.almostrealism.photon.network;
 
 import com.almostrealism.io.SceneLoader;
+import com.almostrealism.network.FileDecoder;
 import io.flowtree.fs.OutputServer;
 import io.almostrealism.resource.Resource;
-import org.almostrealism.space.FileDecoder;
 import org.almostrealism.space.Scene;
 
 import java.io.IOException;
