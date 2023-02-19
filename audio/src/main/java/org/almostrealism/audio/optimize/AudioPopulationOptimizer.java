@@ -92,12 +92,14 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	}
 
 	public void readPopulation() throws FileNotFoundException {
-		List<Genome<PackedCollection<?>>> genomes;
+		List<Genome<PackedCollection<?>>> genomes = null;
 
 		if (new File(file).exists()) {
 			genomes = read(new FileInputStream(file));
 			PopulationOptimizer.console.println("Read chromosome data from " + file);
-		} else {
+		}
+
+		if (genomes == null || genomes.isEmpty()) {
 			genomes = Optional.ofNullable(getGenerator())
 					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
 							.mapToObj(i -> gen.get()).collect(Collectors.toList()))

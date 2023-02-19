@@ -388,12 +388,20 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return map(cells, i -> new AdjustableDelayCell(OutputLine.sampleRate, delay.apply(i), scale.apply(i)));
 	}
 
+	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter) {
+		return m(cells, adapter, cells::get, cells.size());
+	}
+
 	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return m(cells, adapter, cells::get, transmission);
 	}
 
 	default CellList mself(CellList cells, List<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return m(cells, adapter, cells, transmission);
+	}
+
+	default CellList m(CellList cells, List<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations) {
+		return m(cells, adapter, destinations, null);
 	}
 
 	default CellList m(CellList cells, List<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations, IntFunction<Gene<PackedCollection<?>>> transmission) {
@@ -408,11 +416,16 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList mself(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission) {
-		return m(cells, adapter, cells, transmission);
+		return m(cells, adapter, cells, transmission, fi());
 	}
 
 	default CellList mself(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission, IntFunction<Cell<PackedCollection<?>>> passthrough) {
 		return m(cells, adapter, cells, transmission, passthrough);
+	}
+
+	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter,
+					   List<Cell<PackedCollection<?>>> destinations) {
+		return m(cells, adapter, destinations::get, null, null, destinations.size());
 	}
 
 	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter,
@@ -425,7 +438,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 					   List<Cell<PackedCollection<?>>> destinations,
 					   IntFunction<Gene<PackedCollection<?>>> transmission,
 					   IntFunction<Cell<PackedCollection<?>>> passthrough) {
-		CellList result = m(cells, adapter, destinations::get, transmission, passthrough);
+		CellList result = m(cells, adapter, destinations::get, transmission, passthrough, -1);
 
 		if (destinations instanceof CellList) {
 			result.getFinals().addAll(((CellList) destinations).getFinals());
@@ -436,26 +449,40 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter,
-					   IntFunction<Cell<PackedCollection<?>>> destinations,
-					   IntFunction<Gene<PackedCollection<?>>> transmission) {
-		return m(cells, adapter, destinations, transmission, null);
+					   IntFunction<Cell<PackedCollection<?>>> destinations, int destinationCount) {
+		return m(cells, adapter, destinations, null, null, destinationCount);
 	}
 
 	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter,
 					   IntFunction<Cell<PackedCollection<?>>> destinations,
+					   IntFunction<Gene<PackedCollection<?>>> transmission) {
+		return m(cells, adapter, destinations, transmission, null, -1);
+	}
+
+	/**
+	 * NOTE: Destination count is only required if transmissions is not provided, as otherwise the
+	 * number of destinations is determined by the length of the transmission gene.
+	 */
+	default CellList m(CellList cells, IntFunction<Cell<PackedCollection<?>>> adapter,
+					   IntFunction<Cell<PackedCollection<?>>> destinations,
 					   IntFunction<Gene<PackedCollection<?>>> transmission,
-					   IntFunction<Cell<PackedCollection<?>>> passthrough) {
+					   IntFunction<Cell<PackedCollection<?>>> passthrough,
+					   int destinationCount) {
 		CellList layer = new CellList(cells);
 		CellList cleanLayer = passthrough == null ? null : new CellList(layer);
 		Iterator<Cell<PackedCollection<?>>> itr = cells.iterator();
 
 		for (AtomicInteger i = new AtomicInteger(); itr.hasNext(); i.incrementAndGet()) {
-			Gene g = transmission.apply(i.get());
+			Gene g = transmission == null ? null : transmission.apply(i.get());
+			if (g == null && destinationCount < 0) {
+				throw new IllegalArgumentException("A transmission gene or a destination count must be provided");
+			}
+
 			Cell<PackedCollection<?>> source = itr.next();
 			Cell<PackedCollection<?>> clean = Optional.ofNullable(passthrough).map(p -> p.apply(i.get())).orElse(null);
 
 			List<Cell<PackedCollection<?>>> dest = new ArrayList<>();
-			IntStream.range(0, g.length()).mapToObj(j -> destinations.apply(j)).forEach(dest::add);
+			IntStream.range(0, g == null ? destinationCount : g.length()).mapToObj(j -> destinations.apply(j)).forEach(dest::add);
 
 			layer.addRequirement(MultiCell.split(source, adapter.apply(i.get()), dest, g, clean));
 			dest.forEach(c -> append(layer, c));

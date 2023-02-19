@@ -188,7 +188,7 @@ public class WavFile {
 			waveform.setMem(i, data[chan][i]);
 		}
 
-		return waveform;
+		return waveform.traverse(1);
 	}
 
 	public static PackedCollection<?> channel(int[][] data, int chan) {

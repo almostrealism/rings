@@ -69,9 +69,11 @@ import org.almostrealism.optimize.PopulationOptimizer;
 
 public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
+
 	public static final boolean enableSourcesJson = true;
 	public static final boolean enableStems = false;
-	public static final boolean enableSingleChannel = true;
+	public static final boolean enableSingleChannel = false;
+	public static final boolean enableFullMix = false;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -98,6 +100,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
+					if (children.isEmpty()) throw new IllegalArgumentException();
+
 					if (population == null) {
 						population = new AudioScenePopulation<>(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
@@ -179,6 +183,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		scene.addBreak(64);
 
 		int channel = 0;
+		double duration1 = 0.5;
+		double duration2 = 1.0;
 
 		if (enableSingleChannel) {
 			PatternLayerManager layer = scene.getPatternManager().addPattern(channel, 2.0, true);
@@ -189,10 +195,52 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			PatternSystemManager.enableWarnings = false;
 			PatternLayerManager.enableWarnings = false;
-		} else {
-			double duration1 = 0.5;
-			double duration2 = 1.0;
+		} else if (!enableFullMix) {
+			PatternLayerManager layer = scene.getPatternManager().addPattern(channel, 0.25, false);
+			layer.setSeedBias(0.8);
+			layer.addLayer(new ParameterSet());
 
+			layer = scene.getPatternManager().addPattern(channel, duration1, false);
+			layer.setSeedBias(0.8);
+			layer.addLayer(new ParameterSet());
+
+			layer = scene.getPatternManager().addPattern(channel, duration1, false);
+			layer.setSeedBias(0.8);
+			layer.addLayer(new ParameterSet());
+
+			// Drums
+			layer = scene.getPatternManager().addPattern(channel++, duration2, false);
+			// layer.setSeedBias(0.25);
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+
+			layer = scene.getPatternManager().addPattern(channel, duration2, false);
+			// layer.setSeedBias(0.25);
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+
+			// Chords
+			layer = scene.getPatternManager().addPattern(channel++, 4.0, true);
+			layer.setSeedBias(0.2);
+			layer.setChordDepth(3);
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+			layer.addLayer(new ParameterSet());
+
+			// Melody
+			layer = scene.getPatternManager().addPattern(channel++, 4.0, true);
+			layer.setSeedBias(-0.1);
+			layer.addLayer(new ParameterSet());
+
+			scene.getEfxManager().setWetChannels(List.of(channel - 2, channel - 1));
+
+			PatternSystemManager.enableWarnings = false;
+			PatternLayerManager.enableWarnings = false;
+		} else {
+			scene.setSettings(AudioScene.Settings.defaultSettings(sourceCount, AudioScene.DEFAULT_PATTERNS_PER_CHANNEL));
+			/*
 			PatternLayerManager layer = scene.getPatternManager().addPattern(channel, 0.25, false);
 			layer.setSeedBias(0.8);
 			layer.addLayer(new ParameterSet());
@@ -248,6 +296,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			layer.addLayer(new ParameterSet());
 			layer.addLayer(new ParameterSet());
 			layer.addLayer(new ParameterSet());
+
+			 */
 
 			scene.getEfxManager().setWetChannels(List.of(4));
 		}

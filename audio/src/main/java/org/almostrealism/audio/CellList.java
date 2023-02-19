@@ -124,8 +124,16 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 
 	public CellList d(IntFunction<Producer<Scalar>> delay, IntFunction<Producer<Scalar>> scale) { return d(this, delay, scale); }
 
+	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter) {
+		return m(this, adapter);
+	}
+
 	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return m(this, adapter, transmission);
+	}
+
+	public CellList m(List<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations) {
+		return m(this, adapter, destinations);
 	}
 
 	public CellList m(List<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations, IntFunction<Gene<PackedCollection<?>>> transmission) {
@@ -134,6 +142,10 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 
 	public CellList mself(List<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return mself(this, adapter, transmission);
+	}
+
+	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations) {
+		return m(this, adapter, destinations);
 	}
 
 	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations, IntFunction<Gene<PackedCollection<?>>> transmission) {

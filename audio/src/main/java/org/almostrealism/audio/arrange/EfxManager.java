@@ -16,17 +16,28 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.SimpleGene;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
+	public static double maxFeedback = 1.0;
+
 	private ConfigurableGenome genome;
+	private SimpleChromosome delayTimes;
+	private SimpleChromosome delayFeedbacks;
 	private int channels;
 	private List<Integer> wetChannels;
 
@@ -41,6 +52,29 @@ public class EfxManager implements CellFeatures {
 
 		this.beatDuration = beatDuration;
 		this.sampleRate = sampleRate;
+
+		init();
+	}
+
+	protected void init() {
+		double choices[] = IntStream.range(0, 5)
+				.mapToDouble(i -> Math.pow(2, i - 2))
+				.mapToObj(d -> List.of(d, 1.5 * d))
+				.flatMap(List::stream)
+				.mapToDouble(d -> d)
+				.toArray();
+
+		PackedCollection<?> c = new PackedCollection<>(choices.length);
+		c.setMem(choices);
+
+		delayTimes = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
+
+		delayFeedbacks = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = delayFeedbacks.addGene();
+			if (maxFeedback != 1.0) g.setTransform(p -> _multiply(p, c(maxFeedback)));
+		});
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }
@@ -51,6 +85,18 @@ public class EfxManager implements CellFeatures {
 			return cells;
 		}
 
-		return cells.d(i -> v(beatDuration.getAsDouble() * 2));
+		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
+
+		CellList delays = IntStream.range(0, 1)
+				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
+						scalar(shape(1), _multiply(c(beatDuration.getAsDouble()), delay), 0),
+						v(1.0)))
+				.collect(CellList.collector());
+
+		cells = cells.m(fi(), delays)
+				.mself(fi(), i -> g(delayFeedbacks.valueAt(channel, 0)))
+				.sum();
+
+		return cells;
 	}
 }

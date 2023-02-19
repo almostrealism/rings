@@ -61,10 +61,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 
 		for (int i = 0; i < channels; i++) {
 			SimpleGene g = v.addGene();
-
-			// TODO  Testing interpolation from 0.2 to 0.95 - this should be removed
-			g.set(0, 0.2);
-			g.set(1, 0.95);
 		}
 
 		this.volume = new LinearInterpolationChromosome(v, 0.0, 1.0, sampleRate);
@@ -74,10 +70,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 
 		for (int i = 0; i < channels; i++) {
 			SimpleGene g = lp.addGene();
-
-			// TODO  Testing interpolation from 0.0 to 1.0 - this should be removed
-			g.set(0, 0.0);
-			g.set(1, 1.0);
 		}
 
 		this.lowPassFilter = new LinearInterpolationChromosome(lp, 0.0, 20000.0, sampleRate);
