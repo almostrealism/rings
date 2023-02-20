@@ -73,7 +73,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final boolean enableSourcesJson = true;
 	public static final boolean enableStems = false;
 	public static final boolean enableSingleChannel = false;
-	public static final boolean enableFullMix = false;
+	public static final boolean enableFullMix = true;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -201,11 +201,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			layer.addLayer(new ParameterSet());
 
 			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
+			// layer.setSeedBias(0.8);
 			layer.addLayer(new ParameterSet());
 
 			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
+			// layer.setSeedBias(0.8);
 			layer.addLayer(new ParameterSet());
 
 			// Drums
@@ -223,7 +223,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			// Chords
 			layer = scene.getPatternManager().addPattern(channel++, 4.0, true);
-			layer.setSeedBias(0.2);
 			layer.setChordDepth(3);
 			layer.addLayer(new ParameterSet());
 			layer.addLayer(new ParameterSet());
@@ -231,7 +230,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			// Melody
 			layer = scene.getPatternManager().addPattern(channel++, 4.0, true);
-			layer.setSeedBias(-0.1);
 			layer.addLayer(new ParameterSet());
 
 			scene.getEfxManager().setWetChannels(List.of(channel - 2, channel - 1));
@@ -239,7 +237,16 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			PatternSystemManager.enableWarnings = false;
 			PatternLayerManager.enableWarnings = false;
 		} else {
-			scene.setSettings(AudioScene.Settings.defaultSettings(sourceCount, AudioScene.DEFAULT_PATTERNS_PER_CHANNEL));
+			AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount, AudioScene.DEFAULT_PATTERNS_PER_CHANNEL);
+			settings.getPatternSystem().setPatterns(
+					settings
+							.getPatternSystem()
+							.getPatterns()
+							.stream()
+							.filter(p -> p.getChannel() < 3)
+							.collect(Collectors.toList()));
+
+			scene.setSettings(settings);
 			/*
 			PatternLayerManager layer = scene.getPatternManager().addPattern(channel, 0.25, false);
 			layer.setSeedBias(0.8);
@@ -299,7 +306,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			 */
 
-			scene.getEfxManager().setWetChannels(List.of(4));
+			scene.getEfxManager().setWetChannels(List.of(3, 4));
 		}
 
 		// scene.saveSettings(new File("scene-settings.json"));

@@ -57,7 +57,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	public static final int FX_FILTERS = 8;
 	public static final int MASTER_FILTER_DOWN = 9;
 
-	public static double defaultResonance = 0.05; // TODO
+	public static double defaultResonance = 0.00; // TODO
 	private static double maxFrequency = 20000;
 
 	private AssignableGenome data;

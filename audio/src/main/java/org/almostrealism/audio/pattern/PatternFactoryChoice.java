@@ -29,6 +29,7 @@ public class PatternFactoryChoice {
 	private double minScale;
 	private double maxScale;
 	private int maxChordDepth;
+	private List<Integer> channels;
 
 	private boolean seed;
 	private int seedUnits;
@@ -79,6 +80,9 @@ public class PatternFactoryChoice {
 
 	public int getMaxChordDepth() { return maxChordDepth; }
 	public void setMaxChordDepth(int maxChordDepth) { this.maxChordDepth = maxChordDepth; }
+
+	public List<Integer> getChannels() { return channels; }
+	public void setChannels(List<Integer> channels) { this.channels = channels; }
 
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }

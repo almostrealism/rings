@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import java.util.function.DoubleToIntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class PatternLayerManager implements CodeFeatures {
 	public static final int MAX_NOTES = 2048;
@@ -116,6 +117,12 @@ public class PatternLayerManager implements CodeFeatures {
 		return melodic ? melodicChoices.get() : percChoices.get();
 	}
 
+	public Stream<PatternFactoryChoice> choices() {
+		return getChoices().stream()
+				.filter(c -> c.getChannels() == null || c.getChannels().contains(channel))
+				.filter(c -> chordDepth <= c.getMaxChordDepth());
+	}
+
 	public int getChannel() { return channel; }
 	public void setChannel(int channel) { this.channel = channel; }
 
@@ -136,9 +143,8 @@ public class PatternLayerManager implements CodeFeatures {
 	public boolean isMelodic() { return melodic; }
 
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
-		List<PatternLayerSeeds> options = getChoices().stream()
+		List<PatternLayerSeeds> options = choices()
 				.filter(PatternFactoryChoice::isSeed)
-				.filter(choice -> chordDepth <= choice.getMaxChordDepth())
 				.map(choice -> choice.seeds(params))
 				.collect(Collectors.toList());
 
@@ -299,10 +305,9 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public PatternFactoryChoice choose(double scale, ParameterSet params) {
-		List<PatternFactoryChoice> options = getChoices().stream()
+		List<PatternFactoryChoice> options = choices()
 				.filter(c -> scale >= c.getMinScale())
 				.filter(c -> scale <= c.getMaxScale())
-				.filter(c -> chordDepth <= c.getMaxChordDepth())
 				.collect(Collectors.toList());
 
 		if (options.isEmpty()) return null;

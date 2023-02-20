@@ -103,8 +103,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private GlobalTimeManager time;
 	private SceneSectionManager sections;
 	private ChordProgressionManager progression;
+
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
+	private List<String> channelNames;
 
 	private EfxManager efx;
 
@@ -144,6 +146,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		patterns = new PatternSystemManager(genome.getGenome(2));
 		patterns.init();
+
+		this.channelNames = new ArrayList<>();
 
 		addDurationListener(duration -> patternDestination = null);
 
@@ -228,6 +232,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public int getSourceCount() { return sourceCount; }
 	public int getDelayLayerCount() { return delayLayerCount; }
 
+	public List<String> getChannelNames() { return channelNames; }
+
 	public double getBeatDuration() { return getTempo().l(1); }
 
 	public void setMeasureSize(int measureSize) { this.measureSize = measureSize; triggerDurationChange(); }
@@ -253,6 +259,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				.stream().map(s -> new Settings.Section(s.getPosition(), s.getLength())).collect(Collectors.toList()));
 		settings.setChordProgression(progression.getSettings());
 		settings.setPatternSystem(patterns.getSettings());
+		settings.setChannelNames(channelNames);
 		return settings;
 	}
 
@@ -266,6 +273,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.getSections().forEach(s -> sections.addSection(s.getPosition(), s.getLength()));
 		progression.setSettings(settings.getChordProgression());
 		patterns.setSettings(settings.getPatternSystem());
+
+		channelNames.clear();
+		channelNames.addAll(settings.getChannelNames());
 	}
 
 	public void setWaves(Waves waves) {
@@ -515,6 +525,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		private ChordProgressionManager.Settings chordProgression;
 		private PatternSystemManager.Settings patternSystem;
+		private List<String> channelNames;
 
 		public Settings() {
 			patternSystem = new PatternSystemManager.Settings();
@@ -541,6 +552,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		public PatternSystemManager.Settings getPatternSystem() { return patternSystem; }
 		public void setPatternSystem(PatternSystemManager.Settings patternSystem) { this.patternSystem = patternSystem; }
 
+		public List<String> getChannelNames() { return channelNames; }
+		public void setChannelNames(List<String> channelNames) { this.channelNames = channelNames; }
+
 		public static class Section {
 			private int position, length;
 
@@ -560,10 +574,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public static Settings defaultSettings(int channels, int patternsPerChannel) {
 			Settings settings = new Settings();
-			settings.getSections().add(new Section(0, 32));
-			settings.getSections().add(new Section(32, 32));
+			settings.getSections().add(new Section(0, 16));
+			settings.getSections().add(new Section(16, 16));
+			settings.getSections().add(new Section(32, 16));
+			settings.getSections().add(new Section(48, 16));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings.defaultSettings(channels, patternsPerChannel));
+			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
 			return settings;
 		}
 	}

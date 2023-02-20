@@ -23,6 +23,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
+import org.almostrealism.audio.optimize.RiseFallChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -37,13 +38,14 @@ import org.almostrealism.time.TemporalList;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 	public static boolean enableFilter = true;
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;
-	private LinearInterpolationChromosome lowPassFilter;
+	private RiseFallChromosome lowPassFilter;
 	private int channel, channels;
 
 	private DoubleSupplier measureDuration;
@@ -58,21 +60,13 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 		this.sampleRate = sampleRate;
 
 		SimpleChromosome v = genome.addSimpleChromosome(LinearInterpolationChromosome.SIZE);
-
-		for (int i = 0; i < channels; i++) {
-			SimpleGene g = v.addGene();
-		}
-
+		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new LinearInterpolationChromosome(v, 0.0, 1.0, sampleRate);
 		this.volume.setGlobalTime(clock.frame());
 
-		SimpleChromosome lp = genome.addSimpleChromosome(LinearInterpolationChromosome.SIZE);
-
-		for (int i = 0; i < channels; i++) {
-			SimpleGene g = lp.addGene();
-		}
-
-		this.lowPassFilter = new LinearInterpolationChromosome(lp, 0.0, 20000.0, sampleRate);
+		SimpleChromosome lp = genome.addSimpleChromosome(RiseFallChromosome.SIZE);
+		IntStream.range(0, channels).forEach(i -> lp.addGene());
+		this.lowPassFilter = new RiseFallChromosome(lp, 0.0, 20000.0, 0.5, sampleRate);
 		this.lowPassFilter.setGlobalTime(clock.frame());
 	}
 
@@ -144,9 +138,9 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 							source.get().evaluate().traverseEach(),
 							volume.getKernelList(0).valueAt(geneIndex)));
 
-			Evaluable<PackedCollection<?>> start = lowPassFilter.getSource().valueAt(geneIndex, 0).getResultant(c(1.0)).get();
-			Evaluable<PackedCollection<?>> end = lowPassFilter.getSource().valueAt(geneIndex, 1).getResultant(c(1.0)).get();
-			process.add(() -> () -> System.out.println("LP Range: " + start.evaluate().toDouble(0) + " to " + end.evaluate().toDouble(0)));
+//			process.add(() -> () -> {
+//				lowPassFilter.getKernelList(0).getData().getCount();
+//			});
 			return process;
 		}
 	}
