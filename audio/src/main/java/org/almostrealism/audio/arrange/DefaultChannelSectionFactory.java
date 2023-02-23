@@ -17,7 +17,6 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -33,7 +32,6 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
 import org.almostrealism.time.TemporalList;
 
 import java.util.function.DoubleSupplier;
@@ -41,7 +39,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures {
-	public static boolean enableFilter = true;
+	public static boolean enableFilter = false;
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;

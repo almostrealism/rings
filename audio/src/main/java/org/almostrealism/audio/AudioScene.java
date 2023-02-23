@@ -18,7 +18,6 @@ package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Operation;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -31,11 +30,9 @@ import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
-import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
@@ -260,6 +257,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.setChordProgression(progression.getSettings());
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
+		settings.setWetChannels(getEfxManager().getWetChannels());
 		return settings;
 	}
 
@@ -275,7 +273,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		patterns.setSettings(settings.getPatternSystem());
 
 		channelNames.clear();
-		channelNames.addAll(settings.getChannelNames());
+		if (settings.getChannelNames() != null) channelNames.addAll(settings.getChannelNames());
+
+		getEfxManager().getWetChannels().clear();
+		if (settings.getWetChannels() != null) getEfxManager().getWetChannels().addAll(settings.getWetChannels());
 	}
 
 	public void setWaves(Waves waves) {
@@ -526,6 +527,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private ChordProgressionManager.Settings chordProgression;
 		private PatternSystemManager.Settings patternSystem;
 		private List<String> channelNames;
+		private List<Integer> wetChannels;
 
 		public Settings() {
 			patternSystem = new PatternSystemManager.Settings();
@@ -555,6 +557,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		public List<String> getChannelNames() { return channelNames; }
 		public void setChannelNames(List<String> channelNames) { this.channelNames = channelNames; }
 
+		public List<Integer> getWetChannels() { return wetChannels; }
+		public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
+
 		public static class Section {
 			private int position, length;
 
@@ -581,6 +586,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings.defaultSettings(channels, patternsPerChannel));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
+			settings.setWetChannels(List.of(3, 4));
 			return settings;
 		}
 	}

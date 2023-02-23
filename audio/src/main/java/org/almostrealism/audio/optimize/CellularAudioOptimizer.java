@@ -238,13 +238,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			PatternLayerManager.enableWarnings = false;
 		} else {
 			AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount, AudioScene.DEFAULT_PATTERNS_PER_CHANNEL);
-			settings.getPatternSystem().setPatterns(
-					settings
-							.getPatternSystem()
-							.getPatterns()
-							.stream()
-							.filter(p -> p.getChannel() < 3)
-							.collect(Collectors.toList()));
+//			settings.getPatternSystem().setPatterns(
+//					settings
+//							.getPatternSystem()
+//							.getPatterns()
+//							.stream()
+//							.filter(p -> p.getChannel() < 4)
+//							.collect(Collectors.toList()));
 
 			scene.setSettings(settings);
 			/*

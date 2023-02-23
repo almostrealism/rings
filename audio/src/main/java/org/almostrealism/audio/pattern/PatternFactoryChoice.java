@@ -57,6 +57,7 @@ public class PatternFactoryChoice {
 		setMaxChordDepth(1);
 		setSeedUnits(4);
 		setSeedScale(0.25);
+		setSeedBias(-0.5);
 		initSelectionFunctions();
 	}
 
