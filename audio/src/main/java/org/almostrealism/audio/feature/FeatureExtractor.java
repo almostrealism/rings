@@ -1,5 +1,6 @@
 package org.almostrealism.audio.feature;
 
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
@@ -28,7 +29,12 @@ import java.util.stream.IntStream;
 public class FeatureExtractor {
 	private static final ThreadLocal<FeatureComputer> computers = new ThreadLocal<>();
 
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
+	public static void main(String args[]) throws InterruptedException, ExecutionException, IOException {
+		main(List.of(WavFile.openWavFile(
+						new File("Library/Snare Perc DD.wav"))),
+				FeatureExtractor::print);
+
+		/*
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 
 		List<Future<?>> futures = IntStream.range(0, 10).mapToObj(i -> (Runnable) () -> {
@@ -65,6 +71,7 @@ public class FeatureExtractor {
 		}).get();
 
 		System.exit(0);
+		 */
 	}
 
 	public static int main(List<WavFile> files, Consumer<Tensor<Scalar>> output) throws IOException {
@@ -72,6 +79,8 @@ public class FeatureExtractor {
 
 		if (mfcc == null) {
 			FeatureSettings settings = new FeatureSettings();
+			settings.getFrameExtractionSettings().setSampFreq(new Scalar(OutputLine.sampleRate));
+
 			mfcc = new FeatureComputer(settings);
 			computers.set(mfcc);
 		}
@@ -79,16 +88,14 @@ public class FeatureExtractor {
 		double vtlnWarp = 1.0;
 		Scalar minDuration = new Scalar(0.0);
 
-		int index = 0;
-		int uttCount = 0, successCount = 0;
-		for (WavFile f : files) {
-			uttCount++;
-			String utt = String.valueOf(index++);
+		int idx = 0;
+		int successCount = 0;
 
+		f: for (WavFile f : files) {
 			if (f.getDuration() < minDuration.getValue()) {
-				System.out.println(utt + " is too short (" +
+				System.out.println(idx + " is too short (" +
 						f.getDuration() + " sec): producing no output.");
-				continue;
+				continue f;
 			}
 
 			int[][] wave = new int[f.getNumChannels()][(int) f.getFramesRemaining()];
@@ -105,20 +112,20 @@ public class FeatureExtractor {
 			try {
 				mfcc.computeFeatures(waveform, new Scalar(f.getSampleRate()), vtlnWarp, features);
 			} catch (Exception e) {
-				System.out.println("Failed to compute features for utterance " + utt);
+				System.out.println("Failed to compute features for file " + idx);
 				e.printStackTrace();
 				continue;
 			}
 
 			output.accept(features);
 
-			if (uttCount % 10 == 0)
-				System.out.println("Processed " + uttCount + " utterances");
-			System.out.println("Processed features for key " + utt);
+			if (idx % 10 == 0)
+				System.out.println("Processed " + idx + " waves");
+			System.out.println("Processed features for key " + idx);
 			successCount++;
 		}
 
-		System.out.println(" Done " + successCount + " out of " + uttCount + " utterances.");
+		System.out.println(" Done " + successCount + " out of " + files.size() + " waves");
 		return successCount != 0 ? 0 : 1;
 	}
 

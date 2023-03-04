@@ -47,7 +47,7 @@ public class FeatureWindowFunction implements CodeFeatures {
 			}
 		}
 
-		this.window = new ScalarBankProduct(win.getCount(), scalars(win), v(win.getCount() * 2, 0)).get();
+		this.window = ScalarBankProduct.fast(win.getCount(), scalars(win), v(win.getCount() * 2, 0)).get();
 	}
 
 	public UnaryOperator<ScalarBank> getWindow() {
@@ -55,6 +55,6 @@ public class FeatureWindowFunction implements CodeFeatures {
 	}
 
 	public Producer<ScalarBank> getWindow(Supplier<Evaluable<? extends ScalarBank>> input) {
-		return new ScalarBankProduct(win.getCount(), scalars(win), input);
+		return ScalarBankProduct.fast(win.getCount(), scalars(win), input);
 	}
 }

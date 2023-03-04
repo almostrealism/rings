@@ -21,13 +21,14 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.computations.Preemphasize;
 import org.almostrealism.algebra.computations.ScalarBankPad;
+import org.almostrealism.algebra.computations.ScalarBankPadFast;
 import org.almostrealism.audio.feature.FeatureWindowFunction;
 import org.almostrealism.audio.feature.FrameExtractionSettings;
 import org.almostrealism.Ops;
 
 import java.util.function.Supplier;
 
-public class WindowPreprocess extends ScalarBankPad {
+public class WindowPreprocess extends ScalarBankPadFast {
 	public WindowPreprocess(FrameExtractionSettings settings, Supplier<Evaluable<? extends ScalarBank>> input) {
 		this(settings.getWindowSize(), settings.getPaddedWindowSize(), settings.getWindowType(),
 				settings.getBlackmanCoeff(), settings.getPreemphCoeff(), input);
@@ -36,7 +37,7 @@ public class WindowPreprocess extends ScalarBankPad {
 	public WindowPreprocess(int windowSize, int paddedWindowSize, String windowType, Scalar blackmanCoeff, Scalar preemphCoeff, Supplier<Evaluable<? extends ScalarBank>> input) {
 		super(windowSize, paddedWindowSize,
 				new FeatureWindowFunction(windowSize, windowType, blackmanCoeff).getWindow(
-						new Preemphasize(windowSize,
+						Preemphasize.fast(windowSize,
 							input, Ops.ops().v(preemphCoeff))));
 	}
 }

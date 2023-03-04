@@ -115,7 +115,7 @@ public class FeatureComputer implements CodeFeatures {
 																		v(2 * count, 0)).get();
 		}
 
-		this.powerSpectrum = new PowerSpectrum(paddedWindowSize, v(2 * paddedWindowSize, 0)).get();
+		this.powerSpectrum = PowerSpectrum.fast(paddedWindowSize, v(2 * paddedWindowSize, 0)).get();
 
 		// We'll definitely need the filterbanks info for VTLN warping factor 1.0.
 		// [note: this call caches it.]
