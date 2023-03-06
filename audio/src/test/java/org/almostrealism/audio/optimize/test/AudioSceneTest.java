@@ -25,6 +25,7 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.Waves;
+import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.test.PatternFactoryTest;
@@ -97,7 +98,7 @@ public class AudioSceneTest implements CellFeatures {
 	}
 
 	protected AudioScene<?> pattern(int sources, int delayLayers, boolean sections) {
-		AudioScene<?> scene = new AudioScene<>(null, 120, sources, delayLayers, OutputLine.sampleRate);
+		AudioScene<?> scene = new AudioScene<>(null, 120, sources, delayLayers, OutputLine.sampleRate, new NoOpGenerationProvider());
 		scene.setTotalMeasures(16);
 		scene.getPatternManager().getChoices().addAll(PatternFactoryTest.createChoices());
 		scene.setTuning(new DefaultKeyboardTuning());

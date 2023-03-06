@@ -2,26 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
+		<artifactId>Rings</artifactId>
 		<version>0.24</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ar-torch</artifactId>
+	<artifactId>ar-remote-server</artifactId>
 
 	<properties>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>18</maven.compiler.source>
+		<maven.compiler.target>18</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-audio</artifactId>
+			<artifactId>ar-remote</artifactId>
+			<version>0.24</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-torch</artifactId>
 			<version>0.24</version>
 		</dependency>
 	</dependencies>
-
 </project>

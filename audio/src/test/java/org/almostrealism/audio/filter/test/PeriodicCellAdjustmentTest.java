@@ -18,6 +18,7 @@ package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
@@ -53,7 +54,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 //		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 //		provider.getSamples().add(new File("src/main/resources/health-test-in.wav"));
 //		return new GeneticTemporalFactoryFromDesirables().from(provider);
-		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
+		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new NoOpGenerationProvider());
 	}
 
 	protected Cells organ(boolean adjust, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {

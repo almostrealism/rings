@@ -33,6 +33,7 @@ import org.almostrealism.audio.WaveSet;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.grains.GrainGenerationSettings;
 import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.audio.health.AudioHealthComputation;
@@ -170,7 +171,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
 		int sourceCount = 5;
-		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3, OutputLine.sampleRate);
+		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3, OutputLine.sampleRate, new NoOpGenerationProvider());
 
 //		Set<Integer> choices = IntStream.range(0, sourceCount).mapToObj(i -> i).collect(Collectors.toSet());
 //		Waves waves = waves(scene, choices, bpm);

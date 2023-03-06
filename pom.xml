@@ -28,6 +28,8 @@
 		<module>torch</module>
 		<module>openai</module>
 		<module>keyframing</module>
+		<module>remote</module>
+		<module>remote-server</module>
 	</modules>
 
 	<!-- Output to jar format -->

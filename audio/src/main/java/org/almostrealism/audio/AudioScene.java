@@ -24,6 +24,9 @@ import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.generative.GenerationManager;
+import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
@@ -107,6 +110,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private EfxManager efx;
 
+	private GenerationManager generation;
+
 	private CombinedGenome genome;
 	private DefaultAudioGenome legacyGenome;
 	
@@ -116,7 +121,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private List<DoubleConsumer> durationListeners;
 	private List<Consumer<Waves>> sourcesListener;
 
-	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers, int sampleRate) {
+	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
+					  int sampleRate) {
+		this(scene, bpm, sources, delayLayers, sampleRate, new NoOpGenerationProvider());
+	}
+
+	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
+					  int sampleRate, GenerationProvider generation) {
 		this.sampleRate = sampleRate;
 		this.bpm = bpm;
 		this.sourceCount = sources;
@@ -149,6 +160,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		addDurationListener(duration -> patternDestination = null);
 
 		this.efx = new EfxManager(genome.getGenome(3), sources, this::getBeatDuration, getSampleRate());
+
+		this.generation = new GenerationManager(generation);
 	}
 
 	public void setBPM(double bpm) {
@@ -258,6 +271,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
 		settings.setWetChannels(getEfxManager().getWetChannels());
+		settings.setGeneration(generation.getSettings());
 		return settings;
 	}
 
@@ -277,6 +291,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		getEfxManager().getWetChannels().clear();
 		if (settings.getWetChannels() != null) getEfxManager().getWetChannels().addAll(settings.getWetChannels());
+
+		generation.setSettings(settings.getGeneration());
 	}
 
 	public void setWaves(Waves waves) {
@@ -529,8 +545,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private List<String> channelNames;
 		private List<Integer> wetChannels;
 
+		private GenerationManager.Settings generation;
+
 		public Settings() {
 			patternSystem = new PatternSystemManager.Settings();
+			generation = new GenerationManager.Settings();
 		}
 
 		public double getBpm() { return bpm; }
@@ -559,6 +578,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public List<Integer> getWetChannels() { return wetChannels; }
 		public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
+
+		public GenerationManager.Settings getGeneration() { return generation; }
+		public void setGeneration(GenerationManager.Settings generation) { this.generation = generation; }
 
 		public static class Section {
 			private int position, length;
