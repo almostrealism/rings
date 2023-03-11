@@ -20,6 +20,8 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.notes.NoteSourceProvider;
+import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
@@ -35,6 +37,7 @@ import org.almostrealism.heredity.ParameterGenome;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.Supplier;
@@ -46,7 +49,7 @@ import java.util.stream.IntStream;
 // 	     2. Melodic/Percussive flag
 // 	     3. The duration of each layer
 
-public class PatternSystemManager implements CodeFeatures {
+public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static boolean enableWarnings = true;
 
 	private List<PatternFactoryChoice> choices;
@@ -94,6 +97,15 @@ public class PatternSystemManager implements CodeFeatures {
 		generate.add(() -> () ->
 				scale.kernelEvaluate(this.destination.traverse(1), this.destination.traverse(1), volume));
 		runSum = generate.get();
+	}
+
+	@Override
+	public List<PatternNoteSource>getSource(String id) {
+		return choices.stream()
+				.map(PatternFactoryChoice::getFactory)
+				.filter(f -> Objects.equals(id, f.getId()))
+				.map(PatternElementFactory::getSources)
+				.findFirst().orElse(null);
 	}
 
 	public List<PatternFactoryChoice> getChoices() {

@@ -23,6 +23,7 @@ import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class PatternElementFactory {
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 
+	private String id;
 	private String name;
 	private List<PatternNoteSource> sources;
 	private boolean melodic;
@@ -67,6 +69,7 @@ public class PatternElementFactory {
 	}
 
 	public PatternElementFactory(String name, PatternNoteSource... sources) {
+		setId(KeyUtils.generateKey());
 		setName(name);
 		setSources(new ArrayList<>());
 		getSources().addAll(List.of(sources));
@@ -80,6 +83,9 @@ public class PatternElementFactory {
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
 	}
+
+	public String getId() { return id; }
+	public void setId(String id) { this.id = id; }
 
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }

@@ -16,20 +16,25 @@
 
 package org.almostrealism.audio.generative;
 
+import org.almostrealism.audio.notes.NoteSourceProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenerationManager {
-	private GenerationProvider provider;
+	private NoteSourceProvider sourceProvider;
+	private GenerationProvider generationProvider;
 	private List<Generator> generators;
 
-	public GenerationManager(GenerationProvider provider) {
-		this.provider = provider;
+	public GenerationManager(NoteSourceProvider sourceProvider, GenerationProvider generationProvider) {
+		this.sourceProvider = sourceProvider;
+		this.generationProvider = generationProvider;
 	}
 
 	public Generator addGenerator() {
 		Generator g = new Generator();
-		g.setProvider(provider);
+		g.setSourceProvider(sourceProvider);
+		g.setGenerationProvider(generationProvider);
 		generators.add(g);
 		return g;
 	}
@@ -45,7 +50,8 @@ public class GenerationManager {
 	public void setSettings(Settings settings) {
 		generators = new ArrayList<>();
 		if (settings.getGenerators() != null) generators.addAll(settings.getGenerators());
-		generators.forEach(g -> g.setProvider(provider));
+		generators.forEach(g -> g.setSourceProvider(sourceProvider));
+		generators.forEach(g -> g.setGenerationProvider(generationProvider));
 	}
 
 	public static class Settings {

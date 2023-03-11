@@ -17,26 +17,46 @@
 package org.almostrealism.audio.generative;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.util.KeyUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Generator {
 	private String id;
-	private List<PatternNoteSource> sources;
-	private GenerationProvider provider;
+	private String name;
+	private List<String> sources;
+	private NoteSourceProvider sourceProvider;
+	private GenerationProvider generationProvider;
 
-	public Generator() { }
+	public Generator() {
+		this.id = KeyUtils.generateKey();
+		this.name = "Generator";
+		this.sources = new ArrayList<>();
+	}
 
 	public String getId() { return id; }
 	public void setId(String id) { this.id = id; }
 
-	public List<PatternNoteSource> getSources() { return sources; }
-	public void setSources(List<PatternNoteSource> sources) { this.sources = sources; }
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
+
+	public List<String> getSources() { return sources; }
+	public void setSources(List<String> sources) { this.sources = sources; }
 
 	@JsonIgnore
-	public GenerationProvider getProvider() { return provider; }
+	public NoteSourceProvider getSourceProvider() { return sourceProvider; }
 
 	@JsonIgnore
-	public void setProvider(GenerationProvider provider) { this.provider = provider; }
+	public void setSourceProvider(NoteSourceProvider sourceProvider) { this.sourceProvider = sourceProvider; }
+
+	@JsonIgnore
+	public GenerationProvider getGenerationProvider() { return generationProvider; }
+
+	@JsonIgnore
+	public void setGenerationProvider(GenerationProvider provider) { this.generationProvider = provider; }
+
+
 }

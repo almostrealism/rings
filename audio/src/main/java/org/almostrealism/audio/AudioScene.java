@@ -161,7 +161,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.efx = new EfxManager(genome.getGenome(3), sources, this::getBeatDuration, getSampleRate());
 
-		this.generation = new GenerationManager(generation);
+		this.generation = new GenerationManager(patterns, generation);
 	}
 
 	public void setBPM(double bpm) {
@@ -229,6 +229,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public ChordProgressionManager getChordProgression() { return progression; }
 	public PatternSystemManager getPatternManager() { return patterns; }
 	public EfxManager getEfxManager() { return efx; }
+	public GenerationManager getGenerationManager() { return generation; }
 
 	public void addTempoListener(Consumer<Frequency> listener) { this.tempoListeners.add(listener); }
 	public void removeTempoListener(Consumer<Frequency> listener) { this.tempoListeners.remove(listener); }
