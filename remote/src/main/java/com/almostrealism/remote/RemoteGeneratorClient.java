@@ -75,4 +75,8 @@ public class RemoteGeneratorClient {
 			System.out.println("RemoteGeneratorClient: Finished receiving results for " + requestId);
 		}
 	}
+
+	public void destroy() {
+		if (generate != null) generate.destroy();
+	}
 }

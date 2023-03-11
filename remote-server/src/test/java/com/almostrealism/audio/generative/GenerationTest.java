@@ -17,7 +17,7 @@
 package com.almostrealism.audio.generative;
 
 import com.almostrealism.remote.RemoteGenerationServer;
-import com.almostrealism.remote.RemoteGeneratorProvider;
+import com.almostrealism.remote.RemoteGenerationProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
@@ -72,7 +72,7 @@ public class GenerationTest {
 	public void generate() throws IOException {
 		startServer();
 
-		RemoteGeneratorProvider provider = new RemoteGeneratorProvider(
+		RemoteGenerationProvider provider = new RemoteGenerationProvider(
 												"localhost", 6565,
 													resources("local"));
 

@@ -70,6 +70,13 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 		requestStream = null;
 	}
 
+	public void destroy() {
+		if (requestStream != null) {
+			requestStream.onCompleted();
+			requestStream = null;
+		}
+	}
+
 	public interface Receiver {
 		void receive(String requestId, int index, WaveData data);
 	}

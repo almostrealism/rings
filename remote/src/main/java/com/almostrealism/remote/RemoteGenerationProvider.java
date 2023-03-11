@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class RemoteGeneratorProvider implements GenerationProvider {
+public class RemoteGenerationProvider implements GenerationProvider {
 	private RemoteGeneratorClient client;
 	private GenerationResourceManager resources;
 
-	public RemoteGeneratorProvider(String host, int port, GenerationResourceManager resources) {
+	public RemoteGenerationProvider(String host, int port, GenerationResourceManager resources) {
 		this.client = new RemoteGeneratorClient(host, port);
 		this.resources = resources;
 	}
@@ -69,5 +69,9 @@ public class RemoteGeneratorProvider implements GenerationProvider {
 	@Override
 	public int getSampleRate() {
 		throw new UnsupportedOperationException();
+	}
+
+	public void destroy() {
+		client.destroy();
 	}
 }
