@@ -14,14 +14,23 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audioml;
+package org.almostrealism.audio.generative;
+
+import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.notes.PatternNoteSource;
 
 import java.io.File;
 
 public interface GenerationResourceManager {
-	void store(String id, File file);
+	void storeModel(String id, File file);
 
-	void load(String id, File dest);
+	void loadModel(String id, File dest);
 
-	boolean isAvailable(String id);
+	boolean isModelAvailable(String id);
+
+	PatternNoteSource storeAudio(String id, File file);
+
+	PatternNoteSource storeAudio(String id, WaveData waveData);
+
+	PatternNoteSource getAudio(String id);
 }

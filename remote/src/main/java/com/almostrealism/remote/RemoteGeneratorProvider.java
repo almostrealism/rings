@@ -17,28 +17,57 @@
 package com.almostrealism.remote;
 
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.util.KeyUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class RemoteGeneratorProvider implements GenerationProvider {
+	private RemoteGeneratorClient client;
+	private GenerationResourceManager resources;
+
+	public RemoteGeneratorProvider(String host, int port, GenerationResourceManager resources) {
+		this.client = new RemoteGeneratorClient(host, port);
+		this.resources = resources;
+	}
 
 	@Override
 	public void refresh(String id, List<PatternNoteSource> sources) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public GeneratorStatus getStatus(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<PatternNoteSource> generate(String id, int count) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<PatternNoteSource> generate(String requestId, String generatorId, int count) {
+		List<PatternNoteSource> results = new ArrayList<>();
+		CountDownLatch latch = new CountDownLatch(count);
+
+		client.generate(requestId, generatorId, count, wave -> {
+			// System.out.println("RemoteGeneratorProvider: Store result " + results.size());
+			results.add(resources.storeAudio(KeyUtils.generateKey(), wave));
+			latch.countDown();
+		});
+
+		try {
+			System.out.println("Awaiting results...");
+			latch.await();
+			System.out.println("RemoteGenerationProvider: Returning " + results.size() + " results");
+			return results;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public int getSampleRate() {
+		throw new UnsupportedOperationException();
 	}
 }

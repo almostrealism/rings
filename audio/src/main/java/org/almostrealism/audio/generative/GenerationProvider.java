@@ -25,5 +25,7 @@ public interface GenerationProvider {
 
 	GeneratorStatus getStatus(String id);
 
-	List<PatternNoteSource> generate(String id, int count);
+	List<PatternNoteSource> generate(String requestId, String generatorId, int count);
+
+	int getSampleRate();
 }

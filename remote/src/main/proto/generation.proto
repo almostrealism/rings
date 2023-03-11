@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package almostrealism.remote;
+
+option java_package = "com.almostrealism.remote.api";
+
+service Generator {
+  rpc refresh(stream SourceData) returns (stream Status) {}
+  rpc generate(stream GeneratorRequest) returns (stream Output) {}
+}
+
+message AudioSegment {
+  int32 index = 1;
+  int32 total_samples = 2;
+  int32 sample_rate = 3;
+  repeated double data = 4;
+  bool isFinal = 5;
+}
+
+message SourceData {
+  string source_id = 1;
+  string generator_id = 2;
+  string name = 3;
+  AudioSegment segment = 4;
+}
+
+enum State {
+  NONE = 0;
+  IN_PROGRESS = 1;
+  FINISHED = 2;
+}
+
+message Status {
+  string id = 1;
+  State state = 2;
+}
+
+message GeneratorRequest {
+  string request_id = 1;
+  string generator_id = 2;
+  int32 count = 3;
+}
+
+message Output {
+  string request_id = 1;
+  string generator_id = 2;
+  int32 index = 3;
+  AudioSegment segment = 4;
+}

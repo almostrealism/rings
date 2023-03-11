@@ -17,13 +17,20 @@
 package org.almostrealism.audioml;
 
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.util.KeyUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DiffusionGenerationProvider implements GenerationProvider {
+	public static final int SAMPLE_RATE = 44100;
+
 	private TorchDiffusion model;
 	private GenerationResourceManager resources;
 
@@ -35,18 +42,48 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 	@Override
 	public void refresh(String id, List<PatternNoteSource> sources) {
 		model.clearDatasets();
+		model.clearModel();
+
 		model.loadAudio(sources);
 		model.train();
-		resources.store(id, new File("models/latest.zip"));
+		resources.storeModel(id, new File("models/latest.zip"));
 	}
 
 	@Override
 	public GeneratorStatus getStatus(String id) {
-		return resources.isAvailable(id) ? GeneratorStatus.READY : GeneratorStatus.NONE;
+		return resources.isModelAvailable(id) ? GeneratorStatus.READY : GeneratorStatus.NONE;
 	}
 
 	@Override
-	public List<PatternNoteSource> generate(String id, int count) {
-		return null;
+	public List<PatternNoteSource> generate(String requestId, String generatorId, int count) {
+		List<PatternNoteSource> existing = new ArrayList<>();
+
+		boolean available = true;
+
+		i: for (int i = 0; i < count; i++) {
+			PatternNoteSource out = resources.getAudio(requestId + ":" + i);
+			if (out == null) {
+				available = false;
+				break i;
+			} else {
+				existing.add(out);
+			}
+		}
+
+		if (available) {
+			System.out.println("DiffusionGenerationProvider: Request " + requestId + " already completed");
+			return existing;
+		}
+
+		resources.loadModel(generatorId, new File("models/latest.zip"));
+		model.generate(count);
+		return IntStream.range(0, count).mapToObj(i ->
+			resources.storeAudio(requestId + ":" + i, new File("output/" + i + ".wav")))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public int getSampleRate() {
+		return SAMPLE_RATE;
 	}
 }

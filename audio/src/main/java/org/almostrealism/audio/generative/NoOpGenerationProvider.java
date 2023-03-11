@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.generative;
 
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.notes.PatternNoteSource;
 
 import java.util.HashMap;
@@ -42,9 +43,14 @@ public class NoOpGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public List<PatternNoteSource> generate(String id, int count) {
+	public List<PatternNoteSource> generate(String requestId, String generatorId, int count) {
 		return IntStream.range(0, count)
-				.mapToObj(i -> sources.get(id).get(i % sources.get(id).size()))
+				.mapToObj(i -> sources.get(generatorId).get(i % sources.get(generatorId).size()))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public int getSampleRate() {
+		return OutputLine.sampleRate;
 	}
 }

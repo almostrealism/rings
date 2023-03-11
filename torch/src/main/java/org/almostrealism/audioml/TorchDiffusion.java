@@ -20,6 +20,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.util.ProcessFeatures;
 
 import java.io.File;
 import java.util.List;
@@ -29,9 +30,15 @@ import java.util.stream.Stream;
 
 public class TorchDiffusion implements ProcessFeatures {
 	private static final String AUDIO = "audio";
-	
+	private static final String MODELS = "models";
+
 	public void clearDatasets() {
 		Stream.of(new File(AUDIO).list()).forEach(run -> run("rm", "-rf", AUDIO + "/" + run));
+	}
+
+	public void clearModel() {
+		run("rm", "-rf", MODELS + "/latest.zip");
+		run("rm", "-rf", MODELS + "/latest");
 	}
 
 	public void loadAudio(List<PatternNoteSource> sources) {
@@ -47,10 +54,16 @@ public class TorchDiffusion implements ProcessFeatures {
 	}
 
 	public void train() {
-		script("train.sh");
+		if (!script("train.sh"))
+			throw new RuntimeException();
 	}
 
-	private void script(String script) {
-		run("sh", script);
+	public void generate(int count) {
+		if (!script("generate.sh", String.valueOf(count)))
+			throw new RuntimeException();
+	}
+
+	private boolean script(String script, String... args) {
+		return 0 == run(Stream.concat(Stream.of("sh", script), Stream.of(args)).toArray(String[]::new));
 	}
 }

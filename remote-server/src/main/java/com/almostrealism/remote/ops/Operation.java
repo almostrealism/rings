@@ -14,19 +14,10 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audioml;
+package com.almostrealism.remote.ops;
 
-public interface ProcessFeatures {
-	default void run(String... command) {
-		try {
-			ProcessBuilder builder = new ProcessBuilder(command);
-			builder.redirectErrorStream(true);
-			builder.inheritIO();
+import org.almostrealism.audio.generative.GenerationProvider;
 
-			Process process = builder.start();
-			process.waitFor();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+public interface Operation {
+	void accept(GenerationProvider provider);
 }
