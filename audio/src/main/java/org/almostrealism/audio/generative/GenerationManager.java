@@ -33,13 +33,19 @@ public class GenerationManager {
 
 	public Generator addGenerator() {
 		Generator g = new Generator();
-		g.setSourceProvider(sourceProvider);
-		g.setGenerationProvider(generationProvider);
-		generators.add(g);
+		addGenerator(g);
 		return g;
 	}
 
+	public void addGenerator(Generator g) {
+		g.setSourceProvider(sourceProvider);
+		g.setGenerationProvider(generationProvider);
+		generators.add(g);
+	}
+
 	public List<Generator> getGenerators() { return generators; }
+
+	public GenerationProvider getGenerationProvider() { return generationProvider; }
 
 	public Settings getSettings() {
 		Settings settings = new Settings();

@@ -27,14 +27,24 @@ import java.util.List;
 public class Generator {
 	private String id;
 	private String name;
+	private State state;
+
 	private List<String> sources;
+	private List<PatternNoteSource> results;
+
 	private NoteSourceProvider sourceProvider;
 	private GenerationProvider generationProvider;
 
 	public Generator() {
-		this.id = KeyUtils.generateKey();
-		this.name = "Generator";
+		this(KeyUtils.generateKey(), "Generator", State.NONE);
+	}
+
+	public Generator(String id, String name, State state) {
+		this.id = id;
+		this.name = name;
+		this.state = state;
 		this.sources = new ArrayList<>();
+		this.results = new ArrayList<>();
 	}
 
 	public String getId() { return id; }
@@ -43,8 +53,14 @@ public class Generator {
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 
+	public State getState() { return state; }
+	public void setState(State state) { this.state = state; }
+
 	public List<String> getSources() { return sources; }
 	public void setSources(List<String> sources) { this.sources = sources; }
+
+	public List<PatternNoteSource> getResults() { return results; }
+	public void setResults(List<PatternNoteSource> results) { this.results = results; }
 
 	@JsonIgnore
 	public NoteSourceProvider getSourceProvider() { return sourceProvider; }
@@ -58,5 +74,32 @@ public class Generator {
 	@JsonIgnore
 	public void setGenerationProvider(GenerationProvider provider) { this.generationProvider = provider; }
 
+	public void generate(int count) {
+		if (state != State.READY) {
+			throw new IllegalStateException("Generator is not ready");
+		}
 
+		state = State.GENERATING;
+		results.addAll(generationProvider.generate(KeyUtils.generateKey(), id, count));
+		state = State.READY;
+	}
+
+	public enum State {
+		NONE, REFRESHING, READY, GENERATING;
+
+		public String getName() {
+			switch (this) {
+			case NONE:
+				return "None";
+			case REFRESHING:
+				return "Refreshing";
+			case READY:
+				return "Ready";
+			case GENERATING:
+				return "Generating";
+			default:
+				return "Unknown";
+			}
+		}
+	}
 }

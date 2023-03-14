@@ -64,8 +64,8 @@ public class GenerationTest {
 				.collect(Collectors.toList());
 
 		DiffusionGenerationProvider provider = provider();
-		provider.refresh("test6", sources);
-		provider.generate(KeyUtils.generateKey(), "test6", 15);
+		provider.refresh("test7", sources);
+		provider.generate(KeyUtils.generateKey(), "test7", 15);
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class GenerationTest {
 													resources("local"));
 
 		String req = "test123";
-		List<PatternNoteSource> result = provider.generate(req, "test5", 5);
+		List<PatternNoteSource> result = provider.generate(req, "test6", 5);
 		System.out.println("GenerationTest: Received " + result.size() + " results");
 	}
 }
