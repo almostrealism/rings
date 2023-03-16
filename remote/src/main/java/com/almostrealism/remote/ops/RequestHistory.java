@@ -34,4 +34,29 @@ public class RequestHistory {
 	public void setGenerateRequests(List<GenerateRequest> generateRequests) {
 		this.generateRequests = generateRequests;
 	}
+
+	public boolean anyCompleted(String generatorId) {
+		for (GenerateRequest request : generateRequests) {
+			if (request.getGeneratorId().equals(generatorId) && request.isComplete()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean anyRefreshing(String generatorId) {
+		// TODO
+		return false;
+	}
+
+	public boolean anyGenerating(String generatorId) {
+		for (GenerateRequest request : generateRequests) {
+			if (request.getGeneratorId().equals(generatorId) && !request.isComplete()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
