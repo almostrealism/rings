@@ -132,7 +132,7 @@ public class WaveData {
 		collectionHeap = null;
 	}
 
-	public static PackedCollection allocateCollection(int count) {
+	public static PackedCollection<?> allocateCollection(int count) {
 		return Optional.ofNullable(getCollectionHeap()).map(h -> h.allocate(count)).orElse(new PackedCollection(count));
 	}
 }

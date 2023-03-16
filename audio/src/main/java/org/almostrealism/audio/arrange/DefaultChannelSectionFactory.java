@@ -109,7 +109,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 		@Override
 		public Supplier<Runnable> process(Producer<PackedCollection<?>> destination, Producer<PackedCollection<?>> source) {
 			PackedCollection<?> input = new PackedCollection<>(samples);
-			PackedCollection<PackedCollection<?>> output = new PackedCollection(shape(1, samples)).traverse(1);
+			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 
 			TemporalList temporals = lowPassFilter.getTemporals();
 

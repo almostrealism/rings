@@ -60,8 +60,8 @@ public class PatternLayerManager implements CodeFeatures {
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
 
-	private PackedCollection volume;
-	private PackedCollection destination;
+	private PackedCollection<?> volume;
+	private PackedCollection<?> destination;
 	private RootDelegateSegmentsAdd sum;
 	private Runnable runSum;
 	private Runnable adjustVolume;
@@ -97,7 +97,7 @@ public class PatternLayerManager implements CodeFeatures {
 
 	protected PackedCollection<?> getDestination() { return destination; }
 
-	public void updateDestination(PackedCollection destination) {
+	public void updateDestination(PackedCollection<?> destination) {
 		this.destination = destination;
 		this.sum = new RootDelegateSegmentsAdd<>(MAX_NOTES, this.destination.traverse(1));
 

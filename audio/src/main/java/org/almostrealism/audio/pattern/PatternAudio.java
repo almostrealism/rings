@@ -37,7 +37,7 @@ public class PatternAudio implements CellFeatures {
 
 	private int sampleRate;
 	private double bpm, beats, scale;
-	private PackedCollection data;
+	private PackedCollection<?> data;
 
 	public PatternAudio(double bpm, double beats) {
 		this(bpm, beats, 4);
@@ -81,11 +81,11 @@ public class PatternAudio implements CellFeatures {
 		}
 	}
 
-	protected void write(PackedCollection data, double position) {
+	protected void write(PackedCollection<?> data, double position) {
 		write(data, (int) (bpm(bpm).l(position * scale) * sampleRate), data.getShape().size(0));
 	}
 
-	protected void write(PackedCollection data, int offset, int length) {
+	protected void write(PackedCollection<?> data, int offset, int length) {
 		PackedCollection dest = this.data.delegate(offset, length).traverse(1);
 		add.getValue().kernelEvaluate(dest, dest, data.traverse(1));
 	}

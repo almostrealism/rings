@@ -56,8 +56,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	private List<PatternLayerManager> patterns;
 	private ConfigurableGenome genome;
 
-	private PackedCollection volume;
-	private PackedCollection destination;
+	private PackedCollection<?> volume;
+	private PackedCollection<?> destination;
 	private RootDelegateSegmentsAdd<PackedCollection> sum;
 	private Runnable runSum;
 
@@ -84,7 +84,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		volume.setMem(0, 1.0);
 	}
 
-	private void updateDestination(PackedCollection destination, Supplier<PackedCollection> intermediateDestination) {
+	private void updateDestination(PackedCollection<?> destination, Supplier<PackedCollection> intermediateDestination) {
 		this.destination = destination;
 		this.sum = new RootDelegateSegmentsAdd<>(8, destination.traverse(1));
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));

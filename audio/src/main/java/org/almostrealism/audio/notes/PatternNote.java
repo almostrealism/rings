@@ -142,11 +142,11 @@ public class PatternNote {
 			notes.put(target, new CachedValue<>(args -> {
 				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
 
-				PackedCollection rate = new PackedCollection(1);
+				PackedCollection<?> rate = new PackedCollection(1);
 				rate.setMem(0, r);
 
-				PackedCollection audio = getAudio();
-				PackedCollection dest = WaveData.allocateCollection((int) (r * audio.getMemLength()));
+				PackedCollection<?> audio = getAudio();
+				PackedCollection<?> dest = WaveData.allocateCollection((int) (r * audio.getMemLength()));
 
 				interpolate.getValue().kernelEvaluate(dest.traverse(1), audio.traverse(0), WaveOutput.timelineScalar.getValue(), rate.traverse(0));
 				return dest;

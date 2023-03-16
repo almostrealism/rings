@@ -560,7 +560,8 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 		OperationList export = new OperationList("Mixdown Export");
 
-		PackedCollection<PackedCollection<?>> wavs = new PackedCollection(shape(cells.size(), WaveOutput.defaultTimelineFrames)).traverse(1);
+		PackedCollection<PackedCollection<?>> wavs = (PackedCollection)
+				new PackedCollection(shape(cells.size(), WaveOutput.defaultTimelineFrames)).traverse(1);
 		for (int i = 0; i < cells.size(); i++) {
 			export.add(((WaveOutput) ((ReceptorCell) cells.get(i)).getReceptor()).export(wavs.get(i)));
 		}
