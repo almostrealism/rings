@@ -19,7 +19,6 @@ package org.almostrealism.audio.arrange;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.heredity.ConfigurableGenome;
@@ -29,7 +28,6 @@ import org.almostrealism.heredity.SimpleGene;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {

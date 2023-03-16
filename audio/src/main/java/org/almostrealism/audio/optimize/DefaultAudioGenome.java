@@ -20,12 +20,10 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.AudioPassFilter;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.AssignableGenome;
 import org.almostrealism.hardware.OperationList;
@@ -310,10 +308,10 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
 			addFactor(g -> g.valueAt(1).getResultant(c(1.0)));
 			addFactor((p, in) -> {
-				CollectionProducer repeat = c(p, 2);
-				CollectionProducer speedUpDuration = c(p, 3);
+				CollectionProducerComputation repeat = c(p, 2);
+				CollectionProducerComputation speedUpDuration = c(p, 3);
 
-				CollectionProducer initial = _pow(c(2.0), c(16)._multiply(c(-0.5)._add(repeat)));
+				CollectionProducerComputation initial = _pow(c(2.0), c(16)._multiply(c(-0.5)._add(repeat)));
 
 				return initial._divide(_pow(c(2.0), _floor(speedUpDuration._pow(c(-1.0))._multiply(in))));
 				// return initial;
@@ -336,19 +334,19 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 			setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0)._multiply(c(60.0)));
 			addFactor((p, in) -> {
-				CollectionProducer periodicWavelength = c(p, 0);
-				CollectionProducer periodicAmp = c(1.0);
-				CollectionProducer polyWaveLength = c(p, 1);
-				CollectionProducer polyExp = c(p, 2);
-				CollectionProducer initial = c(p, 3);
-				CollectionProducer scale = c(p, 4);
-				CollectionProducer offset = c(p, 5);
+				CollectionProducerComputation periodicWavelength = c(p, 0);
+				CollectionProducerComputation periodicAmp = c(1.0);
+				CollectionProducerComputation polyWaveLength = c(p, 1);
+				CollectionProducerComputation polyExp = c(p, 2);
+				CollectionProducerComputation initial = c(p, 3);
+				CollectionProducerComputation scale = c(p, 4);
+				CollectionProducerComputation offset = c(p, 5);
 
 //				return sinw(in, periodicWavelength, periodicAmp).pow(2.0)
 //						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
 
 				if (relative) scale = scale._multiply(initial);
-				CollectionProducer pos = _subtract(in, offset);
+				CollectionProducerComputation pos = _subtract(in, offset);
 				return _bound(pos._greaterThan(c(0.0), polyWaveLength._pow(c(-1.0))._multiply(pos)._pow(polyExp)._multiply(scale)._add(initial), initial), min, max);
 //				return bound(polyWaveLength.pow(-1.0).multiply(pos).pow(polyExp).multiply(scale).add(initial), min, max);
 			});
@@ -368,12 +366,12 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0)._multiply(c(10.0)));
 			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
 			addFactor((p, in) -> {
-				CollectionProducer speedUpWavelength = c(p, 1)._multiply(c(2.0));
-				CollectionProducer speedUpAmp = c(p, 2);
-				CollectionProducer slowDownWavelength = c(p, 3)._multiply(c(2.0));
-				CollectionProducer slowDownAmp = c(p, 4);
-				CollectionProducer polySpeedUpWaveLength = c(p, 5);
-				CollectionProducer polySpeedUpExp = c(p, 6);
+				CollectionProducerComputation speedUpWavelength = c(p, 1)._multiply(c(2.0));
+				CollectionProducerComputation speedUpAmp = c(p, 2);
+				CollectionProducerComputation slowDownWavelength = c(p, 3)._multiply(c(2.0));
+				CollectionProducerComputation slowDownAmp = c(p, 4);
+				CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
+				CollectionProducerComputation polySpeedUpExp = c(p, 6);
 				return c(1.0)._add(_sinw(in, speedUpWavelength, speedUpAmp)._pow(c(2.0)))
 						._multiply(c(1.0)._subtract(_sinw(in, slowDownWavelength, slowDownAmp)._pow(c(2.0))))
 						._multiply(c(1.0)._add(polySpeedUpWaveLength._pow(c(-1.0))._multiply(in)._pow(polySpeedUpExp)));

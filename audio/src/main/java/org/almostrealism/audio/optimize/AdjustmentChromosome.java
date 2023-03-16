@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.optimize;
 
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
@@ -33,16 +33,16 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 		setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 		setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0)._multiply(c(60.0)));
 		addFactor((p, in) -> {
-			CollectionProducer periodicWavelength = c(p, 0);
-			CollectionProducer periodicAmp = c(1.0);
-			CollectionProducer polyWaveLength = c(p, 1);
-			CollectionProducer polyExp = c(p, 2);
-			CollectionProducer initial = c(p, 3);
-			CollectionProducer scale = c(p, 4);
-			CollectionProducer offset = c(p, 5);
+			CollectionProducerComputation periodicWavelength = c(p, 0);
+			CollectionProducerComputation periodicAmp = c(1.0);
+			CollectionProducerComputation polyWaveLength = c(p, 1);
+			CollectionProducerComputation polyExp = c(p, 2);
+			CollectionProducerComputation initial = c(p, 3);
+			CollectionProducerComputation scale = c(p, 4);
+			CollectionProducerComputation offset = c(p, 5);
 
 			if (relative) scale = scale._multiply(initial);
-			CollectionProducer pos = _subtract(in, offset);
+			CollectionProducerComputation pos = _subtract(in, offset);
 			return _bound(pos._greaterThan(c(0.0),
 					polyWaveLength._pow(c(-1.0))
 							._multiply(pos)._pow(polyExp)

@@ -17,7 +17,7 @@
 package org.almostrealism.audio.optimize;
 
 import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
@@ -41,14 +41,14 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 		setTransform(0, identity(0, c(1.0)));
 		setTransform(1, identity(1, c(1.0)));
 		addFactor((p, in) -> {
-			CollectionProducer scale = _subtract(c(maxValue), c(minValue));
-			CollectionProducer direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);
+			CollectionProducerComputation scale = _subtract(c(maxValue), c(minValue));
+			CollectionProducerComputation direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);
 
-			CollectionProducer magnitude = _multiply(scale, c(p, 1));
-			CollectionProducer start = c(choice(2, toScalar(c(p, 0)), p(originChoices)), 0);
-			CollectionProducer end = _multiply(direction, magnitude)._add(start);
+			CollectionProducerComputation magnitude = _multiply(scale, c(p, 1));
+			CollectionProducerComputation start = c(choice(2, toScalar(c(p, 0)), p(originChoices)), 0);
+			CollectionProducerComputation end = _multiply(direction, magnitude)._add(start);
 
-			CollectionProducer pos = _divide(in, p(duration));
+			CollectionProducerComputation pos = _divide(in, p(duration));
 
 			return _add(start, _multiply(end._subtract(start), pos));
 		});

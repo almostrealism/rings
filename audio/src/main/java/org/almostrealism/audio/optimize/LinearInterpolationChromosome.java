@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.optimize;
 
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
@@ -32,10 +32,10 @@ public class LinearInterpolationChromosome extends WavCellChromosomeExpansion {
 		setTransform(0, identity(0, c(1.0)));
 		setTransform(1, identity(1, c(1.0)));
 		addFactor((p, in) -> {
-			CollectionProducer scale = _subtract(c(max), c(min));
-			CollectionProducer start = c(min)._add(c(p, 0)._multiply(scale));
-			CollectionProducer end = c(min)._add(c(p, 1)._multiply(scale));
-			CollectionProducer pos = _divide(in, p(duration));
+			CollectionProducerComputation scale = _subtract(c(max), c(min));
+			CollectionProducerComputation start = c(min)._add(c(p, 0)._multiply(scale));
+			CollectionProducerComputation end = c(min)._add(c(p, 1)._multiply(scale));
+			CollectionProducerComputation pos = _divide(in, p(duration));
 
 			return _add(start, _multiply(end._subtract(start), pos));
 		});

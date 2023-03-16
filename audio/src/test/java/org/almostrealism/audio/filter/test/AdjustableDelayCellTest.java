@@ -17,12 +17,10 @@
 package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.test.SineWaveCellTest;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.sources.SineWaveCell;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.mem.MemoryBankAdapter;
@@ -58,7 +56,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 	public OperationList computation(AdjustableDelayCell delay) {
 		PackedCollection multiplier = new PackedCollection(1);
 		multiplier.setMem(0.1);
-		CollectionProducer product = c(1.0)._multiply(p(multiplier));
+		CollectionProducerComputation product = c(1.0)._multiply(p(multiplier));
 
 		OperationList ops = new OperationList("Delay Push and Tick");
 		ops.add(delay.push(product));

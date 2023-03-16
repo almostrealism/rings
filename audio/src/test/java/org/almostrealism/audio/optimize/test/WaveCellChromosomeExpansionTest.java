@@ -18,11 +18,9 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.optimize.WavCellChromosomeExpansion;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.TemporalFactor;
@@ -37,8 +35,8 @@ public class WaveCellChromosomeExpansionTest implements CellFeatures, TestFeatur
 		WavCellChromosomeExpansion expansion = new WavCellChromosomeExpansion(input, 3, 2, OutputLine.sampleRate);
 
 		expansion.addFactor((params, in) -> {
-			CollectionProducer amp = c(params, 0);
-			CollectionProducer wavelength = c(params, 1);
+			CollectionProducerComputation amp = c(params, 0);
+			CollectionProducerComputation wavelength = c(params, 1);
 			return _sin(c(TWO_PI)._divide(wavelength)._multiply(in))._multiply(amp);
 		});
 
