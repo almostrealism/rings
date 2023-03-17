@@ -28,7 +28,7 @@ public class CellListTests implements CellFeatures {
 		Producer<PackedCollection<?>> source = p(data.getCollection());
 
 		PackedCollection<?> input = new PackedCollection<>(samples);
-		PackedCollection<PackedCollection<?>> output = new PackedCollection(shape(1, samples)).traverse(1);
+		PackedCollection<PackedCollection<?>> output = new PackedCollection<PackedCollection<?>>(shape(1, samples)).traverse(1);
 
 		CellList cells = cells(1, i -> new WaveCell(input.traverseEach(), OutputLine.sampleRate)); // .f(i -> lp(2000, 0.1));
 

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import io.almostrealism.code.ComputeRequirement;
 import io.almostrealism.relation.Provider;
@@ -63,16 +64,19 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		timelineScalar = new DefaultContextSpecific<>(
 				() -> {
 					ScalarBank data = new ScalarBank(defaultTimelineFrames);
-					List<Double> values = IntStream.range(0, defaultTimelineFrames)
-							.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
-					for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
+					double values[] = IntStream.range(0, defaultTimelineFrames)
+							.mapToObj(i -> i / (double) OutputLine.sampleRate)
+							.flatMap(v -> Stream.of(v, 1.0))
+							.mapToDouble(Double::doubleValue).toArray();
+					// for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
+					data.setMem(values);
 					return data;
 				}, ScalarBank::destroy);
 		timelineScalar.init();
 
 		timeline = new DefaultContextSpecific<>(
 				() -> {
-					PackedCollection data = new PackedCollection(defaultTimelineFrames).traverseEach();
+					PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
 					List<Double> values = IntStream.range(0, defaultTimelineFrames)
 							.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
 					for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
@@ -150,7 +154,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 //				pairAt.r().get().kernelEvaluate(destination, new MemoryBank[]{timeline.getValue()});
 
 				exportSource = new Provider(data);
-				exportKernel.kernelEvaluate(destination, new MemoryBank[] { data, timelineScalar.getValue() });
+				exportKernel.kernelEvaluate(destination, new MemoryBank[] { data, timelineScalar.getValue().range(0, destination.getMemLength()) });
 				if (enableVerbose)
 					System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
 			};

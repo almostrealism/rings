@@ -49,8 +49,6 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		ScalarBank output = new ScalarBank(input.getCount());
 
-		System.out.println(ev.getFunctionDefinition());
-
 		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
 		ev.kernelEvaluate(output, new MemoryBank[] { input, dim });
 

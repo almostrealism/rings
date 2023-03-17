@@ -54,7 +54,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void aggregate() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
-		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
@@ -62,7 +61,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	public void aggregateCompact() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
 		p.compact();
-		System.out.println(p.getFunctionDefinition());
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
@@ -74,8 +72,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		PairBank input = getInput();
 		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		RGBBank output = new RGBBank(input.getCount());
-
-		System.out.println(p.getFunctionDefinition());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
 		p.kernelEvaluate(output, new MemoryBank[] { input, dim });
@@ -115,8 +111,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		PairBank input = getInput();
 		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		RGBBank output = new RGBBank(input.getCount());
-
-		System.out.println(p.getFunctionDefinition());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
 		p.kernelEvaluate(output, new MemoryBank[] { input, dim });

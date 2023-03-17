@@ -128,8 +128,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void compile() {
 		AcceleratedComputationEvaluable<RGB> ev = engine();
 		ev.compile();
-
-		System.out.println(ev.getFunctionDefinition());
 	}
 
 	@Test

@@ -118,7 +118,6 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		op.add(cell.tick());
 
 		AcceleratedComputationOperation o = (AcceleratedComputationOperation) loop(op, DURATION_FRAMES).get();
-		System.out.println(o.getFunctionDefinition());
 		o.run();
 
 		System.out.println("DynamicAudioCellTest: Writing WAV...");
