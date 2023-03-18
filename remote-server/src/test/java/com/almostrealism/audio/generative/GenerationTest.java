@@ -64,8 +64,8 @@ public class GenerationTest {
 				.collect(Collectors.toList());
 
 		DiffusionGenerationProvider provider = provider();
-		provider.refresh("test7", sources);
-		provider.generate(KeyUtils.generateKey(), "test7", 15);
+		provider.refresh("test8", sources);
+		provider.generate(KeyUtils.generateKey(), "test8", 25);
 	}
 
 	@Test
