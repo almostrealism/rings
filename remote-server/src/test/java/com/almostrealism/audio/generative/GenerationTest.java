@@ -54,7 +54,7 @@ public class GenerationTest {
 	}
 
 	public void startServer() throws IOException {
-		RemoteGenerationServer server = new RemoteGenerationServer(accessManager(), provider());
+		RemoteGenerationServer server = new RemoteGenerationServer(accessManager(), provider(), 6566);
 		server.start();
 	}
 
@@ -81,7 +81,7 @@ public class GenerationTest {
 		startServer();
 
 		RemoteGenerationProvider provider = new RemoteGenerationProvider(
-										"localhost", 6565,
+										"localhost", 6566,
 										RemoteAccessKey.load("rings-key.json"),
 										resources("local"));
 
