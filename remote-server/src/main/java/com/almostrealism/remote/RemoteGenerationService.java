@@ -24,19 +24,21 @@ import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.generative.GenerationProvider;
 
 public class RemoteGenerationService extends GeneratorGrpc.GeneratorImplBase {
+	private AccessManager accessManager;
 	private GenerationProviderQueue queue;
 
-	public RemoteGenerationService(GenerationProvider provider) {
+	public RemoteGenerationService(AccessManager accessManager, GenerationProvider provider) {
+		this.accessManager = accessManager;
 		this.queue = new GenerationProviderQueue(provider);
 	}
 
 	@Override
-	public StreamObserver<Generation.SourceData> refresh(StreamObserver<Generation.Status> responseObserver) {
-		return new RemoteRefresh(queue, responseObserver);
+	public StreamObserver<Generation.RefreshRequest> refresh(StreamObserver<Generation.Status> responseObserver) {
+		return new RemoteRefresh(accessManager, queue, responseObserver);
 	}
 
 	@Override
 	public StreamObserver<Generation.GeneratorRequest> generate(StreamObserver<Generation.Output> responseObserver) {
-		return new RemoteGenerate(queue, responseObserver);
+		return new RemoteGenerate(accessManager, queue, responseObserver);
 	}
 }

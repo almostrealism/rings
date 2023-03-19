@@ -30,8 +30,8 @@ public class RemoteGenerationProvider implements GenerationProvider {
 	private RemoteGeneratorClient client;
 	private GenerationResourceManager resources;
 
-	public RemoteGenerationProvider(String host, int port, GenerationResourceManager resources) {
-		this.client = new RemoteGeneratorClient(host, port);
+	public RemoteGenerationProvider(String host, int port, RemoteAccessKey key, GenerationResourceManager resources) {
+		this.client = new RemoteGeneratorClient(host, port, key);
 		this.resources = resources;
 	}
 

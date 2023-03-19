@@ -16,6 +16,8 @@
 
 package com.almostrealism.remote;
 
+import com.almostrealism.remote.mgr.DefaultAccessManager;
+import com.almostrealism.remote.mgr.ManagerDatabase;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.almostrealism.audio.generative.GenerationProvider;
@@ -30,16 +32,16 @@ public class RemoteGenerationServer {
 
 	private Server server;
 
-	public RemoteGenerationServer(GenerationProvider provider) {
-		this(provider, DEFAULT_PORT);
+	public RemoteGenerationServer(AccessManager accessManager, GenerationProvider provider) {
+		this(accessManager, provider, DEFAULT_PORT);
 	}
 
-	public RemoteGenerationServer(GenerationProvider provider, int port) {
-		this(provider, ServerBuilder.forPort(port));
+	public RemoteGenerationServer(AccessManager accessManager, GenerationProvider provider, int port) {
+		this(accessManager, provider, ServerBuilder.forPort(port));
 	}
 
-	public RemoteGenerationServer(GenerationProvider provider, ServerBuilder<?> serverBuilder) {
-		this.server = serverBuilder.addService(new RemoteGenerationService(provider)).build();
+	public RemoteGenerationServer(AccessManager accessManager, GenerationProvider provider, ServerBuilder<?> serverBuilder) {
+		this.server = serverBuilder.addService(new RemoteGenerationService(accessManager, provider)).build();
 	}
 
 	public void start() throws IOException {
@@ -47,18 +49,26 @@ public class RemoteGenerationServer {
 		System.out.println("RemoteGenerationServer: Started");
 	}
 
+	public void awaitTermination() throws InterruptedException {
+		server.awaitTermination();
+	}
+
 	public static void main(String args[]) {
 		String root = args[0];
+
+		DefaultAccessManager accessManager = new DefaultAccessManager(ManagerDatabase.load(new File(root, "rings-db.json")));
+		System.out.println("RemoteGenerationServer: Loaded user database");
 
 		GenerationProvider provider = new DiffusionGenerationProvider(
 				new LocalResourceManager(
 							new File(root + "remote-models"),
 							new File(root + "remote-audio")));
-		RemoteGenerationServer server = new RemoteGenerationServer(provider);
+		RemoteGenerationServer server = new RemoteGenerationServer(accessManager, provider);
 
 		try {
 			server.start();
-		} catch (IOException e) {
+			server.awaitTermination();
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

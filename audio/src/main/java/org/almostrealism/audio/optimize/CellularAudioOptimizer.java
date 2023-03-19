@@ -153,7 +153,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = verbosity < 3;
+		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);

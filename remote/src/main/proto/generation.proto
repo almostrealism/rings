@@ -5,8 +5,14 @@ package almostrealism.remote;
 option java_package = "com.almostrealism.remote.api";
 
 service Generator {
-  rpc refresh(stream SourceData) returns (stream Status) {}
+  rpc refresh(stream RefreshRequest) returns (stream Status) {}
   rpc generate(stream GeneratorRequest) returns (stream Output) {}
+}
+
+message AccessKey {
+  string userId = 1;
+  string token = 2;
+  string key = 3;
 }
 
 message AudioSegment {
@@ -19,9 +25,16 @@ message AudioSegment {
 
 message SourceData {
   string source_id = 1;
-  string generator_id = 2;
-  string name = 3;
-  AudioSegment segment = 4;
+  string name = 2;
+  AudioSegment segment = 3;
+}
+
+message RefreshRequest {
+  AccessKey access_key = 1;
+  string request_id = 2;
+  string generator_id = 3;
+  SourceData source = 4;
+  bool is_final = 5;
 }
 
 enum State {
@@ -36,9 +49,10 @@ message Status {
 }
 
 message GeneratorRequest {
-  string request_id = 1;
-  string generator_id = 2;
-  int32 count = 3;
+  AccessKey access_key = 1;
+  string request_id = 2;
+  string generator_id = 3;
+  int32 count = 4;
 }
 
 message Output {

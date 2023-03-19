@@ -16,22 +16,25 @@
 
 package com.almostrealism.remote.ops;
 
+import com.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.api.Generation;
 import com.almostrealism.remote.api.GeneratorGrpc;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.data.WaveData;
 
 public class GenerateRequestor implements StreamObserver<Generation.Output> {
+	private RemoteAccessKey key;
 	private GeneratorGrpc.GeneratorStub generator;
 	private StreamObserver<Generation.GeneratorRequest> requestStream;
 
 	private WaveDataAccumulator accumulator;
 
-	public GenerateRequestor(GeneratorGrpc.GeneratorStub generator, Receiver deliver) {
+	public GenerateRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver) {
+		this.key = key;
 		this.generator = generator;
 		this.accumulator = new WaveDataAccumulator((id, data) -> {
-			String key[] = id.split(":");
-			deliver.receive(key[0], Integer.parseInt(key[1]), data);
+			String k[] = id.split(":");
+			deliver.receive(k[0], Integer.parseInt(k[1]), data);
 		});
 	}
 
@@ -39,12 +42,21 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 		ensureRequestStream();
 
 		Generation.GeneratorRequest request = Generation.GeneratorRequest.newBuilder()
+				.setAccessKey(key())
 				.setRequestId(requestId)
 				.setGeneratorId(generatorId)
 				.setCount(count)
 				.build();
 
 		requestStream.onNext(request);
+	}
+
+	protected Generation.AccessKey key() {
+		return Generation.AccessKey.newBuilder()
+				.setKey(key.getKey())
+				.setUserId(key.getUserId())
+				.setToken(key.getToken())
+				.build();
 	}
 
 	protected void ensureRequestStream() {

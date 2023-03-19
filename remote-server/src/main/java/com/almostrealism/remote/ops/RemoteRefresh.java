@@ -16,6 +16,7 @@
 
 package com.almostrealism.remote.ops;
 
+import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
 import com.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
@@ -25,19 +26,21 @@ import org.almostrealism.audio.generative.LocalResourceManager;
 
 import java.util.List;
 
-public class RemoteRefresh implements StreamObserver<Generation.SourceData> {
+public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> {
+	private final AccessManager accessManager;
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Status> reply;
 
 	private LocalResourceManager resources;
 
-	public RemoteRefresh(GenerationProviderQueue queue, StreamObserver<Generation.Status> reply) {
+	public RemoteRefresh(AccessManager accessManager, GenerationProviderQueue queue, StreamObserver<Generation.Status> reply) {
+		this.accessManager = accessManager;
 		this.queue = queue;
 		this.reply = reply;
 	}
 
 	@Override
-	public void onNext(Generation.SourceData value) {
+	public void onNext(Generation.RefreshRequest value) {
 		System.out.println("Received source data: " + value);
 	}
 

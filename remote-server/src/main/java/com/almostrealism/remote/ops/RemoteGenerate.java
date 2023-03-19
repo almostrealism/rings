@@ -16,6 +16,7 @@
 
 package com.almostrealism.remote.ops;
 
+import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
 import com.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
@@ -29,11 +30,13 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 public class RemoteGenerate implements StreamObserver<Generation.GeneratorRequest> {
+	private final AccessManager accessManager;
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Output> reply;
 	private WaveDataPublisher publisher;
 
-	public RemoteGenerate(GenerationProviderQueue queue, StreamObserver<Generation.Output> reply) {
+	public RemoteGenerate(AccessManager accessManager, GenerationProviderQueue queue, StreamObserver<Generation.Output> reply) {
+		this.accessManager = accessManager;
 		this.queue = queue;
 		this.reply = reply;
 		this.publisher = new WaveDataPublisher();
@@ -42,8 +45,12 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	@Override
 	public void onNext(Generation.GeneratorRequest value) {
 		System.out.println("Received generator request: " + value.getRequestId() + " for generator " + value.getGeneratorId());
-		queue.submit(new GenerationOperation(value.getRequestId(), value.getGeneratorId(), value.getCount(),
-				results -> output(value.getRequestId(), value.getGeneratorId(), results)));
+		if (accessManager.authorize(value.getAccessKey(), value.getRequestId())) {
+			queue.submit(new GenerationOperation(value.getRequestId(), value.getGeneratorId(), value.getCount(),
+					results -> output(value.getRequestId(), value.getGeneratorId(), results)));
+		} else {
+			System.out.println("Access denied for user \"" + value.getAccessKey().getUserId() + "\"");
+		}
 	}
 
 	protected void output(String requestId, String generatorId, List<PatternNoteSource> results) {

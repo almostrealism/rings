@@ -16,8 +16,12 @@
 
 package com.almostrealism.audio.generative;
 
+import com.almostrealism.remote.AccessManager;
+import com.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.RemoteGenerationServer;
 import com.almostrealism.remote.RemoteGenerationProvider;
+import com.almostrealism.remote.mgr.DefaultAccessManager;
+import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
@@ -41,12 +45,16 @@ public class GenerationTest {
 				new File(ROOT + prefix + "-models"), new File(ROOT + prefix + "-audio"));
 	}
 
+	protected AccessManager accessManager() {
+		return new DefaultAccessManager(ManagerDatabase.load(new File(ROOT, "rings-db.json")));
+	}
+
 	protected DiffusionGenerationProvider provider() {
 		return new DiffusionGenerationProvider(resources("remote"));
 	}
 
 	public void startServer() throws IOException {
-		RemoteGenerationServer server = new RemoteGenerationServer(provider());
+		RemoteGenerationServer server = new RemoteGenerationServer(accessManager(), provider());
 		server.start();
 	}
 
@@ -73,8 +81,9 @@ public class GenerationTest {
 		startServer();
 
 		RemoteGenerationProvider provider = new RemoteGenerationProvider(
-												"localhost", 6565,
-													resources("local"));
+										"localhost", 6565,
+										RemoteAccessKey.load("rings-key.json"),
+										resources("local"));
 
 		String req = "test123";
 		List<PatternNoteSource> result = provider.generate(req, "test6", 5);

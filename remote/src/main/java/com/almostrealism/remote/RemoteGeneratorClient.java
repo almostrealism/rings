@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class RemoteGeneratorClient {
+	private RemoteAccessKey key;
 	private Channel channel;
 	private GeneratorGrpc.GeneratorStub generator;
 	private GenerateRequestor generate;
@@ -35,15 +36,16 @@ public class RemoteGeneratorClient {
 	private Map<String, Consumer<WaveData>> listeners;
 	private Map<String, AtomicInteger> completion;
 
-	public RemoteGeneratorClient(String host, int port) {
-		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
+	public RemoteGeneratorClient(String host, int port, RemoteAccessKey key) {
+		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(), key);
 	}
 
-	public RemoteGeneratorClient(ManagedChannelBuilder<?> channelBuilder) {
-		channel = channelBuilder.build();
-		generator = GeneratorGrpc.newStub(channel);
-		listeners = new HashMap<>();
-		completion = new HashMap<>();
+	public RemoteGeneratorClient(ManagedChannelBuilder<?> channelBuilder, RemoteAccessKey key) {
+		this.key = key;
+		this.channel = channelBuilder.build();
+		this.generator = GeneratorGrpc.newStub(channel);
+		this.listeners = new HashMap<>();
+		this.completion = new HashMap<>();
 	}
 
 	public void generate(String requestId, String generatorId, int count, Consumer<WaveData> output) {
@@ -58,7 +60,7 @@ public class RemoteGeneratorClient {
 
 	private void ensureGenerate() {
 		if (generate == null) {
-			generate = new GenerateRequestor(generator, this::deliver);
+			generate = new GenerateRequestor(key, generator, this::deliver);
 		}
 	}
 
