@@ -21,6 +21,7 @@ public class GenerateRequest {
 	private String generatorId;
 	private int count;
 	private boolean complete;
+	private boolean error;
 
 	public GenerateRequest() { }
 
@@ -41,4 +42,7 @@ public class GenerateRequest {
 
 	public boolean isComplete() { return complete; }
 	public void setComplete(boolean complete) { this.complete = complete; }
+
+	public boolean isError() { return error; }
+	public void setError(boolean error) { this.error = error; }
 }

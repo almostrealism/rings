@@ -59,9 +59,11 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 				.build();
 	}
 
-	protected void ensureRequestStream() {
+	protected synchronized void ensureRequestStream() {
 		if (requestStream == null) {
+			System.out.println("GenerateRequestor: Creating request stream...");
 			requestStream = generator.generate(this);
+			System.out.println("GenerateRequestor: Request stream created");
 		}
 	}
 
