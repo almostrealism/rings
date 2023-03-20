@@ -99,6 +99,11 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		}
 
 		@Override
+		public String getRequestId() {
+			return requestId;
+		}
+
+		@Override
 		public void accept(GenerationProvider provider) {
 			results.accept(provider.generate(requestId, generatorId, count));
 		}

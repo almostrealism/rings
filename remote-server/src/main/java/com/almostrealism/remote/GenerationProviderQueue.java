@@ -19,23 +19,45 @@ package com.almostrealism.remote;
 import com.almostrealism.remote.ops.Operation;
 import org.almostrealism.audio.generative.GenerationProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GenerationProviderQueue {
 	private ExecutorService executor;
 	private GenerationProvider provider;
+	private List<String> currentRequests;
 
 	public GenerationProviderQueue(GenerationProvider provider) {
 		this.executor = Executors.newSingleThreadExecutor();
 		this.provider = provider;
+		this.currentRequests = new ArrayList<>();
 	}
 
 	public GenerationProvider getProvider() {
 		return provider;
 	}
 
-	public void submit(Operation op) {
-		executor.submit(() -> op.accept(provider));
+	public synchronized void submit(Operation op) {
+		if (op.getRequestId() == null || "".equals(op.getRequestId())) {
+			throw new IllegalArgumentException("Request must have a non-empty ID");
+		}
+
+		if (currentRequests.contains(op.getRequestId())) {
+			System.out.println("GenerationProviderQueue: Request \"" + op.getRequestId() + "\" already being processed");
+			return;
+		}
+
+		currentRequests.add(op.getRequestId());
+		executor.submit(() -> {
+			try {
+				op.accept(provider);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				currentRequests.remove(op.getRequestId());
+			}
+		});
 	}
 }

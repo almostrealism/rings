@@ -56,17 +56,24 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 	}
 
 	public static class RefreshOperation implements Operation {
-		private String id;
+		private String requestId;
+		private String generatorId;
 		private List<PatternNoteSource> sources;
 
-		public RefreshOperation(String id, List<PatternNoteSource> sources) {
-			this.id = id;
+		public RefreshOperation(String requestId, String generatorId, List<PatternNoteSource> sources) {
+			this.requestId = requestId;
+			this.generatorId = generatorId;
 			this.sources = sources;
 		}
 
 		@Override
+		public String getRequestId() {
+			return requestId;
+		}
+
+		@Override
 		public void accept(GenerationProvider provider) {
-			provider.refresh(id, sources);
+			provider.refresh(generatorId, sources);
 		}
 	}
 }
