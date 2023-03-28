@@ -20,6 +20,7 @@ import com.almostrealism.remote.api.Generation;
 import com.almostrealism.remote.api.GeneratorGrpc;
 import com.almostrealism.remote.ops.RemoteGenerate;
 import com.almostrealism.remote.ops.RemoteRefresh;
+import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.generative.GenerationProvider;
 
@@ -34,6 +35,9 @@ public class RemoteGenerationService extends GeneratorGrpc.GeneratorImplBase {
 
 	@Override
 	public StreamObserver<Generation.RefreshRequest> refresh(StreamObserver<Generation.Status> responseObserver) {
+		if (responseObserver instanceof ServerCallStreamObserver)
+			((ServerCallStreamObserver) responseObserver).setOnCancelHandler(() -> { });
+
 		return new RemoteRefresh(accessManager, queue, responseObserver);
 	}
 

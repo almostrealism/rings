@@ -53,7 +53,7 @@ public class GenerationProviderQueue {
 		executor.submit(() -> {
 			try {
 				op.accept(provider);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			} finally {
 				currentRequests.remove(op.getRequestId());

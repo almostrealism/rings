@@ -51,12 +51,14 @@ public class LocalResourceManager implements GenerationResourceManager, ProcessF
 
 	@Override
 	public FileNoteSource storeAudio(String id, File file) {
+		System.out.println("LocalResourceManager: Storing audio " + id);
 		run("mv", file.getAbsolutePath(), audio.getAbsolutePath() + "/" + id);
 		return new FileNoteSource(audio.getAbsolutePath() + "/" + id);
 	}
 
 	@Override
 	public PatternNoteSource storeAudio(String id, WaveData waveData) {
+		System.out.println("LocalResourceManager: Storing audio " + id);
 		waveData.save(new File(audio.getAbsolutePath() + "/" + id));
 		return new FileNoteSource(audio.getAbsolutePath() + "/" + id);
 	}

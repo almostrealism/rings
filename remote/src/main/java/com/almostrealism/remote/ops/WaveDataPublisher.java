@@ -33,6 +33,8 @@ public class WaveDataPublisher {
 
 		double samples[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
 
+		System.out.println("WaveDataPublisher: Publishing " + samples.length + " samples");
+
 		while (index < samples.length) {
 			Generation.AudioSegment.Builder builder = Generation.AudioSegment.newBuilder();
 			builder.setIndex(index);
@@ -46,11 +48,8 @@ public class WaveDataPublisher {
 				builder.addData(samples[index + i]);
 			}
 
-			// System.out.println("WaveDataPublisher: Sending segment " + index + " to " + (index + BATCH_SIZE) + " of " + samples.length);
 			segment.accept(builder.build());
 			index += BATCH_SIZE;
 		}
-
-		System.out.println("WaveDataPublisher: Published " + data);
 	}
 }

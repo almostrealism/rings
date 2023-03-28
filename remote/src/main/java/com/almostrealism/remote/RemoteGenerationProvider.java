@@ -51,7 +51,7 @@ public class RemoteGenerationProvider implements GenerationProvider {
 		CountDownLatch latch = new CountDownLatch(count);
 
 		client.generate(requestId, generatorId, count, wave -> {
-			// System.out.println("RemoteGeneratorProvider: Store result " + results.size());
+			System.out.println("RemoteGeneratorProvider: Store result " + results.size());
 			results.add(resources.storeAudio(KeyUtils.generateKey(), wave));
 			latch.countDown();
 		});

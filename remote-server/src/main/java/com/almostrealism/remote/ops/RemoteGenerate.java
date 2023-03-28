@@ -54,7 +54,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	}
 
 	protected void output(String requestId, String generatorId, List<PatternNoteSource> results) {
-		System.out.println("Sending " + results.size() + " results");
+		System.out.println("RemoteGenerate: Sending " + results.size() + " results");
 		IntStream.range(0, results.size()).forEach(i -> output(requestId, generatorId, i, results.get(i)));
 	}
 
@@ -64,6 +64,11 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	}
 
 	protected void output(String requestId, String generatorId, int index, PatternNote note) {
+		if (note.getAudio() == null) {
+			System.out.println("RemoteGenerate: Empty result will not be published");
+			return;
+		}
+
 		publisher.publish(new WaveData(note.getAudio(), queue.getProvider().getSampleRate()), audio -> {
 			Generation.Output.Builder builder = Generation.Output.newBuilder();
 			builder.setRequestId(requestId);
@@ -81,7 +86,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 
 	@Override
 	public void onCompleted() {
-		System.out.println("Completed");
+		System.out.println("RemoteGenerate: Stream completed");
 		reply.onCompleted();
 	}
 

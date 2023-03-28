@@ -75,6 +75,7 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 	@Override
 	public void onError(Throwable e) {
 		e.printStackTrace();
+		requestStream = null;
 	}
 
 	@Override

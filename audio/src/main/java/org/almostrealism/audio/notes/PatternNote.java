@@ -165,6 +165,9 @@ public class PatternNote {
 				WaveData data = provider.get();
 				if (data.getSampleRate() == OutputLine.sampleRate) {
 					audio = provider.get().getCollection();
+				} else {
+					System.out.println("WARN: Sample rate of " + data.getSampleRate() +
+							" does not match required sample rate of " + OutputLine.sampleRate);
 				}
 			} else {
 				audio = audioSupplier.get();
