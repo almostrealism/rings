@@ -23,6 +23,7 @@ import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.generative.LocalResourceManager;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 	@Override
 	public void onNext(Generation.RefreshRequest value) {
 		System.out.println("Received source data: " + value);
+		// TODO aggregate data and kick off refresh when is_final is received
 	}
 
 	@Override
@@ -71,9 +73,13 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 			return requestId;
 		}
 
+		public String getGeneratorId() { return generatorId; }
+
+		public List<PatternNoteSource> getSources() { return sources; }
+
 		@Override
 		public void accept(GenerationProvider provider) {
-			provider.refresh(generatorId, sources);
+			provider.refresh(requestId, generatorId, sources);
 		}
 	}
 }

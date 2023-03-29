@@ -41,11 +41,13 @@ enum State {
   NONE = 0;
   IN_PROGRESS = 1;
   FINISHED = 2;
+  FAILED = 3;
 }
 
 message Status {
-  string id = 1;
-  State state = 2;
+  string request_id = 1;
+  string generator_id = 2;
+  State state = 3;
 }
 
 message GeneratorRequest {

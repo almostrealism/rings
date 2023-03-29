@@ -25,6 +25,7 @@ import org.almostrealism.util.KeyUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RemoteGenerationProvider implements GenerationProvider {
 	private RemoteGeneratorClient client;
@@ -36,8 +37,23 @@ public class RemoteGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public void refresh(String id, List<PatternNoteSource> sources) {
-		throw new UnsupportedOperationException();
+	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
+		CountDownLatch latch = new CountDownLatch(1);
+		AtomicBoolean success = new AtomicBoolean(false);
+
+		client.refresh(requestId, generatorId, sources, s -> {
+			success.set(s);
+			latch.countDown();
+		});
+
+		try {
+			System.out.println("Awaiting status...");
+			latch.await();
+			System.out.println("RemoteGenerationProvider: Done");
+			return success.get();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

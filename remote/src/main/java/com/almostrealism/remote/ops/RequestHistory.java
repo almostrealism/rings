@@ -21,21 +21,31 @@ import java.util.List;
 
 public class RequestHistory {
 
+	private List<RefreshRequest> refreshRequests;
 	private List<GenerateRequest> generateRequests;
 
 	public RequestHistory() {
+		refreshRequests = new ArrayList<>();
 		generateRequests = new ArrayList<>();
 	}
+
+	public List<RefreshRequest> getRefreshRequests() { return refreshRequests; }
+	public void setRefreshRequests(List<RefreshRequest> refreshRequests) { this.refreshRequests = refreshRequests; }
 
 	public List<GenerateRequest> getGenerateRequests() {
 		return generateRequests;
 	}
-
 	public void setGenerateRequests(List<GenerateRequest> generateRequests) {
 		this.generateRequests = generateRequests;
 	}
 
 	public boolean anyCompleted(String generatorId) {
+		for (RefreshRequest request : refreshRequests) {
+			if (request.getGeneratorId().equals(generatorId) && request.isComplete()) {
+				return true;
+			}
+		}
+
 		for (GenerateRequest request : generateRequests) {
 			if (request.getGeneratorId().equals(generatorId) && request.isComplete()) {
 				return true;
@@ -46,7 +56,12 @@ public class RequestHistory {
 	}
 
 	public boolean anyRefreshing(String generatorId) {
-		// TODO
+		for (RefreshRequest request : refreshRequests) {
+			if (request.getGeneratorId().equals(generatorId) && !request.isComplete()) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 

@@ -23,6 +23,7 @@ import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Generator {
 	private String id;
@@ -74,6 +75,17 @@ public class Generator {
 	@JsonIgnore
 	public void setGenerationProvider(GenerationProvider provider) { this.generationProvider = provider; }
 
+	public void refresh() {
+		if (state == State.REFRESHING || state == State.GENERATING) {
+			throw new IllegalStateException("Generator is busy");
+		}
+
+		state = State.REFRESHING;
+		boolean success = generationProvider.refresh(KeyUtils.generateKey(), id,
+				getSources().stream().map(sourceProvider::getSource).flatMap(List::stream).collect(Collectors.toList()));
+		state = success ? State.READY : State.NONE;
+	}
+
 	public void generate(int count) {
 		if (state != State.READY) {
 			throw new IllegalStateException("Generator is not ready");
@@ -90,16 +102,16 @@ public class Generator {
 
 		public String getName() {
 			switch (this) {
-			case NONE:
-				return "None";
-			case REFRESHING:
-				return "Refreshing";
-			case READY:
-				return "Ready";
-			case GENERATING:
-				return "Generating";
-			default:
-				return "Unknown";
+				case NONE:
+					return "None";
+				case REFRESHING:
+					return "Refreshing";
+				case READY:
+					return "Ready";
+				case GENERATING:
+					return "Generating";
+				default:
+					return "Unknown";
 			}
 		}
 	}

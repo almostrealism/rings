@@ -20,7 +20,6 @@ import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
 import org.almostrealism.audio.notes.PatternNoteSource;
-import org.almostrealism.util.KeyUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,13 +39,19 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public void refresh(String id, List<PatternNoteSource> sources) {
-		model.clearDatasets();
-		model.clearModel();
+	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
+		try {
+			model.clearDatasets();
+			model.clearModel();
 
-		model.loadAudio(sources);
-		model.train();
-		resources.storeModel(id, new File("models/latest.zip"));
+			model.loadAudio(sources);
+			model.train();
+			resources.storeModel(generatorId, new File("models/latest.zip"));
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override

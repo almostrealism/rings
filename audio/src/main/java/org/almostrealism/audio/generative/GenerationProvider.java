@@ -21,7 +21,7 @@ import org.almostrealism.audio.notes.PatternNoteSource;
 import java.util.List;
 
 public interface GenerationProvider {
-	void refresh(String id, List<PatternNoteSource> sources);
+	boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources);
 
 	GeneratorStatus getStatus(String id);
 

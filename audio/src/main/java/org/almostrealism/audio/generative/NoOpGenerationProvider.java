@@ -33,8 +33,9 @@ public class NoOpGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public void refresh(String id, List<PatternNoteSource> sources) {
-		this.sources.put(id, sources);
+	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
+		this.sources.put(generatorId, sources);
+		return true;
 	}
 
 	@Override
