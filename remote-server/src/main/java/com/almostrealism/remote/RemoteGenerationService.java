@@ -23,12 +23,14 @@ import com.almostrealism.remote.ops.RemoteRefresh;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.generative.GenerationResourceManager;
 
 public class RemoteGenerationService extends GeneratorGrpc.GeneratorImplBase {
 	private AccessManager accessManager;
 	private GenerationProviderQueue queue;
 
-	public RemoteGenerationService(AccessManager accessManager, GenerationProvider provider) {
+	public RemoteGenerationService(AccessManager accessManager,
+								   GenerationProvider provider) {
 		this.accessManager = accessManager;
 		this.queue = new GenerationProviderQueue(provider);
 	}

@@ -22,11 +22,13 @@ import org.almostrealism.audio.notes.PatternNoteSource;
 import java.io.File;
 
 public interface GenerationResourceManager {
-	void storeModel(String id, File file);
+	void storeModel(String id, String vers, File file);
 
 	void loadModel(String id, File dest);
 
 	boolean isModelAvailable(String id);
+
+	boolean isModelVersionAvailable(String vers);
 
 	PatternNoteSource storeAudio(String id, File file);
 

@@ -33,8 +33,9 @@ public class LocalResourceManager implements GenerationResourceManager, ProcessF
 	}
 
 	@Override
-	public void storeModel(String id, File file) {
+	public void storeModel(String id, String vers, File file) {
 		run("mv", file.getAbsolutePath(), models.getAbsolutePath() + "/" + id);
+		run("touch", models.getAbsolutePath() + "/" + vers);
 		System.out.println("LocalResourceManager: Saved model " + id);
 	}
 
@@ -47,6 +48,11 @@ public class LocalResourceManager implements GenerationResourceManager, ProcessF
 	@Override
 	public boolean isModelAvailable(String id) {
 		return new File(models.getAbsolutePath() + "/" + id).exists();
+	}
+
+	@Override
+	public boolean isModelVersionAvailable(String vers) {
+		return new File(models.getAbsolutePath() + "/" + vers).exists();
 	}
 
 	@Override

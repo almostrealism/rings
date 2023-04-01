@@ -35,6 +35,7 @@ public class RefreshRequestor implements StreamObserver<Generation.Status> {
 	public RefreshRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver) {
 		this.key = key;
 		this.generator = generator;
+		this.deliver = deliver;
 		this.publisher = new WaveDataPublisher();
 	}
 

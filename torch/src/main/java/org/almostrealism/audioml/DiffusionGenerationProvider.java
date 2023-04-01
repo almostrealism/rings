@@ -41,12 +41,17 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 	@Override
 	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
 		try {
+			if (resources.isModelVersionAvailable(requestId)) {
+				// If the model was already refreshed, just return true
+				return true;
+			}
+
 			model.clearDatasets();
 			model.clearModel();
 
 			model.loadAudio(sources);
 			model.train();
-			resources.storeModel(generatorId, new File("models/latest.zip"));
+			resources.storeModel(generatorId, requestId, new File("models/latest.zip"));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
