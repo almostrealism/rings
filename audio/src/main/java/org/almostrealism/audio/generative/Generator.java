@@ -93,7 +93,7 @@ public class Generator {
 
 		state = State.GENERATING;
 		List<PatternNoteSource> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
-		if (results != null) results.addAll(results);
+		if (getResults() != null) getResults().addAll(results);
 		state = State.READY;
 	}
 
