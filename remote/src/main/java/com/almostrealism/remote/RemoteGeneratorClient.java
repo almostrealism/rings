@@ -70,6 +70,7 @@ public class RemoteGeneratorClient {
 				sources.stream()
 						.map(PatternNoteSource::getNotes)
 						.flatMap(List::stream)
+						.filter(PatternNote::isValid)
 						.map(PatternNote::getAudio)
 						.filter(Objects::nonNull)
 						.map(c -> new WaveData(c, OutputLine.sampleRate))

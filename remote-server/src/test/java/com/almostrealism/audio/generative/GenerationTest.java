@@ -77,6 +77,28 @@ public class GenerationTest {
 	}
 
 	@Test
+	public void trainRemote() throws IOException {
+		List<PatternFactoryChoice> choices =
+				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
+						PatternFactoryChoiceList.class);
+
+		List<PatternNoteSource> sources = choices.stream()
+				.map(PatternFactoryChoice::getFactory)
+				// .filter(c -> "Hats".equals(c.getName()))
+				.map(PatternElementFactory::getSources)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+
+		RemoteGenerationProvider provider = new RemoteGenerationProvider(
+				"localhost", 6566,
+				RemoteAccessKey.load("rings-key.json"),
+				resources("local"));
+
+		provider.refresh(KeyUtils.generateKey(), "test9", sources);
+		provider.generate(KeyUtils.generateKey(), "test9", 25);
+	}
+
+	@Test
 	public void generate() throws IOException {
 		startServer();
 
