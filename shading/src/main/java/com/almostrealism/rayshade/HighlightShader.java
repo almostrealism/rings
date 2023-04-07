@@ -21,8 +21,6 @@ import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.*;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -30,7 +28,6 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
-import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.CodeFeatures;
@@ -85,7 +82,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		Evaluable<Vector> n;
 		
 		try {
-			n = compileProducer(new RayDirection(normals.iterator().next()));
+			n = compileProducer(direction(normals.iterator().next()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

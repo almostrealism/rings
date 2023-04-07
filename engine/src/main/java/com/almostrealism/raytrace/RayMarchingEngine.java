@@ -22,7 +22,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.LightingContext;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBAdd;
@@ -31,7 +30,6 @@ import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.DistanceEstimator;
@@ -75,7 +73,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engin
 
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		return new RayDirection(iterator().next());
+		return direction(iterator().next());
 	}
 
 	@Override

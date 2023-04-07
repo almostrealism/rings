@@ -9,6 +9,8 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.algebra.computations.ScalarExpressionComputation;
 import org.almostrealism.algebra.computations.VectorExpressionComputation;
 import org.almostrealism.color.Light;
@@ -18,7 +20,7 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.computations.RayDirection;
+import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.util.TestFeatures;
@@ -61,8 +63,8 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 		return (ScalarExpressionComputation) ((OperationAdapter) scalarProduct()).getInputs().get(1);
 	}
 
-	protected RayDirection rayDirection() {
-		return (RayDirection) ((OperationAdapter) scalarFromVector()).getInputs().get(1);
+	protected VectorProducerBase rayDirection() {
+		return (VectorProducerBase) ((OperationAdapter) scalarFromVector()).getInputs().get(1);
 	}
 
 	@Test
@@ -113,7 +115,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateRayDirection() {
-		RayDirection dp = rayDirection();
+		VectorProducerBase dp = rayDirection();
 		Evaluable<Vector> ev = dp.get();
 		((OperationAdapter) ev).compile();
 

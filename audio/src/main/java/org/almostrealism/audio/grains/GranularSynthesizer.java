@@ -68,7 +68,7 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 
 		playbackKernel = new DefaultContextSpecific<>(() -> {
 			TraversalPolicy grainShape = new TraversalPolicy(3);
-			Producer<PackedCollection> g = Ops.ops().v(PackedCollection.class, 1, -1);
+			Producer<PackedCollection<?>> g = (Producer) Ops.ops().v(PackedCollection.class, 1, -1);
 			ScalarProducerBase pos = Ops.ops().scalar(grainShape, g, 0).add(
 							Ops.ops().mod(Ops.ops().scalar(grainShape, g, 2).multiply(Ops.ops().v(Scalar.class, 2, -1))
 									.multiply(Ops.ops().v(Scalar.class, 0)), Ops.ops().scalar(grainShape, g, 1)))

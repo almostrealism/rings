@@ -18,7 +18,6 @@ package com.almostrealism.raytrace;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.ContinuousField;
-import org.almostrealism.geometry.computations.RayDirection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shadable;
@@ -102,7 +101,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 
 		@Override
 		public Producer<Vector> getNormalAt(Producer<Vector> vector) {
-			return new RayDirection(get(0));
+			return direction(get(0));
 		}
 
 		@Override
