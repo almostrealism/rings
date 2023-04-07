@@ -37,6 +37,7 @@
 		<module>keyframing</module>
 		<module>remote</module>
 		<module>remote-server</module>
+		<module>aware</module>
 	</modules>
 
 	<!-- Output to jar format -->
