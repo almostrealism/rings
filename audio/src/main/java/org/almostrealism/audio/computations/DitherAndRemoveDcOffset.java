@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,14 +27,9 @@ import org.almostrealism.algebra.computations.ScalarBankSum;
 import java.util.function.Supplier;
 
 public class DitherAndRemoveDcOffset extends ScalarBankAdd {
-	public DitherAndRemoveDcOffset(int count, Supplier<Evaluable<? extends ScalarBank>> input, Supplier<Evaluable<? extends Scalar>> ditherValue) {
-		this(count, new Dither(count, input, ditherValue));
-	}
-
 	public DitherAndRemoveDcOffset(int count, Supplier<Evaluable<? extends ScalarBank>> input,
-								   Supplier<Evaluable<? extends Scalar>> ditherValue,
-								   Supplier<Pair<?>> randDestination) {
-		this(count, new Dither(count, input, ditherValue, randDestination));
+								   Supplier<Evaluable<? extends Scalar>> ditherValue) {
+		this(count, new Dither(count, input, ditherValue));
 	}
 
 	private DitherAndRemoveDcOffset(int count, Dither dither) {
