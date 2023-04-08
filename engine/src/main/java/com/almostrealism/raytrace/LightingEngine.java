@@ -38,7 +38,6 @@ import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.computations.RayOrigin;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import io.almostrealism.relation.Producer;
@@ -47,7 +46,6 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.ProducerWithRank;
-import static org.almostrealism.Ops.*;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -81,7 +79,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
 
 		if (enableShadows && light.castShadows) {
-			shadow = new ShadowMask(light, allSurfaces, new RayOrigin(intersections.get(0)).get());
+			shadow = new ShadowMask(light, allSurfaces, Ops.ops().origin(intersections.get(0)).get());
 		} else {
 			shadow = RGBWhite.getInstance();
 		}
@@ -93,7 +91,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		context.setOtherSurfaces(otherSurfaces);
 
 		if (light instanceof SurfaceLight) {
-			shade = lightingCalculation(intersections, new RayOrigin(intersections.get(0)).get(),
+			shade = lightingCalculation(intersections, Ops.ops().origin(intersections.get(0)).get(),
 										surface, otherSurfaces,
 										((SurfaceLight) light).getSamples(), p);
 		} else if (light instanceof PointLight) {
@@ -109,7 +107,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
-						new RayOrigin(intersections.get(0)));
+						Ops.ops().origin(intersections.get(0)));
 		} else {
 			shade = RGBBlack.getInstance();
 		}

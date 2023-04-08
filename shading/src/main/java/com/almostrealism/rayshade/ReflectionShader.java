@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.computations.RayOrigin;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
@@ -110,7 +109,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		final Producer<RGB> fr = r;
 
-		VectorProducerBase point = new RayOrigin(p.getIntersection().get(0));
+		VectorProducerBase point = origin(p.getIntersection().get(0));
 		VectorProducerBase n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 

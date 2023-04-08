@@ -2,6 +2,7 @@ package com.almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
@@ -83,11 +84,11 @@ public class MeshIntersectionTest implements CodeFeatures {
 		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
 		Assert.assertEquals(1.0, distances.get(pos).getValue(), Math.pow(10, -10));
 
-		Vector n = closestNormal.evaluate(new Object[] { input.get(pos) });
+		PackedCollection<?> n = closestNormal.evaluate(new Object[] { input.get(pos) });
 		System.out.println("normal(" + pos + ") = " + n);
-		Assert.assertEquals(0.0, n.getX(), Math.pow(10, -10));
-		Assert.assertEquals(0.0, n.getY(), Math.pow(10, -10));
-		Assert.assertEquals(1.0, n.getZ(), Math.pow(10, -10));
+		Assert.assertEquals(0.0, n.toDouble(0), Math.pow(10, -10));
+		Assert.assertEquals(0.0, n.toDouble(1), Math.pow(10, -10));
+		Assert.assertEquals(1.0, n.toDouble(2), Math.pow(10, -10));
 
 		pos = (height / 2) * width + 3 * width / 8;
 		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
@@ -95,9 +96,9 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		n = closestNormal.evaluate(new Object[] { input.get(pos) });
 		System.out.println("normal(" + pos + ") = " + n);
-		Assert.assertEquals(-0.6666666865348816, n.getX(), Math.pow(10, -10));
-		Assert.assertEquals(0.3333333432674408, n.getY(), Math.pow(10, -10));
-		Assert.assertEquals(0.6666666865348816, n.getZ(), Math.pow(10, -10));
+		Assert.assertEquals(-0.6666666865348816, n.toDouble(0), Math.pow(10, -10));
+		Assert.assertEquals(0.3333333432674408, n.toDouble(1), Math.pow(10, -10));
+		Assert.assertEquals(0.6666666865348816, n.toDouble(2), Math.pow(10, -10));
 	}
 
 	@Test
