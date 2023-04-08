@@ -9,9 +9,6 @@ import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;
-import org.almostrealism.algebra.computations.Dither;
-import org.almostrealism.algebra.computations.PowerSpectrum;
-import org.almostrealism.algebra.computations.ScalarBankAdd;
 import org.almostrealism.algebra.computations.ScalarBankSum;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
@@ -101,10 +98,10 @@ public class FeatureComputer implements CodeFeatures {
 
 		if (processWindow == null) {
 			processWindow = v(2 * count, 0);
-			processWindow = new Dither(count, processWindow, v(Scalar.class, 1));
+			processWindow = dither(count, processWindow, v(Scalar.class, 1));
 
 			if (settings.getFrameExtractionSettings().isRemoveDcOffset()) {
-				processWindow = new ScalarBankAdd(count, processWindow, new ScalarBankSum(count, processWindow).divide(count).multiply(-1));
+				processWindow = scalarBankAdd(count, processWindow, new ScalarBankSum(count, processWindow).divide(count).multiply(-1));
 			}
 		}
 
@@ -115,7 +112,7 @@ public class FeatureComputer implements CodeFeatures {
 																		v(2 * count, 0)).get();
 		}
 
-		this.powerSpectrum = PowerSpectrum.fast(paddedWindowSize, v(2 * paddedWindowSize, 0)).get();
+		this.powerSpectrum = powerSpectrum(paddedWindowSize, v(2 * paddedWindowSize, 0)).get();
 
 		// We'll definitely need the filterbanks info for VTLN warping factor 1.0.
 		// [note: this call caches it.]

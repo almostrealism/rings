@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,16 +19,15 @@ package org.almostrealism.audio.computations;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.computations.Preemphasize;
+import org.almostrealism.algebra.ScalarBankFeatures;
 import org.almostrealism.algebra.computations.ScalarBankPad;
-import org.almostrealism.algebra.computations.ScalarBankPadFast;
 import org.almostrealism.audio.feature.FeatureWindowFunction;
 import org.almostrealism.audio.feature.FrameExtractionSettings;
 import org.almostrealism.Ops;
 
 import java.util.function.Supplier;
 
-public class WindowPreprocess extends ScalarBankPadFast {
+public class WindowPreprocess extends ScalarBankPad {
 	public WindowPreprocess(FrameExtractionSettings settings, Supplier<Evaluable<? extends ScalarBank>> input) {
 		this(settings.getWindowSize(), settings.getPaddedWindowSize(), settings.getWindowType(),
 				settings.getBlackmanCoeff(), settings.getPreemphCoeff(), input);
@@ -37,7 +36,7 @@ public class WindowPreprocess extends ScalarBankPadFast {
 	public WindowPreprocess(int windowSize, int paddedWindowSize, String windowType, Scalar blackmanCoeff, Scalar preemphCoeff, Supplier<Evaluable<? extends ScalarBank>> input) {
 		super(windowSize, paddedWindowSize,
 				new FeatureWindowFunction(windowSize, windowType, blackmanCoeff).getWindow(
-						Preemphasize.fast(windowSize,
-							input, Ops.ops().v(preemphCoeff))));
+						ScalarBankFeatures.getInstance().preemphasize(windowSize,
+								input, Ops.ops().v(preemphCoeff))));
 	}
 }

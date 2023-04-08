@@ -44,7 +44,7 @@ public class RemoteGenerationProvider implements GenerationProvider {
 		client.refresh(requestId, generatorId, sources, s -> {
 			success.set(s);
 			latch.countDown();
-		});
+		}, () -> { while (latch.getCount() > 0) latch.countDown(); });
 
 		try {
 			System.out.println("Awaiting status...");
@@ -70,7 +70,7 @@ public class RemoteGenerationProvider implements GenerationProvider {
 			System.out.println("RemoteGeneratorProvider: Store result " + results.size());
 			results.add(resources.storeAudio(KeyUtils.generateKey(), wave));
 			latch.countDown();
-		});
+		}, () -> { while (latch.getCount() > 0) latch.countDown(); });
 
 		try {
 			System.out.println("Awaiting results...");

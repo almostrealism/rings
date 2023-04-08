@@ -26,6 +26,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,11 @@ public class RemoteGeneratorClient {
 	private GenerateRequestor generate;
 
 	private Map<String, Consumer<Boolean>> refreshListeners;
+	private Map<String, Runnable> refreshEndListeners;
+
 	private Map<String, Consumer<WaveData>> generateListeners;
+	private Map<String, Runnable> generateEndListeners;
+
 	private Map<String, AtomicInteger> completion;
 
 	public RemoteGeneratorClient(String host, int port, RemoteAccessKey key) {
@@ -55,16 +60,19 @@ public class RemoteGeneratorClient {
 		this.channel = channelBuilder.build();
 		this.generator = GeneratorGrpc.newStub(channel);
 		this.refreshListeners = new HashMap<>();
+		this.refreshEndListeners = new HashMap<>();
 		this.generateListeners = new HashMap<>();
+		this.generateEndListeners = new HashMap<>();
 		this.completion = new HashMap<>();
 	}
 
-	public void refresh(String requestId, String generatorId, List<PatternNoteSource> sources, Consumer<Boolean> success) {
+	public void refresh(String requestId, String generatorId, List<PatternNoteSource> sources, Consumer<Boolean> success, Runnable end) {
 		ensureRefresh();
 
 		System.out.println("RemoteGeneratorClient: Submitting refresh request " + requestId);
 
 		refreshListeners.put(requestId, success);
+		refreshEndListeners.put(requestId, end);
 		completion.put(requestId, new AtomicInteger(1));
 		refresh.submit(requestId, generatorId,
 				sources.stream()
@@ -77,26 +85,61 @@ public class RemoteGeneratorClient {
 						.collect(Collectors.toList()));
 	}
 
-	public void generate(String requestId, String generatorId, int count, Consumer<WaveData> output) {
+	public void generate(String requestId, String generatorId, int count, Consumer<WaveData> output, Runnable end) {
 		ensureGenerate();
 
 		System.out.println("RemoteGeneratorClient: Submitting generate request " + requestId);
 
 		generateListeners.put(requestId, output);
+		generateEndListeners.put(requestId, end);
 		completion.put(requestId, new AtomicInteger(count));
 		generate.submit(requestId, generatorId, count);
 	}
 
 	private void ensureRefresh() {
 		if (refresh == null) {
-			refresh = new RefreshRequestor(key, generator, this::deliver);
+			refresh = new RefreshRequestor(key, generator, this::deliver, this::refreshEnd);
 		}
+	}
+
+	private void refreshDone(String requestId) {
+		refreshListeners.remove(requestId);
+		refreshEndListeners.remove(requestId);
+		completion.remove(requestId);
+		System.out.println("RemoteGeneratorClient: Finished receiving results for " + requestId);
+	}
+
+	private void refreshEnd() {
+		refresh = null;
+
+		List<String> all = new ArrayList<>();
+		all.addAll(refreshEndListeners.keySet());
+
+		all.stream().map(refreshEndListeners::get).forEach(Runnable::run);
+		all.forEach(this::refreshDone);
 	}
 
 	private void ensureGenerate() {
 		if (generate == null) {
-			generate = new GenerateRequestor(key, generator, this::deliver);
+			generate = new GenerateRequestor(key, generator, this::deliver, this::generateEnd);
 		}
+	}
+
+	private void generateDone(String requestId) {
+		generateListeners.remove(requestId);
+		generateEndListeners.remove(requestId);
+		completion.remove(requestId);
+		System.out.println("RemoteGeneratorClient: Finished receiving results for " + requestId);
+	}
+
+	private void generateEnd() {
+		generate = null;
+
+		List<String> all = new ArrayList<>();
+		all.addAll(generateEndListeners.keySet());
+
+		all.stream().map(generateEndListeners::get).forEach(Runnable::run);
+		all.forEach(this::generateDone);
 	}
 
 	protected void deliver(String requestId, boolean success) {
@@ -107,9 +150,7 @@ public class RemoteGeneratorClient {
 
 		refreshListeners.get(requestId).accept(success);
 		if (completion.get(requestId).decrementAndGet() <= 0) {
-			refreshListeners.remove(requestId);
-			completion.remove(requestId);
-			System.out.println("RemoteGeneratorClient: Finished receiving results for " + requestId);
+			refreshDone(requestId);
 		}
 	}
 
@@ -121,13 +162,12 @@ public class RemoteGeneratorClient {
 
 		generateListeners.get(requestId).accept(data);
 		if (completion.get(requestId).decrementAndGet() <= 0) {
-			generateListeners.remove(requestId);
-			completion.remove(requestId);
-			System.out.println("RemoteGeneratorClient: Finished receiving results for " + requestId);
+			generateDone(requestId);
 		}
 	}
 
 	public void destroy() {
+		if (refresh != null) refresh.destroy();
 		if (generate != null) generate.destroy();
 	}
 }

@@ -29,12 +29,16 @@ public class RefreshRequestor implements StreamObserver<Generation.Status> {
 	private RemoteAccessKey key;
 	private GeneratorGrpc.GeneratorStub generator;
 	private StreamObserver<Generation.RefreshRequest> requestStream;
+	private Runnable end;
+
 	private WaveDataPublisher publisher;
 	private Receiver deliver;
 
-	public RefreshRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver) {
+	public RefreshRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver, Runnable end) {
 		this.key = key;
 		this.generator = generator;
+		this.end = end;
+
 		this.deliver = deliver;
 		this.publisher = new WaveDataPublisher();
 	}
@@ -62,7 +66,8 @@ public class RefreshRequestor implements StreamObserver<Generation.Status> {
 						.setIsFinal(last && audio.getIsFinal())
 						.build();
 
-				requestStream.onNext(request);
+				if (requestStream != null)
+					requestStream.onNext(request);
 			});
 		}
 
@@ -100,6 +105,8 @@ public class RefreshRequestor implements StreamObserver<Generation.Status> {
 	public void onError(Throwable e) {
 		e.printStackTrace();
 		requestStream = null;
+		System.out.println("RefreshRequestor: Running end callback");
+		end.run();
 	}
 
 	@Override
@@ -107,6 +114,7 @@ public class RefreshRequestor implements StreamObserver<Generation.Status> {
 		System.out.println("RefreshRequestor: Completed");
 		requestStream.onCompleted();
 		requestStream = null;
+		end.run();
 	}
 
 	public void destroy() {

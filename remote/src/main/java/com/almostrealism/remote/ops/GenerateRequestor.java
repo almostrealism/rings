@@ -26,16 +26,18 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 	private RemoteAccessKey key;
 	private GeneratorGrpc.GeneratorStub generator;
 	private StreamObserver<Generation.GeneratorRequest> requestStream;
+	private Runnable end;
 
 	private WaveDataAccumulator accumulator;
 
-	public GenerateRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver) {
+	public GenerateRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver, Runnable end) {
 		this.key = key;
 		this.generator = generator;
 		this.accumulator = new WaveDataAccumulator((id, data) -> {
 			String k[] = id.split(":");
 			deliver.receive(k[0], Integer.parseInt(k[1]), data);
 		});
+		this.end = end;
 	}
 
 	public void submit(String requestId, String generatorId, int count) {
@@ -76,6 +78,8 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 	public void onError(Throwable e) {
 		e.printStackTrace();
 		requestStream = null;
+		System.out.println("GenerateRequestor: Running end callback");
+		end.run();
 	}
 
 	@Override
@@ -83,6 +87,7 @@ public class GenerateRequestor implements StreamObserver<Generation.Output> {
 		System.out.println("GenerateRequestor: Completed");
 		requestStream.onCompleted();
 		requestStream = null;
+		end.run();
 	}
 
 	public void destroy() {
