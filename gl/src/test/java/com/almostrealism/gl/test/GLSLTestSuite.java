@@ -17,13 +17,9 @@
 package com.almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
-import org.almostrealism.color.ColorEvaluable;
+import org.almostrealism.algebra.Pair;
 import io.almostrealism.code.Computation;
-import org.almostrealism.algebra.PairFunction;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.concurrent.Future;
 
 public class GLSLTestSuite {
 	@Test
@@ -38,7 +34,7 @@ public class GLSLTestSuite {
 		 */
 	}
 
-	public void encodePairFunction(PairFunction<Future<ColorEvaluable>> f) {
+	public void encodePairFunction(Computation<Pair> f) {
 		if (f instanceof Computation == false) {
 			throw new IllegalArgumentException(f + " is not a Computation, a requirement for encoding to GLSL");
 		}

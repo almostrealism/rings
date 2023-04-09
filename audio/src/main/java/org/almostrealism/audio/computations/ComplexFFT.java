@@ -19,12 +19,11 @@ package org.almostrealism.audio.computations;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
-import org.almostrealism.algebra.PairBankEvaluable;
 import org.almostrealism.hardware.AcceleratedEvaluable;
 
 import java.util.function.Supplier;
 
-public class ComplexFFT extends AcceleratedEvaluable<PairBank, PairBank> implements PairBankEvaluable {
+public class ComplexFFT extends AcceleratedEvaluable<PairBank, PairBank> implements Evaluable<PairBank> {
 	public ComplexFFT(int count, boolean forward, Supplier<Evaluable<? extends PairBank>> input) {
 		super("transform", () -> args -> new PairBank(count),
 				new Supplier[] { input }, config(count, forward));

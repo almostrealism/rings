@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,23 +16,19 @@
 
 package com.almostrealism.projection;
 
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairEvaluable;
 import org.almostrealism.algebra.PairProducer;
-import org.almostrealism.algebra.ScalarProducer;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorProducerBase;
-import org.almostrealism.algebra.computations.RandomPair;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.computations.RayFromVectors;
-import org.almostrealism.hardware.HardwareFeatures;
 
-import static org.almostrealism.Ops.*;
-
-public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatures {
+public class PinholeCameraRayAt extends RayFromVectors implements CodeFeatures {
 	private PinholeCameraRayAt(Vector location, VectorProducerBase direction) {
 		super(Ops.ops().v(location), direction);
 	}
@@ -67,11 +63,12 @@ public class PinholeCameraRayAt extends RayFromVectors implements HardwareFeatur
 			VectorProducerBase uv = u(wv, t(pqr));
 			VectorProducerBase vv = v(wv, uv);
 
-			PairEvaluable random = new RandomPair();
-			PairEvaluable frandom = Ops.ops().fromScalars(random.x().add(-0.5), random.y().add(-0.5));
+			Producer<PackedCollection<?>> random = Ops.ops().rand(2);
+			Producer<Scalar> rx = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 0)), 0));
+			Producer<Scalar> ry = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 1)), 0));
 
-			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(() -> frandom.x()));
-			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(() -> frandom.y()));
+			pqr = pqr.add(uv.scalarMultiply(blur.getX()).scalarMultiply(rx));
+			pqr = pqr.add(vv.scalarMultiply(blur.getY()).scalarMultiply(ry));
 
 			pqr = pqr.scalarMultiply(len).scalarMultiply(pqr.length().pow(-1.0));
 		}

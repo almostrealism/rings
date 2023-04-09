@@ -18,20 +18,22 @@ package com.almostrealism.gl;
 
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
-import org.almostrealism.algebra.PairFunction;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.RGB;
+
+import java.util.function.Function;
 
 /**
  * {@link GLShader} is a {@link Scope} implementation which encodes a color pipeline
- * specified as a {@link PairFunction} taking screen coordinates to {@link RGB}s.
+ * specified as a {@link Pair} {@link Function} taking screen coordinates to {@link RGB}s.
  */
 public class GLShader extends Scope<Variable> {
-	private PairFunction<RGB> pipeline;
+	private Function<Pair, RGB> pipeline;
 
 	/**
-	 * Create a {@link GLShader} for the specified {@link PairFunction} color pipeline.
+	 * Create a {@link GLShader} for the specified {@link Pair} @link Function} color pipeline.
 	 */
-	public GLShader(PairFunction<RGB> colorPipeline) {
+	public GLShader(Function<Pair, RGB> colorPipeline) {
 		this.pipeline = colorPipeline;
 	}
 }

@@ -79,10 +79,10 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		
 		RGB lightColor = p.getLight().getColorAt(v(p.getIntersection().getNormalAt(v(point)).get().evaluate())).get().evaluate();
 		
-		Evaluable<Vector> n;
+		Producer<Vector> n;
 		
 		try {
-			n = compileProducer(direction(normals.iterator().next()));
+			n = direction(normals.iterator().next());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
