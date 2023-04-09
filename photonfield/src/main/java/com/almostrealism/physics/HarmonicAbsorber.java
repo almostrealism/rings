@@ -17,15 +17,19 @@
 package com.almostrealism.physics;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
 import com.almostrealism.chem.PotentialMap;
 import com.almostrealism.primitives.AbsorptionPlane;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.Clock;
 
@@ -46,8 +50,8 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	
 	private Clock clock;
 	private double energy, radius, k, q, d;
-	private Evaluable<Vector> dp;
-	private Evaluable<Vector> place;
+	private Producer<Vector> dp;
+	private Vector place;
 	
 	public static void main(String args[]) {
 		// Create a harmonic absorber and confine it to a sphere
@@ -77,9 +81,9 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(3.0 * Math.pow(10.0, 1.0));
-		a.addAbsorber(b, ops().vector(0.5, 0.0, 0.0));
-		a.addAbsorber(l, ops().vector(-1.0, 0.0, 0.0));
-		a.addAbsorber(plane, ops().vector(2.5, 0.0, 0.0));
+		a.addAbsorber(b, Ops.ops().vector(0.5, 0.0, 0.0));
+		a.addAbsorber(l, Ops.ops().vector(-1.0, 0.0, 0.0));
+		a.addAbsorber(plane, Ops.ops().vector(2.5, 0.0, 0.0));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb
@@ -120,7 +124,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	}
 	
 	public HarmonicAbsorber() {
-		this.place = ZeroVector.getEvaluable();
+		this.place = ZeroVector.getEvaluable().evaluate();
 	}
 
 	@Override
@@ -142,14 +146,14 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	public double getQuanta() { return this.q; }
 
 	@Override
-	public VectorEvaluable getDisplacement() {
-		return multiply(place, dp);
+	public Producer<Vector> getDisplacement() {
+		return multiply(p(place), dp);
 	}
 	
 	protected void updateDisplacement() {
 		this.d = radius * Math.sqrt(energy / k);
-		double off = d / place.evaluate().length();
-		this.dp = ops().vector(off, off, off).get();
+		double off = d / place.length();
+		this.dp = Ops.ops().vector(off, off, off);
 	}
 	
 	public boolean absorb(Vector x, Vector p, double energy) {
@@ -158,7 +162,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		if (Math.random() < verbose)
 			System.out.println("HarmonicAbsorber: Absorb energy = " + energy);
 
-		place = add(place, v(p).get());
+		place = add(v(place), v(p)).get().evaluate();
 		this.energy += energy;
 		
 		this.updateDisplacement();
@@ -167,18 +171,18 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	}
 
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		double e = this.getEmitEnergy();
 		this.energy -= e;
 
-		// TODO  Perform computation within VectorProducer
+		// TODO  Perform computation within the returned producer
 
-		double pd = place.evaluate(new Object[0]).length();
-		Vector p = place.evaluate(new Object[0]).divide(pd);
+		double pd = place.length();
+		Vector p = place.divide(pd);
 		
 		this.updateDisplacement();
 		
-		return v(p).get();
+		return v(p);
 	}
 
 	@Override
@@ -193,7 +197,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	}
 
 	@Override
-	public VectorEvaluable getEmitPosition() { return this.getDisplacement(); }
+	public Producer<Vector> getEmitPosition() { return this.getDisplacement(); }
 
 	@Override
 	public double getNextEmit() {

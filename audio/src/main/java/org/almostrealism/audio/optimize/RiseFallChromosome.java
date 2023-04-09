@@ -41,16 +41,16 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 		setTransform(0, identity(0, c(1.0)));
 		setTransform(1, identity(1, c(1.0)));
 		addFactor((p, in) -> {
-			CollectionProducerComputation scale = _subtract(c(maxValue), c(minValue));
+			CollectionProducerComputation scale = subtract(c(maxValue), c(minValue));
 			CollectionProducerComputation direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);
 
-			CollectionProducerComputation magnitude = _multiply(scale, c(p, 1));
+			CollectionProducerComputation magnitude = multiply(scale, c(p, 1));
 			CollectionProducerComputation start = c(choice(2, toScalar(c(p, 0)), p(originChoices)), 0);
-			CollectionProducerComputation end = _multiply(direction, magnitude)._add(start);
+			CollectionProducerComputation end = multiply(direction, magnitude)._add(start);
 
 			CollectionProducerComputation pos = _divide(in, p(duration));
 
-			return _add(start, _multiply(end._subtract(start), pos));
+			return add(start, multiply(end._subtract(start), pos));
 		});
 	}
 

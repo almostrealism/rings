@@ -129,7 +129,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
 
-			KernelizedEvaluable product = _multiply(v(0, 0), v(0, 1)).get();
+			KernelizedEvaluable product = multiply(v(0, 0), v(0, 1)).get();
 			process.add(() -> () ->
 					// TODO  Should be able to just use ::evaluate here...
 					product.kernelEvaluate(destination.get().evaluate().traverseEach(),

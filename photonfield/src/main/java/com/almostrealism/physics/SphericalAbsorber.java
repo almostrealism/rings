@@ -25,6 +25,8 @@
 package com.almostrealism.physics;
 
 import com.almostrealism.chem.PotentialMap;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 
@@ -68,5 +70,5 @@ public interface SphericalAbsorber extends Absorber {
 	 * @return  {x, y, z} - The displacement vector for this spherical aborber. A unit length
 	 *          vector represents a displacement equal to the radius of this spherical absorber.
 	 */
-	VectorEvaluable getDisplacement();
+	Producer<Vector> getDisplacement();
 }

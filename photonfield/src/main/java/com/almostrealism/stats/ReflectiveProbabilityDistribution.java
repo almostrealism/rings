@@ -16,6 +16,7 @@
 
 package com.almostrealism.stats;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.space.Length;
@@ -27,12 +28,12 @@ public class ReflectiveProbabilityDistribution implements SphericalProbabilityDi
 	private double m = 1.0;
 
 	@Override
-	public Evaluable<Vector> getSample(double[] in, double[] orient) {
+	public Producer<Vector> getSample(double[] in, double[] orient) {
 		orient = VectorMath.multiply(orient, new Vector(in).dotProduct(new Vector(orient)) * 2.0, true);
 		Vector r = new Vector(orient).subtract(new Vector(in));
 		r.normalize();
 		if (this.m != 1.0) r.multiplyBy(this.m);
-		return v(r).get();
+		return v(r);
 	}
 
 	@Override

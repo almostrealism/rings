@@ -380,7 +380,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Evaluable<Vector> xyz) {
+	public double[] getSurfaceCoords(Producer<Vector> xyz) {
 		// TODO Auto-generated method stub
 		return null;
 	}

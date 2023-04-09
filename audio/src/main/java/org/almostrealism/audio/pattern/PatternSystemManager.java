@@ -17,7 +17,6 @@
 package org.almostrealism.audio.pattern;
 
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteSourceProvider;
@@ -26,14 +25,11 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.ProducerWithOffset;
-import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.ParameterGenome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +85,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this.sum = new RootDelegateSegmentsAdd<>(8, destination.traverse(1));
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
-		KernelizedEvaluable<PackedCollection<?>> scale = _multiply(
+		KernelizedEvaluable<PackedCollection<?>> scale = multiply(
 				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1)).get();
 
 		OperationList generate = new OperationList("PatternSystemManager Sum");

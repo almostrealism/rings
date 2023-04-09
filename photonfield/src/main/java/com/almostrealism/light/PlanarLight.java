@@ -96,28 +96,28 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 	}
 
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		super.last += super.delta;
 		
 		if (!this.lightProp)
-			return v(this.normal).get();
+			return v(this.normal);
 		
 		Vector v = UniformSphericalRandom.getInstance().evaluate(new Object[0]);
 		if (v.dotProduct(this.normal) < 0)
 			v.multiplyBy(-1.0);
 		
-		return vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)).normalize().get();
+		return vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)).normalize();
 	}
 
 	@Override
-	public Evaluable<Vector> getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		if (this.across == null)
 			across = up.crossProduct(normal);
 
 		// TODO  Put random computation into vector producer evaluate method
 		Vector x = across.multiply((Math.random() - 0.5) * this.w);
 		x.addTo(up.multiply((Math.random() - 0.5) * this.h));
-		return v(x).get();
+		return v(x);
 	}
 
 	@Override

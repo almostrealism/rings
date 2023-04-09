@@ -16,6 +16,7 @@
 
 package com.almostrealism.physics;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
@@ -44,7 +45,7 @@ public class VolumetricDensityAbsorber implements Absorber {
 	}
 
 	@Override
-	public VectorEvaluable emit() {
+	public Producer<Vector> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -74,7 +75,7 @@ public class VolumetricDensityAbsorber implements Absorber {
 	}
 
 	@Override
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -147,8 +147,8 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Evaluable<Vector> v) {
-		double xyz[] = v.evaluate().toArray();
+	public double[] getSurfaceCoords(Producer<Vector> v) {
+		double xyz[] = v.get().evaluate().toArray();
 
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(normal.get().evaluate()).toArray();

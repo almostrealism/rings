@@ -23,6 +23,8 @@ import javax.swing.JFrame;
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
 import com.almostrealism.primitives.Plane;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
@@ -115,11 +117,11 @@ public class SpecularAbsorber extends VolumeAbsorber
 		// Add SpecularAbsorber and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(2.0 * x);
-		a.addAbsorber(b, ops().vector(0.0, -x, 0.0));
+		a.addAbsorber(b, Ops.ops().vector(0.0, -x, 0.0));
 		// a.addAbsorber(bl, new double[] {0.0, 0.0, 0.0});
-		a.addAbsorber(l, ops().vector(0.0, 0.0, -x));
-		a.addAbsorber(plane, ops().vector(0.0, 0.0, x + 10.0));
-		a.addAbsorber(pinhole, ops().vector(0.0, 0.0, x));
+		a.addAbsorber(l, Ops.ops().vector(0.0, 0.0, -x));
+		a.addAbsorber(plane, Ops.ops().vector(0.0, 0.0, x + 10.0));
+		a.addAbsorber(pinhole, Ops.ops().vector(0.0, 0.0, x));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the stuff we want to look at...
@@ -211,7 +213,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 	}
 
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		P = (Vector) ((Object[])Queue.peekNext())[0];
 		L = (Vector) ((Object[])Queue.next())[1];
 		
@@ -221,10 +223,10 @@ public class SpecularAbsorber extends VolumeAbsorber
 			
 			if (this.reflectDepth > 0.0 && in > this.reflectDepth) {
 				if (this.volume.intersect(P, L) >= this.reflectDepth)
-					return v(L).get();
+					return v(L);
 			} else if (this.reflectDepth < 0.0 && in < this.reflectDepth) {
 				if (this.volume.intersect(P, L) <= this.reflectDepth)
-					return v(L).get();
+					return v(L);
 			}
 			
 			L = minusL;
@@ -252,10 +254,10 @@ public class SpecularAbsorber extends VolumeAbsorber
 //		return Integer.MAX_VALUE;
 	}
 
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		// return position of next queue item
 		if (Queue.size() > 0)
-			return (VectorEvaluable) ((Object[]) Queue.peekNext())[0];
+			return v((Vector) ((Object[]) Queue.peekNext())[0]);
 		else
 			return null;
 	}

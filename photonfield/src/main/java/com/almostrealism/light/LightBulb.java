@@ -70,9 +70,9 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	
 	/** Returns a uniform spherical random vector. */
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		this.last += this.delta;
-		return UniformSphericalRandom.getInstance();
+		return UniformSphericalRandom::getInstance;
 	}
 
 	/** Returns a random energy value in the visible spectrum. */
@@ -95,7 +95,7 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	
 	/** Returns the location of this {@link LightBulb}. */
 	@Override
-	public Evaluable<Vector> getEmitPosition() { return ZeroVector.getEvaluable(); }
+	public Producer<Vector> getEmitPosition() { return ZeroVector.getInstance(); }
 	
 	public void setSpectra(ProbabilityDistribution spectra) { this.spectra = spectra; }
 	public ProbabilityDistribution getSpectra() { return this.spectra; }
@@ -126,7 +126,7 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	public double[] getSpatialCoords(double uv[]) { return new double[3]; }
 
 	@Override
-	public double[] getSurfaceCoords(Evaluable<Vector> xyz) { return new double[2]; }
+	public double[] getSurfaceCoords(Producer<Vector> xyz) { return new double[2]; }
 
 	@Override
 	public Object operate(Vector triple) {

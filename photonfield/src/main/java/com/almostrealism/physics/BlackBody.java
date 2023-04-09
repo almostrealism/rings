@@ -28,6 +28,7 @@ import java.util.Arrays;
 import com.almostrealism.absorption.PinholeCameraAbsorber;
 import com.almostrealism.chem.ElectronCloud;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
@@ -187,13 +188,13 @@ public class BlackBody implements Absorber, PhysicalConstants {
 	}
 
 	@Override
-	public VectorEvaluable emit() { return null; }
+	public Producer<Vector> emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public Evaluable<Vector> getEmitPosition() { return null; }
+	public Producer<Vector> getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }

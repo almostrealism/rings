@@ -16,6 +16,7 @@
 
 package com.almostrealism.buffers;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.relation.Evaluable;
 
@@ -80,7 +81,7 @@ public class AveragedVectorMap2D96Bit implements AveragedVectorMap2D {
 		this.bzBuf = null;
 	}
 	
-	public void addVector(double u, double v, Evaluable<Vector> e, boolean front) {
+	public void addVector(double u, double v, Producer<Vector> e, boolean front) {
 		if (u >= 1.0 || v >= 1.0 || u < 0.0 || v < 0.0) {
 			System.out.println("AveragedVectorMap2D96Bit: Invalid UV " + u + ", " + v);
 			return;

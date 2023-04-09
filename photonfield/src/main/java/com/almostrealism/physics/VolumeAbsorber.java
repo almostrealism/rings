@@ -16,6 +16,7 @@
 
 package com.almostrealism.physics;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
@@ -87,7 +88,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 * Calls the emit method on the Absorber instance wrapped by this VolumeAbsorber.
 	 */
 	@Override
-	public Evaluable<Vector> emit() { return this.absorber.emit(); }
+	public Producer<Vector> emit() { return this.absorber.emit(); }
 	
 	/**
 	 * Calls the getEmitEnergy method on the Absorber instance wrapped by this VolumeAbsorber.
@@ -105,7 +106,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 * Calls the getEmitPosition method on the Absorber instance wrapped by this VolumeAbsorber.
 	 */
 	@Override
-	public Evaluable<Vector> getEmitPosition() { return this.absorber.getEmitPosition(); }
+	public Producer<Vector> getEmitPosition() { return this.absorber.getEmitPosition(); }
 	
 	/**
 	 * Calls the setClock method on the Absorber instance wrapped by this VolumeAbsorber.

@@ -16,6 +16,7 @@
 
 package com.almostrealism.buffers;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.relation.Evaluable;
 
@@ -23,7 +24,7 @@ import io.almostrealism.relation.Evaluable;
  * @author  Mike Murray
  */
 public interface AveragedVectorMap2D {
-	void addVector(double u, double v, Evaluable<Vector> e, boolean front);
+	void addVector(double u, double v, Producer<Vector> e, boolean front);
 	double[] getVector(double u, double v, boolean front);
 	int getSampleCount(double u, double v, boolean front);
 }

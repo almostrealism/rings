@@ -156,7 +156,7 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		ScalarProducerBase d = add(point, v(location).scalarMultiply(-1.0)).lengthSq();
+		ScalarProducerBase d = lengthSq(add(point, v(location).scalarMultiply(-1.0)));
 
 		RGB color = getColor().multiply(getIntensity());
 		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, v(color), d));

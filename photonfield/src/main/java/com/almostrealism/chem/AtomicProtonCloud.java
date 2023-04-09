@@ -17,6 +17,7 @@
 package com.almostrealism.chem;
 
 import com.almostrealism.physics.SphericalAbsorber;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Atom;
@@ -53,7 +54,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return 0;
 	}
 
-	public VectorEvaluable getDisplacement() {
+	public Producer<Vector> getDisplacement() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -63,7 +64,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return false;
 	}
 
-	public VectorEvaluable emit() {
+	public Producer<Vector> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -88,7 +89,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return null;
 	}
 
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

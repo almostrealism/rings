@@ -73,6 +73,6 @@ public class WavCellChromosomeExpansion extends
 
 	@Override
 	protected BiFunction<Producer<PackedCollection<?>>, Producer<PackedCollection<?>>, Producer<PackedCollection<?>>> combine() {
-		return this::_multiply;
+		return this::multiply;
 	}
 }

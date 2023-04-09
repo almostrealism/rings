@@ -32,12 +32,12 @@ public class LinearInterpolationChromosome extends WavCellChromosomeExpansion {
 		setTransform(0, identity(0, c(1.0)));
 		setTransform(1, identity(1, c(1.0)));
 		addFactor((p, in) -> {
-			CollectionProducerComputation scale = _subtract(c(max), c(min));
+			CollectionProducerComputation scale = subtract(c(max), c(min));
 			CollectionProducerComputation start = c(min)._add(c(p, 0)._multiply(scale));
 			CollectionProducerComputation end = c(min)._add(c(p, 1)._multiply(scale));
 			CollectionProducerComputation pos = _divide(in, p(duration));
 
-			return _add(start, _multiply(end._subtract(start), pos));
+			return add(start, multiply(end._subtract(start), pos));
 		});
 	}
 

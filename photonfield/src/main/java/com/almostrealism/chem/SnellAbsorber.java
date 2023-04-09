@@ -19,6 +19,7 @@ package com.almostrealism.chem;
 import java.lang.Math;
 import java.util.ArrayList;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
@@ -63,7 +64,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	 * Assumptions: incAngle will not be above 180
 	 */
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		if (Queue.isEmpty()) return null;
 		
 		double d[];
@@ -98,7 +99,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 		this.Queue.remove(0);
 
 		R.normalize();
-		return v(R).get();
+		return v(R);
 	}
 
 	// Get and Set methods follow
@@ -130,12 +131,12 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 
 	/** Returns Position vector of next item. */
 	@Override
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		if (!Queue.isEmpty()) {
 			if (Math.random() < 0.0001)
 				System.out.println(Queue.get(0)[0].toString());
 
-			return (VectorEvaluable) Queue.get(0)[0];
+			return v((Vector) Queue.get(0)[0]);
 		} else {
 			return null;
 		}

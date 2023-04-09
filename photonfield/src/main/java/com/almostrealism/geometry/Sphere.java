@@ -106,8 +106,8 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Evaluable<Vector> v) {
-		double xyz[] = v.evaluate(new Object[0]).toArray();
+	public double[] getSurfaceCoords(Producer<Vector> v) {
+		double xyz[] = v.get().evaluate().toArray();
 
 		double s = Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]);
 		double uv[] = {0.5 + Math.asin(xyz[2]) / Math.PI, 0};

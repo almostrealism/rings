@@ -17,6 +17,7 @@
 package com.almostrealism.physics;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
@@ -30,7 +31,7 @@ public class MonochromeBody extends BlackBody {
 	private double chrome;
 
 	@Override
-	public VectorEvaluable emit() {
+	public Producer<Vector> emit() {
 		return null;
 	}
 
@@ -38,7 +39,7 @@ public class MonochromeBody extends BlackBody {
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public Evaluable<Vector> getEmitPosition() { return ZeroVector.getEvaluable(); }
+	public Producer<Vector> getEmitPosition() { return ZeroVector.getInstance(); }
 
 	@Override
 	public double getNextEmit() {

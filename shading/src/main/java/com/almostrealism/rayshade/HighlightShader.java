@@ -89,7 +89,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n = scalarMultiply(n, length(n).pow(-1.0));
-		VectorProducerBase h = add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection());
+		VectorProducerBase h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(new Object[] {p}));

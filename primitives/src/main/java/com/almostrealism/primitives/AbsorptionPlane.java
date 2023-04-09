@@ -22,8 +22,10 @@ import java.io.OutputStream;
 
 import javax.swing.JPanel;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
@@ -174,13 +176,13 @@ public class AbsorptionPlane extends Plane implements Absorber, Fast {
 	}
 
 	@Override
-	public VectorEvaluable emit() { return null; }
+	public Producer<Vector> emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public VectorEvaluable getEmitPosition() { return null; }
+	public VectorProducerBase getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Double.MAX_VALUE; }

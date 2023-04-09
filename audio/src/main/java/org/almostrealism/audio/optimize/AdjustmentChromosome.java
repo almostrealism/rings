@@ -42,7 +42,7 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 			CollectionProducerComputation offset = c(p, 5);
 
 			if (relative) scale = scale._multiply(initial);
-			CollectionProducerComputation pos = _subtract(in, offset);
+			CollectionProducerComputation pos = subtract(in, offset);
 			return _bound(pos._greaterThan(c(0.0),
 					polyWaveLength._pow(c(-1.0))
 							._multiply(pos)._pow(polyExp)

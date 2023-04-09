@@ -86,7 +86,7 @@ public class SpanningTreeAbsorber implements AbsorberSet {
 	}
 
 	@Override
-	public VectorEvaluable emit() {
+	public Producer<Vector> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -194,7 +194,7 @@ public class SpanningTreeAbsorber implements AbsorberSet {
 	}
 
 	@Override
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

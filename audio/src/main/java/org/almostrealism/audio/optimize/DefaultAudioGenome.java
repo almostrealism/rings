@@ -346,7 +346,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 //						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
 
 				if (relative) scale = scale._multiply(initial);
-				CollectionProducerComputation pos = _subtract(in, offset);
+				CollectionProducerComputation pos = subtract(in, offset);
 				return _bound(pos._greaterThan(c(0.0), polyWaveLength._pow(c(-1.0))._multiply(pos)._pow(polyExp)._multiply(scale)._add(initial), initial), min, max);
 //				return bound(polyWaveLength.pow(-1.0).multiply(pos).pow(polyExp).multiply(scale).add(initial), min, max);
 			});
@@ -411,8 +411,8 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 		@Override
 		public Factor<PackedCollection<?>> valueAt(int pos) {
-			Producer<PackedCollection<?>> lowFrequency = _multiply(c(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(c(1.0)));
-			Producer<PackedCollection<?>> highFrequency = _multiply(c(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(c(1.0)));
+			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(c(1.0)));
+			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(c(1.0)));
 			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
 		}

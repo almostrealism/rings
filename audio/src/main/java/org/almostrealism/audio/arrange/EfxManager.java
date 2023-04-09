@@ -71,7 +71,7 @@ public class EfxManager implements CellFeatures {
 		delayFeedbacks = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> {
 			SimpleGene g = delayFeedbacks.addGene();
-			if (maxFeedback != 1.0) g.setTransform(p -> _multiply(p, c(maxFeedback)));
+			if (maxFeedback != 1.0) g.setTransform(p -> multiply(p, c(maxFeedback)));
 		});
 	}
 
@@ -87,7 +87,7 @@ public class EfxManager implements CellFeatures {
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
-						scalar(shape(1), _multiply(c(beatDuration.getAsDouble()), delay), 0),
+						scalar(shape(1), multiply(c(beatDuration.getAsDouble()), delay), 0),
 						v(1.0)))
 				.collect(CellList.collector());
 

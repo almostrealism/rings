@@ -31,6 +31,8 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.VectorProducer;
+import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -212,13 +214,13 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				this.listener.updateColorBuffer(u, v, this.getVolume(), this.buf, front);
 		}
 		
-		public void addIncidence(double u, double v, Evaluable<Vector> e, boolean front) {
+		public void addIncidence(double u, double v, Producer<Vector> e, boolean front) {
 			this.incidence.addVector(u, v, e, front);
 			if (this.listener != null)
 				this.listener.updateIncidenceBuffer(u, v, this.getVolume(), this.incidence, front);
 		}
 
-		public void addExitance(double u, double v, Evaluable<Vector> e, boolean front) {
+		public void addExitance(double u, double v, Producer<Vector> e, boolean front) {
 			this.exitance.addVector(u, v, e, front);
 			if (this.listener != null)
 				this.listener.updateExitanceBuffer(u, v, this.getVolume(), this.exitance, front);
@@ -476,9 +478,9 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				Volume<?> v = this.getVolume(a);
 				
 				if (v != null) {
-					double uv[] = v.getSurfaceCoords(v(y).get());
+					double uv[] = v.getSurfaceCoords(v(y));
 					boolean front = p.dotProduct(v.getNormalAt(v(y)).get().evaluate()) < 0.0;
-					as.addIncidence(uv[0], uv[1], v(p.minus()).get(), front);
+					as.addIncidence(uv[0], uv[1], v(p.minus()), front);
 					this.spread(a, v.getNormalAt(v(y)).get().evaluate(), nx.toArray(), y.toArray(), p, energy, as);
 				}
 				
@@ -491,11 +493,11 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				Volume<?> v = this.getVolume(a);
 				
 				if (v != null) {
-					double uv[] = v.getSurfaceCoords(v(x).get());
+					double uv[] = v.getSurfaceCoords(v(x));
 
 					Vector n = v.getNormalAt(v(y)).get().evaluate();
 					boolean front = p.dotProduct(n) < 0.0;
-					as.addIncidence(uv[0], uv[1], v(p.minus()).get(), front);
+					as.addIncidence(uv[0], uv[1], v(p.minus()), front);
 					this.spread(a, n, nx.toArray(), y.toArray(), p, energy, as);
 				}
 				
@@ -514,9 +516,9 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				Volume<?> v = this.getVolume(it.absorber);
 				
 				if (v != null) {
-					double uv[] = v.getSurfaceCoords(v(l).get());
+					double uv[] = v.getSurfaceCoords(v(l));
 					boolean front = p.dotProduct(v.getNormalAt(v(l)).get().evaluate()) < 0.0;
-					it.addIncidence(uv[0], uv[1], v(p.minus()).get(), front);
+					it.addIncidence(uv[0], uv[1], v(p.minus()), front);
 				}
 				
 				return true;
@@ -554,15 +556,15 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				Producer<Vector> is = v(s);
 
 				if (a.absorb(s, p, energy)) {
-					double uv[] = v.getSurfaceCoords(is.get());
+					double uv[] = v.getSurfaceCoords(is);
 					boolean front = p.dotProduct(v.getNormalAt(v(s)).get().evaluate()) < 0.0;
-					it.addIncidence(uv[0], uv[1], v(p.minus()).get(), front);
+					it.addIncidence(uv[0], uv[1], v(p.minus()), front);
 				}
 			} else if (v != null) {
 				Producer<Vector> is = v(s);
-				double uv[] = v.getSurfaceCoords(is.get());
+				double uv[] = v.getSurfaceCoords(is);
 				boolean front = p.dotProduct(v.getNormalAt(v(s)).get().evaluate()) < 0.0;
-				it.addIncidence(uv[0], uv[1], v(p.minus()).get(), front);
+				it.addIncidence(uv[0], uv[1], v(p.minus()), front);
 			}
 		}
 	}
@@ -582,17 +584,17 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	}
 
 	@Override
-	public Evaluable<Vector> emit() {
+	public Producer<Vector> emit() {
 		if (this.emitter == null) {
 			return null;
 		} else {
-			Evaluable<Vector> d = null;
+			Producer<Vector> d = null;
 			
 			v: if (this.emitter.buf != null) {
 				Volume<?> vol = this.getVolume(this.emitter.absorber);
 				if (vol == null) break v;
 				
-				Evaluable<Vector> p = this.emitter.absorber.getEmitPosition();
+				Producer<Vector> p = this.emitter.absorber.getEmitPosition();
 
 				double energy = this.emitter.absorber.getEmitEnergy();
 				double n = 1000 * PhysicalConstants.HC / energy;
@@ -605,7 +607,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 										" emitted null.");
 				
 				boolean front = enableFrontBackDetection ?
-									d.evaluate().dotProduct(vol.getNormalAt(() -> p).get().evaluate()) >= 0.0 : true;
+									dotProduct(d, vol.getNormalAt(p)).get().evaluate().toDouble(0) >= 0.0 : true;
 				
 				double uv[] = vol.getSurfaceCoords(p);
 				RGB c = new RGB(this.colorDepth, n);
@@ -635,11 +637,11 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	}
 
 	@Override
-	public VectorEvaluable getEmitPosition() {
+	public Producer<Vector> getEmitPosition() {
 		if (this.emitter == null) this.selectEmitter();
 		if (this.emitter == null) return null;
-		Evaluable<Vector> x = emitter.absorber.getEmitPosition();
-		return add(x, emitter.position.get());
+		Producer<Vector> x = emitter.absorber.getEmitPosition();
+		return add(x, emitter.position);
 	}
 
 	@Override
@@ -929,7 +931,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				RGB c = null; // Raytraced
 
 				if (vol != null && d >= 0) {
-					double uv[] = vol.getSurfaceCoords(v(po.subtract(rclosest.position.get().evaluate())).get());
+					double uv[] = vol.getSurfaceCoords(subtract(v(po), rclosest.position));
 					c = rclosest.getColorAt(uv[0], uv[1], front, true, n); // Base color
 					b = rclosest.getColorAt(uv[0], uv[1], front, false, n);
 					double v[] = rclosest.incidence.getVector(uv[0], uv[1], front);
@@ -940,7 +942,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 					double vd[] = point.getDirection().getData();
 
 					if (rclosest.brdf != null)
-						b.multiplyBy(new Vector(vd).dotProduct(rclosest.brdf.getSample(v, norm).evaluate(new Object[0])));
+						b.multiplyBy(new Vector(vd).dotProduct(rclosest.brdf.getSample(v, norm).get().evaluate()));
 					else
 						b.multiplyBy(new Vector(rclosest.exitance.getVector(uv[0], uv[1], front)).dotProduct(new Vector(vd)));
 				}
@@ -950,12 +952,12 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 				if (rclosest.brdf != null && p.getReflectionCount() < 2) {
 					Vector viewer = point.getDirection();
 					double v[] = {viewer.getX(), viewer.getY(), viewer.getZ()};
-					Evaluable<Vector> s = rclosest.brdf.getSample(v, norm);
+					Producer<Vector> s = rclosest.brdf.getSample(v, norm);
 
 					p.addReflection();
 
-					Vector vpo = (Vector) po.clone();
-					Vector vs = s.evaluate(new Object[0]);
+					Vector vpo = po.clone();
+					Vector vs = s.get().evaluate();
 
 					LightingEngineAggregator l = new LightingEngineAggregator(v(new Ray(vpo, vs)),
 							(Iterable<Curve<RGB>>) p.getAllSurfaces(), p.getAllLights(), p);
