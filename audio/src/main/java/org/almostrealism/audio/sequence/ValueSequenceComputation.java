@@ -49,9 +49,9 @@ public abstract class ValueSequenceComputation extends DynamicOperationComputati
 	public ArrayVariable getWaveLength() { return getArgument(2); }
 	public ArrayVariable getDurationFrames() { return getArgument(3); }
 
-	public Supplier<Evaluable<? extends Scalar>> output() { return (Supplier<Evaluable<? extends Scalar>>) getInputs().get(0); }
-	public Supplier<Evaluable<? extends Scalar>> wavePosition() { return (Supplier<Evaluable<? extends Scalar>>) getInputs().get(1); }
-	public Supplier<Evaluable<? extends Scalar>> durationFrames() { return (Supplier<Evaluable<? extends Scalar>>) getInputs().get(3); }
+	public Producer<Scalar> output() { return (Producer<Scalar>) getInputs().get(0); }
+	public Producer<Scalar> wavePosition() { return (Producer<Scalar>) getInputs().get(1); }
+	public Producer<Scalar> durationFrames() { return (Producer<Scalar>) getInputs().get(3); }
 
 	public <T> List<T> choices(Function<Supplier<Evaluable<? extends Scalar>>, T> processor) {
 		return IntStream.range(4, getInputs().size())

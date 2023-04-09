@@ -527,7 +527,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (enableWetInAdjustment) {
 			gene.add(factor(wet.valueAt(0)));
 		} else {
-			gene.add(p -> c(0.2)._multiply(p));
+			gene.add(p -> c(0.2).multiply(p));
 		}
 
 		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));

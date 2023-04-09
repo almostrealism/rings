@@ -35,7 +35,7 @@ import org.almostrealism.CodeFeatures;
  * and 1.0 (no attenuation).
  */
 // TODO  Accept a ColorProducer instead of an RGB
-public class PointLight implements Light, Positioned, CodeFeatures {
+public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures {
 	private double intensity;
 	private RGB color;
 
@@ -159,7 +159,7 @@ public class PointLight implements Light, Positioned, CodeFeatures {
 		ScalarProducerBase d = lengthSq(add(point, v(location).scalarMultiply(-1.0)));
 
 		RGB color = getColor().multiply(getIntensity());
-		return GeneratedColorProducer.fromProducer(this, new Attenuation(da, db, dc, v(color), d));
+		return GeneratedColorProducer.fromProducer(this, attenuation(da, db, dc, v(color), d));
 	}
 
 	/** Returns the location of this {@link PointLight} as a {@link Vector}. */

@@ -53,8 +53,8 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	
 	public void setFreq(double hertz) { this.waveLength = hertz / (double) OutputLine.sampleRate; }
 
-	public Supplier<Runnable> setFreq(Supplier<Evaluable<? extends Scalar>> hertz) {
-		return a(1, data::getWaveLength, scalarsDivide(hertz, v(OutputLine.sampleRate)));
+	public Supplier<Runnable> setFreq(Producer<Scalar> hertz) {
+		return a(1, data::getWaveLength, divide(hertz, v(OutputLine.sampleRate)));
 	}
 
 	// TODO  Rename to milli, default should be seconds

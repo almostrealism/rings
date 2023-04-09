@@ -22,7 +22,6 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CellularTemporalFactor;
 import org.junit.Test;
@@ -88,7 +87,7 @@ public class DelayCellTest implements CellFeatures {
 		cells.addRequirement(adjustment);
 
 		cells = cells
-				.d(i -> v(2.6), i -> c(2.0)._add((Producer) adjustment.getResultant(c(1.0))))
+				.d(i -> v(2.6), i -> c(2.0).add((Producer) adjustment.getResultant(c(1.0))))
 				.o(i -> new File("results/adjust-delay-cell-test.wav"));
 
 		Supplier<Runnable> r = cells.sec(7.5);

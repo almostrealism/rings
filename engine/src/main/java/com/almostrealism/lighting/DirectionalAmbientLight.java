@@ -19,6 +19,7 @@ package com.almostrealism.lighting;
 import java.util.Collection;
 import java.util.List;
 
+import org.almostrealism.Ops;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
@@ -111,10 +112,10 @@ public class DirectionalAmbientLight extends AmbientLight {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, ops().v(l), light, otherLights, otherSurfaces)) : null;
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, Ops.ops().v(l), light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
-			p.setLightDirection(ops().v(l));
+			p.setLightDirection(Ops.ops().v(l));
 			p.setLight(light);
 			p.setOtherLights(otherLights);
 			p.setOtherSurfaces(otherSurfaces);

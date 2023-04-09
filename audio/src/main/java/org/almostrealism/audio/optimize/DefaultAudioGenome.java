@@ -304,16 +304,16 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			setTransform(0, g -> g.valueAt(0).getResultant(c(1.0)));
 			setTransform(1, g -> g.valueAt(1).getResultant(c(1.0)));
 			setTransform(2, g -> g.valueAt(2).getResultant(c(1.0)));
-			setTransform(3, g -> oneToInfinity(g.valueAt(3), 3.0)._multiply(c(60.0)));
+			setTransform(3, g -> oneToInfinity(g.valueAt(3), 3.0).multiply(c(60.0)));
 			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
 			addFactor(g -> g.valueAt(1).getResultant(c(1.0)));
 			addFactor((p, in) -> {
 				CollectionProducerComputation repeat = c(p, 2);
 				CollectionProducerComputation speedUpDuration = c(p, 3);
 
-				CollectionProducerComputation initial = _pow(c(2.0), c(16)._multiply(c(-0.5)._add(repeat)));
+				CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(repeat)));
 
-				return initial._divide(_pow(c(2.0), _floor(speedUpDuration._pow(c(-1.0))._multiply(in))));
+				return initial.divide(pow(c(2.0), _floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
 				// return initial;
 			});
 		}
@@ -327,12 +327,12 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			super(data.valueAt(index), data.length(index), 6, sampleRate);
 			setGlobalTime(globalTime);
 			this.relative = relative;
-			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0)._multiply(c(60.0)));
-			setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0)._multiply(c(60.0)));
-			setTransform(2, g -> oneToInfinity(g.valueAt(2), 1.0)._multiply(c(10.0)));
-			setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0)._multiply(c(10.0)));
+			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(c(60.0)));
+			setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(c(60.0)));
+			setTransform(2, g -> oneToInfinity(g.valueAt(2), 1.0).multiply(c(10.0)));
+			setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0).multiply(c(10.0)));
 			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
-			setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0)._multiply(c(60.0)));
+			setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0).multiply(c(60.0)));
 			addFactor((p, in) -> {
 				CollectionProducerComputation periodicWavelength = c(p, 0);
 				CollectionProducerComputation periodicAmp = c(1.0);
@@ -345,9 +345,9 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 //				return sinw(in, periodicWavelength, periodicAmp).pow(2.0)
 //						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
 
-				if (relative) scale = scale._multiply(initial);
+				if (relative) scale = scale.multiply(initial);
 				CollectionProducerComputation pos = subtract(in, offset);
-				return _bound(pos._greaterThan(c(0.0), polyWaveLength._pow(c(-1.0))._multiply(pos)._pow(polyExp)._multiply(scale)._add(initial), initial), min, max);
+				return _bound(pos._greaterThan(c(0.0), polyWaveLength.pow(c(-1.0)).multiply(pos).pow(polyExp).multiply(scale).add(initial), initial), min, max);
 //				return bound(polyWaveLength.pow(-1.0).multiply(pos).pow(polyExp).multiply(scale).add(initial), min, max);
 			});
 		}
@@ -357,24 +357,24 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		public DelayChromosome(int index, Producer<Scalar> globalTime) {
 			super(data.valueAt(index), data.length(index), 7, sampleRate);
 			setGlobalTime(globalTime);
-			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(c(1.0)), 3.0)._multiply(c(60.0)));
-			setTransform(1, g -> oneToInfinity(g.valueAt(1).getResultant(c(1.0)), 3.0)._multiply(c(60.0)));
-			setTransform(2, g -> oneToInfinity(g.valueAt(2).getResultant(c(1.0)), 0.5)._multiply(c(10.0)));
-			setTransform(3, g -> oneToInfinity(g.valueAt(3).getResultant(c(1.0)), 3.0)._multiply(c(60.0)));
+			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+			setTransform(1, g -> oneToInfinity(g.valueAt(1).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+			setTransform(2, g -> oneToInfinity(g.valueAt(2).getResultant(c(1.0)), 0.5).multiply(c(10.0)));
+			setTransform(3, g -> oneToInfinity(g.valueAt(3).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
 			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
-			setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0)._multiply(c(60.0)));
-			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0)._multiply(c(10.0)));
+			setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
 			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
 			addFactor((p, in) -> {
-				CollectionProducerComputation speedUpWavelength = c(p, 1)._multiply(c(2.0));
+				CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
 				CollectionProducerComputation speedUpAmp = c(p, 2);
-				CollectionProducerComputation slowDownWavelength = c(p, 3)._multiply(c(2.0));
+				CollectionProducerComputation slowDownWavelength = c(p, 3).multiply(c(2.0));
 				CollectionProducerComputation slowDownAmp = c(p, 4);
 				CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 				CollectionProducerComputation polySpeedUpExp = c(p, 6);
-				return c(1.0)._add(_sinw(in, speedUpWavelength, speedUpAmp)._pow(c(2.0)))
-						._multiply(c(1.0)._subtract(_sinw(in, slowDownWavelength, slowDownAmp)._pow(c(2.0))))
-						._multiply(c(1.0)._add(polySpeedUpWaveLength._pow(c(-1.0))._multiply(in)._pow(polySpeedUpExp)));
+				return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+						.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+						.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
 			});
 		}
 	}

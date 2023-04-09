@@ -20,7 +20,6 @@ import io.almostrealism.scope.Scope;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.RayBank;
@@ -29,8 +28,6 @@ import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
-
-import static org.almostrealism.Ops.*;
 
 public class ReflectedRay implements RayProducer {
 	private Producer<Vector> point;
@@ -108,7 +105,7 @@ public class ReflectedRay implements RayProducer {
 	 * second specified {@link Vector} and returns the result.
 	 */
 	public static VectorProducerBase reflect(Producer<Vector> vector, Producer<Vector> normal) {
-		VectorProducerBase newVector = Ops.ops().vector(Ops.ops()._minus(vector));
+		VectorProducerBase newVector = Ops.ops().vector(Ops.ops().minus(vector));
 		ScalarProducerBase s = Ops.ops().scalar(2).multiply(newVector.dotProduct(normal).divide(Ops.ops().lengthSq(normal)));
 		return newVector.subtract(Ops.ops().scalarMultiply(normal, s));
 	}

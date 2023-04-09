@@ -132,7 +132,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		CellList cells = new CellList();
 		cells.addRoot(seq);
 		cells = new CellList(cells);
-		cells.addRoot(new DynamicAudioCell(c(1)._multiply(p(out)), Arrays.asList(data -> cell1, data -> cell2)));
+		cells.addRoot(new DynamicAudioCell(c(1).multiply(p(out)), Arrays.asList(data -> cell1, data -> cell2)));
 		cells = cells.o(i -> new File("results/seq-dynamic-test.wav"));
 
 		TemporalRunner runner = new TemporalRunner(cells, 4 * OutputLine.sampleRate);

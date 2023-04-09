@@ -87,7 +87,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 			return c;
 		};
 
-		return new DynamicAudioCell(c(1)._add(p(choice))._divide(c(2.0)), Arrays.asList(cell1, cell2));
+		return new DynamicAudioCell(c(1).add(p(choice)).divide(c(2.0)), Arrays.asList(cell1, cell2));
 	}
 
 	@Test

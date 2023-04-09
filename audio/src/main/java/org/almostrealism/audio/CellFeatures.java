@@ -24,7 +24,6 @@ import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.audio.filter.AudioPassFilter;
@@ -519,7 +518,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> cellChoices =
 				cells.stream()
 						.map(c -> (Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>) data -> (CollectionTemporalCellAdapter) c).collect(Collectors.toList());
-		DynamicAudioCell cell = new DynamicAudioCell(c(1)._multiply(p(out)), cellChoices);
+		DynamicAudioCell cell = new DynamicAudioCell(c(1).multiply(p(out)), cellChoices);
 		ValueSequenceCell c = (ValueSequenceCell) seq(choices, v(duration), segments).get(0);
 		c.setReceptor(a(p(out)));
 
