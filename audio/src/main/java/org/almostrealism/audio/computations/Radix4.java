@@ -22,6 +22,7 @@ import org.almostrealism.algebra.computations.ComplexFromAngle;
 import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.algebra.computations.PairFromScalars;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
 public class Radix4 implements RadixComputationFactory, CodeFeatures {
 	private int part;
@@ -33,7 +34,7 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 	}
 
 	@Override
-	public PairProducer build(Scalar angle, Scalar k, Scalar n, Producer<PairBank> bank, int length) {
+	public PairProducer build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
 		Producer<Scalar> angleProducer = v(angle);
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);

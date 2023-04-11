@@ -1,5 +1,6 @@
 package org.almostrealism.audio.feature;
 
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.ScalarTable;
 import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.audio.computations.WindowPreprocess;
@@ -12,6 +13,7 @@ import org.almostrealism.algebra.Tensor;
 import org.almostrealism.algebra.computations.ScalarBankSum;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class FeatureComputer implements CodeFeatures {
 
 	private final WaveMath math;
 
-	private final Evaluable<? extends PairBank> fft;
+	private final Evaluable<? extends PackedCollection<Pair<?>>> fft;
 
 	private final Evaluable<? extends ScalarBank> processWindow;
 	private Evaluable<? extends ScalarBank> preemphasizeAndWindowFunctionAndPad;
@@ -45,7 +47,7 @@ public class FeatureComputer implements CodeFeatures {
 
 	private final ScalarBank windowInput;
 	private final Scalar rawLogEnergy;
-	private final PairBank complexSignalFrame;
+	private final PackedCollection<Pair<?>> complexSignalFrame;
 	private final ScalarBank featureEnergies;
 
 	private int featureCount = -1;
@@ -74,7 +76,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		windowInput = new ScalarBank(paddedWindowSize);
 		rawLogEnergy = new Scalar(0.0);
-		complexSignalFrame = new PairBank(paddedWindowSize);
+		complexSignalFrame = Pair.bank(paddedWindowSize);
 
 		// Note that we include zeroth dct in either case.  If using the
 		// energy we replace this with the energy.  This means a different
@@ -267,7 +269,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		long start = System.currentTimeMillis();
 
-		PairBank signalFrame;
+		PackedCollection<Pair<?>> signalFrame;
 
 		if (fft != null) {
 			signalFrame = fft.evaluate(toPairBank(realSignalFrame, complexSignalFrame));
@@ -502,11 +504,11 @@ public class FeatureComputer implements CodeFeatures {
 		return melBanks;
 	}
 
-	static PairBank toPairBank(ScalarBank real) {
-		return toPairBank(real, new PairBank(real.getCount()));
+	static PackedCollection<Pair<?>> toPairBank(ScalarBank real) {
+		return toPairBank(real, Pair.bank(real.getCount()));
 	}
 
-	static PairBank toPairBank(ScalarBank real, PairBank out) {
+	static PackedCollection<Pair<?>> toPairBank(ScalarBank real, PackedCollection<Pair<?>> out) {
 		IntStream.range(0, real.getCount()).forEach(i -> out.set(i, real.get(i).getValue(), 0.0));
 		return out;
 	}

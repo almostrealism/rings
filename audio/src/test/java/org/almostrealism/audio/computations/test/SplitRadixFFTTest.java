@@ -3,6 +3,7 @@ package org.almostrealism.audio.computations.test;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.audio.computations.SplitRadixFFT;
+import org.almostrealism.collect.PackedCollection;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
@@ -51,7 +52,7 @@ public class SplitRadixFFTTest {
 	protected Runnable compute(boolean print, double input[], double output[]) {
 		return () -> {
 			long start = System.currentTimeMillis();
-			PairBank p = splitRadixFft(input).evaluate(input());
+			PackedCollection<Pair<?>> p = splitRadixFft(input).evaluate(input());
 			updateTime(System.currentTimeMillis() - start);
 
 			if (print) {

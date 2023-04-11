@@ -4,6 +4,7 @@ import org.almostrealism.algebra.PairTable;
 import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.TestFeatures;
@@ -79,7 +80,7 @@ public class ComplexFFTTest implements TestFeatures {
 				PairBank input = input();
 
 				long start = System.currentTimeMillis();
-				PairBank p = complexFft().evaluate(input);
+				PackedCollection<Pair<?>> p = complexFft().evaluate(input);
 				updateTime(System.currentTimeMillis() - start);
 
 				if (print) {

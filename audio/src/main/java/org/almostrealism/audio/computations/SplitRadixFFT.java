@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ package org.almostrealism.audio.computations;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.PairBankFromPairsBuilder;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
-public class SplitRadixFFT implements Evaluable<PairBank>, CodeFeatures {
+public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, CodeFeatures {
 	public static final double SQRT_2 = Math.sqrt(2.0);
 
 	private final RadixComputationFactory radix4Part1Pos;
@@ -36,7 +38,7 @@ public class SplitRadixFFT implements Evaluable<PairBank>, CodeFeatures {
 	private final RadixComputationFactory radix2Even;
 	private final RadixComputationFactory radix2Odd;
 
-	private Evaluable<PairBank> result;
+	private Evaluable<PackedCollection<Pair<?>>> result;
 
 	public SplitRadixFFT(int bins, boolean forward) {
 		radix2A = new Radix2(Radix2.A);
@@ -53,15 +55,15 @@ public class SplitRadixFFT implements Evaluable<PairBank>, CodeFeatures {
 	}
 
 	@Override
-	public PairBank evaluate(Object... args) {
+	public PackedCollection<Pair<?>> evaluate(Object... args) {
 		return result.evaluate(args);
 	}
 
-	protected PairBankFromPairsBuilder transform(Producer<PairBank> values, int length, boolean forward) {
+	protected PairBankFromPairsBuilder transform(Producer<PackedCollection<Pair<?>>> values, int length, boolean forward) {
 		return calculateTransform(values, length, !forward, !forward);
 	}
 
-	private PairBankFromPairsBuilder calculateTransform(Producer<PairBank> input, int length, boolean inverseTransform, boolean isFirstSplit) {
+	private PairBankFromPairsBuilder calculateTransform(Producer<PackedCollection<Pair<?>>> input, int length, boolean inverseTransform, boolean isFirstSplit) {
 		int powerOfTwo = 31 - Integer.numberOfLeadingZeros(length);
 
 		if (1 << powerOfTwo != length) {
@@ -135,7 +137,7 @@ public class SplitRadixFFT implements Evaluable<PairBank>, CodeFeatures {
 		return (PairBankFromPairsBuilder) input; // TODO  Will not work for edge case
 	}
 
-	private PairBankFromPairsBuilder calculateRadix2Transform(Producer<PairBank> input, int length, boolean inverseTransform, boolean isFirstSplit) {
+	private PairBankFromPairsBuilder calculateRadix2Transform(Producer<PackedCollection<Pair<?>>> input, int length, boolean inverseTransform, boolean isFirstSplit) {
 		Scalar ns = new Scalar(length);
 
 		if (length >= 2) {

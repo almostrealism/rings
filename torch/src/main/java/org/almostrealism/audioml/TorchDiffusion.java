@@ -29,6 +29,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class TorchDiffusion implements ProcessFeatures {
+	public static boolean enableVirtualEnv = true;
+
 	private static final String AUDIO = "audio";
 	private static final String MODELS = "models";
 
@@ -54,7 +56,7 @@ public class TorchDiffusion implements ProcessFeatures {
 	}
 
 	public void train() {
-		if (!script("train.sh"))
+		if (!script(enableVirtualEnv ? "train_venv.sh" : "train.sh"))
 			throw new RuntimeException();
 	}
 

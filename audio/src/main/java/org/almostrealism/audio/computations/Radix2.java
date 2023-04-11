@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.ComplexFromAngle;
 import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
 public class Radix2 implements RadixComputationFactory, CodeFeatures {
 	public static final int A = 0;
@@ -35,7 +36,7 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 	}
 
 	@Override
-	public PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PairBank> bank, int length) {
+	public PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
 		Producer<Scalar> angleProducer = v(angle);
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);

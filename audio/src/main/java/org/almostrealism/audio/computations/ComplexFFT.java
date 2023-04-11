@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ package org.almostrealism.audio.computations;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedEvaluable;
 
 import java.util.function.Supplier;
 
-public class ComplexFFT extends AcceleratedEvaluable<PairBank, PairBank> implements Evaluable<PairBank> {
+public class ComplexFFT extends AcceleratedEvaluable<PackedCollection<Pair<?>>, PackedCollection<Pair<?>>> implements Evaluable<PackedCollection<Pair<?>>> {
 	public ComplexFFT(int count, boolean forward, Supplier<Evaluable<? extends PairBank>> input) {
-		super("transform", () -> args -> new PairBank(count),
+		super("transform", () -> args -> Pair.bank(count),
 				new Supplier[] { input }, config(count, forward));
 		int powerOfTwo = 31 - Integer.numberOfLeadingZeros(count);
 

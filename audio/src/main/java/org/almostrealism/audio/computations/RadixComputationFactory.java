@@ -17,10 +17,12 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.PairProducerBase;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 
 public interface RadixComputationFactory {
-	PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PairBank> bank, int length);
+	PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length);
 }
