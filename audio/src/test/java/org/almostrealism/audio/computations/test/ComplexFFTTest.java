@@ -3,7 +3,6 @@ package org.almostrealism.audio.computations.test;
 import org.almostrealism.algebra.PairTable;
 import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.hardware.MemoryBank;
@@ -47,9 +46,9 @@ public class ComplexFFTTest implements TestFeatures {
 			in = new PairTable(input.length, kernelSize);
 
 			for (int t = 0; t < kernelSize; t++) {
-				PairBank bank = new PairBank(input.length);
+				PackedCollection<Pair<?>> bank = Pair.bank(input.length);
 				IntStream.range(0, input.length).forEach(i -> bank.set(i, input[i], 0.0));
-				in.set(t, bank);
+				in.set(t, bank.toArray(0, bank.getMemLength()));
 			}
 
 			ComplexFFTTest.inputTables.set(in);
@@ -143,7 +142,7 @@ public class ComplexFFTTest implements TestFeatures {
 			updateTime(System.currentTimeMillis() - start);
 
 			for (int t = 0; t < table.getCount(); t++) {
-				PairBank p = table.get(t);
+				PackedCollection<Pair<?>> p = table.get(t);
 
 				if (print) {
 					IntStream.range(0, p.getCount())

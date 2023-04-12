@@ -17,7 +17,7 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
@@ -84,7 +84,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 				int w = ev.length;
 				int h = ev[0].length;
 
-				PairBank allSamples = new PairBank(((MemoryBank) args[0]).getCount());
+				PackedCollection<Pair<?>> allSamples = Pair.bank(((MemoryBank) args[0]).getCount());
 				RGBBank out[][] = new RGBBank[w][h];
 
 				System.out.println("SuperSampler: Evaluating sample kernels...");

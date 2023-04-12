@@ -5,7 +5,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
@@ -69,7 +68,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 	public void intersectAt() {
 		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, ray);
 
-		PairBank input = RealizableImage.generateKernelInput(0, 0, width, height);
+		PackedCollection<Pair<?>> input = RealizableImage.generateKernelInput(0, 0, width, height);
 		ScalarBank distances = new ScalarBank(input.getCount());
 		kernel.setDimensions(width, height, 1, 1);
 		kernel.kernelEvaluate(distances, new MemoryBank[] { input });
@@ -111,8 +110,8 @@ public class MeshIntersectionTest implements CodeFeatures {
 		System.out.println("distance = " + distances.get(0).getValue());
 		Assert.assertEquals(1.0, distances.get(0).getValue(), Math.pow(10, -10));
 
-		PairBank out = new PairBank(1);
-		PairBank conf = new PairBank(1);
+		PackedCollection<Pair<?>> out = Pair.bank(1);
+		PackedCollection<Pair<?>> conf = Pair.bank(1);
 		conf.set(0, new Pair(1, Intersection.e));
 		RankedChoiceEvaluable.highestRank.kernelEvaluate(out, new MemoryBank[] { distances, conf });
 		System.out.println("highest rank: " + out.get(0));

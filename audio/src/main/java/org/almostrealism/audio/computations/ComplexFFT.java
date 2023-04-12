@@ -18,14 +18,13 @@ package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedEvaluable;
 
 import java.util.function.Supplier;
 
 public class ComplexFFT extends AcceleratedEvaluable<PackedCollection<Pair<?>>, PackedCollection<Pair<?>>> implements Evaluable<PackedCollection<Pair<?>>> {
-	public ComplexFFT(int count, boolean forward, Supplier<Evaluable<? extends PairBank>> input) {
+	public ComplexFFT(int count, boolean forward, Supplier<Evaluable<? extends PackedCollection<Pair<?>>>> input) {
 		super("transform", () -> args -> Pair.bank(count),
 				new Supplier[] { input }, config(count, forward));
 		int powerOfTwo = 31 - Integer.numberOfLeadingZeros(count);

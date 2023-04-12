@@ -19,8 +19,6 @@ package org.almostrealism.audio.computations.test;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.PairTable;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
@@ -79,7 +77,7 @@ public class NativeFFTTest implements TestFeatures {
 		Evaluable<? extends PackedCollection<Pair<?>>> fft = NativeFFTTest.fft.get();
 
 		if (fft == null) {
-			fft = new ComplexFFT(512, true, v(PairBank.class, 0));
+			fft = new ComplexFFT(512, true, v(0, 0));
 			NativeFFTTest.fft.set(fft);
 		}
 

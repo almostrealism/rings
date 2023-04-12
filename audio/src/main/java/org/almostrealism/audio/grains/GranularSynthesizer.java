@@ -21,7 +21,6 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.ScalarProducerBase;
@@ -172,7 +171,7 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 						// TODO  Create a kernel function that inserts every Scalar from a bank into AcceleratedTimeSeries, to replace this
 						// w(source).map(k -> new ReceptorCell<>(sourceRec)).iter(source.getWave().getCount(), false).get().run();
 
-						PairBank sourceRecBank = new PairBank(source.getCollection().getMemLength(), sourceRec, 2, MemoryBankAdapter.defaultCacheLevel);
+						PackedCollection<Pair<?>> sourceRecBank = Pair.bank(source.getCollection().getMemLength(), sourceRec, 2);
 						sourceKernel.getValue().kernelEvaluate(sourceRecBank, source.getCollection(), WaveOutput.timelineScalar.getValue(), new Scalar(source.getSampleRate()));
 						sourceRec.set(0, 1, source.getCollection().getMemLength() + 1);
 

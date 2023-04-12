@@ -6,7 +6,6 @@ import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.audio.computations.WindowPreprocess;
 import org.almostrealism.audio.util.TensorRow;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;

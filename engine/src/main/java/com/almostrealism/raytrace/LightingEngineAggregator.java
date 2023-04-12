@@ -17,10 +17,10 @@
 package com.almostrealism.raytrace;
 
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -43,7 +43,7 @@ import java.util.List;
 public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implements PathElement<RGB, RGB>, DimensionAware {
 	public static boolean enableVerbose = false;
 
-	private PairBank input;
+	private PackedCollection<Pair<?>> input;
 	private List<ScalarBank> ranks;
 
 	private boolean kernel;
@@ -69,7 +69,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		int totalWidth = w * ssw;
 		int totalHeight = h * ssh;
 
-		PairBank pixelLocations = new PairBank(totalWidth * totalHeight);
+		PackedCollection<Pair<?>> pixelLocations = Pair.bank(totalWidth * totalHeight);
 
 		for (double i = 0; i < totalWidth; i++) {
 			for (double j = 0; j < totalHeight; j++) {
@@ -88,7 +88,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 	 * Provide a {@link MemoryBank} to use when evaluating the rank for each
 	 * {@link LightingEngine}.
 	 */
-	private void setKernelInput(PairBank input) {
+	private void setKernelInput(PackedCollection<Pair<?>> input) {
 		this.input = input;
 		resetRankCache();
 	}

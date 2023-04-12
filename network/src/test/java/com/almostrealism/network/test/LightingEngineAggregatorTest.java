@@ -22,7 +22,6 @@ import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBBank;
@@ -71,7 +70,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
+		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -110,7 +109,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
+		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
 		RGBBank output = new RGBBank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -129,7 +128,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 	@Test
 	public void compareDependents() throws IOException {
 		PackedCollection<Pair<?>> input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
+		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
 		a.compact();

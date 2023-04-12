@@ -18,7 +18,6 @@ package com.almostrealism.network.test;
 
 import com.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.collect.PackedCollection;
@@ -47,7 +46,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
+		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
 		ScalarBank output = new ScalarBank(input.getCount());
 
 		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
