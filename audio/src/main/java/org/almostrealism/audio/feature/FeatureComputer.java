@@ -91,7 +91,7 @@ public class FeatureComputer implements CodeFeatures {
 		if (this.settings.getEnergyFloor().getValue() > 0.0)
 			logEnergyFloor = new Scalar(Math.log(this.settings.getEnergyFloor().getValue()));
 
-		PairBank fftOutput = new PairBank(paddedWindowSize);
+		PackedCollection<Pair<?>> fftOutput = Pair.bank(paddedWindowSize);
 
 		fft = new ComplexFFT(paddedWindowSize, true, v(2 * paddedWindowSize, 0));
 

@@ -21,14 +21,15 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairBank;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class KernelizedIntersectionTest extends AbstractIntersectionTest {
-	public PairBank getInput() {
-		PairBank pixelLocations = new PairBank(width * height);
+	public PackedCollection<Pair<?>> getInput() {
+		PackedCollection<Pair<?>> pixelLocations = Pair.bank(width * height);
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -45,7 +46,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		SphereIntersectAt combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 
-		PairBank input = getInput();
+		PackedCollection<Pair<?>> input = getInput();
 		PairBank dim = PairBank.fromProducer(pair(width, height).get(), width * height);
 		ScalarBank output = new ScalarBank(input.getCount());
 
