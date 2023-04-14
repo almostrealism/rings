@@ -21,12 +21,10 @@ import com.almostrealism.primitives.Pinhole;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayBank;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
@@ -35,7 +33,6 @@ import org.almostrealism.space.Volume;
 import org.almostrealism.physics.Clock;
 
 import org.almostrealism.util.PriorityQueue;
-import io.almostrealism.relation.Evaluable;
 
 import com.almostrealism.projection.PinholeCamera;
 
@@ -207,7 +204,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 				vx.addTo(location);
 
 				return new Ray(vx, vd);
-			}, RayBank::new);
+			}, Ray::bank);
 	}
 
 	@Override
@@ -231,7 +228,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Evaluable<Vector> xyz) { return plane.getSurfaceCoords(xyz); }
+	public double[] getSurfaceCoords(Producer<Vector> xyz) { return plane.getSurfaceCoords(xyz); }
 
 	@Override
 	public double[] getSpatialCoords(double uv[]) { return plane.getSpatialCoords(uv); }
@@ -247,13 +244,13 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	}
 
 	@Override
-	public VectorEvaluable emit() { return null; }
+	public Producer<Vector> emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0.0; }
 
 	@Override
-	public VectorEvaluable getEmitPosition() { return null; }
+	public Producer<Vector> getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }

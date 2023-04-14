@@ -22,7 +22,6 @@ import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.RayProducer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
@@ -47,9 +46,9 @@ public class ReflectedRay implements RayProducer {
 		Evaluable<Vector> nor = normal.get();
 		Evaluable<Vector> refl = reflected.get();
 
-		return new KernelizedEvaluable<Ray>() {
+		return new KernelizedEvaluable<>() {
 			@Override
-			public MemoryBank<Ray> createKernelDestination(int size) { return new RayBank(size); }
+			public MemoryBank<Ray> createKernelDestination(int size) { return Ray.bank(size); }
 
 			@Override
 			public Ray evaluate(Object[] args) {

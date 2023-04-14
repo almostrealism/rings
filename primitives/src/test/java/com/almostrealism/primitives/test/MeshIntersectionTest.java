@@ -9,7 +9,6 @@ import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayBank;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
@@ -102,7 +101,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 	@Test
 	public void triangleIntersectAtKernel() {
-		RayBank in = new RayBank(1);
+		PackedCollection<Ray> in = Ray.bank(1);
 		ScalarBank distances = new ScalarBank(1);
 
 		in.set(0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0);
