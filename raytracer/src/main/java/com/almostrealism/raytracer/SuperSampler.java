@@ -19,7 +19,6 @@ package com.almostrealism.raytracer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBBank;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
@@ -53,7 +52,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 
 			@Override
 			public MemoryBank<RGB> createKernelDestination(int size) {
-				return new RGBBank(size);
+				return RGB.bank(size);
 			}
 
 			@Override
@@ -85,7 +84,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 				int h = ev[0].length;
 
 				PackedCollection<Pair<?>> allSamples = Pair.bank(((MemoryBank) args[0]).getCount());
-				RGBBank out[][] = new RGBBank[w][h];
+				PackedCollection<RGB> out[][] = new PackedCollection[w][h];
 
 				System.out.println("SuperSampler: Evaluating sample kernels...");
 				for (int i = 0; i < ev.length; i++) {
@@ -97,7 +96,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 							allSamples.set(k, r, q);
 						}
 
-						out[i][j] = new RGBBank(((MemoryBank) args[0]).getCount());
+						out[i][j] = RGB.bank(((MemoryBank) args[0]).getCount());
 						ev[i][j].kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
 					}
 				}

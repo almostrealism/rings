@@ -20,7 +20,6 @@ import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBBank;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
@@ -37,7 +36,7 @@ public class IntersectionalLightingEngine extends LightingEngine<ContinuousField
     }
 
 	@Override
-	public MemoryBank<RGB> createKernelDestination(int size) { return new RGBBank(size); }
+	public MemoryBank<RGB> createKernelDestination(int size) { return RGB.bank(size); }
 
 	@Override
 	public String toString() {

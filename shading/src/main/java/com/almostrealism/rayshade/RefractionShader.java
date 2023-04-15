@@ -85,7 +85,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 				return new KernelizedEvaluable<>() {
 					@Override
 					public MemoryBank<RGB> createKernelDestination(int size) {
-						return new RGBBank(size);
+						return RGB.bank(size);
 					}
 
 					@Override
