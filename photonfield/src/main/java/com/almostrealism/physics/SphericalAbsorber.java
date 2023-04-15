@@ -27,7 +27,6 @@ package com.almostrealism.physics;
 import com.almostrealism.chem.PotentialMap;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 
 /**

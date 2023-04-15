@@ -21,7 +21,6 @@ import java.util.Iterator;
 
 import com.almostrealism.chem.PotentialMap;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.physics.Clock;

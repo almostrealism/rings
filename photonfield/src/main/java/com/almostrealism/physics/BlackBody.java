@@ -30,7 +30,6 @@ import com.almostrealism.chem.ElectronCloud;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.chem.Alloy;
 import org.almostrealism.chem.PeriodicTable;

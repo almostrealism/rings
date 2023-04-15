@@ -27,7 +27,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.Spectrum;
 import org.almostrealism.physics.Absorber;

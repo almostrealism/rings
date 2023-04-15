@@ -18,7 +18,6 @@ package com.almostrealism.physics;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
 import org.almostrealism.physics.Clock;

@@ -17,7 +17,6 @@
 package com.almostrealism.physics;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
@@ -27,7 +26,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.PhotonField;

@@ -19,7 +19,6 @@ package com.almostrealism.chem;
 import com.almostrealism.physics.SphericalAbsorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorEvaluable;
 import org.almostrealism.physics.Atom;
 import org.almostrealism.physics.Clock;
 

@@ -313,7 +313,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 				CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(repeat)));
 
-				return initial.divide(pow(c(2.0), _floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
+				return initial.divide(pow(c(2.0), floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
 				// return initial;
 			});
 		}
