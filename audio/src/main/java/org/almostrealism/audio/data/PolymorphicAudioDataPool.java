@@ -24,6 +24,7 @@ import org.almostrealism.hardware.mem.MemoryPool;
 
 import java.util.Optional;
 
+@Deprecated
 public class PolymorphicAudioDataPool extends MemoryPool<DefaultWaveCellData> {
 	private static ContextSpecific<PolymorphicAudioDataPool> local;
 

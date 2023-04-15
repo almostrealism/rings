@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.almostrealism.audio.data;
 
 import org.almostrealism.audio.sources.PolynomialCellData;
 import org.almostrealism.audio.sources.SineWaveCellData;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.PooledMem;
@@ -33,4 +35,9 @@ public class PolymorphicAudioData extends DefaultWaveCellData implements SineWav
 
 	@Override
 	public PooledMem getDefaultDelegate() { return PolymorphicAudioDataPool.getLocal(); }
+
+	public static PackedCollection<PolymorphicAudioData> bank(int count) {
+		return new PackedCollection<>(new TraversalPolicy(count, SIZE), 1, delegateSpec ->
+			new PolymorphicAudioData(delegateSpec.getDelegate(), delegateSpec.getOffset()));
+	}
 }

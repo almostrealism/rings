@@ -22,7 +22,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.CodeFeatures;
 
