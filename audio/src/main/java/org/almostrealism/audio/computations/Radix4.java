@@ -20,7 +20,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.*;
 import org.almostrealism.algebra.computations.ComplexFromAngle;
 import org.almostrealism.algebra.computations.PairFromPairBank;
-import org.almostrealism.algebra.computations.PairFromScalars;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
@@ -47,20 +46,20 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		ScalarProducerBase kPlusHalfN = scalarAdd(kProducer, halfN);
 		ScalarProducerBase kPlusQuarterN = scalarAdd(kProducer, quarterN);
 
-		PairProducer a = new PairFromPairBank(bank, kProducer);
-		PairProducer b = new PairFromPairBank(bank, kPlusQuarterN);
-		PairProducer c = new PairFromPairBank(bank, kPlusHalfN);
-		PairProducer d = new PairFromPairBank(bank, kPlusTripleQuarterN);
+		PairProducerBase a = pairFromBank(bank, kProducer);
+		PairProducerBase b = pairFromBank(bank, kPlusQuarterN);
+		PairProducerBase c = pairFromBank(bank, kPlusHalfN);
+		PairProducerBase d = pairFromBank(bank, kPlusTripleQuarterN);
 
 		Producer<Pair<?>> bMinusD = subtract(b, d);
 		Producer<Pair<?>> aMinusC = subtract(a, c);
 
-		PairProducer imaginaryTimesSub;
+		PairProducerBase imaginaryTimesSub;
 
 		if (pos) {
-			imaginaryTimesSub = new PairFromScalars(r(bMinusD).minus(), l(bMinusD));
+			imaginaryTimesSub = pair(r(bMinusD).minus(), l(bMinusD));
 		} else {
-			imaginaryTimesSub = new PairFromScalars(r(bMinusD), l(bMinusD).minus());
+			imaginaryTimesSub = pair(r(bMinusD), l(bMinusD).minus());
 		}
 
 		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);

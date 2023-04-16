@@ -26,16 +26,13 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.geometry.computations.RayFromVectors;
+import org.almostrealism.geometry.computations.RayExpressionComputation;
 
-public class PinholeCameraRayAt extends RayFromVectors implements CodeFeatures {
-	private PinholeCameraRayAt(Vector location, VectorProducerBase direction) {
-		super(Ops.ops().v(location), direction);
-	}
-
-	public PinholeCameraRayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
-							  double blur, double focalLength, Vector u, Vector v, Vector w) {
-		this(location, direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
+public class PinholeCameraProjection implements CodeFeatures {
+	public static RayExpressionComputation rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
+												 double blur, double focalLength, Vector u, Vector v, Vector w) {
+		return Ops.ops().ray(Ops.ops().v(location),
+				direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
 	private static VectorProducerBase direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
@@ -55,7 +52,7 @@ public class PinholeCameraRayAt extends RayFromVectors implements CodeFeatures {
 		ScalarProducerBase y = p.multiply(u.getY()).add(q.multiply(v.getY())).add(r.multiply(w.getY()));
 		ScalarProducerBase z = p.multiply(u.getZ()).add(q.multiply(v.getZ())).add(r.multiply(w.getZ()));
 
-		VectorProducerBase pqr = Ops.ops().fromScalars(x, y, z);
+		VectorProducerBase pqr = Ops.ops().vector(x, y, z);
 		ScalarProducerBase len = pqr.length();
 		
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
@@ -78,11 +75,11 @@ public class PinholeCameraRayAt extends RayFromVectors implements CodeFeatures {
 
 	private static Producer<Vector> t(VectorProducerBase pqr) {
 		Producer<Vector> ft = pqr.y().lessThanv(pqr.x()).and(pqr.y().lessThanv(pqr.z()),
-				Ops.ops().fromScalars(pqr.x(), Ops.ops().scalar(1.0), pqr.z()),
-				Ops.ops().fromScalars(pqr.x(), pqr.y(), Ops.ops().scalar(1.0)));
+				Ops.ops().vector(pqr.x(), Ops.ops().scalar(1.0), pqr.z()),
+				Ops.ops().vector(pqr.x(), pqr.y(), Ops.ops().scalar(1.0)));
 
 		Producer<Vector> t = pqr.x().lessThanv(pqr.y()).and(pqr.y().lessThanv(pqr.z()),
-				Ops.ops().fromScalars(Ops.ops().scalar(1.0), pqr.y(), pqr.z()), ft);
+				Ops.ops().vector(Ops.ops().scalar(1.0), pqr.y(), pqr.z()), ft);
 
 		return t;
 	}
@@ -91,13 +88,13 @@ public class PinholeCameraRayAt extends RayFromVectors implements CodeFeatures {
 		ScalarProducerBase x = Ops.ops().y(t).multiply(w.z()).add(Ops.ops().z(t).multiply(w.y()).multiply(-1.0));
 		ScalarProducerBase y = Ops.ops().z(t).multiply(w.x()).add(Ops.ops().x(t).multiply(w.z()).multiply(-1.0));
 		ScalarProducerBase z = Ops.ops().x(t).multiply(w.y()).add(Ops.ops().y(t).multiply(w.x()).multiply(-1.0));
-		return Ops.ops().fromScalars(x, y, z).normalize();
+		return Ops.ops().vector(x, y, z).normalize();
 	}
 
 	private static VectorProducerBase v(VectorProducerBase w, VectorProducerBase u) {
 		ScalarProducerBase x = w.y().multiply(u.z()).add(w.z().multiply(u.y()).multiply(-1.0));
 		ScalarProducerBase y = w.z().multiply(u.x()).add(w.x().multiply(u.z()).multiply(-1.0));
 		ScalarProducerBase z = w.x().multiply(u.y()).add(w.y().multiply(u.x()).multiply(-1.0));
-		return Ops.ops().fromScalars(x, y, z);
+		return Ops.ops().vector(x, y, z);
 	}
 }

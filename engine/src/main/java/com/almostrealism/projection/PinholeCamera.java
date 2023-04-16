@@ -159,7 +159,7 @@ public class PinholeCamera extends OrthographicCamera {
 //		}
 
 		if (enableHardwareAcceleration) {
-			return new PinholeCameraRayAt(posP, sdP, getLocation(), getProjectionDimensions(),
+			return PinholeCameraProjection.rayAt(posP, sdP, getLocation(), getProjectionDimensions(),
 											blur, focalLength, u, v, w);
 		} else {
 			return new DynamicProducerForMemoryData<>(args -> {

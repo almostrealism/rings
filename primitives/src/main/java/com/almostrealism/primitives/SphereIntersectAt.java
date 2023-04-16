@@ -18,6 +18,7 @@ package com.almostrealism.primitives;
 
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.PairProducer;
+import org.almostrealism.algebra.PairProducerBase;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.bool.AcceleratedConjunctionScalar;
 import org.almostrealism.bool.GreaterThanScalar;
@@ -42,7 +43,7 @@ public class SphereIntersectAt extends LessThanScalar {
 		this(Ops.ops().oDotd(r), Ops.ops().oDoto(r), Ops.ops().dDotd(r));
 	}
 
-	private static AcceleratedConjunctionScalar closest(PairProducer t) {
+	private static AcceleratedConjunctionScalar closest(PairProducerBase t) {
 		return new AcceleratedConjunctionScalar(
 				new LessThanScalar(t.x(), t.y(), t.x(), t.y(), false),
 				new GreaterThanScalar(t.x(),
@@ -56,13 +57,13 @@ public class SphereIntersectAt extends LessThanScalar {
 						Ops.ops().scalar(0)));
 	}
 
-	private static PairProducer t(ScalarProducerBase oDotD,
-								  ScalarProducerBase oDotO,
-								  ScalarProducerBase dDotD) {
+	private static PairProducerBase t(ScalarProducerBase oDotD,
+									  ScalarProducerBase oDotO,
+									  ScalarProducerBase dDotD) {
 		ScalarProducerBase dS = discriminantSqrt(oDotD, oDotO, dDotD);
 		ScalarProducerBase minusODotD = oDotD.multiply(-1.0);
 		ScalarProducerBase dDotDInv = dDotD.pow(-1.0);
-		return Ops.ops().fromScalars(minusODotD.add(dS).multiply(dDotDInv),
+		return Ops.ops().pair(minusODotD.add(dS).multiply(dDotDInv),
 								minusODotD.add(dS.multiply(-1.0)).multiply(dDotDInv));
 	}
 

@@ -49,10 +49,10 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 		ScalarProducerBase kPlusHalfN = scalarAdd(kProducer, halfN);
 		ScalarProducerBase kPlusQuarterN = scalarAdd(kProducer, quarterN);
 
-		PairProducer a = new PairFromPairBank(bank, kProducer);
-		PairProducer b = new PairFromPairBank(bank, kPlusQuarterN);
-		PairProducer c = new PairFromPairBank(bank, kPlusHalfN);
-		PairProducer d = new PairFromPairBank(bank, kPlusTripleQuarterN);
+		PairProducerBase a = pairFromBank(bank, kProducer);
+		PairProducerBase b = pairFromBank(bank, kPlusQuarterN);
+		PairProducerBase c = pairFromBank(bank, kPlusHalfN);
+		PairProducerBase d = pairFromBank(bank, kPlusTripleQuarterN);
 
 		if (kind == A) {
 			return pairAdd(a, c);

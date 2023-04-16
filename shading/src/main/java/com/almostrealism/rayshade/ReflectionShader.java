@@ -24,12 +24,11 @@ import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
+import org.almostrealism.geometry.RayProducerBase;
 import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
-import org.almostrealism.geometry.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
@@ -38,7 +37,6 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 import com.almostrealism.raytrace.LightingEngineAggregator;
 
 /**
@@ -114,7 +112,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		VectorProducerBase n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
-		RayMatrixTransform transform = new RayMatrixTransform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
+		RayProducerBase transform = transform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
 		VectorProducerBase loc = origin(transform);
 
 		ScalarProducerBase cp = length(nor).multiply(length(n));
