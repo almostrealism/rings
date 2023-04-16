@@ -30,7 +30,6 @@ import org.almostrealism.hardware.MemoryData;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-// TODO Convert to subclass of ColorSum
 public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 	protected KernelizedProducer<RGB> samples[][];
 	private double scale;

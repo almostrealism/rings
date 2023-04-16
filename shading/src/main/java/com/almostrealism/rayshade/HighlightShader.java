@@ -25,13 +25,11 @@ import org.almostrealism.color.*;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.RGBEvaluable;
 import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link HighlightShader} provides a shading method for highlights on surfaces.
@@ -93,7 +91,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		h = h.scalarMultiply(h.length().pow(-1.0));
 
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(new Object[] {p}));
-		if (super.size() > 0) hc = cmultiply(hc, super.shade(p, normals));
+		if (super.size() > 0) hc = multiply(hc, super.shade(p, normals));
 
 		ScalarProducerBase cFront = h.dotProduct(n);
 		ScalarProducerBase cBack = h.dotProduct(scalarMultiply(n, -1.0));
@@ -108,7 +106,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = v(lightColor).multiply(v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
+				Producer<RGB> pr = multiply(v(lightColor), v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {
@@ -122,7 +120,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
-				Producer<RGB> pr = v(lightColor).multiply(v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
+				Producer<RGB> pr = multiply(v(lightColor), v(fhc.get().evaluate(args))).multiply(v(new RGB(c, c, c)));
 				if (color == null) {
 					color = pr;
 				} else {

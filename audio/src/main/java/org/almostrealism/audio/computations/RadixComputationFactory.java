@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,5 +23,5 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
 public interface RadixComputationFactory {
-	PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length);
+	Producer<Pair<?>> build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length);
 }

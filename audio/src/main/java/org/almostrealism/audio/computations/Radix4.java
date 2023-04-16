@@ -52,15 +52,15 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		PairProducer c = new PairFromPairBank(bank, kPlusHalfN);
 		PairProducer d = new PairFromPairBank(bank, kPlusTripleQuarterN);
 
-		PairProducerBase bMinusD = pairSubtract(b, d);
-		PairProducerBase aMinusC = pairSubtract(a, c);
+		Producer<Pair<?>> bMinusD = subtract(b, d);
+		Producer<Pair<?>> aMinusC = subtract(a, c);
 
 		PairProducer imaginaryTimesSub;
 
 		if (pos) {
-			imaginaryTimesSub = new PairFromScalars(bMinusD.r().minus(), bMinusD.l());
+			imaginaryTimesSub = new PairFromScalars(r(bMinusD).minus(), l(bMinusD));
 		} else {
-			imaginaryTimesSub = new PairFromScalars(bMinusD.r(), bMinusD.l().minus());
+			imaginaryTimesSub = new PairFromScalars(r(bMinusD), l(bMinusD).minus());
 		}
 
 		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);
@@ -69,9 +69,9 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		PairProducer omegaToPowerOf3 = new ComplexFromAngle(angleK3);
 
 		if (part == 0) {
-			return pairSubtract(aMinusC, imaginaryTimesSub).multiplyComplex(omega);
+			return multiplyComplex(subtract(aMinusC, imaginaryTimesSub), omega);
 		} else {
-			return pairAdd(aMinusC, imaginaryTimesSub).multiplyComplex(omegaToPowerOf3);
+			return multiplyComplex(add(aMinusC, imaginaryTimesSub), omegaToPowerOf3);
 		}
 	}
 }

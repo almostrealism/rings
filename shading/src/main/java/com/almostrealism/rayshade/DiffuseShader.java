@@ -59,19 +59,19 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 		KernelizedProducer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
+			Producer<RGB> color = multiply(surfaceColor, lightColor).multiply(cfromScalar(scaleFront));
 			front = new GreaterThanRGB(scaleFront, scalar(0),
-							cfromScalar(scaleFront).multiply(lightColor).multiply(surfaceColor),
-							RGBBlack.getInstance());
+							color, RGBBlack.getInstance());
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
+			Producer<RGB> color = multiply(surfaceColor, lightColor).multiply(cfromScalar(scaleBack));
 			back = new GreaterThanRGB(scaleBack, scalar(0),
-							cfromScalar(scaleBack).multiply(lightColor).multiply(surfaceColor),
-							RGBBlack.getInstance());
+							color, RGBBlack.getInstance());
 		}
 
 		if (front != null && back != null) {
-			return GeneratedColorProducer.fromProducer(this, cadd(front, back));
+			return GeneratedColorProducer.fromProducer(this, add(front, back));
 		} else if (front != null) {
 			return GeneratedColorProducer.fromProducer(this, front);
 		} else if (back != null) {

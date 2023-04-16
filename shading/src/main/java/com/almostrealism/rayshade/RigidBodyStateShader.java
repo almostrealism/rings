@@ -84,7 +84,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>,
 		
 		RigidBody.State state = ((RigidBody) p.getSurface()).getState();
 		
-		Vector d = null;
+		Vector d;
 		
 		if (this.type == RigidBodyStateShader.VELOCITY)
 			d = state.getLinearVelocity();
@@ -98,6 +98,6 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>,
 		d.divideBy(d.length());
 		p.setLightDirection(v(d));
 		
-		return rgb(m).multiply(this.shader.shade(p, f));
+		return multiply(rgb(m), shader.shade(p, f));
 	}
 }

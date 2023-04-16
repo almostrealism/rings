@@ -113,11 +113,13 @@ public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, Code
 				int doubleK = 2 * k;
 				int quadrupleK = 2 * doubleK;
 
+				Pair<?> len = new Pair<>(length, length);
+
 				if (inverseTransform && isFirstSplit) {
-					transformed.set(doubleK, pairDivide(radix2FFT.get(k), v(length)));
-					transformed.set(quadrupleK + 1, pairDivide(radix4Part1FFT.get(k), v(length)));
-					transformed.set(doubleK + halfN, pairDivide(radix2FFT.get(k + quarterN), v(length)));
-					transformed.set(quadrupleK + 3, pairDivide(radix4Part2FFT.get(k), v(length)));
+					transformed.set(doubleK, divide(radix2FFT.get(k), v(len)));
+					transformed.set(quadrupleK + 1, divide(radix4Part1FFT.get(k), v(len)));
+					transformed.set(doubleK + halfN, divide(radix2FFT.get(k + quarterN), v(len)));
+					transformed.set(quadrupleK + 3, divide(radix4Part2FFT.get(k), v(len)));
 				} else {
 					transformed.set(doubleK, radix2FFT.get(k));
 					transformed.set(quadrupleK + 1, radix4Part1FFT.get(k));
@@ -160,11 +162,13 @@ public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, Code
 
 			PairBankFromPairsBuilder transformed = new PairBankFromPairsBuilder(length);
 
+			Pair<?> len = new Pair<>(length, length);
+
 			for (int k = 0; k < halfN; k++) {
 				int doubleK = k * 2;
 				if (inverseTransform && isFirstSplit) {
-					transformed.set(doubleK, pairDivide(evenFFT.get(k), v(length)));
-					transformed.set(doubleK + 1, pairDivide(oddFFT.get(k), v(length)));
+					transformed.set(doubleK, divide(evenFFT.get(k), v(len)));
+					transformed.set(doubleK + 1, divide(oddFFT.get(k), v(len)));
 				} else {
 					transformed.set(doubleK, evenFFT.get(k));
 					transformed.set(doubleK + 1, oddFFT.get(k));

@@ -21,6 +21,7 @@ import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.SurfaceLight;
 import io.almostrealism.code.ArgumentMap;
+import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.code.ScopeLifecycle;
 import org.almostrealism.Ops;
@@ -30,7 +31,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.color.computations.RGBWhite;
@@ -63,10 +63,18 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 						  Curve<RGB> surface,
 						  Collection<Curve<RGB>> otherSurfaces,
 						  Light light, Iterable<Light> otherLights, ShaderContext p) {
-		super(new ColorProduct(shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p)));
+		super(shadowAndShadeProduct(intersections, surface, otherSurfaces, light, otherLights, p));
 		this.intersections = intersections;
 		this.surface = surface;
 		this.distance = ((ShadableIntersection) intersections).getDistance();
+	}
+
+	protected static ProducerComputation<RGB> shadowAndShadeProduct(ContinuousField intersections,
+																	Curve<RGB> surface,
+																	Collection<Curve<RGB>> otherSurfaces,
+																	Light light, Iterable<Light> otherLights, ShaderContext p) {
+		Supplier shadowAndShade[] = shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p);
+		return Ops.ops().multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1]);
 	}
 
 	protected static Supplier[] shadowAndShade(ContinuousField intersections,

@@ -24,6 +24,7 @@ import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.DiscreteField;
+import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
 import org.almostrealism.geometry.computations.RayMatrixTransform;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
@@ -104,7 +105,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		Producer<RGB> r = getReflectiveColor();
 		if (size() > 0) {
-			r = cmultiply(r, ReflectionShader.super.shade(p, normals));
+			r = multiply(r, ReflectionShader.super.shade(p, normals));
 		}
 
 		final Producer<RGB> fr = r;
@@ -118,7 +119,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		ScalarProducerBase cp = length(nor).multiply(length(n));
 
-		Evaluable<RGB> tc = null;
+		Producer<RGB> tc = null;
 
 		// TODO Should surface color be factored in to reflection?
 //		RGB surfaceColor = p.getSurface().getColorAt(p.getPoint());
@@ -127,7 +128,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			Evaluable<RGB> color = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
+			AcceleratedRankedChoiceEvaluable<RGB> aggegator = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
+			Producer<RGB> color = () -> aggegator;
 			/*
 			if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
 				if (eMap == null) {
@@ -143,15 +145,13 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
 			ScalarProducerBase reflective = v(reflectivity).add(v(1 - reflectivity)
 							.multiply(compileProducer(pow(c, v(5.0)))));
-			Evaluable<RGB> fcolor = color;
-			color = cfromScalar(reflective).multiply(fr).multiply(() -> fcolor).get();
+			Producer<RGB> fcolor = color;
+			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
 
 			if (tc == null) {
 				tc = color;
 			} else {
-				Evaluable<RGB> ftc = tc;
-				Evaluable<RGB> ffcolor = color;
-				tc = new RGBAdd(() -> ftc, () -> ffcolor);
+				tc = add(tc, color);
 			}
 		}
 
@@ -161,7 +161,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			Evaluable<RGB> color = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);
+			LightingEngineAggregator aggregator = new LightingEngineAggregator(reflectedRay, allSurfaces, allLights, p);;
+			Producer<RGB> color = () -> aggregator;
 			/*
 			if (color == null) {
 				if (eMap == null) {
@@ -177,19 +178,19 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
 			ScalarProducerBase reflective = v(reflectivity).add(
 					v(1 - reflectivity).multiply(pow(c, v(5.0))));
-			Evaluable<RGB> fcolor = color;
-			color = cmultiply(() -> fcolor, cmultiply(fr, cfromScalar(reflective))).get();
+			Producer<RGB> fcolor = color;
+			color = multiply(fcolor, multiply(fr, cfromScalar(reflective)));
 
 			if (tc == null) {
 				tc = color;
 			} else {
-				tc = cadd(tc, color);
+				tc = add(tc, color);
 			}
 		}
 
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
-		Evaluable<RGB> ftc = tc;
-		return GeneratedColorProducer.fromProducer(this, cmultiply(() -> ftc, lightColor));
+		Producer<RGB> ftc = tc;
+		return GeneratedColorProducer.fromProducer(this, multiply(ftc, lightColor));
 	}
 	
 	/**

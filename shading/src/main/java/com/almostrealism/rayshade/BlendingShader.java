@@ -86,8 +86,8 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 		RGB hc = this.hotColor.get().evaluate(p);
 		RGB cc = this.coldColor.get().evaluate(p);
 		
-		RGBProducer c = v(hc).multiply(cfromScalar(k));
-		c = c.add(v(cc).multiply(cfromScalar(oneMinusK)));
+		Producer<RGB> c = multiply(v(hc), cfromScalar(k));
+		c = add(c, multiply(v(cc), cfromScalar(oneMinusK)));
 
 		return GeneratedColorProducer.fromProducer(this, c);
 	}

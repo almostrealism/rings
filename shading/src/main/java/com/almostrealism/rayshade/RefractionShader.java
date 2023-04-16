@@ -29,14 +29,12 @@ import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
-import org.almostrealism.color.computations.ColorProduct;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
-import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
@@ -118,7 +116,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 									p.getLightDirection(), p.getLight(), p.getOtherLights(), p.getSurface(),
 									p.getOtherSurfaces(), n, p);
 
-							c = new ColorProduct(rgb(10, 10, 10), c);
+							c = multiply(rgb(10, 10, 10), c);
 
 							if (Math.random() < 0.01)
 								System.out.println("RefractionShader.shadeFront: " + c.get().evaluate(args));

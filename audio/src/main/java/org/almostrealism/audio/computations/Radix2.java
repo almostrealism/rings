@@ -36,7 +36,7 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 	}
 
 	@Override
-	public PairProducerBase build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
+	public Producer<Pair<?>> build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
 		Producer<Scalar> angleProducer = v(angle);
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);
@@ -64,9 +64,9 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 		PairProducer omega = new ComplexFromAngle(angleK);
 
 		if (kind == EVEN) {
-			return pairAdd(a, c);
+			return add(a, c);
 		} else if (kind == ODD) {
-			return pairSubtract(a, c).multiplyComplex(omega);
+			return multiplyComplex(subtract(a, c), omega);
 		}
 
 		throw new IllegalArgumentException(String.valueOf(kind));

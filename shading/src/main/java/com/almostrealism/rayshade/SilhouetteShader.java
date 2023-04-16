@@ -22,7 +22,6 @@ import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.color.RGBEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
 import io.almostrealism.relation.Compactable;
@@ -36,12 +35,12 @@ import org.almostrealism.hardware.KernelizedProducer;
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements RGBEvaluable, Compactable, Editable, Shader<LightingContext> {
+public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, Shader<LightingContext> {
 	private KernelizedProducer<RGB> color;
 
 	private String names[] = { "Color" };
 	private String desc[] = { "The color of the silhouette" };
-	private Class types[] = { RGBEvaluable.class };
+	private Class types[] = { Evaluable.class };
   
   
 	/**
