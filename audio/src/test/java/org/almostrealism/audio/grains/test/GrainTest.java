@@ -38,7 +38,7 @@ public class GrainTest implements CellFeatures {
 
 		Producer<Scalar> pos = scalar(grainShape, g, 0).add(
 				mod(multiply(scalar(grainShape, g, 2),
-						v(Scalar.class, 0)), scalar(grainShape, g, 1)))
+						v(Scalar.shape(), 0)), scalar(grainShape, g, 1)))
 				.multiply(scalar(OutputLine.sampleRate));
 		Producer cursor = pair(pos, v(0.0));
 

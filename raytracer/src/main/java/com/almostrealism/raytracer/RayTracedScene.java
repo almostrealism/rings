@@ -112,7 +112,7 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 	public Producer<RGB> getProducer() { return getProducer(getRenderParameters()); }
 
 	public KernelizedProducer<RGB> getProducer(RenderParameters p) {
-		KernelizedProducer<RGB> producer = operate((Producer) v(Pair.class, 0), pair(p.width, p.height));
+		KernelizedProducer<RGB> producer = operate((Producer) v(Pair.shape(), 0), pair(p.width, p.height));
 
 		if (producer instanceof DimensionAware) {
 			((DimensionAware) producer).setDimensions(p.width, p.height, p.ssWidth, p.ssHeight);

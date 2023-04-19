@@ -99,7 +99,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		if (processWindow == null) {
 			processWindow = v(2 * count, 0);
-			processWindow = dither(count, processWindow, v(Scalar.class, 1));
+			processWindow = dither(count, processWindow, v(Scalar.shape(), 1));
 
 			if (settings.getFrameExtractionSettings().isRemoveDcOffset()) {
 				processWindow = scalarBankAdd(count, processWindow, new ScalarBankSum(count, processWindow).divide(count).multiply(-1));

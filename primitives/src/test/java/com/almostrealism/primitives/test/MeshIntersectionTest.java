@@ -54,7 +54,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return (KernelizedProducer<Ray>) c.rayAt((Producer) v(Pair.class, 0), pair(width, height));
+		return (KernelizedProducer<Ray>) c.rayAt((Producer) v(Pair.shape(), 0), pair(width, height));
 	}
 
 	@Before

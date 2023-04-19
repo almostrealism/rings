@@ -53,7 +53,7 @@ public class WaveMath implements CodeFeatures {
 		if (!dotEvals.containsKey(count)) {
 			Scalar output = new Scalar();
 			ScalarBank temp = new ScalarBank(count);
-			dotEvals.put(count, new ScalarBankDotProduct(count, v(ScalarBank.class, 0), v(ScalarBank.class, 1)).get());
+			dotEvals.put(count, new ScalarBankDotProduct(count, v(Scalar.shape(), 0), v(Scalar.shape(), 1)).get());
 		}
 
 		return dotEvals.get(count);
