@@ -61,27 +61,27 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 	static {
 		sourceKernel = new DefaultContextSpecific<>(() ->
 			Ops.ops().pair(Ops.ops().scalarsMultiply(
-						Ops.ops().v(Scalar.class, 1), Ops.ops().v(Scalar.class, 2, -1)),
-					Ops.ops().v(Scalar.class, 0)).get()
+						Ops.ops().v(Scalar.shape(), 1), Ops.ops().v(Scalar.shape(), 2, -1)),
+					Ops.ops().v(Scalar.shape(), 0)).get()
 		);
 
 		playbackKernel = new DefaultContextSpecific<>(() -> {
 			TraversalPolicy grainShape = new TraversalPolicy(3);
-			Producer<PackedCollection<?>> g = (Producer) Ops.ops().v(PackedCollection.class, 1, -1);
-			ScalarProducerBase pos = Ops.ops().scalar(grainShape, g, 0).add(
-							Ops.ops().mod(Ops.ops().multiply(Ops.ops().scalar(grainShape, g, 2), Ops.ops().v(Scalar.class, 2, -1))
-									.multiply(Ops.ops().v(Scalar.class, 0)), Ops.ops().scalar(grainShape, g, 1)))
-					.multiply(OutputLine.sampleRate);
+			Producer<PackedCollection<?>> g = (Producer) Ops.ops().v(1, 1, -1);
+			Producer<Scalar> pos = Ops.ops().scalar(grainShape, g, 0).add(
+							Ops.ops().mod(Ops.ops().multiply(Ops.ops().scalar(grainShape, g, 2), Ops.ops().v(Scalar.shape(), 2, -1))
+									.multiply(Ops.ops().v(Scalar.shape(), 0)), Ops.ops().scalar(grainShape, g, 1)))
+					.multiply(Ops.ops().scalar(OutputLine.sampleRate));
 			Producer cursor = Ops.ops().pair(pos, Ops.ops().v(0.0));
-			return new AcceleratedTimeSeriesValueAt(Ops.ops().v(AcceleratedTimeSeries.class, 3, -1), cursor).get();
+			return new AcceleratedTimeSeriesValueAt(Ops.ops().v(2, 3, -1), cursor).get();
 		});
 
-		modKernel = new DefaultContextSpecific<>(() ->
-				Ops.ops().sinw(Ops.ops().scalarSubtract(Ops.ops().v(Scalar.class, 0),
-							Ops.ops().v(Scalar.class, 2, -1)),
-							Ops.ops().v(Scalar.class, 3, -1),
-							Ops.ops().v(Scalar.class, 4, -1))
-					.multiply(Ops.ops().v(Scalar.class, 1)).get());
+		modKernel = new DefaultContextSpecific<>(() -> (KernelizedEvaluable)
+				Ops.ops().sinw(Ops.ops().scalarSubtract(Ops.ops().v(Scalar.shape(), 0),
+							Ops.ops().v(Scalar.shape(), 2, -1)),
+							Ops.ops().v(Scalar.shape(), 3, -1),
+							Ops.ops().v(Scalar.shape(), 4, -1))
+					.multiply(Ops.ops().v(Scalar.shape(), 1)).get());
 
 
 	}

@@ -49,7 +49,7 @@ public class PatternNote {
 	static {
 		interpolate = new DefaultContextSpecific<>(() ->
 				new Interpolate(
-						new PassThroughProducer<>(-1, 0, -1),
+						new PassThroughProducer<>(1, 0, -1),
 						new PassThroughProducer<>(1, 1),
 						new PassThroughProducer<>(2, 2, -1),
 						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate))).get());

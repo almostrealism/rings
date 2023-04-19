@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sources;
 
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.graph.temporal.BaseAudioData;
@@ -25,6 +26,6 @@ public interface PolynomialCellData extends BaseAudioData {
 
 	default Scalar exponent() { return get(3); }
 
-	default Provider<Scalar> getExponent() { return new Provider<>(exponent()); }
+	default Producer<Scalar> getExponent() { return p(exponent()); }
 	default void setExponent(double scale) { exponent().setValue(scale); }
 }

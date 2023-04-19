@@ -109,7 +109,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		final Producer<RGB> fr = r;
 
 		VectorProducerBase point = origin(p.getIntersection().get(0));
-		VectorProducerBase n = direction(normals.iterator().next());
+		Producer<Vector> n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		RayProducerBase transform = transform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
@@ -140,7 +140,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarProducerBase c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
 			ScalarProducerBase reflective = v(reflectivity).add(v(1 - reflectivity)
 							.multiply(compileProducer(pow(c, v(5.0)))));
 			Producer<RGB> fcolor = color;
@@ -173,7 +173,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducerBase c = v(1).subtract(minus(n).dotProduct(nor).divide(cp));
+			ScalarProducerBase c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
 			ScalarProducerBase reflective = v(reflectivity).add(
 					v(1 - reflectivity).multiply(pow(c, v(5.0))));
 			Producer<RGB> fcolor = color;
@@ -228,7 +228,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	
 	/**
 	 * Returns the reflective color used by this {@link ReflectionShader}
-	 * as an {@link RGBEvaluable}.
+	 * as an {@link RGB} {@link Producer}.
 	 */
 	public Producer<RGB> getReflectiveColor() { return this.reflectiveColor; }
 	

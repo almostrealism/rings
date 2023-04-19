@@ -19,6 +19,7 @@ package org.almostrealism.audio.sources;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.DynamicOperationComputationAdapter;
@@ -29,14 +30,14 @@ public abstract class SineWaveComputation extends DynamicOperationComputationAda
 	protected static final double TWO_PI = 2 * Math.PI;
 
 	public SineWaveComputation(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
-		super(() -> new Provider<>(output),
-				data::getWavePosition,
-				data::getWaveLength,
-				data::getNotePosition,
-				data::getNoteLength,
-				data::getPhase,
-				data::getAmplitude,
-				data::getDepth,
+		super((Supplier) Ops.ops().p(output),
+				(Supplier) data.getWavePosition(),
+				(Supplier) data.getWaveLength(),
+				(Supplier) data.getNotePosition(),
+				(Supplier) data.getNoteLength(),
+				(Supplier) data.getPhase(),
+				(Supplier) data.getAmplitude(),
+				(Supplier) data.getDepth(),
 				(Supplier) envelope);
 	}
 

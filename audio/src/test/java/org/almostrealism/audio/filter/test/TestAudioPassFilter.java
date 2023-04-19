@@ -66,7 +66,7 @@ public class TestAudioPassFilter implements TemporalFactor<PackedCollection<?>>,
 
 		input = value;
 		// return () -> new Provider<>(output);
-		return data::getOutput;
+		return data.getOutput();
 	}
 
 	@Override

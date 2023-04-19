@@ -431,7 +431,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			// Apply dynamic high pass filters
 			cells = cells.map(fc(i -> {
 				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-				return hp(multiply(c(20000), f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
+				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
 			}));
 		}
 
@@ -487,7 +487,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
 						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
-						return lp(multiply(c(20000), f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
+						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
 //							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
 					}));
 				}

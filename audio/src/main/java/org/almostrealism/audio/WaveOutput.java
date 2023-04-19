@@ -84,8 +84,8 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				}, PackedCollection::destroy);
 		timeline.init();
 
-		PairFromPairBank pairAt = new PairFromPairBank((Producer) Ops.ops().v(ScalarBank.class, 0, -1),
-				Ops.ops().v(OutputLine.sampleRate).multiply(Ops.ops().v(Scalar.class, 1)).add(Ops.ops().v(1.0)));
+		PairFromPairBank pairAt = new PairFromPairBank((Producer) Ops.ops().v(Ops.ops().shape(2), 0),
+				Ops.ops().v(OutputLine.sampleRate).multiply(Ops.ops().v(Ops.ops().shape(2), 1)).add(Ops.ops().v(1.0)));
 //		PairFromPairBank pairAt = new PairFromPairBank((Producer) () -> exportSource,
 //				Ops.ops().v(OutputLine.sampleRate).multiply(Ops.ops().v(Scalar.class, 1)).add(Ops.ops().v(1.0)));
 		ExpressionComputation r = new ExpressionComputation<>(List.of(args -> args.get(1).getValue(0)), (Producer) pairAt.r());

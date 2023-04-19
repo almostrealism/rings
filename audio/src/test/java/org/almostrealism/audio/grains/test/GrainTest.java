@@ -34,12 +34,12 @@ public class GrainTest implements CellFeatures {
 		grain.setRate(2.0);
 
 		TraversalPolicy grainShape = new TraversalPolicy(3);
-		Producer<PackedCollection<?>> g = (Producer) v(PackedCollection.class, 1, -1);
+		Producer<PackedCollection<?>> g = (Producer) v(1, 1, -1);
 
-		ScalarProducerBase pos = scalar(grainShape, g, 0).add(
+		Producer<Scalar> pos = scalar(grainShape, g, 0).add(
 				mod(multiply(scalar(grainShape, g, 2),
 						v(Scalar.class, 0)), scalar(grainShape, g, 1)))
-				.multiply(OutputLine.sampleRate);
+				.multiply(scalar(OutputLine.sampleRate));
 		Producer cursor = pair(pos, v(0.0));
 
 		ScalarBank result = new ScalarBank(10 * OutputLine.sampleRate);

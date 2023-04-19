@@ -30,18 +30,18 @@ import java.util.function.Supplier;
 public class TestAudioPassFilterComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
 	public TestAudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> input, Supplier output) {
 		super(output,
-				data::getSampleRate,
-				data::getC,
-				data::getA1,
-				data::getA2,
-				data::getA3,
-				data::getB1,
-				data::getB2,
-				data::getInputHistory0,
-				data::getInputHistory1,
-				data::getOutputHistory0,
-				data::getOutputHistory1,
-				data::getOutputHistory2,
+				(Supplier) data.getSampleRate(),
+				(Supplier) data.getC(),
+				(Supplier) data.getA1(),
+				(Supplier) data.getA2(),
+				(Supplier) data.getA3(),
+				(Supplier) data.getB1(),
+				(Supplier) data.getB2(),
+				(Supplier) data.getInputHistory0(),
+				(Supplier) data.getInputHistory1(),
+				(Supplier) data.getOutputHistory0(),
+				(Supplier) data.getOutputHistory1(),
+				(Supplier) data.getOutputHistory2(),
 				(Supplier) input);
 	}
 

@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sources;
 
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.graph.temporal.BaseAudioData;
@@ -26,15 +27,15 @@ public interface SineWaveCellData extends BaseAudioData {
 	default Scalar phase() { return get(5); }
 	default Scalar depth() { return get(6); }
 
-	default Provider<Scalar> getNotePosition() { return new Provider<>(notePosition()); }
+	default Producer<Scalar> getNotePosition() { return p(notePosition()); }
 	default void setNotePosition(double notePosition) { notePosition().setValue(notePosition); }
 
-	default Provider<Scalar> getNoteLength() { return new Provider<>(noteLength()); }
+	default Producer<Scalar> getNoteLength() { return p(noteLength()); }
 	default void setNoteLength(double noteLength) { noteLength().setValue(noteLength); }
 
-	default Provider<Scalar> getPhase() { return new Provider<>(phase()); }
+	default Producer<Scalar> getPhase() { return p(phase()); }
 	default void setPhase(double phase) { phase().setValue(phase); }
 
-	default Provider<Scalar> getDepth() { return new Provider<>(depth()); }
+	default Producer<Scalar> getDepth() { return p(depth()); }
 	default void setDepth(double depth) { depth().setValue(depth); }
 }

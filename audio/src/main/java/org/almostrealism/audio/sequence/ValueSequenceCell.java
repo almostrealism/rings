@@ -44,7 +44,7 @@ public class ValueSequenceCell extends CollectionTemporalCellAdapter implements 
 		this.data = data;
 		this.values = IntStream.range(0, steps).mapToObj(values).collect(Collectors.toList());
 		this.durationFrames = toFrames(duration);
-		addSetup(a(1, data::getWaveLength, v(1)));
+		addSetup(a(1, data.getWaveLength(), v(1)));
 	}
 
 	@Override

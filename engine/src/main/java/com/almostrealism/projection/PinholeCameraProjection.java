@@ -20,6 +20,7 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairProducer;
+import org.almostrealism.algebra.PairProducerBase;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
@@ -37,7 +38,7 @@ public class PinholeCameraProjection implements CodeFeatures {
 
 	private static VectorProducerBase direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
 											Vector u, Vector v, Vector w, Pair blur) {
-		PairProducer pd = Ops.ops().v(projectionDimensions);
+		PairProducerBase pd = Ops.ops().v(projectionDimensions);
 
 		ScalarProducerBase sdx = Ops.ops().l(sd);
 		ScalarProducerBase sdy = Ops.ops().r(sd);

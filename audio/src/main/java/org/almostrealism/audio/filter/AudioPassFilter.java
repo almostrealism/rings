@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 		setSampleRate(sampleRate);
 	}
 
-	public Producer<PackedCollection<?>> getFrequency() {
-		return frequency;
-	}
+	public Producer<PackedCollection<?>> getFrequency() { return frequency; }
 	public void setFrequency(Producer<PackedCollection<?>> frequency) {
 		this.frequency = frequency;
 	}
@@ -79,7 +77,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 		}
 
 		input = value;
-		return data::getOutput;
+		return data.getOutput();
 	}
 
 	@Override

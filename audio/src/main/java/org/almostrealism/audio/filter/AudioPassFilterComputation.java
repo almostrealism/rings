@@ -31,21 +31,21 @@ public class AudioPassFilterComputation extends DynamicOperationComputationAdapt
 	private boolean high;
 
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
-		super(data::getOutput,
+		super((Supplier) data.getOutput(),
 				(Supplier) frequency,
 				(Supplier) resonance,
-				data::getSampleRate,
-				data::getC,
-				data::getA1,
-				data::getA2,
-				data::getA3,
-				data::getB1,
-				data::getB2,
-				data::getInputHistory0,
-				data::getInputHistory1,
-				data::getOutputHistory0,
-				data::getOutputHistory1,
-				data::getOutputHistory2,
+				(Supplier) data.getSampleRate(),
+				(Supplier) data.getC(),
+				(Supplier) data.getA1(),
+				(Supplier) data.getA2(),
+				(Supplier) data.getA3(),
+				(Supplier) data.getB1(),
+				(Supplier) data.getB2(),
+				(Supplier) data.getInputHistory0(),
+				(Supplier) data.getInputHistory1(),
+				(Supplier) data.getOutputHistory0(),
+				(Supplier) data.getOutputHistory1(),
+				(Supplier) data.getOutputHistory2(),
 				(Supplier) input);
 		this.high = high;
 	}
@@ -93,33 +93,33 @@ public class AudioPassFilterComputation extends DynamicOperationComputationAdapt
 		String one = stringForDouble(1.0);
 
 		if (high) {
-			addVariable(getC().valueAt(0).assign(e("tan(" + stringForDouble(Math.PI) +
+			addVariable(getC().valueAt(0).assign(expression("tan(" + stringForDouble(Math.PI) +
 									" * " + frequency() + " / " + sampleRate() + ")",
 									getFrequency(), getSampleRate())));
-			addVariable(getA1().valueAt(0).assign(e(one +
+			addVariable(getA1().valueAt(0).assign(expression(one +
 							" / (" + one + " + " + resonance() + " * " + c() + " + " + c() + " * " + c() + ")",
 					getResonance(), getC())));
-			addVariable(getA2().valueAt(0).assign(e(stringForDouble(-2.0) + " * " + a1(), getA1())));
+			addVariable(getA2().valueAt(0).assign(expression(stringForDouble(-2.0) + " * " + a1(), getA1())));
 			addVariable(getA3().valueAt(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().valueAt(0).assign(e(stringForDouble(2.0) +
+			addVariable(getB1().valueAt(0).assign(expression(stringForDouble(2.0) +
 					" * (" + c() + " * " + c() + " - " + one + ") * " + a1(), getC(), getA1())));
 			addVariable(getB2().valueAt(0).assign(
-					e("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
+					expression("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
 							getResonance(), getC(), getA1())));
 		} else {
-			addVariable(getC().valueAt(0).assign(e(
+			addVariable(getC().valueAt(0).assign(expression(
 								one + " / tan(" + stringForDouble(Math.PI) +
 										" * " + frequency() + " / " + sampleRate() + ")",
 										getFrequency(), getSampleRate())));
-			addVariable(getA1().valueAt(0).assign(e(one +
+			addVariable(getA1().valueAt(0).assign(expression(one +
 							" / (" + one + " + " + resonance() + " * " + c() + " + " + c() + " * " + c() + ")",
 							getResonance(), getC())));
-			addVariable(getA2().valueAt(0).assign(e(stringForDouble(2.0) + " * " + a1(), getA1())));
+			addVariable(getA2().valueAt(0).assign(expression(stringForDouble(2.0) + " * " + a1(), getA1())));
 			addVariable(getA3().valueAt(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().valueAt(0).assign(e(stringForDouble(2.0) +
+			addVariable(getB1().valueAt(0).assign(expression(stringForDouble(2.0) +
 							" * (" + one + " - " + c() + " * " + c() + ") * " + a1(), getC(), getA1())));
 			addVariable(getB2().valueAt(0).assign(
-					e("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
+					expression("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
 							getResonance(), getC(), getA1())));
 		}
 

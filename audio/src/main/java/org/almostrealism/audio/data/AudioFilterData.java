@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
@@ -40,27 +41,27 @@ public interface AudioFilterData extends BaseAudioData {
 	default Scalar outputHistory1() { return get(13); }
 	default Scalar outputHistory2() { return get(14); }
 
-	default Provider<Scalar> getFrequency() { return new Provider<>(frequency()); }
+	default Producer<Scalar> getFrequency() { return p(frequency()); }
 	default void setFrequency(double frequency) { frequency().setValue(frequency); }
 
-	default Provider<Scalar> getResonance() { return new Provider<>(resonance()); }
+	default Producer<Scalar> getResonance() { return p(resonance()); }
 	default void setResonance(double resonance) { resonance().setValue(resonance); }
 
-	default Provider<Scalar> getSampleRate() { return new Provider<>(sampleRate()); }
+	default Producer<Scalar> getSampleRate() { return p(sampleRate()); }
 	default void setSampleRate(double sampleRate) { sampleRate().setValue(sampleRate); }
 
-	default Provider<Scalar> getC() { return new Provider<>(c()); }
-	default Provider<Scalar> getA1() { return new Provider<>(a1()); }
-	default Provider<Scalar> getA2() { return new Provider<>(a2()); }
-	default Provider<Scalar> getA3() { return new Provider<>(a3()); }
-	default Provider<Scalar> getB1() { return new Provider<>(b1()); }
-	default Provider<Scalar> getB2() { return new Provider<>(b2()); }
-	default Provider<PackedCollection<?>> getOutput() { return new Provider<>(output()); }
-	default Provider<Scalar> getInputHistory0() { return new Provider<>(inputHistory0()); }
-	default Provider<Scalar> getInputHistory1() { return new Provider<>(inputHistory1()); }
-	default Provider<Scalar> getOutputHistory0() { return new Provider<>(outputHistory0()); }
-	default Provider<Scalar> getOutputHistory1() { return new Provider<>(outputHistory1()); }
-	default Provider<Scalar> getOutputHistory2() { return new Provider<>(outputHistory2()); }
+	default Producer<Scalar> getC() { return p(c()); }
+	default Producer<Scalar> getA1() { return p(a1()); }
+	default Producer<Scalar> getA2() { return p(a2()); }
+	default Producer<Scalar> getA3() { return p(a3()); }
+	default Producer<Scalar> getB1() { return p(b1()); }
+	default Producer<Scalar> getB2() { return p(b2()); }
+	default Producer<PackedCollection<?>> getOutput() { return p(output()); }
+	default Producer<Scalar> getInputHistory0() { return p(inputHistory0()); }
+	default Producer<Scalar> getInputHistory1() { return p(inputHistory1()); }
+	default Producer<Scalar> getOutputHistory0() { return p(outputHistory0()); }
+	default Producer<Scalar> getOutputHistory1() { return p(outputHistory1()); }
+	default Producer<Scalar> getOutputHistory2() { return p(outputHistory2()); }
 
 	default void reset() {
 		c().setValue(0.0);
