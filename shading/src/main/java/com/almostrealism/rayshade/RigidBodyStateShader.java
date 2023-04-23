@@ -23,7 +23,6 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
 
-import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
@@ -80,7 +79,7 @@ public class RigidBodyStateShader<T extends ShaderContext> implements Shader<T>,
 	@Override
 	public Producer<RGB> shade(T p, DiscreteField f) {
 		if (p.getSurface() instanceof RigidBody == false)
-			return RGBWhite.getInstance();
+			return white();
 		
 		RigidBody.State state = ((RigidBody) p.getSurface()).getState();
 		

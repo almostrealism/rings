@@ -2,7 +2,6 @@ package com.almostrealism.raytracer;
 
 import org.almostrealism.algebra.ScalarFeatures;
 import org.almostrealism.geometry.ContinuousField;
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.code.Operator;
@@ -44,6 +43,6 @@ public class Thing extends AbstractSurface implements ScalarFeatures {
 
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		return new ImmutableVector(0.0, 0.0, 1.0);
+		return vector(0.0, 0.0, 1.0);
 	}
 }

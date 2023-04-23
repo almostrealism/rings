@@ -25,6 +25,7 @@ import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.code.ScopeLifecycle;
 import org.almostrealism.Ops;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.algebra.Scalar;
@@ -32,8 +33,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBBlack;
-import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
@@ -89,7 +88,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		if (enableShadows && light.castShadows) {
 			shadow = new ShadowMask(light, allSurfaces, Ops.ops().origin(intersections.get(0)).get());
 		} else {
-			shadow = RGBWhite.getInstance();
+			shadow = RGBFeatures.getInstance().white();
 		}
 
 		ShaderContext context = p.clone();
@@ -117,7 +116,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
 						Ops.ops().origin(intersections.get(0)));
 		} else {
-			shade = RGBBlack.getInstance();
+			shade = RGBFeatures.getInstance().black();
 		}
 
 		return new Supplier[] { shadow, shade };
@@ -228,7 +227,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		} else if (light instanceof AmbientLight) {
 			throw new IllegalArgumentException("Migrated elsewhere");
 		} else {
-			return RGBBlack.getInstance();
+			return RGBFeatures.getInstance().black();
 		}
 	}
 

@@ -12,9 +12,8 @@ import com.almostrealism.rayshade.RefractionShader;
 import com.almostrealism.raytrace.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.RealizableImage;
-import org.almostrealism.color.computations.RGBWhite;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Plane;
@@ -77,7 +76,7 @@ public class RayTracingTest {
 
 			/* Shaders */
 			s1.addShader(new DiffuseShader());
-			s1.addShader(new ReflectionShader(1.0, RGBWhite.getInstance()));
+			s1.addShader(new ReflectionShader(1.0, RGBFeatures.getInstance().white()));
 
 
 			/* Sphere 2 */

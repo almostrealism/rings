@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 
 import com.almostrealism.absorption.PinholeCameraAbsorber;
 import com.almostrealism.primitives.Plane;
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.ProbabilityDistribution;
@@ -168,7 +167,7 @@ public class AbsorberPreviewPanel extends JPanel
 	
 	protected void initFloor() {
 		Plane p = new Plane();
-		p.setSurfaceNormal(new ImmutableVector(0.0, 1.0, 0.0));
+		p.setSurfaceNormal(vector(0.0, 1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(20.0);
 		p.setHeight(20.0);

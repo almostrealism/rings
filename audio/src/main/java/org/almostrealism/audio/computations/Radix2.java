@@ -18,8 +18,6 @@ package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.ComplexFromAngle;
-import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
@@ -61,7 +59,7 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 		}
 
 		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);
-		PairProducer omega = new ComplexFromAngle(angleK);
+		Producer<Pair<?>> omega = complexFromAngle(angleK);
 
 		if (kind == EVEN) {
 			return add(a, c);

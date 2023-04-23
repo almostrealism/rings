@@ -18,8 +18,6 @@ package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.*;
-import org.almostrealism.algebra.computations.ComplexFromAngle;
-import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
@@ -33,7 +31,7 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 	}
 
 	@Override
-	public PairProducer build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
+	public Producer<Pair<?>> build(Scalar angle, Scalar k, Scalar n, Producer<PackedCollection<Pair<?>>> bank, int length) {
 		Producer<Scalar> angleProducer = v(angle);
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);
@@ -64,8 +62,8 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 
 		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);
 		ScalarProducerBase angleK3 = scalarsMultiply(angleK, v(3));
-		PairProducer omega = new ComplexFromAngle(angleK);
-		PairProducer omegaToPowerOf3 = new ComplexFromAngle(angleK3);
+		Producer<Pair<?>> omega = complexFromAngle(angleK);
+		Producer<Pair<?>> omegaToPowerOf3 = complexFromAngle(angleK3);
 
 		if (part == 0) {
 			return multiplyComplex(subtract(aMinusC, imaginaryTimesSub), omega);

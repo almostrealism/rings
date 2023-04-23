@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,15 @@ import org.almostrealism.Ops;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.collect.computations.PackedCollectionAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
 public class PatternAudio implements CellFeatures {
-	private static ContextSpecific<KernelizedEvaluable<PackedCollection>> add;
+	private static ContextSpecific<KernelizedEvaluable<PackedCollection<?>>> add;
 
 	static {
-		add = new DefaultContextSpecific<>(() -> new PackedCollectionAdd(new TraversalPolicy(1),
+		add = new DefaultContextSpecific<>(() -> Ops.ops().add(
 				Ops.ops().v(1, 0),
 				Ops.ops().v(1, 1)).get());
 	}

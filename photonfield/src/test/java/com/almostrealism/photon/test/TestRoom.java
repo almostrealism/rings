@@ -27,7 +27,7 @@ import com.almostrealism.physics.SpecularAbsorber;
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
 import com.almostrealism.primitives.Plane;
-import org.almostrealism.algebra.ImmutableVector;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhysicalConstants;
@@ -66,7 +66,7 @@ public class TestRoom implements PhysicalConstants {
 		plane.setWidth(700);
 		plane.setHeight(700);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		//The focal length of the Cornell Box's lense is .035
@@ -76,7 +76,7 @@ public class TestRoom implements PhysicalConstants {
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(.5*1.9 * Math.sqrt(.035 * .580));
 		pinhole.setThickness(0.05);
-		pinhole.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Plane LeftWall = new Plane();
@@ -84,7 +84,7 @@ public class TestRoom implements PhysicalConstants {
 		LeftWall.setHeight(550.0);
 		LeftWall.setWidth(550.0);
 		LeftWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		LeftWall.setSurfaceNormal(new ImmutableVector(0.0, 0.0, 0.0));
+		LeftWall.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, 0.0));
 		LW.setVolume(LeftWall);
 		LW.setColorRange(620.0, 130.0);
 		
@@ -93,7 +93,7 @@ public class TestRoom implements PhysicalConstants {
 		RightWall.setHeight(550.0);
 		RightWall.setWidth(550.0);
 		RightWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		RightWall.setSurfaceNormal(new ImmutableVector(1.0, 0.0, 0.0));
+		RightWall.setSurfaceNormal(Ops.ops().vector(1.0, 0.0, 0.0));
 		RW.setVolume(RightWall);
 		RW.setColorRange(495, 75);
 		
@@ -102,7 +102,7 @@ public class TestRoom implements PhysicalConstants {
 		BackWall.setHeight(550.0);
 		BackWall.setWidth(550.0);
 		BackWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		BackWall.setSurfaceNormal(new ImmutableVector(0.0, 0.0, 1.0));
+		BackWall.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, 1.0));
 		BW.setVolume(BackWall);
 		BW.setColorRange(570, 50);
 		
@@ -111,7 +111,7 @@ public class TestRoom implements PhysicalConstants {
 		Ceiling.setHeight(550.0);
 		Ceiling.setWidth(550.0);
 		Ceiling.setOrientation(new double[] {1.0, 0.0, 0.0});
-		Ceiling.setSurfaceNormal(new ImmutableVector(0.0, -1.0, 0.0));
+		Ceiling.setSurfaceNormal(Ops.ops().vector(0.0, -1.0, 0.0));
 		CL.setVolume(Ceiling);
 		CL.setColorRange(570, 50);
 		
@@ -120,7 +120,7 @@ public class TestRoom implements PhysicalConstants {
 		Floor.setHeight(550.0);
 		Floor.setWidth(550.0);
 		Floor.setOrientation(new double[] {1.0, 0.0, 0.0});
-		Floor.setSurfaceNormal(new ImmutableVector(0.0, 1.0, 0.0));
+		Floor.setSurfaceNormal(Ops.ops().vector(0.0, 1.0, 0.0));
 		FL.setVolume(Floor);
 		FL.setColorRange(570, 50);
 		

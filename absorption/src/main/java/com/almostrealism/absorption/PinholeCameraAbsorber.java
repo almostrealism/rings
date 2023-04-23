@@ -18,7 +18,7 @@ package com.almostrealism.absorption;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
-import org.almostrealism.algebra.ImmutableVector;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
@@ -66,7 +66,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 		
 		this.pinhole = new Pinhole();
 		this.pinhole.setRadius(focalLength / (2.0 * fNum));
-		this.pinhole.setSurfaceNormal(new ImmutableVector(norm[0], norm[1], norm[2]));
+		this.pinhole.setSurfaceNormal(vector(norm[0], norm[1], norm[2]));
 		this.pinhole.setOrientation(orient);
 		
 		this.planePos = VectorMath.multiply(norm, -focalLength, true);
@@ -87,7 +87,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	protected void initPlane(double norm[], double orient[]) {
 		if (this.plane == null) {
 			this.plane = new AbsorptionPlane();
-			this.plane.setSurfaceNormal(new ImmutableVector(norm[0], norm[1], norm[2]));
+			this.plane.setSurfaceNormal(vector(norm[0], norm[1], norm[2]));
 			this.plane.setOrientation(VectorMath.clone(orient));
 		}
 	}
@@ -117,7 +117,7 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 	@Override
 	public void setViewingDirection(Vector v) {
 		initPlane(v.toArray(), new double[3]);
-		this.plane.setSurfaceNormal(new ImmutableVector(v));
+		this.plane.setSurfaceNormal(value(v));
 	}
 
 	@Override

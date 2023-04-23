@@ -31,7 +31,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.computations.RGBAdd;
-import org.almostrealism.color.computations.RGBBlack;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
@@ -170,7 +169,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 								  Curve<RGB> otherSurfaces[], Vector n, ShaderContext p) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			lastRay = null;
-			return RGBBlack.getInstance();
+			return black();
 		}
 		
 		boolean entering = this.checkEntering(viewerDirection, n);

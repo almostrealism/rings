@@ -24,7 +24,6 @@ import com.almostrealism.chem.PotentialMap;
 import com.almostrealism.primitives.AbsorptionPlane;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.collect.PackedCollection;
@@ -69,7 +68,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		
 		// Facing the negative X direction and oriented so
 		// that the positive Y axis is "upward".
-		plane.setSurfaceNormal(new ImmutableVector(-1.0, 0.0, 0.0));
+		plane.setSurfaceNormal(Ops.ops().vector(-1.0, 0.0, 0.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb

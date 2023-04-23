@@ -24,7 +24,7 @@ import com.almostrealism.raytracer.RayTracedScene;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.computations.RGBBlack;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.hardware.KernelizedEvaluable;
@@ -38,7 +38,7 @@ import org.junit.Test;
 import javax.swing.*;
 import java.io.IOException;
 
-public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
+public class LightingEngineAggregatorTest extends KernelizedIntersectionTest implements RGBFeatures {
 	protected RayTracedScene getScene() throws IOException {
 		TestScene scene = new TestScene(false, false, false,
 				true, false, false,
@@ -117,7 +117,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest {
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
 			RGB value = agg.get().evaluate(new Object[] { input.get(i), dim.get(i) });
-			if (value == null) value = RGBBlack.getEvaluable().evaluate();
+			if (value == null) value = black().get().evaluate();
 			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
 			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
 			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));

@@ -29,7 +29,6 @@ import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
@@ -67,7 +66,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	public ReflectionShader() {
 		this.setReflectivity(0.0);
 		this.setBlur(0.0);
-		this.setReflectiveColor(RGBWhite.getInstance());
+		this.setReflectiveColor(white());
 	}
 	
 	/**

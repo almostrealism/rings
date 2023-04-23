@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.almostrealism.primitives;
 
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.hardware.HardwareFeatures;
@@ -58,7 +57,7 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 	/**
 	 * @param p  {x, y, z} - The vector normal to the absorption plane.
 	 */
-	public void setSurfaceNormal(ImmutableVector p) {
+	public void setSurfaceNormal(Producer<Vector> p) {
 		this.normal = p; this.across = null;
 	}
 
@@ -92,13 +91,13 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 		Plane.d = d;
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(dotProduct(x, new ImmutableVector(up[0], up[1], up[2])).get().evaluate().getValue());
+		double y = Math.abs(dotProduct(x, vector(up[0], up[1], up[2])).get().evaluate().getValue());
 		if (y > this.h / 2.0) return false;
 		
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(normal.get().evaluate()).toArray();
 		
-		double z = Math.abs(dotProduct(x, new ImmutableVector(across[0], across[1], across[2])).get().evaluate().getValue());
+		double z = Math.abs(dotProduct(x, vector(across[0], across[1], across[2])).get().evaluate().getValue());
 		if (z > this.w / 2.0) return false;
 		
 		return true;
@@ -116,14 +115,14 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 			d1 = Double.MAX_VALUE - 1.0;
 		} else {
 			Vector x = d.multiply(d1 + this.thick / 2.0).add(p);
-			if (!this.inside(new ImmutableVector(x))) d1 = Double.MAX_VALUE - 1.0;
+			if (!this.inside(value(x))) d1 = Double.MAX_VALUE - 1.0;
 		}
 		
 		if (d2 < 0.0) {
 			d2 = Double.MAX_VALUE - 1.0;
 		} else {
 			Vector x = d.multiply(d2 - this.thick / 2.0).add(p);
-			if (!this.inside(new ImmutableVector(x))) d2 = Double.MAX_VALUE - 1.0;
+			if (!this.inside(value(x))) d2 = Double.MAX_VALUE - 1.0;
 		}
 		
 		

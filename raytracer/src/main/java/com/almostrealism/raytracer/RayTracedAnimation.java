@@ -34,7 +34,6 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
-import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
@@ -408,7 +407,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				String ref = p.getProperty("bodies." + i + ".shade.ref");
 
 				if (ref != null) {
-					s.addShader(new ReflectionShader(Double.parseDouble(ref), RGBWhite.getInstance()));
+					s.addShader(new ReflectionShader(Double.parseDouble(ref), white()));
 				}
 
 				s.addShader(DiffuseShader.defaultDiffuseShader);

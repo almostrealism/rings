@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.color.RGBProducer;
-import org.almostrealism.color.computations.RGBWhite;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.algebra.TripleFunction;
@@ -65,7 +64,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		if (enableSphere) {
 			if (enableSilhouette) {
-				s.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+				s.setShaders(new Shader[] { new SilhouetteShader(white()) });
 			} else if (enableSphereReflection) {
 				s.setShaders(new Shader[] {
 						new ReflectionShader(0.6, rgb(0.6))
@@ -80,21 +79,21 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 			if (enableSilhouette) {
 				Sphere s2 = new Sphere();
-				s2.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s2.setShaders(new Shader[]{new SilhouetteShader(white())});
 				s2.setLocation(new Vector(0.0, 2.4, -3.0));
 				s2.setColor(new RGB(0.8, 0.8, 0.8));
 				s2.setSize(0.25);
 				add(s2);
 
 				Sphere s3 = new Sphere();
-				s3.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s3.setShaders(new Shader[]{new SilhouetteShader(white())});
 				s3.setLocation(new Vector(0.0, 1.4, -3.0));
 				s3.setColor(new RGB(0.8, 0.8, 0.8));
 				s3.setSize(0.25);
 				add(s3);
 
 				Sphere s4 = new Sphere();
-				s4.setShaders(new Shader[]{new SilhouetteShader(RGBWhite.getInstance())});
+				s4.setShaders(new Shader[]{new SilhouetteShader(white())});
 				s4.setLocation(new Vector(0.0, 0.4, -3.0));
 				s4.setColor(new RGB(0.8, 0.8, 0.8));
 				s4.setSize(0.25);
@@ -108,7 +107,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 			if (enableFloorReflection) {
 				p.setShaders(new Shader[] {
-						new ReflectionShader(0.65, RGBWhite.getInstance())
+						new ReflectionShader(0.65, white())
 				});
 			}
 
@@ -186,7 +185,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 					FileDecoder.PLYEncoding, false, null)).get(0);
 
 			if (enableSilhouette) {
-				dragon.setShaders(new Shader[] { new SilhouetteShader(RGBWhite.getInstance()) });
+				dragon.setShaders(new Shader[] { new SilhouetteShader(white()) });
 			} else {
 				dragon.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 			}

@@ -27,12 +27,12 @@ import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import io.almostrealism.relation.Realization;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 
-import org.almostrealism.color.computations.RGBBlack;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.CodeFeatures;
@@ -40,7 +40,7 @@ import org.almostrealism.geometry.DimensionAware;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
-public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures {
+public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures, RGBFeatures {
 	private RayTracer tracer;
 	private Camera camera;
 	private RenderParameters p;
@@ -78,20 +78,20 @@ public class RayTracedScene implements Realization<RealizableImage, RenderParame
 		Future<KernelizedProducer<RGB>> color = tracer.trace(camera.rayAt(uv, sd));
 
 		if (color == null) {
-			color = new Future<KernelizedProducer<RGB>>() {
+			color = new Future<>() {
 				@Override
 				public KernelizedProducer<RGB> get() {
-					return RGBBlack.getInstance();
+					return black();
 				}
 
 				@Override
-				public boolean cancel(boolean mayInterruptIfRunning) { return false; }
+				public boolean cancel(boolean mayInterruptIfRunning) {return false;}
 
 				@Override
-				public boolean isCancelled() { return false; }
+				public boolean isCancelled() {return false;}
 
 				@Override
-				public boolean isDone() { return true; }
+				public boolean isDone() {return true;}
 
 				@Override
 				public KernelizedProducer<RGB> get(long timeout, TimeUnit unit)

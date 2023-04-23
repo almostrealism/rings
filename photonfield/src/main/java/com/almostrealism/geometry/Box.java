@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
 import com.almostrealism.primitives.Plane;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.algebra.ImmutableVector;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.physics.PhotonField;
@@ -70,7 +70,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		plane.setWidth(600);
 		plane.setHeight(600);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		//The focal length of the Cornell Box's lense is .035
@@ -78,9 +78,9 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		//The diameter of the pinhole is given by the equation
 		// d = 1.9(sqrt(f*l)) where f is the focal length and l is the avergage wavelength
 		Pinhole pinhole = new Pinhole();
-		pinhole.setRadius(scale/1.5);
+		pinhole.setRadius(scale / 1.5);
 		pinhole.setThickness(scale / 100.0);
-		pinhole.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Box box1 = new Box();
@@ -98,9 +98,9 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(scale * 10.0);
 		a.addAbsorber(spec, ZeroVector.getInstance());
-		a.addAbsorber(plane, ops().vector(0.0, 0.0, scale * 2.2));
+		a.addAbsorber(plane, Ops.ops().vector(0.0, 0.0, scale * 2.2));
 		// a.addAbsorber(pinhole, new double[] {0.0, 0.0, scale * 2.0});
-		a.addAbsorber(l, ops().vector(0.0, 0.0, scale * 1.95));
+		a.addAbsorber(l, Ops.ops().vector(0.0, 0.0, scale * 1.95));
 		
 		PhotonField f = new DefaultPhotonField();
 		f.setAbsorber(a);
@@ -171,7 +171,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			bottom.setWidth(this.width);
 			bottom.setHeight(this.depth);
 			bottom.setOrientation(this.orientation);
-			bottom.setSurfaceNormal(new ImmutableVector(new Vector(this.normal)));
+			bottom.setSurfaceNormal(value(new Vector(this.normal)));
 			bottom.setThickness(this.wallThickness);
 			// BT.setVolume(bottom);
 			// BT.setColorRange(this.startColor, this.range);
@@ -183,7 +183,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			top.setWidth(this.width);
 			top.setHeight(this.depth);
 			top.setOrientation(this.orientation);
-			top.setSurfaceNormal(new ImmutableVector(new Vector(this.normal).minus()));
+			top.setSurfaceNormal(value(new Vector(this.normal).minus()));
 			top.setThickness(this.wallThickness);
 			// TP.setVolume(top);
 			// TP.setColorRange(this.startColor, this.range);
@@ -194,7 +194,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			// SpecularAbsorber S1 = new SpecularAbsorber();
 			side1.setWidth(this.depth);
 			side1.setHeight(this.height);
-			side1.setSurfaceNormal(new ImmutableVector(new Vector(bottom.getOrientation()).crossProduct(bottom.getSurfaceNormal().get().evaluate())));
+			side1.setSurfaceNormal(value(new Vector(bottom.getOrientation()).crossProduct(bottom.getSurfaceNormal().get().evaluate())));
 			side1.setOrientation(bottom.getSurfaceNormal().get().evaluate().crossProduct(new Vector(bottom.getAcross())).toArray());
 			side1.setThickness(this.wallThickness);
 			// S1.setVolume(side1);
@@ -206,7 +206,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 //			SpecularAbsorber S2 = new SpecularAbsorber();
 			side2.setWidth(this.width);
 			side2.setHeight(this.height);
-			side2.setSurfaceNormal(new ImmutableVector(new Vector(bottom.getOrientation()).minus()));
+			side2.setSurfaceNormal(value(new Vector(bottom.getOrientation()).minus()));
 			side2.setOrientation(bottom.getSurfaceNormal().get().evaluate().minus().toArray());
 			side2.setThickness(this.wallThickness);
 //			S2.setVolume(side2);
@@ -218,7 +218,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 //			SpecularAbsorber S3 = new SpecularAbsorber();
 			side3.setWidth(this.depth);
 			side3.setHeight(this.height);
-			side3.setSurfaceNormal(new ImmutableVector(side1.getSurfaceNormal().get().evaluate().minus()));
+			side3.setSurfaceNormal(value(side1.getSurfaceNormal().get().evaluate().minus()));
 			side3.setOrientation(side1.getOrientation());
 			side3.setThickness(this.wallThickness);
 //			S3.setVolume(side3);
@@ -230,7 +230,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 //			SpecularAbsorber S4 = new SpecularAbsorber();
 			side4.setWidth(this.width);
 			side4.setHeight(this.height);
-			side4.setSurfaceNormal(new ImmutableVector(side2.getSurfaceNormal().get().evaluate().minus()));
+			side4.setSurfaceNormal(value(side2.getSurfaceNormal().get().evaluate().minus()));
 			side4.setOrientation(side2.getOrientation());
 			side4.setThickness(this.wallThickness);
 //			S4.setVolume(side4);

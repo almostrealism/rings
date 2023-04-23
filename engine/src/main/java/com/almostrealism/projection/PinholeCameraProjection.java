@@ -38,15 +38,18 @@ public class PinholeCameraProjection implements CodeFeatures {
 
 	private static VectorProducerBase direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
 											Vector u, Vector v, Vector w, Pair blur) {
-		PairProducerBase pd = Ops.ops().v(projectionDimensions);
+		Producer<Pair<?>> pd = Ops.ops().v(projectionDimensions);
 
 		ScalarProducerBase sdx = Ops.ops().l(sd);
 		ScalarProducerBase sdy = Ops.ops().r(sd);
 
-		ScalarProducerBase p = pd.x().multiply(Ops.ops().l(pos))
-								.multiply(sdx.add(-1.0).pow(-1.0)).add(pd.x().multiply(-0.5));
-		ScalarProducerBase q = pd.y().multiply(Ops.ops().r(pos))
-								.multiply(sdy.add(-1.0).pow(-1.0)).add(pd.y().multiply(-0.5));
+		ScalarProducerBase pdx = Ops.ops().l(pd);
+		ScalarProducerBase pdy = Ops.ops().r(pd);
+
+		ScalarProducerBase p = pdx.multiply(Ops.ops().l(pos))
+								.multiply(sdx.add(-1.0).pow(-1.0)).add(pdx.multiply(-0.5));
+		ScalarProducerBase q = pdy.multiply(Ops.ops().r(pos))
+								.multiply(sdy.add(-1.0).pow(-1.0)).add(pdy.multiply(-0.5));
 		ScalarProducerBase r = Ops.ops().scalar(-focalLength);
 
 		ScalarProducerBase x = p.multiply(u.getX()).add(q.multiply(v.getX())).add(r.multiply(w.getX()));

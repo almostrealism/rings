@@ -48,8 +48,8 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 	 * and black as a cold color.
 	 */
 	public BlendingShader() {
-		this.hotColor = RGBWhite.getInstance();
-		this.coldColor = RGBBlack.getInstance();
+		this.hotColor = white();
+		this.coldColor = black();
 	}
 	
 	/**

@@ -17,11 +17,11 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBBlack;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
 import io.almostrealism.relation.Compactable;
@@ -35,7 +35,7 @@ import org.almostrealism.hardware.KernelizedProducer;
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, Shader<LightingContext> {
+public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, Shader<LightingContext>, RGBFeatures {
 	private KernelizedProducer<RGB> color;
 
 	private String names[] = { "Color" };
@@ -46,7 +46,7 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	/**
 	 * Constructs a new {@link SilhouetteShader} using black as a color.
 	 */
-	public SilhouetteShader() { this.color = RGBBlack.getInstance(); }
+	public SilhouetteShader() { this.color = black(); }
 	
 	/**
 	 * Constructs a new {@link SilhouetteShader} using the specified {@link RGB}

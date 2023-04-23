@@ -25,7 +25,6 @@ import com.almostrealism.primitives.Pinhole;
 import com.almostrealism.primitives.Plane;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.ImmutableVector;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.Spectrum;
@@ -79,7 +78,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 		SpecularAbsorber b = new SpecularAbsorber();
 		//b.setVolume(new Sphere(x / 10.0));
 		Plane p = new Plane();
-		p.setSurfaceNormal(new ImmutableVector(0.0, -1.0, 0.0));
+		p.setSurfaceNormal(Ops.ops().vector(0.0, -1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(x / 2.0);
 		p.setHeight(x / 2.0);
@@ -95,13 +94,13 @@ public class SpecularAbsorber extends VolumeAbsorber
 		plane.setWidth(300);
 		plane.setHeight(300);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(x / 8.0);
 		pinhole.setThickness(0.05);
-		pinhole.setSurfaceNormal(new ImmutableVector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb
