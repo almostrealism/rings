@@ -19,8 +19,6 @@ package com.almostrealism.projection;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.PairProducer;
-import org.almostrealism.algebra.PairProducerBase;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;

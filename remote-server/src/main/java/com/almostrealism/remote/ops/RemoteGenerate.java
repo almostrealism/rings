@@ -30,6 +30,8 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 public class RemoteGenerate implements StreamObserver<Generation.GeneratorRequest> {
+	public static final int MAX_GENERATION_COUNT = 40;
+
 	private final AccessManager accessManager;
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Output> reply;
@@ -46,7 +48,8 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	public void onNext(Generation.GeneratorRequest value) {
 		System.out.println("Received generator request: " + value.getRequestId() + " for generator " + value.getGeneratorId());
 		if (accessManager.authorize(value.getAccessKey(), value.getRequestId())) {
-			queue.submit(new GenerationOperation(value.getRequestId(), value.getGeneratorId(), value.getCount(),
+			queue.submit(new GenerationOperation(value.getRequestId(), value.getGeneratorId(),
+					value.getCount() < MAX_GENERATION_COUNT ? value.getCount() : MAX_GENERATION_COUNT,
 					results -> output(value.getRequestId(), value.getGeneratorId(), results)));
 		} else {
 			System.out.println("Access denied for user \"" + value.getAccessKey().getUserId() + "\"");

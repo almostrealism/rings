@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayProducer;
+import org.almostrealism.geometry.RayProducerBase;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 
-public class ReflectedRay implements RayProducer {
+public class ReflectedRay implements RayProducerBase {
 	private Producer<Vector> point;
 	private Producer<Vector> normal;
 	private Producer<Vector> reflected;

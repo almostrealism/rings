@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;;
+import org.almostrealism.color.*;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.RGBProducer;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -38,7 +37,7 @@ public class AmbientLight implements Light, RGBFeatures, CodeFeatures {
 	private double intensity;
 	private RGB color;
 
-	private RGBProducer colorProducer = GeneratedColorProducer.fromFunction(this, triple -> color.multiply(intensity));
+	private Producer<RGB> colorProducer = GeneratedColorProducer.fromFunction(this, triple -> color.multiply(intensity));
 
 	/**
 	 * Constructs an AmbientLight object with the default intensity and color.

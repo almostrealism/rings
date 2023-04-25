@@ -23,13 +23,13 @@ import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.SilhouetteShader;
 import com.almostrealism.raytracer.Thing;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.RGBProducer;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.algebra.TripleFunction;
@@ -120,7 +120,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				RGBProducer p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
+				Producer<RGB> p = GeneratedColorProducer.fromFunction(this, new TripleFunction<Triple, RGB>() {
 					@Override
 					public RGB operate(Triple t) {
 						Vector point = new Vector(t.getA(), t.getB(), 0.0);
@@ -136,7 +136,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 					}
 				});
 
-				public RGBProducer getColorAt() { return p; }
+				public Producer<RGB> getColorAt() { return p; }
 
 				public Evaluable<RGB> getColorAt(Object args[]) { return v(evaluate(args)).get(); }
 				@Override

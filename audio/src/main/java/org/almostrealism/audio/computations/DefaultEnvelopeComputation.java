@@ -16,50 +16,22 @@
 
 package org.almostrealism.audio.computations;
 
-import io.almostrealism.code.PhysicalScope;
-import io.almostrealism.code.ProducerComputationBase;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.HybridScope;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.hardware.ComputerFeatures;
-import org.almostrealism.hardware.DestinationSupport;
-import org.almostrealism.hardware.MemoryData;
-import org.almostrealism.hardware.MemoryDataComputation;
-import org.almostrealism.hardware.mem.MemoryDataDestination;
+import org.almostrealism.algebra.ScalarProducerBase;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.CollectionProducerComputationAdapter;
 
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class DefaultEnvelopeComputation extends ProducerComputationBase<MemoryData, Scalar>
-		implements ScalarProducer, MemoryDataComputation<Scalar>, DestinationSupport<Scalar>, ComputerFeatures {
-
-	private Supplier<Scalar> destination;
+public class DefaultEnvelopeComputation extends CollectionProducerComputationAdapter<PackedCollection<?>, Scalar> implements ScalarProducerBase {
 
 	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
-		this.destination = () -> Scalar.blank().get().evaluate();
-		this.setInputs(List.of(new MemoryDataDestination(this, ScalarBank::new), (Supplier) notePosition));
-		init();
+		super(Scalar.shape(), (Producer) notePosition);
 	}
-
-	@Override
-	public int getMemLength() { return 2; }
-
-	@Override
-	public void setDestination(Supplier<Scalar> destination) { this.destination = destination; }
-
-	@Override
-	public Supplier<Scalar> getDestination() { return destination; }
-
-	/**
-	 * @return  PhysicalScope#GLOBAL
-	 */
-	@Override
-	public PhysicalScope getDefaultPhysicalScope() { return PhysicalScope.GLOBAL; }
 
 	@Override
 	public Scope<Scalar> getScope() {

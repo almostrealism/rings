@@ -17,7 +17,6 @@
 package com.almostrealism.primitives;
 
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.PairProducer;
 import org.almostrealism.algebra.PairProducerBase;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.bool.AcceleratedConjunctionScalar;
