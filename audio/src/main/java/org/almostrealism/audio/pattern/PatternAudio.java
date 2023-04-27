@@ -85,6 +85,6 @@ public class PatternAudio implements CellFeatures {
 
 	protected void write(PackedCollection<?> data, int offset, int length) {
 		PackedCollection dest = this.data.delegate(offset, length).traverse(1);
-		add.getValue().kernelEvaluate(dest, dest, data.traverse(1));
+		add.getValue().into(dest).evaluate(dest, data.traverse(1));
 	}
 }

@@ -148,7 +148,8 @@ public class PatternNote {
 				PackedCollection<?> audio = getAudio();
 				PackedCollection<?> dest = WaveData.allocateCollection((int) (r * audio.getMemLength()));
 
-				interpolate.getValue().kernelEvaluate(dest.traverse(1), audio.traverse(0), WaveOutput.timelineScalar.getValue(), rate.traverse(0));
+				interpolate.getValue().into(dest.traverse(1))
+						.evaluate(audio.traverse(0), WaveOutput.timelineScalar.getValue(), rate.traverse(0));
 				return dest;
 			}));
 		}

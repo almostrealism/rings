@@ -3,8 +3,6 @@ package org.almostrealism.audio.grains.test;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.ScalarProducer;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
@@ -44,7 +42,7 @@ public class GrainTest implements CellFeatures {
 
 		ScalarBank result = new ScalarBank(10 * OutputLine.sampleRate);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
-		source.getData().valueAt(cursor).get().kernelEvaluate(result, new MemoryBank[] { WaveOutput.timelineScalar.getValue(), grain });
+		source.getData().valueAt(cursor).get().into(result).evaluate(WaveOutput.timelineScalar.getValue(), grain);
 		System.out.println("GrainTest: Timeline kernel evaluated");
 
 		System.out.println("GrainTest: Rendering grains...");

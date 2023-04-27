@@ -131,8 +131,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 
 			KernelizedEvaluable product = multiply(v(1, 0), v(1, 1)).get();
 			process.add(() -> () ->
-					// TODO  Should be able to just use ::evaluate here...
-					product.kernelEvaluate(destination.get().evaluate().traverseEach(),
+					product.into(destination.get().evaluate().traverseEach()).evaluate(
 							source.get().evaluate().traverseEach(),
 							volume.getKernelList(0).valueAt(geneIndex)));
 

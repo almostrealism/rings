@@ -91,7 +91,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		OperationList generate = new OperationList("PatternSystemManager Sum");
 		generate.add(() -> sum.get());
 		generate.add(() -> () ->
-				scale.kernelEvaluate(this.destination.traverse(1), this.destination.traverse(1), volume));
+				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
 		runSum = generate.get();
 	}
 

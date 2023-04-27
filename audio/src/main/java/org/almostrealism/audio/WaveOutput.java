@@ -149,12 +149,9 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		if (enableKernelExport) {
 			Runnable export = () -> {
 				long start = System.currentTimeMillis();
-//				PairFromPairBank pairAt = new PairFromPairBank((Producer) p(data),
-//						v(OutputLine.sampleRate).multiply(v(Scalar.class, 0)).add(v(1.0)));
-//				pairAt.r().get().kernelEvaluate(destination, new MemoryBank[]{timeline.getValue()});
 
 				exportSource = new Provider(data);
-				exportKernel.kernelEvaluate(destination, new MemoryBank[] { data, timelineScalar.getValue().range(0, destination.getMemLength()) });
+				exportKernel.into(destination).evaluate(data, timelineScalar.getValue().range(0, destination.getMemLength()));
 				if (enableVerbose)
 					System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
 			};

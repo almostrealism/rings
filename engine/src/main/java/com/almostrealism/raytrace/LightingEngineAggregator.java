@@ -94,8 +94,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 	}
 
 	/**
-	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available, using
-	 * {@link KernelizedEvaluable#kernelEvaluate(MemoryBank, org.almostrealism.hardware.MemoryData[])}.
+	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available.
 	 */
 	public synchronized void initRankCache() {
 		if (this.ranks != null) return;
@@ -107,7 +106,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(new ScalarBank(input.getCount()));
-			((KernelizedEvaluable) get(i).getRank().get()).kernelEvaluate(ranks.get(i), new MemoryBank[] { input });
+			((KernelizedEvaluable) get(i).getRank().get()).into(ranks.get(i)).evaluate(input);
 		}
 	}
 

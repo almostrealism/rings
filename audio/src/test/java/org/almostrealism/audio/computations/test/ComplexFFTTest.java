@@ -136,7 +136,7 @@ public class ComplexFFTTest implements TestFeatures {
 			PackedCollection<PackedCollection<Pair<?>>> table = Pair.table(input.getShape().length(1), input.getCount());
 
 			long start = System.currentTimeMillis();
-			complexFft().kernelEvaluate(table, new MemoryBank[] { input });
+			complexFft().into(table).evaluate(input);
 			updateTime(System.currentTimeMillis() - start);
 
 			for (int t = 0; t < table.getCount(); t++) {

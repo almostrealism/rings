@@ -70,7 +70,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		PackedCollection<Pair<?>> input = RealizableImage.generateKernelInput(0, 0, width, height);
 		ScalarBank distances = new ScalarBank(input.getCount());
 		kernel.setDimensions(width, height, 1, 1);
-		kernel.kernelEvaluate(distances, new MemoryBank[] { input });
+		kernel.into(distances).evaluate(input);
 
 		Evaluable<Vector> closestNormal = kernel.getClosestNormal();
 
@@ -92,7 +92,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
 		Assert.assertEquals(1.042412281036377, distances.get(pos).getValue(), Math.pow(10, -10));
 
-		n = closestNormal.evaluate(new Object[] { input.get(pos) });
+		n = closestNormal.evaluate(input.get(pos));
 		System.out.println("normal(" + pos + ") = " + n);
 		Assert.assertEquals(-0.6666666865348816, n.toDouble(0), Math.pow(10, -10));
 		Assert.assertEquals(0.3333333432674408, n.toDouble(1), Math.pow(10, -10));
@@ -105,14 +105,14 @@ public class MeshIntersectionTest implements CodeFeatures {
 		ScalarBank distances = new ScalarBank(1);
 
 		in.set(0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0);
-		Triangle.intersectAt.kernelEvaluate(distances, new MemoryBank[] { in, data });
+		Triangle.intersectAt.into(distances).evaluate(in, data);
 		System.out.println("distance = " + distances.get(0).getValue());
 		Assert.assertEquals(1.0, distances.get(0).getValue(), Math.pow(10, -10));
 
 		PackedCollection<Pair<?>> out = Pair.bank(1);
 		PackedCollection<Pair<?>> conf = Pair.bank(1);
 		conf.set(0, new Pair(1, Intersection.e));
-		RankedChoiceEvaluable.highestRank.kernelEvaluate(out, new MemoryBank[] { distances, conf });
+		RankedChoiceEvaluable.highestRank.into(out).evaluate(distances, conf);
 		System.out.println("highest rank: " + out.get(0));
 		Assert.assertEquals(1.0, out.get(0).getA(), Math.pow(10, -10));
 		Assert.assertEquals(0.0, out.get(0).getB(), Math.pow(10, -10));

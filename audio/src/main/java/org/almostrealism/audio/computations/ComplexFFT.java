@@ -17,6 +17,7 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Evaluable;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedEvaluable;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 public class ComplexFFT extends AcceleratedEvaluable<PackedCollection<Pair<?>>, PackedCollection<Pair<?>>> implements Evaluable<PackedCollection<Pair<?>>> {
 	public ComplexFFT(int count, boolean forward, Supplier<Evaluable<? extends PackedCollection<Pair<?>>>> input) {
 		super("transform", () -> args -> Pair.bank(count),
-				new Supplier[] { input }, config(count, forward));
+				input, Ops.ops().p(new Pair(count, forward ? 0 : 1)));
 		int powerOfTwo = 31 - Integer.numberOfLeadingZeros(count);
 
 		if (1 << powerOfTwo != count) {
@@ -38,9 +39,5 @@ public class ComplexFFT extends AcceleratedEvaluable<PackedCollection<Pair<?>>, 
 			// TODO  Support backward
 			throw new UnsupportedOperationException();
 		}
-	}
-
-	private static Object[] config(int count, boolean forward) {
-		return new Object[] { new Pair(count, forward ? 0 : 1) };
 	}
 }

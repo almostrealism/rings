@@ -78,36 +78,40 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 			}
 
 			@Override
-			public void kernelEvaluate(MemoryBank destination, MemoryData... args) {
-				int w = ev.length;
-				int h = ev[0].length;
+			public Evaluable withDestination(MemoryBank<RGB> destination) {
+				return args -> {
+					int w = ev.length;
+					int h = ev[0].length;
 
-				PackedCollection<Pair<?>> allSamples = Pair.bank(((MemoryBank) args[0]).getCount());
-				PackedCollection<RGB> out[][] = new PackedCollection[w][h];
+					PackedCollection<Pair<?>> allSamples = Pair.bank(((MemoryBank) args[0]).getCount());
+					PackedCollection<RGB> out[][] = new PackedCollection[w][h];
 
-				System.out.println("SuperSampler: Evaluating sample kernels...");
-				for (int i = 0; i < ev.length; i++) {
-					j: for (int j = 0; j < ev[i].length; j++) {
-						for (int k = 0; k < ((MemoryBank) args[0]).getCount(); k++) {
-							Pair pos = (Pair) ((MemoryBank) args[0]).get(k);
-							double r = pos.getX() + ((double) i / (double) ev.length);
-							double q = pos.getY() + ((double) j / (double) ev[i].length);
-							allSamples.set(k, r, q);
-						}
-
-						out[i][j] = RGB.bank(((MemoryBank) args[0]).getCount());
-						ev[i][j].kernelEvaluate(out[i][j], new MemoryBank[] { allSamples } );
-					}
-				}
-
-				System.out.println("SuperSampler: Combining samples...");
-				for (int k = 0; k < destination.getCount(); k++) {
+					System.out.println("SuperSampler: Evaluating sample kernels...");
 					for (int i = 0; i < ev.length; i++) {
 						j: for (int j = 0; j < ev[i].length; j++) {
-							((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+							for (int k = 0; k < ((MemoryBank) args[0]).getCount(); k++) {
+								Pair pos = (Pair) ((MemoryBank) args[0]).get(k);
+								double r = pos.getX() + ((double) i / (double) ev.length);
+								double q = pos.getY() + ((double) j / (double) ev[i].length);
+								allSamples.set(k, r, q);
+							}
+
+							out[i][j] = RGB.bank(((MemoryBank) args[0]).getCount());
+							ev[i][j].into(out[i][j]).evaluate(allSamples);
 						}
 					}
-				}
+
+					System.out.println("SuperSampler: Combining samples...");
+					for (int k = 0; k < destination.getCount(); k++) {
+						for (int i = 0; i < ev.length; i++) {
+							j: for (int j = 0; j < ev[i].length; j++) {
+								((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+							}
+						}
+					}
+
+					return destination;
+				};
 			}
 		};
 	}

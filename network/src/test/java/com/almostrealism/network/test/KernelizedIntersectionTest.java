@@ -50,7 +50,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		ScalarBank output = new ScalarBank(input.getCount());
 
 		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
-		ev.kernelEvaluate(output, new MemoryBank[] { input, dim });
+		ev.into(output).evaluate(input, dim);
 
 		System.out.println("KernelizedIntersectionTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {

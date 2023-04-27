@@ -73,7 +73,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
-		p.kernelEvaluate(output, new MemoryBank[] { input, dim });
+		p.into(output).evaluate(input, dim);
 
 		/*
 		System.out.println("LightingEngineAggregatorTest: Displaying image...");
@@ -112,7 +112,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
-		p.kernelEvaluate(output, new MemoryBank[] { input, dim });
+		p.into(output).evaluate(input, dim);
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
@@ -140,7 +140,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedEvaluable) {
 				KernelizedEvaluable kp = (KernelizedEvaluable)  a.getArguments().get(i).getProducer();
 				MemoryBank output = kp.createKernelDestination(input.getCount());
-				kp.kernelEvaluate(output, new MemoryBank[] { input, dim });
+				kp.into(output).evaluate(input, dim);
 
 				System.out.println("LightingEngineAggregatorTest: Comparing...");
 				for (int j = 0; j < output.getCount(); j++) {

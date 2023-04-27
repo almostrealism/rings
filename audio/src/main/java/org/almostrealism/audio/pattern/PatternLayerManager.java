@@ -109,7 +109,7 @@ public class PatternLayerManager implements CodeFeatures {
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
 		v.add(() -> () -> volume.setMem(0, 1.0 / chordDepth));
 		v.add(() -> () ->
-				scale.kernelEvaluate(this.destination.traverse(1), this.destination.traverse(1), volume));
+				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
 		adjustVolume = v.get();
 	}
 
