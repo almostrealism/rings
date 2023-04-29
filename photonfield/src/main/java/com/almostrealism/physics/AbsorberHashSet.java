@@ -30,8 +30,6 @@ import com.almostrealism.chem.PotentialMap;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
-import org.almostrealism.algebra.VectorProducer;
-import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
