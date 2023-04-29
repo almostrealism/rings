@@ -18,11 +18,9 @@ package com.almostrealism.geometry;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducer;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.space.Volume;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link Sphere} represents a spherical volume in 3D space.
