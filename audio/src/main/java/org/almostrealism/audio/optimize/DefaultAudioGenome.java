@@ -43,6 +43,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Deprecated
 public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, CellFeatures {
 	public static final int GENERATORS = 0;
 	public static final int PARAMETERS = 1;

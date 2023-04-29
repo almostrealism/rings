@@ -21,6 +21,8 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
 public class AdjustmentChromosome extends WavCellChromosomeExpansion {
+	public static final int SIZE = 6;
+
 	private boolean relative;
 
 	public AdjustmentChromosome(Chromosome<PackedCollection<?>> source, double min, double max, boolean relative, int sampleRate) {

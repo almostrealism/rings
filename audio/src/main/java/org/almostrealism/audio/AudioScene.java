@@ -22,6 +22,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
@@ -108,6 +109,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
 
+	private MixdownManager mixdown;
 	private EfxManager efx;
 
 	private GenerationManager generation;
@@ -140,7 +142,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(4);
+		this.genome = new CombinedGenome(5);
 		this.legacyGenome = new DefaultAudioGenome(sources, delayLayers, sampleRate, time.getClock().frame());
 
 		this.tuning = new DefaultKeyboardTuning();
@@ -159,7 +161,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> patternDestination = null);
 
-		this.efx = new EfxManager(genome.getGenome(3), sources, this::getBeatDuration, getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(3), sources, time.getClock(), getSampleRate());
+		this.efx = new EfxManager(genome.getGenome(4), sources, this::getBeatDuration, getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -214,7 +217,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public void assignGenome(Genome<PackedCollection<?>> genome) {
 		AudioSceneGenome g = (AudioSceneGenome) genome;
 		this.genome.assignTo(g.getGenome());
-		if (g.getLegacyGenome() != null) this.legacyGenome.assignTo(g.getLegacyGenome());
+		if (g.getLegacyGenome() != null && this.legacyGenome != null)
+			this.legacyGenome.assignTo(g.getLegacyGenome());
 		this.progression.refreshParameters();
 		this.patterns.refreshParameters();
 	}
@@ -323,8 +327,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
-		setup.add(legacyGenome.setup());
+		if (legacyGenome != null) setup.add(legacyGenome.setup());
 		setup.add(time.setup());
+		setup.add(mixdown.setup());
 
 		if (enablePatternSystem) {
 			cells = getPatternCells(measures, output, setup);
@@ -337,7 +342,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, OperationList setup) {
 		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return cells(cells, measures, output);
+		return mixdown.cells(legacyGenome, cells, measures, output);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
@@ -421,117 +426,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 									legacyGenome.valueAt(DefaultAudioGenome.PARAMETERS, i))
 										.apply(i));
 
-		return cells(cells, measures, output);
-	}
-
-	private CellList cells(CellList sources, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
-		CellList cells = sources;
-
-		if (enableMainFilterUp) {
-			// Apply dynamic high pass filters
-			cells = cells.map(fc(i -> {
-				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
-			}));
-		}
-
-		cells = cells
-				.addRequirements(legacyGenome.getTemporals().toArray(TemporalFactor[]::new));
-
-		if (enableSourcesOnly) {
-			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
-					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
-		}
-
-		if (enableMixdown)
-			cells = cells.mixdown(mixdownDuration);
-
-		// Volume adjustment
-		CellList branch[] = cells.branch(
-				fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
-				enableEfxFilters ?
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
-								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
-
-		CellList main = branch[0];
-		CellList efx = branch[1];
-
-		// Sum the main layer
-		main = main.sum();
-
-		if (enableEfx) {
-			// Create the delay layers
-			int delayLayers = legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS).length();
-			CellList delays = IntStream.range(0, delayLayers)
-					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(c(1.0))),
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(c(1.0)))))
-					.collect(CellList.collector());
-
-			// Route each line to each delay layer
-			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, legacyGenome.valueAt(DefaultAudioGenome.WET_IN, i)))
-					// Feedback grid
-					.mself(fi(), legacyGenome.valueAt(DefaultAudioGenome.TRANSMISSION),
-							fc(legacyGenome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
-					.sum();
-
-			if (disableClean) {
-				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
-				return efx;
-			} else {
-				// Mix efx with main and measure #2
-				efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-
-				if (enableMasterFilterDown) {
-					// Apply dynamic low pass filter
-					main = main.map(fc(i -> {
-						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
-						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
-//							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
-					}));
-				}
-
-				// Deliver main to the output and measure #1
-				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
-
-				return cells(main, efx);
-			}
-		} else {
-			// Deliver main to the output and measure #1 and #2
-			return main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
-		}
-	}
-
-	/**
-	 * This method wraps the specified {@link Factor} to prevent it from
-	 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
-	 * that would proceed to invoke the {@link org.almostrealism.time.Temporal#tick()} operation.
-	 * This is not a good solution, and this process needs to be reworked, so
-	 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
-	 * and it doesn't get invoked multiple times.
-	 */
-	private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
-		return v -> f.getResultant(v);
-	}
-
-	/**
-	 * Create a {@link Gene} for routing delays.
-	 * The current implementation delivers audio to
-	 * the first delay based on the wet level, and
-	 * delivers nothing to the others.
-	 */
-	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
-		ArrayListGene<PackedCollection<?>> gene = new ArrayListGene<>();
-
-		if (enableWetInAdjustment) {
-			gene.add(factor(wet.valueAt(0)));
-		} else {
-			gene.add(p -> c(0.2).multiply(p));
-		}
-
-		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));
-		return gene;
+		return mixdown.cells(legacyGenome, cells, measures, output);
 	}
 
 	public static class Settings {
