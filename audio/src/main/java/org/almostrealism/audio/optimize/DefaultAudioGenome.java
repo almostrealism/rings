@@ -66,7 +66,8 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	private Producer<Scalar> globalTime;
 
 	private GeneratorChromosome generatorChromosome;
-	private AdjustmentChromosome volumeChromosome;
+	// private AdjustmentChromosome volumeChromosome;
+	private org.almostrealism.audio.optimize.AdjustmentChromosome volumeChromosome;
 	private AdjustmentChromosome mainFilterUpChromosome;
 	private AdjustmentChromosome wetInChromosome;
 	private DelayChromosome delayChromosome;
@@ -95,7 +96,11 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
-		if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME, 0.0, 1.0, true, globalTime);
+		// if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME, 0.0, 1.0, true, globalTime);
+		if (volumeChromosome == null) {
+			volumeChromosome = new org.almostrealism.audio.optimize.AdjustmentChromosome(data.valueAt(VOLUME), 0.0, 1.0, true, sampleRate);
+			volumeChromosome.setGlobalTime(globalTime);
+		}
 		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP, 0.0, 1.0, false, globalTime);
 		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN, 0.0, 1.0, false, globalTime);
 		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS, globalTime);

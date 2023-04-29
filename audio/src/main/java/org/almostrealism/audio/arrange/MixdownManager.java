@@ -7,7 +7,6 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
-import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Receptor;
@@ -27,6 +26,7 @@ import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures {
 	private ConfigurableGenome genome;
+	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
 
 	public MixdownManager(ConfigurableGenome genome, int channels, TimeCell clock, int sampleRate) {
@@ -34,13 +34,19 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
-		this.mainFilterUp = new AdjustmentChromosome(v, 0.0, 1.0, false, sampleRate);
+		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
+		this.volume.setGlobalTime(clock.frame());
+
+		SimpleChromosome fup = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
+		IntStream.range(0, channels).forEach(i -> fup.addGene());
+		this.mainFilterUp = new AdjustmentChromosome(fup, 0.0, 1.0, false, sampleRate);
 		this.mainFilterUp.setGlobalTime(clock.frame());
 	}
 
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList();
+		setup.add(volume.expand());
 		setup.add(mainFilterUp.expand());
 		return setup;
 	}
@@ -62,10 +68,13 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		cells = cells
 				.addRequirements(legacyGenome.getTemporals().toArray(TemporalFactor[]::new));
+				// .addRequirements(volume, mainFilterUp);
 
 		if (AudioScene.enableSourcesOnly) {
 			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
 					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+//			return cells.map(fc(i -> factor(volume.valueAt(i, 0))))
+//					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
 		if (AudioScene.enableMixdown)
@@ -78,6 +87,12 @@ public class MixdownManager implements Setup, CellFeatures {
 						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
 								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
 						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
+//		CellList branch[] = cells.branch(
+//				fc(i -> factor(volume.valueAt(i, 0))),
+//				AudioScene.enableEfxFilters ?
+//						fc(i -> factor(volume.valueAt(i, 0))
+//								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
+//						fc(i -> factor(volume.valueAt(i, 0))));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];
