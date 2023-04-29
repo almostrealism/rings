@@ -41,13 +41,13 @@ public class RequestHistory {
 
 	public boolean anyCompleted(String generatorId) {
 		for (RefreshRequest request : refreshRequests) {
-			if (request.getGeneratorId().equals(generatorId) && request.isComplete()) {
+			if (request.getGeneratorId().equals(generatorId) && request.isComplete() && !request.isError()) {
 				return true;
 			}
 		}
 
 		for (GenerateRequest request : generateRequests) {
-			if (request.getGeneratorId().equals(generatorId) && request.isComplete()) {
+			if (request.getGeneratorId().equals(generatorId) && request.isComplete() && !request.isError()) {
 				return true;
 			}
 		}
@@ -57,7 +57,7 @@ public class RequestHistory {
 
 	public boolean anyRefreshing(String generatorId) {
 		for (RefreshRequest request : refreshRequests) {
-			if (request.getGeneratorId().equals(generatorId) && !request.isComplete()) {
+			if (request.getGeneratorId().equals(generatorId) && (!request.isComplete() || request.isError())) {
 				return true;
 			}
 		}
@@ -67,7 +67,7 @@ public class RequestHistory {
 
 	public boolean anyGenerating(String generatorId) {
 		for (GenerateRequest request : generateRequests) {
-			if (request.getGeneratorId().equals(generatorId) && !request.isComplete()) {
+			if (request.getGeneratorId().equals(generatorId) && (!request.isComplete() || request.isError())) {
 				return true;
 			}
 		}

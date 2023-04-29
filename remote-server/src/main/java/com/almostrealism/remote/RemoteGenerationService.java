@@ -37,8 +37,11 @@ public class RemoteGenerationService extends GeneratorGrpc.GeneratorImplBase {
 
 	@Override
 	public StreamObserver<Generation.RefreshRequest> refresh(StreamObserver<Generation.Status> responseObserver) {
-		if (responseObserver instanceof ServerCallStreamObserver)
-			((ServerCallStreamObserver) responseObserver).setOnCancelHandler(() -> { });
+		if (responseObserver instanceof ServerCallStreamObserver) {
+			((ServerCallStreamObserver) responseObserver).setOnCancelHandler(() -> {});
+		} else {
+			System.out.println("WARN: Unable to set onCancelHandler on " + responseObserver.getClass().getName());
+		}
 
 		return new RemoteRefresh(accessManager, queue, responseObserver);
 	}

@@ -22,17 +22,28 @@ import java.io.File;
 import java.io.IOException;
 
 public class RemoteAccessKey {
+	private String host;
+	private int port;
+
 	private String userId;
 	private String token;
 	private String key;
 
 	public RemoteAccessKey() { }
 
-	public RemoteAccessKey(String userId, String token, String key) {
+	public RemoteAccessKey(String host, int port, String userId, String token, String key) {
+		this.host = host;
+		this.port = port;
 		this.userId = userId;
 		this.token = token;
 		this.key = key;
 	}
+
+	public String getHost() { return host;}
+	public void setHost(String host) { this.host = host; }
+
+	public int getPort() { return port; }
+	public void setPort(int port) { this.port = port; }
 
 	public String getUserId() {
 		return userId;
