@@ -125,7 +125,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		} else if (pos == PROCESSORS) {
 			return delayChromosome;
 		} else if (pos == FX_FILTERS) {
-			return new FixedFilterChromosome(pos);
+			return new FixedFilterChromosome(data.valueAt(pos), sampleRate);
 		} else if (pos == MASTER_FILTER_DOWN) {
 			throw new UnsupportedOperationException();
 		} else {
@@ -330,44 +330,44 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		}
 	}
 
-	protected class FixedFilterChromosome implements Chromosome<PackedCollection<?>> {
-		private final int index;
-
-		public FixedFilterChromosome(int index) {
-			this.index = index;
-		}
-
-		@Override
-		public int length() {
-			return data.length(index);
-		}
-
-		@Override
-		public Gene<PackedCollection<?>> valueAt(int pos) {
-			return new FixedFilterGene(index, pos);
-		}
-	}
-
-	protected class FixedFilterGene implements Gene<PackedCollection<?>> {
-		private final int chromosome;
-		private final int index;
-
-		public FixedFilterGene(int chromosome, int index) {
-			this.chromosome = chromosome;
-			this.index = index;
-		}
-
-		@Override
-		public int length() { return 1; }
-
-		@Override
-		public Factor<PackedCollection<?>> valueAt(int pos) {
-			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(c(1.0)));
-			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(c(1.0)));
-			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
-					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
-		}
-	}
+//	protected class FixedFilterChromosome implements Chromosome<PackedCollection<?>> {
+//		private final int index;
+//
+//		public FixedFilterChromosome(int index) {
+//			this.index = index;
+//		}
+//
+//		@Override
+//		public int length() {
+//			return data.length(index);
+//		}
+//
+//		@Override
+//		public Gene<PackedCollection<?>> valueAt(int pos) {
+//			return new FixedFilterGene(index, pos);
+//		}
+//	}
+//
+//	protected class FixedFilterGene implements Gene<PackedCollection<?>> {
+//		private final int chromosome;
+//		private final int index;
+//
+//		public FixedFilterGene(int chromosome, int index) {
+//			this.chromosome = chromosome;
+//			this.index = index;
+//		}
+//
+//		@Override
+//		public int length() { return 1; }
+//
+//		@Override
+//		public Factor<PackedCollection<?>> valueAt(int pos) {
+//			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(c(1.0)));
+//			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(c(1.0)));
+//			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
+//					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
+//		}
+//	}
 
 	public static ChromosomeFactory<PackedCollection<?>> generatorFactory(IntToDoubleFunction choiceMin, IntToDoubleFunction choiceMax,
 																	   double offsetChoices[], double repeatChoices[],
