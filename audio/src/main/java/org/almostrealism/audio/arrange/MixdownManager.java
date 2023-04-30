@@ -49,6 +49,7 @@ public class MixdownManager implements Setup, CellFeatures {
 	private AdjustmentChromosome mainFilterUp;
 	private AdjustmentChromosome wetIn;
 	private SimpleChromosome transmission;
+	private SimpleChromosome wetOut;
 	private DelayChromosome delay;
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
@@ -71,6 +72,9 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		this.transmission = genome.addSimpleChromosome(delayLayers);
 		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene());
+
+		this.wetOut = genome.addSimpleChromosome(delayLayers);
+		this.wetOut.addGene();
 
 		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
@@ -112,6 +116,8 @@ public class MixdownManager implements Setup, CellFeatures {
 		wetIn.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
 
 		IntStream.range(0, delayLayers).forEach(i -> transmission.setParameterRange(i, config.minTransmission, config.maxTransmission));
+
+		IntStream.range(0, delayLayers).forEach(i -> wetOut.setParameterRange(i, config.minWetOut, config.maxWetOut));
 
 		delay.setDelayRange(config.minDelay, config.maxDelay);
 		delay.setPeriodicSpeedUpDurationRange(config.periodicSpeedUpDurationMin, config.periodicSpeedUpDurationMax);
@@ -196,13 +202,12 @@ public class MixdownManager implements Setup, CellFeatures {
 			// Route each line to each delay layer
 //			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
 //					// Feedback grid
-//					.mself(fi(), legacyGenome.valueAt(DefaultAudioGenome.TRANSMISSION),
+//					.mself(fi(), transmission,
 //							fc(legacyGenome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
 //					.sum();
 			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
 					// Feedback grid
-					.mself(fi(), transmission,
-							fc(legacyGenome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
+					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
 					.sum();
 
 			if (AudioScene.disableClean) {
