@@ -139,14 +139,14 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
-		setup.add(delayChromosome.expand());
+		// setup.add(delayChromosome.expand());
 		return setup;
 	}
 
 	public TemporalList getTemporals() {
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(generatorChromosome.getTemporals());
-		temporals.addAll(delayChromosome.getTemporals());
+		// temporals.addAll(delayChromosome.getTemporals());
 		return temporals;
 	}
 

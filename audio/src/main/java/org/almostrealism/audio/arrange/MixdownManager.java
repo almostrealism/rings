@@ -24,6 +24,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
 import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
+import org.almostrealism.audio.optimize.DelayChromosome;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
@@ -47,10 +48,11 @@ public class MixdownManager implements Setup, CellFeatures {
 	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
 	private AdjustmentChromosome wetIn;
+	private DelayChromosome delay;
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
 
-	public MixdownManager(ConfigurableGenome genome, int channels, TimeCell clock, int sampleRate) {
+	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers, TimeCell clock, int sampleRate) {
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
@@ -65,6 +67,11 @@ public class MixdownManager implements Setup, CellFeatures {
 		IntStream.range(0, channels).forEach(i -> w.addGene());
 		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
 		this.wetIn.setGlobalTime(clock.frame());
+
+		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
+		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
+		this.delay = new DelayChromosome(d, sampleRate);
+		this.delay.setGlobalTime(clock.frame());
 
 		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> wf.addGene());
@@ -100,6 +107,14 @@ public class MixdownManager implements Setup, CellFeatures {
 		wetIn.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
 		wetIn.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
 
+		delay.setDelayRange(config.minDelay, config.maxDelay);
+		delay.setPeriodicSpeedUpDurationRange(config.periodicSpeedUpDurationMin, config.periodicSpeedUpDurationMax);
+		delay.setPeriodicSpeedUpPercentageRange(config.periodicSpeedUpPercentageMin, config.periodicSpeedUpPercentageMax);
+		delay.setPeriodicSlowDownDurationRange(config.periodicSlowDownDurationMin, config.periodicSlowDownDurationMax);
+		delay.setPeriodicSlowDownPercentageRange(config.periodicSlowDownPercentageMin, config.periodicSlowDownPercentageMax);
+		delay.setOverallSpeedUpDurationRange(config.overallSpeedUpDurationMin, config.overallSpeedUpDurationMax);
+		delay.setOverallSpeedUpExponentRange(config.overallSpeedUpExponentMin, config.overallSpeedUpExponentMax);
+
 		wetFilter.setHighPassRange(config.minHighPass, config.maxHighPass);
 		wetFilter.setLowPassRange(config.minLowPass, config.maxLowPass);
 
@@ -117,6 +132,7 @@ public class MixdownManager implements Setup, CellFeatures {
 		setup.add(volume.expand());
 		setup.add(mainFilterUp.expand());
 		setup.add(wetIn.expand());
+		setup.add(delay.expand());
 		setup.add(mainFilterDown.expand());
 		return setup;
 	}
@@ -137,6 +153,7 @@ public class MixdownManager implements Setup, CellFeatures {
 		temporals.addAll(volume.getTemporals());
 		temporals.addAll(mainFilterUp.getTemporals());
 		temporals.addAll(wetIn.getTemporals());
+		temporals.addAll(delay.getTemporals());
 		temporals.addAll(mainFilterDown.getTemporals());
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
@@ -164,11 +181,17 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		if (AudioScene.enableEfx) {
 			// Create the delay layers
-			int delayLayers = legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS).length();
+//			int delayLayers = legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS).length();
+//			CellList delays = IntStream.range(0, delayLayers)
+//					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
+//							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(c(1.0))),
+//							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(c(1.0)))))
+//					.collect(CellList.collector());
+			int delayLayers = delay.length();
 			CellList delays = IntStream.range(0, delayLayers)
 					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(c(1.0))),
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(c(1.0)))))
+							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
+							toScalar(delay.valueAt(i, 1).getResultant(c(1.0)))))
 					.collect(CellList.collector());
 
 			// Route each line to each delay layer

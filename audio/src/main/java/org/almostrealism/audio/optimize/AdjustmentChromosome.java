@@ -25,7 +25,7 @@ import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.heredity.SimpleChromosome;
 
-public class AdjustmentChromosome extends WavCellChromosomeExpansion {
+public class AdjustmentChromosome extends WavCellChromosomeExpansion implements OptimizeFactorFeatures {
 	public static final int SIZE = 6;
 
 	private boolean relative;
@@ -92,44 +92,23 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 				factorForAdjustmentOffset(max));
 	}
 
-	public static double factorForPeriodicAdjustmentDuration(double seconds) {
-		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	public double factorForPeriodicAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	public static double factorForPolyAdjustmentDuration(double seconds) {
-		return HeredityFeatures.getInstance().invertOneToInfinity(seconds, 60, 3);
+	public double factorForPolyAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	public static double polyFilterUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
+	public double factorForPolyAdjustmentExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
 	}
 
-	public static double factorForPolyAdjustmentExponent(double exp) {
-		return HeredityFeatures.getInstance().invertOneToInfinity(exp, 10, 1);
+	public double factorForAdjustmentInitial(double value) {
+		return invertOneToInfinity(value, 10, 1);
 	}
 
-	public static double factorForAdjustmentInitial(double value) {
-		return HeredityFeatures.getInstance().invertOneToInfinity(value, 10, 1);
-	}
-
-	public static double factorForAdjustmentOffset(double value) {
-		return HeredityFeatures.getInstance().invertOneToInfinity(value, 60, 3);
-	}
-
-	public static double valueForFactor(Factor<PackedCollection<?>> value) {
-		if (value instanceof ScaleFactor) {
-			return ((ScaleFactor) value).getScaleValue();
-		} else {
-			return value.getResultant(Ops.ops().c(1.0)).get().evaluate().toDouble(0);
-		}
-	}
-
-	public static double valueForFactor(Factor<PackedCollection<?>> value, double exp, double multiplier) {
-		if (value instanceof ScaleFactor) {
-			return HeredityFeatures.getInstance().oneToInfinity(((ScaleFactor) value).getScaleValue(), exp) * multiplier;
-		} else {
-			double v = value.getResultant(Ops.ops().c(1.0)).get().evaluate().toDouble(0);
-			return HeredityFeatures.getInstance().oneToInfinity(v, exp) * multiplier;
-		}
+	public double factorForAdjustmentOffset(double value) {
+		return invertOneToInfinity(value, 60, 3);
 	}
 }

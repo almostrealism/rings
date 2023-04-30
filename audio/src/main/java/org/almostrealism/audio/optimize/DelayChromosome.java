@@ -19,8 +19,10 @@ package org.almostrealism.audio.optimize;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Factor;
+import org.almostrealism.heredity.SimpleChromosome;
 
-public class DelayChromosome extends WavCellChromosomeExpansion {
+public class DelayChromosome extends WavCellChromosomeExpansion implements OptimizeFactorFeatures {
 	public static final int SIZE = 7;
 
 	public DelayChromosome(Chromosome<PackedCollection<?>> source, int sampleRate) {
@@ -45,4 +47,101 @@ public class DelayChromosome extends WavCellChromosomeExpansion {
 					.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
 		});
 	}
+
+	public void setDelayRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(0, factorForDelay(min), factorForDelay(max));
+	}
+
+	public void setPeriodicSpeedUpDurationRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(1,
+				factorForSpeedUpDuration(min),
+				factorForSpeedUpDuration(max));
+	}
+
+	public void setPeriodicSpeedUpPercentageRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(2,
+				factorForSpeedUpPercentage(min),
+				factorForSpeedUpPercentage(max));
+	}
+
+	public void setPeriodicSlowDownDurationRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(3,
+				factorForSlowDownDuration(min),
+				factorForSlowDownDuration(max));
+	}
+
+	public void setPeriodicSlowDownPercentageRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(4,
+				factorForSlowDownPercentage(min),
+				factorForSlowDownPercentage(max));
+	}
+
+	public void setOverallSpeedUpDurationRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(5,
+				factorForPolySpeedUpDuration(min),
+				factorForPolySpeedUpDuration(max));
+	}
+
+	public void setOverallSpeedUpExponentRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(6,
+				factorForPolySpeedUpExponent(min),
+				factorForPolySpeedUpExponent(max));
+	}
+
+	public double factorForDelay(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double delayForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	public double factorForSpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double speedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	public double factorForSpeedUpPercentage(double decimal) {
+		return invertOneToInfinity(decimal, 10, 0.5);
+	}
+
+	public double speedUpPercentageForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 0.5, 10);
+	}
+
+	public double factorForSlowDownDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double slowDownDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	public double factorForSlowDownPercentage(double decimal) {
+		return decimal;
+	}
+
+	public double slowDownPercentageForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f);
+	}
+
+	public double factorForPolySpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double polySpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	public double factorForPolySpeedUpExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	public double polySpeedUpExponentForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 1, 10);
+	}
+
 }

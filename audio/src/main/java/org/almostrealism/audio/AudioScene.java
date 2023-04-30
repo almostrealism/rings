@@ -161,7 +161,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> patternDestination = null);
 
-		this.mixdown = new MixdownManager(genome.getGenome(3), sources, time.getClock(), getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(3), sources, delayLayers, time.getClock(), getSampleRate());
 		this.efx = new EfxManager(genome.getGenome(4), sources, this::getBeatDuration, getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
