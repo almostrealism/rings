@@ -150,8 +150,8 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
 		// setup.add(volumeChromosome.expand());
-		setup.add(mainFilterUpChromosome.expand());
-		setup.add(wetInChromosome.expand());
+		// setup.add(mainFilterUpChromosome.expand());
+		// setup.add(wetInChromosome.expand());
 		setup.add(delayChromosome.expand());
 		setup.add(masterFilterDownChromosome.expand());
 		return setup;
@@ -161,8 +161,8 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(generatorChromosome.getTemporals());
 		// temporals.addAll(volumeChromosome.getTemporals());
-		temporals.addAll(mainFilterUpChromosome.getTemporals());
-		temporals.addAll(wetInChromosome.getTemporals());
+		// temporals.addAll(mainFilterUpChromosome.getTemporals());
+		// temporals.addAll(wetInChromosome.getTemporals());
 		temporals.addAll(delayChromosome.getTemporals());
 		temporals.addAll(masterFilterDownChromosome.getTemporals());
 		return temporals;
