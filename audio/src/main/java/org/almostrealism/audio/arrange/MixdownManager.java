@@ -121,7 +121,7 @@ public class MixdownManager implements Setup, CellFeatures {
 		temporals.addAll(volume.getTemporals());
 		temporals.addAll(mainFilterUp.getTemporals());
 		temporals.addAll(wetIn.getTemporals());
-		// temporals.addAll(mainFilterDown.getTemporals());
+		temporals.addAll(mainFilterDown.getTemporals());
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
@@ -182,8 +182,8 @@ public class MixdownManager implements Setup, CellFeatures {
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
-						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
-						// TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterDown.valueAt(i, 0);
+						// TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
+						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterDown.valueAt(i, 0);
 						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
 					}));
 				}

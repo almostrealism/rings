@@ -153,7 +153,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		// setup.add(mainFilterUpChromosome.expand());
 		// setup.add(wetInChromosome.expand());
 		setup.add(delayChromosome.expand());
-		setup.add(masterFilterDownChromosome.expand());
+		// setup.add(masterFilterDownChromosome.expand());
 		return setup;
 	}
 
@@ -164,7 +164,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		// temporals.addAll(mainFilterUpChromosome.getTemporals());
 		// temporals.addAll(wetInChromosome.getTemporals());
 		temporals.addAll(delayChromosome.getTemporals());
-		temporals.addAll(masterFilterDownChromosome.getTemporals());
+		// temporals.addAll(masterFilterDownChromosome.getTemporals());
 		return temporals;
 	}
 
