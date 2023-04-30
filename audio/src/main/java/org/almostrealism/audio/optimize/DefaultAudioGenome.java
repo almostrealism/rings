@@ -91,7 +91,10 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
-		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS, globalTime);
+		if (delayChromosome == null) {
+			delayChromosome = new DelayChromosome(data.valueAt(PROCESSORS), sampleRate);
+			delayChromosome.setGlobalTime(globalTime);
+		}
 	}
 
 	public void assignTo(Genome g) {
@@ -125,7 +128,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		} else if (pos == PROCESSORS) {
 			return delayChromosome;
 		} else if (pos == FX_FILTERS) {
-			return new FixedFilterChromosome(data.valueAt(pos), sampleRate);
+			throw new UnsupportedOperationException();
 		} else if (pos == MASTER_FILTER_DOWN) {
 			throw new UnsupportedOperationException();
 		} else {
@@ -304,68 +307,29 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		}
 	}
 
-	public class DelayChromosome extends WavCellChromosomeExpansion {
-		public DelayChromosome(int index, Producer<Scalar> globalTime) {
-			super(data.valueAt(index), data.length(index), 7, sampleRate);
-			setGlobalTime(globalTime);
-			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-			setTransform(1, g -> oneToInfinity(g.valueAt(1).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-			setTransform(2, g -> oneToInfinity(g.valueAt(2).getResultant(c(1.0)), 0.5).multiply(c(10.0)));
-			setTransform(3, g -> oneToInfinity(g.valueAt(3).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
-			setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
-			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
-			addFactor((p, in) -> {
-				CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
-				CollectionProducerComputation speedUpAmp = c(p, 2);
-				CollectionProducerComputation slowDownWavelength = c(p, 3).multiply(c(2.0));
-				CollectionProducerComputation slowDownAmp = c(p, 4);
-				CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
-				CollectionProducerComputation polySpeedUpExp = c(p, 6);
-				return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-						.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-						.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
-			});
-		}
-	}
-
-//	protected class FixedFilterChromosome implements Chromosome<PackedCollection<?>> {
-//		private final int index;
-//
-//		public FixedFilterChromosome(int index) {
-//			this.index = index;
-//		}
-//
-//		@Override
-//		public int length() {
-//			return data.length(index);
-//		}
-//
-//		@Override
-//		public Gene<PackedCollection<?>> valueAt(int pos) {
-//			return new FixedFilterGene(index, pos);
-//		}
-//	}
-//
-//	protected class FixedFilterGene implements Gene<PackedCollection<?>> {
-//		private final int chromosome;
-//		private final int index;
-//
-//		public FixedFilterGene(int chromosome, int index) {
-//			this.chromosome = chromosome;
-//			this.index = index;
-//		}
-//
-//		@Override
-//		public int length() { return 1; }
-//
-//		@Override
-//		public Factor<PackedCollection<?>> valueAt(int pos) {
-//			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 0).getResultant(c(1.0)));
-//			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), data.valueAt(chromosome, index, 1).getResultant(c(1.0)));
-//			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
-//					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
+//	public class DelayChromosome extends WavCellChromosomeExpansion {
+//		public DelayChromosome(int index, Producer<Scalar> globalTime) {
+//			super(data.valueAt(index), data.length(index), 7, sampleRate);
+//			setGlobalTime(globalTime);
+//			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+//			setTransform(1, g -> oneToInfinity(g.valueAt(1).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+//			setTransform(2, g -> oneToInfinity(g.valueAt(2).getResultant(c(1.0)), 0.5).multiply(c(10.0)));
+//			setTransform(3, g -> oneToInfinity(g.valueAt(3).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+//			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
+//			setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
+//			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
+//			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
+//			addFactor((p, in) -> {
+//				CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
+//				CollectionProducerComputation speedUpAmp = c(p, 2);
+//				CollectionProducerComputation slowDownWavelength = c(p, 3).multiply(c(2.0));
+//				CollectionProducerComputation slowDownAmp = c(p, 4);
+//				CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
+//				CollectionProducerComputation polySpeedUpExp = c(p, 6);
+//				return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+//						.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+//						.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
+//			});
 //		}
 //	}
 

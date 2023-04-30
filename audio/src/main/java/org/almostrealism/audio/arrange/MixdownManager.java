@@ -1,7 +1,22 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -22,7 +37,6 @@ import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.TemporalFactor;
-import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
 import java.util.List;
@@ -30,7 +44,6 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures {
-	private ConfigurableGenome genome;
 	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
 	private AdjustmentChromosome wetIn;
@@ -38,8 +51,6 @@ public class MixdownManager implements Setup, CellFeatures {
 	private AdjustmentChromosome mainFilterDown;
 
 	public MixdownManager(ConfigurableGenome genome, int channels, TimeCell clock, int sampleRate) {
-		this.genome = genome;
-
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
@@ -139,17 +150,10 @@ public class MixdownManager implements Setup, CellFeatures {
 			cells = cells.mixdown(AudioScene.mixdownDuration);
 
 		// Volume adjustment
-//		CellList branch[] = cells.branch(
-//				fc(i -> factor(volume.valueAt(i, 0))),
-//				AudioScene.enableEfxFilters ?
-//						fc(i -> factor(volume.valueAt(i, 0))
-//								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-//						fc(i -> factor(volume.valueAt(i, 0))));
 		CellList branch[] = cells.branch(
 				fc(i -> factor(volume.valueAt(i, 0))),
 				AudioScene.enableEfxFilters ?
-						fc(i -> factor(volume.valueAt(i, 0))
-								.andThen(wetFilter.valueAt(i, 0))) :
+						fc(i -> factor(volume.valueAt(i, 0)).andThen(wetFilter.valueAt(i, 0))) :
 						fc(i -> factor(volume.valueAt(i, 0))));
 
 		CellList main = branch[0];
