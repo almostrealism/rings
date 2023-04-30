@@ -1,11 +1,13 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
+import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
@@ -41,6 +43,51 @@ public class MixdownManager implements Setup, CellFeatures {
 		IntStream.range(0, channels).forEach(i -> fup.addGene());
 		this.mainFilterUp = new AdjustmentChromosome(fup, 0.0, 1.0, false, sampleRate);
 		this.mainFilterUp.setGlobalTime(clock.frame());
+
+		initRanges(new AudioSceneGenome.GeneratorConfiguration(channels));
+	}
+
+	public void initRanges(AudioSceneGenome.GeneratorConfiguration config) {
+		setPeriodicVolumeDurationRange(
+				DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
+				DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
+		setOverallVolumeDurationRange(
+				DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
+				DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
+		setOverallVolumeInitialRange(
+				DefaultAudioGenome.factorForAdjustmentInitial(config.minVolumeValue),
+				DefaultAudioGenome.factorForAdjustmentInitial(config.maxVolumeValue));
+		setOverallVolumeScaleRange(-1.0, -1.0);
+		setOverallVolumeExponentRange(
+				DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
+				DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
+		setOverallVolumeOffsetRange(
+				DefaultAudioGenome.factorForAdjustmentOffset(config.overallVolumeOffsetMin),
+				DefaultAudioGenome.factorForAdjustmentOffset(config.overallVolumeOffsetMax));
+	}
+
+	public void setPeriodicVolumeDurationRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(0, min, max);
+	}
+
+	public void setOverallVolumeDurationRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(1, min, max);
+	}
+
+	public void setOverallVolumeExponentRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(2, min, max);
+	}
+
+	public void setOverallVolumeInitialRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(3, min, max);
+	}
+
+	public void setOverallVolumeScaleRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(4, min, max);
+	}
+
+	public void setOverallVolumeOffsetRange(double min, double max) {
+		((SimpleChromosome) volume.getSource()).setParameterRange(5, min, max);
 	}
 
 	@Override
