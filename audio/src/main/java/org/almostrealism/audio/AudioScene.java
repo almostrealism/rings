@@ -336,7 +336,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, OperationList setup) {
 		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return mixdown.cells(legacyGenome, cells, measures, output);
+		return mixdown.cells(cells, measures, output);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {

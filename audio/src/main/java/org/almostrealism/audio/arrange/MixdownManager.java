@@ -149,7 +149,7 @@ public class MixdownManager implements Setup, CellFeatures {
 		return setup;
 	}
 
-	public CellList cells(DefaultAudioGenome legacyGenome, CellList sources, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	public CellList cells(CellList sources, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
 		CellList cells = sources;
 
 		if (AudioScene.enableMainFilterUp) {
@@ -161,7 +161,6 @@ public class MixdownManager implements Setup, CellFeatures {
 		}
 
 		TemporalList temporals = new TemporalList();
-		temporals.addAll(legacyGenome.getTemporals());
 		temporals.addAll(volume.getTemporals());
 		temporals.addAll(mainFilterUp.getTemporals());
 		temporals.addAll(wetIn.getTemporals());
@@ -200,11 +199,6 @@ public class MixdownManager implements Setup, CellFeatures {
 					.collect(CellList.collector());
 
 			// Route each line to each delay layer
-//			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
-//					// Feedback grid
-//					.mself(fi(), transmission,
-//							fc(legacyGenome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
-//					.sum();
 			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
 					// Feedback grid
 					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
