@@ -66,12 +66,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	private Producer<Scalar> globalTime;
 
 	private GeneratorChromosome generatorChromosome;
-	// private AdjustmentChromosome volumeChromosome;
-	private org.almostrealism.audio.optimize.AdjustmentChromosome volumeChromosome;
-	private AdjustmentChromosome mainFilterUpChromosome;
-	private AdjustmentChromosome wetInChromosome;
 	private DelayChromosome delayChromosome;
-	private AdjustmentChromosome masterFilterDownChromosome;
 
 	public DefaultAudioGenome(int sources, int delayLayers, Producer<Scalar> globalTime) {
 		this(sources, delayLayers, OutputLine.sampleRate, globalTime);
@@ -96,15 +91,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
-		// if (volumeChromosome == null) volumeChromosome = new AdjustmentChromosome(VOLUME, 0.0, 1.0, true, globalTime);
-		if (volumeChromosome == null) {
-			volumeChromosome = new org.almostrealism.audio.optimize.AdjustmentChromosome(data.valueAt(VOLUME), 0.0, 1.0, true, sampleRate);
-			volumeChromosome.setGlobalTime(globalTime);
-		}
-		if (mainFilterUpChromosome == null) mainFilterUpChromosome = new AdjustmentChromosome(MAIN_FILTER_UP, 0.0, 1.0, false, globalTime);
-		if (wetInChromosome == null) wetInChromosome = new AdjustmentChromosome(WET_IN, 0.0, 1.0, false, globalTime);
 		if (delayChromosome == null) delayChromosome = new DelayChromosome(PROCESSORS, globalTime);
-		if (masterFilterDownChromosome == null) masterFilterDownChromosome = new AdjustmentChromosome(MASTER_FILTER_DOWN, 0.0, 1.0, false, globalTime);
 	}
 
 	public void assignTo(Genome g) {
@@ -130,17 +117,17 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		if (pos == GENERATORS) {
 			return generatorChromosome;
 		} else if (pos == VOLUME) {
-			return volumeChromosome;
+			throw new UnsupportedOperationException();
 		} else if (pos == MAIN_FILTER_UP) {
-			return mainFilterUpChromosome;
+			throw new UnsupportedOperationException();
 		} else if (pos == WET_IN) {
-			return wetInChromosome;
+			throw new UnsupportedOperationException();
 		} else if (pos == PROCESSORS) {
 			return delayChromosome;
 		} else if (pos == FX_FILTERS) {
 			return new FixedFilterChromosome(pos);
 		} else if (pos == MASTER_FILTER_DOWN) {
-			return masterFilterDownChromosome;
+			throw new UnsupportedOperationException();
 		} else {
 			return data.valueAt(pos);
 		}
@@ -149,22 +136,14 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
-		// setup.add(volumeChromosome.expand());
-		// setup.add(mainFilterUpChromosome.expand());
-		// setup.add(wetInChromosome.expand());
 		setup.add(delayChromosome.expand());
-		// setup.add(masterFilterDownChromosome.expand());
 		return setup;
 	}
 
 	public TemporalList getTemporals() {
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(generatorChromosome.getTemporals());
-		// temporals.addAll(volumeChromosome.getTemporals());
-		// temporals.addAll(mainFilterUpChromosome.getTemporals());
-		// temporals.addAll(wetInChromosome.getTemporals());
 		temporals.addAll(delayChromosome.getTemporals());
-		// temporals.addAll(masterFilterDownChromosome.getTemporals());
 		return temporals;
 	}
 
@@ -321,40 +300,6 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 				return initial.divide(pow(c(2.0), floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
 				// return initial;
-			});
-		}
-	}
-
-	@Deprecated
-	public class AdjustmentChromosome extends WavCellChromosomeExpansion {
-		private boolean relative;
-
-		public AdjustmentChromosome(int index, double min, double max, boolean relative, Producer<Scalar> globalTime) {
-			super(data.valueAt(index), data.length(index), 6, sampleRate);
-			setGlobalTime(globalTime);
-			this.relative = relative;
-			setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(c(60.0)));
-			setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(c(60.0)));
-			setTransform(2, g -> oneToInfinity(g.valueAt(2), 1.0).multiply(c(10.0)));
-			setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0).multiply(c(10.0)));
-			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
-			setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0).multiply(c(60.0)));
-			addFactor((p, in) -> {
-				CollectionProducerComputation periodicWavelength = c(p, 0);
-				CollectionProducerComputation periodicAmp = c(1.0);
-				CollectionProducerComputation polyWaveLength = c(p, 1);
-				CollectionProducerComputation polyExp = c(p, 2);
-				CollectionProducerComputation initial = c(p, 3);
-				CollectionProducerComputation scale = c(p, 4);
-				CollectionProducerComputation offset = c(p, 5);
-
-//				return sinw(in, periodicWavelength, periodicAmp).pow(2.0)
-//						.multiply(polyWaveLength.pow(-1.0).multiply(in).pow(polyExp));
-
-				if (relative) scale = scale.multiply(initial);
-				CollectionProducerComputation pos = subtract(in, offset);
-				return _bound(pos._greaterThan(c(0.0), polyWaveLength.pow(c(-1.0)).multiply(pos).pow(polyExp).multiply(scale).add(initial), initial), min, max);
-//				return bound(polyWaveLength.pow(-1.0).multiply(pos).pow(polyExp).multiply(scale).add(initial), min, max);
 			});
 		}
 	}

@@ -106,10 +106,6 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		if (AudioScene.enableMainFilterUp) {
 			// Apply dynamic high pass filters
-//			cells = cells.map(fc(i -> {
-//				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-//				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
-//			}));
 			cells = cells.map(fc(i -> {
 				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterUp.valueAt(i, 0);
 				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
@@ -126,8 +122,6 @@ public class MixdownManager implements Setup, CellFeatures {
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
 		if (AudioScene.enableSourcesOnly) {
-//			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
-//					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 			return cells.map(fc(i -> factor(volume.valueAt(i, 0))))
 					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
@@ -136,12 +130,6 @@ public class MixdownManager implements Setup, CellFeatures {
 			cells = cells.mixdown(AudioScene.mixdownDuration);
 
 		// Volume adjustment
-//		CellList branch[] = cells.branch(
-//				fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
-//				AudioScene.enableEfxFilters ?
-//						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
-//								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-//						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
 		CellList branch[] = cells.branch(
 				fc(i -> factor(volume.valueAt(i, 0))),
 				AudioScene.enableEfxFilters ?
@@ -165,7 +153,6 @@ public class MixdownManager implements Setup, CellFeatures {
 					.collect(CellList.collector());
 
 			// Route each line to each delay layer
-//			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, legacyGenome.valueAt(DefaultAudioGenome.WET_IN, i)))
 			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
 					// Feedback grid
 					.mself(fi(), legacyGenome.valueAt(DefaultAudioGenome.TRANSMISSION),
@@ -182,7 +169,6 @@ public class MixdownManager implements Setup, CellFeatures {
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
-						// TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
 						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterDown.valueAt(i, 0);
 						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
 					}));
