@@ -21,6 +21,8 @@ import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.TemporalFactor;
+import org.almostrealism.time.Temporal;
+import org.almostrealism.time.TemporalList;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -48,46 +50,12 @@ public class MixdownManager implements Setup, CellFeatures {
 	}
 
 	public void initRanges(AudioSceneGenome.GeneratorConfiguration config) {
-		setPeriodicVolumeDurationRange(
-				DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
-				DefaultAudioGenome.factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
-		setOverallVolumeDurationRange(
-				DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
-				DefaultAudioGenome.factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
-		setOverallVolumeInitialRange(
-				DefaultAudioGenome.factorForAdjustmentInitial(config.minVolumeValue),
-				DefaultAudioGenome.factorForAdjustmentInitial(config.maxVolumeValue));
-		setOverallVolumeScaleRange(-1.0, -1.0);
-		setOverallVolumeExponentRange(
-				DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
-				DefaultAudioGenome.factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
-		setOverallVolumeOffsetRange(
-				DefaultAudioGenome.factorForAdjustmentOffset(config.overallVolumeOffsetMin),
-				DefaultAudioGenome.factorForAdjustmentOffset(config.overallVolumeOffsetMax));
-	}
-
-	public void setPeriodicVolumeDurationRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(0, min, max);
-	}
-
-	public void setOverallVolumeDurationRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(1, min, max);
-	}
-
-	public void setOverallVolumeExponentRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(2, min, max);
-	}
-
-	public void setOverallVolumeInitialRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(3, min, max);
-	}
-
-	public void setOverallVolumeScaleRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(4, min, max);
-	}
-
-	public void setOverallVolumeOffsetRange(double min, double max) {
-		((SimpleChromosome) volume.getSource()).setParameterRange(5, min, max);
+		volume.setPeriodicDurationRange(config.periodicVolumeDurationMin, config.periodicVolumeDurationMax);
+		volume.setOverallDurationRange(config.overallVolumeDurationMin, config.overallVolumeDurationMax);
+		volume.setOverallInitialRange(config.minVolumeValue, config.maxVolumeValue);
+		volume.setOverallScaleRange(-1.0, -1.0);
+		volume.setOverallExponentRange(config.overallVolumeExponentMin, config.overallVolumeExponentMax);
+		volume.setOverallOffsetRange(config.overallVolumeOffsetMin, config.overallVolumeOffsetMax);
 	}
 
 	@Override
@@ -113,33 +81,35 @@ public class MixdownManager implements Setup, CellFeatures {
 			}));
 		}
 
-		cells = cells
-				.addRequirements(legacyGenome.getTemporals().toArray(TemporalFactor[]::new));
-				// .addRequirements(volume, mainFilterUp);
+		TemporalList temporals = new TemporalList();
+		temporals.addAll(legacyGenome.getTemporals());
+		temporals.addAll(volume.getTemporals());
+
+		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
 		if (AudioScene.enableSourcesOnly) {
-			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
-					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
-//			return cells.map(fc(i -> factor(volume.valueAt(i, 0))))
+//			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
 //					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+			return cells.map(fc(i -> factor(volume.valueAt(i, 0))))
+					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
 		if (AudioScene.enableMixdown)
 			cells = cells.mixdown(AudioScene.mixdownDuration);
 
 		// Volume adjustment
-		CellList branch[] = cells.branch(
-				fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
-				AudioScene.enableEfxFilters ?
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
-								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
 //		CellList branch[] = cells.branch(
-//				fc(i -> factor(volume.valueAt(i, 0))),
+//				fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
 //				AudioScene.enableEfxFilters ?
-//						fc(i -> factor(volume.valueAt(i, 0))
+//						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
 //								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-//						fc(i -> factor(volume.valueAt(i, 0))));
+//						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
+		CellList branch[] = cells.branch(
+				fc(i -> factor(volume.valueAt(i, 0))),
+				AudioScene.enableEfxFilters ?
+						fc(i -> factor(volume.valueAt(i, 0))
+								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
+						fc(i -> factor(volume.valueAt(i, 0))));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];

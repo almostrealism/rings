@@ -328,8 +328,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		setup = new OperationList("AudioScene Setup");
 		if (legacyGenome != null) setup.add(legacyGenome.setup());
-		setup.add(time.setup());
 		setup.add(mixdown.setup());
+		setup.add(time.setup());
 
 		if (enablePatternSystem) {
 			cells = getPatternCells(measures, output, setup);
