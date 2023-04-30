@@ -56,9 +56,6 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	public static final int FX_FILTERS = 8;
 	public static final int MASTER_FILTER_DOWN = 9;
 
-	public static double defaultResonance = 0.1; // TODO
-	private static double maxFrequency = 20000;
-
 	private AssignableGenome data;
 	private int sources, delayLayers, length;
 	private int sampleRate;
@@ -66,7 +63,6 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	private Producer<Scalar> globalTime;
 
 	private GeneratorChromosome generatorChromosome;
-	private DelayChromosome delayChromosome;
 
 	public DefaultAudioGenome(int sources, int delayLayers, Producer<Scalar> globalTime) {
 		this(sources, delayLayers, OutputLine.sampleRate, globalTime);
@@ -91,10 +87,6 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	protected void initChromosomes() {
 		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
-		if (delayChromosome == null) {
-			delayChromosome = new DelayChromosome(data.valueAt(PROCESSORS), sampleRate);
-			delayChromosome.setGlobalTime(globalTime);
-		}
 	}
 
 	public void assignTo(Genome g) {
@@ -126,7 +118,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		} else if (pos == WET_IN) {
 			throw new UnsupportedOperationException();
 		} else if (pos == PROCESSORS) {
-			return delayChromosome;
+			throw new UnsupportedOperationException();
 		} else if (pos == FX_FILTERS) {
 			throw new UnsupportedOperationException();
 		} else if (pos == MASTER_FILTER_DOWN) {
@@ -139,14 +131,12 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
 		setup.add(generatorChromosome.expand());
-		// setup.add(delayChromosome.expand());
 		return setup;
 	}
 
 	public TemporalList getTemporals() {
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(generatorChromosome.getTemporals());
-		// temporals.addAll(delayChromosome.getTemporals());
 		return temporals;
 	}
 
@@ -306,32 +296,6 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			});
 		}
 	}
-
-//	public class DelayChromosome extends WavCellChromosomeExpansion {
-//		public DelayChromosome(int index, Producer<Scalar> globalTime) {
-//			super(data.valueAt(index), data.length(index), 7, sampleRate);
-//			setGlobalTime(globalTime);
-//			setTransform(0, g -> oneToInfinity(g.valueAt(0).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-//			setTransform(1, g -> oneToInfinity(g.valueAt(1).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-//			setTransform(2, g -> oneToInfinity(g.valueAt(2).getResultant(c(1.0)), 0.5).multiply(c(10.0)));
-//			setTransform(3, g -> oneToInfinity(g.valueAt(3).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-//			setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
-//			setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
-//			setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
-//			addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
-//			addFactor((p, in) -> {
-//				CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
-//				CollectionProducerComputation speedUpAmp = c(p, 2);
-//				CollectionProducerComputation slowDownWavelength = c(p, 3).multiply(c(2.0));
-//				CollectionProducerComputation slowDownAmp = c(p, 4);
-//				CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
-//				CollectionProducerComputation polySpeedUpExp = c(p, 6);
-//				return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-//						.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-//						.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
-//			});
-//		}
-//	}
 
 	public static ChromosomeFactory<PackedCollection<?>> generatorFactory(IntToDoubleFunction choiceMin, IntToDoubleFunction choiceMax,
 																	   double offsetChoices[], double repeatChoices[],

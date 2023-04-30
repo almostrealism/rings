@@ -21,6 +21,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
+import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
 import org.almostrealism.audio.optimize.RiseFallChromosome;
 import org.almostrealism.collect.PackedCollection;
@@ -121,7 +122,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 						.addSetup((Setup) factor)
 						.addRequirements(clock, temporals)
 						.map(fc(i -> lp(factor.getResultant(c(1.0)),
-								v(DefaultAudioGenome.defaultResonance))));
+								v(FixedFilterChromosome.defaultResonance))));
 			}
 
 			OperationList process = new OperationList();

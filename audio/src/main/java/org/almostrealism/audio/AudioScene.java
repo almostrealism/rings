@@ -76,7 +76,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public static final int mixdownDuration = 140;
 
-	public static final boolean enablePatternSystem = true;
 	public static final boolean enableRepeat = true;
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
@@ -331,12 +330,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		if (enablePatternSystem) {
-			cells = getPatternCells(measures, output, setup);
-		} else {
-			cells = getWavesCells(measures, output);
-		}
-
+		cells = getPatternCells(measures, output, setup);
 		return cells.addRequirement(time::tick);
 	}
 
@@ -397,36 +391,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		} else {
 			setSettings(Settings.defaultSettings(getSourceCount(), DEFAULT_PATTERNS_PER_CHANNEL));
 		}
-	}
-
-	private CellList getWavesCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
-		sources.setBpm(getBPM());
-
-		BiFunction<Gene<PackedCollection<?>>, Gene<PackedCollection<?>>, IntFunction<Cell<PackedCollection<?>>>> generator = (g, p) -> channel -> {
-			Producer<PackedCollection<?>> duration = g.valueAt(2).getResultant(c(getTempo().l(1)));
-
-			Producer<PackedCollection<?>> x = p.valueAt(0).getResultant(c(1.0));
-			Producer<PackedCollection<?>> y = p.valueAt(1).getResultant(c(1.0));
-			Producer<PackedCollection<?>> z = p.valueAt(2).getResultant(c(1.0));
-
-			if (sourceOverride == null) {
-				return getWaves().getChoiceCell(channel,
-						toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-						toScalar(x), toScalar(y), toScalar(z), toScalar(g.valueAt(1).getResultant(duration)),
-						enableRepeat ? toScalar(duration) : null);
-			} else {
-				return sourceOverride.getChoiceCell(channel, toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-						v(0.0), v(0.0), v(0.0), v(0.0), null);
-			}
-		};
-
-		// Generators
-		CellList cells = cells(legacyGenome.valueAt(DefaultAudioGenome.GENERATORS).length(),
-				i -> generator.apply(legacyGenome.valueAt(DefaultAudioGenome.GENERATORS, i),
-									legacyGenome.valueAt(DefaultAudioGenome.PARAMETERS, i))
-										.apply(i));
-
-		return mixdown.cells(legacyGenome, cells, measures, output);
 	}
 
 	public static class Settings {
