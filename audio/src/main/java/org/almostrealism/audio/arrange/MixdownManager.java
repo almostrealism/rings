@@ -9,6 +9,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
 import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
+import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Receptor;
@@ -33,6 +34,7 @@ public class MixdownManager implements Setup, CellFeatures {
 	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
 	private AdjustmentChromosome wetIn;
+	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
 
 	public MixdownManager(ConfigurableGenome genome, int channels, TimeCell clock, int sampleRate) {
@@ -52,6 +54,10 @@ public class MixdownManager implements Setup, CellFeatures {
 		IntStream.range(0, channels).forEach(i -> w.addGene());
 		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
 		this.wetIn.setGlobalTime(clock.frame());
+
+		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
+		IntStream.range(0, channels).forEach(i -> wf.addGene());
+		this.wetFilter = new FixedFilterChromosome(wf, sampleRate);
 
 		SimpleChromosome fdown = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fdown.addGene());
@@ -82,6 +88,9 @@ public class MixdownManager implements Setup, CellFeatures {
 		wetIn.setOverallScaleRange(1.0, 1.0);
 		wetIn.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
 		wetIn.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
+
+		wetFilter.setHighPassRange(config.minHighPass, config.maxHighPass);
+		wetFilter.setLowPassRange(config.minLowPass, config.maxLowPass);
 
 		mainFilterDown.setPeriodicDurationRange(config.periodicMasterFilterDownDurationMin, config.periodicMasterFilterDownDurationMax);
 		mainFilterDown.setOverallDurationRange(config.overallMasterFilterDownDurationMin, config.overallMasterFilterDownDurationMax);
@@ -130,11 +139,17 @@ public class MixdownManager implements Setup, CellFeatures {
 			cells = cells.mixdown(AudioScene.mixdownDuration);
 
 		// Volume adjustment
+//		CellList branch[] = cells.branch(
+//				fc(i -> factor(volume.valueAt(i, 0))),
+//				AudioScene.enableEfxFilters ?
+//						fc(i -> factor(volume.valueAt(i, 0))
+//								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
+//						fc(i -> factor(volume.valueAt(i, 0))));
 		CellList branch[] = cells.branch(
 				fc(i -> factor(volume.valueAt(i, 0))),
 				AudioScene.enableEfxFilters ?
 						fc(i -> factor(volume.valueAt(i, 0))
-								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
+								.andThen(wetFilter.valueAt(i, 0))) :
 						fc(i -> factor(volume.valueAt(i, 0))));
 
 		CellList main = branch[0];

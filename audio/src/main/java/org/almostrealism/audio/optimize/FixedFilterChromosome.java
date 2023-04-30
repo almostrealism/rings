@@ -7,8 +7,11 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.SimpleChromosome;
 
 public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, CellFeatures {
+	public static final int SIZE = 2;
+
 	public static double defaultResonance = 0.1; // TODO
 	private static double maxFrequency = 20000;
 
@@ -47,5 +50,13 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, C
 			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
 		}
+	}
+
+	public void setHighPassRange(double min, double max) {
+		((SimpleChromosome) source).setParameterRange(0, min / maxFrequency, max / maxFrequency);
+	}
+
+	public void setLowPassRange(double min, double max) {
+		((SimpleChromosome) source).setParameterRange(1, min / maxFrequency, max / maxFrequency);
 	}
 }
