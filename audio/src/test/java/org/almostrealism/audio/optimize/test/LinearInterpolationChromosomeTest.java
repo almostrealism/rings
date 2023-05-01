@@ -8,6 +8,7 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
+import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
@@ -73,7 +74,7 @@ public class LinearInterpolationChromosomeTest implements CellFeatures, TestFeat
 				.addSetup((Setup) factor)
 				.addRequirements(clock, temporals)
 				.map(fc(i -> lp(factor.getResultant(c(1.0)),
-						v(DefaultAudioGenome.defaultResonance))))
+						v(FixedFilterChromosome.defaultResonance))))
 				.o(i -> new File("results/lowpass-filter-interpolation.wav"));
 
 		OperationList op = new OperationList();

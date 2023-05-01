@@ -18,8 +18,6 @@ package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -28,8 +26,6 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
-import org.almostrealism.audio.optimize.AudioSceneGenome;
-import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -37,22 +33,12 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.AdjustableDelayCell;
-import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.Breeders;
 import org.almostrealism.heredity.CombinedGenome;
-import org.almostrealism.heredity.DefaultGenomeBreeder;
-import org.almostrealism.heredity.Factor;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
-import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
@@ -62,10 +48,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
-import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -114,7 +98,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private GenerationManager generation;
 
 	private CombinedGenome genome;
-	private DefaultAudioGenome legacyGenome;
 	
 	private OperationList setup;
 
@@ -142,7 +125,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
 		this.genome = new CombinedGenome(5);
-		this.legacyGenome = new DefaultAudioGenome(sources, delayLayers, sampleRate, time.getClock().frame());
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getMeasureDuration, getSampleRate());
@@ -184,40 +166,27 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public ParameterGenome getGenome() { return genome.getParameters(); }
 
-	@Deprecated
-	public DefaultAudioGenome getLegacyGenome() { return legacyGenome; }
-
 	public GenomeBreeder<PackedCollection<?>> getBreeder() {
-		GenomeBreeder<PackedCollection<?>> breeder = genome.getBreeder();
+		return genome.getBreeder();
 
-		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
-				Breeders.of(Breeders.randomChoiceBreeder(),
-						Breeders.randomChoiceBreeder(),
-						Breeders.randomChoiceBreeder(),
-						Breeders.averageBreeder()), 							   // GENERATORS
-				Breeders.averageBreeder(),										   // PARAMETERS
-				Breeders.averageBreeder(),  									   // VOLUME
-				Breeders.averageBreeder(),  									   // MAIN FILTER UP
-				Breeders.averageBreeder(),  									   // WET IN
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
-				Breeders.averageBreeder(),  									   // WET OUT
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
-
-		return (g1, g2) -> {
-			AudioSceneGenome asg1 = (AudioSceneGenome) g1;
-			AudioSceneGenome asg2 = (AudioSceneGenome) g2;
-			return new AudioSceneGenome(breeder.combine(asg1.getGenome(), asg2.getGenome()),
-					legacyBreeder.combine(asg1.getLegacyGenome(), asg2.getLegacyGenome()));
-		};
+//		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
+//				Breeders.of(Breeders.randomChoiceBreeder(),
+//						Breeders.randomChoiceBreeder(),
+//						Breeders.randomChoiceBreeder(),
+//						Breeders.averageBreeder()), 							   // GENERATORS
+//				Breeders.averageBreeder(),										   // PARAMETERS
+//				Breeders.averageBreeder(),  									   // VOLUME
+//				Breeders.averageBreeder(),  									   // MAIN FILTER UP
+//				Breeders.averageBreeder(),  									   // WET IN
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
+//				Breeders.averageBreeder(),  									   // WET OUT
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
+//				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
 	}
 
 	public void assignGenome(Genome<PackedCollection<?>> genome) {
-		AudioSceneGenome g = (AudioSceneGenome) genome;
-		this.genome.assignTo(g.getGenome());
-		if (g.getLegacyGenome() != null && this.legacyGenome != null)
-			this.legacyGenome.assignTo(g.getLegacyGenome());
+		this.genome.assignTo(genome);
 		this.progression.refreshParameters();
 		this.patterns.refreshParameters();
 	}
@@ -326,7 +295,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
-		if (legacyGenome != null) setup.add(legacyGenome.setup());
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 

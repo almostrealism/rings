@@ -16,17 +16,13 @@
 
 package org.almostrealism.audio.optimize.test;
 
-import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.optimize.AudioSceneGenome;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.audio.optimize.CellularAudioOptimizer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;

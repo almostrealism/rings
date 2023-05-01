@@ -124,7 +124,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		health.setOutputFile("results/cells-pattern-small.wav");
 
 		AudioScene<?> pattern = pattern(2, 2, true);
-		pattern.assignGenome(genome(pattern, false));
+		pattern.assignGenome(pattern.getGenome().random());
 
 		Cells organ = cells(pattern, health.getMeasures(), health.getOutput());
 

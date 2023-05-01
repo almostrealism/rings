@@ -22,8 +22,6 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
-import org.almostrealism.audio.optimize.AudioSceneGenome;
-import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.optimize.DelayChromosome;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.collect.PackedCollection;
@@ -41,6 +39,7 @@ import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.TemporalList;
 
 import java.util.List;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -90,10 +89,10 @@ public class MixdownManager implements Setup, CellFeatures {
 		this.mainFilterDown = new AdjustmentChromosome(fdown, 0.0, 1.0, false, sampleRate);
 		this.mainFilterDown.setGlobalTime(clock.frame());
 
-		initRanges(new AudioSceneGenome.GeneratorConfiguration(channels), delayLayers);
+		initRanges(new Configuration(channels), delayLayers);
 	}
 
-	public void initRanges(AudioSceneGenome.GeneratorConfiguration config, int delayLayers) {
+	public void initRanges(Configuration config, int delayLayers) {
 		volume.setPeriodicDurationRange(config.periodicVolumeDurationMin, config.periodicVolumeDurationMax);
 		volume.setOverallDurationRange(config.overallVolumeDurationMin, config.overallVolumeDurationMax);
 		volume.setOverallInitialRange(config.minVolumeValue, config.maxVolumeValue);
@@ -260,5 +259,164 @@ public class MixdownManager implements Setup, CellFeatures {
 
 		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));
 		return gene;
+	}
+
+	public static class Configuration {
+		public IntToDoubleFunction minChoice, maxChoice;
+		public double minChoiceValue, maxChoiceValue;
+
+		public double repeatSpeedUpDurationMin, repeatSpeedUpDurationMax;
+
+		public IntToDoubleFunction minX, maxX;
+		public IntToDoubleFunction minY, maxY;
+		public IntToDoubleFunction minZ, maxZ;
+		public double minXValue, maxXValue;
+		public double minYValue, maxYValue;
+		public double minZValue, maxZValue;
+
+		public IntToDoubleFunction minVolume, maxVolume;
+		public double minVolumeValue, maxVolumeValue;
+		public double periodicVolumeDurationMin, periodicVolumeDurationMax;
+		public double overallVolumeDurationMin, overallVolumeDurationMax;
+		public double overallVolumeExponentMin, overallVolumeExponentMax;
+		public double overallVolumeOffsetMin, overallVolumeOffsetMax;
+
+		public double periodicFilterUpDurationMin, periodicFilterUpDurationMax;
+		public double overallFilterUpDurationMin, overallFilterUpDurationMax;
+		public double overallFilterUpExponentMin, overallFilterUpExponentMax;
+		public double overallFilterUpOffsetMin, overallFilterUpOffsetMax;
+
+		public double minTransmission, maxTransmission;
+		public double minDelay, maxDelay;
+
+		public double periodicSpeedUpDurationMin, periodicSpeedUpDurationMax;
+		public double periodicSpeedUpPercentageMin, periodicSpeedUpPercentageMax;
+		public double periodicSlowDownDurationMin, periodicSlowDownDurationMax;
+		public double periodicSlowDownPercentageMin, periodicSlowDownPercentageMax;
+		public double overallSpeedUpDurationMin, overallSpeedUpDurationMax;
+		public double overallSpeedUpExponentMin, overallSpeedUpExponentMax;
+
+		public double periodicWetInDurationMin, periodicWetInDurationMax;
+		public double overallWetInDurationMin, overallWetInDurationMax;
+		public double overallWetInExponentMin, overallWetInExponentMax;
+		public double overallWetInOffsetMin, overallWetInOffsetMax;
+
+		public double minWetOut, maxWetOut;
+		public double minHighPass, maxHighPass;
+		public double minLowPass, maxLowPass;
+
+		public double periodicMasterFilterDownDurationMin, periodicMasterFilterDownDurationMax;
+		public double overallMasterFilterDownDurationMin, overallMasterFilterDownDurationMax;
+		public double overallMasterFilterDownExponentMin, overallMasterFilterDownExponentMax;
+		public double overallMasterFilterDownOffsetMin, overallMasterFilterDownOffsetMax;
+
+		public double offsetChoices[];
+		public double repeatChoices[];
+
+		public Configuration() { this(1); }
+
+		public Configuration(int scale) {
+			double offset = 80;
+			double duration = 0;
+
+			minChoiceValue = 0.0;
+			maxChoiceValue = 1.0;
+			repeatSpeedUpDurationMin = 5.0;
+			repeatSpeedUpDurationMax = 60.0;
+
+			minVolumeValue = 0.4 / scale;
+			maxVolumeValue = 0.8 / scale;
+			periodicVolumeDurationMin = 0.5;
+			periodicVolumeDurationMax = 180;
+//			overallVolumeDurationMin = 60;
+//			overallVolumeDurationMax = 240;
+			overallVolumeDurationMin = duration + 5.0;
+			overallVolumeDurationMax = duration + 30.0;
+			overallVolumeExponentMin = 1;
+			overallVolumeExponentMax = 1;
+			overallVolumeOffsetMin = offset + 10.0;
+			overallVolumeOffsetMax = offset + 35.0;
+
+			periodicFilterUpDurationMin = 0.5;
+			periodicFilterUpDurationMax = 180;
+			overallFilterUpDurationMin = duration + 90.0;
+			overallFilterUpDurationMax = duration + 360.0;
+			overallFilterUpExponentMin = 0.5;
+			overallFilterUpExponentMax = 3.5;
+			overallFilterUpOffsetMin = offset;
+			overallFilterUpOffsetMax = offset + 35.0;
+
+			minTransmission = 0.3;
+			maxTransmission = 1.6;
+			minDelay = 4.0;
+			maxDelay = 20.0;
+
+			periodicSpeedUpDurationMin = 20.0;
+			periodicSpeedUpDurationMax = 180.0;
+			periodicSpeedUpPercentageMin = 0.0;
+			periodicSpeedUpPercentageMax = 2.0;
+
+			periodicSlowDownDurationMin = 20.0;
+			periodicSlowDownDurationMax = 180.0;
+			periodicSlowDownPercentageMin = 0.0;
+			periodicSlowDownPercentageMax = 0.9;
+
+			overallSpeedUpDurationMin = 10.0;
+			overallSpeedUpDurationMax = 60.0;
+			overallSpeedUpExponentMin = 1;
+			overallSpeedUpExponentMax = 1;
+
+			periodicWetInDurationMin = 0.5;
+			periodicWetInDurationMax = 180;
+//			overallWetInDurationMin = 30;
+//			overallWetInDurationMax = 120;
+			overallWetInDurationMin = duration + 5.0;
+			overallWetInDurationMax = duration + 60.0;
+			overallWetInExponentMin = 0.5;
+			overallWetInExponentMax = 2.5;
+			overallWetInOffsetMin = offset;
+			overallWetInOffsetMax = offset + 30;
+
+			minWetOut = 0.5;
+			maxWetOut = 1.8;
+			minHighPass = 0.0;
+			maxHighPass = 5000.0;
+			minLowPass = 15000.0;
+			maxLowPass = 20000.0;
+
+			periodicMasterFilterDownDurationMin = 0.5;
+			periodicMasterFilterDownDurationMax = 90;
+			overallMasterFilterDownDurationMin = duration + 30;
+			overallMasterFilterDownDurationMax = duration + 120;
+			overallMasterFilterDownExponentMin = 0.5;
+			overallMasterFilterDownExponentMax = 3.5;
+			overallMasterFilterDownOffsetMin = offset;
+			overallMasterFilterDownOffsetMax = offset + 40;
+
+			offsetChoices = IntStream.range(0, 7)
+					.mapToDouble(i -> Math.pow(2, -i))
+					.toArray();
+			offsetChoices[0] = 0.0;
+
+			repeatChoices = IntStream.range(0, 9)
+					.map(i -> i - 2)
+					.mapToDouble(i -> Math.pow(2, i))
+//					.map(DefaultAudioGenome::factorForRepeat)
+					.toArray();
+
+			repeatChoices = new double[] { 16 };
+
+
+			minChoice = i -> minChoiceValue;
+			maxChoice = i -> maxChoiceValue;
+			minX = i -> minXValue;
+			maxX = i -> maxXValue;
+			minY = i -> minYValue;
+			maxY = i -> maxYValue;
+			minZ = i -> minZValue;
+			maxZ = i -> maxZValue;
+			minVolume = i -> minVolumeValue;
+			maxVolume = i -> maxVolumeValue;
+		}
 	}
 }

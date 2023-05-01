@@ -1,25 +1,17 @@
 package org.almostrealism.audio.optimize.test;
 
-import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.optimize.AudioSceneGenome;
-import org.almostrealism.audio.optimize.CellularAudioOptimizer;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
-import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.stream.IntStream;
 
 public class DefaultAudioGenomeTest implements HeredityFeatures, TestFeatures {
 	@Test
@@ -56,35 +48,5 @@ public class DefaultAudioGenomeTest implements HeredityFeatures, TestFeatures {
 		Scalar result = (Scalar) delayGene.valueAt(1).getResultant((Producer) v(60)).get().evaluate();
 		System.out.println(result);
 		Assert.assertTrue(Math.abs(2.687736711 - result.getValue()) < 0.001);
-	}
-
-	@Test
-	public void generated() {
-		AudioScene<?> scene = new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
-		DefaultAudioGenome g = new DefaultAudioGenome(2, 2, null);
-		g.assignTo(AudioSceneGenome.generator(scene).get().get());
-		g.setup().get().run();
-
-		CellularTemporalFactor<PackedCollection<?>> volume = (CellularTemporalFactor<PackedCollection<?>>) g.valueAt(DefaultAudioGenome.VOLUME, 0, 0);
-		volume.setup().get().run();
-		Evaluable<PackedCollection<?>> result = volume.getResultant(c(1.0)).get();
-		Runnable tick = volume.tick().get();
-
-		for (int n = 0; n < 10; n++) {
-			System.out.println("After " + n * 5 + " seconds: " + result.evaluate());
-			IntStream.range(0, 5 * OutputLine.sampleRate).forEach(i -> tick.run());
-		}
-	}
-
-	@Test
-	public void setup() {
-		AudioScene<?> scene = new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
-
-		IntStream.range(0, 10).forEach(i -> {
-			DefaultAudioGenome genome = new DefaultAudioGenome(2, 2, OutputLine.sampleRate, null);
-			genome.assignTo(AudioSceneGenome.generator(scene).get().get());
-			genome.setup().get().run();
-			System.out.println("DefaultAudioGenomeTest: Setup " + i + " complete");
-		});
 	}
 }

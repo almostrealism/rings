@@ -116,7 +116,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	}
 
 	public static CellularAudioOptimizer build(AudioScene<?> scene, int cycles) {
-		return build(AudioSceneGenome.generator(scene), scene, cycles);
+		return build(() -> scene.getGenome()::random, scene, cycles);
 	}
 
 	public static CellularAudioOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator, AudioScene<?> scene, int cycles) {
