@@ -90,8 +90,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this.sum = new RootDelegateSegmentsAdd<>(8, destination.traverse(1));
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
-//		KernelizedProducer<PackedCollection<?>> scale = multiply(
-//				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1));
 		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		OperationList generate = new OperationList("PatternSystemManager Sum");
