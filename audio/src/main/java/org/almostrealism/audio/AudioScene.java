@@ -57,6 +57,8 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
+	public static final int DEFAULT_ACTIVE_PATTERNS_PER_CHANNEL = 2;
+	public static final int DEFAULT_LAYERS_PER_PATTERN = 3;
 
 	public static final int mixdownDuration = 140;
 
@@ -357,7 +359,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (file.exists()) {
 			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class));
 		} else {
-			setSettings(Settings.defaultSettings(getSourceCount(), DEFAULT_PATTERNS_PER_CHANNEL));
+			setSettings(Settings.defaultSettings(getSourceCount(),
+					DEFAULT_PATTERNS_PER_CHANNEL,
+					DEFAULT_ACTIVE_PATTERNS_PER_CHANNEL,
+					DEFAULT_LAYERS_PER_PATTERN));
 		}
 	}
 
@@ -427,14 +432,15 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			public void setLength(int length) { this.length = length; }
 		}
 
-		public static Settings defaultSettings(int channels, int patternsPerChannel) {
+		public static Settings defaultSettings(int channels, int patternsPerChannel, int activePatternsPerChannel, int layersPerPattern) {
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
 			settings.getSections().add(new Section(32, 16));
 			settings.getSections().add(new Section(48, 16));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
-			settings.setPatternSystem(PatternSystemManager.Settings.defaultSettings(channels, patternsPerChannel));
+			settings.setPatternSystem(PatternSystemManager.Settings
+					.defaultSettings(channels, patternsPerChannel, activePatternsPerChannel, layersPerPattern));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
 			settings.setWetChannels(List.of(3, 4));
 			return settings;

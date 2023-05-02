@@ -324,8 +324,8 @@ public class MixdownManager implements Setup, CellFeatures {
 			repeatSpeedUpDurationMin = 5.0;
 			repeatSpeedUpDurationMax = 60.0;
 
-			minVolumeValue = 0.4 / scale;
-			maxVolumeValue = 0.8 / scale;
+			minVolumeValue = 2.0 / scale;
+			maxVolumeValue = 2.0 / scale;
 			periodicVolumeDurationMin = 0.5;
 			periodicVolumeDurationMax = 180;
 //			overallVolumeDurationMin = 60;

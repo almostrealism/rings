@@ -23,10 +23,13 @@ import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.ProducerWithOffset;
+import org.almostrealism.collect.computations.PackedCollectionMax;
 import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.ConfigurableGenome;
@@ -46,6 +49,8 @@ import java.util.stream.IntStream;
 // 	     3. The duration of each layer
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
+	public static final boolean enableAutoVolume = true;
+
 	public static boolean enableWarnings = true;
 
 	private List<PatternFactoryChoice> choices;
@@ -85,13 +90,23 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this.sum = new RootDelegateSegmentsAdd<>(8, destination.traverse(1));
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
-		KernelizedEvaluable<PackedCollection<?>> scale = multiply(
-				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1)).get();
+//		KernelizedProducer<PackedCollection<?>> scale = multiply(
+//				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1));
+		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		OperationList generate = new OperationList("PatternSystemManager Sum");
 		generate.add(() -> sum.get());
-		generate.add(() -> () ->
-				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+
+		if (enableAutoVolume) {
+			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(p(this.destination.traverse(0)));
+			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
+			generate.add(a(1, p(volume), auto));
+			generate.add(() -> () -> {
+				System.out.println("Setting volume to " + volume.toDouble(0));
+			});
+		}
+
+		generate.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		runSum = generate.get();
 	}
 
@@ -181,7 +196,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		public List<PatternLayerManager.Settings> getPatterns() { return patterns; }
 		public void setPatterns(List<PatternLayerManager.Settings> patterns) { this.patterns = patterns; }
 
-		public static Settings defaultSettings(int channels, int patternsPerChannel) {
+		public static Settings defaultSettings(int channels, int patternsPerChannel, int activePatterns, int layersPerPattern) {
 			Settings settings = new Settings();
 			IntStream.range(0, channels).forEach(c -> IntStream.range(0, patternsPerChannel).forEach(p -> {
 				PatternLayerManager.Settings pattern = new PatternLayerManager.Settings();
@@ -190,10 +205,10 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 2);
 				pattern.setFactorySelection(ParameterFunction.random());
-				if (p == 0 || (c < 3 && p < 4)) {
-					pattern.getLayers().add(ParameterSet.random());
-					pattern.getLayers().add(ParameterSet.random());
-					pattern.getLayers().add(ParameterSet.random());
+				if (p == 0 || (c < 3 && p < activePatterns)) {
+					for (int i = 0; i < layersPerPattern; i++) {
+						pattern.getLayers().add(ParameterSet.random());
+					}
 				}
 				settings.getPatterns().add(pattern);
 			}));

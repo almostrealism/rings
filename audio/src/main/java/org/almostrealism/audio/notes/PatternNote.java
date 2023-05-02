@@ -21,6 +21,7 @@ import io.almostrealism.code.CachedValue;
 import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.Waves;
@@ -43,15 +44,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PatternNote {
+public class PatternNote implements CellFeatures {
 	private static ContextSpecific<KernelizedEvaluable<PackedCollection<?>>> interpolate;
 
 	static {
 		interpolate = new DefaultContextSpecific<>(() ->
 				new Interpolate(
-						new PassThroughProducer<>(1, 0, -1),
+						new PassThroughProducer<>(1, 0),
 						new PassThroughProducer<>(1, 1),
-						new PassThroughProducer<>(2, 2, -1),
+						new PassThroughProducer<>(1, 2),
 						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate))).get());
 	}
 
@@ -148,8 +149,12 @@ public class PatternNote {
 				PackedCollection<?> audio = getAudio();
 				PackedCollection<?> dest = WaveData.allocateCollection((int) (r * audio.getMemLength()));
 
+				PackedCollection<?> timeline = WaveOutput.timeline.getValue();
+
 				interpolate.getValue().into(dest.traverse(1))
-						.evaluate(audio.traverse(0), WaveOutput.timelineScalar.getValue(), rate.traverse(0));
+						.evaluate(audio.traverse(0),
+								timeline.range(shape(dest.getMemLength())).traverseEach(),
+								rate.traverse(0));
 				return dest;
 			}));
 		}

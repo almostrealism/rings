@@ -23,6 +23,7 @@ import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.Gene;
@@ -101,15 +102,18 @@ public class PatternLayerManager implements CodeFeatures {
 		this.destination = destination;
 		this.sum = new RootDelegateSegmentsAdd<>(MAX_NOTES, this.destination.traverse(1));
 
-		KernelizedEvaluable<PackedCollection<?>> scale = multiply(
-				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1)).get();
+//		KernelizedEvaluable<PackedCollection<?>> scale = multiply(
+//				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1)).get();
+		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		runSum = sum.get();
 
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-		v.add(() -> () -> volume.setMem(0, 1.0 / chordDepth));
 		v.add(() -> () ->
-				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+				volume.setMem(0, 1.0 / chordDepth));
+//		v.add(() -> () ->
+//				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		adjustVolume = v.get();
 	}
 

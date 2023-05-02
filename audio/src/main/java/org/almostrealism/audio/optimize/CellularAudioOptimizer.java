@@ -75,6 +75,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final boolean enableStems = false;
 	public static final boolean enableSingleChannel = false;
 	public static final boolean enableFullMix = true;
+	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -238,76 +239,22 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			PatternSystemManager.enableWarnings = false;
 			PatternLayerManager.enableWarnings = false;
 		} else {
-			AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount, AudioScene.DEFAULT_PATTERNS_PER_CHANNEL);
-//			settings.getPatternSystem().setPatterns(
-//					settings
-//							.getPatternSystem()
-//							.getPatterns()
-//							.stream()
-//							.filter(p -> p.getChannel() < 4)
-//							.collect(Collectors.toList()));
+			AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount,
+					AudioScene.DEFAULT_PATTERNS_PER_CHANNEL,
+					AudioScene.DEFAULT_ACTIVE_PATTERNS_PER_CHANNEL,
+					AudioScene.DEFAULT_LAYERS_PER_PATTERN);
+
+			if (singleChannel >= 0) {
+				settings.getPatternSystem().setPatterns(
+						settings
+								.getPatternSystem()
+								.getPatterns()
+								.stream()
+								.filter(p -> p.getChannel() == singleChannel)
+								.collect(Collectors.toList()));
+			}
 
 			scene.setSettings(settings);
-			/*
-			PatternLayerManager layer = scene.getPatternManager().addPattern(channel, 0.25, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel, duration1, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel++, duration1, false);
-			layer.setSeedBias(0.8);
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel, duration2, false);
-			layer.setSeedBias(0.25);
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel++, duration2, false);
-			layer.setSeedBias(0.25);
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel++, 2.0, false);
-			layer.setSeedBias(0.2);
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel++, 8.0, true);
-			layer.setSeedBias(0.2);
-			layer.setChordDepth(3);
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-
-			layer = scene.getPatternManager().addPattern(channel++, 4.0, true);
-			layer.setSeedBias(0.0);
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-			layer.addLayer(new ParameterSet());
-
-			 */
-
-			scene.getEfxManager().setWetChannels(List.of(3, 4));
 		}
 
 		// scene.saveSettings(new File("scene-settings.json"));
