@@ -56,6 +56,16 @@ public class PatternFactoryTest implements CellFeatures {
 	public void fixChoices() throws IOException {
 		List<PatternFactoryChoice> choices = readChoices();
 
+		choices.forEach(c -> {
+			c.setGranularity(1.0 / c.getSeedUnits());
+			if ("Bass".equals(c.getFactory().getName())) {
+				c.setGranularity(4.0);
+				c.setSeedScale(4.0);
+				c.setSeedBias(0.0);
+				c.setMaxScale(8.0);
+			}
+		});
+
 		new ObjectMapper().writeValue(new File("pattern-factory-new.json"), choices);
 	}
 

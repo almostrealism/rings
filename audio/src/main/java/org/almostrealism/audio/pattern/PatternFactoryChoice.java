@@ -33,6 +33,7 @@ public class PatternFactoryChoice {
 
 	private boolean seed;
 	private int seedUnits;
+	private double granularity;
 	private double seedScale;
 	private double seedBias;
 
@@ -56,6 +57,7 @@ public class PatternFactoryChoice {
 		setMaxScale(maxScale);
 		setMaxChordDepth(1);
 		setSeedUnits(4);
+		setGranularity(0.25);
 		setSeedScale(0.25);
 		setSeedBias(-0.5);
 		initSelectionFunctions();
@@ -91,6 +93,9 @@ public class PatternFactoryChoice {
 	public int getSeedUnits() { return seedUnits; }
 	public void setSeedUnits(int seedUnits) { this.seedUnits = seedUnits; }
 
+	public double getGranularity() { return granularity; }
+	public void setGranularity(double granularity) { this.granularity = granularity; }
+
 	public double getSeedScale() { return seedScale; }
 	public void setSeedScale(double seedScale) { this.seedScale = seedScale; }
 
@@ -109,7 +114,7 @@ public class PatternFactoryChoice {
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
-		return new PatternLayerSeeds(0, seedScale, 1.0 / seedUnits, seedBias, factory, params);
+		return new PatternLayerSeeds(0, seedScale, granularity, seedBias, factory, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, int depth, ParameterSet params) {

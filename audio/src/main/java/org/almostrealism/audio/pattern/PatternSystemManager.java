@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
+import java.util.function.IntFunction;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -99,9 +101,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(p(this.destination.traverse(0)));
 			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
 			generate.add(a(1, p(volume), auto));
-			generate.add(() -> () -> {
-				System.out.println("Setting volume to " + volume.toDouble(0));
-			});
+//			generate.add(() -> () -> {
+//				System.out.println("Setting volume to " + volume.toDouble(0));
+//			});
 		}
 
 		generate.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
@@ -194,20 +196,25 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		public List<PatternLayerManager.Settings> getPatterns() { return patterns; }
 		public void setPatterns(List<PatternLayerManager.Settings> patterns) { this.patterns = patterns; }
 
-		public static Settings defaultSettings(int channels, int patternsPerChannel, int activePatterns, int layersPerPattern) {
+		public static Settings defaultSettings(int channels, int patternsPerChannel,
+											   IntUnaryOperator activePatterns,
+											   IntUnaryOperator layersPerPattern,
+											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
 			IntStream.range(0, channels).forEach(c -> IntStream.range(0, patternsPerChannel).forEach(p -> {
 				PatternLayerManager.Settings pattern = new PatternLayerManager.Settings();
 				pattern.setChannel(c);
-				pattern.setDuration(c == 0 ? 1 : Math.pow(2.0, c - 1));
+				pattern.setDuration(duration.applyAsInt(c));
 				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 2);
 				pattern.setFactorySelection(ParameterFunction.random());
-				if (p == 0 || (c < 3 && p < activePatterns)) {
-					for (int i = 0; i < layersPerPattern; i++) {
+
+				if (p < activePatterns.applyAsInt(c)) {
+					IntStream.range(0, layersPerPattern.applyAsInt(c)).forEach(l -> {
 						pattern.getLayers().add(ParameterSet.random());
-					}
+					});
 				}
+
 				settings.getPatterns().add(pattern);
 			}));
 			return settings;

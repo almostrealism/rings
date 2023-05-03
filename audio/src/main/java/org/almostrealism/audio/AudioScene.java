@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -57,8 +58,41 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
-	public static final int DEFAULT_ACTIVE_PATTERNS_PER_CHANNEL = 2;
-	public static final int DEFAULT_LAYERS_PER_PATTERN = 3;
+	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
+	public static final IntUnaryOperator DEFAULT_LAYERS;
+	public static final IntUnaryOperator DEFAULT_DURATION;
+
+	static {
+		DEFAULT_ACTIVE_PATTERNS = c ->
+				switch (c) {
+					case 0 -> { yield 2; }
+					case 1 -> { yield 2; }
+					case 2 -> { yield 1; }
+					case 3 -> { yield 1; }
+					case 4 -> { yield 1; }
+					case 5 -> { yield 1; }
+					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+				};
+
+		DEFAULT_LAYERS = c ->
+				switch (c) {
+					case 0 -> { yield 3; }
+					case 1 -> { yield 3; }
+					case 2 -> { yield 5; }
+					case 3 -> { yield 5; }
+					case 4 -> { yield 3; }
+					case 5 -> { yield 3; }
+					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+				};
+
+		DEFAULT_DURATION = c ->
+				switch (c) {
+					case 0 -> { yield 1; }
+					case 2 -> { yield 16; }
+					case 3 -> { yield 16; }
+					default -> (int) Math.pow(2.0, c - 1);
+				};
+	}
 
 	public static final int mixdownDuration = 140;
 
@@ -361,8 +395,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		} else {
 			setSettings(Settings.defaultSettings(getSourceCount(),
 					DEFAULT_PATTERNS_PER_CHANNEL,
-					DEFAULT_ACTIVE_PATTERNS_PER_CHANNEL,
-					DEFAULT_LAYERS_PER_PATTERN));
+					DEFAULT_ACTIVE_PATTERNS,
+					DEFAULT_LAYERS,
+					DEFAULT_DURATION));
 		}
 	}
 
@@ -432,7 +467,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			public void setLength(int length) { this.length = length; }
 		}
 
-		public static Settings defaultSettings(int channels, int patternsPerChannel, int activePatternsPerChannel, int layersPerPattern) {
+		public static Settings defaultSettings(int channels, int patternsPerChannel,
+											   IntUnaryOperator activePatterns,
+											   IntUnaryOperator layersPerPattern,
+											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
@@ -440,9 +478,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.getSections().add(new Section(48, 16));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
-					.defaultSettings(channels, patternsPerChannel, activePatternsPerChannel, layersPerPattern));
+					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
-			settings.setWetChannels(List.of(3, 4));
+			settings.setWetChannels(List.of(2, 3, 4));
 			return settings;
 		}
 	}
