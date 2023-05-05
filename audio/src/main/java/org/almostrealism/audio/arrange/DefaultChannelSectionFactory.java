@@ -21,8 +21,10 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.optimize.DefaultAudioGenome;
+import org.almostrealism.audio.optimize.DurationAdjustmentChromosome;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
+import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.audio.optimize.RiseFallChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
@@ -33,18 +35,34 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.TemporalFactor;
+import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
+import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class DefaultChannelSectionFactory implements Setup, CellFeatures {
+public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableFilter = false;
+
+	public static final double repeatChoices[];
+
+	static {
+//		repeatChoices = IntStream.range(0, 9)
+//				.map(i -> i - 2)
+//				.mapToDouble(i -> Math.pow(2, i))
+//				.toArray();
+
+		repeatChoices = new double[] { 16 };
+	}
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;
 	private RiseFallChromosome lowPassFilter;
+	private DurationAdjustmentChromosome duration;
+
 	private int channel, channels;
 
 	private DoubleSupplier measureDuration;
@@ -67,6 +85,22 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 		IntStream.range(0, channels).forEach(i -> lp.addGene());
 		this.lowPassFilter = new RiseFallChromosome(lp, 0.0, 20000.0, 0.5, sampleRate);
 		this.lowPassFilter.setGlobalTime(clock.frame());
+
+		PackedCollection<?> repeat = new PackedCollection<>(repeatChoices.length);
+		repeat.setMem(Arrays.stream(repeatChoices).map(this::factorForRepeat).toArray());
+
+		SimpleChromosome r = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> r.addChoiceGene(repeat));
+		SimpleChromosome s = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> s.addGene());
+		this.duration = new DurationAdjustmentChromosome(r, s, sampleRate);
+		this.duration.setGlobalTime(clock.frame());
+
+		initRanges();
+	}
+
+	protected void initRanges() {
+		duration.setRepeatSpeedUpDurationRange(5.0, 60.0);
 	}
 
 	public Section createSection(int position) {
@@ -82,6 +116,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 		setup.add(() -> () -> lowPassFilter.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(volume.expand());
 		setup.add(lowPassFilter.expand());
+		setup.add(duration.expand());
 		return setup;
 	}
 
@@ -93,8 +128,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 		public Section() { }
 
 		protected Section(int position, int length,
-										int geneIndex,
-										int samples) {
+						  int geneIndex, int samples) {
 			this.position = position;
 			this.length = length;
 			this.geneIndex = geneIndex;
@@ -112,17 +146,22 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 			PackedCollection<?> input = new PackedCollection<>(samples);
 			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 
-			TemporalList temporals = lowPassFilter.getTemporals();
+			TemporalList temporals = new TemporalList();
+			temporals.addAll(lowPassFilter.getTemporals());
 
-			Factor<PackedCollection<?>> factor = lowPassFilter.valueAt(geneIndex, 0);
 			CellList cells = cells(1, i -> new WaveCell(input.traverseEach(), sampleRate));
 
 			if (enableFilter) {
+				temporals.addAll(volume.getTemporals());
+
+				Factor<PackedCollection<?>> factor = lowPassFilter.valueAt(geneIndex, 0);
+				Producer<PackedCollection<?>> lp = factor(factor).getResultant(c(1.0));
+
 				cells = cells
-						.addSetup((Setup) factor)
-						.addRequirements(clock, temporals)
-						.map(fc(i -> lp(factor.getResultant(c(1.0)),
-								v(FixedFilterChromosome.defaultResonance))));
+						.addRequirements(clock)
+						.addRequirements(temporals.toArray(TemporalFactor[]::new)) // TODO  Why can't the list just be added?
+						.map(fc(i -> factor(volume.valueAt(geneIndex, 0))))
+						.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
 			}
 
 			OperationList process = new OperationList();
@@ -130,7 +169,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
 
-			KernelizedEvaluable product = multiply(v(1, 0), v(1, 1)).get();
+			KernelizedEvaluable product;
+
+			if (enableFilter) {
+				product = multiply(v(1, 0), v(1, 1)).get();
+			} else {
+				product = multiply(v(1, 0), c(1.0)).get();
+			}
+
 			process.add(() -> () ->
 					product.into(destination.get().evaluate().traverseEach()).evaluate(
 							source.get().evaluate().traverseEach(),
@@ -140,6 +186,18 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures {
 //				lowPassFilter.getKernelList(0).getData().getCount();
 //			});
 			return process;
+		}
+
+		/**
+		 * This method wraps the specified {@link Factor} to prevent it from
+		 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
+		 * that would proceed to invoke the {@link org.almostrealism.time.Temporal#tick()} operation.
+		 * This is not a good solution, and this process needs to be reworked, so
+		 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
+		 * and it doesn't get invoked multiple times.
+		 */
+		private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
+			return v -> f.getResultant(v);
 		}
 	}
 }

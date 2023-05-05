@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.optimize;
 
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
@@ -37,6 +38,9 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 		ScalarBank originChoices = new ScalarBank(2);
 		originChoices.set(0, maxValue);
 		originChoices.set(1, minValue);
+
+		Scalar testChoice = new Scalar();
+		testChoice.setMem(0, 0.25);
 
 		setTransform(0, identity(0, c(1.0)));
 		setTransform(1, identity(1, c(1.0)));

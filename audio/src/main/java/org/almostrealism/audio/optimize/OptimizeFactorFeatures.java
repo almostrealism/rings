@@ -23,4 +23,22 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 			return HeredityFeatures.getInstance().oneToInfinity(v, exp) * multiplier;
 		}
 	}
+
+	default double[] repeatForFactor(Factor<PackedCollection<?>> f) {
+		double v = 16 * (valueForFactor(f) - 0.5);
+
+		if (v == 0) {
+			return new double[] { 1.0, 1.0 };
+		} else if (v > 0) {
+			return new double[] { Math.pow(2.0, v), 1.0 };
+		} else if (v < 0) {
+			return new double[] { 1.0, Math.pow(2.0, -v) };
+		}
+
+		return null;
+	}
+
+	default double factorForRepeat(double beats) {
+		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
+	}
 }
