@@ -88,14 +88,6 @@ public class DelayChromosome extends WavCellChromosomeExpansionNew implements Op
 				factorForPolySpeedUpExponent(max));
 	}
 
-	public double factorForDelay(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double delayForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
 	public double factorForSpeedUpDuration(double seconds) {
 		return invertOneToInfinity(seconds, 60, 3);
 	}

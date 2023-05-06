@@ -98,6 +98,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 
 	public int getFactorCount() { return kernels.size(); }
 
+	@Deprecated
 	public void addFactor(Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> value) {
 		this.kernels.add(new KernelOrValue(value));
 	}

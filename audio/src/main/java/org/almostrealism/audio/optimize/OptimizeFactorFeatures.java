@@ -41,4 +41,12 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 	default double factorForRepeat(double beats) {
 		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
 	}
+
+	default double factorForDelay(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double delayForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
 }
