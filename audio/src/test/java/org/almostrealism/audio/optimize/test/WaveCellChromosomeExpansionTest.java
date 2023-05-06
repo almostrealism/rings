@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.optimize.test;
 
-import org.almostrealism.audio.optimize.WavCellChromosomeExpansion;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;

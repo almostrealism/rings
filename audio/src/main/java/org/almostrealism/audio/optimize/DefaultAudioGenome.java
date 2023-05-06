@@ -64,15 +64,15 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	// private GeneratorChromosome generatorChromosome;
 
-	public DefaultAudioGenome(int sources, int delayLayers, Producer<Scalar> globalTime) {
+	private DefaultAudioGenome(int sources, int delayLayers, Producer<Scalar> globalTime) {
 		this(sources, delayLayers, OutputLine.sampleRate, globalTime);
 	}
 
-	public DefaultAudioGenome(int sources, int delayLayers, int sampleRate, Producer<Scalar> globalTime) {
+	private DefaultAudioGenome(int sources, int delayLayers, int sampleRate, Producer<Scalar> globalTime) {
 		this(sources, delayLayers, 10, sampleRate, globalTime);
 	}
 
-	protected DefaultAudioGenome(int sources, int delayLayers, int length, int sampleRate, Producer<Scalar> globalTime) {
+	private DefaultAudioGenome(int sources, int delayLayers, int length, int sampleRate, Producer<Scalar> globalTime) {
 		this(new AssignableGenome(), sources, delayLayers, length, sampleRate, globalTime);
 	}
 
