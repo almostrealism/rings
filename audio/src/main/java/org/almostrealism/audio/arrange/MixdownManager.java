@@ -78,11 +78,11 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.wetOut = genome.addSimpleChromosome(delayLayers);
 		this.wetOut.addGene();
 
-//		this.delay = genome.addSimpleChromosome(1);
-//		IntStream.range(0, delayLayers).forEach(i -> {
-//			SimpleGene g = delay.addGene();
-//			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-//		});
+		this.delay = genome.addSimpleChromosome(1);
+		IntStream.range(0, delayLayers).forEach(i -> {
+			SimpleGene g = delay.addGene();
+			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+		});
 
 		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
@@ -205,8 +205,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			int delayLayers = delayDynamics.length();
 			CellList delays = IntStream.range(0, delayLayers)
 					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(delayDynamics.valueAt(i, 0).getResultant(c(1.0))),
-							toScalar(delayDynamics.valueAt(i, 1).getResultant(c(1.0)))))
+							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
+							toScalar(delayDynamics.valueAt(i, 0).getResultant(c(1.0)))))
 					.collect(CellList.collector());
 
 			// Route each line to each delay layer

@@ -474,8 +474,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(32, 16));
-			settings.getSections().add(new Section(48, 16));
+			settings.getSections().add(new Section(32, 32));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
