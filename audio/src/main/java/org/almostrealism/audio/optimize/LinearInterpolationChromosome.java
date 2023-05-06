@@ -20,7 +20,7 @@ import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
-public class LinearInterpolationChromosome extends WavCellChromosomeExpansion {
+public class LinearInterpolationChromosome extends WavCellChromosomeExpansionNew {
 	public static final int SIZE = 2;
 
 	private final PackedCollection duration;

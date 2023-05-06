@@ -102,7 +102,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 		this.kernels.add(new KernelOrValue(new KernelList(bankProvider, tableProvider, computation, inputGenes, inputFactors)));
 	}
 
-	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> identity(int index) {
+	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> identity(int index, Producer arg) {
 		return g -> (Producer<PackedCollection<?>>) g.valueAt(index).getResultant(c(1.0));
 	}
 
