@@ -35,7 +35,7 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansionNew implemen
 		setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0).multiply(c(10.0)));
 		setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 		setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0).multiply(c(60.0)));
-		addFactor((p, in) -> {
+		setFactor((p, in) -> {
 			CollectionProducerComputation periodicWavelength = c(p, 0);
 			CollectionProducerComputation periodicAmp = c(1.0);
 			CollectionProducerComputation polyWaveLength = c(p, 1);

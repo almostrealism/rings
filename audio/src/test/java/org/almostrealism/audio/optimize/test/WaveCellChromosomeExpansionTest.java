@@ -34,7 +34,7 @@ public class WaveCellChromosomeExpansionTest implements CellFeatures, TestFeatur
 
 		WavCellChromosomeExpansionNew expansion = new WavCellChromosomeExpansionNew(input, 2, OutputLine.sampleRate);
 
-		expansion.addFactor((params, in) -> {
+		expansion.setFactor((params, in) -> {
 			CollectionProducerComputation amp = c(params, 0);
 			CollectionProducerComputation wavelength = c(params, 1);
 			return _sin(c(TWO_PI).divide(wavelength).multiply(in)).multiply(amp);

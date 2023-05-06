@@ -25,10 +25,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.graph.Cell;
-import org.almostrealism.graph.MemoryDataTemporalCellularChromosomeExpansion;
 import org.almostrealism.hardware.KernelList;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.hardware.OperationList;
@@ -60,7 +57,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 
 	private ArrayListChromosome<PackedCollection<?>> destination;
 
-	private List<KernelOrValue> kernels;
+	private KernelList<PackedCollection<?>> kernels;
 	private int inputGenes, inputFactors;
 	private IntFunction<MemoryBank<PackedCollection<?>>> bankProvider;
 	private BiFunction<Integer, Integer, MemoryBank<PackedCollection<?>>> tableProvider;
@@ -76,7 +73,6 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 		this.bankProvider = PackedCollection.bank(new TraversalPolicy(1));
 		this.tableProvider = PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
 				new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset()));
-		this.kernels = new ArrayList<>();
 		this.sampleRate = sampleRate;
 	}
 
@@ -90,19 +86,23 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 		this.time = time;
 	}
 
-	public void setTimeline(PackedCollection<PackedCollection<?>> timeline) { kernels.forEach(k -> k.setInput(timeline)); }
+	public void setTimeline(PackedCollection<PackedCollection<?>> timeline) { kernels.setInput(timeline); }
 
 	public KernelList<PackedCollection<?>> getKernelList(int factor) {
-		return Objects.requireNonNull(kernels.get(factor)).getKernels();
+		if (factor != 0) {
+			throw new IllegalArgumentException();
+		}
+
+		return kernels;
 	}
 
-	public int getFactorCount() { return kernels.size(); }
+	public int getFactorCount() { return 1; }
 
-	public void addFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
-		this.kernels.add(new KernelOrValue(new KernelList(bankProvider, tableProvider, computation, inputGenes, inputFactors)));
+	public void setFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
+		this.kernels = new KernelList(bankProvider, tableProvider, computation, inputGenes, inputFactors);
 	}
 
-	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> identity(int index, Producer arg) {
+	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> id(int index) {
 		return g -> (Producer<PackedCollection<?>>) g.valueAt(index).getResultant(c(1.0));
 	}
 
@@ -145,11 +145,15 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 	}
 
 	public TemporalList getTemporals() {
-		return destination.stream()
+		TemporalList all = destination.stream()
 				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
 				.map(f -> f instanceof Temporal ? (Temporal) f : null)
 				.filter(Objects::nonNull)
 				.collect(TemporalList.collector());
+		if (!all.isEmpty()) {
+			System.out.println("WavCellChromosome: " + all.size() + " temporals");
+		}
+		return all;
 	}
 
 	protected Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
@@ -169,33 +173,28 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 	public int length() { return destination.length(); }
 
 	protected Factor<PackedCollection<?>> factor(int pos, int factor, Gene<PackedCollection<?>> gene) {
-		if (kernels.get(factor).isKernel()) {
-			return cell(pos, factor, gene)
-					.toFactor(Scalar::new, p -> protein -> new Assignment<>(1, p, protein), combine());
-			// return cell(pos, factor, gene).toFactor();
-		} else {
-			throw new UnsupportedOperationException();
+		if (factor != 0) {
+			throw new IllegalArgumentException();
 		}
+
+		return cell(pos, factor, gene)
+					.toFactor(Scalar::new, p -> protein -> new Assignment<>(1, p, protein), combine());
+		// return cell(pos, factor, gene).toFactor();
 	}
 
 	protected WaveCell cell(int pos, int factor, Gene<PackedCollection<?>> gene) {
-		kernels.get(factor).setParameters(pos, gene);
-		return kernels.get(factor).cell(pos);
+		kernels.setParameters(pos, parameters(gene));
+		return new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
 	}
 
 	protected Supplier<Runnable> process() {
-		OperationList op = kernels.stream()
-				.map(KernelOrValue::getKernels)
-				.filter(Objects::nonNull)
-				.collect(OperationList.collector());
-
-		Runnable run = op.get();
+		Runnable run = kernels.get();
 
 		return () -> () -> {
 			if (cc().isKernelSupported()) {
 				run.run();
 			} else {
-				cc(() -> op.get().run(), ComputeRequirement.CL);
+				cc(() -> kernels.get().run(), ComputeRequirement.CL);
 			}
 		};
 	}
@@ -216,32 +215,5 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 	protected BiFunction<Producer<PackedCollection<?>>, Producer<PackedCollection<?>>, Producer<PackedCollection<?>>> combine() {
 		return (a, b) -> (Producer) toScalar(a).multiply(toScalar(b));
 		// return (a, b) -> a;
-	}
-
-	protected class KernelOrValue {
-		private KernelList<PackedCollection<?>> kernels;
-
-		public KernelOrValue(KernelList<PackedCollection<?>> k) { this.kernels = k; }
-
-		public void setInput(PackedCollection<PackedCollection<?>> input) {
-			if (isKernel()) kernels.setInput(input);
-		}
-
-		public boolean isKernel() { return kernels != null; }
-
-		public KernelList<PackedCollection<?>> getKernels() { return kernels; }
-
-		public void setParameters(int pos, Gene<PackedCollection<?>> parameters) {
-			if (isKernel()) kernels.setParameters(pos, parameters(parameters));
-		}
-
-		public WaveCell cell(int pos) {
-			if (isKernel()) {
-//				return WavCellChromosomeExpansionNew.this.cell((PackedCollection) kernels.valueAt(pos));
-				return new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
-			} else {
-				throw new UnsupportedOperationException();
-			}
-		}
 	}
 }

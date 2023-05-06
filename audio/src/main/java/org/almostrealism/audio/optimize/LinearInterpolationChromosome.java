@@ -29,9 +29,9 @@ public class LinearInterpolationChromosome extends WavCellChromosomeExpansionNew
 		super(source, SIZE, sampleRate);
 		duration = new PackedCollection(1);
 
-		setTransform(0, identity(0, c(1.0)));
-		setTransform(1, identity(1, c(1.0)));
-		addFactor((p, in) -> {
+		setTransform(0, id(0));
+		setTransform(1, id(1));
+		setFactor((p, in) -> {
 			CollectionProducerComputation scale = subtract(c(max), c(min));
 			CollectionProducerComputation start = c(min).add(c(p, 0).multiply(scale));
 			CollectionProducerComputation end = c(min).add(c(p, 1).multiply(scale));

@@ -42,9 +42,9 @@ public class RiseFallChromosome extends WavCellChromosomeExpansionNew {
 		Scalar testChoice = new Scalar();
 		testChoice.setMem(0, 0.25);
 
-		setTransform(0, identity(0, c(1.0)));
-		setTransform(1, identity(1, c(1.0)));
-		addFactor((p, in) -> {
+		setTransform(0, id(0));
+		setTransform(1, id(1));
+		setFactor((p, in) -> {
 			CollectionProducerComputation scale = subtract(c(maxValue), c(minValue));
 			CollectionProducerComputation direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);
 

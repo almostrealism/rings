@@ -36,7 +36,7 @@ public class DurationAdjustmentChromosome extends WavCellChromosomeExpansionNew 
 		this.speedUp = speedUp;
 		setTransform(0, g -> g.valueAt(0).getResultant(c(1.0)));
 		setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(c(60.0)));
-		addFactor((p, in) -> {
+		setFactor((p, in) -> {
 			CollectionProducerComputation rp = c(p, 0);
 			CollectionProducerComputation speedUpDuration = c(p, 1);
 
