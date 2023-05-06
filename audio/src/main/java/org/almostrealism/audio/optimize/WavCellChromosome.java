@@ -126,8 +126,22 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		return process();
 	}
 
+	private Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
+		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
+
+		kernels.setParameters(pos, parameters(transformed));
+		WaveCell cell = new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
+		Factor<PackedCollection<?>> factor = cell.toFactor(Scalar::new,
+				p -> protein -> new Assignment<>(1, p, protein), combine());
+		// return cell.toFactor();
+		result.add(factor);
+
+		return result;
+	}
+
 	@Override
 	public Supplier<Runnable> tick() {
+		System.out.println("WavCellChromosome.tick()");
 		return destination.stream()
 				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
 				.map(f -> f instanceof TemporalFactor ? (TemporalFactor) f : null)
@@ -145,36 +159,11 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		return all;
 	}
 
-	protected Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
-		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
-
-		for (int i = 0; i < getFactorCount(); i++) {
-			result.add(factor(pos, i, transformed));
-		}
-
-		return result;
-	}
-
 	@Override
 	public Gene<PackedCollection<?>> valueAt(int pos) { return destination.valueAt(pos); }
 
 	@Override
 	public int length() { return destination.length(); }
-
-	protected Factor<PackedCollection<?>> factor(int pos, int factor, Gene<PackedCollection<?>> gene) {
-		if (factor != 0) {
-			throw new IllegalArgumentException();
-		}
-
-		return cell(pos, factor, gene)
-					.toFactor(Scalar::new, p -> protein -> new Assignment<>(1, p, protein), combine());
-		// return cell(pos, factor, gene).toFactor();
-	}
-
-	protected WaveCell cell(int pos, int factor, Gene<PackedCollection<?>> gene) {
-		kernels.setParameters(pos, parameters(gene));
-		return new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
-	}
 
 	protected Supplier<Runnable> process() {
 		Runnable run = kernels.get();
