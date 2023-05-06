@@ -16,8 +16,12 @@
 
 package org.almostrealism.audio.optimize;
 
+import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
@@ -53,14 +57,6 @@ public class DurationAdjustmentChromosome extends WavCellChromosome implements O
 				factorForRepeatSpeedUpDuration(max));
 	}
 
-	public double factorForRepeatSpeedUpDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double repeatSpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
 	protected static Chromosome<PackedCollection<?>> combinedChromosome(Chromosome<PackedCollection<?>> repeat,
 																		Chromosome<PackedCollection<?>> speedUp) {
 		return new Chromosome<>() {
@@ -87,23 +83,4 @@ public class DurationAdjustmentChromosome extends WavCellChromosome implements O
 			}
 		};
 	}
-
-
-	// 		BiFunction<Gene<PackedCollection<?>>, Gene<PackedCollection<?>>, IntFunction<Cell<PackedCollection<?>>>> generator = (g, p) -> channel -> {
-	//			Producer<PackedCollection<?>> duration = g.valueAt(2).getResultant(c(getTempo().l(1)));
-	//
-	//			Producer<PackedCollection<?>> x = p.valueAt(0).getResultant(c(1.0));
-	//			Producer<PackedCollection<?>> y = p.valueAt(1).getResultant(c(1.0));
-	//			Producer<PackedCollection<?>> z = p.valueAt(2).getResultant(c(1.0));
-	//
-	//			if (sourceOverride == null) {
-	//				return getWaves().getChoiceCell(channel,
-	//						toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-	//						toScalar(x), toScalar(y), toScalar(z), toScalar(g.valueAt(1).getResultant(duration)),
-	//						enableRepeat ? toScalar(duration) : null);
-	//			} else {
-	//				return sourceOverride.getChoiceCell(channel, toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-	//						v(0.0), v(0.0), v(0.0), v(0.0), null);
-	//			}
-	//		};
 }

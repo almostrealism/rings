@@ -16,14 +16,18 @@
 
 package org.almostrealism.audio.optimize.test;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.optimize.DurationAdjustmentChromosome;
+import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
+import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
@@ -31,7 +35,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-public class DurationAdjustmentTest implements CellFeatures, TestFeatures {
+public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatures, TestFeatures {
 	@Test
 	public void dynamicRepeat() {
 		int sr = OutputLine.sampleRate;
@@ -53,6 +57,31 @@ public class DurationAdjustmentTest implements CellFeatures, TestFeatures {
 				"Library/Snare Perc DD.wav")
 				.addRequirements(clock, (TemporalFactor) factor)
 				.o(i -> new File("results/dynamic-repeat.wav"));
+
+		cells.sec(bpm(120).l(count)).get().run();
+	}
+
+	@Test
+	public void durationAdjustment() {
+		int sr = OutputLine.sampleRate;
+
+		TimeCell clock = new TimeCell();
+
+		double repeat = factorForRepeat(1.0);
+		double speedUp = 4;
+
+		Producer<PackedCollection<?>> r = c(repeat);
+		Producer<PackedCollection<?>> su = c(speedUp);
+
+		Producer<PackedCollection<?>> params = concat(r, su);
+
+		Producer<PackedCollection<?>> adjust = durationAdjustment(params, divide(c(clock.frame(), 0), c(sr)));
+
+		int count = 32;
+
+		CellList cells = w(c(0.0), adjust, "Library/Snare Perc DD.wav")
+				.addRequirements(clock)
+				.o(i -> new File("results/duration-adjustment.wav"));
 
 		cells.sec(bpm(120).l(count)).get().run();
 	}
