@@ -22,7 +22,7 @@ import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
-public class RiseFallChromosome extends WavCellChromosomeExpansionNew {
+public class RiseFallChromosome extends WavCellChromosome {
 	public static final int SIZE = 2;
 
 	private final PackedCollection duration;

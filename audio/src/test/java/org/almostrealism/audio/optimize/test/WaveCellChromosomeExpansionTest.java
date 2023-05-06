@@ -19,7 +19,7 @@ package org.almostrealism.audio.optimize.test;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.optimize.WavCellChromosomeExpansionNew;
+import org.almostrealism.audio.optimize.WavCellChromosome;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
@@ -32,7 +32,7 @@ public class WaveCellChromosomeExpansionTest implements CellFeatures, TestFeatur
 	public void expand() {
 		Chromosome<PackedCollection<?>> input = c(g(0.5, 0.7), g(1.0, 0.9), g(1.5, 1.1));
 
-		WavCellChromosomeExpansionNew expansion = new WavCellChromosomeExpansionNew(input, 2, OutputLine.sampleRate);
+		WavCellChromosome expansion = new WavCellChromosome(input, 2, OutputLine.sampleRate);
 
 		expansion.setFactor((params, in) -> {
 			CollectionProducerComputation amp = c(params, 0);

@@ -22,7 +22,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
-public class DelayChromosome extends WavCellChromosomeExpansionNew implements OptimizeFactorFeatures {
+public class DelayChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
 	public static final int SIZE = 7;
 
 	public DelayChromosome(Chromosome<PackedCollection<?>> source, int sampleRate) {

@@ -21,7 +21,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.SimpleChromosome;
 
-public class AdjustmentChromosome extends WavCellChromosomeExpansionNew implements OptimizeFactorFeatures {
+public class AdjustmentChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
 	public static final int SIZE = 6;
 
 	private boolean relative;

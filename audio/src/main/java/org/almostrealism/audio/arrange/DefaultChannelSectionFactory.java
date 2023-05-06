@@ -189,12 +189,12 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			process.add(() -> () ->
 					product.into(destination.get().evaluate().traverseEach()).evaluate(
 							source.get().evaluate().traverseEach(),
-							volume.getKernelList(0).valueAt(geneIndex)));
+							volume.getKernelList().valueAt(geneIndex)));
 
-//			process.add(() -> () -> {
-//				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList(0).getData();
-//				data.get(1);
-//			});
+			process.add(() -> () -> {
+				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList().getData();
+				data.get(1);
+			});
 			return process;
 		}
 

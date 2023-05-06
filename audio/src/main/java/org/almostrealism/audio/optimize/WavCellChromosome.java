@@ -39,9 +39,7 @@ import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -51,7 +49,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollection<?>>, Temporal, Setup, CellFeatures {
+public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Temporal, Setup, CellFeatures {
 	private Chromosome<PackedCollection<?>> source;
 	private Map<Integer, Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>>> transforms;
 
@@ -65,7 +63,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 	private int sampleRate;
 	private Producer<Scalar> time;
 
-	public WavCellChromosomeExpansionNew(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
+	public WavCellChromosome(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
 		this.source = source;
 		this.transforms = new HashMap<>();
 		this.inputGenes = source.length();
@@ -88,13 +86,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 
 	public void setTimeline(PackedCollection<PackedCollection<?>> timeline) { kernels.setInput(timeline); }
 
-	public KernelList<PackedCollection<?>> getKernelList(int factor) {
-		if (factor != 0) {
-			throw new IllegalArgumentException();
-		}
-
-		return kernels;
-	}
+	public KernelList<PackedCollection<?>> getKernelList() { return kernels; }
 
 	public int getFactorCount() { return 1; }
 
@@ -150,9 +142,6 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 				.map(f -> f instanceof Temporal ? (Temporal) f : null)
 				.filter(Objects::nonNull)
 				.collect(TemporalList.collector());
-		if (!all.isEmpty()) {
-			System.out.println("WavCellChromosome: " + all.size() + " temporals");
-		}
 		return all;
 	}
 
