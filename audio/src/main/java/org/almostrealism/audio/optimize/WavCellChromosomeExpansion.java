@@ -32,17 +32,18 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+@Deprecated
 public class WavCellChromosomeExpansion extends
 		MemoryDataTemporalCellularChromosomeExpansion<PackedCollection<PackedCollection<?>>, PackedCollection<?>, PackedCollection<?>> implements CellFeatures {
 
 	private int sampleRate;
 	private Producer<Scalar> time;
 
-	public WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
+	private WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
 		this(source, source.length(), inputFactors, sampleRate);
 	}
 
-	public WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputGenes, int inputFactors, int sampleRate) {
+	private WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputGenes, int inputFactors, int sampleRate) {
 		super((Class) PackedCollection.class, source, 1, PackedCollection.bank(new TraversalPolicy(1)),
 				PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
 						new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset())),

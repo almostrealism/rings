@@ -62,7 +62,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	private Producer<Scalar> globalTime;
 
-	private GeneratorChromosome generatorChromosome;
+	// private GeneratorChromosome generatorChromosome;
 
 	public DefaultAudioGenome(int sources, int delayLayers, Producer<Scalar> globalTime) {
 		this(sources, delayLayers, OutputLine.sampleRate, globalTime);
@@ -86,7 +86,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	}
 
 	protected void initChromosomes() {
-		if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
+		// if (generatorChromosome == null) generatorChromosome = new GeneratorChromosome(GENERATORS, globalTime);
 	}
 
 	public void assignTo(Genome g) {
@@ -110,7 +110,8 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 	@Override
 	public Chromosome<PackedCollection<?>> valueAt(int pos) {
 		if (pos == GENERATORS) {
-			return generatorChromosome;
+//			return generatorChromosome;
+			throw new UnsupportedOperationException();
 		} else if (pos == VOLUME) {
 			throw new UnsupportedOperationException();
 		} else if (pos == MAIN_FILTER_UP) {
@@ -130,13 +131,13 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("DefaultAudioGenome Chromosome Expansions");
-		setup.add(generatorChromosome.expand());
+		// setup.add(generatorChromosome.expand());
 		return setup;
 	}
 
 	public TemporalList getTemporals() {
 		TemporalList temporals = new TemporalList();
-		temporals.addAll(generatorChromosome.getTemporals());
+		// temporals.addAll(generatorChromosome.getTemporals());
 		return temporals;
 	}
 
@@ -274,6 +275,7 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 		return valueForFactor(f) * 20000;
 	}
 
+	/*
 	@Deprecated
 	protected class GeneratorChromosome extends WavCellChromosomeExpansion {
 		public GeneratorChromosome(int index, Producer<Scalar> globalTime) {
@@ -337,4 +339,5 @@ public class DefaultAudioGenome implements Genome<PackedCollection<?>>, Setup, C
 			}
 		};
 	}
+	 */
 }

@@ -127,8 +127,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		IntStream.range(0, delayLayers).forEach(i -> wetOut.setParameterRange(i, config.minWetOut, config.maxWetOut));
 
-		if (delay != null)
-			delay.setParameterRange(0, factorForDelay(config.minDelay), factorForDelay(config.maxDelay));
+		delay.setParameterRange(0, factorForDelay(config.minDelay), factorForDelay(config.maxDelay));
 
 		delayDynamics.setDelayRange(config.minDelay, config.maxDelay);
 		delayDynamics.setPeriodicSpeedUpDurationRange(config.periodicSpeedUpDurationMin, config.periodicSpeedUpDurationMax);
