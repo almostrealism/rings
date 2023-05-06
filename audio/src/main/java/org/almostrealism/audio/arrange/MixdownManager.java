@@ -205,7 +205,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			CellList delays = IntStream.range(0, delayLayers)
 					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
 							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
-							toScalar(delayDynamics.valueAt(i, 1).getResultant(c(1.0)))))
+							toScalar(delayDynamics.valueAt(i, 0).getResultant(c(1.0)))))
 					.collect(CellList.collector());
 
 			// Route each line to each delay layer

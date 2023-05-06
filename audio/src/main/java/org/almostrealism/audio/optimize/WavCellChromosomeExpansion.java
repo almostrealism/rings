@@ -29,6 +29,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -50,6 +51,10 @@ public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromo
 	@Override
 	protected Producer<PackedCollection<PackedCollection<?>>> parameters(Gene<PackedCollection<?>> gene) {
 		return concat(IntStream.range(0, gene.length()).mapToObj(gene).map(f -> f.getResultant(c(1.0))).toArray(Producer[]::new));
+	}
+
+	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> identity(int index) {
+		return super.identity(index, c(1.0));
 	}
 
 	@Override

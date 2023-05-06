@@ -98,11 +98,6 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 
 	public int getFactorCount() { return kernels.size(); }
 
-	@Deprecated
-	public void addFactor(Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> value) {
-		this.kernels.add(new KernelOrValue(value));
-	}
-
 	public void addFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
 		this.kernels.add(new KernelOrValue(new KernelList(bankProvider, tableProvider, computation, inputGenes, inputFactors)));
 	}
@@ -179,7 +174,7 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 					.toFactor(Scalar::new, p -> protein -> new Assignment<>(1, p, protein), combine());
 			// return cell(pos, factor, gene).toFactor();
 		} else {
-			return kernels.get(factor).getFactor(gene);
+			throw new UnsupportedOperationException();
 		}
 	}
 
@@ -225,11 +220,8 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 
 	protected class KernelOrValue {
 		private KernelList<PackedCollection<?>> kernels;
-		private Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> value;
 
 		public KernelOrValue(KernelList<PackedCollection<?>> k) { this.kernels = k; }
-
-		public KernelOrValue(Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> v) { this.value = v; }
 
 		public void setInput(PackedCollection<PackedCollection<?>> input) {
 			if (isKernel()) kernels.setInput(input);
@@ -250,10 +242,6 @@ public class WavCellChromosomeExpansionNew implements Chromosome<PackedCollectio
 			} else {
 				throw new UnsupportedOperationException();
 			}
-		}
-
-		public Factor<PackedCollection<?>> getFactor(Gene<PackedCollection<?>> gene) {
-			return protein -> combine().apply(value.apply(gene), protein);
 		}
 	}
 }
