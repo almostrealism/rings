@@ -163,7 +163,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.genome = new CombinedGenome(5);
 
 		this.tuning = new DefaultKeyboardTuning();
-		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getMeasureDuration, getSampleRate());
+		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getTempo, this::getMeasureDuration, getSampleRate());
 		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
@@ -474,8 +474,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(32, 16));
-			settings.getSections().add(new Section(48, 16));
+			settings.getSections().add(new Section(32, 32));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));

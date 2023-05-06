@@ -47,6 +47,7 @@ import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -545,7 +546,8 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput()));
 
 		OperationList export = new OperationList("Export " + wavs.getAtomicMemLength() + " frames");
-		export.add(iter(cells, wavs.getAtomicMemLength()));
+		// export.add(iter(cells, wavs.getAtomicMemLength()));
+		export.add(new TemporalRunner(cells, wavs.getAtomicMemLength()));
 
 		for (int i = 0; i < cells.size(); i++) {
 			export.add(((WaveOutput) ((ReceptorCell) cells.get(i)).getReceptor()).export(wavs.get(i).traverseEach()));

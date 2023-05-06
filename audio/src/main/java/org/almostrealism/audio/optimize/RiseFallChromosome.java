@@ -52,9 +52,10 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 			CollectionProducerComputation start = c(choice(2, toScalar(c(p, 0)), p(originChoices)), 0);
 			CollectionProducerComputation end = multiply(direction, magnitude).add(start);
 
-			CollectionProducerComputation pos = divide(in, p(duration));
+			CollectionProducerComputation pos = divide(traverse(1, in), p(duration));
 
 			return add(start, multiply(end.subtract(start), pos));
+			// return end;
 		});
 	}
 

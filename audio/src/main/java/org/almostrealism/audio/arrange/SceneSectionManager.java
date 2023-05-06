@@ -19,6 +19,7 @@ package org.almostrealism.audio.arrange;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,14 +35,16 @@ public class SceneSectionManager implements Setup {
 	private ConfigurableGenome genome;
 	private int channels;
 
+	private Supplier<Frequency> tempo;
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
 
-	public SceneSectionManager(ConfigurableGenome genome, int channels, DoubleSupplier measureDuration, int sampleRate) {
+	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo, DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
 		this.genome = genome;
 		this.channels = channels;
+		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.sampleRate = sampleRate;
 	}
@@ -57,7 +60,7 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public SceneSection addSection(int position, int length) {
-		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, measureDuration, length, sampleRate);
+		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, tempo, measureDuration, length, sampleRate);
 		SceneSection s = SceneSection.createSection(position, length, channels, () -> channelFactory.createSection(position));
 		sections.add(s);
 		setup.add(channelFactory.setup());

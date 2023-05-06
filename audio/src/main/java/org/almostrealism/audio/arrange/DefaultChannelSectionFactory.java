@@ -36,6 +36,7 @@ import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.TemporalFactor;
+import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
@@ -45,6 +46,8 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
+	public static boolean enableVolumePostprocess = false;
+	public static boolean enableRepeat = false;
 	public static boolean enableFilter = false;
 
 	public static final double repeatChoices[];
@@ -65,13 +68,16 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 	private int channel, channels;
 
+	private Supplier<Frequency> tempo;
 	private DoubleSupplier measureDuration;
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, DoubleSupplier measureDuration, int length, int sampleRate) {
+	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo,
+										DoubleSupplier measureDuration, int length, int sampleRate) {
 		this.clock = new TimeCell();
 		this.channels = channels;
+		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.length = length;
 		this.sampleRate = sampleRate;
@@ -100,7 +106,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	}
 
 	protected void initRanges() {
-		duration.setRepeatSpeedUpDurationRange(5.0, 60.0);
+		duration.setRepeatSpeedUpDurationRange(10.0, 10.0);
 	}
 
 	public Section createSection(int position) {
@@ -147,21 +153,24 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 
 			TemporalList temporals = new TemporalList();
+			temporals.addAll(volume.getTemporals());
 			temporals.addAll(lowPassFilter.getTemporals());
+			temporals.addAll(duration.getTemporals());
 
-			CellList cells = cells(1, i -> new WaveCell(input.traverseEach(), sampleRate));
+			Producer<PackedCollection<?>> repeat = duration.valueAt(geneIndex, 0).getResultant(c(tempo.get().l(1)));
+			CellList cells = cells(1, i ->
+						new WaveCell(input.traverseEach(), sampleRate, 1.0, null, enableRepeat ? toScalar(repeat) : null))
+					.addRequirements(clock)
+					.addRequirements(temporals.toArray(TemporalFactor[]::new)); // TODO  Why can't the list just be added?
+
+			if (!enableVolumePostprocess) {
+				cells = cells.map(fc(i -> factor(volume.valueAt(geneIndex, 0))));
+			}
 
 			if (enableFilter) {
-				temporals.addAll(volume.getTemporals());
-
 				Factor<PackedCollection<?>> factor = lowPassFilter.valueAt(geneIndex, 0);
 				Producer<PackedCollection<?>> lp = factor(factor).getResultant(c(1.0));
-
-				cells = cells
-						.addRequirements(clock)
-						.addRequirements(temporals.toArray(TemporalFactor[]::new)) // TODO  Why can't the list just be added?
-						.map(fc(i -> factor(volume.valueAt(geneIndex, 0))))
-						.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
+				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
 			}
 
 			OperationList process = new OperationList();
@@ -171,7 +180,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 			KernelizedEvaluable product;
 
-			if (enableFilter) {
+			if (enableVolumePostprocess) {
 				product = multiply(v(1, 0), v(1, 1)).get();
 			} else {
 				product = multiply(v(1, 0), c(1.0)).get();
@@ -183,7 +192,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 							volume.getKernelList(0).valueAt(geneIndex)));
 
 //			process.add(() -> () -> {
-//				lowPassFilter.getKernelList(0).getData().getCount();
+//				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList(0).getData();
+//				data.get(1);
 //			});
 			return process;
 		}
