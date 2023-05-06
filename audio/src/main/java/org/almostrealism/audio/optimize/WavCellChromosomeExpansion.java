@@ -29,18 +29,29 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromosomeExpansion implements CellFeatures {
+public class WavCellChromosomeExpansion extends
+		MemoryDataTemporalCellularChromosomeExpansion<PackedCollection<PackedCollection<?>>, PackedCollection<?>, PackedCollection<?>> implements CellFeatures {
 
-	// TODO  Can't inputGenes just be inferred via source::length?
+	private int sampleRate;
+	private Producer<Scalar> time;
+
+	public WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
+		this(source, source.length(), inputFactors, sampleRate);
+	}
+
 	public WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputGenes, int inputFactors, int sampleRate) {
 		super((Class) PackedCollection.class, source, 1, PackedCollection.bank(new TraversalPolicy(1)),
 				PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
 						new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset())),
-				inputGenes, inputFactors, sampleRate);
+				inputGenes, inputFactors);
+		this.sampleRate = sampleRate;
+	}
+
+	public void setGlobalTime(Producer<Scalar> time) {
+		this.time = time;
 	}
 
 	@Override
@@ -49,12 +60,13 @@ public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromo
 	}
 
 	@Override
-	protected Producer<PackedCollection<PackedCollection<?>>> parameters(Gene<PackedCollection<?>> gene) {
-		return concat(IntStream.range(0, gene.length()).mapToObj(gene).map(f -> f.getResultant(c(1.0))).toArray(Producer[]::new));
+	protected Cell<PackedCollection<?>> cell(PackedCollection<PackedCollection<?>> data) {
+		return new WaveCell(data, sampleRate, time);
 	}
 
-	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> identity(int index) {
-		return super.identity(index, c(1.0));
+	@Override
+	protected Producer<PackedCollection<PackedCollection<?>>> parameters(Gene<PackedCollection<?>> gene) {
+		return concat(IntStream.range(0, gene.length()).mapToObj(gene).map(f -> f.getResultant(c(1.0))).toArray(Producer[]::new));
 	}
 
 	@Override

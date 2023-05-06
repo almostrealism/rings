@@ -22,7 +22,7 @@ import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
-public class RiseFallChromosome extends WavCellChromosomeExpansionNew {
+public class RiseFallChromosome extends WavCellChromosomeExpansion {
 	public static final int SIZE = 2;
 
 	private final PackedCollection duration;
@@ -42,8 +42,8 @@ public class RiseFallChromosome extends WavCellChromosomeExpansionNew {
 		Scalar testChoice = new Scalar();
 		testChoice.setMem(0, 0.25);
 
-		setTransform(0, identity(0));
-		setTransform(1, identity(1));
+		setTransform(0, identity(0, c(1.0)));
+		setTransform(1, identity(1, c(1.0)));
 		addFactor((p, in) -> {
 			CollectionProducerComputation scale = subtract(c(maxValue), c(minValue));
 			CollectionProducerComputation direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);

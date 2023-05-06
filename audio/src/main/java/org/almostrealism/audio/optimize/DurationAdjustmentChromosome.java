@@ -23,7 +23,7 @@ import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 
-public class DurationAdjustmentChromosome extends WavCellChromosomeExpansionNew implements OptimizeFactorFeatures {
+public class DurationAdjustmentChromosome extends WavCellChromosomeExpansion implements OptimizeFactorFeatures {
 	public static final int SIZE = 2;
 	private Chromosome<PackedCollection<?>> speedUp;
 
@@ -42,7 +42,8 @@ public class DurationAdjustmentChromosome extends WavCellChromosomeExpansionNew 
 
 			CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
-			return initial.divide(pow(c(2.0), floor(divide(in, speedUpDuration))));
+			// return initial.divide(pow(c(2.0), floor(divide(in, speedUpDuration))));
+			return initial.divide(pow(c(2.0), floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
 		});
 	}
 

@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumePostprocess = false;
-	public static boolean enableRepeat = false;
+	public static boolean enableRepeat = true;
 	public static boolean enableFilter = false;
 
 	public static final double repeatChoices[];
