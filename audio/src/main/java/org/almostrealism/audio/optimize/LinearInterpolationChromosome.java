@@ -20,17 +20,17 @@ import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
-public class LinearInterpolationChromosome extends WavCellChromosomeExpansion {
+public class LinearInterpolationChromosome extends WavCellChromosomeExpansionNew {
 	public static final int SIZE = 2;
 
 	private final PackedCollection duration;
 
 	public LinearInterpolationChromosome(Chromosome<PackedCollection<?>> source, double min, double max, int sampleRate) {
-		super(source, source.length(), SIZE, sampleRate);
+		super(source, SIZE, sampleRate);
 		duration = new PackedCollection(1);
 
-		setTransform(0, identity(0, c(1.0)));
-		setTransform(1, identity(1, c(1.0)));
+		setTransform(0, identity(0));
+		setTransform(1, identity(1));
 		addFactor((p, in) -> {
 			CollectionProducerComputation scale = subtract(c(max), c(min));
 			CollectionProducerComputation start = c(min).add(c(p, 0).multiply(scale));

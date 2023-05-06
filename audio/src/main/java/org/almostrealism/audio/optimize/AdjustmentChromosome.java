@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@
 
 package org.almostrealism.audio.optimize;
 
-import org.almostrealism.Ops;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
-import org.almostrealism.heredity.HeredityFeatures;
-import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.heredity.SimpleChromosome;
 
-public class AdjustmentChromosome extends WavCellChromosomeExpansion implements OptimizeFactorFeatures {
+public class AdjustmentChromosome extends WavCellChromosomeExpansionNew implements OptimizeFactorFeatures {
 	public static final int SIZE = 6;
 
 	private boolean relative;
 
 	public AdjustmentChromosome(Chromosome<PackedCollection<?>> source, double min, double max, boolean relative, int sampleRate) {
-		super(source, source.length(), 6, sampleRate);
+		super(source, 6, sampleRate);
 		this.relative = relative;
 		setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(c(60.0)));
 		setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(c(60.0)));

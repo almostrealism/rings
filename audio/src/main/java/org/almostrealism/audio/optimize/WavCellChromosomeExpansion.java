@@ -32,33 +32,19 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class WavCellChromosomeExpansion extends
-		MemoryDataTemporalCellularChromosomeExpansion<PackedCollection<PackedCollection<?>>, PackedCollection<?>, PackedCollection<?>> implements CellFeatures {
-
-	private int sampleRate;
-	private Producer<Scalar> time;
+public class WavCellChromosomeExpansion extends MemoryDataTemporalCellularChromosomeExpansion implements CellFeatures {
 
 	// TODO  Can't inputGenes just be inferred via source::length?
 	public WavCellChromosomeExpansion(Chromosome<PackedCollection<?>> source, int inputGenes, int inputFactors, int sampleRate) {
 		super((Class) PackedCollection.class, source, 1, PackedCollection.bank(new TraversalPolicy(1)),
 				PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
 						new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset())),
-				inputGenes, inputFactors);
-		this.sampleRate = sampleRate;
-	}
-
-	public void setGlobalTime(Producer<Scalar> time) {
-		this.time = time;
+				inputGenes, inputFactors, sampleRate);
 	}
 
 	@Override
 	public Supplier<Runnable> setup() {
 		return () -> () -> setTimeline(WaveOutput.timeline.getValue());
-	}
-
-	@Override
-	protected Cell<PackedCollection<?>> cell(PackedCollection<PackedCollection<?>> data) {
-		return new WaveCell(data, sampleRate, time);
 	}
 
 	@Override
