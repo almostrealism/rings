@@ -272,7 +272,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		return gene;
 	}
 
-	public static class Configuration {
+	public static class Configuration implements OptimizeFactorFeatures {
 		public IntToDoubleFunction minChoice, maxChoice;
 		public double minChoiceValue, maxChoiceValue;
 
@@ -412,7 +412,6 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			repeatChoices = IntStream.range(0, 9)
 					.map(i -> i - 2)
 					.mapToDouble(i -> Math.pow(2, i))
-//					.map(DefaultAudioGenome::factorForRepeat)
 					.toArray();
 
 			repeatChoices = new double[] { 16 };

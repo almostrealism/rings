@@ -17,7 +17,6 @@
 package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.Frequency;
@@ -25,7 +24,6 @@ import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.tone.WesternChromatic;
 import  org.almostrealism.audio.tone.WesternScales;
-import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -135,11 +133,6 @@ public class AssignableGenomeTest implements CellFeatures {
 		genome.add(z);
 		genome.add(a);
 		return genome;
-	}
-
-	protected Temporal organ(DefaultAudioGenome genome, List<Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> meter) {
-		genome.assignTo(genome(0.0, 0.0, false));
-		return scene().getCells(measures, meter);
 	}
 
 	protected Cells cells(Receptor<PackedCollection<?>> meter) {

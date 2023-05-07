@@ -29,6 +29,7 @@ import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.hardware.Hardware;
@@ -155,9 +156,9 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome<Scalar>> genomes = new ArrayList<>();
-		genomes.add(genome());
-		genomes.add(genome());
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		genomes.add(scene.getGenome().random());
+		genomes.add(scene.getGenome().random());
 
 		AudioPopulationOptimizer.store(genomes, new FileOutputStream("Population.xml"));
 
