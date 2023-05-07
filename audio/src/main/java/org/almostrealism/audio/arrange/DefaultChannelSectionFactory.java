@@ -50,7 +50,8 @@ import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumePostprocess = false;
-	public static boolean enableRepeat = true;
+	public static boolean enableVolumeRiseFall = true;
+	public static boolean enableRepeat = false;
 	public static boolean enableFilter = true;
 
 	public static final double repeatChoices[];
@@ -66,6 +67,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;
+	private RiseFallChromosome volumeRiseFall;
 	private RiseFallChromosome lowPassFilter;
 	private SimpleChromosome simpleDuration;
 	private SimpleChromosome simpleDurationSpeedUp;
@@ -90,6 +92,11 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new LinearInterpolationChromosome(v, 0.0, 1.0, sampleRate);
 		this.volume.setGlobalTime(clock.frame());
+
+		SimpleChromosome vrf = genome.addSimpleChromosome(RiseFallChromosome.SIZE);
+		IntStream.range(0, channels).forEach(i -> vrf.addGene());
+		this.volumeRiseFall = new RiseFallChromosome(vrf, 0.0, 1.0, 0.5, sampleRate);
+		this.volumeRiseFall.setGlobalTime(clock.frame());
 
 		SimpleChromosome lp = genome.addSimpleChromosome(RiseFallChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> lp.addGene());
@@ -125,8 +132,10 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList();
 		setup.add(() -> () -> volume.setDuration(length * measureDuration.getAsDouble()));
+		setup.add(() -> () -> volumeRiseFall.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(() -> () -> lowPassFilter.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(volume.expand());
+		setup.add(volumeRiseFall.expand());
 		setup.add(lowPassFilter.expand());
 		return setup;
 	}
@@ -159,20 +168,24 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 			TemporalList temporals = new TemporalList();
 			temporals.addAll(volume.getTemporals());
+			temporals.addAll(volumeRiseFall.getTemporals());
 			temporals.addAll(lowPassFilter.getTemporals());
 
-			Producer<PackedCollection<?>> r =
-				simpleDuration.valueAt(0, 0).getResultant(c(tempo.get().l(1)));
-			Producer<PackedCollection<?>> su =
-				simpleDurationSpeedUp.valueAt(0, 0).getResultant(c(1.0));
+			Producer<PackedCollection<?>> r = simpleDuration.valueAt(0, 0)
+													.getResultant(c(tempo.get().l(1)));
+			Producer<PackedCollection<?>> su = simpleDurationSpeedUp.valueAt(0, 0)
+													.getResultant(c(1.0));
 			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), clock.time(sampleRate));
 
 			CellList cells = cells(1, i ->
 					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), enableRepeat ? toScalar(repeat) : null))
 					.addRequirements(clock)
-					.addRequirements(temporals.toArray(TemporalFactor[]::new)); // TODO  Why can't the list just be added?
+					// TODO  Why can't the list just be added?
+					.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
-			if (!enableVolumePostprocess) {
+			if (enableVolumeRiseFall) {
+				cells = cells.map(fc(i -> factor(volumeRiseFall.valueAt(geneIndex, 0))));
+			} else if (!enableVolumePostprocess) {
 				cells = cells.map(fc(i -> factor(volume.valueAt(geneIndex, 0))));
 			}
 
