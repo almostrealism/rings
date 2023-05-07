@@ -32,14 +32,17 @@ import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
+import org.almostrealism.heredity.ChoiceGene;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.SimpleGene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -47,8 +50,8 @@ import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumePostprocess = false;
-	public static boolean enableRepeat = false;
-	public static boolean enableFilter = false;
+	public static boolean enableRepeat = true;
+	public static boolean enableFilter = true;
 
 	public static final double repeatChoices[];
 
@@ -58,13 +61,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 //				.mapToDouble(i -> Math.pow(2, i))
 //				.toArray();
 
-		repeatChoices = new double[] { 16 };
+		repeatChoices = new double[] { 16, 32 };
 	}
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;
 	private RiseFallChromosome lowPassFilter;
-	private DurationAdjustmentChromosome duration;
+	private SimpleChromosome simpleDuration;
+	private SimpleChromosome simpleDurationSpeedUp;
 
 	private int channel, channels;
 
@@ -95,18 +99,20 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		PackedCollection<?> repeat = new PackedCollection<>(repeatChoices.length);
 		repeat.setMem(Arrays.stream(repeatChoices).map(this::factorForRepeat).toArray());
 
-		SimpleChromosome r = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> r.addChoiceGene(repeat));
-		SimpleChromosome s = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> s.addGene());
-		this.duration = new DurationAdjustmentChromosome(r, s, sampleRate);
-		this.duration.setGlobalTime(clock.frame());
+		this.simpleDuration = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> simpleDuration.addChoiceGene(repeat));
+
+		this.simpleDurationSpeedUp = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = simpleDurationSpeedUp.addGene();
+			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+		});
 
 		initRanges();
 	}
 
 	protected void initRanges() {
-		duration.setRepeatSpeedUpDurationRange(10.0, 10.0);
+		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(4), factorForRepeatSpeedUpDuration(4));
 	}
 
 	public Section createSection(int position) {
@@ -122,7 +128,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		setup.add(() -> () -> lowPassFilter.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(volume.expand());
 		setup.add(lowPassFilter.expand());
-		setup.add(duration.expand());
 		return setup;
 	}
 
@@ -155,11 +160,15 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			TemporalList temporals = new TemporalList();
 			temporals.addAll(volume.getTemporals());
 			temporals.addAll(lowPassFilter.getTemporals());
-			temporals.addAll(duration.getTemporals());
 
-			Producer<PackedCollection<?>> repeat = duration.valueAt(geneIndex, 0).getResultant(c(tempo.get().l(1)));
+			Producer<PackedCollection<?>> r =
+				simpleDuration.valueAt(0, 0).getResultant(c(tempo.get().l(1)));
+			Producer<PackedCollection<?>> su =
+				simpleDurationSpeedUp.valueAt(0, 0).getResultant(c(1.0));
+			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), clock.time(sampleRate));
+
 			CellList cells = cells(1, i ->
-						new WaveCell(input.traverseEach(), sampleRate, 1.0, null, enableRepeat ? toScalar(repeat) : null))
+					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), enableRepeat ? toScalar(repeat) : null))
 					.addRequirements(clock)
 					.addRequirements(temporals.toArray(TemporalFactor[]::new)); // TODO  Why can't the list just be added?
 
@@ -191,10 +200,10 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 							source.get().evaluate().traverseEach(),
 							volume.getKernelList().valueAt(geneIndex)));
 
-			process.add(() -> () -> {
-				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList().getData();
-				data.get(1);
-			});
+//			process.add(() -> () -> {
+//				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList().getData();
+//				data.get(1);
+//			});
 			return process;
 		}
 
