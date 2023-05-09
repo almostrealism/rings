@@ -14,16 +14,16 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 		if (value instanceof ScaleFactor) {
 			return ((ScaleFactor) value).getScaleValue();
 		} else {
-			return value.getResultant(Ops.ops().c(1.0)).get().evaluate().toDouble(0);
+			return value.getResultant(c(1.0)).get().evaluate().toDouble(0);
 		}
 	}
 
 	default double valueForFactor(Factor<PackedCollection<?>> value, double exp, double multiplier) {
 		if (value instanceof ScaleFactor) {
-			return HeredityFeatures.getInstance().oneToInfinity(((ScaleFactor) value).getScaleValue(), exp) * multiplier;
+			return oneToInfinity(((ScaleFactor) value).getScaleValue(), exp) * multiplier;
 		} else {
-			double v = value.getResultant(Ops.ops().c(1.0)).get().evaluate().toDouble(0);
-			return HeredityFeatures.getInstance().oneToInfinity(v, exp) * multiplier;
+			double v = value.getResultant(c(1.0)).get().evaluate().toDouble(0);
+			return oneToInfinity(v, exp) * multiplier;
 		}
 	}
 
@@ -45,7 +45,6 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 		return ((Math.log(beats) / Math.log(2)) / 16) + 0.5;
 	}
 
-
 	default double factorForRepeatSpeedUpDuration(double seconds) {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
@@ -63,6 +62,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 	}
 
 	default ProducerComputation<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
+																	   Producer<PackedCollection<?>> speedUpOffset,
 																	   Producer<PackedCollection<?>> time) {
 		return Ops.op(o -> {
 			CollectionProducerComputation rp = o.c(params, 0);
@@ -70,8 +70,10 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 
 			CollectionProducerComputation initial = o.pow(o.c(2.0), o.c(16).multiply(o.c(-0.5).add(rp)));
 
-			return initial.divide(o.pow(o.c(2.0), o.floor(o.divide(time, speedUpDuration))));
-			// return initial.divide(pow(c(2.0), floor(speedUpDuration.pow(c(-1.0)).multiply(in))));
+			Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, speedUpOffset));
+//			Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, c(0.0)));
+			speedUp = o.floor(o.divide(speedUp, speedUpDuration));
+			return initial.divide(o.pow(o.c(2.0), speedUp));
 		});
 	}
 }

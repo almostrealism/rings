@@ -40,13 +40,14 @@ import org.almostrealism.time.TemporalList;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumePostprocess = false;
 	public static boolean enableVolumeRiseFall = true;
-	public static boolean enableRepeat = false;
+	public static boolean enableRepeat = true;
 	public static boolean enableFilter = true;
 
 	public static final double repeatChoices[];
@@ -57,7 +58,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 //				.mapToDouble(i -> Math.pow(2, i))
 //				.toArray();
 
-		repeatChoices = new double[] { 16, 32 };
+		repeatChoices = new double[] { 8, 16, 32 };
 	}
 
 	private TimeCell clock;
@@ -68,16 +69,18 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	private SimpleChromosome simpleDurationSpeedUp;
 
 	private int channel, channels;
+	private IntPredicate wetChannels;
 
 	private Supplier<Frequency> tempo;
 	private DoubleSupplier measureDuration;
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo,
-										DoubleSupplier measureDuration, int length, int sampleRate) {
+	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, IntPredicate wetChannels,
+										Supplier<Frequency> tempo, DoubleSupplier measureDuration, int length, int sampleRate) {
 		this.clock = new TimeCell();
 		this.channels = channels;
+		this.wetChannels = wetChannels;
 		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.length = length;
@@ -104,7 +107,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		this.simpleDuration = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> simpleDuration.addChoiceGene(repeat));
 
-		this.simpleDurationSpeedUp = genome.addSimpleChromosome(1);
+		this.simpleDurationSpeedUp = genome.addSimpleChromosome(2);
 		IntStream.range(0, channels).forEach(i -> {
 			SimpleGene g = simpleDurationSpeedUp.addGene();
 			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
@@ -114,7 +117,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	}
 
 	protected void initRanges() {
-		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(4), factorForRepeatSpeedUpDuration(4));
+		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(2), factorForRepeatSpeedUpDuration(2));
+		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(12), factorForRepeatSpeedUpDuration(24));
 	}
 
 	public Section createSection(int position) {
@@ -166,11 +170,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			temporals.addAll(volumeRiseFall.getTemporals());
 			temporals.addAll(lowPassFilter.getTemporals());
 
-			Producer<PackedCollection<?>> r = simpleDuration.valueAt(0, 0)
+			int repeatGene = geneIndex; // 0;
+			Producer<PackedCollection<?>> r = simpleDuration.valueAt(repeatGene, 0)
 													.getResultant(c(tempo.get().l(1)));
-			Producer<PackedCollection<?>> su = simpleDurationSpeedUp.valueAt(0, 0)
+			Producer<PackedCollection<?>> su = simpleDurationSpeedUp.valueAt(repeatGene, 0)
 													.getResultant(c(1.0));
-			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), clock.time(sampleRate));
+			Producer<PackedCollection<?>> so = simpleDurationSpeedUp.valueAt(repeatGene, 1)
+													.getResultant(c(1.0));
+			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), so, clock.time(sampleRate));
 
 			CellList cells = cells(1, i ->
 					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), enableRepeat ? toScalar(repeat) : null))
@@ -184,7 +191,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 				cells = cells.map(fc(i -> factor(volume.valueAt(geneIndex, 0))));
 			}
 
-			if (enableFilter) {
+			if (enableFilter && wetChannels.test(channel)) {
 				Factor<PackedCollection<?>> factor = lowPassFilter.valueAt(geneIndex, 0);
 				Producer<PackedCollection<?>> lp = factor(factor).getResultant(c(1.0));
 				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));

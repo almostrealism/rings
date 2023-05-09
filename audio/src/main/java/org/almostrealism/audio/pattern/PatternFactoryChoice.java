@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
@@ -37,8 +38,7 @@ public class PatternFactoryChoice {
 	private double seedScale;
 	private double seedBias;
 
-	@Deprecated
-	private ParameterizedPositionFunction seedNoteFunction;
+	private ParameterFunction granularitySelection;
 
 	public PatternFactoryChoice() { this(null); }
 
@@ -64,7 +64,7 @@ public class PatternFactoryChoice {
 	}
 
 	public void initSelectionFunctions() {
-		seedNoteFunction = ParameterizedPositionFunction.random();
+		granularitySelection = ParameterFunction.random();
 	}
 
 	public PatternElementFactory getFactory() { return factory; }
@@ -102,19 +102,16 @@ public class PatternFactoryChoice {
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
-	public ParameterizedPositionFunction getSeedNoteFunction() {
-		return seedNoteFunction;
-	}
-	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) {
-		this.seedNoteFunction = seedNoteFunction;
-	}
+	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) { }
 
 	public void setTuning(KeyboardTuning tuning) {
 		getFactory().setTuning(tuning);
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
-		return new PatternLayerSeeds(0, seedScale, granularity, seedBias, factory, params);
+		double granularity = getMaxScale() * granularitySelection.power(2, 3, -2).apply(params);
+		granularity = Math.max(getMinScale(), granularity);
+		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, int depth, ParameterSet params) {

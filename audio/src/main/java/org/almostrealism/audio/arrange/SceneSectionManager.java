@@ -39,6 +39,8 @@ public class SceneSectionManager implements Setup {
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
 
+	private List<Integer> wetChannels;
+
 	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo, DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
@@ -47,11 +49,15 @@ public class SceneSectionManager implements Setup {
 		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.sampleRate = sampleRate;
+		this.wetChannels = new ArrayList<>();
 	}
 
 	public ConfigurableGenome getGenome() {
 		return genome;
 	}
+
+	public List<Integer> getWetChannels() { return wetChannels; }
+	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
 	public List<SceneSection> getSections() { return Collections.unmodifiableList(sections); }
 
@@ -60,7 +66,8 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public SceneSection addSection(int position, int length) {
-		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, tempo, measureDuration, length, sampleRate);
+		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, c -> getWetChannels().contains(c),
+																					tempo, measureDuration, length, sampleRate);
 		SceneSection s = SceneSection.createSection(position, length, channels, () -> channelFactory.createSection(position));
 		sections.add(s);
 		setup.add(channelFactory.setup());

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.WaveSet;
+import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
@@ -164,17 +166,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
 		int sourceCount = 5;
-		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3, OutputLine.sampleRate, new NoOpGenerationProvider());
-
-//		Set<Integer> choices = IntStream.range(0, sourceCount).mapToObj(i -> i).collect(Collectors.toSet());
-//		Waves waves = waves(scene, choices, bpm);
+		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3,
+										OutputLine.sampleRate, new NoOpGenerationProvider());
 
 		scene.getPatternManager().getChoices().addAll(createChoices());
 		scene.setTuning(new DefaultKeyboardTuning());
-		scene.setTotalMeasures(64);
-		scene.addSection(0, 32);
-		scene.addSection(32, 32);
-		scene.addBreak(64);
 
 		AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount,
 				AudioScene.DEFAULT_PATTERNS_PER_CHANNEL,
@@ -183,6 +179,12 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				AudioScene.DEFAULT_DURATION);
 
 		if (singleChannel >= 0) {
+			PatternSystemManager.enableWarnings = false;
+			// PatternLayerManager.enableLogging = true;
+			// DefaultChannelSectionFactory.enableFilter = false;
+
+			settings.setWetChannels(Collections.emptyList());
+
 			settings.getPatternSystem().setPatterns(
 					settings
 							.getPatternSystem()
@@ -193,8 +195,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		}
 
 		scene.setSettings(settings);
-
-		// scene.saveSettings(new File("scene-settings.json"));
 		return scene;
 	}
 
@@ -208,17 +208,17 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 				if (!"Kicks".equals(c.getFactory().getName())) {
 					c.setMinScale(0.0);
-					c.setMaxScale(8.0);
+					c.setMaxScale(16.0);
 				}
 
 				if ("Chord Synth".equals(c.getFactory().getName())) {
-					c.setGranularity(2.0);
-					c.setSeedScale(2.0);
+//					c.setGranularity(2.0);
+//					c.setSeedScale(2.0);
 					c.setSeedBias(0.0);
 				} else if ("Bass".equals(c.getFactory().getName())) {
-					c.setGranularity(8.0);
-					c.setSeedScale(8.0);
-					c.setSeedBias(0.0);
+//					c.setGranularity(8.0);r
+//					c.setSeedScale(8.0);
+					c.setSeedBias(1.0);
 				}
 			});
 

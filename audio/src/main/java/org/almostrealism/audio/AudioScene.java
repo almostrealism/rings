@@ -78,7 +78,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				switch (c) {
 					case 0 -> { yield 3; }
 					case 1 -> { yield 3; }
-					case 2 -> { yield 5; }
+					case 2 -> { yield 4; }
 					case 3 -> { yield 5; }
 					case 4 -> { yield 3; }
 					case 5 -> { yield 3; }
@@ -299,7 +299,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (settings.getChannelNames() != null) channelNames.addAll(settings.getChannelNames());
 
 		getEfxManager().getWetChannels().clear();
-		if (settings.getWetChannels() != null) getEfxManager().getWetChannels().addAll(settings.getWetChannels());
+		getSectionManager().getWetChannels().clear();
+		if (settings.getWetChannels() != null) {
+			getEfxManager().getWetChannels().addAll(settings.getWetChannels());
+			getSectionManager().getWetChannels().addAll(settings.getWetChannels());
+		}
 
 		generation.setSettings(settings.getGeneration());
 	}

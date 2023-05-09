@@ -44,6 +44,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public static final int MAX_NOTES = 2048;
 
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
+	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
 	private int channel;
 	private double duration;
@@ -250,6 +251,12 @@ public class PatternLayerManager implements CodeFeatures {
 				roots.add(new PatternLayer());
 			}
 		} else {
+			if (enableLogging) {
+				System.out.println();
+				System.out.println("PatternLayerManager: " + roots.size() +
+						" roots (scale = " + scale + ", duration = " + duration + ")");
+			}
+
 			roots.forEach(layer -> {
 				PatternFactoryChoice choice = choose(scale, params);
 				PatternLayer next;
@@ -259,6 +266,11 @@ public class PatternLayerManager implements CodeFeatures {
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
+				}
+
+				if (enableLogging) {
+					System.out.println("PatternLayerManager: " + layer.getAllElements(0, duration).size() +
+										" elements --> " + next.getElements().size() + " elements");
 				}
 
 				layer.getTail().setChild(next);

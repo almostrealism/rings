@@ -76,7 +76,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		Producer<PackedCollection<?>> params = concat(r, su);
 
 //		Producer<PackedCollection<?>> adjust = durationAdjustment(params, divide(c(clock.frame(), 0), c(sr)));
-		Producer<PackedCollection<?>> adjust = durationAdjustment(params, clock.time(sr));
+		Producer<PackedCollection<?>> adjust = durationAdjustment(params, c(0.0), clock.time(sr));
 
 		int count = 32;
 
