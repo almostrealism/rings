@@ -57,6 +57,12 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	}
 
 	protected void output(String requestId, String generatorId, List<PatternNoteSource> results) {
+		if (results == null) {
+			System.out.println("RemoteGenerate: Generation failed");
+			// TODO  Send back status info to client
+			return;
+		}
+
 		System.out.println("RemoteGenerate: Sending " + results.size() + " results");
 		IntStream.range(0, results.size()).forEach(i -> output(requestId, generatorId, i, results.get(i)));
 	}
