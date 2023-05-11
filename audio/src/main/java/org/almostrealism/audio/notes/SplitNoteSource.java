@@ -69,13 +69,13 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 	public String getOrigin() { return source; }
 
 	public String getSource() { return source; }
-	public void setSource(String source) { this.source = source; }
+	public void setSource(String source) { this.source = source; notes = null; }
 
 	public double getDuration() { return duration; }
-	public void setDuration(double duration) { this.duration = duration; }
+	public void setDuration(double duration) { this.duration = duration; notes = null; }
 
 	public double getBpm() { return bpm; }
-	public void setBpm(double bpm) { this.bpm = bpm; }
+	public void setBpm(double bpm) { this.bpm = bpm; notes = null; }
 
 	@JsonIgnore
 	private PackedCollection getAudio() {

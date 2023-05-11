@@ -16,7 +16,7 @@
 
 package com.almostrealism.network.test;
 
-import com.almostrealism.primitives.SphereIntersectAt;
+import org.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;

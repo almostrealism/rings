@@ -31,7 +31,7 @@ import org.almostrealism.swing.Dialog;
 
 import com.almostrealism.primitives.Cone;
 import com.almostrealism.primitives.Cylinder;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import com.almostrealism.primitives.SurfaceUI;
 
 

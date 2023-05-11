@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import com.almostrealism.gl.SurfaceCanvas;
 import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 
 /**
  * @author  Michael Murray

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,6 @@ public class PatternFactoryChoice {
 	private List<Integer> channels;
 
 	private boolean seed;
-	private int seedUnits;
-	private double granularity;
-	private double seedScale;
 	private double seedBias;
 
 	private ParameterFunction granularitySelection;
@@ -47,7 +44,7 @@ public class PatternFactoryChoice {
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight) {
-		this(factory, weight, 0.0, 1.0);
+		this(factory, weight, 0.0, 16.0);
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
@@ -90,18 +87,19 @@ public class PatternFactoryChoice {
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }
 
-	public int getSeedUnits() { return seedUnits; }
-	public void setSeedUnits(int seedUnits) { this.seedUnits = seedUnits; }
+	@Deprecated
+	public void setSeedUnits(int seedUnits) { }
 
-	public double getGranularity() { return granularity; }
-	public void setGranularity(double granularity) { this.granularity = granularity; }
+	@Deprecated
+	public void setGranularity(double granularity) { }
 
-	public double getSeedScale() { return seedScale; }
-	public void setSeedScale(double seedScale) { this.seedScale = seedScale; }
+	@Deprecated
+	public void setSeedScale(double seedScale) { }
 
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
+	@Deprecated
 	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) { }
 
 	public void setTuning(KeyboardTuning tuning) {

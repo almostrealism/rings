@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import com.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.code.CodePrintWriter;

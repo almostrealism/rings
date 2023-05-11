@@ -20,7 +20,7 @@ import com.almostrealism.primitives.SurfaceUI;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import org.almostrealism.space.SurfaceGroup;
 
 public class RenderableSurfaceFactory {

@@ -26,6 +26,7 @@ import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.RigidBody;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.primitives.Sphere;
 
 import java.awt.Graphics;
 

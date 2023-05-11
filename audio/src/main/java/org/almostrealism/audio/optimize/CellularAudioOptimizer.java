@@ -204,20 +204,14 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 
 			choices.forEach(c -> {
-				c.setGranularity(1.0 / c.getSeedUnits());
-
 				if (!"Kicks".equals(c.getFactory().getName())) {
 					c.setMinScale(0.0);
 					c.setMaxScale(16.0);
 				}
 
 				if ("Chord Synth".equals(c.getFactory().getName())) {
-//					c.setGranularity(2.0);
-//					c.setSeedScale(2.0);
 					c.setSeedBias(0.0);
 				} else if ("Bass".equals(c.getFactory().getName())) {
-//					c.setGranularity(8.0);r
-//					c.setSeedScale(8.0);
 					c.setSeedBias(1.0);
 				}
 			});

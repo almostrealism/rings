@@ -16,13 +16,12 @@
 
 package com.almostrealism.network.test;
 
-import com.almostrealism.primitives.SphereIntersectAt;
+import org.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
-import org.almostrealism.hardware.MemoryBank;
 import org.junit.Assert;
 import org.junit.Test;
 
