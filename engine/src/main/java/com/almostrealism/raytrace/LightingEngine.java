@@ -73,7 +73,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 																	Collection<Curve<RGB>> otherSurfaces,
 																	Light light, Iterable<Light> otherLights, ShaderContext p) {
 		Supplier shadowAndShade[] = shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p);
-		return Ops.ops().multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1]);
+		return RGBFeatures.getInstance().rgb((Ops.ops().multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1])));
 	}
 
 	protected static Supplier[] shadowAndShade(ContinuousField intersections,
