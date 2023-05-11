@@ -23,6 +23,7 @@ import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.Gene;
@@ -43,6 +44,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public static final int MAX_NOTES = 2048;
 
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
+	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
 	private int channel;
 	private double duration;
@@ -101,15 +103,14 @@ public class PatternLayerManager implements CodeFeatures {
 		this.destination = destination;
 		this.sum = new RootDelegateSegmentsAdd<>(MAX_NOTES, this.destination.traverse(1));
 
-		KernelizedEvaluable<PackedCollection<?>> scale = multiply(
-				new PassThroughProducer<>(1, 0), new PassThroughProducer<>(1, 1, -1)).get();
+		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		runSum = sum.get();
 
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-		v.add(() -> () -> volume.setMem(0, 1.0 / chordDepth));
 		v.add(() -> () ->
-				scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+				volume.setMem(0, 1.0 / chordDepth));
+		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		adjustVolume = v.get();
 	}
 
@@ -250,6 +251,12 @@ public class PatternLayerManager implements CodeFeatures {
 				roots.add(new PatternLayer());
 			}
 		} else {
+			if (enableLogging) {
+				System.out.println();
+				System.out.println("PatternLayerManager: " + roots.size() +
+						" roots (scale = " + scale + ", duration = " + duration + ")");
+			}
+
 			roots.forEach(layer -> {
 				PatternFactoryChoice choice = choose(scale, params);
 				PatternLayer next;
@@ -259,6 +266,11 @@ public class PatternLayerManager implements CodeFeatures {
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
+				}
+
+				if (enableLogging) {
+					System.out.println("PatternLayerManager: " + layer.getAllElements(0, duration).size() +
+										" elements --> " + next.getElements().size() + " elements");
 				}
 
 				layer.getTail().setChild(next);

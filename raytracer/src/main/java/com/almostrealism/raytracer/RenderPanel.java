@@ -39,7 +39,7 @@ import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.GraphicsConverter;
 
-import com.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.event.SceneCloseEvent;
 import com.almostrealism.event.SceneOpenEvent;
 import com.almostrealism.event.SurfaceEditEvent;
@@ -114,7 +114,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				rparams.ssWidth = RenderPanel.this.ssWidth;
 				rparams.ssHeight = RenderPanel.this.ssHeight;
 
-				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) scene, new FogParameters()), scene.getCamera(), rparams);
+				RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(scene, new FogParameters()), scene.getCamera(), rparams);
 				image = r.realize(rparams);
 
 				evaluateImage();
@@ -313,7 +313,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	public Object evaluate(Object[] images) {
 		renderedImage = (Image) images[0];
 
-		System.out.println("Repainting RenderPanel with " + renderedImage);
+		// System.out.println("Repainting RenderPanel with " + renderedImage);
 
 		try {
 			SwingUtilities.invokeAndWait(() -> {
@@ -322,7 +322,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 				repaint();
 			});
 		} catch(InterruptedException ie) {
-			System.out.println("Swing Utilities Interruption: " + ie.toString());
+			System.out.println("Swing Utilities Interruption: " + ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
 			System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
 		}

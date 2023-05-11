@@ -23,6 +23,7 @@ import io.almostrealism.relation.Producer;
 import io.almostrealism.uml.ModelEntity;
 
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
+import org.almostrealism.projection.OrthographicCamera;
 
 /**
  * A PinholeCamera object represents a camera in 3D. A PinholeCamera object stores the

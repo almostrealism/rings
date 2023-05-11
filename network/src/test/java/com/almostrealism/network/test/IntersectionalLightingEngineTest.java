@@ -1,7 +1,7 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.lighting.PointLight;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.code.OperationAdapter;

@@ -108,6 +108,8 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 			this.ranks.add(new ScalarBank(input.getCount()));
 			((KernelizedEvaluable) get(i).getRank().get()).into(ranks.get(i)).evaluate(input);
 		}
+
+		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
 	}
 
 	/**

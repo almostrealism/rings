@@ -16,7 +16,7 @@
 
 package com.almostrealism.gl;
 
-import com.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL2;
@@ -27,7 +27,6 @@ import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
-import io.almostrealism.uml.Function;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.TransformMatrix;

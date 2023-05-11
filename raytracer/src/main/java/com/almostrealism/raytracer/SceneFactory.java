@@ -19,7 +19,6 @@ package com.almostrealism.raytracer;
 import java.util.Arrays;
 import java.util.List;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
@@ -34,9 +33,9 @@ import org.almostrealism.space.ShadableSurface;
 import io.almostrealism.relation.Factory;
 
 import com.almostrealism.lighting.PointLight;
-import com.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 
 /**
  * The {@link SceneFactory} class provides static utility methods for getting commonly

@@ -26,7 +26,7 @@ import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytrace.RenderParameters;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 import org.junit.Test;
 

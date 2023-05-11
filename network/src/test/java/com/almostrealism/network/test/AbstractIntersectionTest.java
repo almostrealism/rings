@@ -16,7 +16,7 @@
 
 package com.almostrealism.network.test;
 
-import com.almostrealism.primitives.SphereIntersectAt;
+import org.almostrealism.primitives.SphereIntersectAt;
 import com.almostrealism.projection.PinholeCameraProjection;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;

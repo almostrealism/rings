@@ -93,8 +93,10 @@ public class Generator {
 
 		state = State.GENERATING;
 		List<PatternNoteSource> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
-		if (getResults() != null) getResults().addAll(results);
-		state = State.READY;
+		if (results != null) {
+			getResults().addAll(results);
+			state = State.READY;
+		}
 	}
 
 	public enum State {

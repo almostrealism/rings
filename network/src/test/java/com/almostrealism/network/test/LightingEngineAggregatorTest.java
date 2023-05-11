@@ -42,7 +42,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	protected RayTracedScene getScene() throws IOException {
 		TestScene scene = new TestScene(false, false, false,
 				true, false, false,
-				true, false, false);
+				true, false, false, false);
 
 		RenderParameters rp = new RenderParameters();
 		rp.width = 100;

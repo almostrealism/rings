@@ -69,13 +69,13 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 	public String getOrigin() { return source; }
 
 	public String getSource() { return source; }
-	public void setSource(String source) { this.source = source; }
+	public void setSource(String source) { this.source = source; notes = null; }
 
 	public double getDuration() { return duration; }
-	public void setDuration(double duration) { this.duration = duration; }
+	public void setDuration(double duration) { this.duration = duration; notes = null; }
 
 	public double getBpm() { return bpm; }
-	public void setBpm(double bpm) { this.bpm = bpm; }
+	public void setBpm(double bpm) { this.bpm = bpm; notes = null; }
 
 	@JsonIgnore
 	private PackedCollection getAudio() {
@@ -98,8 +98,10 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 			PackedCollection<?> audio = getAudio();
 			if (audio == null) return Collections.emptyList();
 
+			double duration = getDuration() * 60.0 / getBpm();
+
 			int frames = (int) (duration * OutputLine.sampleRate);
-			int total = (int) (audio.getMemLength() / (getDuration() * OutputLine.sampleRate));
+			int total = (int) (audio.getMemLength() / (duration * OutputLine.sampleRate));
 			notes = IntStream.range(0, total)
 					.mapToObj(i -> (Supplier<PackedCollection>) () ->
 							new PackedCollection<>(shape(frames), 1, audio, i * frames))

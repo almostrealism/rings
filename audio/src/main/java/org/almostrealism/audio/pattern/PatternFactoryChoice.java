@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
@@ -32,12 +33,9 @@ public class PatternFactoryChoice {
 	private List<Integer> channels;
 
 	private boolean seed;
-	private int seedUnits;
-	private double seedScale;
 	private double seedBias;
 
-	@Deprecated
-	private ParameterizedPositionFunction seedNoteFunction;
+	private ParameterFunction granularitySelection;
 
 	public PatternFactoryChoice() { this(null); }
 
@@ -46,7 +44,7 @@ public class PatternFactoryChoice {
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight) {
-		this(factory, weight, 0.0, 1.0);
+		this(factory, weight, 0.0, 16.0);
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
@@ -56,13 +54,14 @@ public class PatternFactoryChoice {
 		setMaxScale(maxScale);
 		setMaxChordDepth(1);
 		setSeedUnits(4);
+		setGranularity(0.25);
 		setSeedScale(0.25);
 		setSeedBias(-0.5);
 		initSelectionFunctions();
 	}
 
 	public void initSelectionFunctions() {
-		seedNoteFunction = ParameterizedPositionFunction.random();
+		granularitySelection = ParameterFunction.random();
 	}
 
 	public PatternElementFactory getFactory() { return factory; }
@@ -88,28 +87,29 @@ public class PatternFactoryChoice {
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }
 
-	public int getSeedUnits() { return seedUnits; }
-	public void setSeedUnits(int seedUnits) { this.seedUnits = seedUnits; }
+	@Deprecated
+	public void setSeedUnits(int seedUnits) { }
 
-	public double getSeedScale() { return seedScale; }
-	public void setSeedScale(double seedScale) { this.seedScale = seedScale; }
+	@Deprecated
+	public void setGranularity(double granularity) { }
+
+	@Deprecated
+	public void setSeedScale(double seedScale) { }
 
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
-	public ParameterizedPositionFunction getSeedNoteFunction() {
-		return seedNoteFunction;
-	}
-	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) {
-		this.seedNoteFunction = seedNoteFunction;
-	}
+	@Deprecated
+	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) { }
 
 	public void setTuning(KeyboardTuning tuning) {
 		getFactory().setTuning(tuning);
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
-		return new PatternLayerSeeds(0, seedScale, 1.0 / seedUnits, seedBias, factory, params);
+		double granularity = getMaxScale() * granularitySelection.power(2, 3, -2).apply(params);
+		granularity = Math.max(getMinScale(), granularity);
+		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, int depth, ParameterSet params) {

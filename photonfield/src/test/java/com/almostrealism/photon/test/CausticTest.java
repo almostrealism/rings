@@ -18,7 +18,7 @@ package com.almostrealism.photon.test;
 
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.network.FileDecoder;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;

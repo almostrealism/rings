@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,17 +18,14 @@ package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
-import org.almostrealism.audio.optimize.AudioSceneGenome;
-import org.almostrealism.audio.optimize.DefaultAudioGenome;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -36,22 +33,12 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.AdjustableDelayCell;
-import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.Breeders;
 import org.almostrealism.heredity.CombinedGenome;
-import org.almostrealism.heredity.DefaultGenomeBreeder;
-import org.almostrealism.heredity.Factor;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
-import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
@@ -61,10 +48,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
-import java.util.function.IntFunction;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -72,10 +58,44 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
+	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
+	public static final IntUnaryOperator DEFAULT_LAYERS;
+	public static final IntUnaryOperator DEFAULT_DURATION;
+
+	static {
+		DEFAULT_ACTIVE_PATTERNS = c ->
+				switch (c) {
+					case 0 -> { yield 2; }
+					case 1 -> { yield 2; }
+					case 2 -> { yield 1; }
+					case 3 -> { yield 1; }
+					case 4 -> { yield 1; }
+					case 5 -> { yield 1; }
+					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+				};
+
+		DEFAULT_LAYERS = c ->
+				switch (c) {
+					case 0 -> { yield 3; }
+					case 1 -> { yield 3; }
+					case 2 -> { yield 4; }
+					case 3 -> { yield 5; }
+					case 4 -> { yield 3; }
+					case 5 -> { yield 3; }
+					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+				};
+
+		DEFAULT_DURATION = c ->
+				switch (c) {
+					case 0 -> { yield 1; }
+					case 2 -> { yield 16; }
+					case 3 -> { yield 16; }
+					default -> (int) Math.pow(2.0, c - 1);
+				};
+	}
 
 	public static final int mixdownDuration = 140;
 
-	public static final boolean enablePatternSystem = true;
 	public static final boolean enableRepeat = true;
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
@@ -108,12 +128,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
 
+	private MixdownManager mixdown;
 	private EfxManager efx;
 
 	private GenerationManager generation;
 
 	private CombinedGenome genome;
-	private DefaultAudioGenome legacyGenome;
 	
 	private OperationList setup;
 
@@ -140,11 +160,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(4);
-		this.legacyGenome = new DefaultAudioGenome(sources, delayLayers, sampleRate, time.getClock().frame());
+		this.genome = new CombinedGenome(5);
 
 		this.tuning = new DefaultKeyboardTuning();
-		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getMeasureDuration, getSampleRate());
+		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getTempo, this::getMeasureDuration, getSampleRate());
 		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
@@ -159,7 +178,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> patternDestination = null);
 
-		this.efx = new EfxManager(genome.getGenome(3), sources, this::getBeatDuration, getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(3), sources, delayLayers, time.getClock(), getSampleRate());
+		this.efx = new EfxManager(genome.getGenome(4), sources, this::getBeatDuration, getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -182,39 +202,27 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public ParameterGenome getGenome() { return genome.getParameters(); }
 
-	@Deprecated
-	public DefaultAudioGenome getLegacyGenome() { return legacyGenome; }
-
 	public GenomeBreeder<PackedCollection<?>> getBreeder() {
-		GenomeBreeder<PackedCollection<?>> breeder = genome.getBreeder();
+		return genome.getBreeder();
 
-		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
-				Breeders.of(Breeders.randomChoiceBreeder(),
-						Breeders.randomChoiceBreeder(),
-						Breeders.randomChoiceBreeder(),
-						Breeders.averageBreeder()), 							   // GENERATORS
-				Breeders.averageBreeder(),										   // PARAMETERS
-				Breeders.averageBreeder(),  									   // VOLUME
-				Breeders.averageBreeder(),  									   // MAIN FILTER UP
-				Breeders.averageBreeder(),  									   // WET IN
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
-				Breeders.averageBreeder(),  									   // WET OUT
-				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
-
-		return (g1, g2) -> {
-			AudioSceneGenome asg1 = (AudioSceneGenome) g1;
-			AudioSceneGenome asg2 = (AudioSceneGenome) g2;
-			return new AudioSceneGenome(breeder.combine(asg1.getGenome(), asg2.getGenome()),
-					legacyBreeder.combine(asg1.getLegacyGenome(), asg2.getLegacyGenome()));
-		};
+//		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
+//				Breeders.of(Breeders.randomChoiceBreeder(),
+//						Breeders.randomChoiceBreeder(),
+//						Breeders.randomChoiceBreeder(),
+//						Breeders.averageBreeder()), 							   // GENERATORS
+//				Breeders.averageBreeder(),										   // PARAMETERS
+//				Breeders.averageBreeder(),  									   // VOLUME
+//				Breeders.averageBreeder(),  									   // MAIN FILTER UP
+//				Breeders.averageBreeder(),  									   // WET IN
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
+//				Breeders.averageBreeder(),  									   // WET OUT
+//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
+//				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
 	}
 
 	public void assignGenome(Genome<PackedCollection<?>> genome) {
-		AudioSceneGenome g = (AudioSceneGenome) genome;
-		this.genome.assignTo(g.getGenome());
-		if (g.getLegacyGenome() != null) this.legacyGenome.assignTo(g.getLegacyGenome());
+		this.genome.assignTo(genome);
 		this.progression.refreshParameters();
 		this.patterns.refreshParameters();
 	}
@@ -291,7 +299,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (settings.getChannelNames() != null) channelNames.addAll(settings.getChannelNames());
 
 		getEfxManager().getWetChannels().clear();
-		if (settings.getWetChannels() != null) getEfxManager().getWetChannels().addAll(settings.getWetChannels());
+		getSectionManager().getWetChannels().clear();
+		if (settings.getWetChannels() != null) {
+			getEfxManager().getWetChannels().addAll(settings.getWetChannels());
+			getSectionManager().getWetChannels().addAll(settings.getWetChannels());
+		}
 
 		generation.setSettings(settings.getGeneration());
 	}
@@ -323,21 +335,16 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
-		setup.add(legacyGenome.setup());
+		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		if (enablePatternSystem) {
-			cells = getPatternCells(measures, output, setup);
-		} else {
-			cells = getWavesCells(measures, output);
-		}
-
+		cells = getPatternCells(measures, output, setup);
 		return cells.addRequirement(time::tick);
 	}
 
 	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, OperationList setup) {
 		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return cells(cells, measures, output);
+		return mixdown.cells(cells, measures, output);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
@@ -390,148 +397,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (file.exists()) {
 			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class));
 		} else {
-			setSettings(Settings.defaultSettings(getSourceCount(), DEFAULT_PATTERNS_PER_CHANNEL));
+			setSettings(Settings.defaultSettings(getSourceCount(),
+					DEFAULT_PATTERNS_PER_CHANNEL,
+					DEFAULT_ACTIVE_PATTERNS,
+					DEFAULT_LAYERS,
+					DEFAULT_DURATION));
 		}
-	}
-
-	private CellList getWavesCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
-		sources.setBpm(getBPM());
-
-		BiFunction<Gene<PackedCollection<?>>, Gene<PackedCollection<?>>, IntFunction<Cell<PackedCollection<?>>>> generator = (g, p) -> channel -> {
-			Producer<PackedCollection<?>> duration = g.valueAt(2).getResultant(c(getTempo().l(1)));
-
-			Producer<PackedCollection<?>> x = p.valueAt(0).getResultant(c(1.0));
-			Producer<PackedCollection<?>> y = p.valueAt(1).getResultant(c(1.0));
-			Producer<PackedCollection<?>> z = p.valueAt(2).getResultant(c(1.0));
-
-			if (sourceOverride == null) {
-				return getWaves().getChoiceCell(channel,
-						toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-						toScalar(x), toScalar(y), toScalar(z), toScalar(g.valueAt(1).getResultant(duration)),
-						enableRepeat ? toScalar(duration) : null);
-			} else {
-				return sourceOverride.getChoiceCell(channel, toScalar(g.valueAt(0).getResultant(Ops.ops().c(1.0))),
-						v(0.0), v(0.0), v(0.0), v(0.0), null);
-			}
-		};
-
-		// Generators
-		CellList cells = cells(legacyGenome.valueAt(DefaultAudioGenome.GENERATORS).length(),
-				i -> generator.apply(legacyGenome.valueAt(DefaultAudioGenome.GENERATORS, i),
-									legacyGenome.valueAt(DefaultAudioGenome.PARAMETERS, i))
-										.apply(i));
-
-		return cells(cells, measures, output);
-	}
-
-	private CellList cells(CellList sources, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
-		CellList cells = sources;
-
-		if (enableMainFilterUp) {
-			// Apply dynamic high pass filters
-			cells = cells.map(fc(i -> {
-				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MAIN_FILTER_UP, i, 0);
-				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
-			}));
-		}
-
-		cells = cells
-				.addRequirements(legacyGenome.getTemporals().toArray(TemporalFactor[]::new));
-
-		if (enableSourcesOnly) {
-			return cells.map(fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))))
-					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
-		}
-
-		if (enableMixdown)
-			cells = cells.mixdown(mixdownDuration);
-
-		// Volume adjustment
-		CellList branch[] = cells.branch(
-				fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))),
-				enableEfxFilters ?
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))
-								.andThen(legacyGenome.valueAt(DefaultAudioGenome.FX_FILTERS, i, 0))) :
-						fc(i -> factor(legacyGenome.valueAt(DefaultAudioGenome.VOLUME, i, 0))));
-
-		CellList main = branch[0];
-		CellList efx = branch[1];
-
-		// Sum the main layer
-		main = main.sum();
-
-		if (enableEfx) {
-			// Create the delay layers
-			int delayLayers = legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS).length();
-			CellList delays = IntStream.range(0, delayLayers)
-					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 0).getResultant(c(1.0))),
-							toScalar(legacyGenome.valueAt(DefaultAudioGenome.PROCESSORS, i, 1).getResultant(c(1.0)))))
-					.collect(CellList.collector());
-
-			// Route each line to each delay layer
-			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, legacyGenome.valueAt(DefaultAudioGenome.WET_IN, i)))
-					// Feedback grid
-					.mself(fi(), legacyGenome.valueAt(DefaultAudioGenome.TRANSMISSION),
-							fc(legacyGenome.valueAt(DefaultAudioGenome.WET_OUT, 0)))
-					.sum();
-
-			if (disableClean) {
-				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
-				return efx;
-			} else {
-				// Mix efx with main and measure #2
-				efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-
-				if (enableMasterFilterDown) {
-					// Apply dynamic low pass filter
-					main = main.map(fc(i -> {
-						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) legacyGenome.valueAt(DefaultAudioGenome.MASTER_FILTER_DOWN, i, 0);
-						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(DefaultAudioGenome.defaultResonance));
-//							return lp(scalarsMultiply(v(20000), v(1.0)), v(DefaultAudioGenome.defaultResonance));
-					}));
-				}
-
-				// Deliver main to the output and measure #1
-				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
-
-				return cells(main, efx);
-			}
-		} else {
-			// Deliver main to the output and measure #1 and #2
-			return main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
-		}
-	}
-
-	/**
-	 * This method wraps the specified {@link Factor} to prevent it from
-	 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
-	 * that would proceed to invoke the {@link org.almostrealism.time.Temporal#tick()} operation.
-	 * This is not a good solution, and this process needs to be reworked, so
-	 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
-	 * and it doesn't get invoked multiple times.
-	 */
-	private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
-		return v -> f.getResultant(v);
-	}
-
-	/**
-	 * Create a {@link Gene} for routing delays.
-	 * The current implementation delivers audio to
-	 * the first delay based on the wet level, and
-	 * delivers nothing to the others.
-	 */
-	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
-		ArrayListGene<PackedCollection<?>> gene = new ArrayListGene<>();
-
-		if (enableWetInAdjustment) {
-			gene.add(factor(wet.valueAt(0)));
-		} else {
-			gene.add(p -> c(0.2).multiply(p));
-		}
-
-		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));
-		return gene;
 	}
 
 	public static class Settings {
@@ -600,16 +471,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			public void setLength(int length) { this.length = length; }
 		}
 
-		public static Settings defaultSettings(int channels, int patternsPerChannel) {
+		public static Settings defaultSettings(int channels, int patternsPerChannel,
+											   IntUnaryOperator activePatterns,
+											   IntUnaryOperator layersPerPattern,
+											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(32, 16));
-			settings.getSections().add(new Section(48, 16));
+			settings.getSections().add(new Section(32, 32));
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
-			settings.setPatternSystem(PatternSystemManager.Settings.defaultSettings(channels, patternsPerChannel));
+			settings.setPatternSystem(PatternSystemManager.Settings
+					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
-			settings.setWetChannels(List.of(3, 4));
+			settings.setWetChannels(List.of(2, 3, 4));
 			return settings;
 		}
 	}

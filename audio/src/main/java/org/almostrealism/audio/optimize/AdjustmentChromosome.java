@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ package org.almostrealism.audio.optimize;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.SimpleChromosome;
 
-public class AdjustmentChromosome extends WavCellChromosomeExpansion {
+public class AdjustmentChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
+	public static final int SIZE = 6;
+
 	private boolean relative;
 
 	public AdjustmentChromosome(Chromosome<PackedCollection<?>> source, double min, double max, boolean relative, int sampleRate) {
-		super(source, source.length(), 6, sampleRate);
+		super(source, 6, sampleRate);
 		this.relative = relative;
 		setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(c(60.0)));
 		setTransform(1, g -> oneToInfinity(g.valueAt(1), 3.0).multiply(c(60.0)));
@@ -32,7 +35,7 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 		setTransform(3, g -> oneToInfinity(g.valueAt(3), 1.0).multiply(c(10.0)));
 		setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 		setTransform(5, g -> oneToInfinity(g.valueAt(5), 3.0).multiply(c(60.0)));
-		addFactor((p, in) -> {
+		setFactor((p, in) -> {
 			CollectionProducerComputation periodicWavelength = c(p, 0);
 			CollectionProducerComputation periodicAmp = c(1.0);
 			CollectionProducerComputation polyWaveLength = c(p, 1);
@@ -49,5 +52,59 @@ public class AdjustmentChromosome extends WavCellChromosomeExpansion {
 							.multiply(scale).add(initial), initial),
 					min, max);
 		});
+	}
+
+	public void setPeriodicDurationRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(0,
+				factorForPeriodicAdjustmentDuration(min),
+				factorForPeriodicAdjustmentDuration(max));
+	}
+
+	public void setOverallDurationRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(1,
+				factorForPolyAdjustmentDuration(min),
+				factorForPolyAdjustmentDuration(max));
+	}
+
+	public void setOverallExponentRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(2,
+				factorForPolyAdjustmentExponent(min),
+				factorForPolyAdjustmentExponent(max));
+	}
+
+	public void setOverallInitialRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(3,
+				factorForAdjustmentInitial(min),
+				factorForAdjustmentInitial(max));
+	}
+
+	public void setOverallScaleRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(4, min, max);
+	}
+
+	public void setOverallOffsetRange(double min, double max) {
+		((SimpleChromosome) getSource()).setParameterRange(5,
+				factorForAdjustmentOffset(min),
+				factorForAdjustmentOffset(max));
+	}
+
+	public double factorForPeriodicAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double factorForPolyAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	public double factorForPolyAdjustmentExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	public double factorForAdjustmentInitial(double value) {
+		return invertOneToInfinity(value, 10, 1);
+	}
+
+	public double factorForAdjustmentOffset(double value) {
+		return invertOneToInfinity(value, 60, 3);
 	}
 }

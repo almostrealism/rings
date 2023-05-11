@@ -29,7 +29,7 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import com.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.GroundPlane;
 import com.almostrealism.renderable.Quad3;
 import com.jogamp.common.util.IOUtil;

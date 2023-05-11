@@ -16,18 +16,19 @@
 
 package org.almostrealism.audio.optimize;
 
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 
-public class RiseFallChromosome extends WavCellChromosomeExpansion {
+public class RiseFallChromosome extends WavCellChromosome {
 	public static final int SIZE = 2;
 
 	private final PackedCollection duration;
 
 	public RiseFallChromosome(Chromosome<PackedCollection<?>> source, double minValue, double maxValue, double minScale, int sampleRate) {
-		super(source, source.length(), SIZE, sampleRate);
+		super(source, SIZE, sampleRate);
 		duration = new PackedCollection(1);
 
 		ScalarBank directionChoices = new ScalarBank(2);
@@ -38,9 +39,12 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 		originChoices.set(0, maxValue);
 		originChoices.set(1, minValue);
 
-		setTransform(0, identity(0, c(1.0)));
-		setTransform(1, identity(1, c(1.0)));
-		addFactor((p, in) -> {
+		Scalar testChoice = new Scalar();
+		testChoice.setMem(0, 0.25);
+
+		setTransform(0, id(0));
+		setTransform(1, id(1));
+		setFactor((p, in) -> {
 			CollectionProducerComputation scale = subtract(c(maxValue), c(minValue));
 			CollectionProducerComputation direction = c(choice(2, toScalar(c(p, 0)), p(directionChoices)), 0);
 
@@ -48,9 +52,10 @@ public class RiseFallChromosome extends WavCellChromosomeExpansion {
 			CollectionProducerComputation start = c(choice(2, toScalar(c(p, 0)), p(originChoices)), 0);
 			CollectionProducerComputation end = multiply(direction, magnitude).add(start);
 
-			CollectionProducerComputation pos = divide(in, p(duration));
+			CollectionProducerComputation pos = divide(traverse(1, in), p(duration));
 
 			return add(start, multiply(end.subtract(start), pos));
+			// return end;
 		});
 	}
 

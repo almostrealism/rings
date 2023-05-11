@@ -17,7 +17,8 @@
 package com.almostrealism.network;
 
 import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
@@ -42,21 +43,21 @@ import org.almostrealism.texture.Texture;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, CodeFeatures {
 	public TestScene() throws IOException {
-		this(false, false, false, true, false, false, false, false, false);
+		this(false, false, false, true, false, false, false, false, false, false);
 	}
 
 	public TestScene(boolean enableCornellBox, boolean enableRandomThing, boolean enableDragon,
 					 boolean enableSphere, boolean enableTriangles, boolean enableFloor,
 					 boolean enableSilhouette,
-					 boolean enableSphereReflection, boolean enableFloorReflection) throws IOException {
+					 boolean enableSphereReflection, boolean enableFloorReflection,
+					 boolean enableThinLensCamera) throws IOException {
 		if (enableCornellBox) {
-			addAll(FileDecoder.decodeScene(new FileInputStream(new File("CornellBox.xml")),
+			addAll(FileDecoder.decodeScene(new FileInputStream("CornellBox.xml"),
 						FileDecoder.XMLEncoding, false, null));
 		}
 
@@ -73,32 +74,32 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 				s.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 			}
 
-			s.setLocation(new Vector(0.0, 3.4, -3.0));
+			s.setLocation(new Vector(0.0, 0.0, -3.0));
 			s.setColor(new RGB(0.8, 0.8, 0.8));
 			add(s);
 
-			if (enableSilhouette) {
-				Sphere s2 = new Sphere();
-				s2.setShaders(new Shader[]{new SilhouetteShader(white())});
-				s2.setLocation(new Vector(0.0, 2.4, -3.0));
-				s2.setColor(new RGB(0.8, 0.8, 0.8));
-				s2.setSize(0.25);
-				add(s2);
-
-				Sphere s3 = new Sphere();
-				s3.setShaders(new Shader[]{new SilhouetteShader(white())});
-				s3.setLocation(new Vector(0.0, 1.4, -3.0));
-				s3.setColor(new RGB(0.8, 0.8, 0.8));
-				s3.setSize(0.25);
-				add(s3);
-
-				Sphere s4 = new Sphere();
-				s4.setShaders(new Shader[]{new SilhouetteShader(white())});
-				s4.setLocation(new Vector(0.0, 0.4, -3.0));
-				s4.setColor(new RGB(0.8, 0.8, 0.8));
-				s4.setSize(0.25);
-				add(s4);
-			}
+//			if (enableSilhouette) {
+//				Sphere s2 = new Sphere();
+//				s2.setShaders(new Shader[]{new SilhouetteShader(white())});
+//				s2.setLocation(new Vector(0.0, 2.4, -3.0));
+//				s2.setColor(new RGB(0.8, 0.8, 0.8));
+//				s2.setSize(0.25);
+//				add(s2);
+//
+//				Sphere s3 = new Sphere();
+//				s3.setShaders(new Shader[]{new SilhouetteShader(white())});
+//				s3.setLocation(new Vector(0.0, 1.4, -3.0));
+//				s3.setColor(new RGB(0.8, 0.8, 0.8));
+//				s3.setSize(0.25);
+//				add(s3);
+//
+//				Sphere s4 = new Sphere();
+//				s4.setShaders(new Shader[]{new SilhouetteShader(white())});
+//				s4.setLocation(new Vector(0.0, 0.4, -3.0));
+//				s4.setColor(new RGB(0.8, 0.8, 0.8));
+//				s4.setSize(0.25);
+//				add(s4);
+//			}
 		}
 
 		if (enableFloor) {
@@ -198,14 +199,21 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		StandardLightingRigs.addDefaultLights(this);
 
-		ThinLensCamera c = new ThinLensCamera();
-		c.setLocation(new Vector(0.0, 0.0, 10.0));
-		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
-		c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
-		c.setFocalLength(0.05);
-		c.setFocus(10.0);
-		c.setLensRadius(0.2);
-
-		setCamera(c);
+		if (enableThinLensCamera) {
+			ThinLensCamera c = new ThinLensCamera();
+			c.setLocation(new Vector(0.0, 0.0, 10.0));
+			c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+			c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+			c.setFocalLength(0.05);
+			c.setFocus(10.0);
+			c.setLensRadius(0.2);
+			setCamera(c);
+		} else {
+			OrthographicCamera c = new OrthographicCamera();
+			c.setLocation(new Vector(0.0, 0.0, 10.0));
+			c.setViewDirection(new Vector(0.0, 0.0, -1.0));
+			c.setProjectionDimensions(c.getProjectionWidth(), c.getProjectionWidth() * 1.6);
+			setCamera(c);
+		}
 	}
 }

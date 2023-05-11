@@ -17,7 +17,7 @@
 package com.almostrealism.gl;
 
 import com.almostrealism.lighting.PointLight;
-import com.almostrealism.primitives.Sphere;
+import org.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;

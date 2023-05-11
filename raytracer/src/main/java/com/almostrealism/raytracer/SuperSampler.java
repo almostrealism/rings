@@ -30,6 +30,7 @@ import org.almostrealism.hardware.MemoryData;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
+// TODO  This can now be done with CollectionProducer::map
 public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 	protected KernelizedProducer<RGB> samples[][];
 	private double scale;
@@ -88,15 +89,18 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 
 					System.out.println("SuperSampler: Evaluating sample kernels...");
 					for (int i = 0; i < ev.length; i++) {
-						j: for (int j = 0; j < ev[i].length; j++) {
+						for (int j = 0; j < ev[i].length; j++) {
+							double pos[] = ((MemoryBank<?>) args[0]).toArray(0, allSamples.getMemLength());
+							double pairs[] = new double[allSamples.getMemLength()];
+
 							for (int k = 0; k < ((MemoryBank) args[0]).getCount(); k++) {
-								Pair pos = (Pair) ((MemoryBank) args[0]).get(k);
-								double r = pos.getX() + ((double) i / (double) ev.length);
-								double q = pos.getY() + ((double) j / (double) ev[i].length);
-								allSamples.set(k, r, q);
+								pairs[2 * k] = pos[2 * k] + ((double) i / (double) ev.length);
+								pairs[2 * k + 1] = pos[2 * k + 1] + ((double) j / (double) ev[i].length);
 							}
 
-							out[i][j] = RGB.bank(((MemoryBank) args[0]).getCount());
+							allSamples.setMem(pairs);
+
+							out[i][j] = RGB.bank(allSamples.getCount());
 							ev[i][j].into(out[i][j]).evaluate(allSamples);
 						}
 					}

@@ -277,8 +277,8 @@ public class ChordProgressionManager {
 
 		public static Settings defaultSettings() {
 			Settings settings = new Settings();
-			settings.setScaleType(ScaleType.MAJOR);
-			settings.setRoot(WesternChromatic.C1);
+			settings.setScaleType(ScaleType.MINOR);
+			settings.setRoot(WesternChromatic.D1);
 			settings.setSize(16);
 			settings.setDuration(8);
 			settings.setChordDepth(4);

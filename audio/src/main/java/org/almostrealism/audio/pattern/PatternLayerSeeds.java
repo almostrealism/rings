@@ -91,16 +91,6 @@ public class PatternLayerSeeds {
 				.map(PatternLayer::new)
 				.collect(Collectors.toList());
 
-		// TODO  This is no longer necessary
-		if (enableTrimming) {
-			while (layers.size() > count) {
-				layers = IntStream.range(0, layers.size())
-						.filter(i -> i % 2 == 1)
-						.mapToObj(layers::get)
-						.collect(Collectors.toList());
-			}
-		}
-
 		if (layers.size() <= 0 && (this.bias + bias) >= 1.0) {
 			System.out.println("PatternLayerSeeds: No seeds generated, despite bias >= 1.0");
 		}
