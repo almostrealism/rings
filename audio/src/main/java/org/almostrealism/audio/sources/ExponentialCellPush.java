@@ -22,6 +22,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.Collections;
+
 public class ExponentialCellPush extends ExponentialComputation {
 	public ExponentialCellPush(ExponentialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super(data, envelope, output);
@@ -46,7 +48,9 @@ public class ExponentialCellPush extends ExponentialComputation {
 		exp.append(getDepth().valueAt(0).getExpression());
 
 		addVariable(getOutput().valueAt(0).assign(
-				new Expression<>(Double.class, exp.toString(), getOutput(), getNotePosition(),
-						getInputScale(), getOutputScale(), getDepth(), getEnvelope())));
+				new Expression<>(Double.class, exp.toString(), Collections.emptyList(),
+						getOutput(), getNotePosition(),
+						getInputScale(), getOutputScale(),
+						getDepth(), getEnvelope())));
 	}
 }

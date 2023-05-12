@@ -22,6 +22,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.Collections;
+
 public class SineWavePush extends SineWaveComputation {
 	public SineWavePush(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super(data, envelope, output);
@@ -48,7 +50,9 @@ public class SineWavePush extends SineWaveComputation {
 		exp.append(getDepth().valueAt(0).getExpression());
 
 		addVariable(getOutput().valueAt(0).assign(
-				new Expression<>(Double.class, exp.toString(), getOutput(), getAmplitude(),
-						getWavePosition(), getPhase(), getDepth(), getEnvelope())));
+				new Expression<>(Double.class, exp.toString(), Collections.emptyList(),
+						getOutput(), getAmplitude(),
+						getWavePosition(), getPhase(),
+						getDepth(), getEnvelope())));
 	}
 }

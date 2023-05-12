@@ -22,6 +22,8 @@ import io.almostrealism.expression.Sum;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 
+import java.util.Collections;
+
 public class SineWaveTick extends SineWaveComputation {
 	public SineWaveTick(SineWaveCellData data, Producer<Scalar> envelope) {
 		super(data, envelope, new Scalar());
@@ -38,6 +40,7 @@ public class SineWaveTick extends SineWaveComputation {
 		addVariable(getNotePosition().valueAt(0).assign(
 				new Expression<>(Double.class, getNotePosition().valueAt(0).getExpression() +
 						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getExpression(),
+						Collections.emptyList(),
 						getNotePosition(), getNoteLength())));
 	}
 }

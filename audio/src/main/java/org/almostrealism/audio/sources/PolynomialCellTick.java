@@ -21,6 +21,8 @@ import io.almostrealism.expression.Expression;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 
+import java.util.Collections;
+
 public class PolynomialCellTick extends PolynomialComputation {
 	public PolynomialCellTick(PolynomialCellData data, Producer<Scalar> envelope) {
 		super(data, envelope, new Scalar());
@@ -35,6 +37,7 @@ public class PolynomialCellTick extends PolynomialComputation {
 		addVariable(getWavePosition().valueAt(0).assign(
 				new Expression<>(Double.class, getWavePosition().valueAt(0).getExpression() +
 						" + " + stringForDouble(1.0) + " / " + getWaveLength().valueAt(0).getExpression(),
+						Collections.emptyList(),
 						getWavePosition(), getWaveLength())));
 	}
 }
