@@ -61,7 +61,7 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	 */
 	@Override
 	public Producer<RGB> shade(LightingContext p, DiscreteField normals) {
-		return GeneratedColorProducer.fromProducer(this, color);
+		return color; // GeneratedColorProducer.fromProducer(this, color);
 	}
 
 	/**

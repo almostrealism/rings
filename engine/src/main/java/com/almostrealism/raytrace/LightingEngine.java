@@ -20,11 +20,9 @@ import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.SurfaceLight;
-import io.almostrealism.code.ArgumentMap;
 import io.almostrealism.code.ProducerComputation;
-import io.almostrealism.code.ScopeInputManager;
-import io.almostrealism.code.ScopeLifecycle;
 import org.almostrealism.Ops;
+import org.almostrealism.algebra.computations.ProducerWithRankAdapter;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
@@ -32,51 +30,52 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.Shadable;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.ProducerWithRank;
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
-public class LightingEngine<T extends ContinuousField> extends AcceleratedComputationEvaluable<RGB> implements ProducerWithRank<RGB, Scalar>, PathElement<Ray, RGB>, DimensionAware, CodeFeatures {
+public class LightingEngine<T extends ContinuousField> extends ProducerWithRankAdapter<RGB>
+				implements PathElement<Ray, RGB>, DimensionAware, CodeFeatures, RGBFeatures {
 	public static boolean enableShadows = false;
 
 	private T intersections;
 	private Curve<RGB> surface;
+
+	private Producer<RGB> color;
 	private Producer<Scalar> distance;
 
 	public LightingEngine(T intersections,
 						  Curve<RGB> surface,
 						  Collection<Curve<RGB>> otherSurfaces,
 						  Light light, Iterable<Light> otherLights, ShaderContext p) {
-		super(shadowAndShadeProduct(intersections, surface, otherSurfaces, light, otherLights, p));
+		super(((ShadableIntersection) intersections).getDistance());
+		this.color = shadowAndShadeProduct(intersections, surface, otherSurfaces, light, otherLights, p);
 		this.intersections = intersections;
 		this.surface = surface;
 		this.distance = ((ShadableIntersection) intersections).getDistance();
 	}
 
-	protected static ProducerComputation<RGB> shadowAndShadeProduct(ContinuousField intersections,
+	protected ProducerComputation<RGB> shadowAndShadeProduct(ContinuousField intersections,
 																	Curve<RGB> surface,
 																	Collection<Curve<RGB>> otherSurfaces,
 																	Light light, Iterable<Light> otherLights, ShaderContext p) {
 		Supplier shadowAndShade[] = shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p);
-		return RGBFeatures.getInstance().rgb((Ops.ops().multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1])));
+		return rgb(multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1]));
 	}
 
-	protected static Supplier[] shadowAndShade(ContinuousField intersections,
+	protected Supplier[] shadowAndShade(ContinuousField intersections,
 											   Curve<RGB> surface,
 											   Collection<Curve<RGB>> otherSurfaces,
 											   Light light, Iterable<Light> otherLights, ShaderContext p) {
@@ -98,7 +97,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		context.setOtherSurfaces(otherSurfaces);
 
 		if (light instanceof SurfaceLight) {
-			shade = lightingCalculation(intersections, Ops.ops().origin(intersections.get(0)).get(),
+			shade = lightingCalculation(intersections, origin(intersections.get(0)).get(),
 										surface, otherSurfaces,
 										((SurfaceLight) light).getSamples(), p);
 		} else if (light instanceof PointLight) {
@@ -114,7 +113,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
 			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
-						Ops.ops().origin(intersections.get(0)));
+						origin(intersections.get(0)));
 		} else {
 			shade = RGBFeatures.getInstance().black();
 		}
@@ -135,31 +134,14 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	public Curve<RGB> getSurface() { return surface; }
 
 	@Override
-	public Producer<RGB> getProducer() { return this; }
+	public Producer<RGB> getProducer() { return color; }
 
 	@Override
 	public Producer<Scalar> getRank() { return distance; }
 
 	@Override
-	public Evaluable<RGB> get() { return this; }
-
-	@Override
-	public void prepareArguments(ArgumentMap map) {
-		super.prepareArguments(map);
-		ScopeLifecycle.prepareArguments(Stream.of(getRank()), map);
-	}
-
-	@Override
-	public void prepareScope(ScopeInputManager manager) {
-		super.prepareScope(manager);
-		if (getArgumentVariables() != null) return;
-
-		ScopeLifecycle.prepareScope(Stream.of(getRank()), manager);
-	}
-
-	@Override
 	public void compact() {
-		super.compact();
+		getProducer().compact();
 		getRank().compact();
 
 		System.out.println("Compacted LightingEngine");
@@ -172,10 +154,10 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * for reflection/shadowing. This list does not include the specified surface for which the lighting
 	 * calculations are to be done.
 	 */
-	public static Supplier<Evaluable<? extends RGB>> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
+	public Producer<RGB> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
 																		 Curve<RGB> surface, Iterable<Curve<RGB>> otherSurfaces,
 																		 Light lights[], ShaderContext p) {
-		Supplier<Evaluable<? extends RGB>> color = null;
+		Producer<RGB> color = null;
 
 		for (int i = 0; i < lights.length; i++) {
 			// See RayTracingEngine.seperateLights method
@@ -185,14 +167,13 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 			for (int j = 0; j < i; j++) { otherLights[j] = lights[j]; }
 			for (int j = i + 1; j < lights.length; j++) { otherLights[j - 1] = lights[j]; }
 
-			Supplier<Evaluable<? extends RGB>> c = lightingCalculation(intersection, point, surface,
+			Producer<RGB> c = lightingCalculation(intersection, point, surface,
 										otherSurfaces, lights[i], otherLights, p);
 			if (c != null) {
 				if (color == null) {
 					color = c;
 				} else {
-					Supplier<Evaluable<? extends RGB>> fc = color;
-					color = () -> new RGBAdd(fc, c);
+					color = add(color, c);
 				}
 			}
 		}
@@ -208,7 +189,7 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 	 * include the specified surface for which the lighting calculations are to be done.
 	 */
 	@Deprecated
-	public static Supplier<Evaluable<? extends RGB>> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
+	public Producer<RGB> lightingCalculation(ContinuousField intersection, Evaluable<Vector> point,
 																		 Curve<RGB> surface,
 																		 Iterable<Curve<RGB>> otherSurfaces, Light light,
 																		 Light otherLights[], ShaderContext p) {
@@ -229,58 +210,6 @@ public class LightingEngine<T extends ContinuousField> extends AcceleratedComput
 		} else {
 			return RGBFeatures.getInstance().black();
 		}
-	}
-
-	/**
-	 * Refracts the specified Vector object based on the specified normal vector and 2 specified indices of refraction.
-	 *
-	 * @param vector  A Vector object representing a unit vector in the direction of the incident ray
-	 * @param normal  A Vector object representing a unit vector that is normal to the surface refracting the ray
-	 * @param ni  A double value representing the index of refraction of the incident medium
-	 * @param nr  A double value representing the index of refraction of the refracting medium
-	 *
-	 * @deprecated
-	 */
-	@Deprecated
-	public static Vector refract(Vector vector, Vector normal, double ni, double nr, boolean v) {
-		if (v) System.out.println("Vector = " + vector);
-
-		vector = vector.minus();
-
-		double p = -vector.dotProduct(normal);
-		double r = ni / nr;
-
-		if (v) System.out.println("p = " + p + " r = " + r);
-
-		vector = vector.minus();
-		if (vector.dotProduct(normal) < 0) {
-			if (v) System.out.println("LALA");
-			normal = normal.minus();
-			p = -p;
-		}
-		vector = vector.minus();
-
-		double s = Math.sqrt(1.0 - r * r * (1.0 - p * p));
-
-		if (v) System.out.println("s = " + s);
-
-		Vector refracted = vector.multiply(r);
-
-		if (v) System.out.println(refracted);
-
-		//	if (p >= 0.0) {
-		refracted.addTo(normal.multiply((p * r) - s));
-		//	} else {
-		//		refracted.addTo(normal.multiply((p * r) - s));
-		//	}
-
-		if (v) System.out.println(refracted);
-
-		// Vector refracted = ((vector.subtract(normal.multiply(p))).multiply(r)).subtract(normal.multiply(s));
-
-//		if (refracted.subtract(vector).length() > 0.001) System.out.println("!!"); TODO
-
-		return refracted.minus();
 	}
 
 //	public static double brdf(Vector ld, Vector vd, Vector n, double nv, double nu, double r) {

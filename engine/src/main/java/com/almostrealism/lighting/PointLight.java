@@ -182,7 +182,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of
-	 * intersection on that surface using the lighting data from the specified {@link PointLight}
+	 * intersection on that surface using the lighting data from this {@link PointLight}
 	 * object and returns an {@link RGB} object that represents the color of the point.
 	 * A list of all other surfaces in the scene must be specified for reflection/shadowing.
 	 * This list does not include the specified surface for which the lighting calculations

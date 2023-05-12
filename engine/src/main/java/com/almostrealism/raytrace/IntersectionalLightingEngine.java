@@ -36,9 +36,6 @@ public class IntersectionalLightingEngine extends LightingEngine<ContinuousField
     }
 
 	@Override
-	public MemoryBank<RGB> createKernelDestination(int size) { return RGB.bank(size); }
-
-	@Override
 	public String toString() {
     	return "IntersectionalLightingEngine[" + getSurface() + "]";
 	}

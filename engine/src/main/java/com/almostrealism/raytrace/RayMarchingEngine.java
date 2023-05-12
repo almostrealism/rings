@@ -24,7 +24,6 @@ import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.color.ShadableCurve;
 import org.almostrealism.color.Shader;
 import org.almostrealism.color.ShaderContext;
@@ -89,8 +88,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engin
 			if (c == null) {
 				c = s.shade(parameters, this);
 			} else {
-				final Producer<RGB> fc = c;
-				c = () -> new RGBAdd(fc, s.shade(parameters, this));
+				c = add(c, s.shade(parameters, this));
 			}
 		}
 		
