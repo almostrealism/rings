@@ -36,18 +36,18 @@ public class SineWavePush extends SineWaveComputation {
 		purgeVariables();
 
 		StringBuilder exp = new StringBuilder();
-		exp.append(getEnvelope().valueAt(0).getExpression());
+		exp.append(getEnvelope().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
-		exp.append(getAmplitude().valueAt(0).getExpression());
+		exp.append(getAmplitude().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
 		exp.append("sin((");
-		exp.append(getWavePosition().valueAt(0).getExpression());
+		exp.append(getWavePosition().valueAt(0).getSimpleExpression());
 		exp.append(" + ");
-		exp.append(getPhase().valueAt(0).getExpression());
+		exp.append(getPhase().valueAt(0).getSimpleExpression());
 		exp.append(") * ");
 		exp.append(stringForDouble(TWO_PI));
 		exp.append(") * ");
-		exp.append(getDepth().valueAt(0).getExpression());
+		exp.append(getDepth().valueAt(0).getSimpleExpression());
 
 		addVariable(getOutput().valueAt(0).assign(
 				new Expression<>(Double.class, exp.toString(), Collections.emptyList(),

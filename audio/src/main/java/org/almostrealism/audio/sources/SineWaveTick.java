@@ -38,8 +38,8 @@ public class SineWaveTick extends SineWaveComputation {
 		addVariable(getWavePosition().valueAt(0).assign(
 				new Sum(getWavePosition().valueAt(0), getWaveLength().valueAt(0))));
 		addVariable(getNotePosition().valueAt(0).assign(
-				new Expression<>(Double.class, getNotePosition().valueAt(0).getExpression() +
-						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getExpression(),
+				new Expression<>(Double.class, getNotePosition().valueAt(0).getSimpleExpression() +
+						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getSimpleExpression(),
 						Collections.emptyList(),
 						getNotePosition(), getNoteLength())));
 	}

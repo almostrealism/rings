@@ -43,17 +43,17 @@ public class ValueSequenceTick extends ValueSequenceComputation {
 
 		Consumer<String> exp = scope.code();
 
-		exp.accept(getWavePosition().valueAt(0).getExpression());
+		exp.accept(getWavePosition().valueAt(0).getSimpleExpression());
 		exp.accept(" = ");
-		exp.accept(new Sum(getWavePosition().valueAt(0), getWaveLength().valueAt(0)).getExpression());
+		exp.accept(new Sum(getWavePosition().valueAt(0), getWaveLength().valueAt(0)).getSimpleExpression());
 		exp.accept(";\n");
 
 		if (repeat) {
-			exp.accept(getWavePosition().valueAt(0).getExpression());
+			exp.accept(getWavePosition().valueAt(0).getSimpleExpression());
 			exp.accept(" = fmod(");
-			exp.accept(getWavePosition().valueAt(0).getExpression());
+			exp.accept(getWavePosition().valueAt(0).getSimpleExpression());
 			exp.accept(", ");
-			exp.accept(getDurationFrames().valueAt(0).getExpression());
+			exp.accept(getDurationFrames().valueAt(0).getSimpleExpression());
 			exp.accept(");\n");
 		}
 	}
