@@ -37,8 +37,8 @@ public class DefaultEnvelopeComputation extends CollectionProducerComputationAda
 	public Scope<Scalar> getScope() {
 		HybridScope<Scalar> scope = new HybridScope<>(this);
 
-		String position = getArgument(1).valueAt(0).getExpression();
-		String result = ((ArrayVariable) getOutputVariable()).valueAt(0).getExpression();
+		String position = getArgument(1).valueAt(0).getSimpleExpression();
+		String result = ((ArrayVariable) getOutputVariable()).valueAt(0).getSimpleExpression();
 
 		Consumer<String> code = scope.code();
 		code.accept("if (" + position + " > 1.0) {\n");

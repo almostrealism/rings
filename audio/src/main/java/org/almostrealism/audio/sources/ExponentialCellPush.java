@@ -36,16 +36,16 @@ public class ExponentialCellPush extends ExponentialComputation {
 		purgeVariables();
 
 		StringBuilder exp = new StringBuilder();
-		exp.append(getEnvelope().valueAt(0).getExpression());
+		exp.append(getEnvelope().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
-		exp.append(getOutputScale().valueAt(0).getExpression());
+		exp.append(getOutputScale().valueAt(0).getSimpleExpression());
 		exp.append(" * (");
 		exp.append("exp(");
-		exp.append(getNotePosition().valueAt(0).getExpression());
+		exp.append(getNotePosition().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
-		exp.append(getInputScale().valueAt(0).getExpression());
+		exp.append(getInputScale().valueAt(0).getSimpleExpression());
 		exp.append(") - 1) * ");
-		exp.append(getDepth().valueAt(0).getExpression());
+		exp.append(getDepth().valueAt(0).getSimpleExpression());
 
 		addVariable(getOutput().valueAt(0).assign(
 				new Expression<>(Double.class, exp.toString(), Collections.emptyList(),
