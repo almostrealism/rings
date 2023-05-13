@@ -36,14 +36,14 @@ public class PolynomialCellPush extends PolynomialComputation {
 		purgeVariables();
 
 		StringBuilder exp = new StringBuilder();
-		exp.append(getEnvelope().valueAt(0).getExpression());
+		exp.append(getEnvelope().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
-		exp.append(getOutputScale().valueAt(0).getExpression());
+		exp.append(getOutputScale().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
 		exp.append("pow(");
-		exp.append(getWavePosition().valueAt(0).getExpression());
+		exp.append(getWavePosition().valueAt(0).getSimpleExpression());
 		exp.append(", ");
-		exp.append(getExponent().valueAt(0).getExpression());
+		exp.append(getExponent().valueAt(0).getSimpleExpression());
 		exp.append(")");
 
 		addVariable(getOutput().valueAt(0).assign(
