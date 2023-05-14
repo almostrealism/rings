@@ -57,7 +57,6 @@ public class PatternFactoryTest implements CellFeatures {
 		List<PatternFactoryChoice> choices = readChoices();
 
 		choices.forEach(c -> {
-			c.setGranularity(1.0 / c.getSeedUnits());
 			if ("Bass".equals(c.getFactory().getName())) {
 				c.setGranularity(4.0);
 				c.setSeedScale(4.0);

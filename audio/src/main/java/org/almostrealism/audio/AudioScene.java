@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -57,10 +58,12 @@ import java.util.stream.IntStream;
 
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
+	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
 	public static final IntUnaryOperator DEFAULT_DURATION;
+	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
 
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
@@ -81,7 +84,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 2 -> { yield 4; }
 					case 3 -> { yield 5; }
 					case 4 -> { yield 3; }
-					case 5 -> { yield 3; }
+					case 5 -> { yield 1; }
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
@@ -91,13 +94,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 1 -> { yield 4; }
 					case 2 -> { yield 16; }
 					case 3 -> { yield 16; }
+					case 5 -> { yield 16; }
 					default -> (int) Math.pow(2.0, c - 1);
 				};
 	}
 
 	public static final int mixdownDuration = 140;
 
-	public static final boolean enableRepeat = true;
 	public static boolean enableMainFilterUp = true;
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
@@ -488,8 +491,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
-			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead"));
-			settings.setWetChannels(List.of(2, 3, 4));
+			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead", "Atmosphere"));
+			// settings.setWetChannels(List.of(2, 3, 4));
+			settings.setWetChannels(List.of(3, 4, 5));
 			return settings;
 		}
 	}

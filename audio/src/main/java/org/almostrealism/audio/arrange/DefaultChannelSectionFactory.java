@@ -45,21 +45,11 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
-	public static boolean enableVolumePostprocess = false;
 	public static boolean enableVolumeRiseFall = true;
 	public static boolean enableRepeat = true;
 	public static boolean enableFilter = true;
 
-	public static final double repeatChoices[];
-
-	static {
-//		repeatChoices = IntStream.range(0, 9)
-//				.map(i -> i - 2)
-//				.mapToDouble(i -> Math.pow(2, i))
-//				.toArray();
-
-		repeatChoices = new double[] { 8, 16, 32 };
-	}
+	public static final double repeatChoices[] = new double[] { 8, 16, 32 };
 
 	private TimeCell clock;
 	private LinearInterpolationChromosome volume;
@@ -70,17 +60,19 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 	private int channel, channels;
 	private IntPredicate wetChannels;
+	private IntPredicate repeatChannels;
 
 	private Supplier<Frequency> tempo;
 	private DoubleSupplier measureDuration;
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, IntPredicate wetChannels,
+	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, IntPredicate wetChannels, IntPredicate repeatChannels,
 										Supplier<Frequency> tempo, DoubleSupplier measureDuration, int length, int sampleRate) {
 		this.clock = new TimeCell();
 		this.channels = channels;
 		this.wetChannels = wetChannels;
+		this.repeatChannels = repeatChannels;
 		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.length = length;
@@ -118,7 +110,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 	protected void initRanges() {
 		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
-		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(12), factorForRepeatSpeedUpDuration(36));
+		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(12), factorForRepeatSpeedUpDuration(48));
 	}
 
 	public Section createSection(int position) {
@@ -180,14 +172,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), so, clock.time(sampleRate));
 
 			CellList cells = cells(1, i ->
-					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), enableRepeat ? toScalar(repeat) : null))
+					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), repeatChannels.test(channel) ? toScalar(repeat) : null))
 					.addRequirements(clock)
 					// TODO  Why can't the list just be added?
 					.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
 			if (enableVolumeRiseFall) {
 				cells = cells.map(fc(i -> factor(volumeRiseFall.valueAt(geneIndex, 0))));
-			} else if (!enableVolumePostprocess) {
+			} else {
 				cells = cells.map(fc(i -> factor(volume.valueAt(geneIndex, 0))));
 			}
 
@@ -201,24 +193,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			process.add(new MemoryDataCopy("DefaultChannelSection Input", () -> source.get().evaluate(), () -> input, samples));
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
-
-			KernelizedEvaluable product;
-
-			if (enableVolumePostprocess) {
-				product = multiply(v(1, 0), v(1, 1)).get();
-			} else {
-				product = multiply(v(1, 0), c(1.0)).get();
-			}
-
-			process.add(() -> () ->
-					product.into(destination.get().evaluate().traverseEach()).evaluate(
-							source.get().evaluate().traverseEach(),
-							volume.getKernelList().valueAt(geneIndex)));
-
-//			process.add(() -> () -> {
-//				PackedCollection<?> data = (PackedCollection<?>) duration.getKernelList().getData();
-//				data.get(1);
-//			});
 			return process;
 		}
 

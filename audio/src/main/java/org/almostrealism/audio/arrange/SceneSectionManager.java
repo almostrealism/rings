@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.time.Frequency;
@@ -66,8 +67,10 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public SceneSection addSection(int position, int length) {
-		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels, c -> getWetChannels().contains(c),
-																					tempo, measureDuration, length, sampleRate);
+		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels,
+																		c -> getWetChannels().contains(c),
+																		AudioScene.DEFAULT_REPEAT_CHANNELS,
+																		tempo, measureDuration, length, sampleRate);
 		SceneSection s = SceneSection.createSection(position, length, channels, () -> channelFactory.createSection(position));
 		sections.add(s);
 		setup.add(channelFactory.setup());

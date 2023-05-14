@@ -38,7 +38,7 @@ public class DefaultChannelSectionTest implements CellFeatures {
 		int samples = 2 * 8 * OutputLine.sampleRate;
 
 		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ConfigurableGenome(),
-											1, c -> true,
+											1, c -> true, c -> true,
 											() -> Frequency.forBPM(120.0), () -> 2.0,
 											8, OutputLine.sampleRate);
 		ChannelSection section = factory.createSection(0);
