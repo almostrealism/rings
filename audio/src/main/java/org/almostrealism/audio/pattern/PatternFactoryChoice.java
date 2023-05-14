@@ -130,7 +130,7 @@ public class PatternFactoryChoice {
 
 	public static Supplier<List<PatternFactoryChoice>> choices(List<PatternFactoryChoice> choices, boolean melodic) {
 		return () -> choices.stream()
-				.filter(c -> c.getFactory().isMelodic() == melodic)
+				.filter(c -> c.getFactory().isMelodic() || !melodic)
 				.collect(Collectors.toList());
 	}
 }

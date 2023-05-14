@@ -65,8 +65,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
 				switch (c) {
-					case 0 -> { yield 2; }
-					case 1 -> { yield 2; }
+					case 0 -> { yield 4; }
+					case 1 -> { yield 4; }
 					case 2 -> { yield 1; }
 					case 3 -> { yield 1; }
 					case 4 -> { yield 1; }
@@ -76,8 +76,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		DEFAULT_LAYERS = c ->
 				switch (c) {
-					case 0 -> { yield 3; }
-					case 1 -> { yield 3; }
+					case 0 -> { yield 5; }
+					case 1 -> { yield 5; }
 					case 2 -> { yield 4; }
 					case 3 -> { yield 5; }
 					case 4 -> { yield 3; }
@@ -88,6 +88,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		DEFAULT_DURATION = c ->
 				switch (c) {
 					case 0 -> { yield 1; }
+					case 1 -> { yield 4; }
 					case 2 -> { yield 16; }
 					case 3 -> { yield 16; }
 					default -> (int) Math.pow(2.0, c - 1);
@@ -478,7 +479,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(32, 32));
+			settings.getSections().add(new Section(16, 8));
+			settings.getSections().add(new Section(24, 16));
+			settings.getBreaks().add(40);
+			settings.getSections().add(new Section(40, 16));
+			settings.getSections().add(new Section(56, 24));
+			settings.setTotalMeasures(80);
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));

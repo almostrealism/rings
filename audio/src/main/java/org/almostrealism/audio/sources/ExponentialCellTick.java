@@ -21,6 +21,8 @@ import io.almostrealism.expression.Expression;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 
+import java.util.Collections;
+
 public class ExponentialCellTick extends ExponentialComputation {
 	public ExponentialCellTick(ExponentialCellData data, Producer<Scalar> envelope) {
 		super(data, envelope, new Scalar());
@@ -33,8 +35,9 @@ public class ExponentialCellTick extends ExponentialComputation {
 		purgeVariables();
 
 		addVariable(getNotePosition().valueAt(0).assign(
-				new Expression<>(Double.class, getNotePosition().valueAt(0).getExpression() +
-						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getExpression(),
+				new Expression<>(Double.class, getNotePosition().valueAt(0).getSimpleExpression() +
+						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getSimpleExpression(),
+						Collections.emptyList(),
 						getNotePosition(), getNoteLength())));
 	}
 }

@@ -16,19 +16,21 @@
 
 package com.almostrealism.rayshade;
 
+import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayProducerBase;
+import org.almostrealism.geometry.RayFeatures;
 import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 
-public class ReflectedRay implements RayProducerBase {
+public class ReflectedRay implements ProducerComputation<Ray>, KernelizedProducer<Ray>, RayFeatures {
 	private Producer<Vector> point;
 	private Producer<Vector> normal;
 	private Producer<Vector> reflected;

@@ -24,7 +24,6 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.color.computations.RGBAdd;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.ShadableSurface;
@@ -109,8 +108,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (color == null) {
 					color = pr;
 				} else {
-					RGBAdd sum = new RGBAdd(color, pr);
-					color = () -> sum;
+					color = add(color, pr);
 				}
 			}
 
@@ -123,8 +121,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 				if (color == null) {
 					color = pr;
 				} else {
-					RGBAdd sum = new RGBAdd(color, pr);
-					color = () -> sum;
+					color = add(color, pr);
 				}
 			}
 

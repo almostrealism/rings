@@ -134,7 +134,7 @@ public class LegacyRayTracingEngine {
 													//	camera.rayAt(new PassThroughProducer<>(0),
 													//				new StaticProducer<>(new Pair(p.width, p.height))),
 													//				surfaces, lights, null);
-					RGB color = le.evaluate(new Pair(r, p.height - q));
+					RGB color = le.get().evaluate(new Pair(r, p.height - q));
 					
 					if (color == null) {
 						// System.out.println("null");

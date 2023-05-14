@@ -16,6 +16,8 @@
 
 package com.almostrealism.gl;
 
+import io.almostrealism.expression.Constant;
+import io.almostrealism.expression.IntegerConstant;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
@@ -753,7 +755,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	@Deprecated public void glDisable(int code) {
 		if (gl != null) super.glDisable(code);
-		p.println(glMethod("disable", new Expression<>(code)));
+		p.println(glMethod("disable", new IntegerConstant(code)));
 	}
 
 	@Override

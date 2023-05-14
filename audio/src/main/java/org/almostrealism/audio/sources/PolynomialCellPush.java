@@ -22,6 +22,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.Collections;
+
 public class PolynomialCellPush extends PolynomialComputation {
 	public PolynomialCellPush(PolynomialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super(data, envelope, output);
@@ -34,18 +36,20 @@ public class PolynomialCellPush extends PolynomialComputation {
 		purgeVariables();
 
 		StringBuilder exp = new StringBuilder();
-		exp.append(getEnvelope().valueAt(0).getExpression());
+		exp.append(getEnvelope().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
-		exp.append(getOutputScale().valueAt(0).getExpression());
+		exp.append(getOutputScale().valueAt(0).getSimpleExpression());
 		exp.append(" * ");
 		exp.append("pow(");
-		exp.append(getWavePosition().valueAt(0).getExpression());
+		exp.append(getWavePosition().valueAt(0).getSimpleExpression());
 		exp.append(", ");
-		exp.append(getExponent().valueAt(0).getExpression());
+		exp.append(getExponent().valueAt(0).getSimpleExpression());
 		exp.append(")");
 
 		addVariable(getOutput().valueAt(0).assign(
-				new Expression<>(Double.class, exp.toString(), getOutput(), getWavePosition(),
-						getExponent(), getOutputScale(), getEnvelope())));
+				new Expression<>(Double.class, exp.toString(), Collections.emptyList(),
+						getOutput(), getWavePosition(),
+						getExponent(), getOutputScale(),
+						getEnvelope())));
 	}
 }
