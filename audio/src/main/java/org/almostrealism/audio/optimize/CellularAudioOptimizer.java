@@ -165,7 +165,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
-		int sourceCount = 5;
+		int sourceCount = AudioScene.DEFAULT_SOURCE_COUNT;
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3,
 										OutputLine.sampleRate, new NoOpGenerationProvider());
 
@@ -204,7 +204,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 
 			choices.forEach(c -> {
-				if (!"Kicks".equals(c.getFactory().getName())) {
+				if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
 					c.setMinScale(0.0);
 					c.setMaxScale(16.0);
 				}
@@ -212,6 +212,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				if ("Chord Synth".equals(c.getFactory().getName())) {
 					c.setSeedBias(0.0);
 				} else if ("Bass".equals(c.getFactory().getName())) {
+					c.setSeedBias(1.0);
+				} else if ("Rise".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
 				}
 			});
