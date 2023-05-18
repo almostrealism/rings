@@ -107,7 +107,7 @@ public class GrainTest implements CellFeatures {
 		Grain grain = new Grain();
 		grain.setStart(0.2);
 		grain.setDuration(0.015);
-		grain.setRate(2.0);
+		grain.setRate(1.0);
 
 		TraversalPolicy grainShape = new TraversalPolicy(3);
 		Producer<PackedCollection<?>> g = v(shape(3).traverseEach(), 1);
@@ -117,7 +117,7 @@ public class GrainTest implements CellFeatures {
 		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
 
 		PackedCollection<?> input = wav.getCollection();
-		int frames = input.getCount(); // 5 * OutputLine.sampleRate;
+		int frames = (int) (input.getCount() / grain.getRate());
 		TraversalPolicy shape = shape(frames).traverse(1);
 
 //		Producer<Scalar> pos = start.add(mod(multiply(rate, in), duration))
@@ -132,12 +132,12 @@ public class GrainTest implements CellFeatures {
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating interpolate kernel...");
 		HardwareOperator.verboseLog(() -> {
-			Producer in = v(1, 0); // traverse(0, pos)'
+			Producer in = v(1, 0);
 
 			KernelizedEvaluable<PackedCollection<?>> ev =
-					interpolate(in,
-							v(1, 1),
-							v(1, 2)).get();
+					interpolate(v(1, 0),
+							pos,
+							v(2, 2)).get();
 			ev.into(result).evaluate(input.traverse(0), timeline, r);
 		});
 		System.out.println("GrainTest: Interpolate kernel evaluated");
