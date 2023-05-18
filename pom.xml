@@ -7,7 +7,7 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.56</common.version>
+		<common.version>0.57</common.version>
 		<flowtree.version>0.16</flowtree.version>
 
 		<grpc.version>1.53.0</grpc.version>
@@ -17,7 +17,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.27</version>
+	<version>0.28</version>
 
 	<modules>
 		<module>audio</module>
@@ -84,10 +84,6 @@
 	</dependencyManagement>
 
 	<distributionManagement>
-<!--		<repository>-->
-<!--			<id>internal</id>-->
-<!--			<url>http://mvn.almostrealism.org:8080/repository/internal/</url>-->
-<!--		</repository>-->
 		<repository>
 			<id>central</id>
 			<url>https://almostrealism.jfrog.io/artifactory/default-libs-release</url>
@@ -101,12 +97,5 @@
 			<releases><enabled>true</enabled></releases>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
-<!--		<repository>-->
-<!--			<id>internal</id>-->
-<!--			<name>Archiva Managed Internal Repository</name>-->
-<!--			<url>http://mvn.almostrealism.org:8080/repository/internal/</url>-->
-<!--			<releases><enabled>true</enabled></releases>-->
-<!--			<snapshots><enabled>true</enabled></snapshots>-->
-<!--		</repository>-->
 	</repositories>
 </project>

@@ -352,7 +352,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
-		PackedCollection<?> audio = WaveData.allocateCollection(getTotalSamples());
+		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0); // WaveData.allocateCollection(getTotalSamples());
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));

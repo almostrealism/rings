@@ -31,7 +31,7 @@ public class SceneTest implements TestFeatures {
 			ShaderContext context = new ShaderContext(scene.getSurfaces()[0], scene.getLights().get(0));
 			IntersectionalLightingEngine engine = new IntersectionalLightingEngine(ray(0, 0, 10, 0, 0, -1),
 					scene.getSurfaces()[0], Collections.emptyList(), scene.getLights().get(0), Collections.emptyList(), context);
-			RGB color = engine.evaluate();
+			RGB color = engine.getProducer().get().evaluate();
 			System.out.println(color);
 			assertEquals(0.3211, color.getRed());
 			assertEquals(0.3211, color.getGreen());

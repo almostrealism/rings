@@ -40,8 +40,8 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	}
 
 	protected GeneratedColorProducer generatedColorProducer() {
-		AcceleratedComputationEvaluable<RGB> engine = engine();
-		return (GeneratedColorProducer) ((OperationAdapter) engine.getComputation()).getInputs().get(2);
+		Producer<RGB> engine = engine().getProducer();
+		return (GeneratedColorProducer) ((OperationAdapter) engine).getInputs().get(2);
 	}
 
 	protected ScalarExpressionComputation dotProduct() {
@@ -125,15 +125,8 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	}
 
 	@Test
-	public void compile() {
-		AcceleratedComputationEvaluable<RGB> ev = engine();
-		ev.compile();
-	}
-
-	@Test
 	public void evaluate() {
-		AcceleratedComputationEvaluable<RGB> ev = engine();
-		ev.compile();
+		Evaluable<RGB> ev = engine().getProducer().get();
 		System.out.println(ev.evaluate());
 	}
 }
