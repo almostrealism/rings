@@ -12,6 +12,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.grains.Grain;
+import org.almostrealism.audio.grains.GrainProcessor;
 import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.collect.CollectionProducer;
@@ -32,6 +33,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class GrainTest implements CellFeatures {
 	@Test
@@ -107,44 +109,61 @@ public class GrainTest implements CellFeatures {
 		Grain grain = new Grain();
 		grain.setStart(0.2);
 		grain.setDuration(0.015);
-		grain.setRate(1.0);
+		grain.setRate(0.3);
 
-		TraversalPolicy grainShape = new TraversalPolicy(3);
-		Producer<PackedCollection<?>> g = v(shape(3).traverseEach(), 1);
+		PackedCollection<?> w = new PackedCollection<>(1);
+		w.setMem(0.75);
 
-		CollectionProducer<PackedCollection<?>> start = c(g, 0);
-		CollectionProducer<PackedCollection<?>> duration = c(g, 1);
+		Producer<PackedCollection<?>> g = v(shape(3), 1);
+		CollectionProducer<PackedCollection<?>> start = c(g, 0).multiply(c(OutputLine.sampleRate));
+		CollectionProducer<PackedCollection<?>> duration = c(g, 1).multiply(c(OutputLine.sampleRate));
 		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
+		CollectionProducer<PackedCollection<?>> wavelength = multiply(p(w), c(OutputLine.sampleRate));
 
 		PackedCollection<?> input = wav.getCollection();
-		int frames = (int) (input.getCount() / grain.getRate());
-		TraversalPolicy shape = shape(frames).traverse(1);
+		int frames = 5 * OutputLine.sampleRate;
 
-//		Producer<Scalar> pos = start.add(mod(multiply(rate, in), duration))
-//									.multiply(scalar(OutputLine.sampleRate));
-//		Producer pos = _mod(in, c(0.5)).multiply(c(OutputLine.sampleRate));
-		Producer<PackedCollection<?>> pos = integers(0, frames); // .divide(c(OutputLine.sampleRate));
-		PackedCollection<?> timeline = pos.get().evaluate();
+		Producer<PackedCollection<?>> series = integers(0, frames);
+		Producer<PackedCollection<?>> max = c(wav.getCollection().getCount()).subtract(start);
+		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, duration), max));
 
-		PackedCollection<?> r = new PackedCollection<>(1);
-		r.setMem(1.0);
+		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
+		generate = generate.multiply(_sinw(series, wavelength, c(1.0)));
 
-		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
-		System.out.println("GrainTest: Evaluating interpolate kernel...");
-		HardwareOperator.verboseLog(() -> {
-			Producer in = v(1, 0);
-
-			KernelizedEvaluable<PackedCollection<?>> ev =
-					interpolate(v(1, 0),
-							pos,
-							v(2, 2)).get();
-			ev.into(result).evaluate(input.traverse(0), timeline, r);
-		});
-		System.out.println("GrainTest: Interpolate kernel evaluated");
+		System.out.println("GrainTest: Evaluating kernel...");
+		Evaluable<PackedCollection<?>> ev = generate.get();
+		PackedCollection<?> result = ev.into(new PackedCollection<>(shape(frames), 1))
+										.evaluate(input.traverse(0), grain);
+		System.out.println("GrainTest: Kernel evaluated");
 
 		System.out.println("GrainTest: Rendering grains...");
 		w(new WaveData(result, OutputLine.sampleRate)).o(i -> new File("results/grain-test.wav")).sec(5).get().run();
 		System.out.println("GrainTest: Done");
+	}
+
+	@Test
+	public void grainProcessor() throws IOException {
+		WaveData wav = WaveData.load(new File("Library/organ.wav"));
+		PackedCollection<?> input = wav.getCollection();
+
+		GrainProcessor processor = new GrainProcessor(5.0, OutputLine.sampleRate);
+
+		w(IntStream.range(0, 5).mapToObj(i -> {
+			Grain grain = new Grain();
+			grain.setStart(Math.random() * 0.3 + 0.2);
+			grain.setDuration(Math.random() * 0.01);
+			grain.setRate(Math.random() * 0.5);
+
+			PackedCollection<?> w = new PackedCollection<>(1);
+			w.setMem(Math.random() * 2 + 0.2);
+
+			PackedCollection<?> p = new PackedCollection<>(1);
+			p.setMem(Math.random() - 0.5);
+
+			return processor.apply(input, grain, w, p);
+		}).toArray(WaveData[]::new))
+				.sum().o(i -> new File("results/grain-processor-test.wav"))
+				.sec(5).get().run();
 	}
 
 	@Test
