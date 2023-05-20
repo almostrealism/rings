@@ -26,20 +26,22 @@ import java.util.function.Supplier;
 
 public interface SamplingFeatures extends CodeFeatures {
 	ThreadLocal<Integer> sampleRate = new ThreadLocal<>();
-	ThreadLocal<Producer<PackedCollection<?>>> time = new ThreadLocal<>();
+	ThreadLocal<Producer<PackedCollection<?>>> frames = new ThreadLocal<>();
 
-	default <T> T time(Producer<PackedCollection<?>> t, Supplier<T> r) {
-		Producer<PackedCollection<?>> lastT = time.get();
+	default <T> T frames(Producer<PackedCollection<?>> f, Supplier<T> r) {
+		Producer<PackedCollection<?>> lastT = frames.get();
 
 		try {
-			time.set(t);
+			frames.set(f);
 			return r.get();
 		} finally {
-			time.set(lastT);
+			frames.set(lastT);
 		}
 	}
 
-	default Producer<PackedCollection<?>> time() { return time.get(); }
+	default Producer<PackedCollection<?>> frame() { return frames.get(); }
+
+	default Producer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
 
 	default <T> T sampleRate(int sr, Supplier<T> r) {
 		Integer lastSr = sampleRate.get();
@@ -56,7 +58,7 @@ public interface SamplingFeatures extends CodeFeatures {
 
 	default <T> T sampling(int rate, double duration, Supplier<T> r) {
 		int frames = (int) (rate * duration);
-		return sampleRate(rate, () -> time(integers(0, frames).divide(c(sampleRate())), r));
+		return sampleRate(rate, () -> frames(integers(0, frames), r));
 	}
 
 	default int toFrames(double sec) { return (int) (sampleRate() * sec); }

@@ -23,6 +23,6 @@ import org.almostrealism.heredity.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
 	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
-		return in -> multiply(c(1.0), in); // divide(multiply(in, time()), attack);
+		return in -> c(in, frame()).multiply(divide(time(), attack));
 	}
 }

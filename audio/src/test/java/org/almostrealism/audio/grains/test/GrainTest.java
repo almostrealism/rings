@@ -193,7 +193,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			PackedCollection<?> p = new PackedCollection<>(1);
 			p.setMem(Math.random() - 0.5);
 
-			return processor.apply(input, grain, w, p).sample(attack(c(1.0)));
+			return processor.apply(input, grain, w, p).sample(attack(c(5.0)));
 		}).toArray(WaveData[]::new))
 				.sum()
 				.o(i -> new File("results/grain-processor-envelope-test.wav"))
