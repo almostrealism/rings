@@ -19,6 +19,8 @@ package org.almostrealism.audio.filter;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 
+// TODO  Use Factor instead
+@Deprecated
 public interface Envelope {
 	Producer<Scalar> getScale(Producer<Scalar> time);
 }

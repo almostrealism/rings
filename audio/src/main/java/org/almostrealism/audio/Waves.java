@@ -27,7 +27,6 @@ import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.Segment;
 import org.almostrealism.audio.data.SegmentList;
 import org.almostrealism.audio.data.WaveDataProviderList;
-import org.almostrealism.audio.filter.EnvelopeProvider;
 import org.almostrealism.audio.sequence.TempoAware;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
@@ -52,7 +51,6 @@ import java.util.stream.IntStream;
 
 public class Waves implements TempoAware, CellFeatures {
 	private WaveSet source;
-	private EnvelopeProvider envelope;
 	private int pos = -1, len = -1;
 	private String sourceName;
 
@@ -91,9 +89,6 @@ public class Waves implements TempoAware, CellFeatures {
 
 	public WaveSet getSource() { return source; }
 	public void setSource(WaveSet source) { this.source = source; }
-
-	public EnvelopeProvider getEnvelope() { return envelope; }
-	public void setEnvelope(EnvelopeProvider envelope) { this.envelope = envelope; }
 
 	public RoutingChoices getChoices() { return choices; }
 	public void setChoices(RoutingChoices choices) { this.choices = choices; }

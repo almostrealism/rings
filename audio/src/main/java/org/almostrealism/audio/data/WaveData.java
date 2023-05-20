@@ -17,8 +17,11 @@
 package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.ScalarBankHeap;
+import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
@@ -26,6 +29,7 @@ import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.heredity.Factor;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +37,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class WaveData {
+public class WaveData implements SamplingFeatures {
 	private static ContextSpecific<PackedCollectionHeap> collectionHeap;
 
 	private PackedCollection collection;
@@ -70,6 +74,13 @@ public class WaveData {
 
 	public WaveData range(int start, int length) {
 		return new WaveData(getCollection().range(new TraversalPolicy(length), start), sampleRate);
+	}
+
+	public WaveData sample(Factor<PackedCollection<?>> processor) {
+		PackedCollection<?> result = new PackedCollection<>(getCollection().getShape());
+		sampling(getSampleRate(), getDuration(), () -> processor.getResultant(p(getCollection())))
+				.get().into(result).evaluate();
+		return new WaveData(result, getSampleRate());
 	}
 
 	public void save(File file) {

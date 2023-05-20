@@ -67,6 +67,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFeatures {
+
 	default Receptor<PackedCollection<?>> a(Supplier<Evaluable<? extends PackedCollection<?>>>... destinations) {
 		if (destinations.length == 1) {
 			return protein -> a(1, destinations[0], protein);

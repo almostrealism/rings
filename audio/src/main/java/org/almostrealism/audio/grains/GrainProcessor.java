@@ -38,7 +38,7 @@ public class GrainProcessor implements CodeFeatures {
 	}
 
 	public WaveData apply(PackedCollection<?> input, Grain grain, PackedCollection<?> wavelength, PackedCollection<?> phase) {
-		count.setMem(input.getCount());
+		count.setMem((double) input.getCount());
 		PackedCollection<?> result = ev.into(new PackedCollection<>(shape(frames), 1))
 				.evaluate(input.traverse(0), grain, wavelength, phase);
 		return new WaveData(result, sampleRate);
