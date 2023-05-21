@@ -24,6 +24,7 @@ import org.almostrealism.time.Frequency;
 
 import java.util.List;
 
+@Deprecated
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface ParameterizedWaveDataProviderFactory {
 	WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates);

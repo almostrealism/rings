@@ -154,7 +154,15 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
 		PackedCollection<?> input = wav.getCollection();
 
-		GrainProcessor processor = new GrainProcessor(5.0, OutputLine.sampleRate);
+		Evaluable<PackedCollection<?>> processor =
+				sampling(OutputLine.sampleRate, 5.0, () -> grains(
+					v(1, 0),
+					v(shape(3), 1),
+					v(shape(3), 2),
+					v(shape(3), 3),
+					v(1, 4))).get();
+
+		int tot = 5 * OutputLine.sampleRate;
 
 		w(IntStream.range(0, 10).mapToObj(i -> {
 			Grain grain = new Grain();
@@ -171,7 +179,8 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			PackedCollection<?> a = new PackedCollection<>(1);
 			a.setMem(1.0);
 
-			return processor.apply(input, grain, w, p, a);
+			return new WaveData(processor.into(new PackedCollection<>(shape(tot), 1))
+					.evaluate(input.traverse(0), grain, w, p, a), OutputLine.sampleRate);
 		}).toArray(WaveData[]::new))
 				.sum()
 				.o(i -> new File("results/grain-processor-test.wav"))
@@ -182,8 +191,17 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 	public void grainProcessorEnvelope() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
 		PackedCollection<?> input = wav.getCollection();
+		
+		Evaluable<PackedCollection<?>> processor =
+						sampling(OutputLine.sampleRate, 5.0,
+								() -> attack(c(5.0)).getResultant(grains(
+									v(1, 0),
+									v(shape(3), 1),
+									v(shape(3), 2),
+									v(shape(3), 3),
+									v(1, 4)))).get();
 
-		GrainProcessor processor = new GrainProcessor(5.0, OutputLine.sampleRate);
+		int tot = 5 * OutputLine.sampleRate;
 
 		w(IntStream.range(0, 10).mapToObj(i -> {
 			Grain grain = new Grain();
@@ -200,7 +218,9 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			PackedCollection<?> a = new PackedCollection<>(1);
 			a.setMem(1.0);
 
-			return processor.apply(input, grain, w, p, a).sample(attack(c(5.0)));
+			return new WaveData(processor.into(new PackedCollection<>(shape(tot), 1))
+					.evaluate(input.traverse(0), grain, w, p, a), OutputLine.sampleRate);
+					// .sample(attack(c(5.0)));
 		}).toArray(WaveData[]::new))
 				.sum()
 				.o(i -> new File("results/grain-processor-envelope-test.wav"))

@@ -20,6 +20,8 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.grains.Grain;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.Supplier;
@@ -71,5 +73,24 @@ public interface SamplingFeatures extends CodeFeatures {
 
 	default Producer<Scalar> toFramesMilli(Supplier<Evaluable<? extends Scalar>> msec) {
 		return scalarsMultiply(v(sampleRate() / 1000d), msec);
+	}
+
+	default CollectionProducer<PackedCollection<?>> grains(Producer<PackedCollection<?>> input,
+														   Producer<Grain> grain,
+														   Producer<PackedCollection<?>> wavelength,
+														   Producer<PackedCollection<?>> phase,
+														   Producer<PackedCollection<?>> amp) {
+		CollectionProducer<PackedCollection<?>> start = c(grain, 0).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection<?>> d = c(grain, 1).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection<?>> rate = c(grain, 2);
+		CollectionProducer<PackedCollection<?>> w = multiply(wavelength, c(sampleRate()));
+
+		Producer<PackedCollection<?>> series = frame();
+//		Producer<PackedCollection<?>> max = subtract(p(count), start);
+//		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, d), max));
+		Producer<PackedCollection<?>> pos  = start.add(_mod(series, d));
+
+		CollectionProducer<PackedCollection<?>> generate = interpolate(input, pos, rate);
+		return generate.multiply(_sinw(series, w, phase, amp));
 	}
 }
