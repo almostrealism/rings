@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.computations.ScalarChoice;
 import org.almostrealism.audio.data.FileWaveDataProvider;
-import org.almostrealism.audio.data.Segment;
 import org.almostrealism.audio.data.SegmentList;
 import org.almostrealism.audio.data.WaveDataProviderList;
 import org.almostrealism.audio.sequence.TempoAware;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.time.Frequency;
 
@@ -42,7 +37,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -99,53 +93,25 @@ public class Waves implements TempoAware, CellFeatures {
 		getChildren().forEach(c -> c.setBpm(bpm));
 	}
 
-	public CollectionTemporalCellAdapter getChoiceCell(int src, Producer<Scalar> decision,
-													   Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z,
-													   Producer<Scalar> offset, Producer<Scalar> duration) {
-		SegmentList segments = getSegments(src, x, y, z);
-
-		Map<PackedCollection<?>, List<Segment>> segmentsByBank = segments.getSegments().stream().collect(Collectors.groupingBy(Segment::getSource));
-		if (segmentsByBank.size() > 1) {
-			throw new UnsupportedOperationException("More than one root PackedCollection for Waves instance");
-		} else if (segmentsByBank.size() <= 0) {
-			return silent();
-		}
-
-		PackedCollection<?> source = segmentsByBank.keySet().iterator().next();
-
-		int count = segments.getSegments().size();
-		ScalarBank positions = new ScalarBank(count);
-		ScalarBank lengths = new ScalarBank(count);
-
-		IntStream.range(0, count).forEach(i -> positions.set(i, segments.getSegments().get(i).getPosition()));
-		IntStream.range(0, count).forEach(i -> lengths.set(i, segments.getSegments().get(i).getLength()));
-
-		ScalarChoice positionChoice = new ScalarChoice(count, decision, v(positions));
-		ScalarChoice lengthChoice = new ScalarChoice(count, decision, v(lengths));
-
-		WaveCell cell = new WaveCell(source, OutputLine.sampleRate, 1.0, offset, duration, positionChoice, lengthChoice);
-		cell.addSetup(segments.setup());
-		return cell;
-	}
-
-	@JsonIgnore
 	public SegmentList getSegments(int src, Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z) {
 		if (!choices.getChoices().contains(src)) return new SegmentList(new ArrayList<>());
 
 		if (isLeaf()) {
 			WaveDataProviderList provider = source.create(x, y, z);
 			return new SegmentList(provider.getProviders()
-					.stream().map(p -> new Segment(sourceName, p.get().getCollection(), pos, len))
+					.stream()
+					.map(p -> (PackedCollection<?>) ((pos >= 0 && len >= 0) ? p.get().getCollection() :
+							p.get().getCollection().range(shape(len).traverse(1), pos)))
 					.collect(Collectors.toList()), provider.setup());
 		} else {
 			List<SegmentList> lists = getChildren().stream().map(c -> c.getSegments(src, x, y, z)).collect(Collectors.toList());
-			List<Segment> segments = lists.stream().map(SegmentList::getSegments).flatMap(List::stream).collect(Collectors.toList());
+			List<PackedCollection<?>> segments = lists.stream().map(SegmentList::getSegments).flatMap(List::stream).collect(Collectors.toList());
 			OperationList setup = lists.stream().map(SegmentList::setup).collect(OperationList.collector());
 			return new SegmentList(segments, setup);
 		}
 	}
 
-	public Segment getSegmentChoice(int src, double decision, double x, double y, double z) {
+	public PackedCollection<?> getSegmentChoice(int src, double decision, double x, double y, double z) {
 		SegmentList segments = getSegments(src, v(x), v(y), v(z));
 		if (segments.isEmpty()) return null;
 
@@ -217,7 +183,7 @@ public class Waves implements TempoAware, CellFeatures {
 					w.getChoices().getChoices().addAll(getChoices().getChoices());
 					return w;
 				})
-				.filter(w -> w.getSegments(0, null, null, null).getSegments().get(0).range().length() > (silenceThreshold * frames))
+				.filter(w -> w.getSegments(0, null, null, null).getSegments().get(0).length() > (silenceThreshold * frames))
 				.forEach(w -> waves.getChildren().add(w));
 		return waves;
 	}

@@ -24,6 +24,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.data.WaveDataProviderList;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.grains.Grain;
 import org.almostrealism.audio.grains.GrainProcessor;
@@ -167,7 +168,10 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			PackedCollection<?> p = new PackedCollection<>(1);
 			p.setMem(Math.random() - 0.5);
 
-			return processor.apply(input, grain, w, p);
+			PackedCollection<?> a = new PackedCollection<>(1);
+			a.setMem(1.0);
+
+			return processor.apply(input, grain, w, p, a);
 		}).toArray(WaveData[]::new))
 				.sum()
 				.o(i -> new File("results/grain-processor-test.wav"))
@@ -193,7 +197,10 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			PackedCollection<?> p = new PackedCollection<>(1);
 			p.setMem(Math.random() - 0.5);
 
-			return processor.apply(input, grain, w, p).sample(attack(c(5.0)));
+			PackedCollection<?> a = new PackedCollection<>(1);
+			a.setMem(1.0);
+
+			return processor.apply(input, grain, w, p, a).sample(attack(c(5.0)));
 		}).toArray(WaveData[]::new))
 				.sum()
 				.o(i -> new File("results/grain-processor-envelope-test.wav"))
@@ -202,10 +209,12 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 
 	@Test
 	public void granularSynth() {
-		GranularSynthesizer synth = new GranularSynthesizer();
+		GranularSynthesizer synth = new GranularSynthesizer(OutputLine.sampleRate);
 		GrainSet set = synth.addFile("Library/organ.wav");
 		set.addGrain(new Grain(0.2, 0.015, 2.0));
-		synth.create(v(0.0), v(0.0), v(0.0), List.of(new Frequency(1.0)))
-				.getProviders().get(0).get().save(new File("results/granular-synth-test.wav"));
+
+		WaveDataProviderList providers = synth.create(v(0.0), v(0.0), v(0.0), List.of(new Frequency(1.0)));
+		providers.setup().get().run();
+		providers.getProviders().get(0).get().save(new File("results/granular-synth-test.wav"));
 	}
 }

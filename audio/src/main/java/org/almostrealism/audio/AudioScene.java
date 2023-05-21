@@ -21,6 +21,7 @@ import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
+import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
@@ -111,8 +112,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
 
-	public static Waves sourceOverride = null;
-
 	private int sampleRate;
 	private double bpm;
 	private int sourceCount;
@@ -121,19 +120,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private int totalMeasures = 1;
 
 	private Animation<T> scene;
-	private Waves sources;
 
-	private KeyboardTuning tuning;
 	private GlobalTimeManager time;
-	private SceneSectionManager sections;
+	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
 
-	private MixdownManager mixdown;
+	private RiseManager riser;
+	private SceneSectionManager sections;
 	private EfxManager efx;
+	private MixdownManager mixdown;
 
 	private GenerationManager generation;
 
@@ -171,9 +170,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
-
-		this.sources = new Waves();
-		IntStream.range(0, sourceCount).forEach(this.sources.getChoices().getChoices()::add);
 
 		patterns = new PatternSystemManager(genome.getGenome(2));
 		patterns.init();
@@ -312,23 +308,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		generation.setSettings(settings.getGeneration());
 	}
 
-	public void setWaves(Waves waves) {
-		this.sources = waves;
-		sourcesListener.forEach(l -> l.accept(sources));
-	}
-
-	// This is needed because AudioScene doesn't manage save
-	// and restore itself. Once it does, this can be removed.
-	@Deprecated
-	public void triggerSourcesChange() {
-		sourcesListener.forEach(l -> l.accept(sources));
-	}
-
 	protected void triggerDurationChange() {
 		durationListeners.forEach(l -> l.accept(getTotalDuration()));
 	}
-
-	public Waves getWaves() { return sources; }
 
 	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
 

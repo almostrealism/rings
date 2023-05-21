@@ -244,47 +244,4 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			return choices;
 		}
 	}
-
-	protected static Waves waves(AudioScene scene, Set<Integer> choices, double bpm) throws IOException {
-		GranularSynthesizer synth = new GranularSynthesizer();
-		synth.setGain(3.0);
-		synth.addFile("Library/organ.wav");
-		synth.addGrain(new GrainGenerationSettings());
-		synth.addGrain(new GrainGenerationSettings());
-
-		WaveSet synthNotes = new WaveSet(synth);
-		synthNotes.setRoot(WesternChromatic.C3);
-		synthNotes.setNotes(WesternScales.major(WesternChromatic.C3, 1));
-
-		GridSequencer sequencer = new GridSequencer();
-		sequencer.setStepCount(8);
-		sequencer.initParamSequence();
-		// sequencer.getSamples().add(synthNotes);
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/MD_SNARE_09.wav")));
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/MD_SNARE_11.wav")));
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/Snare Perc DD.wav")));
-
-		Waves seqWaves = new Waves("Sequencer", new WaveSet(sequencer));
-		seqWaves.getChoices().setChoices(choices);
-
-		Waves group = new Waves("Group");
-		group.getChoices().setChoices(choices);
-		group.getChildren().add(seqWaves);
-
-
-		File sources = new File("sources.json");
-		Waves waves = scene.getWaves();
-
-		if (enableSourcesJson && sources.exists()) {
-			waves = Waves.load(sources);
-			scene.setWaves(waves);
-		} else if (enableStems) {
-			waves.addSplits(Arrays.asList(new File(STEMS).listFiles()), bpm, Math.pow(10, -6), choices, 1.0, 2.0, 4.0);
-		} else {
-			waves.getChildren().add(group);
-			waves.getChoices().setChoices(choices);
-		}
-
-		return waves;
-	}
 }

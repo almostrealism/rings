@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.test;
+package org.almostrealism.audio.notes;
 
-import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.audio.Waves;
+import org.almostrealism.audio.tone.KeyboardTuning;
 
-public class WavesTest implements CellFeatures, TestFeatures {
+import java.util.List;
 
-	private double choose(int i) {
-		if (i == 0) {
-			return 0.0;
-		} else if (i == 1) {
-			return 0.5;
- 		} else if (i == 2) {
-			return 0.99;
-		} else {
-			throw new UnsupportedOperationException();
-		}
+public class WaveNoteSource implements PatternNoteSource {
+	private KeyboardTuning tuning;
+	private Waves waves;
+
+	@Override
+	public String getOrigin() { return null; }
+
+	@Override
+	public void setTuning(KeyboardTuning tuning) { this.tuning = tuning; }
+
+	@Override
+	public List<PatternNote> getNotes() {
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 }

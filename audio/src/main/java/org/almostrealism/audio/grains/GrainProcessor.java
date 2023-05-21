@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.almostrealism.audio.grains;
 
 import io.almostrealism.relation.Evaluable;
@@ -33,14 +49,16 @@ public class GrainProcessor implements CodeFeatures {
 		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, d), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
-		generate = generate.multiply(_sinw(series, wavelength, phase, c(1.0)));
+		generate = generate.multiply(_sinw(series, wavelength, phase, v(1, 4)));
 		ev = generate.get();
 	}
 
-	public WaveData apply(PackedCollection<?> input, Grain grain, PackedCollection<?> wavelength, PackedCollection<?> phase) {
+	public int getFrames() { return frames; }
+
+	public WaveData apply(PackedCollection<?> input, Grain grain, PackedCollection<?> wavelength, PackedCollection<?> phase, PackedCollection<?> amp) {
 		count.setMem((double) input.getCount());
 		PackedCollection<?> result = ev.into(new PackedCollection<>(shape(frames), 1))
-				.evaluate(input.traverse(0), grain, wavelength, phase);
+				.evaluate(input.traverse(0), grain, wavelength, phase, amp);
 		return new WaveData(result, sampleRate);
 	}
 }

@@ -144,6 +144,7 @@ public class WaveData implements SamplingFeatures {
 		collectionHeap = null;
 	}
 
+	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
 	public static PackedCollection<?> allocateCollection(int count) {
 		return Optional.ofNullable(getCollectionHeap()).map(h -> h.allocate(count)).orElse(new PackedCollection(count));
 	}

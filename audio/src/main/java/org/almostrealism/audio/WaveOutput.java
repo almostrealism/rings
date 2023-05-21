@@ -50,7 +50,7 @@ import org.almostrealism.time.CursorPair;
 import org.almostrealism.CodeFeatures;
 
 public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
-	public static boolean enableVerbose = false;
+	public static boolean enableVerbose = true;
 	public static boolean enableKernelExport = true;
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);

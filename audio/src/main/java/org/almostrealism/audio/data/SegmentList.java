@@ -17,6 +17,7 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.cycle.Setup;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.List;
@@ -24,26 +25,21 @@ import java.util.function.Supplier;
 
 public class SegmentList implements Setup {
 	private Supplier<Runnable> setup;
-	private List<Segment> segments;
+	private List<PackedCollection<?>> segments;
 
-	public SegmentList(List<Segment> segments) {
+	public SegmentList(List<PackedCollection<?>> segments) {
 		this(segments, new OperationList());
 	}
 
-	public SegmentList(List<Segment> segments, Supplier<Runnable> setup) {
+	public SegmentList(List<PackedCollection<?>> segments, Supplier<Runnable> setup) {
 		this.setup = setup;
 		this.segments = segments;
 	}
 
 	@Override
-	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList();
-		setup.add(this.setup);
-		segments.forEach(s -> setup.add(s.setup()));
-		return setup;
-	}
+	public Supplier<Runnable> setup() { return setup; }
 
-	public List<Segment> getSegments() { return segments; }
+	public List<PackedCollection<?>> getSegments() { return segments; }
 
 	public boolean isEmpty() { return getSegments() == null || getSegments().isEmpty(); }
 }

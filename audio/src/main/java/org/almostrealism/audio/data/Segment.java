@@ -16,15 +16,14 @@
 
 package org.almostrealism.audio.data;
 
-import io.almostrealism.cycle.Setup;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.function.Supplier;
 
-public class Segment implements Setup {
+@Deprecated
+public class Segment {
 	private String sourceText;
 	private PackedCollection<?> source;
 	private int pos, len;
@@ -52,11 +51,8 @@ public class Segment implements Setup {
 		this.setup = setup;
 	}
 
-	public String getSourceText() { return sourceText; }
 	public PackedCollection<?> getSource() { return source; }
 	public int getPosition() { return pos; }
 	public int getLength() { return len; }
 	public PackedCollection<?> range() { return source.range(new TraversalPolicy(len), pos); }
-
-	public Supplier<Runnable> setup() { return setup; }
 }
