@@ -27,7 +27,6 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProviderList;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.grains.Grain;
-import org.almostrealism.audio.grains.GrainProcessor;
 import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.collect.CollectionProducer;
@@ -44,34 +43,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class GrainTest implements CellFeatures, EnvelopeFeatures {
-	@Test
-	public void grainsOld() {
-		WaveOutput source = new WaveOutput();
-		w(new File("Library/organ.wav")).map(i -> new ReceptorCell<>(source)).sec(1.0, false).get().run();
-
-		Grain grain = new Grain();
-		grain.setStart(0.2);
-		grain.setDuration(0.015);
-		grain.setRate(2.0);
-
-		TraversalPolicy grainShape = new TraversalPolicy(3);
-		Producer<PackedCollection<?>> g = v(1, 1, -1);
-
-		Producer<Scalar> pos = scalar(grainShape, g, 0).add(
-						mod(multiply(scalar(grainShape, g, 2),
-								v(Scalar.shape(), 0)), scalar(grainShape, g, 1)))
-				.multiply(scalar(OutputLine.sampleRate));
-		Producer cursor = pair(pos, v(0.0));
-
-		ScalarBank result = new ScalarBank(10 * OutputLine.sampleRate);
-		System.out.println("GrainTest: Evaluating timeline kernel...");
-		source.getData().valueAt(cursor).get().into(result).evaluate(WaveOutput.timelineScalar.getValue(), grain);
-		System.out.println("GrainTest: Timeline kernel evaluated");
-
-		System.out.println("GrainTest: Rendering grains...");
-		w(new WaveData(result, OutputLine.sampleRate)).o(i -> new File("results/grain-test-old.wav")).sec(5).get().run();
-		System.out.println("GrainTest: Done");
-	}
 
 	@Test
 	public void grainsTimeSeries() {
