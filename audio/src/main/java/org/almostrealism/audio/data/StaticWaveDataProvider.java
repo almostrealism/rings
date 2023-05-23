@@ -14,26 +14,41 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.notes;
+package org.almostrealism.audio.data;
 
-import org.almostrealism.audio.Waves;
-import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.util.KeyUtils;
 
-import java.util.List;
+public class StaticWaveDataProvider extends WaveDataProviderAdapter {
+	private String key;
+	private WaveData data;
 
-public class WaveNoteSource implements PatternNoteSource {
-	private KeyboardTuning tuning;
-	private Waves waves;
-
-	@Override
-	public String getOrigin() { return null; }
-
-	@Override
-	public void setTuning(KeyboardTuning tuning) { this.tuning = tuning; }
+	public StaticWaveDataProvider(WaveData data) {
+		this.key = KeyUtils.generateKey();
+		this.data = data;
+	}
 
 	@Override
-	public List<PatternNote> getNotes() {
-		// TODO
-		throw new UnsupportedOperationException();
+	public int getCount() {
+		return data.getCollection().getCount();
+	}
+
+	@Override
+	public double getDuration() {
+		return data.getDuration();
+	}
+
+	@Override
+	public int getSampleRate() {
+		return data.getSampleRate();
+	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	@Override
+	protected WaveData load() {
+		return data;
 	}
 }

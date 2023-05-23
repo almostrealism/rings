@@ -103,9 +103,9 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 			int frames = (int) (duration * OutputLine.sampleRate);
 			int total = (int) (audio.getMemLength() / (duration * OutputLine.sampleRate));
 			notes = IntStream.range(0, total)
-					.mapToObj(i -> (Supplier<PackedCollection>) () ->
+					.mapToObj(i -> (Supplier<PackedCollection<?>>) () ->
 							new PackedCollection<>(shape(frames), 1, audio, i * frames))
-					.map(PatternNote::new)
+					.map(PatternNote::create)
 					.map(note -> {
 						note.setTuning(tuning);
 						return note;

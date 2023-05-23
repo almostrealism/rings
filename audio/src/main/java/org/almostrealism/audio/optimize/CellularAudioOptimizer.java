@@ -19,40 +19,27 @@ package org.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.WaveSet;
-import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
-import org.almostrealism.audio.data.FileWaveDataProvider;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
-import org.almostrealism.audio.grains.GrainGenerationSettings;
-import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.Waves;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
-import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternSystemManager;
-import org.almostrealism.audio.sequence.GridSequencer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.audio.tone.WesternChromatic;
-import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.AdjustableDelayCell;
@@ -69,7 +56,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 	public static final boolean enableSourcesJson = true;
 	public static final boolean enableStems = false;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 3;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -222,18 +209,18 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		} else {
 			List<PatternFactoryChoice> choices = new ArrayList<>();
 
-			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", new PatternNote("Kit/Kick.wav")));
+			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
 			kick.setSeed(true);
 			kick.setMinScale(0.25);
 			choices.add(kick);
 
-			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", new PatternNote("Kit/Clap.wav")));
+			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
 			clap.setMaxScale(0.5);
 			choices.add(clap);
 
 			PatternFactoryChoice toms = new PatternFactoryChoice(
-					new PatternElementFactory("Toms", new PatternNote("Kit/Tom1.wav"),
-							new PatternNote("Kit/Tom2.wav")));
+					new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
+							PatternNote.create("Kit/Tom2.wav")));
 			toms.setMaxScale(0.25);
 			choices.add(toms);
 

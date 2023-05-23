@@ -58,7 +58,7 @@ public class FileNoteSource implements PatternNoteSource {
 
 	public List<PatternNote> getNotes() {
 		if (note == null) {
-			note = new PatternNote(source, root);
+			note = PatternNote.create(source, root);
 			note.setTuning(tuning);
 		}
 

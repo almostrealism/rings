@@ -142,7 +142,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
-	private List<Consumer<Waves>> sourcesListener;
 
 	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
 					  int sampleRate) {
@@ -159,7 +158,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.tempoListeners = new ArrayList<>();
 		this.durationListeners = new ArrayList<>();
-		this.sourcesListener = new ArrayList<>();
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
@@ -244,9 +242,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public void addDurationListener(DoubleConsumer listener) { this.durationListeners.add(listener); }
 	public void removeDurationListener(DoubleConsumer listener) { this.durationListeners.remove(listener); }
-
-	public void addSourcesListener(Consumer<Waves> listener) { this.sourcesListener.add(listener); }
-	public void removeSourcesListener(Consumer<Waves> listener) { this.sourcesListener.remove(listener); }
 
 	public int getSourceCount() { return sourceCount; }
 	public int getDelayLayerCount() { return delayLayerCount; }

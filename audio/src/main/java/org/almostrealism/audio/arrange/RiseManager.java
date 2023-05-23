@@ -17,23 +17,19 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.Waves;
+import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.time.Frequency;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-public class RiseManager implements Setup {
+public class RiseManager implements Setup, CellFeatures {
 	private OperationList setup;
-	private Waves generator;
+	private StatelessSource generator;
 	private ConfigurableGenome genome;
 
 	private Supplier<Frequency> tempo;
@@ -57,7 +53,7 @@ public class RiseManager implements Setup {
 
 	public CellList getRise() {
 		// TODO
-		this.generator.getSegmentChoice(0, 1.0, 0.0, 0.0, 0.0);
+		this.generator.generate(c(0.0, 0.0, 0.0), c(1.0));
 		throw new UnsupportedOperationException();
 	}
 }

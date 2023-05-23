@@ -22,6 +22,7 @@ import org.almostrealism.hardware.OperationList;
 import java.util.List;
 import java.util.function.Supplier;
 
+@Deprecated
 public class WaveDataProviderList implements Setup {
 	private Supplier<Runnable> setup;
 	private List<WaveDataProvider> providers;

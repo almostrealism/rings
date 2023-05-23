@@ -28,5 +28,9 @@ public interface WaveDataProvider extends Supplier<WaveData>, Setup {
 
 	double getDuration();
 
+	int getSampleRate();
+
 	default Supplier<Runnable> setup() { return new OperationList(); }
+
+	WaveData get(double playbackRate);
 }

@@ -19,39 +19,28 @@ package org.almostrealism.audio.grains;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
-import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.DynamicWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.data.ParameterizedWaveDataProviderFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProviderList;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.Input;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
-import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.ctx.DefaultContextSpecific;
-import org.almostrealism.hardware.mem.MemoryBankAdapter;
-import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.Frequency;
-import org.almostrealism.time.computations.AcceleratedTimeSeriesValueAt;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory, CellFeatures {
+public class GranularSynthesizer implements StatelessSource, CellFeatures {
 	public static double ampModWavelengthMin = 0.1;
 	public static double ampModWavelengthMax = 10;
 	public static double duration = 10;
@@ -65,12 +54,6 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 		gain = 1.0;
 		grains = new ArrayList<>();
 		processor = new GrainProcessor(duration, sampleRate);
-	}
-
-	@JsonIgnore
-	@Override
-	public int getCount() {
-		return processor.getFrames();
 	}
 
 	@JsonIgnore
@@ -106,6 +89,11 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 	}
 
 	@Override
+	public Producer<PackedCollection<?>> generate(Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency) {
+		return null;
+	}
+
+	@Deprecated
 	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
 		Evaluable<Scalar> evX = x.get();
 		Evaluable<Scalar> evY = y.get();
@@ -113,7 +101,7 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 
 		List<WaveDataProvider> providers = new ArrayList<>();
 		playbackRates.forEach(rate -> {
-			PackedCollection<?> output = WaveData.allocateCollection(getCount()).traverse(1);
+			PackedCollection<?> output = WaveData.allocateCollection(processor.getFrames()).traverse(1);
 			WaveData destination = new WaveData(output, OutputLine.sampleRate);
 			providers.add(new DynamicWaveDataProvider("synth://" + UUID.randomUUID(), destination));
 		});
@@ -154,7 +142,7 @@ public class GranularSynthesizer implements ParameterizedWaveDataProviderFactory
 					}
 				}
 
-				Producer args[] = Input.generateArguments(getCount(), 0, results.size());
+				Producer args[] = Input.generateArguments(processor.getFrames(), 0, results.size());
 				Producer sum = args[0];
 
 				for (int j = 1; j < args.length; j++) {

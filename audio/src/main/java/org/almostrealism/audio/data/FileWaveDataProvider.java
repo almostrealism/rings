@@ -54,6 +54,20 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 
 	@JsonIgnore
 	@Override
+	public int getSampleRate() {
+		try {
+			WavFile w = WavFile.openWavFile(new File(resourcePath));
+			long count = w.getNumFrames();
+			if (count > Integer.MAX_VALUE) throw new UnsupportedOperationException();
+			if (w.getSampleRate() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
+			return (int) w.getSampleRate();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@JsonIgnore
+	@Override
 	public int getCount() {
 		try {
 			long count = WavFile.openWavFile(new File(resourcePath)).getNumFrames();
