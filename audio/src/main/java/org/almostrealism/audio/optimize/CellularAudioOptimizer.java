@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
@@ -34,6 +35,7 @@ import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -204,6 +206,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					c.setSeedBias(1.0);
 				}
 			});
+
+			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
+							TreeNoteSource.Filter.nameStartsWith("SN_"));
+			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
+			choices.add(PatternFactoryChoice.fromSource(synths, true));
 
 			return choices;
 		} else {

@@ -18,6 +18,7 @@ package org.almostrealism.audio.pattern;
 
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
 import java.util.List;
@@ -126,6 +127,12 @@ public class PatternFactoryChoice {
 		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, 0.0, depth, true, params).ifPresent(layer.getElements()::add);
 		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, 0.0, depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
+	}
+
+	public static PatternFactoryChoice fromSource(PatternNoteSource source, boolean melodic) {
+		PatternElementFactory f = new PatternElementFactory(source);
+		f.setMelodic(melodic);
+		return new PatternFactoryChoice(f);
 	}
 
 	public static Supplier<List<PatternFactoryChoice>> choices(List<PatternFactoryChoice> choices, boolean melodic) {
