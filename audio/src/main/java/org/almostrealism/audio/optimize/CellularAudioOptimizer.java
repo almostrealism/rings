@@ -210,7 +210,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
 							TreeNoteSource.Filter.nameStartsWith("SN_"));
 			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
-			choices.add(PatternFactoryChoice.fromSource(synths, true));
+			choices.add(PatternFactoryChoice.fromSource(synths, 3, 5, true));
 
 			return choices;
 		} else {

@@ -95,6 +95,7 @@ public class TreeNoteSource implements PatternNoteSource {
 					.orElse(true);
 			if (match) notes.add(new PatternNote(p, getRoot()));
 		});
+		notes.forEach(n -> n.setTuning(tuning));
 	}
 
 	public static TreeNoteSource fromFile(File root, Filter filter) {

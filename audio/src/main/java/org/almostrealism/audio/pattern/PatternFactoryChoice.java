@@ -21,6 +21,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -54,10 +55,12 @@ public class PatternFactoryChoice {
 		setMinScale(minScale);
 		setMaxScale(maxScale);
 		setMaxChordDepth(1);
+		setSeed(true);
 		setSeedUnits(4);
 		setGranularity(0.25);
 		setSeedScale(0.25);
 		setSeedBias(-0.5);
+		setChannels(new ArrayList<>());
 		initSelectionFunctions();
 	}
 
@@ -129,10 +132,14 @@ public class PatternFactoryChoice {
 		return layer;
 	}
 
-	public static PatternFactoryChoice fromSource(PatternNoteSource source, boolean melodic) {
+	public static PatternFactoryChoice fromSource(PatternNoteSource source, int channel, int maxChordDepth, boolean melodic) {
 		PatternElementFactory f = new PatternElementFactory(source);
 		f.setMelodic(melodic);
-		return new PatternFactoryChoice(f);
+
+		PatternFactoryChoice c = new PatternFactoryChoice(f);
+		c.setMaxChordDepth(maxChordDepth);
+		c.getChannels().add(channel);
+		return c;
 	}
 
 	public static Supplier<List<PatternFactoryChoice>> choices(List<PatternFactoryChoice> choices, boolean melodic) {
