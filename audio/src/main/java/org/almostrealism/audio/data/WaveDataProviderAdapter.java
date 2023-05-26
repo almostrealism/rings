@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeFeatures {
+	public static boolean enableHeap = true;
+
 	private static Map<String, ContextSpecific<WaveData>> loaded;
 	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;
 
@@ -43,7 +45,8 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 						new PassThroughProducer<>(1, 0),
 						new PassThroughProducer<>(1, 1),
 						new PassThroughProducer<>(1, 2),
-						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate))).get());
+						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate)),
+						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(OutputLine.sampleRate))).get());
 	}
 
 	public abstract String getKey();
@@ -69,7 +72,8 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 		rate.setMem(0, playbackRate);
 
 		PackedCollection<?> audio = original.getCollection();
-		PackedCollection<?> dest = WaveData.allocateCollection((int) (playbackRate * audio.getMemLength()));
+		int len = (int) (playbackRate * audio.getMemLength());
+		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
 
 		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
 

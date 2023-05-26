@@ -132,8 +132,9 @@ public class PatternFactoryChoice {
 		return layer;
 	}
 
-	public static PatternFactoryChoice fromSource(PatternNoteSource source, int channel, int maxChordDepth, boolean melodic) {
-		PatternElementFactory f = new PatternElementFactory(source);
+	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
+												  int channel, int maxChordDepth, boolean melodic) {
+		PatternElementFactory f = new PatternElementFactory(name, source);
 		f.setMelodic(melodic);
 
 		PatternFactoryChoice c = new PatternFactoryChoice(f);

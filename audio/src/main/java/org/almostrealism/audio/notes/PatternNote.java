@@ -70,6 +70,7 @@ public class PatternNote implements CellFeatures {
 	public void setSource(String source) {
 		this.valid = null;
 
+		if (source == null) return;
 		if (provider == null) provider = new FileWaveDataProvider(source);
 
 		try {
@@ -149,7 +150,14 @@ public class PatternNote implements CellFeatures {
 	public boolean isValid() {
 		if (audio != null) return true;
 		if (valid != null) return valid;
-		valid = provider.getSampleRate() == OutputLine.sampleRate;
+
+		try {
+			valid = provider.getSampleRate() == OutputLine.sampleRate;
+		} catch (Exception e) {
+			System.out.println("WARN: " + e.getMessage());
+			valid = false;
+		}
+
 		return valid;
 	}
 

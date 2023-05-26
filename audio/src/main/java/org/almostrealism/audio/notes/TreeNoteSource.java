@@ -85,7 +85,7 @@ public class TreeNoteSource implements PatternNoteSource {
 		tree.forEach(f -> {
 			FileWaveDataProvider p = f.get();
 			if (p == null) {
-				System.out.println("WARN: FileWaveDataProvider produced null");
+				// System.out.println("WARN: FileWaveDataProvider produced null");
 				return;
 			}
 

@@ -57,8 +57,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
-	public static final boolean enableStems = false;
-	public static final int singleChannel = 3;
+	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -144,7 +143,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(20000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
+		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(40000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
 		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 16 : 1);
@@ -192,6 +191,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			PatternFactoryChoiceList choices = new ObjectMapper()
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 
+			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
+							TreeNoteSource.Filter.nameStartsWith("SN_"));
+			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
+			choices.add(PatternFactoryChoice.fromSource("SN", synths, 3, 5, true));
+
 			choices.forEach(c -> {
 				if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
 					c.setMinScale(0.0);
@@ -204,13 +208,10 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 					c.setSeedBias(1.0);
 				} else if ("Rise".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
+				} else if ("SN".equals(c.getFactory().getName())) {
+					c.setSeedBias(0.25);
 				}
 			});
-
-			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
-							TreeNoteSource.Filter.nameStartsWith("SN_"));
-			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
-			choices.add(PatternFactoryChoice.fromSource(synths, 3, 5, true));
 
 			return choices;
 		} else {

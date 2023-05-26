@@ -36,6 +36,10 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	public FileWaveDataProvider() { }
 
 	public FileWaveDataProvider(String resourcePath) {
+		if (resourcePath == null) {
+			throw new IllegalArgumentException();
+		}
+
 		setResourcePath(resourcePath);
 	}
 
