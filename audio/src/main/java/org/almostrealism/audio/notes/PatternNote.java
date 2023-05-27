@@ -104,14 +104,22 @@ public class PatternNote implements CellFeatures {
 	}
 
 	@JsonIgnore
-	public double getDuration() {
-		return getAudio().getMemLength() / (double) OutputLine.sampleRate;
+	public double getDuration(KeyPosition<?> target) {
+		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
+		return provider.getDuration(r);
 	}
 
 	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int length) {
 		return () -> {
 			Evaluable<PackedCollection> audio = getAudio(target).get();
-			return args -> audio.evaluate().range(new TraversalPolicy(length));
+			return args -> {
+				try {
+					return audio.evaluate().range(new TraversalPolicy(length));
+				} catch (IllegalArgumentException e) {
+					System.out.println("target = " + target + ", length = " + length);
+					throw e;
+				}
+			};
 		};
 	}
 

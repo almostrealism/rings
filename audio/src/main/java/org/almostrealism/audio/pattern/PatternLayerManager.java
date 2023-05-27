@@ -23,11 +23,8 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -37,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -328,7 +326,8 @@ public class PatternLayerManager implements CodeFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(DoubleToIntFunction offsetForPosition, int measures, DoubleFunction<Scale<?>> scaleForPosition) {
+	public void sum(DoubleToIntFunction offsetForPosition, DoubleUnaryOperator timeForDuration,
+					int measures, DoubleFunction<Scale<?>> scaleForPosition) {
 		List<PatternElement> elements = getAllElements(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -349,7 +348,7 @@ public class PatternLayerManager implements CodeFeatures {
 			double offset = i * duration;
 
 			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, offsetForPosition, scaleForPosition, this::nextNotePosition))
+					.map(e -> e.getNoteDestinations(melodic, offset, offsetForPosition, timeForDuration, scaleForPosition, this::nextNotePosition))
 					.flatMap(List::stream)
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;

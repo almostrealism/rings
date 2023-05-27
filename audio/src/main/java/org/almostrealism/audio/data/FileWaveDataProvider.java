@@ -31,6 +31,9 @@ import java.util.function.Supplier;
 
 public class FileWaveDataProvider extends WaveDataProviderAdapter {
 
+	private Integer sampleRate;
+	private Integer count;
+	private Double duration;
 	private String resourcePath;
 
 	public FileWaveDataProvider() { }
@@ -59,37 +62,47 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	@JsonIgnore
 	@Override
 	public int getSampleRate() {
-		try {
-			WavFile w = WavFile.openWavFile(new File(resourcePath));
-			long count = w.getNumFrames();
-			if (count > Integer.MAX_VALUE) throw new UnsupportedOperationException();
-			if (w.getSampleRate() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
-			return (int) w.getSampleRate();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (sampleRate == null) {
+			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
+				long count = w.getNumFrames();
+				if (count > Integer.MAX_VALUE) throw new UnsupportedOperationException();
+				if (w.getSampleRate() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
+				this.sampleRate = (int) w.getSampleRate();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
+
+		return sampleRate;
 	}
 
 	@JsonIgnore
 	@Override
 	public int getCount() {
-		try {
-			long count = WavFile.openWavFile(new File(resourcePath)).getNumFrames();
-			if (count > Integer.MAX_VALUE) throw new UnsupportedOperationException();
-			return (int) count;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (count == null) {
+			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
+				if (w.getNumFrames() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
+				this.count = (int) w.getNumFrames();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
+
+		return count;
 	}
 
 	@JsonIgnore
 	@Override
 	public double getDuration() {
-		try {
-			return WavFile.openWavFile(new File(resourcePath)).getDuration();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (duration == null) {
+			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
+				this.duration = w.getDuration();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
+
+		return duration;
 	}
 
 	protected WaveData load() {

@@ -60,6 +60,11 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 	protected void unload() { clearKey(getKey()); }
 
 	@Override
+	public double getDuration(double playbackRate) {
+		return getDuration() / playbackRate;
+	}
+
+	@Override
 	public WaveData get(double playbackRate) {
 		WaveData original = get();
 
@@ -72,7 +77,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 		rate.setMem(0, playbackRate);
 
 		PackedCollection<?> audio = original.getCollection();
-		int len = (int) (playbackRate * audio.getMemLength());
+		int len = (int) (audio.getMemLength() / playbackRate);
 		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
 
 		PackedCollection<?> timeline = WaveOutput.timeline.getValue();

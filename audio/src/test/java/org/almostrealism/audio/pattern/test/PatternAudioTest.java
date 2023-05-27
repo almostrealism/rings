@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.almostrealism.audio.pattern.test;
 
 import org.almostrealism.algebra.Scalar;
@@ -21,7 +37,7 @@ public class PatternAudioTest {
 		s.setLeft(4);
 		s.setRight(6);
 
-		PatternElement e = new PatternElement(new PatternNote(in), 0.5);
+		PatternElement e = new PatternElement(PatternNote.create(() -> in), 0.5);
 		PatternAudio audio = new PatternAudio(60, 1.0, 1.0, 10);
 		audio.push(e);
 
@@ -31,7 +47,7 @@ public class PatternAudioTest {
 
 	@Test
 	public void noteAudio() {
-		PatternNote note = new PatternNote("Library/Monarch_C1.wav", WesternChromatic.C1);
+		PatternNote note = PatternNote.create("Library/Monarch_C1.wav", WesternChromatic.C1);
 		note.setTuning(new DefaultKeyboardTuning());
 		new WaveData(note.getAudio(WesternChromatic.C2).get().evaluate(), OutputLine.sampleRate).save(new File("results/Monarch_C2.wav"));
 	}

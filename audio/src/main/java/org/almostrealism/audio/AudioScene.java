@@ -357,6 +357,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		return () -> () -> {
 			refreshPatternDestination();
 			patterns.sum(channels, pos -> (int) (pos * getMeasureSamples()),
+					len -> len * getMeasureDuration(),
 					getTotalMeasures(), getChordProgression()::forPosition,
 					patternDestination, () -> WaveData.allocateCollection(getTotalSamples()));
 		};

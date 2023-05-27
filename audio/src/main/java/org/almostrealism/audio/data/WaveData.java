@@ -120,17 +120,17 @@ public class WaveData implements SamplingFeatures {
 	}
 
 	public static WaveData load(File f) throws IOException {
-		WavFile w = WavFile.openWavFile(f);
+		try (WavFile w = WavFile.openWavFile(f)) {
+			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
+			w.readFrames(wave, 0, (int) w.getFramesRemaining());
 
-		double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
-		w.readFrames(wave, 0, (int) w.getFramesRemaining());
+			int channelCount = w.getNumChannels();
 
-		int channelCount = w.getNumChannels();
+			assert channelCount > 0;
+			int channel = 0;
 
-		assert channelCount > 0;
-		int channel = 0;
-
-		return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+		}
 	}
 
 	public static PackedCollectionHeap getCollectionHeap() { return collectionHeap == null ? null : collectionHeap.getValue(); }
