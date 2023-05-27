@@ -16,11 +16,13 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
@@ -64,8 +66,7 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private RootDelegateSegmentsAdd sum;
-	private Runnable runSum;
+	private Evaluable<PackedCollection<?>> sum;
 	private Runnable adjustVolume;
 
 	public PatternLayerManager(List<PatternFactoryChoice> choices, SimpleChromosome chromosome, int channel, double measures,
@@ -101,15 +102,13 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public void updateDestination(PackedCollection<?> destination) {
 		this.destination = destination;
-		this.sum = new RootDelegateSegmentsAdd<>(MAX_NOTES, this.destination.traverse(1));
 
 		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
-
-		runSum = sum.get();
+		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
 		v.add(() -> () ->
-				volume.setMem(0, 1.0 / chordDepth));
+				volume.setMem(0, 1.0 / Math.max(1, chordDepth - 1)));
 		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		adjustVolume = v.get();
 	}
@@ -349,23 +348,21 @@ public class PatternLayerManager implements CodeFeatures {
 		IntStream.range(0, count).forEach(i -> {
 			double offset = i * duration;
 
-			sum.getInput().clear();
 			elements.stream()
 					.map(e -> e.getNoteDestinations(melodic, offset, offsetForPosition, scaleForPosition, this::nextNotePosition))
 					.flatMap(List::stream)
-					.forEach(sum.getInput()::add);
+					.forEach(note -> {
+						if (note.getOffset() >= destination.getShape().length(0)) return;
 
-			if (sum.getInput().size() > sum.getMaxInputs()) {
-				System.out.println("PatternLayerManager: Too many inputs (" + sum.getInput().size() + ") for sum on channel " + getChannel());
-				return;
-			}
+						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
+						int frames = Math.min(audio.getShape().getCount(),
+								destination.getShape().length(0) - note.getOffset());
 
-			if (sum.getInput().size() <= 0) {
-				System.out.println("PatternLayerManager: No inputs for sum");
-				return;
-			}
-
-			runSum.run();
+						TraversalPolicy shape = shape(frames).traverse(1);
+						sum
+								.into(destination.range(shape, note.getOffset()))
+								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+					});
 		});
 
 		adjustVolume.run();

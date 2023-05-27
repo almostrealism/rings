@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeFeatures {
-	public static boolean enableHeap = true;
+	public static boolean enableHeap = false;
 
 	private static Map<String, ContextSpecific<WaveData>> loaded;
 	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;

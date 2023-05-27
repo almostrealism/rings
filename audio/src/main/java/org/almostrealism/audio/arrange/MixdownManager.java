@@ -327,7 +327,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		public Configuration() { this(1); }
 
 		public Configuration(int scale) {
-			double offset = 80;
+			double offset = 70;
 			double duration = 0;
 
 			minChoiceValue = 0.0;

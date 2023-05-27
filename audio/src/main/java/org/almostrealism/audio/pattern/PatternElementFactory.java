@@ -163,10 +163,12 @@ public class PatternElementFactory {
 
 		PatternElement element = new PatternElement(notes.get((int) (note * notes.size())), position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
+		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -1).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
+
+		// System.out.println("PatternElementFactory: duration = " + element.getNoteDurationSelection());
 
 		double r = repeatSelection.apply(params, position, scale);
 
