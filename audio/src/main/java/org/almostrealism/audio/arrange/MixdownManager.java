@@ -327,7 +327,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		public Configuration() { this(1); }
 
 		public Configuration(int scale) {
-			double offset = 70;
+			double offset = 60;
 			double duration = 0;
 
 			minChoiceValue = 0.0;
@@ -357,8 +357,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			overallFilterUpOffsetMin = offset;
 			overallFilterUpOffsetMax = offset + 35.0;
 
-			minTransmission = 0.3;
-			maxTransmission = 1.6;
+			minTransmission = 0.05;
+			maxTransmission = 0.3;
 			minDelay = 4.0;
 			maxDelay = 20.0;
 
@@ -389,7 +389,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			overallWetInOffsetMax = offset + 30;
 
 			minWetOut = 0.5;
-			maxWetOut = 1.8;
+			maxWetOut = 1.0;
 			minHighPass = 0.0;
 			maxHighPass = 5000.0;
 			minLowPass = 15000.0;

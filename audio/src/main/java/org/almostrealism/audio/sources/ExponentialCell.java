@@ -16,18 +16,18 @@
 
 package org.almostrealism.audio.sources;
 
-import org.almostrealism.audio.filter.Envelope;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.algebra.Scalar;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 
 public class ExponentialCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private Envelope env;
+	private Factor<Scalar> env;
 	private final ExponentialCellData data;
 
 	public ExponentialCell() {
@@ -38,7 +38,7 @@ public class ExponentialCell extends CollectionTemporalCellAdapter implements Sa
 		this.data = data;
 	}
 
-	public void setEnvelope(Envelope e) { this.env = e; }
+	public void setEnvelope(Factor<Scalar> e) { this.env = e; }
 
 	public void strike() { data.setNotePosition(0); }
 
@@ -59,7 +59,7 @@ public class ExponentialCell extends CollectionTemporalCellAdapter implements Sa
 		PackedCollection<?> value = new PackedCollection<>(1);
 		OperationList push = new OperationList("ExponentialCell Push");
 		push.add(new ExponentialCellPush(data, env == null ? v(1.0) :
-				env.getScale(data::getNotePosition), value));
+				env.getResultant(data::getNotePosition), value));
 		push.add(super.push(p(value)));
 		return push;
 	}
@@ -69,7 +69,7 @@ public class ExponentialCell extends CollectionTemporalCellAdapter implements Sa
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("ExponentialCell Tick");
 		tick.add(new ExponentialCellTick(data, env == null ? v(1.0) :
-				env.getScale(data::getNotePosition)));
+				env.getResultant(data::getNotePosition)));
 		tick.add(super.tick());
 		return tick;
 	}
