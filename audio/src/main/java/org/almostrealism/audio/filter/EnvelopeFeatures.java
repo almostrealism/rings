@@ -22,7 +22,15 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
+	default EnvelopeSection envelope(Factor<PackedCollection<?>> envelope) {
+		return new EnvelopeSection(() -> time(), envelope);
+	}
+
 	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
 		return in -> multiply(in, _min(c(1.0), divide(time(), attack)));
+	}
+
+	default Factor<PackedCollection<?>> sustain(Producer<PackedCollection<?>> volume) {
+		return in -> multiply(in, volume);
 	}
 }

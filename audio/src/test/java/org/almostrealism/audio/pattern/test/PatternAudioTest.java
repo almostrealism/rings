@@ -21,6 +21,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
+import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.pattern.PatternAudio;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.notes.PatternNote;
@@ -64,5 +65,18 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
 				.save(new File("results/pattern-note-envelope.wav"));
+	}
+
+	@Test
+	public void envelopeSections() {
+		EnvelopeSection section = envelope(attack(c(0.5)))
+									.andThen(c(0.5), sustain(c(3.2)));
+
+		PatternNote note = PatternNote.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
+		note = PatternNote.create(note, section.get());
+		note.setTuning(new DefaultKeyboardTuning());
+
+		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-envelope-sections.wav"));
 	}
 }
