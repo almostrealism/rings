@@ -132,7 +132,10 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	}
 
 	public TraversalPolicy getShape(KeyPosition<?> target) {
-		return new TraversalPolicy((int) (getSampleRate() * getDuration(target))).traverse(1);
+		if (delegate != null) return delegate.getShape(target);
+
+		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
+		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
 	}
 
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int length) {
