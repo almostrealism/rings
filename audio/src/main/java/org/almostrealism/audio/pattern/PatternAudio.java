@@ -24,6 +24,7 @@ import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
+// TODO  It would be better to use this in PatternLayerManager
 public class PatternAudio implements CellFeatures {
 	private static ContextSpecific<KernelizedEvaluable<PackedCollection<?>>> add;
 

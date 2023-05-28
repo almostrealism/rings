@@ -26,13 +26,10 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.ProducerWithOffset;
 import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;

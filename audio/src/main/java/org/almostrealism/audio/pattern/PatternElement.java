@@ -24,7 +24,6 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.ProducerWithOffset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,12 +119,12 @@ public class PatternElement implements CodeFeatures {
 				.collect(Collectors.toList());
 	}
 
-	public List<ProducerWithOffset<PackedCollection>> getNoteDestinations(boolean melodic, double offset,
+	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
 																		  DoubleToIntFunction frameForPosition,
 																		  DoubleUnaryOperator timeForDuration,
 																		  DoubleFunction<Scale<?>> scaleForPosition,
 																		  DoubleUnaryOperator nextNotePosition) {
-		List<ProducerWithOffset<PackedCollection>> destinations = new ArrayList<>();
+		List<PatternNoteAudio> destinations = new ArrayList<>();
 
 		for (int i = 0; i < getRepeatCount(); i++) {
 			double relativePosition = getPosition() + i * getRepeatDuration();
@@ -138,10 +137,10 @@ public class PatternElement implements CodeFeatures {
 				if (keys.isEmpty()) break p;
 				int keyIndex = (int) (p * keys.size());
 
-				Producer<PackedCollection> note = getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
+				Producer<PackedCollection<?>> note = getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
 													nextNotePosition.applyAsDouble(relativePosition),
-													frameForPosition, timeForDuration);
-				destinations.add(new ProducerWithOffset<>(note, frameForPosition.applyAsInt(actualPosition)));
+													timeForDuration);
+				destinations.add(new PatternNoteAudio(note, frameForPosition.applyAsInt(actualPosition)));
 
 				keys.remove(keyIndex);
 			}
@@ -150,9 +149,8 @@ public class PatternElement implements CodeFeatures {
 		return destinations;
 	}
 
-	public Producer<PackedCollection> getNoteAudio(boolean melodic, KeyPosition<?> target,
+	public Producer<PackedCollection<?>> getNoteAudio(boolean melodic, KeyPosition<?> target,
 												   double position, double nextNotePosition,
-												   DoubleToIntFunction frameForPosition,
 												   DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = melodic ? target : getNote().getRoot();
 

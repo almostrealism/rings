@@ -46,7 +46,7 @@ public class PatternNote implements CellFeatures {
 	private KeyPosition<?> root;
 
 	private KeyboardTuning tuning;
-	private Map<KeyPosition, CachedValue<PackedCollection>> notes;
+	private Map<KeyPosition, CachedValue<PackedCollection<?>>> notes;
 
 	public PatternNote() { this(null, WesternChromatic.C1); }
 
@@ -109,9 +109,9 @@ public class PatternNote implements CellFeatures {
 		return provider.getDuration(r);
 	}
 
-	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int length) {
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int length) {
 		return () -> {
-			Evaluable<PackedCollection> audio = getAudio(target).get();
+			Evaluable<PackedCollection<?>> audio = getAudio(target).get();
 			return args -> {
 				try {
 					return audio.evaluate().range(new TraversalPolicy(length));
@@ -123,7 +123,7 @@ public class PatternNote implements CellFeatures {
 		};
 	}
 
-	public CachedValue<PackedCollection> getAudio(KeyPosition<?> target) {
+	public CachedValue<PackedCollection<?>> getAudio(KeyPosition<?> target) {
 		if (!notes.containsKey(target)) {
 			notes.put(target, new CachedValue<>(args -> {
 				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
@@ -135,7 +135,7 @@ public class PatternNote implements CellFeatures {
 	}
 
 	@JsonIgnore
-	public PackedCollection getAudio() {
+	public PackedCollection<?> getAudio() {
 		if (audio == null && provider != null) {
 			WaveData data = provider.get();
 			if (data.getSampleRate() == OutputLine.sampleRate) {
