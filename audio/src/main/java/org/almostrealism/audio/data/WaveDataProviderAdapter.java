@@ -67,6 +67,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 	@Override
 	public WaveData get(double playbackRate) {
 		WaveData original = get();
+		if (playbackRate == 1.0) return original;
 
 		if (original.getSampleRate() != OutputLine.sampleRate) {
 			System.out.println("WARN: Cannot alter playback rate of audio which is not at " + OutputLine.sampleRate);
@@ -86,7 +87,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 				.evaluate(audio.traverse(0),
 						timeline.range(shape(dest.getMemLength())).traverseEach(),
 						rate.traverse(0));
-		return new WaveData(dest, original.getSampleRate());
+		return new WaveData(dest.traverse(1), original.getSampleRate());
 	}
 
 	@JsonIgnore

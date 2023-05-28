@@ -18,18 +18,21 @@ package org.almostrealism.audio.pattern.test;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.pattern.PatternAudio;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.junit.Test;
 
 import java.io.File;
 
-public class PatternAudioTest {
+public class PatternAudioTest implements EnvelopeFeatures {
 	@Test
 	public void push() {
 		PackedCollection in = new PackedCollection(5);
@@ -49,6 +52,17 @@ public class PatternAudioTest {
 	public void noteAudio() {
 		PatternNote note = PatternNote.create("Library/Monarch_C1.wav", WesternChromatic.C1);
 		note.setTuning(new DefaultKeyboardTuning());
-		new WaveData(note.getAudio(WesternChromatic.C2).get().evaluate(), OutputLine.sampleRate).save(new File("results/Monarch_C2.wav"));
+		new WaveData(note.getAudio(WesternChromatic.C2).get().evaluate(), note.getSampleRate())
+				.save(new File("results/Monarch_C2.wav"));
+	}
+
+	@Test
+	public void envelope() {
+		PatternNote note = PatternNote.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
+		note = PatternNote.create(note, attack(c(0.5)));
+		note.setTuning(new DefaultKeyboardTuning());
+
+		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-envelope.wav"));
 	}
 }

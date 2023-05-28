@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.filter;
+package org.almostrealism.audio.pattern;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.SamplingFeatures;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.Factor;
+import org.almostrealism.audio.filter.EnvelopeFeatures;
+import org.almostrealism.audio.notes.PatternNote;
 
-public interface EnvelopeFeatures extends SamplingFeatures {
-	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
-		return in -> multiply(in, _min(c(1.0), divide(time(), attack)));
+public class ParameterizedEnvelope implements EnvelopeFeatures {
+	public PatternNote apply(PatternNote note) {
+//		return PatternNote.create(note, attack(c(0.2)));
+		return PatternNote.create(note, in -> multiply(in, c(1.1)));
+	}
+
+	public static ParameterizedEnvelope random() {
+		return new ParameterizedEnvelope();
 	}
 }

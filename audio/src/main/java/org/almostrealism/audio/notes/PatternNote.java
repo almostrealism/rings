@@ -22,6 +22,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.StaticWaveDataProvider;
 import org.almostrealism.audio.data.SupplierWaveDataProvider;
@@ -32,27 +33,38 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.heredity.Factor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PatternNote implements CellFeatures {
+public class PatternNote implements CellFeatures, SamplingFeatures {
 
 	private WaveDataProvider provider;
-	private PackedCollection audio;
+	private PackedCollection<?> audio;
+
+	private PatternNote delegate;
+	private Factor<PackedCollection<?>> factor;
 
 	private Boolean valid;
 	private KeyPosition<?> root;
 
 	private KeyboardTuning tuning;
-	private Map<KeyPosition, CachedValue<PackedCollection<?>>> notes;
+	private Map<KeyPosition, Producer<PackedCollection<?>>> notes;
 
 	public PatternNote() { this(null, WesternChromatic.C1); }
 
 	public PatternNote(WaveDataProvider provider, KeyPosition root) {
 		this.provider = provider;
 		setRoot(root);
+		notes = new HashMap<>();
+	}
+
+	protected PatternNote(PatternNote delegate, Factor<PackedCollection<?>> factor) {
+		this.delegate = delegate;
+		this.factor = factor;
+		setRoot(delegate.getRoot());
 		notes = new HashMap<>();
 	}
 
@@ -97,41 +109,55 @@ public class PatternNote implements CellFeatures {
 
 	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
-		if (tuning != this.tuning) {
+		if (delegate != null) {
+			delegate.setTuning(tuning);
+		} else if (tuning != this.tuning) {
 			this.tuning = tuning;
 			notes.clear();
 		}
 	}
 
 	@JsonIgnore
+	public int getSampleRate() {
+		if (delegate != null) return delegate.getSampleRate();
+		return provider.getSampleRate();
+	}
+
+	@JsonIgnore
 	public double getDuration(KeyPosition<?> target) {
+		if (delegate != null) return delegate.getDuration(target);
+
 		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
 		return provider.getDuration(r);
 	}
 
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int length) {
-		return () -> {
-			Evaluable<PackedCollection<?>> audio = getAudio(target).get();
-			return args -> {
-				try {
-					return audio.evaluate().range(new TraversalPolicy(length));
-				} catch (IllegalArgumentException e) {
-					System.out.println("target = " + target + ", length = " + length);
-					throw e;
-				}
-			};
-		};
+	public TraversalPolicy getShape(KeyPosition<?> target) {
+		return new TraversalPolicy((int) (getSampleRate() * getDuration(target))).traverse(1);
 	}
 
-	public CachedValue<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int length) {
+		return c(new TraversalPolicy(length).traverse(1),
+			args -> getAudio(target).get().evaluate().range(new TraversalPolicy(length)));
+	}
+
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
 		if (!notes.containsKey(target)) {
-			notes.put(target, new CachedValue<>(args -> {
-				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
-				return provider.get(r).getCollection();
-			}));
+			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target).get())));
 		}
 
 		return notes.get(target);
+	}
+
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target) {
+		if (delegate == null) {
+			return () -> args -> {
+				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
+				return provider.get(r).getCollection();
+			};
+		} else {
+			return sampling(getSampleRate(), getDuration(target),
+					() -> factor.getResultant(delegate.getAudio(target)));
+		}
 	}
 
 	@JsonIgnore
@@ -149,12 +175,8 @@ public class PatternNote implements CellFeatures {
 		return audio;
 	}
 
-	@JsonIgnore
-	public void setAudio(PackedCollection audio) {
-		this.audio = audio;
-	}
-
 	public boolean isValid() {
+		if (delegate != null) return delegate.isValid();
 		if (audio != null) return true;
 		if (valid != null) return valid;
 
@@ -182,6 +204,10 @@ public class PatternNote implements CellFeatures {
 
 	public static PatternNote create(WaveData source, KeyPosition root) {
 		return new PatternNote(new StaticWaveDataProvider(source), root);
+	}
+
+	public static PatternNote create(PatternNote delegate, Factor<PackedCollection<?>> factor) {
+		return new PatternNote(delegate, factor);
 	}
 
 	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier) {

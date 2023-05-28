@@ -58,9 +58,7 @@ public class PatternElement implements CodeFeatures {
 		setRepeatDuration(1);
 	}
 
-	public PatternNote getNote() {
-		return note;
-	}
+	public PatternNote getNote() { return note; }
 	public void setNote(PatternNote note) {
 		this.note = note;
 	}
@@ -77,8 +75,10 @@ public class PatternElement implements CodeFeatures {
 		this.durationStrategy = durationStrategy;
 	}
 
-	public double getNoteDuration(DoubleUnaryOperator timeForDuration, double position, double nextPosition, double originalDurationSeconds) {
-		return durationStrategy.getLength(timeForDuration, position, nextPosition, originalDurationSeconds, getNoteDurationSelection());
+	public double getNoteDuration(DoubleUnaryOperator timeForDuration, double position, double nextPosition,
+								  double originalDurationSeconds) {
+		return durationStrategy.getLength(timeForDuration, position, nextPosition,
+							originalDurationSeconds, getNoteDurationSelection());
 	}
 
 	public double getNoteDurationSelection() { return noteDuration; }
@@ -120,10 +120,10 @@ public class PatternElement implements CodeFeatures {
 	}
 
 	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
-																		  DoubleToIntFunction frameForPosition,
-																		  DoubleUnaryOperator timeForDuration,
-																		  DoubleFunction<Scale<?>> scaleForPosition,
-																		  DoubleUnaryOperator nextNotePosition) {
+													DoubleToIntFunction frameForPosition,
+													DoubleUnaryOperator timeForDuration,
+													DoubleFunction<Scale<?>> scaleForPosition,
+													DoubleUnaryOperator nextNotePosition) {
 		List<PatternNoteAudio> destinations = new ArrayList<>();
 
 		for (int i = 0; i < getRepeatCount(); i++) {
@@ -159,7 +159,7 @@ public class PatternElement implements CodeFeatures {
 		} else {
 			double originalDuration = getNote().getDuration(target);
 			return getNote().getAudio(k,
-					(int) (getNote().getProvider().getSampleRate() *
+					(int) (getNote().getSampleRate() *
 							getNoteDuration(timeForDuration, position, nextNotePosition, originalDuration)));
 		}
 	}
