@@ -57,7 +57,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
-	public static final int singleChannel = 3;
+	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -203,13 +203,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				}
 
 				if ("Chord Synth".equals(c.getFactory().getName())) {
-					c.setSeedBias(0.0);
+					c.setSeedBias(0.4);
 				} else if ("Bass".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
 				} else if ("Rise".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
 				} else if ("SN".equals(c.getFactory().getName())) {
-					c.setSeedBias(0.25);
+					c.setSeedBias(0.4);
 				}
 			});
 

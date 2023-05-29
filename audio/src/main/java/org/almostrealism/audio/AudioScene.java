@@ -72,7 +72,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 0 -> { yield 4; }
 					case 1 -> { yield 4; }
 					case 2 -> { yield 1; }
-					case 3 -> { yield 1; }
+					case 3 -> { yield 2; }
 					case 4 -> { yield 1; }
 					case 5 -> { yield 1; }
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);

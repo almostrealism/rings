@@ -327,7 +327,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		public Configuration() { this(1); }
 
 		public Configuration(int scale) {
-			double offset = 60;
+			double offset = 78;
 			double duration = 0;
 
 			minChoiceValue = 0.0;
@@ -345,8 +345,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			overallVolumeDurationMax = duration + 30.0;
 			overallVolumeExponentMin = 1;
 			overallVolumeExponentMax = 1;
-			overallVolumeOffsetMin = offset + 10.0;
-			overallVolumeOffsetMax = offset + 35.0;
+			overallVolumeOffsetMin = offset + 5.0;
+			overallVolumeOffsetMax = offset + 30.0;
 
 			periodicFilterUpDurationMin = 0.5;
 			periodicFilterUpDurationMax = 180;
@@ -354,8 +354,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			overallFilterUpDurationMax = duration + 360.0;
 			overallFilterUpExponentMin = 0.5;
 			overallFilterUpExponentMax = 3.5;
-			overallFilterUpOffsetMin = offset;
-			overallFilterUpOffsetMax = offset + 35.0;
+			overallFilterUpOffsetMin = offset - 10.0;
+			overallFilterUpOffsetMax = offset + 25.0;
 
 			minTransmission = 0.05;
 			maxTransmission = 0.3;
