@@ -19,9 +19,11 @@ package org.almostrealism.audio.pattern.test;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
+import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
+import org.almostrealism.audio.pattern.ParameterizedEnvelope;
 import org.almostrealism.audio.pattern.PatternAudio;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.notes.PatternNote;
@@ -78,5 +80,17 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
 				.save(new File("results/pattern-note-envelope-sections.wav"));
+	}
+
+	@Test
+	public void parameterizedEnvelope() {
+		ParameterizedEnvelope envelope = ParameterizedEnvelope.random();
+
+		PatternNote note = PatternNote.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
+		note = envelope.apply(new ParameterSet(), note);
+		note.setTuning(new DefaultKeyboardTuning());
+
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-param-envelope.wav"));
 	}
 }

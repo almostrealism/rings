@@ -158,9 +158,7 @@ public class PatternElement implements CodeFeatures {
 			return getNote().getAudio(k);
 		} else {
 			double originalDuration = getNote().getDuration(target);
-			return getNote().getAudio(k,
-					(int) (getNote().getSampleRate() *
-							getNoteDuration(timeForDuration, position, nextNotePosition, originalDuration)));
+			return getNote().getAudio(k, getNoteDuration(timeForDuration, position, nextNotePosition, originalDuration));
 		}
 	}
 

@@ -21,8 +21,10 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.grains.Grain;
+import org.almostrealism.audio.pattern.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 

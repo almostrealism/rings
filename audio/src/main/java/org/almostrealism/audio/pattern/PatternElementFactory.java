@@ -158,10 +158,10 @@ public class PatternElementFactory {
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		PatternNote choice = envelope.apply(notes.get((int) (note * notes.size())));
+		PatternNote choice = envelope.apply(params, notes.get((int) (note * notes.size())));
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -1).apply(params));
+		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -2).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);

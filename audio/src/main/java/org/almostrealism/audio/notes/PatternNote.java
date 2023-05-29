@@ -18,7 +18,6 @@ package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.CachedValue;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
@@ -28,6 +27,7 @@ import org.almostrealism.audio.data.StaticWaveDataProvider;
 import org.almostrealism.audio.data.SupplierWaveDataProvider;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
+import org.almostrealism.audio.pattern.NoteAudioFilter;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -45,7 +45,7 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	private PackedCollection<?> audio;
 
 	private PatternNote delegate;
-	private Factor<PackedCollection<?>> factor;
+	private NoteAudioFilter filter;
 
 	private Boolean valid;
 	private KeyPosition<?> root;
@@ -61,11 +61,10 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		notes = new HashMap<>();
 	}
 
-	protected PatternNote(PatternNote delegate, Factor<PackedCollection<?>> factor) {
+	protected PatternNote(PatternNote delegate, NoteAudioFilter filter) {
 		this.delegate = delegate;
-		this.factor = factor;
+		this.filter = filter;
 		setRoot(delegate.getRoot());
-		notes = new HashMap<>();
 	}
 
 	@Deprecated
@@ -138,28 +137,37 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
 	}
 
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int length) {
-		return c(new TraversalPolicy(length).traverse(1),
-			args -> getAudio(target).get().evaluate().range(new TraversalPolicy(length)));
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration) {
+		if (delegate == null) {
+			System.out.println("WARN: No AudioNoteFilter for PatternNote, note duration will be ignored");
+			return getAudio(target);
+		} else {
+			// System.out.println("PatternNote: duration = " + noteDuration);
+			return computeAudio(target, noteDuration);
+		}
 	}
 
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
-		if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target).get())));
+		if (delegate != null) {
+			return delegate.getAudio(target);
+		} else if (!notes.containsKey(target)) {
+			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target, -1.0).get())));
 		}
 
 		return notes.get(target);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target) {
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration) {
 		if (delegate == null) {
 			return () -> args -> {
 				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
 				return provider.get(r).getCollection();
 			};
-		} else {
+		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(), getDuration(target),
-					() -> factor.getResultant(delegate.getAudio(target)));
+					() -> filter.apply(delegate.getAudio(target), c(noteDuration)));
+		} else {
+			throw new UnsupportedOperationException();
 		}
 	}
 
@@ -209,8 +217,12 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		return new PatternNote(new StaticWaveDataProvider(source), root);
 	}
 
+	public static PatternNote create(PatternNote delegate, NoteAudioFilter filter) {
+		return new PatternNote(delegate, filter);
+	}
+
 	public static PatternNote create(PatternNote delegate, Factor<PackedCollection<?>> factor) {
-		return new PatternNote(delegate, factor);
+		return new PatternNote(delegate, (audio, duration) -> factor.getResultant(audio));
 	}
 
 	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier) {

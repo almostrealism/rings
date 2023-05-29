@@ -57,7 +57,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 3;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
