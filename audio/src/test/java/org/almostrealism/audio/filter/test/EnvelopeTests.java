@@ -18,6 +18,8 @@ package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
+import org.almostrealism.audio.filter.EnvelopeSection;
+import org.almostrealism.collect.PackedCollection;
 import org.junit.Test;
 
 import java.io.File;
@@ -29,5 +31,26 @@ public class EnvelopeTests implements EnvelopeFeatures {
 		WaveData.load(new File("Library/organ.wav"))
 				.sample(attack(c(1.0)))
 				.save(new File("results/attack-test.wav"));
+	}
+
+	@Test
+	public void adsr() {
+		double duration = 8.0;
+		double attack = 0.5;
+		double decay = 1.0;
+		double sustain = 0.3;
+		double release = 3.0;
+
+		EnvelopeSection env = envelope(attack(c(attack)))
+				.andThenDecay(c(attack), c(decay), c(sustain))
+				.andThen(c(attack + decay), sustain(c(sustain)))
+				.andThenRelease(c(duration), c(sustain), c(release), c(0.0));
+
+
+		PackedCollection<?> data = new PackedCollection<>(10 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/adsr-test.wav"));
 	}
 }

@@ -26,6 +26,7 @@ import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProviderList;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
+import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.grains.Grain;
 import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
@@ -162,10 +163,14 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 	public void grainProcessorEnvelope() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
 		PackedCollection<?> input = wav.getCollection();
-		
+
+		double attack = 1.0;
+
+		EnvelopeSection env = envelope(attack(c(attack)));
+
 		Evaluable<PackedCollection<?>> processor =
 						sampling(OutputLine.sampleRate, 5.0,
-								() -> attack(c(5.0)).getResultant(grains(
+								() -> env.get().getResultant(grains(
 									v(1, 0),
 									v(shape(3), 1),
 									v(shape(3), 2),
@@ -187,13 +192,13 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 			p.setMem(Math.random() - 0.5);
 
 			PackedCollection<?> a = new PackedCollection<>(1);
-			a.setMem(1.0);
+			a.setMem(0.2);
 
 			return new WaveData(processor.into(new PackedCollection<>(shape(tot), 1))
 					.evaluate(input.traverse(0), grain, w, p, a), OutputLine.sampleRate);
-					// .sample(attack(c(5.0)));
 		}).toArray(WaveData[]::new))
 				.sum()
+				.map(fc(i -> sf(10.0)))
 				.o(i -> new File("results/grain-processor-envelope-test.wav"))
 				.sec(5).get().run();
 	}

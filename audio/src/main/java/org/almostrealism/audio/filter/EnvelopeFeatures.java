@@ -26,11 +26,39 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 		return new EnvelopeSection(() -> time(), envelope);
 	}
 
+	default Factor<PackedCollection<?>> sustain(Producer<PackedCollection<?>> volume) {
+		return in -> multiply(in, volume);
+	}
+
+	default Factor<PackedCollection<?>> linear(Producer<PackedCollection<?>> offset,
+											    Producer<PackedCollection<?>> duration,
+												Producer<PackedCollection<?>> startVolume,
+												Producer<PackedCollection<?>> endVolume) {
+		return in -> {
+			Producer<PackedCollection<?>> t = subtract(time(), offset);
+			Producer<PackedCollection<?>> pos = divide(t, duration);
+			Producer<PackedCollection<?>> start = subtract(c(1.0), pos).multiply(startVolume);
+			Producer<PackedCollection<?>> end = multiply(endVolume, pos);
+			Producer<PackedCollection<?>> level = add(start, end);
+			return multiply(in, level);
+		};
+	}
+
 	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
 		return in -> multiply(in, _min(c(1.0), divide(time(), attack)));
 	}
 
-	default Factor<PackedCollection<?>> sustain(Producer<PackedCollection<?>> volume) {
-		return in -> multiply(in, volume);
+	default Factor<PackedCollection<?>> decay(Producer<PackedCollection<?>> offset,
+											  Producer<PackedCollection<?>> decay,
+											  Producer<PackedCollection<?>> endVolume) {
+		return linear(offset, decay, c(1.0), endVolume);
+	}
+
+	default Factor<PackedCollection<?>> release(Producer<PackedCollection<?>> offset,
+											  Producer<PackedCollection<?>> startVolume,
+											  Producer<PackedCollection<?>> release,
+											  Producer<PackedCollection<?>> endVolume) {
+
+		return linear(offset, release, startVolume, endVolume);
 	}
 }

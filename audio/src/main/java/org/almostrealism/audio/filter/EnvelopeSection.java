@@ -23,7 +23,7 @@ import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 
-public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, CollectionFeatures {
+public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, EnvelopeFeatures {
 	private Supplier<Producer<PackedCollection<?>>> time;
 	private Producer<PackedCollection<?>> start;
 	private Supplier<Factor<PackedCollection<?>>> lastEnvelope;
@@ -46,6 +46,19 @@ public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, C
 
 	public EnvelopeSection andThen(Producer<PackedCollection<?>> start, Factor<PackedCollection<?>> envelope) {
 		return new EnvelopeSection(time, start, this, envelope);
+	}
+
+	public EnvelopeSection andThenDecay(Producer<PackedCollection<?>> offset,
+										Producer<PackedCollection<?>> decay,
+										Producer<PackedCollection<?>> endVolume) {
+		return andThen(offset, decay(offset, decay, endVolume));
+	}
+
+	public EnvelopeSection andThenRelease(Producer<PackedCollection<?>> offset,
+										  Producer<PackedCollection<?>> startVolume,
+										  Producer<PackedCollection<?>> release,
+										  Producer<PackedCollection<?>> endVolume) {
+		return andThen(offset, release(offset, startVolume, release, endVolume));
 	}
 
 	@Override

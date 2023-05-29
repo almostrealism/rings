@@ -71,9 +71,13 @@ public class WaveData implements SamplingFeatures {
 	}
 
 	public WaveData sample(Factor<PackedCollection<?>> processor) {
+		return sample(() -> processor);
+	}
+
+	public WaveData sample(Supplier<Factor<PackedCollection<?>>> processor) {
 		PackedCollection<?> result = new PackedCollection<>(getCollection().getShape());
 		sampling(getSampleRate(), getDuration(),
-					() -> processor.getResultant(c(p(getCollection()), frame())))
+					() -> processor.get().getResultant(c(p(getCollection()), frame())))
 				.get().into(result).evaluate();
 		return new WaveData(result, getSampleRate());
 	}
