@@ -143,7 +143,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
+		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
 		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 16 : 1);
