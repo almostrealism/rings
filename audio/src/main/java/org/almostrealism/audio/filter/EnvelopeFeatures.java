@@ -50,7 +50,7 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 			Producer<PackedCollection<?>> pos = divide(t, duration);
 			Producer<PackedCollection<?>> start = subtract(c(1.0), pos).multiply(startVolume);
 			Producer<PackedCollection<?>> end = multiply(endVolume, pos);
-			Producer<PackedCollection<?>> level = add(start, end);
+			Producer<PackedCollection<?>> level = _max(c(0.0), add(start, end));
 			return multiply(in, level);
 		};
 	}
