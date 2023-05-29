@@ -26,6 +26,17 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 		return new EnvelopeSection(() -> time(), envelope);
 	}
 
+	default EnvelopeSection envelope(Producer<PackedCollection<?>> duration,
+									 Producer<PackedCollection<?>> attack,
+									 Producer<PackedCollection<?>> decay,
+									 Producer<PackedCollection<?>> sustain,
+									 Producer<PackedCollection<?>> release) {
+		return envelope(attack(attack))
+				.andThenDecay(attack, decay, sustain)
+				.andThen(add(attack, decay), sustain(sustain))
+				.andThenRelease(duration, sustain, release, c(0.0));
+	}
+
 	default Factor<PackedCollection<?>> sustain(Producer<PackedCollection<?>> volume) {
 		return in -> multiply(in, volume);
 	}

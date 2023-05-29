@@ -53,4 +53,21 @@ public class EnvelopeTests implements EnvelopeFeatures {
 		new WaveData(data, 44100)
 				.sample(env).save(new File("results/adsr-test.wav"));
 	}
+
+	@Test
+	public void envelope() {
+		double duration = 8.0;
+		double attack = 0.5;
+		double decay = 1.0;
+		double sustain = 0.3;
+		double release = 3.0;
+
+		EnvelopeSection env = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+
+		PackedCollection<?> data = new PackedCollection<>(10 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/envelope-test.wav"));
+	}
 }
