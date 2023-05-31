@@ -14,17 +14,41 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.filter;
+package org.almostrealism.audio.data;
 
-import io.almostrealism.scope.Scope;
-import org.almostrealism.graph.ByteFunction;
+import org.almostrealism.util.KeyUtils;
 
-public class BlurFilter implements ByteFunction<byte[]> {
-	@Override
-	public byte[] operate(byte[] b) {
-		return b;
+public class StaticWaveDataProvider extends WaveDataProviderAdapter {
+	private String key;
+	private WaveData data;
+
+	public StaticWaveDataProvider(WaveData data) {
+		this.key = KeyUtils.generateKey();
+		this.data = data;
 	}
 
 	@Override
-	public Scope<byte[]> getScope() { throw new RuntimeException("Not implemented"); }
+	public int getCount() {
+		return data.getCollection().getCount();
+	}
+
+	@Override
+	public double getDuration() {
+		return data.getDuration();
+	}
+
+	@Override
+	public int getSampleRate() {
+		return data.getSampleRate();
+	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	@Override
+	protected WaveData load() {
+		return data;
+	}
 }

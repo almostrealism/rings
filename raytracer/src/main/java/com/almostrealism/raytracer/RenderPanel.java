@@ -310,30 +310,32 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	/** Update the displayed image to the first element of the specified argument. */
 	@Override
-	public Object evaluate(Object[] images) {
-		renderedImage = (Image) images[0];
+	public Evaluable<Object> get() {
+		return images -> {
+			renderedImage = (Image) images[0];
 
-		// System.out.println("Repainting RenderPanel with " + renderedImage);
+			// System.out.println("Repainting RenderPanel with " + renderedImage);
 
-		try {
-			SwingUtilities.invokeAndWait(() -> {
-				RenderPanel.this.removeAll();
-				revalidate();
-				repaint();
-			});
-		} catch(InterruptedException ie) {
-			System.out.println("Swing Utilities Interruption: " + ie);
-		} catch(java.lang.reflect.InvocationTargetException ite) {
-			System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
-		}
+			try {
+				SwingUtilities.invokeAndWait(() -> {
+					RenderPanel.this.removeAll();
+					revalidate();
+					repaint();
+				});
+			} catch(InterruptedException ie) {
+				System.out.println("Swing Utilities Interruption: " + ie);
+			} catch(java.lang.reflect.InvocationTargetException ite) {
+				System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
+			}
 
-		if (evaluationStart > 0) {
-			long mins = (System.currentTimeMillis() - evaluationStart) / 60000;
-			System.out.println("Repainted RenderPanel (" + mins + " evaluation minutes elapsed)");
-		} else {
-			System.out.println("Repainted RenderPanel");
-		}
+			if (evaluationStart > 0) {
+				long mins = (System.currentTimeMillis() - evaluationStart) / 60000;
+				System.out.println("Repainted RenderPanel (" + mins + " evaluation minutes elapsed)");
+			} else {
+				System.out.println("Repainted RenderPanel");
+			}
 
-		return renderedImage;
+			return renderedImage;
+		};
 	}
 }

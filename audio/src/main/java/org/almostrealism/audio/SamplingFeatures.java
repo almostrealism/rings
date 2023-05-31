@@ -1,23 +1,98 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio;
 
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.grains.Grain;
+import org.almostrealism.audio.pattern.NoteAudioFilter;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 
 public interface SamplingFeatures extends CodeFeatures {
+	ThreadLocal<Integer> sampleRate = new ThreadLocal<>();
+	ThreadLocal<Producer<PackedCollection<?>>> frames = new ThreadLocal<>();
 
-	default int toFrames(double sec) { return (int) (OutputLine.sampleRate * sec); }
+	default <T> T frames(Producer<PackedCollection<?>> f, Supplier<T> r) {
+		Producer<PackedCollection<?>> lastT = frames.get();
 
-	default Producer<Scalar> toFrames(Supplier<Evaluable<? extends Scalar>> sec) {
-		return scalarsMultiply(v(OutputLine.sampleRate), sec);
+		try {
+			frames.set(f);
+			return r.get();
+		} finally {
+			frames.set(lastT);
+		}
 	}
 
-	default int toFramesMilli(int msec) { return (int) (OutputLine.sampleRate * msec / 1000d); }
+	default Producer<PackedCollection<?>> frame() { return frames.get(); }
+
+	default Producer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
+
+	default <T> T sampleRate(int sr, Supplier<T> r) {
+		Integer lastSr = sampleRate.get();
+
+		try {
+			sampleRate.set(sr);
+			return r.get();
+		} finally {
+			sampleRate.set(lastSr);
+		}
+	}
+
+	default int sampleRate() { return sampleRate.get() == null ? OutputLine.sampleRate : sampleRate.get(); }
+
+	default <T> T sampling(int rate, double duration, Supplier<T> r) {
+		int frames = (int) (rate * duration);
+		return sampleRate(rate, () -> frames(integers(0, frames), r));
+	}
+
+	default int toFrames(double sec) { return (int) (sampleRate() * sec); }
+
+	default Producer<Scalar> toFrames(Supplier<Evaluable<? extends Scalar>> sec) {
+		return scalarsMultiply(v(sampleRate()), sec);
+	}
+
+	default int toFramesMilli(int msec) { return (int) (sampleRate() * msec / 1000d); }
 
 	default Producer<Scalar> toFramesMilli(Supplier<Evaluable<? extends Scalar>> msec) {
-		return scalarsMultiply(v(OutputLine.sampleRate / 1000d), msec);
+		return scalarsMultiply(v(sampleRate() / 1000d), msec);
+	}
+
+	default CollectionProducer<PackedCollection<?>> grains(Producer<PackedCollection<?>> input,
+														   Producer<Grain> grain,
+														   Producer<PackedCollection<?>> wavelength,
+														   Producer<PackedCollection<?>> phase,
+														   Producer<PackedCollection<?>> amp) {
+		CollectionProducer<PackedCollection<?>> start = c(grain, 0).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection<?>> d = c(grain, 1).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection<?>> rate = c(grain, 2);
+		CollectionProducer<PackedCollection<?>> w = multiply(wavelength, c(sampleRate()));
+
+		Producer<PackedCollection<?>> series = frame();
+//		Producer<PackedCollection<?>> max = subtract(p(count), start);
+//		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, d), max));
+		Producer<PackedCollection<?>> pos  = start.add(_mod(series, d));
+
+		CollectionProducer<PackedCollection<?>> generate = interpolate(input, pos, rate);
+		return generate.multiply(_sinw(series, w, phase, amp));
 	}
 }

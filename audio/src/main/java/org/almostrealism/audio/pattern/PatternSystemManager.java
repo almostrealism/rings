@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -25,13 +26,10 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.ProducerWithOffset;
+import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
-import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
-import java.util.function.IntFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -61,8 +59,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private RootDelegateSegmentsAdd<PackedCollection> sum;
-	private Runnable runSum;
+	private Evaluable<PackedCollection<?>> sum;
+	private Runnable postprocess;
 
 	public PatternSystemManager() {
 		this(new ArrayList<>());
@@ -89,29 +87,29 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private void updateDestination(PackedCollection<?> destination, Supplier<PackedCollection> intermediateDestination) {
 		this.destination = destination;
-		this.sum = new RootDelegateSegmentsAdd<>(8, destination.traverse(1));
+		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
+
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
 		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
-		OperationList generate = new OperationList("PatternSystemManager Sum");
-		generate.add(() -> sum.get());
+		OperationList process = new OperationList("PatternSystemManager Postprocess");
 
 		if (enableAutoVolume) {
 			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(p(this.destination.traverse(0)));
 			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
-			generate.add(a(1, p(volume), auto));
-//			generate.add(() -> () -> {
+			process.add(a(1, p(volume), auto));
+//			process.add(() -> () -> {
 //				System.out.println("Setting volume to " + volume.toDouble(0));
 //			});
 		}
 
-		generate.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
-		runSum = generate.get();
+		process.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
+		postprocess = process.get();
 	}
 
 	@Override
-	public List<PatternNoteSource>getSource(String id) {
+	public List<PatternNoteSource> getSource(String id) {
 		return choices.stream()
 				.map(PatternFactoryChoice::getFactory)
 				.filter(f -> Objects.equals(id, f.getId()))
@@ -161,6 +159,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void sum(List<Integer> channels, DoubleToIntFunction offsetForPosition,
+					DoubleUnaryOperator timeForDuration,
 					int measures, DoubleFunction<Scale<?>> scaleForPosition,
 					PackedCollection destination, Supplier<PackedCollection> intermediateDestination) {
 		if (this.destination != destination) {
@@ -176,18 +175,21 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			return;
 		}
 
-		sum.getInput().clear();
-		patternsForChannel.forEach(i -> {
-			patterns.get(i).sum(offsetForPosition, measures, scaleForPosition);
-			sum.getInput().add(new ProducerWithOffset<>(v(patterns.get(i).getDestination()), 0));
+		patternsForChannel.stream().map(i -> {
+			patterns.get(i).sum(offsetForPosition, timeForDuration, measures, scaleForPosition);
+			return v(patterns.get(i).getDestination());
+		}).forEach(note -> {
+			PackedCollection<?> audio = traverse(1, note).get().evaluate();
+			int frames = Math.min(audio.getShape().getCount(),
+					this.destination.getShape().length(0));
+
+			TraversalPolicy shape = shape(frames).traverse(1);
+			sum
+					.into(this.destination.range(shape))
+					.evaluate(this.destination.range(shape), audio.range(shape));
 		});
 
-		if (sum.getInput().size() > sum.getMaxInputs()) {
-			System.out.println("PatternSystemManager: Too many patterns (" + sum.getInput().size() + ") for sum");
-			return;
-		}
-
-		runSum.run();
+		postprocess.run();
 	}
 
 	public static class Settings {

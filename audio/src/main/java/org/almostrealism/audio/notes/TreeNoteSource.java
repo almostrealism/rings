@@ -1,0 +1,143 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.almostrealism.audio.notes;
+
+import io.almostrealism.code.Tree;
+import io.almostrealism.relation.Named;
+import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.audio.tone.WesternChromatic;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+public class TreeNoteSource implements PatternNoteSource {
+	private Tree<? extends Supplier<FileWaveDataProvider>> tree;
+	private List<PatternNote> notes;
+
+	private KeyboardTuning tuning;
+	private KeyPosition<?> root;
+
+	private List<Filter> filters;
+
+	public TreeNoteSource() { this(null); }
+
+	public TreeNoteSource(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		this(tree, WesternChromatic.C1);
+	}
+
+	public TreeNoteSource(Tree<? extends Supplier<FileWaveDataProvider>> tree, KeyPosition<?> root) {
+		setTree(tree);
+		setRoot(root);
+		this.filters = new ArrayList<>();
+	}
+
+	public KeyPosition<?> getRoot() { return root; }
+	public void setRoot(KeyPosition<?> root) { this.root = root; }
+
+	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() {
+		return tree;
+	}
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		this.tree = tree;
+	}
+
+	public List<Filter> getFilters() { return filters; }
+
+	@Override
+	public void setTuning(KeyboardTuning tuning) {
+		this.tuning = tuning;
+
+		if (notes != null) {
+			for (PatternNote note : notes) {
+				note.setTuning(tuning);
+			}
+		}
+	}
+
+	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
+
+	public List<PatternNote> getNotes() {
+		computeNotes();
+		return notes;
+	}
+
+	private void computeNotes() {
+		notes = new ArrayList<>();
+		tree.forEach(f -> {
+			FileWaveDataProvider p = f.get();
+			if (p == null) {
+				// System.out.println("WARN: FileWaveDataProvider produced null");
+				return;
+			}
+
+			boolean match = filters.stream()
+					.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
+					.reduce((a, b) -> a & b)
+					.orElse(true);
+			if (match) notes.add(new PatternNote(p, getRoot()));
+		});
+		notes.forEach(n -> n.setTuning(tuning));
+	}
+
+	public static TreeNoteSource fromFile(File root, Filter filter) {
+		TreeNoteSource t = new TreeNoteSource(new FileWaveDataProviderNode(root));
+		t.getFilters().add(filter);
+		return t;
+	}
+
+	public enum FilterOn {
+		PATH, NAME;
+
+		String select(FileWaveDataProvider p) {
+			return switch (this) {
+				case NAME -> new File(p.getResourcePath()).getName();
+				case PATH -> p.getResourcePath();
+			};
+		}
+	}
+
+	public enum FilterType {
+		STARTS_WITH;
+
+		boolean matches(String value, String filter) {
+			return switch (this) {
+				case STARTS_WITH -> value.startsWith(filter);
+			};
+		}
+	}
+
+	public static class Filter {
+		private FilterOn filterOn;
+		private FilterType filterType;
+		private String filter;
+
+		public Filter(FilterOn filterOn, FilterType filterType, String filter) {
+			this.filterOn = filterOn;
+			this.filterType = filterType;
+			this.filter = filter;
+		}
+
+		public static Filter nameStartsWith(String prefix) {
+			return new Filter(FilterOn.NAME, FilterType.STARTS_WITH, prefix);
+		}
+	}
+}

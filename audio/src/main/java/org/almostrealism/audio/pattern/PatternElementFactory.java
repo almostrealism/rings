@@ -40,9 +40,7 @@ public class PatternElementFactory {
 
 	private ParameterizedPositionFunction noteSelection;
 	private ParameterFunction noteLengthSelection;
-
-	@Deprecated
-	private ParameterizedPositionFunction scalePositionSelection;
+	private ParameterizedEnvelope envelope;
 
 	private ChordPositionFunction chordNoteSelection;
 
@@ -79,7 +77,7 @@ public class PatternElementFactory {
 	public void initSelectionFunctions() {
 		noteSelection = ParameterizedPositionFunction.random();
 		noteLengthSelection = ParameterFunction.random();
-		scalePositionSelection = ParameterizedPositionFunction.random();
+		envelope = ParameterizedEnvelope.random();
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
 	}
@@ -111,12 +109,11 @@ public class PatternElementFactory {
 
 	@Deprecated
 	public ParameterizedPositionFunction getScalePositionSelection() {
-		return scalePositionSelection;
+		return null;
 	}
 
 	@Deprecated
 	public void setScalePositionSelection(ParameterizedPositionFunction scalePositionSelection) {
-		this.scalePositionSelection = scalePositionSelection;
 	}
 
 	public ChordPositionFunction getChordNoteSelection() {
@@ -161,12 +158,15 @@ public class PatternElementFactory {
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		PatternElement element = new PatternElement(notes.get((int) (note * notes.size())), position);
+		PatternNote choice = envelope.apply(params, notes.get((int) (note * notes.size())));
+		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
+		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -2).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
+
+		// System.out.println("PatternElementFactory: duration = " + element.getNoteDurationSelection());
 
 		double r = repeatSelection.apply(params, position, scale);
 

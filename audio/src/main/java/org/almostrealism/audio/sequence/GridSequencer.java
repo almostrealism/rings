@@ -20,19 +20,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.WaveSet;
 import org.almostrealism.audio.data.DynamicWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunctionSequence;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.data.ParameterizedWaveDataProviderFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProviderList;
+import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.OperationList;
@@ -40,16 +38,15 @@ import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
-public class GridSequencer implements ParameterizedWaveDataProviderFactory, TempoAware, CellFeatures {
+public class GridSequencer implements StatelessSource, TempoAware, CellFeatures {
 	private Frequency bpm;
 	private double stepSize;
 	private int stepCount;
 	private int totalBeats;
-	private List<WaveSet> samples;
+	private List<WaveDataProvider> samples;
 
 	private ParameterFunctionSequence sequence;
 
@@ -79,8 +76,8 @@ public class GridSequencer implements ParameterizedWaveDataProviderFactory, Temp
 	public int getTotalBeats() { return totalBeats; }
 	public void setTotalBeats(int totalBeats) { this.totalBeats = totalBeats; }
 
-	public List<WaveSet> getSamples() { return samples; }
-	public void setSamples(List<WaveSet> samples) { this.samples = samples; }
+	public List<WaveDataProvider> getSamples() { return samples; }
+	public void setSamples(List<WaveDataProvider> samples) { this.samples = samples; }
 
 	public ParameterFunctionSequence getSequence() { return sequence; }
 
@@ -90,9 +87,15 @@ public class GridSequencer implements ParameterizedWaveDataProviderFactory, Temp
 	public double getDuration() { return bpm.l(getTotalBeats()); }
 
 	@Override
+	public Producer<PackedCollection<?>> generate(Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency) {
+		// TODO
+		throw new UnsupportedOperationException();
+	}
+
+	@Deprecated
 	public int getCount() { return (int) (getDuration() * OutputLine.sampleRate); }
 
-	@Override
+	@Deprecated
 	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
 		PackedCollection<?> export = WaveData.allocateCollection(getCount());
 		WaveData destination = new WaveData(export, OutputLine.sampleRate);
@@ -106,16 +109,11 @@ public class GridSequencer implements ParameterizedWaveDataProviderFactory, Temp
 
 		OperationList setup = new OperationList();
 
-		for (WaveSet s : samples) {
-			WaveDataProviderList provider = s.create(x, y, z);
-			setup.add(provider.setup());
-
-			for (WaveDataProvider p : provider.getProviders()) {
-				try {
-					cells = cells.and(w(c(bpm.l(1)), p.get()));
-				} catch (Exception e) {
-					System.out.println("Skipping invalid sample: " + e.getMessage());
-				}
+		for (WaveDataProvider p : samples) {
+			try {
+				cells = cells.and(w(c(bpm.l(1)), p.get()));
+			} catch (Exception e) {
+				System.out.println("Skipping invalid sample: " + e.getMessage());
 			}
 		}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.data;
+package org.almostrealism.audio.pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.time.Frequency;
+import org.almostrealism.collect.PackedCollection;
 
-import java.util.List;
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface ParameterizedWaveDataProviderFactory {
-	WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates);
-
-	@JsonIgnore
-	int getCount();
+public interface NoteAudioFilter {
+	Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
+										Producer<PackedCollection<?>> noteDuration);
 }

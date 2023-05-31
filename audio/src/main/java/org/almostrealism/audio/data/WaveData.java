@@ -16,16 +16,14 @@
 
 package org.almostrealism.audio.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.ScalarBankHeap;
+import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.heredity.Factor;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +31,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class WaveData {
+public class WaveData implements SamplingFeatures {
 	private static ContextSpecific<PackedCollectionHeap> collectionHeap;
 
 	private PackedCollection collection;
@@ -72,6 +70,18 @@ public class WaveData {
 		return new WaveData(getCollection().range(new TraversalPolicy(length), start), sampleRate);
 	}
 
+	public WaveData sample(Factor<PackedCollection<?>> processor) {
+		return sample(() -> processor);
+	}
+
+	public WaveData sample(Supplier<Factor<PackedCollection<?>>> processor) {
+		PackedCollection<?> result = new PackedCollection<>(getCollection().getShape());
+		sampling(getSampleRate(), getDuration(),
+					() -> processor.get().getResultant(c(p(getCollection()), frame())))
+				.get().into(result).evaluate();
+		return new WaveData(result, getSampleRate());
+	}
+
 	public void save(File file) {
 		PackedCollection w = getCollection();
 
@@ -108,17 +118,17 @@ public class WaveData {
 	}
 
 	public static WaveData load(File f) throws IOException {
-		WavFile w = WavFile.openWavFile(f);
+		try (WavFile w = WavFile.openWavFile(f)) {
+			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
+			w.readFrames(wave, 0, (int) w.getFramesRemaining());
 
-		double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
-		w.readFrames(wave, 0, (int) w.getFramesRemaining());
+			int channelCount = w.getNumChannels();
 
-		int channelCount = w.getNumChannels();
+			assert channelCount > 0;
+			int channel = 0;
 
-		assert channelCount > 0;
-		int channel = 0;
-
-		return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+		}
 	}
 
 	public static PackedCollectionHeap getCollectionHeap() { return collectionHeap == null ? null : collectionHeap.getValue(); }
@@ -132,6 +142,7 @@ public class WaveData {
 		collectionHeap = null;
 	}
 
+	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
 	public static PackedCollection<?> allocateCollection(int count) {
 		return Optional.ofNullable(getCollectionHeap()).map(h -> h.allocate(count)).orElse(new PackedCollection(count));
 	}

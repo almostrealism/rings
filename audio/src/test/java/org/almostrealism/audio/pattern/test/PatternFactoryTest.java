@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,6 @@ import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
-import org.almostrealism.collect.ProducerWithOffset;
-import org.almostrealism.collect.computations.RootDelegateSegmentsAdd;
-import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
@@ -99,18 +96,18 @@ public class PatternFactoryTest implements CellFeatures {
 	public static List<PatternFactoryChoice> createChoices() {
 		List<PatternFactoryChoice> choices = new ArrayList<>();
 
-		PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", new PatternNote("Kit/Kick.wav")));
+		PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
 		kick.setSeed(true);
 		kick.setMinScale(0.25);
 		choices.add(kick);
 
-		PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", new PatternNote("Kit/Clap.wav")));
+		PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
 		clap.setMaxScale(0.5);
 		choices.add(clap);
 
 		PatternFactoryChoice toms = new PatternFactoryChoice(
-				new PatternElementFactory("Toms", new PatternNote("Kit/Tom1.wav"),
-						new PatternNote("Kit/Tom2.wav")));
+				new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
+						PatternNote.create("Kit/Tom2.wav")));
 		toms.setMaxScale(0.25);
 		choices.add(toms);
 
@@ -128,23 +125,6 @@ public class PatternFactoryTest implements CellFeatures {
 	@Test
 	public void storeChoices() throws IOException {
 		new ObjectMapper().writeValue(new File("pattern-factory.json"), createChoices());
-	}
-
-	@Test
-	public void sum() throws IOException {
-		HardwareOperator.enableLog = true;
-		HardwareOperator.enableVerboseLog = true;
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
-
-		WaveData kick = WaveData.load(new File("Kit/Kick.wav"));
-
-		Frequency bpm = bpm(120);
-		PackedCollection destination = new PackedCollection((int) (bpm.l(16) * OutputLine.sampleRate));
-		RootDelegateSegmentsAdd<PackedCollection> op = new RootDelegateSegmentsAdd<>(List.of(new ProducerWithOffset<>(v(kick.getCollection()), 0)), destination);
-		op.get().run();
-
-		WaveData out = new WaveData(destination, OutputLine.sampleRate);
-		out.save(new File("sum-test.wav"));
 	}
 
 	@Test
@@ -170,7 +150,8 @@ public class PatternFactoryTest implements CellFeatures {
 		}
 
 		manager.updateDestination(destination);
-		manager.sum(pos -> (int) (pos * bpm.l(16) * OutputLine.sampleRate), 1, pos -> Scale.of(WesternChromatic.C1));
+		manager.sum(pos -> (int) (pos * bpm.l(16) * OutputLine.sampleRate),
+				pos -> pos * bpm.l(4), 1, pos -> Scale.of(WesternChromatic.C1));
 
 		WaveData out = new WaveData(destination, OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));

@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WavFile {
+public class WavFile implements AutoCloseable {
 
 	private enum ReaderState {
 		READING, WRITING, CLOSED
@@ -620,11 +620,11 @@ public class WavFile {
 		return numFramesToWrite;
 	}
 
-	public int writeFrames(double[][] sampleBuffer, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(double[][] sampleBuffer, int numFramesToWrite) throws IOException {
 		return writeFrames(sampleBuffer, 0, numFramesToWrite);
 	}
 
-	public int writeFrames(double[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(double[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException {
 		if (readerState != ReaderState.WRITING) throw new IOException("Cannot write to WavFile instance");
 
 		for (int f = 0; f < numFramesToWrite; f++) {
@@ -641,7 +641,7 @@ public class WavFile {
 		return numFramesToWrite;
 	}
 
-
+	@Override
 	public void close() throws IOException {
 		// Close the input stream and set to null
 		if (iStream != null) {

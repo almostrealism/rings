@@ -16,14 +16,18 @@
 
 package org.almostrealism.audio.pattern;
 
+import java.util.function.DoubleUnaryOperator;
+
 public enum NoteDurationStrategy {
 	NONE, FIXED, NO_OVERLAP;
 
-	public double getLength(double position, double nextPosition, double originalDuration, double durationSelection) {
+	public double getLength(DoubleUnaryOperator timeForDuration,
+							double position, double nextPosition,
+							double originalDurationSeconds, double durationSelection) {
 		return switch (this) {
-			case FIXED -> durationSelection;
-			case NO_OVERLAP -> nextPosition - position;
-			default -> originalDuration;
+			case FIXED -> Math.min(originalDurationSeconds, timeForDuration.applyAsDouble(durationSelection));
+			case NO_OVERLAP -> timeForDuration.applyAsDouble(nextPosition - position);
+			default -> originalDurationSeconds;
 		};
 	}
 }

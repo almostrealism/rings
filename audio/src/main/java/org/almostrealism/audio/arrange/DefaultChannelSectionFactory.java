@@ -110,7 +110,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 	protected void initRanges() {
 		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
-		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(12), factorForRepeatSpeedUpDuration(48));
+		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(52));
 	}
 
 	public Section createSection(int position) {

@@ -145,12 +145,7 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	}
 
 	@Override
-	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
-		return null;
-	}
-
-	@Override
-	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+	public Operator<Scalar> get() {
 		return null;
 	}
 }

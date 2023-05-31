@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@ package com.almostrealism.surfaceui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -214,28 +211,8 @@ public abstract class AbstractSurfaceUI implements SurfaceUI {
 	}
 
 	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return getSurface().cancel(mayInterruptIfRunning);
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return getSurface().isCancelled();
-	}
-
-	@Override
-	public boolean isDone() {
-		return getSurface().isDone();
-	}
-
-	@Override
-	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
+	public Operator<Scalar> get() {
 		return getSurface().get();
-	}
-
-	@Override
-	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		return getSurface().get(timeout, unit);
 	}
 
 	/**

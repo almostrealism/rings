@@ -233,12 +233,7 @@ public class CSG extends AbstractSurface {
     }
 
     @Override
-    public Operator<Scalar> get() throws InterruptedException, ExecutionException {
-        return null;
-    }
-
-    @Override
-    public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public Operator<Scalar> get() {
         return null;
     }
 }

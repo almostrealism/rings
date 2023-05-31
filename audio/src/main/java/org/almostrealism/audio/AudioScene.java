@@ -21,6 +21,7 @@ import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
+import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
@@ -71,7 +72,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 0 -> { yield 4; }
 					case 1 -> { yield 4; }
 					case 2 -> { yield 1; }
-					case 3 -> { yield 1; }
+					case 3 -> { yield 2; }
 					case 4 -> { yield 1; }
 					case 5 -> { yield 1; }
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
@@ -111,8 +112,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
 
-	public static Waves sourceOverride = null;
-
 	private int sampleRate;
 	private double bpm;
 	private int sourceCount;
@@ -121,19 +120,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private int totalMeasures = 1;
 
 	private Animation<T> scene;
-	private Waves sources;
 
-	private KeyboardTuning tuning;
 	private GlobalTimeManager time;
-	private SceneSectionManager sections;
+	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
 
-	private MixdownManager mixdown;
+	private RiseManager riser;
+	private SceneSectionManager sections;
 	private EfxManager efx;
+	private MixdownManager mixdown;
 
 	private GenerationManager generation;
 
@@ -143,7 +142,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
-	private List<Consumer<Waves>> sourcesListener;
 
 	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
 					  int sampleRate) {
@@ -160,7 +158,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.tempoListeners = new ArrayList<>();
 		this.durationListeners = new ArrayList<>();
-		this.sourcesListener = new ArrayList<>();
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
@@ -171,9 +168,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
-
-		this.sources = new Waves();
-		IntStream.range(0, sourceCount).forEach(this.sources.getChoices().getChoices()::add);
 
 		patterns = new PatternSystemManager(genome.getGenome(2));
 		patterns.init();
@@ -249,9 +243,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public void addDurationListener(DoubleConsumer listener) { this.durationListeners.add(listener); }
 	public void removeDurationListener(DoubleConsumer listener) { this.durationListeners.remove(listener); }
 
-	public void addSourcesListener(Consumer<Waves> listener) { this.sourcesListener.add(listener); }
-	public void removeSourcesListener(Consumer<Waves> listener) { this.sourcesListener.remove(listener); }
-
 	public int getSourceCount() { return sourceCount; }
 	public int getDelayLayerCount() { return delayLayerCount; }
 
@@ -312,23 +303,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		generation.setSettings(settings.getGeneration());
 	}
 
-	public void setWaves(Waves waves) {
-		this.sources = waves;
-		sourcesListener.forEach(l -> l.accept(sources));
-	}
-
-	// This is needed because AudioScene doesn't manage save
-	// and restore itself. Once it does, this can be removed.
-	@Deprecated
-	public void triggerSourcesChange() {
-		sourcesListener.forEach(l -> l.accept(sources));
-	}
-
 	protected void triggerDurationChange() {
 		durationListeners.forEach(l -> l.accept(getTotalDuration()));
 	}
-
-	public Waves getWaves() { return sources; }
 
 	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
 
@@ -352,7 +329,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
-		PackedCollection<?> audio = WaveData.allocateCollection(getTotalSamples());
+		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0); // WaveData.allocateCollection(getTotalSamples());
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
@@ -380,6 +357,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		return () -> () -> {
 			refreshPatternDestination();
 			patterns.sum(channels, pos -> (int) (pos * getMeasureSamples()),
+					len -> len * getMeasureDuration(),
 					getTotalMeasures(), getChordProgression()::forPosition,
 					patternDestination, () -> WaveData.allocateCollection(getTotalSamples()));
 		};

@@ -19,40 +19,29 @@ package org.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.WaveSet;
-import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
-import org.almostrealism.audio.data.FileWaveDataProvider;
-import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
-import org.almostrealism.audio.grains.GrainGenerationSettings;
-import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.Waves;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
-import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternSystemManager;
-import org.almostrealism.audio.sequence.GridSequencer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.audio.tone.WesternChromatic;
-import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.AdjustableDelayCell;
@@ -68,7 +57,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
-	public static final boolean enableStems = false;
 	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
@@ -155,7 +143,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(20000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
+		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
 		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 16 : 1);
@@ -203,6 +191,11 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			PatternFactoryChoiceList choices = new ObjectMapper()
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 
+			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
+							TreeNoteSource.Filter.nameStartsWith("SN_"));
+			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
+			choices.add(PatternFactoryChoice.fromSource("SN", synths, 3, 5, true));
+
 			choices.forEach(c -> {
 				if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
 					c.setMinScale(0.0);
@@ -210,11 +203,13 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				}
 
 				if ("Chord Synth".equals(c.getFactory().getName())) {
-					c.setSeedBias(0.0);
+					c.setSeedBias(0.4);
 				} else if ("Bass".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
 				} else if ("Rise".equals(c.getFactory().getName())) {
 					c.setSeedBias(1.0);
+				} else if ("SN".equals(c.getFactory().getName())) {
+					c.setSeedBias(0.4);
 				}
 			});
 
@@ -222,18 +217,18 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		} else {
 			List<PatternFactoryChoice> choices = new ArrayList<>();
 
-			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", new PatternNote("Kit/Kick.wav")));
+			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
 			kick.setSeed(true);
 			kick.setMinScale(0.25);
 			choices.add(kick);
 
-			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", new PatternNote("Kit/Clap.wav")));
+			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
 			clap.setMaxScale(0.5);
 			choices.add(clap);
 
 			PatternFactoryChoice toms = new PatternFactoryChoice(
-					new PatternElementFactory("Toms", new PatternNote("Kit/Tom1.wav"),
-							new PatternNote("Kit/Tom2.wav")));
+					new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
+							PatternNote.create("Kit/Tom2.wav")));
 			toms.setMaxScale(0.25);
 			choices.add(toms);
 
@@ -243,48 +238,5 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 			return choices;
 		}
-	}
-
-	protected static Waves waves(AudioScene scene, Set<Integer> choices, double bpm) throws IOException {
-		GranularSynthesizer synth = new GranularSynthesizer();
-		synth.setGain(3.0);
-		synth.addFile("Library/organ.wav");
-		synth.addGrain(new GrainGenerationSettings());
-		synth.addGrain(new GrainGenerationSettings());
-
-		WaveSet synthNotes = new WaveSet(synth);
-		synthNotes.setRoot(WesternChromatic.C3);
-		synthNotes.setNotes(WesternScales.major(WesternChromatic.C3, 1));
-
-		GridSequencer sequencer = new GridSequencer();
-		sequencer.setStepCount(8);
-		sequencer.initParamSequence();
-		// sequencer.getSamples().add(synthNotes);
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/MD_SNARE_09.wav")));
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/MD_SNARE_11.wav")));
-		sequencer.getSamples().add(new WaveSet(new FileWaveDataProvider("Library/Snare Perc DD.wav")));
-
-		Waves seqWaves = new Waves("Sequencer", new WaveSet(sequencer));
-		seqWaves.getChoices().setChoices(choices);
-
-		Waves group = new Waves("Group");
-		group.getChoices().setChoices(choices);
-		group.getChildren().add(seqWaves);
-
-
-		File sources = new File("sources.json");
-		Waves waves = scene.getWaves();
-
-		if (enableSourcesJson && sources.exists()) {
-			waves = Waves.load(sources);
-			scene.setWaves(waves);
-		} else if (enableStems) {
-			waves.addSplits(Arrays.asList(new File(STEMS).listFiles()), bpm, Math.pow(10, -6), choices, 1.0, 2.0, 4.0);
-		} else {
-			waves.getChildren().add(group);
-			waves.getChoices().setChoices(choices);
-		}
-
-		return waves;
 	}
 }

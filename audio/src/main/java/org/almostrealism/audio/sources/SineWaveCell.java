@@ -17,7 +17,6 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.filter.Envelope;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.PolymorphicAudioData;
@@ -26,12 +25,13 @@ import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.algebra.Scalar;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 
 // TODO  Reimplement as a function of org.almostrealism.graph.TimeCell
 public class SineWaveCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private Envelope env;
+	private Factor<Scalar> env;
 	private final SineWaveCellData data;
 
 	private double noteLength;
@@ -47,7 +47,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 		this.data = data;
 	}
 
-	public void setEnvelope(Envelope e) { this.env = e; }
+	public void setEnvelope(Factor<Scalar> e) { this.env = e; }
 
 	public void strike() { data.setNotePosition(0); }
 	
@@ -97,7 +97,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 		PackedCollection<?> value = new PackedCollection<>(1);
 		OperationList push = new OperationList("SineWaveCell Push");
 		push.add(new SineWavePush(data, env == null ? v(1.0) :
-					env.getScale(data.getNotePosition()), value));
+					env.getResultant(data.getNotePosition()), value));
 		push.add(super.push(p(value)));
 		return push;
 	}
@@ -106,7 +106,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("SineWaveCell Tick");
 		tick.add(new SineWaveTick(data, env == null ? v(1.0) :
-				env.getScale(data.getNotePosition())));
+				env.getResultant(data.getNotePosition())));
 		tick.add(super.tick());
 		return tick;
 	}

@@ -17,7 +17,6 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.filter.Envelope;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
@@ -27,12 +26,13 @@ import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.heredity.Factor;
 
 import java.util.function.Supplier;
 
 // TODO  Reimplement as a function of org.almostrealism.graph.TimeCell
 public class PolynomialCell extends CollectionTemporalCellAdapter implements CodeFeatures, HardwareFeatures {
-	private Envelope env;
+	private Factor<Scalar> env;
 	private final PolynomialCellData data;
 
 	public PolynomialCell() {
@@ -45,7 +45,7 @@ public class PolynomialCell extends CollectionTemporalCellAdapter implements Cod
 		addSetup(a(1, data.getAmplitude(), v(1.0)));
 	}
 
-	public void setEnvelope(Envelope e) { this.env = e; }
+	public void setEnvelope(Factor<Scalar> e) { this.env = e; }
 
 	public Supplier<Runnable> setWaveLength(Supplier<Evaluable<? extends Scalar>> seconds) {
 		return a(1, data.getWaveLength(), scalarsMultiply(seconds, v(OutputLine.sampleRate)));
@@ -60,7 +60,7 @@ public class PolynomialCell extends CollectionTemporalCellAdapter implements Cod
 		PackedCollection<?> value = new PackedCollection<>(1);
 		OperationList push = new OperationList("PolynomialCell Push");
 		push.add(new PolynomialCellPush(data, env == null ? v(1.0) :
-				env.getScale(data.getWavePosition()), value));
+				env.getResultant(data.getWavePosition()), value));
 		push.add(super.push(p(value)));
 		return push;
 	}
@@ -70,7 +70,7 @@ public class PolynomialCell extends CollectionTemporalCellAdapter implements Cod
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("PolynomialCell Tick");
 		tick.add(new PolynomialCellTick(data, env == null ? v(1.0) :
-				env.getScale(data.getWavePosition())));
+				env.getResultant(data.getWavePosition())));
 		tick.add(super.tick());
 		return tick;
 	}

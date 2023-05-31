@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,36 @@
 package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.expression.Product;
+import io.almostrealism.relation.Evaluable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.HardwareFeatures;
+import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.time.computations.Interpolate;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class WaveDataProviderAdapter implements WaveDataProvider {
+public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeFeatures {
+	public static boolean enableHeap = false;
+
 	private static Map<String, ContextSpecific<WaveData>> loaded;
+	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;
 
 	static {
 		loaded = new HashMap<>();
+		interpolate = new DefaultContextSpecific<>(() ->
+				new Interpolate(
+						new PassThroughProducer<>(1, 0),
+						new PassThroughProducer<>(1, 1),
+						new PassThroughProducer<>(1, 2),
+						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate)),
+						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(OutputLine.sampleRate))).get());
 	}
 
 	public abstract String getKey();
@@ -39,6 +58,37 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider {
 	protected abstract WaveData load();
 
 	protected void unload() { clearKey(getKey()); }
+
+	@Override
+	public double getDuration(double playbackRate) {
+		return getDuration() / playbackRate;
+	}
+
+	@Override
+	public WaveData get(double playbackRate) {
+		WaveData original = get();
+		if (playbackRate == 1.0) return original;
+
+		if (original.getSampleRate() != OutputLine.sampleRate) {
+			System.out.println("WARN: Cannot alter playback rate of audio which is not at " + OutputLine.sampleRate);
+			return null;
+		}
+
+		PackedCollection<?> rate = new PackedCollection(1);
+		rate.setMem(0, playbackRate);
+
+		PackedCollection<?> audio = original.getCollection();
+		int len = (int) (audio.getMemLength() / playbackRate);
+		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
+
+		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
+
+		interpolate.getValue().into(dest.traverse(1))
+				.evaluate(audio.traverse(0),
+						timeline.range(shape(dest.getMemLength())).traverseEach(),
+						rate.traverse(0));
+		return new WaveData(dest.traverse(1), original.getSampleRate());
+	}
 
 	@JsonIgnore
 	@Override

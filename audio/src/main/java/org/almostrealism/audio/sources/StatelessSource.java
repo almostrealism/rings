@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audio.filter;
+package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 
-public interface Envelope {
-	Producer<Scalar> getScale(Producer<Scalar> time);
+public interface StatelessSource {
+	Producer<PackedCollection<?>> generate(Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency);
 }

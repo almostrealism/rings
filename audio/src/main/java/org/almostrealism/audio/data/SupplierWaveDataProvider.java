@@ -16,47 +16,44 @@
 
 package org.almostrealism.audio.data;
 
-import io.almostrealism.cycle.Setup;
-import org.almostrealism.hardware.OperationList;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.Supplier;
 
-public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements Setup {
+public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 	private String key;
-	private WaveData destination;
-	private Supplier<Runnable> setup;
+	private Supplier<PackedCollection<?>> source;
+	private int sampleRate;
 
-	public DynamicWaveDataProvider(String key, WaveData destination) {
-		this(key, destination, new OperationList());
+	public SupplierWaveDataProvider() { }
+
+	public SupplierWaveDataProvider(Supplier<PackedCollection<?>> source, int sampleRate) {
+		this.source = source;
+		this.sampleRate = sampleRate;
 	}
-
-	public DynamicWaveDataProvider(String key, WaveData destination,Supplier<Runnable> setup) {
-		this.key = key;
-		this.destination = destination;
-		this.setup = setup;
-	}
-
-	@Override
-	public String getKey() { return key; }
 
 	@Override
 	public int getCount() {
-		return destination.getCollection().getMemLength();
+		return get().getCollection().getCount();
 	}
 
 	@Override
 	public double getDuration() {
-		return getCount() / (double) getSampleRate();
+		return get().getDuration();
 	}
 
 	@Override
 	public int getSampleRate() {
-		return destination.getSampleRate();
+		return sampleRate;
 	}
 
 	@Override
-	public Supplier<Runnable> setup() { return setup; }
+	public String getKey() {
+		return key;
+	}
 
 	@Override
-	protected WaveData load() { return destination; }
+	protected WaveData load() {
+		return new WaveData(source.get(), sampleRate);
+	}
 }
