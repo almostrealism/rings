@@ -1,5 +1,22 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.feature;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.ScalarTable;
 import org.almostrealism.audio.computations.ComplexFFT;
@@ -9,7 +26,6 @@ import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;
-import org.almostrealism.algebra.computations.ScalarBankSum;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
@@ -17,7 +33,6 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class FeatureComputer implements CodeFeatures {
@@ -95,14 +110,14 @@ public class FeatureComputer implements CodeFeatures {
 		fft = new ComplexFFT(paddedWindowSize, true, v(2 * paddedWindowSize, 0));
 
 		int count = settings.getFrameExtractionSettings().getWindowSize();
-		Supplier<Evaluable<? extends ScalarBank>> processWindow = null;
+		Producer<ScalarBank> processWindow = null;
 
 		if (processWindow == null) {
 			processWindow = v(2 * count, 0);
 			processWindow = dither(count, processWindow, v(Scalar.shape(), 1));
 
 			if (settings.getFrameExtractionSettings().isRemoveDcOffset()) {
-				processWindow = scalarBankAdd(count, processWindow, new ScalarBankSum(count, processWindow).divide(count).multiply(-1));
+				processWindow = scalarBankAdd(count, processWindow, scalar(subset(shape(count, 1), processWindow, 0).sum().divide(c(count)).multiply(c(-1))));
 			}
 		}
 

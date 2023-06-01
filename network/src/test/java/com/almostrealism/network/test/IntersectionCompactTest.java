@@ -16,6 +16,7 @@
 
 package com.almostrealism.network.test;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.primitives.SphereIntersectAt;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
@@ -25,7 +26,7 @@ import org.junit.Test;
 public class IntersectionCompactTest extends AbstractIntersectionTest {
 	@Test
 	public void compact() {
-		SphereIntersectAt combined = combined();
+		Producer<Scalar> combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 		ev.compile();
 

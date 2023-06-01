@@ -1,6 +1,23 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.almostrealism.network.test;
 
 import com.almostrealism.lighting.PointLight;
+import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.primitives.Sphere;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytrace.IntersectionalLightingEngine;
@@ -11,7 +28,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.algebra.computations.ScalarExpressionComputation;
-import org.almostrealism.algebra.computations.VectorExpressionComputation;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
@@ -19,7 +35,6 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
@@ -49,16 +64,16 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 				((OperationAdapter) generatedColorProducer().getProducer()).getInputs().get(1);
 	}
 
-	protected VectorExpressionComputation vectorFromScalars() {
-		return (VectorExpressionComputation) ((OperationAdapter) dotProduct()).getInputs().get(1);
+	protected ExpressionComputation<Vector> vectorFromScalars() {
+		return (ExpressionComputation<Vector>) ((OperationAdapter) dotProduct()).getInputs().get(1);
 	}
 
-	protected ScalarExpressionComputation scalarProduct() {
-		return (ScalarExpressionComputation) ((OperationAdapter) vectorFromScalars()).getInputs().get(1);
+	protected ExpressionComputation<Scalar> scalarProduct() {
+		return (ExpressionComputation<Scalar>) ((OperationAdapter) vectorFromScalars()).getInputs().get(1);
 	}
 
-	protected ScalarExpressionComputation scalarFromVector() {
-		return (ScalarExpressionComputation) ((OperationAdapter) scalarProduct()).getInputs().get(1);
+	protected ExpressionComputation<Scalar> scalarFromVector() {
+		return (ExpressionComputation<Scalar>) ((OperationAdapter) scalarProduct()).getInputs().get(1);
 	}
 
 	protected VectorProducerBase rayDirection() {
@@ -78,7 +93,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateVectorFromScalars() {
-		VectorExpressionComputation dp = vectorFromScalars();
+		ExpressionComputation<Vector> dp = vectorFromScalars();
 		Evaluable<Vector> ev = dp.get();
 		((OperationAdapter) ev).compile();
 
@@ -91,7 +106,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateScalarProduct() {
-		ScalarExpressionComputation dp = scalarProduct();
+		ExpressionComputation<Scalar> dp = scalarProduct();
 		Evaluable<Scalar> ev = dp.get();
 		((OperationAdapter) ev).compile();
 
@@ -102,7 +117,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateScalarFromVector() {
-		ScalarExpressionComputation dp = scalarFromVector();
+		ExpressionComputation<Scalar> dp = scalarFromVector();
 		Evaluable<Scalar> ev = dp.get();
 		((OperationAdapter) ev).compile();
 

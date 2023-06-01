@@ -48,7 +48,7 @@ import org.almostrealism.projection.OrthographicCamera;
  * @author  Michael Murray
  */
 @ModelEntity
-public class PinholeCamera extends OrthographicCamera {
+public class PinholeCamera extends OrthographicCamera implements ProjectionFeatures {
 	public static boolean enableHardwareAcceleration = true;
 
   	private double focalLength = 1.0;
@@ -160,7 +160,7 @@ public class PinholeCamera extends OrthographicCamera {
 //		}
 
 		if (enableHardwareAcceleration) {
-			return PinholeCameraProjection.rayAt(posP, sdP, getLocation(), getProjectionDimensions(),
+			return rayAt(posP, sdP, getLocation(), getProjectionDimensions(),
 											blur, focalLength, u, v, w);
 		} else {
 			return new DynamicProducerForMemoryData<>(args -> {

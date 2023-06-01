@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarProducerBase;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
+import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.computations.GreaterThanRGB;
 import org.almostrealism.geometry.DiscreteField;
@@ -47,10 +50,10 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 	/** Method specified by the {@link Shader} interface. */
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
-		VectorProducerBase point = origin(normals.get(0));
-		VectorProducerBase n = direction(normals.get(0)).normalize();
-		ScalarProducerBase scaleFront = n.dotProduct(p.getLightDirection());
-		ScalarProducerBase scaleBack = n.scalarMultiply(-1.0).dotProduct(p.getLightDirection());
+		ExpressionComputation<Vector> point = origin(normals.get(0));
+		ExpressionComputation<Vector> n = normalize(direction(normals.get(0)));
+		ExpressionComputation<Scalar> scaleFront = dotProduct(n, p.getLightDirection());
+		ExpressionComputation<Scalar> scaleBack = dotProduct(scalarMultiply(n, -1.0), p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
 		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 

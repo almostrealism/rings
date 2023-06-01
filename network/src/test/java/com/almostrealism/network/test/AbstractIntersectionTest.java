@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package com.almostrealism.network.test;
 
-import org.almostrealism.primitives.SphereIntersectAt;
-import com.almostrealism.projection.PinholeCameraProjection;
+import com.almostrealism.projection.ProjectionFeatures;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.primitives.Sphere;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
-import org.almostrealism.CodeFeatures;
 
-public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures {
+public class AbstractIntersectionTest implements HardwareFeatures, ProjectionFeatures {
 	protected final int width = 400, height = 400;
 
-	protected SphereIntersectAt combined() {
+	protected Producer<Scalar> combined() {
 		Vector viewDirection = new Vector(0.0, 0.0,  -1.0);
 		Vector upDirection = new Vector(0.0, 1.0, 0.0);
 
@@ -39,11 +39,11 @@ public class AbstractIntersectionTest implements HardwareFeatures, CodeFeatures 
 		Vector v = w.crossProduct(u);
 
 		return
-				new SphereIntersectAt(PinholeCameraProjection.rayAt((Producer) v(Pair.shape(), 0),
+				new Sphere().intersectAt(rayAt((Producer) v(Pair.shape(), 0),
 						pair(width, height),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),
 						0.0, 1.0,
-						u, v, w));
+						u, v, w)).getDistance();
 	}
 }

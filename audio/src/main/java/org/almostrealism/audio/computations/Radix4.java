@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		Producer<Pair<?>> bMinusD = subtract(b, d);
 		Producer<Pair<?>> aMinusC = subtract(a, c);
 
-		PairProducerBase imaginaryTimesSub;
+		Producer<Pair<?>> imaginaryTimesSub;
 
 		if (pos) {
 			imaginaryTimesSub = pair(r(bMinusD).minus(), l(bMinusD));
