@@ -22,7 +22,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;

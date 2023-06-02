@@ -18,7 +18,6 @@ package org.almostrealism.audio.sources.test;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.DynamicAudioCell;
