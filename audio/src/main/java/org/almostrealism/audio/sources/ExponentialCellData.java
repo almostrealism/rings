@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.TraversalPolicy;
 
-public class ExponentialCellData extends ScalarBank {
+public class ExponentialCellData extends PackedCollection<Scalar> {
 	public ExponentialCellData() {
-		super(5);
+		super(new TraversalPolicy(5, 2), 1, delegateSpec ->
+				new Scalar(delegateSpec.getDelegate(), delegateSpec.getOffset()));
 	}
 
 	protected Scalar notePosition() { return get(0); }

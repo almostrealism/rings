@@ -7,6 +7,7 @@ import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.feature.FeatureComputer;
 import org.almostrealism.audio.feature.FeatureExtractor;
 import org.almostrealism.audio.feature.FeatureSettings;
+import org.almostrealism.collect.PackedCollection;
 import org.junit.Test;
 
 import java.io.File;
@@ -69,7 +70,7 @@ public class FeatureComputerTest {
 		assert channelCount > 0;
 		int channel = 0;
 
-		ScalarBank waveform = WavFile.channelScalar(wave, channel);
+		PackedCollection<Scalar> waveform = WavFile.channelScalar(wave, channel);
 		Tensor<Scalar> features = new Tensor<>();
 		double vtlnWarp = 1.0;
 		mfcc.computeFeatures(waveform, new Scalar(file.getSampleRate()), vtlnWarp, features);

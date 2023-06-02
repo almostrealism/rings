@@ -243,7 +243,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 
 		cells.sec(10).get().run();
 
-		ScalarBank export = new ScalarBank(WaveOutput.defaultTimelineFrames);
+		PackedCollection<Scalar> export = Scalar.scalarBank(WaveOutput.defaultTimelineFrames);
 		output.export(export).get().run();
 
 		WavFile f = WavFile.newWavFile(new File("results/mix-export-test.wav"), 1,

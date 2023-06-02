@@ -1,8 +1,7 @@
 package org.almostrealism.audio.feature;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.hardware.HardwareException;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,8 @@ public class Resampler {
 	private long inputSampleOffset;
 	private long outputSampleOffset;
 	private List<Scalar> inputRemainder;
-	private ScalarBank firstIndex;
-	private List<ScalarBank> weights;
+	private PackedCollection<Scalar> firstIndex;
+	private List<PackedCollection<Scalar>> weights;
 
 	public Resampler(int sampRateInHz, int sampRateOutHz,
 					 Scalar filterCutoffHz, int numZeros) {
@@ -98,7 +97,7 @@ public class Resampler {
 	}
 
 	void setIndexesAndWeights() {
-		firstIndex = new ScalarBank(outputSamplesInUnit);
+		firstIndex = Scalar.scalarBank(outputSamplesInUnit);
 		weights = new ArrayList<>();
 
 		double windowWidth = numZeros / (2.0 * filterCutoff.getValue());
@@ -118,7 +117,7 @@ public class Resampler {
 			firstIndex.set(i, minInputIndex);
 			weights.add(null);
 			int numIndices = maxInputIndex - minInputIndex + 1;
-			weights.set(i, new ScalarBank(numIndices));
+			weights.set(i, Scalar.scalarBank(numIndices));
 			for (int j = 0; j < numIndices; j++) {
 				int inputIndex = minInputIndex + j;
 				double inputT = inputIndex / (double) sampRateIn,
@@ -144,7 +143,7 @@ public class Resampler {
 	}
 
 
-	ScalarBank resample(ScalarBank input, boolean flush) {
+	PackedCollection<Scalar> resample(PackedCollection<Scalar> input, boolean flush) {
 		int inputDim = input.getCount();
 		long totInputSamp = inputSampleOffset + inputDim,
 				totOutputSamp = getNumOutputSamples(totInputSamp, flush);
@@ -153,7 +152,7 @@ public class Resampler {
 			throw new UnsupportedOperationException("Cannot resample");
 		}
 
-		ScalarBank output = new ScalarBank((int) totOutputSamp);
+		PackedCollection<Scalar> output = Scalar.scalarBank((int) totOutputSamp);
 
 		assert totOutputSamp >= outputSampleOffset;
 
@@ -163,7 +162,7 @@ public class Resampler {
 			 sampOut < totOutputSamp;
 			 sampOut++) {
 			double indexes[] = getIndexes(sampOut);
-			ScalarBank weights = this.weights.get((int) indexes[1]);
+			PackedCollection<Scalar> weights = this.weights.get((int) indexes[1]);
 			// firstInputIndex is the first index into "input" that we have a weight
 			// for.
 			int firstInputIndex = (int) (indexes[0] - inputSampleOffset);
@@ -171,7 +170,7 @@ public class Resampler {
 
 			if (firstInputIndex >= 0 &&
 					firstInputIndex + weights.getCount() <= inputDim) {
-				ScalarBank inputPart = listSegment(input, firstInputIndex, weights.getCount());
+				PackedCollection<Scalar> inputPart = listSegment(input, firstInputIndex, weights.getCount());
 				thisOutput = math.dot(inputPart, weights);
 			} else {  // Handle edge cases.
 				thisOutput = new Scalar(0.0);
@@ -206,7 +205,7 @@ public class Resampler {
 	}
 
 	// TODO  This doesn't look right. What data is impacted by this method?
-	void setRemainder(ScalarBank input) {
+	void setRemainder(PackedCollection<Scalar> input) {
 		List<Scalar> oldRemainder = new ArrayList<>(inputRemainder);
 		// maxRemainderNeeded is the width of the filter from side to side,
 		// measured in input samples.  you might think it should be half that,
@@ -266,7 +265,7 @@ public class Resampler {
 
 	private int numSamplesOut() { return weights.size(); }
 
-	public static ScalarBank resampleWaveform(Scalar origFreq, ScalarBank wave, Scalar newFreq) {
+	public static PackedCollection<Scalar> resampleWaveform(Scalar origFreq, PackedCollection<Scalar> wave, Scalar newFreq) {
 		Scalar minFreq = new Scalar(Math.min(origFreq.getValue(), newFreq.getValue()));
 		Scalar lowpassCutoff = new Scalar(0.99 * 0.5 * minFreq.getValue());
 		int lowpassFilterWidth = 6;
@@ -275,8 +274,8 @@ public class Resampler {
 		return resampler.resample(wave, true);
 	}
 
-	private ScalarBank listSegment(ScalarBank input, int index, int len) {
-		ScalarBank output = new ScalarBank(len);
+	private PackedCollection<Scalar> listSegment(PackedCollection<Scalar> input, int index, int len) {
+		PackedCollection<Scalar> output = Scalar.scalarBank(len);
 		for (int i = 0; i < len; i++) {
 			output.set(i, input.get(i + index));
 		}

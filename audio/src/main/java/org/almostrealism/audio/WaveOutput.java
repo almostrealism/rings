@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import io.almostrealism.relation.Provider;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.ExpressionComputation;
@@ -42,7 +41,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 import org.almostrealism.time.AcceleratedTimeSeries;
@@ -56,14 +54,14 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
-	public static ContextSpecific<ScalarBank> timelineScalar;
+	public static ContextSpecific<PackedCollection<Scalar>> timelineScalar;
 	private static KernelizedEvaluable<PackedCollection<?>> exportKernel;
-	private static Provider<ScalarBank> exportSource;
+	private static Provider<PackedCollection<Scalar>> exportSource;
 
 	static {
 		timelineScalar = new DefaultContextSpecific<>(
 				() -> {
-					ScalarBank data = new ScalarBank(defaultTimelineFrames);
+					PackedCollection<Scalar> data = Scalar.scalarBank(defaultTimelineFrames);
 					double values[] = IntStream.range(0, defaultTimelineFrames)
 							.mapToObj(i -> i / (double) OutputLine.sampleRate)
 							.flatMap(v -> Stream.of(v, 1.0))
@@ -71,7 +69,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 					// for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
 					data.setMem(values);
 					return data;
-				}, ScalarBank::destroy);
+				}, PackedCollection::destroy);
 		timelineScalar.init();
 
 		timeline = new DefaultContextSpecific<>(
@@ -151,7 +149,9 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				long start = System.currentTimeMillis();
 
 				exportSource = new Provider(data);
-				exportKernel.into(destination).evaluate(data, timelineScalar.getValue().range(0, destination.getMemLength()));
+				exportKernel.into(destination)
+						.evaluate(data,
+								timelineScalar.getValue().range(shape(destination.getCount(), 2).traverse(1)));
 				if (enableVerbose)
 					System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
 			};

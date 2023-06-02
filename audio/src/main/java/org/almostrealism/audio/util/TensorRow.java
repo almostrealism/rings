@@ -1,8 +1,24 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.util;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.stream.IntStream;
 
@@ -41,7 +57,7 @@ public class TensorRow<T> {
 		for (int i = 0; i < size; i++) set(i, (T) new Scalar(0.0));
 	}
 
-	public void addMatVec(Tensor<Scalar> matrix, ScalarBank vector) {
+	public void addMatVec(Tensor<Scalar> matrix, PackedCollection<Scalar> vector) {
 		int m = matrix.length();
 		int n = matrix.length(0);
 		assert n == vector.getCount();
@@ -57,7 +73,7 @@ public class TensorRow<T> {
 		}
 	}
 
-	public void mulElements(ScalarBank vals) {
+	public void mulElements(PackedCollection<Scalar> vals) {
 		int size = length();
 		assert size == vals.getCount();
 

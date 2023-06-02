@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.almostrealism.audio.synth;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Source;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
@@ -28,17 +28,17 @@ import org.almostrealism.hardware.DynamicProducerForMemoryData;
 // TODO  Could JavaAudioSample be a subclass?
 public class Sample implements Source<Scalar> {
 	private int i;
-	private ScalarBank data;
+	private PackedCollection<Scalar> data;
 	
 	public Sample(byte data[]) {
-		this.data = new ScalarBank(data.length);
+		this.data = Scalar.scalarBank(data.length);
 		
 		for (int i = 0; i < data.length; i++) {
 			this.data.get(i).setValue(((double) data[i]) / Byte.MAX_VALUE);
 		}
 	}
 	
-	public Sample(ScalarBank data) {
+	public Sample(PackedCollection<Scalar> data) {
 		this.data = data;
 	}
 

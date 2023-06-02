@@ -1,10 +1,11 @@
 package org.almostrealism.audio.feature;
 
-import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 
 public class Bin {
 	private int key;
-	private ScalarBank value;
+	private PackedCollection<Scalar> value;
 
 	public int getKey() {
 		return key;
@@ -14,11 +15,11 @@ public class Bin {
 		this.key = key;
 	}
 
-	public ScalarBank getValue() {
+	public PackedCollection<Scalar> getValue() {
 		return value;
 	}
 
-	public void setValue(ScalarBank value) {
+	public void setValue(PackedCollection<Scalar> value) {
 		this.value = value;
 	}
 }

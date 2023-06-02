@@ -24,7 +24,6 @@ import org.almostrealism.audio.computations.WindowPreprocess;
 import org.almostrealism.audio.util.TensorRow;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
@@ -47,22 +46,22 @@ public class FeatureComputer implements CodeFeatures {
 
 	private final Evaluable<? extends PackedCollection<Pair<?>>> fft;
 
-	private final Evaluable<? extends ScalarBank> processWindow;
-	private Evaluable<? extends ScalarBank> preemphasizeAndWindowFunctionAndPad;
+	private final Evaluable<? extends PackedCollection<Scalar>> processWindow;
+	private Evaluable<? extends PackedCollection<Scalar>> preemphasizeAndWindowFunctionAndPad;
 
-	private final Evaluable<ScalarBank> powerSpectrum;
+	private final Evaluable<PackedCollection<Scalar>> powerSpectrum;
 
-	private ScalarBank lifterCoeffs;
+	private PackedCollection<Scalar> lifterCoeffs;
 	private final ScalarTable dctMatrix;  // matrix we left-multiply by to perform DCT.
 	private Scalar logEnergyFloor;
 	private final Map<Double, MelBanks> allMelBanks;  // BaseFloat is VTLN coefficient.
 
-	private final ScalarBank melEnergies;
+	private final PackedCollection<Scalar> melEnergies;
 
-	private final ScalarBank windowInput;
+	private final PackedCollection<Scalar> windowInput;
 	private final Scalar rawLogEnergy;
 	private final PackedCollection<Pair<?>> complexSignalFrame;
-	private final ScalarBank featureEnergies;
+	private final PackedCollection<Scalar> featureEnergies;
 
 	private int featureCount = -1;
 	private Tensor<Double> logTensor;
@@ -75,7 +74,7 @@ public class FeatureComputer implements CodeFeatures {
 		this.logTensor = new Tensor<>();
 
 		int binCount = this.settings.getMelBanksSettings().getNumBins();
-		this.melEnergies = new ScalarBank(binCount);
+		this.melEnergies = Scalar.scalarBank(binCount);
 
 		if (this.settings.getNumCeps() > binCount)
 			System.err.println("num-ceps cannot be larger than num-mel-bins."
@@ -88,7 +87,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		int paddedWindowSize = this.settings.getFrameExtractionSettings().getPaddedWindowSize();
 
-		windowInput = new ScalarBank(paddedWindowSize);
+		windowInput = Scalar.scalarBank(paddedWindowSize);
 		rawLogEnergy = new Scalar(0.0);
 		complexSignalFrame = Pair.bank(paddedWindowSize);
 
@@ -97,9 +96,9 @@ public class FeatureComputer implements CodeFeatures {
 		// ordering of features than HTK.
 		// dctMatrix.trim(this.settings.getNumCeps(), binCount);
 		dctMatrix = dctm.copy(this.settings.getNumCeps(), binCount);
-		featureEnergies = new ScalarBank(this.settings.getNumCeps());
+		featureEnergies = Scalar.scalarBank(this.settings.getNumCeps());
 		if (this.settings.getCepstralLifter().getValue() != 0.0) {
-			lifterCoeffs = new ScalarBank(this.settings.getNumCeps());
+			lifterCoeffs = Scalar.scalarBank(this.settings.getNumCeps());
 			computeLifterCoeffs(this.settings.getCepstralLifter().getValue(), lifterCoeffs);
 		}
 		if (this.settings.getEnergyFloor().getValue() > 0.0)
@@ -110,7 +109,7 @@ public class FeatureComputer implements CodeFeatures {
 		fft = new ComplexFFT(paddedWindowSize, true, v(2 * paddedWindowSize, 0));
 
 		int count = settings.getFrameExtractionSettings().getWindowSize();
-		Producer<ScalarBank> processWindow = null;
+		Producer<PackedCollection<Scalar>> processWindow = null;
 
 		if (processWindow == null) {
 			processWindow = v(2 * count, 0);
@@ -159,7 +158,7 @@ public class FeatureComputer implements CodeFeatures {
 				M.set(k, n, new Scalar(normalizer.getValue() * Math.cos(Math.PI /N * (n + 0.5) * k)));
 	}
 
-	protected void computeLifterCoeffs(double Q, ScalarBank coeffs) {
+	protected void computeLifterCoeffs(double Q, PackedCollection<Scalar> coeffs) {
 		// Compute liftering coefficients (scaling on cepstral coeffs)
 		// coeffs are numbered slightly differently from HTK: the zeroth
 		// index is C0, which is not affected.
@@ -167,13 +166,13 @@ public class FeatureComputer implements CodeFeatures {
 			coeffs.set(i, 1.0 + 0.5 * Q * Math.sin(Math.PI * i / Q));
 	}
 
-	public void computeFeatures(ScalarBank wave,
+	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
 								Tensor<Scalar> output) {
 		computeFeatures(wave, sampleFreq, 1.0, output);
 	}
 
-	public void computeFeatures(ScalarBank wave,
+	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
 								double vtlnWarp,
 								Tensor<Scalar> output) {
@@ -191,21 +190,21 @@ public class FeatureComputer implements CodeFeatures {
 						+ sampleFreq + " .vs " + newSampleFreq);
 
 			// Resample the waveform
-			ScalarBank resampledWave = Resampler.resampleWaveform(sampleFreq, wave, newSampleFreq);
+			PackedCollection<Scalar> resampledWave = Resampler.resampleWaveform(sampleFreq, wave, newSampleFreq);
 			compute(resampledWave, vtlnWarp, output);
 		}
 	}
 
-	public void computeFeatures(ScalarBank wave,
+	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
-								BiConsumer<Integer, ScalarBank> output) {
+								BiConsumer<Integer, PackedCollection<Scalar>> output) {
 		computeFeatures(wave, sampleFreq, 1.0, output);
 	}
 
-	public void computeFeatures(ScalarBank wave,
+	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
 								double vtlnWarp,
-								BiConsumer<Integer, ScalarBank> output) {
+								BiConsumer<Integer, PackedCollection<Scalar>> output) {
 		Scalar newSampleFreq = settings.getFrameExtractionSettings().getSampFreq();
 		if (sampleFreq.getValue() == newSampleFreq.getValue()) {
 			compute(wave, vtlnWarp, output);
@@ -220,19 +219,19 @@ public class FeatureComputer implements CodeFeatures {
 						+ sampleFreq + " .vs " + newSampleFreq);
 
 			// Resample the waveform
-			ScalarBank resampledWave = Resampler.resampleWaveform(sampleFreq, wave, newSampleFreq);
+			PackedCollection<Scalar> resampledWave = Resampler.resampleWaveform(sampleFreq, wave, newSampleFreq);
 			compute(resampledWave, vtlnWarp, output);
 		}
 	}
 
-	protected void compute(ScalarBank wave, double vtlnWarp, Tensor<Scalar> output) {
+	protected void compute(PackedCollection<Scalar> wave, double vtlnWarp, Tensor<Scalar> output) {
 		compute(wave, vtlnWarp,
 				(r, v) -> IntStream.range(0, v.getCount())
 						.forEach(i ->
 								new TensorRow<>(output, r).set(i, new Scalar(featureEnergies.get(i).getValue()))));
 	}
 
-	public void compute(ScalarBank wave, double vtlnWarp, BiConsumer<Integer, ScalarBank> output) {
+	public void compute(PackedCollection<Scalar> wave, double vtlnWarp, BiConsumer<Integer, PackedCollection<Scalar>> output) {
 		int rowsOut = numFrames(wave.getCount(), settings.getFrameExtractionSettings(), false);
 
 		if (rowsOut == 0) {
@@ -243,7 +242,7 @@ public class FeatureComputer implements CodeFeatures {
 		for (int r = 0; r < rowsOut; r++) {
 			featureCount++;
 			logTensor.insert((double) featureCount, featureCount, 0); // Number column
-			ScalarBank window = extractWindow(0, wave, r, settings.getFrameExtractionSettings(),
+			PackedCollection<Scalar> window = extractWindow(0, wave, r, settings.getFrameExtractionSettings(),
 					featureWindowFunction, windowInput,
 					useRawLogEnergy ? rawLogEnergy : null);
 
@@ -254,25 +253,25 @@ public class FeatureComputer implements CodeFeatures {
 		}
 	}
 
-	private double dot(ScalarBank x, ScalarBank y) {
+	private double dot(PackedCollection<Scalar> x, PackedCollection<Scalar> y) {
 		return Math.max(
 				IntStream.range(0, x.getCount()).mapToDouble(i ->
 						x.get(i).x() * y.get(i).x()).sum(), epsilon);
 	}
 
-	private double logDot(ScalarBank x, ScalarBank y) {
+	private double logDot(PackedCollection<Scalar> x, PackedCollection<Scalar> y) {
 		return Math.log(dot(x, y));
 	}
 
-	private void removeDcOffset(ScalarBank window) {
+	private void removeDcOffset(PackedCollection<Scalar> window) {
 		double dcOffset = window.stream().mapToDouble(Scalar::getValue).sum();
 		window.forEach(scalar -> scalar.setValue(scalar.getValue() - dcOffset));
 	}
 
 	protected void compute(Scalar signalRawLogEnergy,
-						double vtlnWarp,
-						ScalarBank realSignalFrame,
-						ScalarBank feature) {
+						   double vtlnWarp,
+						   PackedCollection<Scalar> realSignalFrame,
+						   PackedCollection<Scalar> feature) {
 		assert realSignalFrame.getCount() == settings.getFrameExtractionSettings().getPaddedWindowSize();
 
 		MelBanks melBanks = getMelBanks(vtlnWarp);
@@ -295,7 +294,8 @@ public class FeatureComputer implements CodeFeatures {
 
 		// Convert the FFT into a power spectrum.
 		start = System.currentTimeMillis();
-		ScalarBank powerSpectrum = this.powerSpectrum.evaluate(signalFrame).range(0, signalFrame.getCount() / 2 + 1);
+		PackedCollection<Scalar> powerSpectrum = this.powerSpectrum.evaluate(signalFrame)
+				.range(shape(signalFrame.getCount() / 2 + 1, 2)).traverse(1);
 		if (enableVerbose) System.out.println("--> computePowerSpectrum: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
@@ -304,18 +304,18 @@ public class FeatureComputer implements CodeFeatures {
 
 		// avoid log of zero (which should be prevented anyway by dithering).
 		start = System.currentTimeMillis();
-		melEnergies.applyFloor(FeatureComputer.epsilon);
-		melEnergies.applyLog();  // take the log.
+		applyFloor(melEnergies, FeatureComputer.epsilon);
+		applyLog(melEnergies);  // take the log.
 		if (enableVerbose) System.out.println("--> applyLog: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		feature.setZero();  // in case there were NaNs.
-		feature.addMatVec(dctMatrix, melEnergies);
+		setZero(feature);  // in case there were NaNs.
+		addMatVec(feature, dctMatrix, melEnergies);
 		if (enableVerbose) System.out.println("--> dctMatrix: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
 		if (settings.getCepstralLifter().getValue() != 0.0)
-			feature.mulElements(lifterCoeffs);
+			mulElements(feature, lifterCoeffs);
 		if (enableVerbose) System.out.println("--> lifterCoeffs: " + (System.currentTimeMillis() - start));
 
 		if (settings.isUseEnergy()) {
@@ -403,12 +403,12 @@ public class FeatureComputer implements CodeFeatures {
 	// ExtractWindow extracts a windowed frame of waveform with a power-of-two,
 	// padded size.  It does mean subtraction, pre-emphasis and dithering as
 	// requested.
-	ScalarBank extractWindow(long sampleOffset, ScalarBank wave,
-					   int f,  // with 0 <= f < NumFrames(feats, opts)
-					   FrameExtractionSettings opts,
-					   FeatureWindowFunction windowFunction,
-					   ScalarBank window,
-					   Scalar logEnergyPreWindow) {
+	PackedCollection<Scalar> extractWindow(long sampleOffset, PackedCollection<Scalar> wave,
+					   		 int f,  // with 0 <= f < NumFrames(feats, opts)
+					   		 FrameExtractionSettings opts,
+							 FeatureWindowFunction windowFunction,
+							 PackedCollection<Scalar> window,
+					   		 Scalar logEnergyPreWindow) {
 
 		assert sampleOffset >= 0 && wave.getCount() != 0;
 		int frameLength = opts.getWindowSize();
@@ -462,15 +462,15 @@ public class FeatureComputer implements CodeFeatures {
 
 		// System.out.println(Arrays.toString(IntStream.range(0, 12).mapToDouble(i -> window.get(i).x()).toArray()));
 
-		ScalarBank frame = window;
-		if (frameLengthPadded > frameLength) frame = frame.range(0, frameLength);
+		PackedCollection<Scalar> frame = window;
+		if (frameLengthPadded > frameLength) frame = frame.range(shape(frameLength, 2)).traverse(1);
 
 		return processWindow(opts, frame, logEnergyPreWindow);
 	}
 
-	ScalarBank processWindow(FrameExtractionSettings opts,
-					   ScalarBank window,
-					   Scalar logEnergyPreWindow) {
+	PackedCollection<Scalar> processWindow(FrameExtractionSettings opts,
+							 PackedCollection<Scalar> window,
+					   		 Scalar logEnergyPreWindow) {
 		long start = System.currentTimeMillis();
 
 		int frameLength = opts.getWindowSize();
@@ -518,11 +518,11 @@ public class FeatureComputer implements CodeFeatures {
 		return melBanks;
 	}
 
-	static PackedCollection<Pair<?>> toPairBank(ScalarBank real) {
+	static PackedCollection<Pair<?>> toPairBank(PackedCollection<Scalar> real) {
 		return toPairBank(real, Pair.bank(real.getCount()));
 	}
 
-	static PackedCollection<Pair<?>> toPairBank(ScalarBank real, PackedCollection<Pair<?>> out) {
+	static PackedCollection<Pair<?>> toPairBank(PackedCollection<Scalar> real, PackedCollection<Pair<?>> out) {
 		IntStream.range(0, real.getCount()).forEach(i -> out.set(i, real.get(i).getValue(), 0.0));
 		return out;
 	}

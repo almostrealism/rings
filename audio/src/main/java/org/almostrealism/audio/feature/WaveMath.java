@@ -19,7 +19,6 @@ package org.almostrealism.audio.feature;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
@@ -61,7 +60,7 @@ public class WaveMath implements CodeFeatures {
 		return gcd * (m / gcd) * (n / gcd);
 	}
 
-	public Scalar dot(ScalarBank a, ScalarBank b) {
+	public Scalar dot(PackedCollection<Scalar> a, PackedCollection<Scalar> b) {
 		assert a.getCount() == b.getCount();
 		return getDot(a.getCount()).evaluate(a, b);
 	}
@@ -69,7 +68,7 @@ public class WaveMath implements CodeFeatures {
 	public synchronized Evaluable<? extends Scalar> getDot(int count) {
 		if (!dotEvals.containsKey(count)) {
 			Scalar output = new Scalar();
-			ScalarBank temp = new ScalarBank(count);
+			PackedCollection<Scalar> temp = Scalar.scalarBank(count);
 
 			Producer<PackedCollection<?>> a = subset(shape(count, 1), v(shape(count, 2), 0), 0);
 			Producer<PackedCollection<?>> b = subset(shape(count, 1), v(shape(count, 2), 1), 0);

@@ -1,8 +1,24 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.feature;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +119,7 @@ public class MelBanks implements CodeFeatures {
 
 			// thisBin will be a vector of coefficients that is only
 			// nonzero where this mel bin is active.
-			ScalarBank thisBin = new ScalarBank(numFftBins);
+			PackedCollection<Scalar> thisBin = Scalar.scalarBank(numFftBins);
 			int firstIndex = -1, lastIndex = -1;
 
 			for (int i = 0; i < numFftBins; i++) {
@@ -133,8 +149,8 @@ public class MelBanks implements CodeFeatures {
 			bins.get(bin).setKey(firstIndex);
 			int size = lastIndex + 1 - firstIndex;
 
-			bins.get(bin).setValue(new ScalarBank(size));
-			bins.get(bin).getValue().copyFromVec(thisBin.range(firstIndex, size));
+			bins.get(bin).setValue(Scalar.scalarBank(size));
+			bins.get(bin).getValue().copyFrom(thisBin.range(shape(size, 2), 2 * firstIndex));
 			for (int i = 0; i < size; i++) {
 				bins.get(bin).getValue().set(i, thisBin.get(firstIndex + i));
 			}
@@ -163,17 +179,17 @@ public class MelBanks implements CodeFeatures {
 	/**
 	 * @param powerSpectrum  contains fft energies.
 	 */
-	public void compute(ScalarBank powerSpectrum, ScalarBank melEnergiesOut) {
+	public void compute(PackedCollection<Scalar> powerSpectrum, PackedCollection<Scalar> melEnergiesOut) {
 		int numBins = bins.size();
 		assert melEnergiesOut.getCount() == numBins;
 
 		for (int i = 0; i < numBins; i++) {
 			int offset = bins.get(i).getKey();
-   			ScalarBank v = bins.get(i).getValue();
+   			PackedCollection<Scalar> v = bins.get(i).getValue();
 			// System.out.println("Bin(" + i + "):");
 			// IntStream.range(0, v.getCount()).mapToObj(v::get).forEach(System.out::println);
 
-   			ScalarBank spec = powerSpectrum.range(offset, v.getCount());
+			PackedCollection<Scalar> spec = powerSpectrum.range(v.getShape(), 2 * offset);
    			// System.out.println("Spectrum:");
    			// IntStream.range(0, spec.getCount()).mapToObj(spec::get).forEach(System.out::println);
 
@@ -199,7 +215,10 @@ public class MelBanks implements CodeFeatures {
 	// pAC - autocorrelation coefficients [n + 1]
 	// pLP - linear prediction coefficients [n] (predicted_sn = sum_1^P{a[i-1] * s[n-i]}})
 	//       F(z) = 1 / (1 - A(z)), 1 is not stored in the demoninator
-	protected static Scalar durbin(int n, ScalarBank pAC, ScalarBank pLP, ScalarBank pTmp) {
+	protected static Scalar durbin(int n,
+								   PackedCollection<Scalar> pAC,
+								   PackedCollection<Scalar> pLP,
+								   PackedCollection<Scalar> pTmp) {
 		double E = pAC.get(0).getValue();
 
 		for (int i = 0; i < n; i++) {

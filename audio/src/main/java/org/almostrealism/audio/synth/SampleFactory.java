@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.OutputLine;
 
 public class SampleFactory {
@@ -42,7 +43,7 @@ public class SampleFactory {
 	
 	public static Sample createSample(double freq, int ms) {
 		int samples = ms * OutputLine.sampleRate / 1000;
-		ScalarBank output = new ScalarBank(samples);
+		PackedCollection<Scalar> output = Scalar.scalarBank(samples);
 
 		double period = (double) OutputLine.sampleRate / freq;
 		for (int i = 0; i < output.getCount(); i++) {
