@@ -18,9 +18,7 @@ package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.computations.GreaterThanRGB;

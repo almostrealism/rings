@@ -22,8 +22,6 @@ import java.util.List;
 
 import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
-import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
@@ -141,8 +139,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			 */
 
 			Producer<Scalar> c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			Producer<Scalar> reflective = v(reflectivity).add(v(1 - reflectivity)
-							.multiply(compileProducer(pow(c, v(5.0)))));
+			Producer<Scalar> reflective = scalarAdd(v(reflectivity), v(1 - reflectivity)
+							.multiply(scalarPow(c, v(5.0))));
 			Producer<RGB> fcolor = color;
 			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
 

@@ -27,7 +27,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorProducerBase;
-import org.almostrealism.algebra.computations.ScalarExpressionComputation;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
@@ -59,8 +58,8 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 		return (GeneratedColorProducer) ((OperationAdapter) engine).getInputs().get(2);
 	}
 
-	protected ScalarExpressionComputation dotProduct() {
-		return (ScalarExpressionComputation)
+	protected ExpressionComputation<Scalar> dotProduct() {
+		return (ExpressionComputation<Scalar>)
 				((OperationAdapter) generatedColorProducer().getProducer()).getInputs().get(1);
 	}
 
@@ -82,7 +81,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateDotProduct() {
-		ScalarExpressionComputation dp = dotProduct();
+		ExpressionComputation<Scalar> dp = dotProduct();
 		Evaluable<Scalar> ev = dp.get();
 		((OperationAdapter) ev).compile();
 

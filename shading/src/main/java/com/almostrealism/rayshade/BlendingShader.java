@@ -17,7 +17,6 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;

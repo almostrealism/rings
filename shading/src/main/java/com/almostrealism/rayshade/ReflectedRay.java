@@ -18,15 +18,9 @@ package com.almostrealism.rayshade;
 
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.scope.Scope;
-import org.almostrealism.Ops;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
-import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.GeometryFeatures;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayFeatures;
 import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;

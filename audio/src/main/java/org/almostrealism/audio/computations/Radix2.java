@@ -39,13 +39,13 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);
 
-		ScalarProducerBase halfN = scalarsMultiply(nProducer, v(0.5));
-		ScalarProducerBase quarterN = scalarsMultiply(nProducer, v(0.25));
-		ScalarProducerBase tripleQuarterN = scalarsMultiply(nProducer, v(0.75));
+		Producer<Scalar> halfN = scalarsMultiply(nProducer, v(0.5));
+		Producer<Scalar> quarterN = scalarsMultiply(nProducer, v(0.25));
+		Producer<Scalar> tripleQuarterN = scalarsMultiply(nProducer, v(0.75));
 
-		ScalarProducerBase kPlusTripleQuarterN = scalarAdd(kProducer, tripleQuarterN);
-		ScalarProducerBase kPlusHalfN = scalarAdd(kProducer, halfN);
-		ScalarProducerBase kPlusQuarterN = scalarAdd(kProducer, quarterN);
+		Producer<Scalar> kPlusTripleQuarterN = scalarAdd(kProducer, tripleQuarterN);
+		Producer<Scalar> kPlusHalfN = scalarAdd(kProducer, halfN);
+		Producer<Scalar> kPlusQuarterN = scalarAdd(kProducer, quarterN);
 
 		PairProducerBase a = pairFromBank(bank, kProducer);
 		PairProducerBase b = pairFromBank(bank, kPlusQuarterN);
@@ -58,7 +58,7 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 			return pairAdd(b, d);
 		}
 
-		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);
+		Producer<Scalar> angleK = scalarsMultiply(angleProducer, kProducer);
 		Producer<Pair<?>> omega = complexFromAngle(angleK);
 
 		if (kind == EVEN) {

@@ -17,10 +17,8 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;

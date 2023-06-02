@@ -191,7 +191,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	}
 
 	protected BiFunction<Producer<PackedCollection<?>>, Producer<PackedCollection<?>>, Producer<PackedCollection<?>>> combine() {
-		return (a, b) -> (Producer) toScalar(a).multiply(toScalar(b));
+		return (a, b) -> (Producer) scalarsMultiply(toScalar(a), toScalar(b));
 		// return (a, b) -> a;
 	}
 }
