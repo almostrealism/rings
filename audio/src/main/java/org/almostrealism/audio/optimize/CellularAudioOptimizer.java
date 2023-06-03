@@ -154,7 +154,8 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
 		int sourceCount = AudioScene.DEFAULT_SOURCE_COUNT;
-		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, 3,
+		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
+		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
 										OutputLine.sampleRate, new NoOpGenerationProvider());
 
 		scene.getPatternManager().getChoices().addAll(createChoices());

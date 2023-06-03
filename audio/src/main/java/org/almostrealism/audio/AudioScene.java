@@ -60,6 +60,7 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final int DEFAULT_SOURCE_COUNT = 6;
+	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
@@ -69,33 +70,33 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
 				switch (c) {
-					case 0 -> { yield 4; }
-					case 1 -> { yield 4; }
-					case 2 -> { yield 1; }
-					case 3 -> { yield 2; }
-					case 4 -> { yield 1; }
-					case 5 -> { yield 1; }
+					case 0 -> 4;
+					case 1 -> 4;
+					case 2 -> 1;
+					case 3 -> 2;
+					case 4 -> 1;
+					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
 		DEFAULT_LAYERS = c ->
 				switch (c) {
-					case 0 -> { yield 5; }
-					case 1 -> { yield 5; }
-					case 2 -> { yield 4; }
-					case 3 -> { yield 5; }
-					case 4 -> { yield 3; }
-					case 5 -> { yield 1; }
+					case 0 -> 5;
+					case 1 -> 5;
+					case 2 -> 4;
+					case 3 -> 5;
+					case 4 -> 3;
+					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
 		DEFAULT_DURATION = c ->
 				switch (c) {
-					case 0 -> { yield 1; }
-					case 1 -> { yield 4; }
-					case 2 -> { yield 16; }
-					case 3 -> { yield 16; }
-					case 5 -> { yield 16; }
+					case 0 -> 1;
+					case 1 -> 4;
+					case 2 -> 16;
+					case 3 -> 16;
+					case 5 -> 16;
 					default -> (int) Math.pow(2.0, c - 1);
 				};
 	}
