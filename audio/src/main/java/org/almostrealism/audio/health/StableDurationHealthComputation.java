@@ -203,7 +203,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
 					System.out.println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds");
-				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 10) == 0) {
+				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20) == 0) {
 					System.out.print(">");
 				}
 			}

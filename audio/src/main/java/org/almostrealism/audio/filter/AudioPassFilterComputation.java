@@ -16,18 +16,25 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.code.HybridScope;
+import io.almostrealism.expression.Max;
+import io.almostrealism.expression.Min;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
+import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.DynamicOperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AudioPassFilterComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
+	public static double MAX_INPUT = 0.99;
+
 	private boolean high;
 
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
@@ -123,17 +130,35 @@ public class AudioPassFilterComputation extends DynamicOperationComputationAdapt
 							getResonance(), getC(), getA1())));
 		}
 
+		String input = "max(min(" + input() + ", " + e(MAX_INPUT).getSimpleExpression() +
+						"), " + e(-MAX_INPUT).getSimpleExpression() + ")";
+
 		addVariable(getOutput().valueAt(0).assign(
-				e(a1() + " * " + input() + " + " +
+				e(a1() + " * " + input + " + " +
 						a2() + " * " + inputHistory0() + " + " +
 						a3() + " * " + inputHistory1() + " - " +
 						b1() + " * " + outputHistory0() + " - " +
 						b2() + " * " + outputHistory1())));
 
 		addVariable(getInputHistory1().valueAt(0).assign(getInputHistory0().valueAt(0)));
-		addVariable(getInputHistory0().valueAt(0).assign(getInput().valueAt(0)));
+		addVariable(getInputHistory0().valueAt(0).assign(new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT))));
 		addVariable(getOutputHistory2().valueAt(0).assign(getOutputHistory1().valueAt(0)));
 		addVariable(getOutputHistory1().valueAt(0).assign(getOutputHistory0().valueAt(0)));
 		addVariable(getOutputHistory0().valueAt(0).assign(getOutput().valueAt(0)));
 	}
+
+//	@Override
+//	public Scope getScope() {
+//		Scope<Scalar> parentScope = super.getScope();
+//		HybridScope<Scalar> scope = new HybridScope<>(this);
+//		scope.getVariables().addAll(parentScope.getVariables());
+//
+//		Consumer<String> code = scope.code();
+//		code.accept("if (fabs(" + getOutput().valueAt(0).getSimpleExpression() + ") > 0.99) {\n");
+//		code.accept("    printf(\"a1 = %f, a2 = %f, a3 = %f, b1 = %f, b2 = %f\\n\", " +
+//				a1() + ", " + a2() + ", " + a3() + ", " + b1() + ", " + b2()  + ");\n");
+//		code.accept("}\n");
+//
+//		return scope;
+//	}
 }
