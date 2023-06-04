@@ -160,6 +160,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		scene.getPatternManager().getChoices().addAll(createChoices());
 		scene.setTuning(new DefaultKeyboardTuning());
+		scene.setLibraryRoot(new FileWaveDataProviderNode(new File(LIBRARY)));
 
 		AudioScene.Settings settings = AudioScene.Settings.defaultSettings(sourceCount,
 				AudioScene.DEFAULT_PATTERNS_PER_CHANNEL,
@@ -191,29 +192,6 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		if (enableSourcesJson) {
 			PatternFactoryChoiceList choices = new ObjectMapper()
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
-
-//			TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
-//							TreeNoteSource.Filter.nameStartsWith("SN_"));
-//			System.out.println("CellularAudioOptimizer: " + synths.getNotes().size() + " synth samples");
-//			choices.add(PatternFactoryChoice.fromSource("SN", synths, 3, 5, true));
-//
-//			choices.forEach(c -> {
-//				if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
-//					c.setMinScale(0.0);
-//					c.setMaxScale(16.0);
-//				}
-//
-//				if ("Chord Synth".equals(c.getFactory().getName())) {
-//					c.setSeedBias(0.4);
-//				} else if ("Bass".equals(c.getFactory().getName())) {
-//					c.setSeedBias(1.0);
-//				} else if ("Rise".equals(c.getFactory().getName())) {
-//					c.setSeedBias(1.0);
-//				} else if ("SN".equals(c.getFactory().getName())) {
-//					c.setSeedBias(0.4);
-//				}
-//			});
-
 			return choices;
 		} else {
 			List<PatternFactoryChoice> choices = new ArrayList<>();

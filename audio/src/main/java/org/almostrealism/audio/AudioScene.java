@@ -87,7 +87,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 1 -> 5;
 					case 2 -> 4;
 					case 3 -> 5;
-					case 4 -> 3;
+					case 4 -> 4;
 					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
@@ -98,6 +98,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					case 1 -> 4;
 					case 2 -> 16;
 					case 3 -> 16;
+					case 4 -> 8;
 					case 5 -> 16;
 					default -> (int) Math.pow(2.0, c - 1);
 				};

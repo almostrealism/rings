@@ -64,10 +64,15 @@ public class PatternFactoryTest implements CellFeatures {
 	public void fixChoices() throws IOException {
 		List<PatternFactoryChoice> choices = readChoices();
 
+		TreeNoteSource pads = TreeNoteSource.fromFile(new File(LIBRARY),
+				TreeNoteSource.Filter.nameStartsWith("PD_"));
+		System.out.println("CellularAudioOptimizer: " + pads.getNotes().size() + " pad samples");
+		choices.add(PatternFactoryChoice.fromSource("PD", pads, 3, 5, true));
+
 		TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
 				TreeNoteSource.Filter.nameStartsWith("SN_"));
 		System.out.println("PatternFactoryTest: " + synths.getNotes().size() + " synth samples");
-		choices.add(PatternFactoryChoice.fromSource("SN", synths, 3, 5, true));
+		choices.add(PatternFactoryChoice.fromSource("SN", synths, 4, 5, true));
 
 		choices.forEach(c -> {
 			if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
