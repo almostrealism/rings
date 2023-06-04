@@ -16,12 +16,15 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.code.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.CollectionProducer;
@@ -144,6 +147,13 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	public void setTuning(KeyboardTuning tuning) {
 		getChoices().forEach(c -> c.setTuning(tuning));
+	}
+
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root) {
+		getChoices().stream().flatMap(c -> c.getFactory().getSources().stream()).forEach(s -> {
+			if (s instanceof TreeNoteSource)
+				((TreeNoteSource) s).setTree(root);
+		});
 	}
 
 	public PatternLayerManager addPattern(int channel, double measures, boolean melodic) {

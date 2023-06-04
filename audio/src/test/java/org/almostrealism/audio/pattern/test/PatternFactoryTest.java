@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.FileNoteSource;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -49,16 +50,39 @@ import java.util.stream.Collectors;
 
 public class PatternFactoryTest implements CellFeatures {
 
+	public static String LIBRARY = "Library";
+
+	static {
+		String env = System.getenv("AR_RINGS_LIBRARY");
+		if (env != null) LIBRARY = env;
+
+		String arg = System.getProperty("AR_RINGS_LIBRARY");
+		if (arg != null) LIBRARY = arg;
+	}
+
 	@Test
 	public void fixChoices() throws IOException {
 		List<PatternFactoryChoice> choices = readChoices();
 
+		TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
+				TreeNoteSource.Filter.nameStartsWith("SN_"));
+		System.out.println("PatternFactoryTest: " + synths.getNotes().size() + " synth samples");
+		choices.add(PatternFactoryChoice.fromSource("SN", synths, 3, 5, true));
+
 		choices.forEach(c -> {
-			if ("Bass".equals(c.getFactory().getName())) {
-				c.setGranularity(4.0);
-				c.setSeedScale(4.0);
-				c.setSeedBias(0.0);
-				c.setMaxScale(8.0);
+			if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
+				c.setMinScale(0.0);
+				c.setMaxScale(16.0);
+			}
+
+			if ("Chord Synth".equals(c.getFactory().getName())) {
+				c.setSeedBias(0.4);
+			} else if ("Bass".equals(c.getFactory().getName())) {
+				c.setSeedBias(1.0);
+			} else if ("Rise".equals(c.getFactory().getName())) {
+				c.setSeedBias(1.0);
+			} else if ("SN".equals(c.getFactory().getName())) {
+				c.setSeedBias(0.4);
 			}
 		});
 
@@ -119,7 +143,12 @@ public class PatternFactoryTest implements CellFeatures {
 	}
 
 	public PatternFactoryChoiceList readChoices() throws IOException {
-		return new ObjectMapper().readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+		File f = new File("pattern-factory.json.old");
+		if (f.exists()) {
+			return new ObjectMapper().readValue(f, PatternFactoryChoiceList.class);
+		} else {
+			return new ObjectMapper().readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+		}
 	}
 
 	@Test

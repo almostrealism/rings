@@ -17,12 +17,14 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.code.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
+import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
@@ -195,6 +197,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public void setTuning(KeyboardTuning tuning) {
 		patterns.setTuning(tuning);
+	}
+
+	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		patterns.setTree(tree);
 	}
 
 	public Animation<T> getScene() { return scene; }

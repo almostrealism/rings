@@ -88,6 +88,7 @@ public class PatternElementFactory {
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 
+	@JsonIgnore
 	public List<PatternNote> getAllNotes() {
 		return sources.stream().map(PatternNoteSource::getNotes).flatMap(List::stream).collect(Collectors.toList());
 	}

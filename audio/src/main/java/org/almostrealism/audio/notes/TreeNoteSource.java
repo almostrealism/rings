@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.Tree;
 import io.almostrealism.relation.Named;
 import org.almostrealism.audio.data.FileWaveDataProvider;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TreeNoteSource implements PatternNoteSource {
+public class TreeNoteSource implements PatternNoteSource, Named {
 	private Tree<? extends Supplier<FileWaveDataProvider>> tree;
 	private List<PatternNote> notes;
 
@@ -53,12 +54,11 @@ public class TreeNoteSource implements PatternNoteSource {
 	public KeyPosition<?> getRoot() { return root; }
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
-	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() {
-		return tree;
-	}
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
-		this.tree = tree;
-	}
+	@JsonIgnore
+	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() { return tree; }
+
+	@JsonIgnore
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) { this.tree = tree; }
 
 	public List<Filter> getFilters() { return filters; }
 
@@ -73,8 +73,17 @@ public class TreeNoteSource implements PatternNoteSource {
 		}
 	}
 
+	@JsonIgnore
+	@Override
+	public String getName() {
+		if (filters.isEmpty()) return getOrigin();
+		if (filters.size() > 1) return getOrigin() + " (" + filters.size() + " filters)";
+		return filters.get(0).filterOn.name() + " " + filters.get(0).filterType.name() + " \"" + filters.get(0).filter + "\"";
+	}
+
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
 
+	@JsonIgnore
 	public List<PatternNote> getNotes() {
 		computeNotes();
 		return notes;
@@ -130,11 +139,22 @@ public class TreeNoteSource implements PatternNoteSource {
 		private FilterType filterType;
 		private String filter;
 
+		public Filter() { }
+
 		public Filter(FilterOn filterOn, FilterType filterType, String filter) {
 			this.filterOn = filterOn;
 			this.filterType = filterType;
 			this.filter = filter;
 		}
+
+		public FilterOn getFilterOn() { return filterOn; }
+		public void setFilterOn(FilterOn filterOn) { this.filterOn = filterOn; }
+
+		public FilterType getFilterType() { return filterType; }
+		public void setFilterType(FilterType filterType) { this.filterType = filterType; }
+
+		public String getFilter() { return filter; }
+		public void setFilter(String filter) { this.filter = filter; }
 
 		public static Filter nameStartsWith(String prefix) {
 			return new Filter(FilterOn.NAME, FilterType.STARTS_WITH, prefix);
