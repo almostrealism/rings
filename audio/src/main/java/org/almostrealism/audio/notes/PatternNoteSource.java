@@ -32,4 +32,6 @@ public interface PatternNoteSource {
 
 	@JsonIgnore
 	List<PatternNote> getNotes();
+
+	boolean checkResourceUsed(String canonicalPath);
 }

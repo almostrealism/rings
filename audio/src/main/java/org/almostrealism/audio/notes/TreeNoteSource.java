@@ -26,6 +26,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -105,6 +106,25 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 			if (match) notes.add(new PatternNote(p, getRoot()));
 		});
 		notes.forEach(n -> n.setTuning(tuning));
+	}
+
+	public boolean checkResourceUsed(String canonicalPath) {
+		if (notes == null) computeNotes();
+
+		boolean match = notes.stream().anyMatch(note -> {
+			if (note.getProvider() instanceof FileWaveDataProvider) {
+				try {
+					return new File(((FileWaveDataProvider) note.getProvider()).getResourcePath()).getCanonicalPath().equals(canonicalPath);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return false;
+				}
+			} else {
+				return false;
+			}
+		});
+
+		return match;
 	}
 
 	public static TreeNoteSource fromFile(File root, Filter filter) {

@@ -320,6 +320,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
 
+	public boolean checkResourceUsed(String canonicalPath) {
+		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
+	}
+
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
 

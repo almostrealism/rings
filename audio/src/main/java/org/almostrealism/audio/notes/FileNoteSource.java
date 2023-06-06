@@ -20,6 +20,8 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class FileNoteSource implements PatternNoteSource {
@@ -63,5 +65,15 @@ public class FileNoteSource implements PatternNoteSource {
 		}
 
 		return List.of(note);
+	}
+
+	@Override
+	public boolean checkResourceUsed(String canonicalPath) {
+		try {
+			return new File(source).getCanonicalPath().equals(canonicalPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

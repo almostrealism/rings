@@ -138,6 +138,10 @@ public class PatternElementFactory {
 		getSources().forEach(n -> n.setTuning(tuning));
 	}
 
+	public boolean checkResourceUsed(String canonicalPath) {
+		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
+	}
+
 	@JsonIgnore
 	public List<PatternNote> getValidNotes() {
 		return getAllNotes().stream().filter(PatternNote::isValid).collect(Collectors.toList());
