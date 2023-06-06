@@ -125,11 +125,15 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	}
 
 	public enum FilterType {
-		STARTS_WITH;
+		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS;
 
 		boolean matches(String value, String filter) {
 			return switch (this) {
+				case EQUALS -> value.equals(filter);
+				case EQUALS_IGNORE_CASE -> value.equalsIgnoreCase(filter);
 				case STARTS_WITH -> value.startsWith(filter);
+				case ENDS_WITH -> value.endsWith(filter);
+				case CONTAINS -> value.contains(filter);
 			};
 		}
 	}

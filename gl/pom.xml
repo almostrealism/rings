@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>gl</artifactId>
+	<artifactId>ar-gl</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -20,13 +20,13 @@
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ui</artifactId>
+			<artifactId>ar-primitives</artifactId>
 			<version>0.29</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>shading</artifactId>
+			<artifactId>ar-shading</artifactId>
 			<version>0.29</version>
 		</dependency>
 

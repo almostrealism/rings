@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,6 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.GraphicsConverter;
 
 import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.event.SceneCloseEvent;
-import com.almostrealism.event.SceneOpenEvent;
-import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
 import io.almostrealism.relation.Pipeline;
 import io.almostrealism.relation.Evaluable;
@@ -163,37 +160,39 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	/** Method called when an event has been fired. */
 	@Override
 	public void eventFired(Event event) {
-		if (event instanceof SceneOpenEvent) {
-			this.scene = (T) ((SceneOpenEvent) event).getScene();
-			this.clearRenderedImage();
-		} else if (event instanceof SceneCloseEvent) {
-			this.scene = null;
-			this.clearRenderedImage();
-		}
-		
-		if (event instanceof SurfaceEditEvent) {
-			SurfaceEditEvent se = (SurfaceEditEvent) event;
+		clearRenderedImage();
 
-			if (se.isNameChangeEvent()) {
-				return;
-			} else if (se.isLocationChangeEvent()) {
-				render();
-			} else if (se.isSizeChangeEvent()) {
-				render();
-			} else if (se.isScaleCoefficientChangeEvent()) {
-				render();
-			} else if (se.isRotationCoefficientChangeEvent()) {
-				render();
-			} else if (se.isTransformationChangeEvent()) {
-				render();
-			} else if (se.isColorChangeEvent()) {
-				evaluateImage();
-			} else if (se.isShadingOptionChangeEvent()) {
-				render();
-			} else if (se.isDataChangeEvent()) {
-				render();
-			}
-		}
+//		if (event instanceof SceneOpenEvent) {
+//			this.scene = (T) ((SceneOpenEvent) event).getScene();
+//			this.clearRenderedImage();
+//		} else if (event instanceof SceneCloseEvent) {
+//			this.scene = null;
+//			this.clearRenderedImage();
+//		}
+//
+//		if (event instanceof SurfaceEditEvent) {
+//			SurfaceEditEvent se = (SurfaceEditEvent) event;
+//
+//			if (se.isNameChangeEvent()) {
+//				return;
+//			} else if (se.isLocationChangeEvent()) {
+//				render();
+//			} else if (se.isSizeChangeEvent()) {
+//				render();
+//			} else if (se.isScaleCoefficientChangeEvent()) {
+//				render();
+//			} else if (se.isRotationCoefficientChangeEvent()) {
+//				render();
+//			} else if (se.isTransformationChangeEvent()) {
+//				render();
+//			} else if (se.isColorChangeEvent()) {
+//				evaluateImage();
+//			} else if (se.isShadingOptionChangeEvent()) {
+//				render();
+//			} else if (se.isDataChangeEvent()) {
+//				render();
+//			}
+//		}
 	}
 
 	/** Returns the {@link Scene} that this {@link RenderPanel} displays. */

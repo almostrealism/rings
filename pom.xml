@@ -26,18 +26,15 @@
 		<module>gl</module>
 		<module>shading</module>
 		<module>primitives</module>
-		<module>ui</module>
 		<module>network</module>
 		<module>absorption</module>
 		<module>photonfield</module>
 		<module>replicate</module>
 		<module>tensorflow</module>
 		<module>torch</module>
-		<module>openai</module>
 		<module>keyframing</module>
 		<module>remote</module>
 		<module>remote-server</module>
-		<module>aware</module>
 	</modules>
 
 	<!-- Output to jar format -->

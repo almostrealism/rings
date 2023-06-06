@@ -197,8 +197,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public Frequency getTempo() { return Frequency.forBPM(bpm); }
 
 	public void setTuning(KeyboardTuning tuning) {
+		this.tuning = tuning;
 		patterns.setTuning(tuning);
 	}
+
+	public KeyboardTuning getTuning() { return tuning; }
 
 	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
 		patterns.setTree(tree);
