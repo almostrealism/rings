@@ -69,11 +69,6 @@ public class FileNoteSource implements PatternNoteSource {
 
 	@Override
 	public boolean checkResourceUsed(String canonicalPath) {
-		try {
-			return new File(source).getCanonicalPath().equals(canonicalPath);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return source != null && source.equals(canonicalPath);
 	}
 }

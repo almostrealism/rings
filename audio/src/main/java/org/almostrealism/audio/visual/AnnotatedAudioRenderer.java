@@ -82,12 +82,13 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 	}
 
 	private void loadWav(File f) throws IOException {
-		WavFile in = WavFile.openWavFile(f);
-		sampleRate = in.getSampleRate();
-		double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
-		in.readFrames(data, (int) in.getFramesRemaining());
+		try (WavFile in = WavFile.openWavFile(f)) {
+			sampleRate = in.getSampleRate();
+			double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			in.readFrames(data, (int) in.getFramesRemaining());
 
-		wav = Scalar.scalarBank(data[0].length);
-		IntStream.range(0, wav.getCount()).forEach(i -> wav.set(i, data[0][i]));
+			wav = Scalar.scalarBank(data[0].length);
+			IntStream.range(0, wav.getCount()).forEach(i -> wav.set(i, data[0][i]));
+		}
 	}
 }

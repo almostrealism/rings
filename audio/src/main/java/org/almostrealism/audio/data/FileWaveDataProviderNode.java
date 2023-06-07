@@ -46,6 +46,11 @@ public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>,
 	@Override
 	public FileWaveDataProvider get() {
 		if (!isLeaf()) return null;
+		if (!file.exists()) return null;
+		if (file.getName().equals(".DS_Store")) return null;
+
+		String ext = file.getName().substring(file.getName().length() - 4);
+		if (!ext.contains("wav") && !ext.contains("WAV")) return null;
 
 		try {
 			return new FileWaveDataProvider(file.getCanonicalPath());

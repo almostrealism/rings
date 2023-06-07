@@ -693,33 +693,21 @@ public class WavFile implements AutoCloseable {
 
 		long start = System.currentTimeMillis();
 
-		WavFile wav;
+		try (WavFile wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate())) {
+			double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
 
-		try {
-			wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
+			for (int i = 0; i < frames.length; i++) {
+				// double value = data.valueAt(i).getValue();
+				double value = frames[i];
 
-		double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
-
-		for (int i = 0; i < frames.length; i++) {
-			// double value = data.valueAt(i).getValue();
-			double value = frames[i];
-
-			try {
-				wav.writeFrames(new double[][]{{value}, {value}}, 1);
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					wav.writeFrames(new double[][]{{value}, {value}}, 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-
-		try {
-			wav.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 }

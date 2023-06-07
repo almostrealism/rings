@@ -25,11 +25,14 @@ import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class FileWaveDataProvider extends WaveDataProviderAdapter {
+	private static List<String> corruptFiles = new ArrayList<>();
 
 	private Integer sampleRate;
 	private Integer count;
@@ -62,6 +65,8 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	@JsonIgnore
 	@Override
 	public int getSampleRate() {
+		if (corruptFiles.contains(getResourcePath())) return 0;
+
 		if (sampleRate == null) {
 			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
 				long count = w.getNumFrames();
@@ -69,6 +74,7 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 				if (w.getSampleRate() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
 				this.sampleRate = (int) w.getSampleRate();
 			} catch (IOException e) {
+				corruptFiles.add(getResourcePath());
 				throw new RuntimeException(e);
 			}
 		}
@@ -79,11 +85,14 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	@JsonIgnore
 	@Override
 	public int getCount() {
+		if (corruptFiles.contains(getResourcePath())) return 0;
+
 		if (count == null) {
 			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
 				if (w.getNumFrames() > Integer.MAX_VALUE) throw new UnsupportedOperationException();
 				this.count = (int) w.getNumFrames();
 			} catch (IOException e) {
+				corruptFiles.add(getResourcePath());
 				throw new RuntimeException(e);
 			}
 		}
@@ -94,10 +103,13 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	@JsonIgnore
 	@Override
 	public double getDuration() {
+		if (corruptFiles.contains(getResourcePath())) return 0.0;
+
 		if (duration == null) {
 			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
 				this.duration = w.getDuration();
 			} catch (IOException e) {
+				corruptFiles.add(getResourcePath());
 				throw new RuntimeException(e);
 			}
 		}
@@ -106,12 +118,15 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	}
 
 	protected WaveData load() {
+		if (corruptFiles.contains(getResourcePath())) return null;
+
 		try {
 			if (WaveOutput.enableVerbose)
 				System.out.println("WaveDataProvider: Loading " + resourcePath);
 
 			return WaveData.load(new File(resourcePath));
 		} catch (IOException e) {
+			corruptFiles.add(getResourcePath());
 			throw new RuntimeException(e);
 		}
 	}

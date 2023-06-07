@@ -17,6 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
@@ -40,6 +41,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PatternNote implements CellFeatures, SamplingFeatures {
+
+	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
+
+	static {
+		audioCache.setAccessListener(CacheManager.maxCachedEntries(audioCache, 2000));
+	}
 
 	private WaveDataProvider provider;
 	private PackedCollection<?> audio;
@@ -151,7 +158,7 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		if (delegate != null) {
 			return delegate.getAudio(target);
 		} else if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target, -1.0).get())));
+			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target, -1.0).get(), PackedCollection::destroy)));
 		}
 
 		return notes.get(target);
@@ -194,7 +201,12 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		try {
 			valid = provider.getSampleRate() == OutputLine.sampleRate;
 		} catch (Exception e) {
-			System.out.println("WARN: " + e.getMessage());
+			if (provider instanceof FileWaveDataProvider) {
+				System.out.println("WARN: " + e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");
+			} else {
+				System.out.println("WARN: " + e.getMessage());
+			}
+
 			valid = false;
 		}
 

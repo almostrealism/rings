@@ -91,27 +91,16 @@ public class WaveData implements SamplingFeatures {
 		// TODO  to fix this.
 		int frames = w.getMemLength(); // w.getCount();
 
-		WavFile wav;
+		try (WavFile wav = WavFile.newWavFile(file, 2, frames, 24, sampleRate)) {
+			for (int i = 0; i < frames; i++) {
+				double value = w.toArray(i, 1)[0];
 
-		try {
-			wav = WavFile.newWavFile(file, 2, frames, 24, sampleRate);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		for (int i = 0; i < frames; i++) {
-			double value = w.toArray(i, 1)[0];
-
-			try {
-				wav.writeFrames(new double[][]{{value}, {value}}, 1);
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					wav.writeFrames(new double[][]{{value}, {value}}, 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-
-		try {
-			wav.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

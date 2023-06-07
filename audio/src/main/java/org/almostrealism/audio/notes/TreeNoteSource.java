@@ -19,11 +19,13 @@ package org.almostrealism.audio.notes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.Tree;
 import io.almostrealism.relation.Named;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
+import org.glassfish.grizzly.streams.Output;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,16 +96,25 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 		notes = new ArrayList<>();
 		tree.forEach(f -> {
 			FileWaveDataProvider p = f.get();
-			if (p == null) {
-				// System.out.println("WARN: FileWaveDataProvider produced null");
-				return;
-			}
 
-			boolean match = filters.stream()
-					.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
-					.reduce((a, b) -> a & b)
-					.orElse(true);
-			if (match) notes.add(new PatternNote(p, getRoot()));
+			try {
+				if (p == null) {
+					// System.out.println("WARN: FileWaveDataProvider produced null");
+					return;
+				}
+
+				if (p.getSampleRate() != OutputLine.sampleRate) {
+					return;
+				}
+
+				boolean match = filters.stream()
+						.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
+						.reduce((a, b) -> a & b)
+						.orElse(true);
+				if (match) notes.add(new PatternNote(p, getRoot()));
+			} catch (Exception e) {
+				System.out.println("WARN: " + e.getMessage() + "(" + p.getResourcePath() + ")");
+			}
 		});
 		notes.forEach(n -> n.setTuning(tuning));
 	}
@@ -113,12 +124,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 		boolean match = notes.stream().anyMatch(note -> {
 			if (note.getProvider() instanceof FileWaveDataProvider) {
-				try {
-					return new File(((FileWaveDataProvider) note.getProvider()).getResourcePath()).getCanonicalPath().equals(canonicalPath);
-				} catch (IOException e) {
-					e.printStackTrace();
-					return false;
-				}
+				return ((FileWaveDataProvider) note.getProvider()).getResourcePath().equals(canonicalPath);
 			} else {
 				return false;
 			}
