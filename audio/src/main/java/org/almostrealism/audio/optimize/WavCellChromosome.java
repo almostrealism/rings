@@ -57,8 +57,6 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 
 	private KernelList<PackedCollection<?>> kernels;
 	private int inputGenes, inputFactors;
-	private IntFunction<MemoryBank<PackedCollection<?>>> bankProvider;
-	private BiFunction<Integer, Integer, MemoryBank<PackedCollection<?>>> tableProvider;
 
 	private int sampleRate;
 	private Producer<Scalar> time;
@@ -68,9 +66,6 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		this.transforms = new HashMap<>();
 		this.inputGenes = source.length();
 		this.inputFactors = inputFactors;
-		this.bankProvider = PackedCollection.bank(new TraversalPolicy(1));
-		this.tableProvider = PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
-				new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset()));
 		this.sampleRate = sampleRate;
 	}
 
@@ -88,10 +83,11 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 
 	public KernelList<PackedCollection<?>> getKernelList() { return kernels; }
 
-	public int getFactorCount() { return 1; }
-
 	public void setFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
-		this.kernels = new KernelList(bankProvider, tableProvider, computation, inputGenes, inputFactors);
+		this.kernels = new KernelList(PackedCollection.bank(new TraversalPolicy(1)),
+				PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
+						new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset())),
+				computation, inputGenes, inputFactors);
 	}
 
 	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> id(int index) {

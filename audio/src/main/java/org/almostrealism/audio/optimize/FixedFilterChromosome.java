@@ -28,7 +28,7 @@ import org.almostrealism.heredity.SimpleChromosome;
 public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, CellFeatures {
 	public static final int SIZE = 2;
 
-	public static double defaultResonance = 0.05; // TODO
+	public static double defaultResonance = 0.01; // TODO
 	private static double maxFrequency = 20000;
 
 	private final Chromosome<PackedCollection<?>> source;

@@ -46,6 +46,7 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 
 	static {
 		audioCache.setAccessListener(CacheManager.maxCachedEntries(audioCache, 2000));
+		audioCache.setClear(PackedCollection::destroy);
 	}
 
 	private WaveDataProvider provider;
@@ -158,7 +159,7 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		if (delegate != null) {
 			return delegate.getAudio(target);
 		} else if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target, -1.0).get(), PackedCollection::destroy)));
+			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target, -1.0).get())));
 		}
 
 		return notes.get(target);

@@ -38,9 +38,6 @@ public class RiseFallChromosome extends WavCellChromosome {
 		originChoices.set(0, maxValue);
 		originChoices.set(1, minValue);
 
-		Scalar testChoice = new Scalar();
-		testChoice.setMem(0, 0.25);
-
 		setTransform(0, id(0));
 		setTransform(1, id(1));
 		setFactor((p, in) -> {

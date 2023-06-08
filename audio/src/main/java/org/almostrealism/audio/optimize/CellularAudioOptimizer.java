@@ -136,7 +136,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
+		PopulationOptimizer.enableBreeding = true; // verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
@@ -146,7 +146,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
-		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 16 : 1);
+		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
 		opt.init();
 		opt.run();
 	}
@@ -173,7 +173,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 			// PatternLayerManager.enableLogging = true;
 			// DefaultChannelSectionFactory.enableFilter = false;
 
-			settings.setWetChannels(Collections.emptyList());
+			// settings.setWetChannels(Collections.emptyList());
 
 			settings.getPatternSystem().setPatterns(
 					settings
