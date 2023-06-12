@@ -21,6 +21,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Factor;
@@ -86,6 +87,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
 															  Producer<PackedCollection<?>> d,
 															  Producer<PackedCollection<?>> m,
+															  Producer<PackedCollection<?>> p,
 															  Producer<PackedCollection<?>> e,
 															  Producer<PackedCollection<?>> time,
 															  Producer<PackedCollection<?>> duration) {
@@ -93,15 +95,21 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		directionChoices.set(0, -1);
 		directionChoices.set(1, 1);
 
-		PackedCollection<Scalar> originChoices = Scalar.scalarBank(2);
-		originChoices.set(0, maxValue);
-		originChoices.set(1, minValue);
+		double sc = maxValue - minValue;
 
-		CollectionProducerComputation scale = subtract(c(maxValue), c(minValue));
+		CollectionProducerComputation scale = c(sc);
+		m = c(minScale).add(multiply(m, c(1.0 - minScale)));
+		p = multiply(p, subtract(c(1.0), m));
+
+		CollectionProducerComputation downOrigin = c(maxValue).subtract(multiply(scale, p));
+		CollectionProducerComputation upOrigin = c(minValue).add(multiply(scale, p));
+
+		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
+
 		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
 
 		CollectionProducerComputation magnitude = multiply(scale, m);
-		CollectionProducerComputation start = c(choice(2, toScalar(d), p(originChoices)), 0);
+		CollectionProducerComputation start = c(choice(2, toScalar(d), originChoices), 0);
 		CollectionProducerComputation end = multiply(direction, magnitude).add(start);
 
 		CollectionProducerComputation pos = pow(divide(time, duration), e);

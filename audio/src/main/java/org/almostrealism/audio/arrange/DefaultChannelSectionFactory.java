@@ -94,7 +94,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		this.volumeRiseFall = new RiseFallChromosome(vrf, 0.0, 1.0, 0.5, sampleRate);
 		this.volumeRiseFall.setGlobalTime(clock.frame());
 
-		this.lowPassFilter = genome.addSimpleChromosome(2);
+		this.lowPassFilter = genome.addSimpleChromosome(3);
 		IntStream.range(0, channels).forEach(i -> lowPassFilter.addGene());
 
 		this.lowPassFilterExp = genome.addSimpleChromosome(1);
@@ -119,8 +119,9 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	}
 
 	protected void initRanges() {
-		lowPassFilter.setParameterRange(0, 0.0, 1.0);
-		lowPassFilter.setParameterRange(1, 0.2, 0.7);
+		lowPassFilter.setParameterRange(0, 0.6, 1.0);
+		lowPassFilter.setParameterRange(1, 0.2, 0.5);
+		lowPassFilter.setParameterRange(2, 0.3, 0.7);
 		lowPassFilterExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(2.5));
 
 		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
@@ -198,10 +199,11 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			if (enableFilter && wetChannels.test(channel)) {
 				Producer<PackedCollection<?>> d = lowPassFilter.valueAt(channel, 0).getResultant(c(1.0));
 				Producer<PackedCollection<?>> m = lowPassFilter.valueAt(channel, 1).getResultant(c(1.0));
+				Producer<PackedCollection<?>> p = lowPassFilter.valueAt(channel, 2).getResultant(c(1.0));
 				Producer<PackedCollection<?>> e = lowPassFilterExp.valueAt(channel, 0).getResultant(c(1.0));
 
-				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.5,
-															d, m, e, clock.time(sampleRate), p(duration));
+				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.2,
+															d, m, p, e, clock.time(sampleRate), p(duration));
 				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
 			}
 

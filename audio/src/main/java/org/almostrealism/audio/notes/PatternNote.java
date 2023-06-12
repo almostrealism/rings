@@ -34,6 +34,9 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.RAM;
+import org.almostrealism.hardware.cl.CLMemory;
 import org.almostrealism.heredity.Factor;
 
 import java.util.HashMap;
@@ -45,7 +48,20 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
 
 	static {
-		audioCache.setAccessListener(CacheManager.maxCachedEntries(audioCache, 2000));
+		OperationList accessListener = new OperationList();
+		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 300));
+		accessListener.add(() -> () -> {
+			if (Math.random() < 0.05) {
+				long size = audioCache.getCachedOrdered().stream()
+						.map(CachedValue::evaluate)
+						.map(PackedCollection::getMem)
+						.mapToLong(m -> m instanceof CLMemory ? ((CLMemory) m).getSize() : 0)
+						.sum();
+				System.out.println("PatternNote: Cache size = " + (size / 1024) + "kb");
+			}
+		});
+
+		audioCache.setAccessListener(accessListener.get());
 		audioCache.setClear(PackedCollection::destroy);
 	}
 

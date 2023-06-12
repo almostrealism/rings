@@ -20,14 +20,17 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.SamplingFeatures;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
+import org.almostrealism.heredity.Factor;
 import org.junit.Test;
 
 import java.io.File;
 
-public class LinearAutomationTests implements CellFeatures, OptimizeFactorFeatures {
+public class LinearAutomationTests implements CellFeatures, SamplingFeatures, OptimizeFactorFeatures {
 	@Test
 	public void riseFall() {
 		int sr = OutputLine.sampleRate;
@@ -35,17 +38,19 @@ public class LinearAutomationTests implements CellFeatures, OptimizeFactorFeatur
 		TimeCell clock = new TimeCell();
 
 		double direction = 0.9;
-		double magnitude = 0.3;
-		double exponent = 3.6;
+		double magnitude = 0.7;
+		double position = 0.1;
+		double exponent = 3.2;
 
 		Producer<PackedCollection<?>> d = c(direction);
 		Producer<PackedCollection<?>> m = c(magnitude);
+		Producer<PackedCollection<?>> s = c(position);
 		Producer<PackedCollection<?>> e = c(exponent);
 
 		int seconds = 30;
 
-		Producer<PackedCollection<?>> freq = riseFall(0, 20000, 0.5,
-														d, m, e, clock.time(sr), c(seconds));
+		Producer<PackedCollection<?>> freq = riseFall(0, 20000, 0.25,
+														d, m, s, e, clock.time(sr), c(seconds));
 
 		CellList cells = w(c(0.0), c(1.0), "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
@@ -54,5 +59,29 @@ public class LinearAutomationTests implements CellFeatures, OptimizeFactorFeatur
 				.o(i -> new File("results/filter-rise-fall.wav"));
 
 		cells.sec(seconds).get().run();
+	}
+
+	@Test
+	public void riseFallAutomation() {
+		int sr = OutputLine.sampleRate;
+
+		double direction = 0.3;
+		double magnitude = 0.5;
+		double position = 1.0;
+		double exponent = 1.0;
+
+		Producer<PackedCollection<?>> d = c(direction);
+		Producer<PackedCollection<?>> m = c(magnitude);
+		Producer<PackedCollection<?>> p = c(position);
+		Producer<PackedCollection<?>> e = c(exponent);
+
+		int seconds = 30;
+
+		Factor<PackedCollection<?>> freq = in ->
+				riseFall(0, 1.0, 0.0,
+						d, m, p, e, time(), c(seconds));
+
+		PackedCollection<?> data = new PackedCollection<>(seconds * sr);
+		new WaveData(data.traverseEach(), sr).sample(freq).save(new File("results/rise-fall-test.wav"));
 	}
 }
