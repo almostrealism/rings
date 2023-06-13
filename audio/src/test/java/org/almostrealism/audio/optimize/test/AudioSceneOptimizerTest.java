@@ -23,15 +23,11 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
-import org.almostrealism.audio.optimize.CellularAudioOptimizer;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.Cells;
-import org.almostrealism.heredity.Breeders;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.heredity.DefaultGenomeBreeder;
 import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.junit.Test;
@@ -44,14 +40,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-public class CellularAudioOptimizerTest extends AssignableGenomeTest {
+public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 	protected AudioScene<?> scene() {
 		// DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 		// return () -> new GeneticTemporalFactoryFromDesirables().from(desirables);
 		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new NoOpGenerationProvider());
 	}
 
-	protected CellularAudioOptimizer optimizer() {
+	protected AudioSceneOptimizer optimizer() {
 		int sources = 2;
 		int delayLayers = 2;
 		int cycles = 1;
@@ -64,7 +60,7 @@ public class CellularAudioOptimizerTest extends AssignableGenomeTest {
 
 		AudioScene<?> scene = scene();
 
-		CellularAudioOptimizer optimizer = new CellularAudioOptimizer(scene, scene::getBreeder, null, cycles);
+		AudioSceneOptimizer optimizer = new AudioSceneOptimizer(scene, scene::getBreeder, null, cycles);
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating AudioScenePopulation...");

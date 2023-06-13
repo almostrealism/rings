@@ -19,7 +19,6 @@ package org.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
@@ -35,7 +33,6 @@ import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -43,7 +40,6 @@ import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.cl.CLComputeContext;
@@ -53,11 +49,11 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
 
-public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
+public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 3;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -78,9 +74,9 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 
 	private AudioScenePopulation<PackedCollection<?>> population;
 
-	public CellularAudioOptimizer(AudioScene<?> scene,
-								  Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
-								  int totalCycles) {
+	public AudioSceneOptimizer(AudioScene<?> scene,
+							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+							   int totalCycles) {
 		super(null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
@@ -98,20 +94,20 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 				});
 	}
 
-	public static CellularAudioOptimizer build(AudioScene<?> scene, int cycles) {
+	public static AudioSceneOptimizer build(AudioScene<?> scene, int cycles) {
 		return build(() -> scene.getGenome()::random, scene, cycles);
 	}
 
-	public static CellularAudioOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator, AudioScene<?> scene, int cycles) {
-		return new CellularAudioOptimizer(scene, scene::getBreeder, generator, cycles);
+	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator, AudioScene<?> scene, int cycles) {
+		return new AudioSceneOptimizer(scene, scene::getBreeder, generator, cycles);
 	}
 
 	/**
-	 * Build a {@link CellularAudioOptimizer} and initialize and run it.
+	 * Build a {@link AudioSceneOptimizer} and initialize and run it.
 	 *
-	 * @see  CellularAudioOptimizer#build(AudioScene, int)
-	 * @see  CellularAudioOptimizer#init
-	 * @see  CellularAudioOptimizer#run()
+	 * @see  AudioSceneOptimizer#build(AudioScene, int)
+	 * @see  AudioSceneOptimizer#init
+	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
 		CLComputeContext.enableFastQueue = false;
@@ -146,7 +142,7 @@ public class CellularAudioOptimizer extends AudioPopulationOptimizer<Cells> {
 		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
-		CellularAudioOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
+		AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
 		opt.init();
 		opt.run();
 	}

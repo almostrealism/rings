@@ -473,14 +473,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 											   IntUnaryOperator layersPerPattern,
 											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
-			settings.getSections().add(new Section(0, 16));
-			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(16, 8));
-			settings.getSections().add(new Section(24, 16));
+			settings.getSections().add(new Section(0, 32));
+			settings.getSections().add(new Section(32, 8));
 			settings.getBreaks().add(40);
-			settings.getSections().add(new Section(40, 16));
-			settings.getSections().add(new Section(56, 24));
-			settings.setTotalMeasures(80);
+			settings.getSections().add(new Section(40, 32));
+			settings.getSections().add(new Section(72, 8));
+			settings.getBreaks().add(80);
+			settings.getSections().add(new Section(80, 64));
+			settings.setTotalMeasures(144);
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
