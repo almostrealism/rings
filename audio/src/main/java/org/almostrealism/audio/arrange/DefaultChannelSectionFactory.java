@@ -119,13 +119,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	}
 
 	protected void initRanges() {
-		lowPassFilter.setParameterRange(0, 0.6, 1.0);
-		lowPassFilter.setParameterRange(1, 0.2, 0.5);
-		lowPassFilter.setParameterRange(2, 0.3, 0.7);
+		lowPassFilter.setParameterRange(0, 0.1, 0.9);
+		lowPassFilter.setParameterRange(1, 0.4, 0.8);
+		lowPassFilter.setParameterRange(2, 0.0, 0.75);
+//		lowPassFilterExp.setParameterRange(0, factorForExponent(1.0), factorForExponent(1.0));
 		lowPassFilterExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(2.5));
 
 		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
-		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(52));
+		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(80));
 	}
 
 	public Section createSection(int position) {
@@ -202,7 +203,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 				Producer<PackedCollection<?>> p = lowPassFilter.valueAt(channel, 2).getResultant(c(1.0));
 				Producer<PackedCollection<?>> e = lowPassFilterExp.valueAt(channel, 0).getResultant(c(1.0));
 
-				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.2,
+				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
 				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
 			}

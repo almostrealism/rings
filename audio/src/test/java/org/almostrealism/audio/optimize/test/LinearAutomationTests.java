@@ -38,9 +38,9 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 		TimeCell clock = new TimeCell();
 
 		double direction = 0.9;
-		double magnitude = 0.7;
-		double position = 0.1;
-		double exponent = 3.2;
+		double magnitude = 0.05;
+		double position = 0.0;
+		double exponent = 1.0;
 
 		Producer<PackedCollection<?>> d = c(direction);
 		Producer<PackedCollection<?>> m = c(magnitude);
@@ -49,14 +49,44 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 
 		int seconds = 30;
 
-		Producer<PackedCollection<?>> freq = riseFall(0, 20000, 0.25,
+		Producer<PackedCollection<?>> freq = riseFall(0, 18000, 0.0,
 														d, m, s, e, clock.time(sr), c(seconds));
 
 		CellList cells = w(c(0.0), c(1.0), "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
 				.map(fc(i -> sf(0.1)))
-				.map(fc(i -> lp(freq, c(0.05))))
+				.map(fc(i -> lp(freq, c(0.2))))
 				.o(i -> new File("results/filter-rise-fall.wav"));
+
+		cells.sec(seconds).get().run();
+	}
+
+	@Test
+	public void riseFallAutomationClock() {
+		int sr = OutputLine.sampleRate;
+
+		TimeCell clock = new TimeCell();
+
+		double direction = 0.9;
+		double magnitude = 0.5;
+		double position = 0.0;
+		double exponent = 1.0;
+
+		Producer<PackedCollection<?>> d = c(direction);
+		Producer<PackedCollection<?>> m = c(magnitude);
+		Producer<PackedCollection<?>> p = c(position);
+		Producer<PackedCollection<?>> e = c(exponent);
+
+		int seconds = 30;
+
+		Producer<PackedCollection<?>> freq = riseFall(0, 1.0, 0.0,
+				d, m, p, e, clock.time(sr), c(seconds));
+
+		CellList cells = w(c(0.0), c(1.0), "Library/Snare Perc DD.wav")
+				.addRequirements(clock)
+				.map(fc(i -> sf(0.1)))
+				.map(fc(i -> in -> freq))
+				.o(i -> new File("results/clock-rise-fall.wav"));
 
 		cells.sec(seconds).get().run();
 	}
@@ -65,9 +95,9 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 	public void riseFallAutomation() {
 		int sr = OutputLine.sampleRate;
 
-		double direction = 0.3;
+		double direction = 0.9;
 		double magnitude = 0.5;
-		double position = 1.0;
+		double position = 0.0;
 		double exponent = 1.0;
 
 		Producer<PackedCollection<?>> d = c(direction);

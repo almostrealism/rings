@@ -51,13 +51,13 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		OperationList accessListener = new OperationList();
 		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 300));
 		accessListener.add(() -> () -> {
-			if (Math.random() < 0.05) {
+			if (Math.random() < 0.005) {
 				long size = audioCache.getCachedOrdered().stream()
 						.map(CachedValue::evaluate)
 						.map(PackedCollection::getMem)
 						.mapToLong(m -> m instanceof CLMemory ? ((CLMemory) m).getSize() : 0)
 						.sum();
-				System.out.println("PatternNote: Cache size = " + (size / 1024) + "kb");
+				System.out.println("PatternNote: Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 
