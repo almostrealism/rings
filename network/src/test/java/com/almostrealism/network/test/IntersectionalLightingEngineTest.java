@@ -106,7 +106,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void evaluateScalarProduct() {
 		ExpressionComputation<Scalar> dp = scalarProduct();
 		Evaluable<Scalar> ev = dp.get();
-		((OperationAdapter) ev).compile();
 
 		Scalar s = ev.evaluate();
 		System.out.println(s);
