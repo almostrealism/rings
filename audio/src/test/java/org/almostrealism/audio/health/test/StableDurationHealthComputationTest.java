@@ -75,7 +75,6 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		cells.setup().get().run();
 
 		Runnable tick = cells.tick().get();
-		((OperationAdapter) tick).compile();
 
 		IntStream.range(0, 5 * OutputLine.sampleRate).forEach(i -> {
 			tick.run();
