@@ -193,6 +193,7 @@ public class WavFile implements AutoCloseable {
 		return waveform;
 	}
 
+	@Deprecated
 	public static PackedCollection<Scalar> channelScalar(int[][] data, int chan) {
 		PackedCollection<Scalar> waveform = Scalar.scalarBank(data[chan].length);
 
