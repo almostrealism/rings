@@ -32,13 +32,16 @@ import io.almostrealism.code.ComputeRequirement;
 import io.almostrealism.relation.Provider;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.PairFromPairBank;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.graph.Receptor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedEvaluable;
+import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.OperationList;
@@ -50,13 +53,13 @@ import org.almostrealism.CodeFeatures;
 public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
 	public static boolean enableVerbose = false;
 	public static boolean enableKernelExport = true;
+	public static boolean enablePairExport = false;
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
 	public static ContextSpecific<PackedCollection<Scalar>> timelineScalar;
 	private static KernelizedEvaluable<PackedCollection<?>> exportKernel;
-	private static Provider<PackedCollection<Scalar>> exportSource;
 
 	static {
 		timelineScalar = new DefaultContextSpecific<>(
@@ -82,12 +85,19 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				}, PackedCollection::destroy);
 		timeline.init();
 
-		PairFromPairBank pairAt = new PairFromPairBank((Producer) Ops.ops().v(Ops.ops().shape(2), 0),
-				Ops.ops().v(OutputLine.sampleRate).multiply(Ops.ops().v(Ops.ops().shape(2), 1)).add(Ops.ops().v(1.0)));
-//		PairFromPairBank pairAt = new PairFromPairBank((Producer) () -> exportSource,
-//				Ops.ops().v(OutputLine.sampleRate).multiply(Ops.ops().v(Scalar.class, 1)).add(Ops.ops().v(1.0)));
-		ExpressionComputation r = new ExpressionComputation<>(List.of(args -> args.get(1).getValue(0)), (Producer) pairAt.r());
-		exportKernel = r.get();
+		exportKernel = Ops.op(o -> {
+			Producer<Pair<?>> pairAt;
+
+			if (enablePairExport) {
+				pairAt = new PairFromPairBank((Producer) o.v(o.shape(2), 0),
+						o.v(OutputLine.sampleRate).multiply(o.v(o.shape(2), 1)).add(o.v(1.0)));
+			} else {
+				return new ExpressionComputation<>(List.of(args -> args.get(1).getValue(1)),
+						o.v(o.shape(defaultTimelineFrames, 2).traverse(1), 0));
+			}
+
+			return new ExpressionComputation<>(List.of(args -> args.get(1).getValue(0)), (Producer) o.r(pairAt));
+		}).get();
 	}
 
 	private Supplier<File> file;
@@ -148,10 +158,22 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 			Runnable export = () -> {
 				long start = System.currentTimeMillis();
 
-				exportSource = new Provider(data);
-				exportKernel.into(destination)
-						.evaluate(data,
-								timelineScalar.getValue().range(shape(destination.getCount(), 2).traverse(1)));
+				if (enablePairExport) {
+					exportKernel.into(destination)
+							.evaluate(data,
+									timelineScalar.getValue().range(shape(destination.getCount(), 2).traverse(1)));
+				} else {
+//					exportKernel.into(destination)
+//							.evaluate(data,
+//									timeline.getValue().range(shape(destination.getCount(), 1).traverse(1)));
+
+					HardwareOperator.disableDimensionMasks(() -> {
+						TraversalPolicy subset = shape(data.getCount() - 1, data.getAtomicMemLength());
+						PackedCollection<?> input = PackedCollection.range(data, subset, 2).traverse(1);
+						exportKernel.into(destination.traverse(1)).evaluate(input);
+					});
+				}
+
 				if (enableVerbose)
 					System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
 			};
