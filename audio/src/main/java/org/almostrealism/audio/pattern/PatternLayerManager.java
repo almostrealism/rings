@@ -22,7 +22,7 @@ import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;

@@ -19,7 +19,7 @@ package org.almostrealism.audio.data;
 import org.almostrealism.audio.sources.PolynomialCellData;
 import org.almostrealism.audio.sources.SineWaveCellData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.PooledMem;

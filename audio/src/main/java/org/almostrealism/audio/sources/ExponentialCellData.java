@@ -19,7 +19,7 @@ package org.almostrealism.audio.sources;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 
 public class ExponentialCellData extends PackedCollection<Scalar> {
 	public ExponentialCellData() {

@@ -31,7 +31,7 @@ import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.time.Frequency;

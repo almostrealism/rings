@@ -20,7 +20,7 @@ import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 import org.almostrealism.heredity.Factor;

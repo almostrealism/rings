@@ -33,9 +33,8 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.RAM;
 import org.almostrealism.hardware.cl.CLMemory;
 import org.almostrealism.heredity.Factor;
 
