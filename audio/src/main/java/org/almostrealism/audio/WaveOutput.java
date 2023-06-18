@@ -82,7 +82,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		timeline.init();
 
 		exportKernel = Ops.op(o ->
-			new ExpressionComputation<>(List.of(args -> args.get(1).getValue(1)),
+			new ExpressionComputation<>(List.of(args -> args.get(1).getValueAt(1)),
 						o.v(o.shape(defaultTimelineFrames, 2).traverse(1), 0))
 		).get();
 	}
