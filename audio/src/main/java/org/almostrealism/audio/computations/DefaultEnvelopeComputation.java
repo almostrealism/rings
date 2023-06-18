@@ -28,6 +28,7 @@ import org.almostrealism.hardware.KernelizedProducer;
 
 import java.util.function.Consumer;
 
+@Deprecated
 public class DefaultEnvelopeComputation extends CollectionProducerComputationAdapter<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar>, KernelizedProducer<Scalar> {
 
 	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
