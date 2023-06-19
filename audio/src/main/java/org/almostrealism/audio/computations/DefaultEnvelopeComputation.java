@@ -23,13 +23,13 @@ import io.almostrealism.scope.Scope;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.computations.CollectionProducerComputationAdapter;
+import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 import org.almostrealism.hardware.KernelizedProducer;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class DefaultEnvelopeComputation extends CollectionProducerComputationAdapter<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar>, KernelizedProducer<Scalar> {
+public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar>, KernelizedProducer<Scalar> {
 
 	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
 		super(Scalar.shape(), (Producer) notePosition);
