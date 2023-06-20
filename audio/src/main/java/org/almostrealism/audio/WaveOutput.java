@@ -26,12 +26,10 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import io.almostrealism.code.ComputeRequirement;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.ExpressionComputation;
@@ -68,7 +66,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		timeline.init();
 
 		exportKernel = Ops.op(o ->
-			new ExpressionComputation<>(List.of(args -> args.get(1).getValueAt(1)),
+			new ExpressionComputation<>(List.of(args -> args.get(1).getValueRelative(1)),
 						o.v(o.shape(defaultTimelineFrames, 2).traverse(1), 0))
 		).get();
 	}
