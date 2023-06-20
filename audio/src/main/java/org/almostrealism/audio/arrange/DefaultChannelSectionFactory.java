@@ -138,11 +138,11 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList();
-		setup.add(() -> () -> volume.setDuration(length * measureDuration.getAsDouble()));
-		setup.add(() -> () -> volumeRiseFall.setDuration(length * measureDuration.getAsDouble()));
+		if (!enableVolumeRiseFall) setup.add(() -> () -> volume.setDuration(length * measureDuration.getAsDouble()));
+		if (enableVolumeRiseFall) setup.add(() -> () -> volumeRiseFall.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(() -> () -> duration.setMem(length * measureDuration.getAsDouble()));
-		setup.add(volume.expand());
-		setup.add(volumeRiseFall.expand());
+		if (!enableVolumeRiseFall) setup.add(volume.expand());
+		if (enableVolumeRiseFall) setup.add(volumeRiseFall.expand());
 		return setup;
 	}
 
@@ -173,8 +173,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 
 			TemporalList temporals = new TemporalList();
-			temporals.addAll(volume.getTemporals());
-			temporals.addAll(volumeRiseFall.getTemporals());
+			if (!enableVolumeRiseFall) temporals.addAll(volume.getTemporals());
+			if (enableVolumeRiseFall) temporals.addAll(volumeRiseFall.getTemporals());
 
 			int repeatGene = channel; // 0;
 			Producer<PackedCollection<?>> r = simpleDuration.valueAt(repeatGene, 0)

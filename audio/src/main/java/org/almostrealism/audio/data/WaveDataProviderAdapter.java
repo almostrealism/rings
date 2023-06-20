@@ -81,6 +81,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 		int len = (int) (audio.getMemLength() / playbackRate);
 		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
 
+		// TODO  This can use CollectionFeatures::integers instead of taking a timeline argument
 		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
 
 		interpolate.getValue().into(dest.traverse(1))

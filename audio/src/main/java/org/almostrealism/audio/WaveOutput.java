@@ -54,23 +54,9 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
-	public static ContextSpecific<PackedCollection<Scalar>> timelineScalar;
 	private static KernelizedEvaluable<PackedCollection<?>> exportKernel;
 
 	static {
-		timelineScalar = new DefaultContextSpecific<>(
-				() -> {
-					PackedCollection<Scalar> data = Scalar.scalarBank(defaultTimelineFrames);
-					double values[] = IntStream.range(0, defaultTimelineFrames)
-							.mapToObj(i -> i / (double) OutputLine.sampleRate)
-							.flatMap(v -> Stream.of(v, 1.0))
-							.mapToDouble(Double::doubleValue).toArray();
-					// for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
-					data.setMem(values);
-					return data;
-				}, PackedCollection::destroy);
-		timelineScalar.init();
-
 		timeline = new DefaultContextSpecific<>(
 				() -> {
 					PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
@@ -97,6 +83,10 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	private Runnable reset;
 
 	public WaveOutput() { this(null); }
+
+	public WaveOutput(int maxFrames) {
+		this(null, maxFrames, 24);
+	}
 
 	public WaveOutput(File f) {
 		this(f, 24);
