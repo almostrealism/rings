@@ -43,6 +43,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.cl.CLComputeContext;
+import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.cl.HardwareOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.heredity.Genome;
@@ -130,6 +131,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
 		HardwareOperator.enableVerboseLog = verbosity > 3;
+		CLMemoryProvider.enableLargeAllocationLogging = true;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = true; // verbosity < 3;
