@@ -22,6 +22,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
+@Deprecated
 public class DelayChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
 	public static final int SIZE = 7;
 

@@ -20,23 +20,19 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
-import org.almostrealism.audio.optimize.LinearInterpolationChromosome;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
-import org.almostrealism.audio.optimize.RiseFallChromosome;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
-import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.Frequency;
-import org.almostrealism.time.TemporalList;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
@@ -44,7 +40,7 @@ import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class DefaultChannelSectionFactory implements Setup, CellFeatures, OptimizeFactorFeatures {
+public class DefaultChannelSectionFactory implements Setup, CellFeatures, EnvelopeFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumeRiseFall = true;
 	public static boolean enableFilter = true;
 
@@ -55,8 +51,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	private TimeCell clock;
 	private PackedCollection<?> duration;
 
-	private LinearInterpolationChromosome volume;
-	private RiseFallChromosome volumeRiseFall;
+	private SimpleChromosome volume;
+	private SimpleChromosome volumeExp;
 	private SimpleChromosome lowPassFilter;
 	private SimpleChromosome lowPassFilterExp;
 	private SimpleChromosome simpleDuration;
@@ -84,15 +80,14 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		this.length = length;
 		this.sampleRate = sampleRate;
 
-		SimpleChromosome v = genome.addSimpleChromosome(LinearInterpolationChromosome.SIZE);
-		IntStream.range(0, channels).forEach(i -> v.addGene());
-		this.volume = new LinearInterpolationChromosome(v, 0.0, 1.0, sampleRate);
-		this.volume.setGlobalTime(clock.frame());
+		this.volume = genome.addSimpleChromosome(3);
+		IntStream.range(0, channels).forEach(i -> volume.addGene());
 
-		SimpleChromosome vrf = genome.addSimpleChromosome(RiseFallChromosome.SIZE);
-		IntStream.range(0, channels).forEach(i -> vrf.addGene());
-		this.volumeRiseFall = new RiseFallChromosome(vrf, 0.0, 1.0, 0.5, sampleRate);
-		this.volumeRiseFall.setGlobalTime(clock.frame());
+		this.volumeExp = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = volumeExp.addGene();
+			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+		});
 
 		this.lowPassFilter = genome.addSimpleChromosome(3);
 		IntStream.range(0, channels).forEach(i -> lowPassFilter.addGene());
@@ -122,8 +117,12 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 		lowPassFilter.setParameterRange(0, 0.1, 0.9);
 		lowPassFilter.setParameterRange(1, 0.4, 0.8);
 		lowPassFilter.setParameterRange(2, 0.0, 0.75);
-//		lowPassFilterExp.setParameterRange(0, factorForExponent(1.0), factorForExponent(1.0));
 		lowPassFilterExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(2.5));
+
+		volume.setParameterRange(0, 0.1, 0.9);
+		volume.setParameterRange(1, 0.4, 0.8);
+		volume.setParameterRange(2, 0.0, 0.9);
+		volumeExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(1.2));
 
 		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
 		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(80));
@@ -138,11 +137,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList();
-		if (!enableVolumeRiseFall) setup.add(() -> () -> volume.setDuration(length * measureDuration.getAsDouble()));
-		if (enableVolumeRiseFall) setup.add(() -> () -> volumeRiseFall.setDuration(length * measureDuration.getAsDouble()));
 		setup.add(() -> () -> duration.setMem(length * measureDuration.getAsDouble()));
-		if (!enableVolumeRiseFall) setup.add(volume.expand());
-		if (enableVolumeRiseFall) setup.add(volumeRiseFall.expand());
 		return setup;
 	}
 
@@ -172,10 +167,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 			PackedCollection<?> input = new PackedCollection<>(samples);
 			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 
-			TemporalList temporals = new TemporalList();
-			if (!enableVolumeRiseFall) temporals.addAll(volume.getTemporals());
-			if (enableVolumeRiseFall) temporals.addAll(volumeRiseFall.getTemporals());
-
 			int repeatGene = channel; // 0;
 			Producer<PackedCollection<?>> r = simpleDuration.valueAt(repeatGene, 0)
 													.getResultant(c(tempo.get().l(1)));
@@ -187,14 +178,18 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Optimi
 
 			CellList cells = cells(1, i ->
 					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), repeatChannels.test(channel) ? toScalar(repeat) : null))
-					.addRequirements(clock)
-					// TODO  Why can't the list just be added?
-					.addRequirements(temporals.toArray(TemporalFactor[]::new));
+					.addRequirements(clock);
 
 			if (enableVolumeRiseFall) {
-				cells = cells.map(fc(i -> factor(volumeRiseFall.valueAt(channel, 0))));
-			} else {
-				cells = cells.map(fc(i -> factor(volume.valueAt(channel, 0))));
+				Producer<PackedCollection<?>> d = volume.valueAt(channel, 0).getResultant(c(1.0));
+				Producer<PackedCollection<?>> m = volume.valueAt(channel, 1).getResultant(c(1.0));
+				Producer<PackedCollection<?>> p = volume.valueAt(channel, 2).getResultant(c(1.0));
+				Producer<PackedCollection<?>> e = volumeExp.valueAt(channel, 0).getResultant(c(1.0));
+
+				Producer<PackedCollection<?>> v = riseFall(0, 1.0, 0.0,
+						d, m, p, e, clock.time(sampleRate), p(duration));
+
+				cells = cells.map(fc(i -> volume(v)));
 			}
 
 			if (enableFilter && wetChannels.test(channel)) {
