@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, Named {
+public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, PathResource, Named {
 	private File file;
 
 	public FileWaveDataProviderNode(File f) {
@@ -36,6 +36,15 @@ public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>,
 
 	@Override
 	public String getName() { return file.getName(); }
+
+	@Override
+	public String getResourcePath() {
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public Collection<FileWaveDataProviderNode> getChildren() {

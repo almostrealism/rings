@@ -25,6 +25,8 @@ import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.data.PathResource;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
@@ -129,6 +131,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
+	private Tree<? extends Supplier<FileWaveDataProvider>> library;
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
@@ -204,6 +207,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public KeyboardTuning getTuning() { return tuning; }
 
 	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		library = tree;
 		patterns.setTree(tree);
 	}
 
@@ -282,11 +286,17 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.getBreaks().addAll(time.getResets());
 		settings.getSections().addAll(sections.getSections()
 				.stream().map(s -> new Settings.Section(s.getPosition(), s.getLength())).collect(Collectors.toList()));
+
+		if (library instanceof PathResource) {
+			settings.setLibraryRoot(((PathResource) library).getResourcePath());
+		}
+
 		settings.setChordProgression(progression.getSettings());
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
 		settings.setWetChannels(getEfxManager().getWetChannels());
 		settings.setGeneration(generation.getSettings());
+
 		return settings;
 	}
 
@@ -298,6 +308,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		time.getResets().clear();
 		settings.getBreaks().forEach(time::addReset);
 		settings.getSections().forEach(s -> sections.addSection(s.getPosition(), s.getLength()));
+
+		if (settings.getLibraryRoot() != null) {
+			setLibraryRoot(new FileWaveDataProviderNode(new File(settings.getLibraryRoot())));
+		}
+
 		progression.setSettings(settings.getChordProgression());
 		patterns.setSettings(settings.getPatternSystem());
 
@@ -408,6 +423,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private int totalMeasures = 64;
 		private List<Integer> breaks = new ArrayList<>();
 		private List<Section> sections = new ArrayList<>();
+		private String libraryRoot;
 
 		private ChordProgressionManager.Settings chordProgression;
 		private PatternSystemManager.Settings patternSystem;
@@ -435,6 +451,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public List<Section> getSections() { return sections; }
 		public void setSections(List<Section> sections) { this.sections = sections; }
+
+		public String getLibraryRoot() { return libraryRoot; }
+		public void setLibraryRoot(String libraryRoot) { this.libraryRoot = libraryRoot; }
 
 		public ChordProgressionManager.Settings getChordProgression() { return chordProgression; }
 		public void setChordProgression(ChordProgressionManager.Settings chordProgression) { this.chordProgression = chordProgression; }

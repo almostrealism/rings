@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class FileWaveDataProvider extends WaveDataProviderAdapter {
+public class FileWaveDataProvider extends WaveDataProviderAdapter implements PathResource {
 	private static List<String> corruptFiles = new ArrayList<>();
 
 	private Integer sampleRate;
@@ -53,6 +53,7 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter {
 	@Override
 	public String getKey() { return getResourcePath(); }
 
+	@Override
 	public String getResourcePath() {
 		return resourcePath;
 	}

@@ -94,6 +94,8 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 	private void computeNotes() {
 		notes = new ArrayList<>();
+		if (tree == null) return;
+		
 		tree.forEach(f -> {
 			FileWaveDataProvider p = f.get();
 
