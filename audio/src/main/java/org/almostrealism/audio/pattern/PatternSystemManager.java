@@ -38,6 +38,7 @@ import org.almostrealism.heredity.ConfigurableGenome;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleUnaryOperator;
@@ -150,9 +151,25 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root) {
-		getChoices().stream().flatMap(c -> c.getFactory().getSources().stream()).forEach(s -> {
+		setTree(root, null);
+	}
+
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root, DoubleConsumer progress) {
+		List<PatternNoteSource> sources = getChoices()
+				.stream()
+				.flatMap(c -> c.getFactory().getSources().stream())
+				.collect(Collectors.toList());
+
+		progress.accept(0.0);
+
+		IntStream.range(0, sources.size()).forEach(i -> {
+			PatternNoteSource s = sources.get(i);
+
 			if (s instanceof TreeNoteSource)
 				((TreeNoteSource) s).setTree(root);
+
+			if (progress != null)
+				progress.accept((double) (i + 1) / sources.size());
 		});
 	}
 

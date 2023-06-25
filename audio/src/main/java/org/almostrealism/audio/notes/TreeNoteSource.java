@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class TreeNoteSource implements PatternNoteSource, Named {
+	public static boolean alwaysComputeNotes = false;
+
 	private Tree<? extends Supplier<FileWaveDataProvider>> tree;
 	private List<PatternNote> notes;
 
@@ -61,7 +63,10 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() { return tree; }
 
 	@JsonIgnore
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) { this.tree = tree; }
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		this.tree = tree;
+		if (!alwaysComputeNotes) computeNotes();
+	}
 
 	public List<Filter> getFilters() { return filters; }
 
@@ -88,8 +93,16 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 	@JsonIgnore
 	public List<PatternNote> getNotes() {
-		computeNotes();
-		return notes;
+		if (alwaysComputeNotes) computeNotes();
+		return notes == null ? new ArrayList<>() : notes;
+	}
+
+	public void refresh() {
+		if (alwaysComputeNotes) {
+			notes = null;
+		} else {
+			computeNotes();
+		}
 	}
 
 	private void computeNotes() {

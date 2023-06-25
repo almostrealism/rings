@@ -207,8 +207,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public KeyboardTuning getTuning() { return tuning; }
 
 	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		setLibraryRoot(tree, null);
+	}
+
+	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree, DoubleConsumer progress) {
 		library = tree;
-		patterns.setTree(tree);
+		patterns.setTree(tree, progress);
 	}
 
 	public Animation<T> getScene() { return scene; }
