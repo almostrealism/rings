@@ -160,7 +160,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				.flatMap(c -> c.getFactory().getSources().stream())
 				.collect(Collectors.toList());
 
-		progress.accept(0.0);
+		if (progress != null)
+			progress.accept(0.0);
 
 		IntStream.range(0, sources.size()).forEach(i -> {
 			PatternNoteSource s = sources.get(i);
