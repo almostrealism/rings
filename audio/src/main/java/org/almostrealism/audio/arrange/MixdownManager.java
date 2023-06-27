@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -41,14 +42,21 @@ import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.TemporalList;
 
 import java.util.List;
+import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
+	public static boolean enableAdjustmentChromosome = true;
+
+	private TimeCell clock;
+	private int sampleRate;
+
 	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
-	private AdjustmentChromosome wetIn;
+	private AdjustmentChromosome wetInOld;
+	private SimpleChromosome wetIn;
 	private SimpleChromosome transmission;
 	private SimpleChromosome wetOut;
 	private SimpleChromosome delay;
@@ -57,6 +65,9 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private AdjustmentChromosome mainFilterDown;
 
 	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers, TimeCell clock, int sampleRate) {
+		this.clock = clock;
+		this.sampleRate = sampleRate;
+
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
@@ -69,8 +80,19 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		SimpleChromosome w = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> w.addGene());
-		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
-		this.wetIn.setGlobalTime(clock.frame());
+		this.wetInOld = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
+		this.wetInOld.setGlobalTime(clock.frame());
+
+		this.wetIn = genome.addSimpleChromosome(6);
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = wetIn.addGene();
+			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setTransform(4, p -> p);
+			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+		});
 
 		this.transmission = genome.addSimpleChromosome(delayLayers);
 		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene());
@@ -116,12 +138,29 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		mainFilterUp.setOverallExponentRange(config.overallFilterUpExponentMin, config.overallFilterUpExponentMax);
 		mainFilterUp.setOverallOffsetRange(config.overallFilterUpOffsetMin, config.overallFilterUpOffsetMax);
 
-		wetIn.setPeriodicDurationRange(config.periodicWetInDurationMin, config.periodicWetInDurationMax);
-		wetIn.setOverallDurationRange(config.overallWetInDurationMin, config.overallWetInDurationMax);
-		wetIn.setOverallInitialRange(0, 0);
-		wetIn.setOverallScaleRange(1.0, 1.0);
-		wetIn.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
-		wetIn.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
+		wetInOld.setPeriodicDurationRange(config.periodicWetInDurationMin, config.periodicWetInDurationMax);
+		wetInOld.setOverallDurationRange(config.overallWetInDurationMin, config.overallWetInDurationMax);
+		wetInOld.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
+		wetInOld.setOverallInitialRange(0, 0);
+		wetInOld.setOverallScaleRange(1.0, 1.0);
+		wetInOld.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
+
+		wetIn.setParameterRange(0,
+				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMin),
+				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMax));
+		wetIn.setParameterRange(1,
+				factorForPolyAdjustmentDuration(config.overallWetInDurationMin),
+				factorForPolyAdjustmentDuration(config.overallWetInDurationMax));
+		wetIn.setParameterRange(2,
+				factorForPolyAdjustmentExponent(config.overallWetInExponentMin),
+				factorForPolyAdjustmentExponent(config.overallWetInExponentMax));
+		wetIn.setParameterRange(3,
+				factorForAdjustmentInitial(0),
+				factorForAdjustmentInitial(0));
+		wetIn.setParameterRange(4, 1.0, 1.0);
+		wetIn.setParameterRange(5,
+				factorForAdjustmentOffset(config.overallWetInOffsetMin),
+				factorForAdjustmentOffset(config.overallWetInOffsetMax));
 
 		IntStream.range(0, delayLayers).forEach(i -> transmission.setParameterRange(i, config.minTransmission, config.maxTransmission));
 
@@ -153,7 +192,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		OperationList setup = new OperationList();
 		setup.add(volume.expand());
 		setup.add(mainFilterUp.expand());
-		setup.add(wetIn.expand());
+		if (enableAdjustmentChromosome) setup.add(wetInOld.expand());
 		setup.add(delayDynamics.expand());
 		setup.add(mainFilterDown.expand());
 		return setup;
@@ -173,7 +212,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(volume.getTemporals());
 		temporals.addAll(mainFilterUp.getTemporals());
-		temporals.addAll(wetIn.getTemporals());
+		if (enableAdjustmentChromosome) temporals.addAll(wetInOld.getTemporals());
 		temporals.addAll(delayDynamics.getTemporals());
 		temporals.addAll(mainFilterDown.getTemporals());
 
@@ -208,8 +247,33 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 							toScalar(delayDynamics.valueAt(i, 0).getResultant(c(1.0)))))
 					.collect(CellList.collector());
 
+			IntFunction<Gene<PackedCollection<?>>> tg;
+
+			if (enableAdjustmentChromosome) {
+				// Route each line to each delay layer
+				tg = i -> delayGene(delayLayers, wetInOld.valueAt(i));
+			} else {
+				tg = i -> delayGene(delayLayers, new Gene<>() {
+					@Override
+					public int length() { return 1; }
+
+					@Override
+					public Factor<PackedCollection<?>> valueAt(int pos) {
+						return in ->
+								multiply(adjustment(
+								wetIn.valueAt(i, 0).getResultant(c(1.0)),
+								wetIn.valueAt(i, 1).getResultant(c(1.0)),
+								wetIn.valueAt(i, 2).getResultant(c(1.0)),
+								wetIn.valueAt(i, 3).getResultant(c(1.0)),
+								wetIn.valueAt(i, 4).getResultant(c(1.0)),
+								wetIn.valueAt(i, 5).getResultant(c(1.0)),
+								clock.time(sampleRate), 0.0, 1.0, false), in);
+					}
+				});
+			}
+
 			// Route each line to each delay layer
-			efx = efx.m(fi(), delays, i -> delayGene(delayLayers, wetIn.valueAt(i)))
+			efx = efx.m(fi(), delays, tg)
 					// Feedback grid
 					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
 					.sum();

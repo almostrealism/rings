@@ -84,6 +84,47 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(exp, 10, 1);
 	}
 
+	default double factorForPeriodicAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double factorForPolyAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double factorForPolyAdjustmentExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	default double factorForAdjustmentInitial(double value) {
+		return invertOneToInfinity(value, 10, 1);
+	}
+
+	default double factorForAdjustmentOffset(double value) {
+		return invertOneToInfinity(value, 60, 3);
+	}
+
+	default ProducerComputation<PackedCollection<?>> adjustment(Producer<PackedCollection<?>> periodicWavelength,
+																Producer<PackedCollection<?>> polyWaveLength,
+																Producer<PackedCollection<?>> polyExp,
+																Producer<PackedCollection<?>> initial,
+																Producer<PackedCollection<?>> scale,
+																Producer<PackedCollection<?>> offset,
+																Producer<PackedCollection<?>> time,
+																double min,
+																double max,
+																boolean relative) {
+		CollectionProducerComputation periodicAmp = c(1.0);
+
+		if (relative) scale = multiply(scale, initial);
+		CollectionProducerComputation pos = subtract(time, offset);
+		return _bound(pos._greaterThan(c(0.0),
+						pow(polyWaveLength, c(-1.0))
+								.multiply(pos).pow(polyExp)
+								.multiply(scale).add(initial), initial),
+				min, max);
+	}
+
 	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
 															  Producer<PackedCollection<?>> d,
 															  Producer<PackedCollection<?>> m,

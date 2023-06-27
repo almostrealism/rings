@@ -88,24 +88,4 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 				factorForAdjustmentOffset(min),
 				factorForAdjustmentOffset(max));
 	}
-
-	public double factorForPeriodicAdjustmentDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double factorForPolyAdjustmentDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double factorForPolyAdjustmentExponent(double exp) {
-		return invertOneToInfinity(exp, 10, 1);
-	}
-
-	public double factorForAdjustmentInitial(double value) {
-		return invertOneToInfinity(value, 10, 1);
-	}
-
-	public double factorForAdjustmentOffset(double value) {
-		return invertOneToInfinity(value, 60, 3);
-	}
 }
