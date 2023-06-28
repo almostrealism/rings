@@ -17,7 +17,6 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -55,8 +54,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	private AdjustmentChromosome volume;
 	private AdjustmentChromosome mainFilterUp;
-	private AdjustmentChromosome wetInOld;
-	private SimpleChromosome wetIn;
+	private AdjustmentChromosome wetIn;
+	private SimpleChromosome wetInSimple;
 	private SimpleChromosome transmission;
 	private SimpleChromosome wetOut;
 	private SimpleChromosome delay;
@@ -80,12 +79,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		SimpleChromosome w = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> w.addGene());
-		this.wetInOld = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
-		this.wetInOld.setGlobalTime(clock.frame());
+		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
+		this.wetIn.setGlobalTime(clock.frame());
 
-		this.wetIn = genome.addSimpleChromosome(6);
+		this.wetInSimple = genome.addSimpleChromosome(6);
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = wetIn.addGene();
+			SimpleGene g = wetInSimple.addGene();
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
@@ -138,27 +137,27 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		mainFilterUp.setOverallExponentRange(config.overallFilterUpExponentMin, config.overallFilterUpExponentMax);
 		mainFilterUp.setOverallOffsetRange(config.overallFilterUpOffsetMin, config.overallFilterUpOffsetMax);
 
-		wetInOld.setPeriodicDurationRange(config.periodicWetInDurationMin, config.periodicWetInDurationMax);
-		wetInOld.setOverallDurationRange(config.overallWetInDurationMin, config.overallWetInDurationMax);
-		wetInOld.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
-		wetInOld.setOverallInitialRange(0, 0);
-		wetInOld.setOverallScaleRange(1.0, 1.0);
-		wetInOld.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
+		wetIn.setPeriodicDurationRange(config.periodicWetInDurationMin, config.periodicWetInDurationMax);
+		wetIn.setOverallDurationRange(config.overallWetInDurationMin, config.overallWetInDurationMax);
+		wetIn.setOverallExponentRange(config.overallWetInExponentMin, config.overallWetInExponentMax);
+		wetIn.setOverallInitialRange(0, 0);
+		wetIn.setOverallScaleRange(1.0, 1.0);
+		wetIn.setOverallOffsetRange(config.overallWetInOffsetMin, config.overallWetInOffsetMax);
 
-		wetIn.setParameterRange(0,
+		wetInSimple.setParameterRange(0,
 				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMin),
 				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMax));
-		wetIn.setParameterRange(1,
+		wetInSimple.setParameterRange(1,
 				factorForPolyAdjustmentDuration(config.overallWetInDurationMin),
 				factorForPolyAdjustmentDuration(config.overallWetInDurationMax));
-		wetIn.setParameterRange(2,
+		wetInSimple.setParameterRange(2,
 				factorForPolyAdjustmentExponent(config.overallWetInExponentMin),
 				factorForPolyAdjustmentExponent(config.overallWetInExponentMax));
-		wetIn.setParameterRange(3,
+		wetInSimple.setParameterRange(3,
 				factorForAdjustmentInitial(0),
 				factorForAdjustmentInitial(0));
-		wetIn.setParameterRange(4, 1.0, 1.0);
-		wetIn.setParameterRange(5,
+		wetInSimple.setParameterRange(4, 1.0, 1.0);
+		wetInSimple.setParameterRange(5,
 				factorForAdjustmentOffset(config.overallWetInOffsetMin),
 				factorForAdjustmentOffset(config.overallWetInOffsetMax));
 
@@ -192,7 +191,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		OperationList setup = new OperationList();
 		setup.add(volume.expand());
 		setup.add(mainFilterUp.expand());
-		if (enableAdjustmentChromosome) setup.add(wetInOld.expand());
+		if (enableAdjustmentChromosome) setup.add(wetIn.expand());
 		setup.add(delayDynamics.expand());
 		setup.add(mainFilterDown.expand());
 		return setup;
@@ -212,7 +211,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(volume.getTemporals());
 		temporals.addAll(mainFilterUp.getTemporals());
-		if (enableAdjustmentChromosome) temporals.addAll(wetInOld.getTemporals());
+		if (enableAdjustmentChromosome) temporals.addAll(wetIn.getTemporals());
 		temporals.addAll(delayDynamics.getTemporals());
 		temporals.addAll(mainFilterDown.getTemporals());
 
@@ -251,7 +250,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 			if (enableAdjustmentChromosome) {
 				// Route each line to each delay layer
-				tg = i -> delayGene(delayLayers, wetInOld.valueAt(i));
+				tg = i -> delayGene(delayLayers, wetIn.valueAt(i));
 			} else {
 				tg = i -> delayGene(delayLayers, new Gene<>() {
 					@Override
@@ -261,12 +260,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 					public Factor<PackedCollection<?>> valueAt(int pos) {
 						return in ->
 								multiply(adjustment(
-								wetIn.valueAt(i, 0).getResultant(c(1.0)),
-								wetIn.valueAt(i, 1).getResultant(c(1.0)),
-								wetIn.valueAt(i, 2).getResultant(c(1.0)),
-								wetIn.valueAt(i, 3).getResultant(c(1.0)),
-								wetIn.valueAt(i, 4).getResultant(c(1.0)),
-								wetIn.valueAt(i, 5).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 0).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 1).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 2).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 3).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 4).getResultant(c(1.0)),
+								wetInSimple.valueAt(i, 5).getResultant(c(1.0)),
 								clock.time(sampleRate), 0.0, 1.0, false), in);
 					}
 				});

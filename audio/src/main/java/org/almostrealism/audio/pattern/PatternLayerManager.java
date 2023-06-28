@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
@@ -353,14 +354,25 @@ public class PatternLayerManager implements CodeFeatures {
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;
 
-						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
-						int frames = Math.min(audio.getShape().getCount(),
-								destination.getShape().length(0) - note.getOffset());
+//						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
+//						int frames = Math.min(audio.getShape().getCount(),
+//								destination.getShape().length(0) - note.getOffset());
+//
+//						TraversalPolicy shape = shape(frames).traverse(1);
+//						sum
+//								.into(destination.range(shape, note.getOffset()))
+//								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
 
-						TraversalPolicy shape = shape(frames).traverse(1);
-						sum
-								.into(destination.range(shape, note.getOffset()))
-								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
+								audio -> {
+									int frames = Math.min(audio.getShape().getCount(),
+											destination.getShape().length(0) - note.getOffset());
+
+									TraversalPolicy shape = shape(frames).traverse(1);
+									return sum
+											.into(destination.range(shape, note.getOffset()))
+											.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+								});
 					});
 		});
 
