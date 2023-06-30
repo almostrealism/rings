@@ -75,15 +75,23 @@ public class Generator {
 	@JsonIgnore
 	public void setGenerationProvider(GenerationProvider provider) { this.generationProvider = provider; }
 
-	public void refresh() {
+	public boolean refresh() {
 		if (state == State.REFRESHING || state == State.GENERATING) {
 			throw new IllegalStateException("Generator is busy");
 		}
 
+		List<PatternNoteSource> sources =
+				getSources().stream()
+						.map(sourceProvider::getSource)
+						.flatMap(List::stream)
+						.collect(Collectors.toList());
+
+		if (sources.isEmpty()) return false;
+
 		state = State.REFRESHING;
-		boolean success = generationProvider.refresh(KeyUtils.generateKey(), id,
-				getSources().stream().map(sourceProvider::getSource).flatMap(List::stream).collect(Collectors.toList()));
+		boolean success = generationProvider.refresh(KeyUtils.generateKey(), id, sources);
 		state = success ? State.READY : State.NONE;
+		return true;
 	}
 
 	public void generate(int count) {
