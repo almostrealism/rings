@@ -81,8 +81,8 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 		
 		Supplier<Evaluable<? extends Vector>> l = p.getLightDirection();
 
-		ExpressionComputation<Scalar> k = dotProduct(direction(n), l).add(v(1.0));
-		ExpressionComputation<Scalar> oneMinusK = scalar(1.0).subtract(k);
+		Producer<Scalar> k = dotProduct(direction(n), l).add(v(1.0));
+		Producer<Scalar> oneMinusK = scalar(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.get().evaluate(p);
 		RGB cc = this.coldColor.get().evaluate(p);
