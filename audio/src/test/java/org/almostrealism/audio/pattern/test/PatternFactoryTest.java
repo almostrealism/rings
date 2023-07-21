@@ -165,8 +165,12 @@ public class PatternFactoryTest implements CellFeatures {
 	public void runLayers() throws IOException {
 		Frequency bpm = bpm(120);
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
-		PackedCollection destination = new PackedCollection((int) (bpm.l(16) * OutputLine.sampleRate));
+		int measures = 32;
+		int beats = 4;
+		double measureDuration = bpm.l(beats);
+		double measureFrames = measureDuration * OutputLine.sampleRate;
+
+		PackedCollection destination = new PackedCollection((int) (measures * measureFrames));
 
 		List<PatternFactoryChoice> choices = readChoices();
 
@@ -175,17 +179,19 @@ public class PatternFactoryTest implements CellFeatures {
 
 		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 0, 1.0, false);
 
-		System.out.println(PatternLayerManager.layerHeader());
-		System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
+		// System.out.println(PatternLayerManager.layerHeader());
+		// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
 
 		for (int i = 0; i < 4; i++) {
 			manager.addLayer(new ParameterSet(0.1, 0.2, 0.3));
-			System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
+			// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
 		}
 
 		manager.updateDestination(destination);
-		manager.sum(pos -> (int) (pos * bpm.l(16) * OutputLine.sampleRate),
-				pos -> pos * bpm.l(4), 1, pos -> Scale.of(WesternChromatic.C1));
+		manager.sum(
+				pos -> (int) (pos * measureFrames),
+				pos -> pos * measureDuration,
+				measures, pos -> Scale.of(WesternChromatic.C1));
 
 		WaveData out = new WaveData(destination, OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));

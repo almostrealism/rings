@@ -190,10 +190,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList();
 		setup.add(volume.expand());
-		setup.add(mainFilterUp.expand());
+		if (AudioScene.enableMainFilterUp) setup.add(mainFilterUp.expand());
 		if (enableAdjustmentChromosome) setup.add(wetIn.expand());
-		setup.add(delayDynamics.expand());
-		setup.add(mainFilterDown.expand());
+		if (!AudioScene.enableSourcesOnly) setup.add(delayDynamics.expand());
+		if (!AudioScene.enableSourcesOnly) setup.add(mainFilterDown.expand());
 		return setup;
 	}
 
@@ -210,15 +210,16 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		TemporalList temporals = new TemporalList();
 		temporals.addAll(volume.getTemporals());
-		temporals.addAll(mainFilterUp.getTemporals());
+		if (AudioScene.enableMainFilterUp) temporals.addAll(mainFilterUp.getTemporals());
 		if (enableAdjustmentChromosome) temporals.addAll(wetIn.getTemporals());
-		temporals.addAll(delayDynamics.getTemporals());
-		temporals.addAll(mainFilterDown.getTemporals());
+		if (!AudioScene.enableSourcesOnly) temporals.addAll(delayDynamics.getTemporals());
+		if (!AudioScene.enableSourcesOnly) temporals.addAll(mainFilterDown.getTemporals());
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
 		if (AudioScene.enableSourcesOnly) {
-			return cells.map(fc(i -> factor(volume.valueAt(i, 0))))
+			return cells
+					.map(fc(i -> factor(volume.valueAt(i, 0))))
 					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
