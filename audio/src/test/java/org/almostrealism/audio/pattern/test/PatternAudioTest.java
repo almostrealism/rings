@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern.test;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -31,6 +32,7 @@ import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.Factor;
 import org.junit.Test;
 
 import java.io.File;
@@ -53,10 +55,10 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 	@Test
 	public void noteAudio() {
-		PatternNote note = PatternNote.create("Library/Monarch_C1.wav", WesternChromatic.C1);
+		PatternNote note = PatternNote.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
 		note.setTuning(new DefaultKeyboardTuning());
-		new WaveData(note.getAudio(WesternChromatic.C2).get().evaluate(), note.getSampleRate())
-				.save(new File("results/Monarch_C2.wav"));
+		new WaveData(note.getAudio(WesternChromatic.C2, 1.0).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-audio.wav"));
 	}
 
 	@Test
@@ -65,8 +67,55 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note = PatternNote.create(note, attack(c(0.5)));
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0).get().evaluate(), note.getSampleRate())
 				.save(new File("results/pattern-note-envelope.wav"));
+	}
+
+	@Test
+	public void conditionalEnvelope() {
+		Factor<PackedCollection<?>> factor = in ->
+				greaterThanConditional(time(), c(1.0),
+						volume(c(0.5)).getResultant(in),
+						attack(c(0.5)).getResultant(in));
+
+		Evaluable<PackedCollection<?>> env =
+				sampling(OutputLine.sampleRate, ParameterizedEnvelope.MAX_SECONDS,
+						() -> factor.getResultant(v(1, 0))).get();
+
+		PatternNote note = PatternNote.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
+		note = PatternNote.create(note, (audio, duration) -> () -> args -> {
+			PackedCollection<?> audioData = audio.get().evaluate();
+			PackedCollection<?> dr = duration.get().evaluate();
+
+			return env.evaluate(audioData, dr);
+		});
+
+		note.setTuning(new DefaultKeyboardTuning());
+
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-conditional-envelope.wav"));
+	}
+
+	@Test
+	public void envelopePassThrough() {
+		Factor<PackedCollection<?>> factor = envelope(attack(c(0.5)))
+				.andThenDecay(c(0.5), c(1.0), c(0.0)).get();
+		Evaluable<PackedCollection<?>> env =
+				sampling(OutputLine.sampleRate, ParameterizedEnvelope.MAX_SECONDS,
+					() -> factor.getResultant(v(1, 0))).get();
+
+		PatternNote note = PatternNote.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
+		note = PatternNote.create(note, (audio, duration) -> () -> args -> {
+			PackedCollection<?> audioData = audio.get().evaluate();
+			PackedCollection<?> dr = duration.get().evaluate();
+
+			return env.evaluate(audioData, dr);
+		});
+
+		note.setTuning(new DefaultKeyboardTuning());
+
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0).get().evaluate(), note.getSampleRate())
+				.save(new File("results/pattern-note-envelope-passthrough.wav"));
 	}
 
 	@Test
@@ -78,7 +127,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note = PatternNote.create(note, section.get());
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1).get().evaluate(), note.getSampleRate())
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0).get().evaluate(), note.getSampleRate())
 				.save(new File("results/pattern-note-envelope-sections.wav"));
 	}
 

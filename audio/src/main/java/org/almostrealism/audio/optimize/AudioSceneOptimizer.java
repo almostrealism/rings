@@ -120,6 +120,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.enableMasterFilterDown = true;
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
+		PatternElementFactory.enableEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 
@@ -134,7 +135,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		CLMemoryProvider.enableLargeAllocationLogging = true;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = true; // verbosity < 3;
+		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);

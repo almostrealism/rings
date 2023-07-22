@@ -54,7 +54,7 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 //					min, max);
 			if (relative) scale = scale.relativeMultiply(initial);
 			CollectionProducerComputation pos = relativeSubtract(in, offset);
-			return _bound(pos._greaterThan(c(0.0),
+			return relativeBound(pos._greaterThan(c(0.0),
 							relativeAdd(polyWaveLength.pow(c(-1.0))
 									.relativeMultiply(pos).pow(polyExp)
 									.relativeMultiply(scale), initial), initial),
