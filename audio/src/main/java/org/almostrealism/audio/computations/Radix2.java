@@ -53,9 +53,9 @@ public class Radix2 implements RadixComputationFactory, CodeFeatures {
 		Producer<Pair<?>> d = pairFromBank(bank, c(kPlusTripleQuarterN, 0));
 
 		if (kind == A) {
-			return pairAdd(a, c);
+			return add(a, c);
 		} else if (kind == B) {
-			return pairAdd(b, d);
+			return add(b, d);
 		}
 
 		Producer<Scalar> angleK = scalarsMultiply(angleProducer, kProducer);
