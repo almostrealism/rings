@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
@@ -31,7 +32,6 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 
@@ -95,7 +95,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
-		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
+		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		OperationList process = new OperationList("PatternSystemManager Postprocess");
 

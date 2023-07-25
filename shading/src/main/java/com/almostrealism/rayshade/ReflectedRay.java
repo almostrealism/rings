@@ -22,12 +22,11 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.GeometryFeatures;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 
-public class ReflectedRay implements ProducerComputation<Ray>, KernelizedProducer<Ray>, GeometryFeatures {
+public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures {
 	private Producer<Vector> point;
 	private Producer<Vector> normal;
 	private Producer<Vector> reflected;

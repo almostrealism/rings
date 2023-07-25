@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -24,7 +25,6 @@ import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
@@ -102,7 +102,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public void updateDestination(PackedCollection<?> destination) {
 		this.destination = destination;
 
-		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
+		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");

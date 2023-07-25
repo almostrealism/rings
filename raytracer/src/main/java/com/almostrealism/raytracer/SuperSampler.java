@@ -21,28 +21,26 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.PathElement;
 import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.MemoryData;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 // TODO  This can now be done with CollectionProducer::map
 public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
-	protected KernelizedProducer<RGB> samples[][];
+	protected Producer<RGB> samples[][];
 	private double scale;
 
-	public SuperSampler(KernelizedProducer<RGB> samples[][]) {
+	public SuperSampler(Producer<RGB> samples[][]) {
 		this.samples = samples;
 		scale = 1.0 / (this.samples.length * this.samples[0].length);
 	}
 
 	@Override
 	public Evaluable<RGB> get() {
-		KernelizedEvaluable<RGB> ev[][] = new KernelizedEvaluable[samples.length][samples[0].length];
+		Evaluable<RGB> ev[][] = new Evaluable[samples.length][samples[0].length];
 		IntStream.range(0, samples.length).forEach(i ->
 			IntStream.range(0, samples[i].length).forEach(j -> {
 				ev[i][j] = samples[i][j].get();

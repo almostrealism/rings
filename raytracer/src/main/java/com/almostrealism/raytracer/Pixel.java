@@ -18,14 +18,13 @@ package com.almostrealism.raytracer;
 
 import org.almostrealism.color.RGB;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.KernelizedProducer;
 
 public class Pixel extends SuperSampler {
 	public Pixel(int ssWidth, int ssHeight) {
-		super(new KernelizedProducer[ssWidth][ssHeight]);
+		super(new Producer[ssWidth][ssHeight]);
 	}
 
-	public synchronized void setSample(int sx, int sy, KernelizedProducer<RGB> s) {
+	public synchronized void setSample(int sx, int sy, Producer<RGB> s) {
 		if (s == null) {
 			throw new IllegalArgumentException("Null sample not supported");
 		}

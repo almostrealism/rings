@@ -26,13 +26,11 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.MeshData;
 import org.almostrealism.space.Triangle;
-import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 import org.junit.Assert;
@@ -41,7 +39,7 @@ import org.junit.Test;
 
 public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
-	private KernelizedProducer<Ray> ray;
+	private Producer<Ray> ray;
 
 	private int width, height;
 
@@ -59,7 +57,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		return new Mesh(data);
 	}
 
-	protected KernelizedProducer<Ray> camera() {
+	protected Producer<Ray> camera() {
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
 		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
@@ -70,7 +68,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return (KernelizedProducer<Ray>) c.rayAt((Producer) v(Pair.shape(), 0), pair(width, height));
+		return (Producer<Ray>) c.rayAt((Producer) v(Pair.shape(), 0), pair(width, height));
 	}
 
 	@Before
