@@ -25,7 +25,7 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.function.Supplier;
 
-public abstract class ExponentialComputation extends OperationComputationAdapter {
+public abstract class ExponentialComputation extends OperationComputationAdapter<PackedCollection<?>> {
 	public ExponentialComputation(ExponentialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super(() -> new Provider<>(output),
 				data::getNotePosition,

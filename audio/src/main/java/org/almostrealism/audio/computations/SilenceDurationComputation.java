@@ -26,7 +26,7 @@ import io.almostrealism.relation.Producer;
 
 import java.util.function.Consumer;
 
-public class SilenceDurationComputation extends OperationComputationAdapter {
+public class SilenceDurationComputation extends OperationComputationAdapter<PackedCollection<?>> {
 	public SilenceDurationComputation(Producer<Scalar> silenceDuration, Producer<Scalar> silenceSettings, Producer<PackedCollection<?>> value) {
 		super(new Producer[] { silenceDuration, silenceSettings, value });
 	}

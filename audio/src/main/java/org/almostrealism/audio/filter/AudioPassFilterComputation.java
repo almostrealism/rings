@@ -29,7 +29,7 @@ import org.almostrealism.CodeFeatures;
 
 import java.util.function.Supplier;
 
-public class AudioPassFilterComputation extends OperationComputationAdapter implements CodeFeatures {
+public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
 
 	private boolean high;

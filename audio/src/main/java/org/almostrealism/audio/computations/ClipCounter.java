@@ -28,7 +28,7 @@ import io.almostrealism.relation.Producer;
 
 import java.util.function.Consumer;
 
-public class ClipCounter extends OperationComputationAdapter {
+public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>> {
 	public ClipCounter(Producer<Scalar> clipCount, Producer<Pair<?>> clipSettings, Producer<PackedCollection<?>> value) {
 		super(new Producer[] { clipCount, clipSettings, value });
 	}

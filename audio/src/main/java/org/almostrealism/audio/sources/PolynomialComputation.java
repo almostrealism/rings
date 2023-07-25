@@ -25,7 +25,7 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.function.Supplier;
 
-public abstract class PolynomialComputation extends OperationComputationAdapter {
+public abstract class PolynomialComputation extends OperationComputationAdapter<PackedCollection<?>> {
 	public PolynomialComputation(PolynomialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super((Supplier) Ops.ops().p(output),
 				(Supplier) data.getWavePosition(),
