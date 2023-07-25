@@ -18,15 +18,14 @@ package org.almostrealism.audio.sources;
 
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.function.Supplier;
 
-public abstract class SineWaveComputation extends DynamicOperationComputationAdapter {
+public abstract class SineWaveComputation extends OperationComputationAdapter {
 	protected static final double TWO_PI = 2 * Math.PI;
 
 	public SineWaveComputation(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {

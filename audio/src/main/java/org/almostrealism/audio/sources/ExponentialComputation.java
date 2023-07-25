@@ -21,11 +21,11 @@ import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.function.Supplier;
 
-public abstract class ExponentialComputation extends DynamicOperationComputationAdapter {
+public abstract class ExponentialComputation extends OperationComputationAdapter {
 	public ExponentialComputation(ExponentialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super(() -> new Provider<>(output),
 				data::getNotePosition,

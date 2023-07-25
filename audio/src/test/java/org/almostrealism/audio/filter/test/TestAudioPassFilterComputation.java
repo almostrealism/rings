@@ -19,15 +19,14 @@ package org.almostrealism.audio.filter.test;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
 import java.util.function.Supplier;
 
-public class TestAudioPassFilterComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
+public class TestAudioPassFilterComputation extends OperationComputationAdapter implements CodeFeatures {
 	public TestAudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> input, Supplier output) {
 		super(output,
 				(Supplier) data.getSampleRate(),

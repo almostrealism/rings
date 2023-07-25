@@ -18,15 +18,14 @@ package org.almostrealism.audio.sources;
 
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.function.Supplier;
 
-public abstract class PolynomialComputation extends DynamicOperationComputationAdapter {
+public abstract class PolynomialComputation extends OperationComputationAdapter {
 	public PolynomialComputation(PolynomialCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
 		super((Supplier) Ops.ops().p(output),
 				(Supplier) data.getWavePosition(),

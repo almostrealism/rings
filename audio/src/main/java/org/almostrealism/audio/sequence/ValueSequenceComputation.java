@@ -25,7 +25,7 @@ import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class ValueSequenceComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
+public abstract class ValueSequenceComputation extends OperationComputationAdapter implements CodeFeatures {
 	protected HybridScope scope;
 	protected final boolean repeat;
 

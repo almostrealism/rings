@@ -16,23 +16,20 @@
 
 package org.almostrealism.audio.filter;
 
-import io.almostrealism.code.HybridScope;
 import io.almostrealism.expression.Max;
 import io.almostrealism.expression.Min;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AudioPassFilterComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
+public class AudioPassFilterComputation extends OperationComputationAdapter implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
 
 	private boolean high;
