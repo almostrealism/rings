@@ -17,7 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.code.Tree;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Named;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
@@ -25,10 +25,8 @@ import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
-import org.glassfish.grizzly.streams.Output;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;

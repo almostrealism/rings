@@ -18,13 +18,13 @@ package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.relation.Countable;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.function.Supplier;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface WaveDataProvider extends Supplier<WaveData>, Setup {
-	int getCount();
+public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup {
 
 	double getDuration();
 

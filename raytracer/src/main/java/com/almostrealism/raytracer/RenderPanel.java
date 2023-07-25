@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,6 +29,8 @@ import javax.swing.SwingUtilities;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
+import io.almostrealism.relation.Node;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.RGB;
@@ -41,7 +44,6 @@ import org.almostrealism.texture.GraphicsConverter;
 
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.primitives.SurfaceUI;
-import io.almostrealism.relation.Pipeline;
 import io.almostrealism.relation.Evaluable;
 
 /**
@@ -50,7 +52,7 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Pipeline {
+public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Producer<Image> {
 	private T scene;
 	private EventHandler handler;
 
@@ -309,7 +311,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	/** Update the displayed image to the first element of the specified argument. */
 	@Override
-	public Evaluable<Object> get() {
+	public Evaluable<Image> get() {
 		return images -> {
 			renderedImage = (Image) images[0];
 
@@ -337,4 +339,5 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			return renderedImage;
 		};
 	}
+
 }

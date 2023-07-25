@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.code.Tree;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.FileWaveDataProvider;
