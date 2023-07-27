@@ -205,7 +205,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 		patternsForChannel.stream().map(i -> {
 			patterns.get(i).sum(offsetForPosition, timeForDuration, measures, scaleForPosition);
-			return v(patterns.get(i).getDestination());
+			return p(patterns.get(i).getDestination());
 		}).forEach(note -> {
 			PackedCollection<?> audio = traverse(1, note).get().evaluate();
 			int frames = Math.min(audio.getShape().getCount(),
