@@ -22,6 +22,7 @@ import java.util.List;
 
 import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
@@ -82,7 +83,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
-			return new DynamicRGBProducer(args -> {
+			return new DynamicCollectionProducer<>(RGB.shape(), args -> {
 					Vector point = p.getIntersection().get(0).get().evaluate(args).getOrigin();
 					return reflectiveColor.get().evaluate(new Object[] { p })
 							.multiply(p.getSurface().getValueAt(v(point)).get().evaluate());
