@@ -27,10 +27,10 @@ import java.io.OutputStream;
  * a shading language similar to C.
  */
 public class GLSLPrintWriter extends CPrintWriter {
-	public GLSLPrintWriter(OutputStream out) { super(out, null); }
+	public GLSLPrintWriter(OutputStream out) { super(out, null, false); }
 
 	/**
 	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
-	public GLSLPrintWriter(PrintWriter p) { super(p, null); }
+	public GLSLPrintWriter(PrintWriter p) { super(p, null, false); }
 }
