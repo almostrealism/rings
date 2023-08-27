@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.almostrealism.CodeFeatures;
 
 import java.util.function.Supplier;
 
-public class TestAudioPassFilterComputation extends OperationComputationAdapter implements CodeFeatures {
+public class TestAudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
 	public TestAudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> input, Supplier output) {
 		super(output,
 				(Supplier) data.getSampleRate(),

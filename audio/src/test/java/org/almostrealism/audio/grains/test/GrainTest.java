@@ -33,7 +33,7 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.cl.HardwareOperator;
+import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
@@ -71,7 +71,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
-		HardwareOperator.verboseLog(() -> {
+		CLOperator.verboseLog(() -> {
 			source.getData().valueAt(cursor).get().into(result).evaluate();
 		});
 		System.out.println("GrainTest: Timeline kernel evaluated");
