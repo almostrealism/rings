@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.expression.Expression;
+import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.expression.Max;
 import io.almostrealism.expression.Min;
 import io.almostrealism.scope.ArrayVariable;
@@ -54,39 +56,39 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 		this.high = high;
 	}
 
-	public ArrayVariable getOutput() { return getArgument(0, 1); }
-	public ArrayVariable getFrequency() { return getArgument(1, 1); }
-	public ArrayVariable getResonance() { return getArgument(2, 2); }
-	public ArrayVariable getSampleRate() { return getArgument(3, 2); }
-	public ArrayVariable getC() { return getArgument(4, 2); }
-	public ArrayVariable getA1() { return getArgument(5, 2); }
-	public ArrayVariable getA2() { return getArgument(6, 2); }
-	public ArrayVariable getA3() { return getArgument(7, 2); }
-	public ArrayVariable getB1() { return getArgument(8, 2); }
-	public ArrayVariable getB2() { return getArgument(9, 2); }
-	public ArrayVariable getInputHistory0() { return getArgument(10, 2); }
-	public ArrayVariable getInputHistory1() { return getArgument(11, 2); }
-	public ArrayVariable getOutputHistory0() { return getArgument(12, 2); }
-	public ArrayVariable getOutputHistory1() { return getArgument(13, 2); }
-	public ArrayVariable getOutputHistory2() { return getArgument(14, 2); }
-	public ArrayVariable getInput() { return getArgument(15, 1); }
+	public ArrayVariable<Double> getOutput() { return getArgument(0, 1); }
+	public ArrayVariable<Double> getFrequency() { return getArgument(1, 1); }
+	public ArrayVariable<Double> getResonance() { return getArgument(2, 2); }
+	public ArrayVariable<Double> getSampleRate() { return getArgument(3, 2); }
+	public ArrayVariable<Double> getC() { return getArgument(4, 2); }
+	public ArrayVariable<Double> getA1() { return getArgument(5, 2); }
+	public ArrayVariable<Double> getA2() { return getArgument(6, 2); }
+	public ArrayVariable<Double> getA3() { return getArgument(7, 2); }
+	public ArrayVariable<Double> getB1() { return getArgument(8, 2); }
+	public ArrayVariable<Double> getB2() { return getArgument(9, 2); }
+	public ArrayVariable<Double> getInputHistory0() { return getArgument(10, 2); }
+	public ArrayVariable<Double> getInputHistory1() { return getArgument(11, 2); }
+	public ArrayVariable<Double> getOutputHistory0() { return getArgument(12, 2); }
+	public ArrayVariable<Double> getOutputHistory1() { return getArgument(13, 2); }
+	public ArrayVariable<Double> getOutputHistory2() { return getArgument(14, 2); }
+	public ArrayVariable<Double> getInput() { return getArgument(15, 1); }
 
-	protected String output() { return getOutput().ref(0); }
-	protected String frequency() { return getFrequency().ref(0); }
-	protected String resonance() { return getResonance().ref(0); }
-	protected String sampleRate() { return getSampleRate().ref(0); }
-	protected String c() { return getC().ref(0); }
-	protected String a1() { return getA1().ref(0); }
-	protected String a2() { return getA2().ref(0); }
-	protected String a3() { return getA3().ref(0); }
-	protected String b1() { return getB1().ref(0); }
-	protected String b2() { return getB2().ref(0); }
-	protected String inputHistory0() { return getInputHistory0().ref(0); }
-	protected String inputHistory1() { return getInputHistory1().ref(0); }
-	protected String outputHistory0() { return getOutputHistory0().ref(0); }
-	protected String outputHistory1() { return getOutputHistory1().ref(0); }
-	protected String outputHistory2() { return getOutputHistory2().ref(0); }
-	protected String input() { return getInput().ref(0); }
+	protected InstanceReference<Double> output() { return getOutput().valueAt(0); }
+	protected InstanceReference<Double> frequency() { return getFrequency().valueAt(0); }
+	protected InstanceReference<Double> resonance() { return getResonance().valueAt(0); }
+	protected InstanceReference<Double> sampleRate() { return getSampleRate().valueAt(0); }
+	protected InstanceReference<Double> c() { return getC().valueAt(0); }
+	protected InstanceReference<Double> a1() { return getA1().valueAt(0); }
+	protected InstanceReference<Double> a2() { return getA2().valueAt(0); }
+	protected InstanceReference<Double> a3() { return getA3().valueAt(0); }
+	protected InstanceReference<Double> b1() { return getB1().valueAt(0); }
+	protected InstanceReference<Double> b2() { return getB2().valueAt(0); }
+	protected InstanceReference<Double> inputHistory0() { return getInputHistory0().valueAt(0); }
+	protected InstanceReference<Double> inputHistory1() { return getInputHistory1().valueAt(0); }
+	protected InstanceReference<Double> outputHistory0() { return getOutputHistory0().valueAt(0); }
+	protected InstanceReference<Double> outputHistory1() { return getOutputHistory1().valueAt(0); }
+	protected InstanceReference<Double> outputHistory2() { return getOutputHistory2().valueAt(0); }
+	protected InstanceReference<Double> input() { return getInput().valueAt(0); }
 
 	@Override
 	public void prepareScope(ScopeInputManager manager) {
@@ -94,68 +96,35 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 
 		purgeVariables();
 
-		String one = stringForDouble(1.0);
+		Expression<Double> one = e(1.0);
+		Expression<Double> pi = e(Math.PI);
 
 		if (high) {
-			addVariable(getC().valueAt(0).assign(expression("tan(" + stringForDouble(Math.PI) +
-									" * " + frequency() + " / " + sampleRate() + ")",
-									getFrequency(), getSampleRate())));
-			addVariable(getA1().valueAt(0).assign(expression(one +
-							" / (" + one + " + " + resonance() + " * " + c() + " + " + c() + " * " + c() + ")",
-					getResonance(), getC())));
-			addVariable(getA2().valueAt(0).assign(expression(stringForDouble(-2.0) + " * " + a1(), getA1())));
-			addVariable(getA3().valueAt(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().valueAt(0).assign(expression(stringForDouble(2.0) +
-					" * (" + c() + " * " + c() + " - " + one + ") * " + a1(), getC(), getA1())));
-			addVariable(getB2().valueAt(0).assign(
-					expression("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
-							getResonance(), getC(), getA1())));
+			addVariable(getC().valueAt(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
+			addVariable(getA1().valueAt(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().valueAt(0).assign(e(-2.0).multiply(a1())));
+			addVariable(getA3().valueAt(0).assign(a1()));
+			addVariable(getB1().valueAt(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
+			addVariable(getB2().valueAt(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		} else {
-			addVariable(getC().valueAt(0).assign(expression(
-								one + " / tan(" + stringForDouble(Math.PI) +
-										" * " + frequency() + " / " + sampleRate() + ")",
-										getFrequency(), getSampleRate())));
-			addVariable(getA1().valueAt(0).assign(expression(one +
-							" / (" + one + " + " + resonance() + " * " + c() + " + " + c() + " * " + c() + ")",
-							getResonance(), getC())));
-			addVariable(getA2().valueAt(0).assign(expression(stringForDouble(2.0) + " * " + a1(), getA1())));
+			addVariable(getC().valueAt(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
+			addVariable(getA1().valueAt(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().valueAt(0).assign(e(2.0).multiply(a1())));
 			addVariable(getA3().valueAt(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().valueAt(0).assign(expression(stringForDouble(2.0) +
-							" * (" + one + " - " + c() + " * " + c() + ") * " + a1(), getC(), getA1())));
-			addVariable(getB2().valueAt(0).assign(
-					expression("(" + one + " - " + resonance() + " * " + c() + " + " + c() + " * " + c() + ") * " + a1(),
-							getResonance(), getC(), getA1())));
+			addVariable(getB1().valueAt(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
+			addVariable(getB2().valueAt(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
-		String input = "max(min(" + input() + ", " + e(MAX_INPUT).getSimpleExpression() +
-						"), " + e(-MAX_INPUT).getSimpleExpression() + ")";
+		Expression<Double> input = new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
 		addVariable(getOutput().valueAt(0).assign(
-				e(a1() + " * " + input + " + " +
-						a2() + " * " + inputHistory0() + " + " +
-						a3() + " * " + inputHistory1() + " - " +
-						b1() + " * " + outputHistory0() + " - " +
-						b2() + " * " + outputHistory1())));
+				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
+						b1().multiply(outputHistory0())).subtract(b2().multiply(outputHistory1()))));
 
 		addVariable(getInputHistory1().valueAt(0).assign(getInputHistory0().valueAt(0)));
-		addVariable(getInputHistory0().valueAt(0).assign(new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT))));
+		addVariable(getInputHistory0().valueAt(0).assign(input));
 		addVariable(getOutputHistory2().valueAt(0).assign(getOutputHistory1().valueAt(0)));
 		addVariable(getOutputHistory1().valueAt(0).assign(getOutputHistory0().valueAt(0)));
 		addVariable(getOutputHistory0().valueAt(0).assign(getOutput().valueAt(0)));
 	}
-
-//	@Override
-//	public Scope getScope() {
-//		Scope<Scalar> parentScope = super.getScope();
-//		HybridScope<Scalar> scope = new HybridScope<>(this);
-//		scope.getVariables().addAll(parentScope.getVariables());
-//
-//		Consumer<String> code = scope.code();
-//		code.accept("if (fabs(" + getOutput().valueAt(0).getSimpleExpression() + ") > 0.99) {\n");
-//		code.accept("    printf(\"a1 = %f, a2 = %f, a3 = %f, b1 = %f, b2 = %f\\n\", " +
-//				a1() + ", " + a2() + ", " + a3() + ", " + b1() + ", " + b2()  + ");\n");
-//		code.accept("}\n");
-//
-//		return scope;
-//	}
 }
