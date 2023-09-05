@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.data;
 
-import org.almostrealism.audio.sources.PolynomialCellData;
 import org.almostrealism.audio.sources.SineWaveCellData;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
@@ -24,7 +23,7 @@ import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.PooledMem;
 
-public class PolymorphicAudioData extends DefaultWaveCellData implements SineWaveCellData, AudioFilterData, ValueSequenceData, PolynomialCellData {
+public class PolymorphicAudioData extends DefaultWaveCellData implements SineWaveCellData, AudioFilterData, ValueSequenceData {
 	public PolymorphicAudioData() {
 		super();
 	}

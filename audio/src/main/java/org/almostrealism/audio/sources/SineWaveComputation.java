@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sources;
 
+import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
@@ -40,13 +41,23 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 				(Supplier) envelope);
 	}
 
-	public ArrayVariable getOutput() { return getArgument(0, 1); }
-	public ArrayVariable getWavePosition() { return getArgument(1, 2); }
-	public ArrayVariable getWaveLength() { return getArgument(2, 2); }
-	public ArrayVariable getNotePosition() { return getArgument(3, 2); }
-	public ArrayVariable getNoteLength() { return getArgument(4, 2); }
-	public ArrayVariable getPhase() { return getArgument(5, 2); }
-	public ArrayVariable getAmplitude() { return getArgument(6, 2); }
-	public ArrayVariable getDepth() { return getArgument(7, 2); }
-	public ArrayVariable getEnvelope() { return getArgument(8, 2); }
+	public ArrayVariable<Double> getOutput() { return getArgument(0, 1); }
+	public ArrayVariable<Double> getWavePosition() { return getArgument(1, 2); }
+	public ArrayVariable<Double> getWaveLength() { return getArgument(2, 2); }
+	public ArrayVariable<Double> getNotePosition() { return getArgument(3, 2); }
+	public ArrayVariable<Double> getNoteLength() { return getArgument(4, 2); }
+	public ArrayVariable<Double> getPhase() { return getArgument(5, 2); }
+	public ArrayVariable<Double> getAmplitude() { return getArgument(6, 2); }
+	public ArrayVariable<Double> getDepth() { return getArgument(7, 2); }
+	public ArrayVariable<Double> getEnvelope() { return getArgument(8, 2); }
+
+	public InstanceReference<Double> output() { return getOutput().valueAt(0); }
+	public InstanceReference<Double> wavePosition() { return getWavePosition().valueAt(0); }
+	public InstanceReference<Double> waveLength() { return getWaveLength().valueAt(0); }
+	public InstanceReference<Double> notePosition() { return getNotePosition().valueAt(0); }
+	public InstanceReference<Double> noteLength() { return getNoteLength().valueAt(0); }
+	public InstanceReference<Double> phase() { return getPhase().valueAt(0); }
+	public InstanceReference<Double> amplitude() { return getAmplitude().valueAt(0); }
+	public InstanceReference<Double> depth() { return getDepth().valueAt(0); }
+	public InstanceReference<Double> envelope() { return getEnvelope().valueAt(0); }
 }

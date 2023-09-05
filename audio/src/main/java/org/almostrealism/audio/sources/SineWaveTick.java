@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,8 @@ public class SineWaveTick extends SineWaveComputation {
 	@Override
 	public void prepareScope(ScopeInputManager manager) {
 		super.prepareScope(manager);
-
 		purgeVariables();
-
-		addVariable(getWavePosition().valueAt(0).assign(
-				new Sum(getWavePosition().valueAt(0), getWaveLength().valueAt(0))));
-		addVariable(getNotePosition().valueAt(0).assign(
-				new Expression<>(Double.class, getNotePosition().valueAt(0).getSimpleExpression() +
-						" + " + stringForDouble(1.0) + " / " + getNoteLength().valueAt(0).getSimpleExpression(),
-						Collections.emptyList(),
-						getNotePosition(), getNoteLength())));
+		addVariable(wavePosition().assign(wavePosition().add(waveLength())));
+		addVariable(notePosition().assign(notePosition().add(noteLength().reciprocal())));
 	}
 }
