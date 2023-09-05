@@ -12,6 +12,11 @@ public class TensorFlowConstant extends TensorFlowExpression {
 	}
 
 	@Override
+	public String getExpression() {
+		return String.valueOf(value);
+	}
+
+	@Override
 	public Operand<TFloat64> toOperand(TensorFlowManager tf) {
 		input = tf.nextInput();
 		input.setValue(tf.valueOf(value));
