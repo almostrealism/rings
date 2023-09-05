@@ -22,6 +22,7 @@ import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.InstanceReference;
+import io.almostrealism.expression.StaticReference;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
@@ -125,25 +126,25 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		
 		List<Expression<?>> bindArgs = new ArrayList<>();
 		bindArgs.add(glPrintWriter.glParam("ARRAY_BUFFER"));
-		bindArgs.add(new InstanceReference(null, "positionBuffer"));
+		bindArgs.add(new StaticReference<>(null, "positionBuffer"));
 		
 		Method bindBuf = glPrintWriter.glMethod("bindBuffer", bindArgs);
 		
 		p.println(bindBuf);
 
 		
-		Variable positions = new Variable("positions", String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]");
+		Variable positions = new Variable<>("positions", new StaticReference<>(String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]"));
 		p.println(positions);
 		
 		
 		
 		p.println(glPrintWriter.glMethod("bufferData", glPrintWriter.glParam("ARRAY_BUFFER"),
-				new Expression(null, "new Float32Array(positions)"),
+				new StaticReference<>(null, "new Float32Array(positions)"),
 				glPrintWriter.glParam("STATIC_DRAW")));
 		
 		//var buffers = { position: positionBuffer, };
 		
-		Variable buffers = new Variable("buffers", String.class, "{ position: positionBuffer, }");
+		Variable buffers = new Variable<>("buffers", new StaticReference<>(String.class, "{ position: positionBuffer, }"));
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<Variable>();
 		List<Variable<?, ?>> vars = bufferBinding.getVariables();
@@ -158,9 +159,9 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glPrintWriter.glMethod("bindBuffer", glPrintWriter.glParam("ARRAY_BUFFER"),
-				new InstanceReference(Vector.class, "buffers.position")));
+				new StaticReference<>(Vector.class, "buffers.position")));
 		methods.add(glPrintWriter.glMethod("vertexAttribPointer",
-				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition"),
+				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition"),
 				new InstanceReference<>(numC),
 				glPrintWriter.glParam("FLOAT"), new InstanceReference<>(norm),
 				new InstanceReference<>(strd), new InstanceReference<>(offs)));
@@ -169,7 +170,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 //		gl.enableVertexAttribArray(
 //		        programInfo.attribLocations.vertexPosition);
 		methods.add(glPrintWriter.glMethod("enableVertexAttribArray",
-				new InstanceReference(Vector.class, "programInfo.attribLocations.vertexPosition")));
+				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition")));
 		
 		for (Iterator it = vars.iterator(); it.hasNext();) {
 			Variable v = (Variable) it.next();
@@ -180,16 +181,16 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 			p.println(method);
 		}
 		
-		Method useP = glPrintWriter.glMethod("useProgram", new InstanceReference(null, "programInfo.program"));
+		Method useP = glPrintWriter.glMethod("useProgram", new StaticReference<>(null, "programInfo.program"));
 		p.println(useP);
 		
 		Method m4fv = glPrintWriter.glMethod("uniformMatrix4fv",
-				new InstanceReference<>(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
-				new InstanceReference<>(norm), new InstanceReference<>(TransformMatrix.class, "projectionMatrix"));
+				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
+				new InstanceReference<>(norm), new StaticReference<>(TransformMatrix.class, "projectionMatrix"));
 		Method m4fvModel = glPrintWriter.glMethod("uniformMatrix4fv",
-				new InstanceReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
+				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
 				new InstanceReference<>(norm),
-				new InstanceReference<>(TransformMatrix.class, "modelViewMatrix"));
+				new StaticReference<>(TransformMatrix.class, "modelViewMatrix"));
 
 		//pass identity matrices instead because conversion is on server side
 //		p.println(m4fv);
