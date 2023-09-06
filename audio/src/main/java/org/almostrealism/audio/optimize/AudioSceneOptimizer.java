@@ -133,7 +133,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
 		HardwareOperator.enableVerboseLog = verbosity > 3;
-		CLMemoryProvider.enableLargeAllocationLogging = true;
+		// CLMemoryProvider.enableLargeAllocationLogging = true;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
