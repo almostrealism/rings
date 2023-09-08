@@ -118,7 +118,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
 		
-		Variable positionBuffer = new Variable("positionBuffer", String.class, new Method(glMember, "createBuffer"));
+		Variable positionBuffer = new Variable("positionBuffer", new Method(glMember, "createBuffer"));
 		
 		GLPrintWriter glPrintWriter = (GLPrintWriter)gl;
 		CodePrintWriter p = glPrintWriter.getPrintWriter();
@@ -148,14 +148,14 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<Variable>();
 		List<Variable<?, ?>> vars = bufferBinding.getVariables();
-		Variable numC = new Variable("numComponents", Integer.class, 2);
+		Variable numC = new Variable("numComponents", e(2));
 		vars.add(numC);
 
-		Variable norm = new Variable("normalize",Boolean.class,false);
+		Variable norm = new Variable("normalize", e(false));
 		vars.add(norm);
-		Variable strd = new Variable("stride",Integer.class,0);
+		Variable strd = new Variable("stride", e(0));
 		vars.add(strd);
-		Variable offs = new Variable("offset",Integer.class,0);
+		Variable offs = new Variable("offset", e(0));
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glPrintWriter.glMethod("bindBuffer", glPrintWriter.glParam("ARRAY_BUFFER"),
@@ -196,7 +196,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 //		p.println(m4fv);
 //		p.println(m4fvModel);
 		
-		Variable vCount = new Variable("vertexCount",Integer.class,4);
+		Variable vCount = new Variable("vertexCount", e(4));
 		Method drawIt = glPrintWriter.glMethod("drawArrays", glPrintWriter.glParam("TRIANGLE_STRIP"),
 				new InstanceReference<>(offs), new InstanceReference<>(vCount));
 		p.println(vCount);

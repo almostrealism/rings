@@ -73,22 +73,22 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	public ArrayVariable<Double> getOutputHistory2() { return getArgument(14, 2); }
 	public ArrayVariable<Double> getInput() { return getArgument(15, 1); }
 
-	protected InstanceReference<Double> output() { return getOutput().valueAt(0); }
-	protected InstanceReference<Double> frequency() { return getFrequency().valueAt(0); }
-	protected InstanceReference<Double> resonance() { return getResonance().valueAt(0); }
-	protected InstanceReference<Double> sampleRate() { return getSampleRate().valueAt(0); }
-	protected InstanceReference<Double> c() { return getC().valueAt(0); }
-	protected InstanceReference<Double> a1() { return getA1().valueAt(0); }
-	protected InstanceReference<Double> a2() { return getA2().valueAt(0); }
-	protected InstanceReference<Double> a3() { return getA3().valueAt(0); }
-	protected InstanceReference<Double> b1() { return getB1().valueAt(0); }
-	protected InstanceReference<Double> b2() { return getB2().valueAt(0); }
-	protected InstanceReference<Double> inputHistory0() { return getInputHistory0().valueAt(0); }
-	protected InstanceReference<Double> inputHistory1() { return getInputHistory1().valueAt(0); }
-	protected InstanceReference<Double> outputHistory0() { return getOutputHistory0().valueAt(0); }
-	protected InstanceReference<Double> outputHistory1() { return getOutputHistory1().valueAt(0); }
-	protected InstanceReference<Double> outputHistory2() { return getOutputHistory2().valueAt(0); }
-	protected InstanceReference<Double> input() { return getInput().valueAt(0); }
+	protected Expression<Double> output() { return getOutput().valueAt(0); }
+	protected Expression<Double> frequency() { return getFrequency().valueAt(0); }
+	protected Expression<Double> resonance() { return getResonance().valueAt(0); }
+	protected Expression<Double> sampleRate() { return getSampleRate().valueAt(0); }
+	protected Expression<Double> c() { return getC().valueAt(0); }
+	protected Expression<Double> a1() { return getA1().valueAt(0); }
+	protected Expression<Double> a2() { return getA2().valueAt(0); }
+	protected Expression<Double> a3() { return getA3().valueAt(0); }
+	protected Expression<Double> b1() { return getB1().valueAt(0); }
+	protected Expression<Double> b2() { return getB2().valueAt(0); }
+	protected Expression<Double> inputHistory0() { return getInputHistory0().valueAt(0); }
+	protected Expression<Double> inputHistory1() { return getInputHistory1().valueAt(0); }
+	protected Expression<Double> outputHistory0() { return getOutputHistory0().valueAt(0); }
+	protected Expression<Double> outputHistory1() { return getOutputHistory1().valueAt(0); }
+	protected Expression<Double> outputHistory2() { return getOutputHistory2().valueAt(0); }
+	protected Expression<Double> input() { return getInput().valueAt(0); }
 
 	@Override
 	public void prepareScope(ScopeInputManager manager) {
@@ -100,31 +100,31 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 		Expression<Double> pi = e(Math.PI);
 
 		if (high) {
-			addVariable(getC().valueAt(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
-			addVariable(getA1().valueAt(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().valueAt(0).assign(e(-2.0).multiply(a1())));
-			addVariable(getA3().valueAt(0).assign(a1()));
-			addVariable(getB1().valueAt(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
-			addVariable(getB2().valueAt(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().ref(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
+			addVariable(getA1().ref(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().ref(0).assign(e(-2.0).multiply(a1())));
+			addVariable(getA3().ref(0).assign(a1()));
+			addVariable(getB1().ref(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
+			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		} else {
-			addVariable(getC().valueAt(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
-			addVariable(getA1().valueAt(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().valueAt(0).assign(e(2.0).multiply(a1())));
-			addVariable(getA3().valueAt(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().valueAt(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
-			addVariable(getB2().valueAt(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().ref(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
+			addVariable(getA1().ref(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().ref(0).assign(e(2.0).multiply(a1())));
+			addVariable(getA3().ref(0).assign(getA1().valueAt(0)));
+			addVariable(getB1().ref(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
+			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
 		Expression<Double> input = new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
-		addVariable(getOutput().valueAt(0).assign(
+		addVariable(getOutput().ref(0).assign(
 				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
 						b1().multiply(outputHistory0())).subtract(b2().multiply(outputHistory1()))));
 
-		addVariable(getInputHistory1().valueAt(0).assign(getInputHistory0().valueAt(0)));
-		addVariable(getInputHistory0().valueAt(0).assign(input));
-		addVariable(getOutputHistory2().valueAt(0).assign(getOutputHistory1().valueAt(0)));
-		addVariable(getOutputHistory1().valueAt(0).assign(getOutputHistory0().valueAt(0)));
-		addVariable(getOutputHistory0().valueAt(0).assign(getOutput().valueAt(0)));
+		addVariable(getInputHistory1().ref(0).assign(getInputHistory0().valueAt(0)));
+		addVariable(getInputHistory0().ref(0).assign(input));
+		addVariable(getOutputHistory2().ref(0).assign(getOutputHistory1().valueAt(0)));
+		addVariable(getOutputHistory1().ref(0).assign(getOutputHistory0().valueAt(0)));
+		addVariable(getOutputHistory0().ref(0).assign(getOutput().valueAt(0)));
 	}
 }

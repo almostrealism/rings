@@ -51,13 +51,13 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 	public ArrayVariable<Double> getDepth() { return getArgument(7, 2); }
 	public ArrayVariable<Double> getEnvelope() { return getArgument(8, 2); }
 
-	public InstanceReference<Double> output() { return getOutput().valueAt(0); }
-	public InstanceReference<Double> wavePosition() { return getWavePosition().valueAt(0); }
-	public InstanceReference<Double> waveLength() { return getWaveLength().valueAt(0); }
-	public InstanceReference<Double> notePosition() { return getNotePosition().valueAt(0); }
-	public InstanceReference<Double> noteLength() { return getNoteLength().valueAt(0); }
-	public InstanceReference<Double> phase() { return getPhase().valueAt(0); }
-	public InstanceReference<Double> amplitude() { return getAmplitude().valueAt(0); }
-	public InstanceReference<Double> depth() { return getDepth().valueAt(0); }
-	public InstanceReference<Double> envelope() { return getEnvelope().valueAt(0); }
+	public InstanceReference<Double> output() { return (InstanceReference<Double>) getOutput().valueAt(0); }
+	public InstanceReference<Double> wavePosition() { return (InstanceReference<Double>) getWavePosition().valueAt(0); }
+	public InstanceReference<Double> waveLength() { return (InstanceReference<Double>) getWaveLength().valueAt(0); }
+	public InstanceReference<Double> notePosition() { return (InstanceReference<Double>) getNotePosition().valueAt(0); }
+	public InstanceReference<Double> noteLength() { return (InstanceReference<Double>) getNoteLength().valueAt(0); }
+	public InstanceReference<Double> phase() { return (InstanceReference<Double>) getPhase().valueAt(0); }
+	public InstanceReference<Double> amplitude() { return (InstanceReference<Double>) getAmplitude().valueAt(0); }
+	public InstanceReference<Double> depth() { return (InstanceReference<Double>) getDepth().valueAt(0); }
+	public InstanceReference<Double> envelope() { return (InstanceReference<Double>) getEnvelope().valueAt(0); }
 }

@@ -19,6 +19,7 @@ package com.almostrealism.gl;
 import io.almostrealism.expression.Constant;
 import io.almostrealism.expression.IntegerConstant;
 import io.almostrealism.expression.StaticReference;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
@@ -52,7 +53,7 @@ import java.util.function.Predicate;
  * encode the GL content to the {@link CodePrintWriter} that is wrapped by this
  * {@link GLPrintWriter}.
  */
-public class GLPrintWriter extends GLDriver {
+public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	// TODO  this is not ideal
 	public static Predicate<Object> isJs = p -> p.getClass().getSimpleName().equals("JavaScriptPrintWriter");
 
@@ -118,7 +119,7 @@ public class GLPrintWriter extends GLDriver {
 		if (c == null) return; // TODO  Set to a "default" projection
 		PinholeCamera pinCam = (PinholeCamera) c;
 		
-		Variable aspect = new Variable("aspect", Double.class, pinCam.getAspectRatio());
+		Variable aspect = new Variable("aspect", e(pinCam.getAspectRatio()));
 		
 		p.println(aspect);
 	}
@@ -522,7 +523,7 @@ public class GLPrintWriter extends GLDriver {
 		args.add(glParam(type));
 
 		String name = "shader" + (varIndex++);
-		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createShader", args));
+		Variable v = new Variable(name, new Method<String>(glMember, "createShader", args));
 		p.println(v);
 		return v;
 	}
@@ -560,7 +561,7 @@ public class GLPrintWriter extends GLDriver {
 	@Override
 	public Variable<String, ?> createBuffer() {
 		String name = "buffer" + (varIndex++);
-		Variable v = new Variable(name, String.class, new Method<String>(glMember, "createBuffer"));
+		Variable v = new Variable(name, new Method<String>(glMember, "createBuffer"));
 		p.println(v);
 		return v;
 	}
@@ -573,7 +574,7 @@ public class GLPrintWriter extends GLDriver {
 	}
 
 	public void bufferData(Variable buffer, List<Double> data) {
-		Variable v = new Variable("vertices" + (varIndex++), List.class, data);
+		Variable v = new Variable("vertices" + (varIndex++), List.class, p(data));
 
 		p.println(v);
 
@@ -766,8 +767,8 @@ public class GLPrintWriter extends GLDriver {
 		p.println(clientWidth);
 		p.println(clientHeight);
 		Expression<Double> aspect = new StaticReference<>(Double.class, "clientWidth / clientHeight");
-		Variable zNear = new Variable ("zNear", Float.class, 0.1);
-		Variable zFar = new Variable("zFar", Float.class, 100.0);
+		Variable zNear = new Variable ("zNear", e(0.1));
+		Variable zFar = new Variable("zFar", e(100.0));
 		arguments.add(projMatrix);
 		arguments.add(fieldOfView);
 		arguments.add(aspect);
@@ -796,7 +797,7 @@ public class GLPrintWriter extends GLDriver {
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
 		
-		Variable positionBuffer = new Variable("positionBuffer", String.class, new Method(glMember,"createBuffer"));
+		Variable positionBuffer = new Variable("positionBuffer", new Method(glMember,"createBuffer"));
 		
 		p.println(positionBuffer);
 		
@@ -823,14 +824,14 @@ public class GLPrintWriter extends GLDriver {
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<>();
 		List<Variable<?, ?>> vars = bufferBinding.getVariables();
-		Variable numC = new Variable("numComponents", Integer.class, 2);
+		Variable numC = new Variable("numComponents", e(2));
 		vars.add(numC);
 
-		Variable norm = new Variable("normalize", Boolean.class,false);
+		Variable norm = new Variable("normalize", e(false));
 		vars.add(norm);
-		Variable strd = new Variable("stride", Integer.class,0);
+		Variable strd = new Variable("stride", e(0));
 		vars.add(strd);
-		Variable offs = new Variable("offset", Integer.class,0);
+		Variable offs = new Variable("offset", e(0));
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glMethod("bindBuffer",
@@ -871,7 +872,7 @@ public class GLPrintWriter extends GLDriver {
 		p.println(m4fv);
 		p.println(m4fvModel);
 		
-		Variable vCount = new Variable("vertexCount",Integer.class,4);
+		Variable vCount = new Variable("vertexCount", e(4));
 		Method drawIt = glMethod("drawArrays", glParam("TRIANGLE_STRIP"),
 				new InstanceReference<>(offs), new InstanceReference<>(vCount));
 		p.println(vCount);
@@ -945,24 +946,21 @@ public class GLPrintWriter extends GLDriver {
 		return new StaticReference<>(Integer.class, concat.toString());
 	}
 
-	public static String stringForDouble(double value) {
-		return Hardware.getLocalHardware().stringForDouble(value);
-	}
-
 	protected static Method glMethod(String glMember, boolean isWebGL, String name, List<Expression<?>> args) {
 		if (!isWebGL) {
 			name = glMember + name.substring(0, 1).toUpperCase() + name.substring(1);
 		} else {
-			for (Expression<?> v : args) {
-				if (v instanceof InstanceReference) {
-					if (v.getExpression().startsWith("GL_")) {
-						v.setExpression(v.getExpression().substring(3));
-					} else if (v.getExpression().startsWith(glMember + ".GL_")) {
-						v.setExpression(glMember + "." +
-								v.getExpression().substring(glMember.length() + 4));
-					}
-				}
-			}
+//			TODO  Need to handle webgl constant naming conventions
+//			for (Expression<?> v : args) {
+//				if (v instanceof InstanceReference) {
+//					if (v.getExpression().startsWith("GL_")) {
+//						v.setExpression(v.getExpression().substring(3));
+//					} else if (v.getExpression().startsWith(glMember + ".GL_")) {
+//						v.setExpression(glMember + "." +
+//								v.getExpression().substring(glMember.length() + 4));
+//					}
+//				}
+//			}
 		}
 
 		return new Method(glMember, name, args);
