@@ -43,7 +43,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, false));
 
 		AudioScenePopulation pop = new AudioScenePopulation(scene, genomes);
-		pop.init(genomes.get(0), measures, output);
+		pop.init(genomes.get(0), measures, null, output);
 		return pop;
 	}
 
@@ -74,7 +74,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	public void genomesFromPopulationHealth() {
 		AtomicInteger index = new AtomicInteger();
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation();
+		StableDurationHealthComputation health = new StableDurationHealthComputation(1);
 		health.setMaxDuration(8);
 		health.setOutputFile(() -> "results/layered-organ-pop-health-test" + index.incrementAndGet() + ".wav");
 

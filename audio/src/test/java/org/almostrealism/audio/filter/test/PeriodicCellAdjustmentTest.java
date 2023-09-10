@@ -86,12 +86,12 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		genome.add(z);
 		genome.add(a);
 
-		return scene().getCells(measures, output);
+		return scene().getCells(measures, null, output);
 	}
 
 	@Test
 	public void healthTestNoAdjustment() {
-		StableDurationHealthComputation health = new StableDurationHealthComputation();
+		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-noadjust.wav");
 
@@ -103,7 +103,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 
 	@Test
 	public void healthTestWithAdjustment() {
-		StableDurationHealthComputation health = new StableDurationHealthComputation();
+		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-adjust.wav");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 package org.almostrealism.audio.health;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,12 +39,21 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	public static int standardDuration = (int) (240 * OutputLine.sampleRate);
 
 	private TemporalCellular target;
+	private int channels;
 
 	private WaveOutput out;
 	private Supplier<String> outputFileSupplier;
+	private IntFunction<String> stemFileSupplier;
 	private File outputFile;
+	private Map<Integer, File> stemFiles;
 
 	private List<AudioMeter> measures;
+	private List<WaveOutput> stems;
+
+	public HealthComputationAdapter(int channels) {
+		this.channels = channels;
+		this.stemFiles = new HashMap<>();
+	}
 
 	public TemporalCellular getTarget() { return target; }
 
@@ -71,17 +83,35 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		return measures;
 	}
 
+	@Override
+	public List<WaveOutput> getStems() {
+		if (stems == null && stemFileSupplier != null) {
+			stems = IntStream.range(0, channels).mapToObj(i ->
+				new WaveOutput(() -> {
+							File f = new File(stemFileSupplier.apply(i));
+							stemFiles.put(i, f);
+							return f;
+						}, 24)).collect(Collectors.toList());
+		}
+
+		return stems;
+	}
+
 	protected void configureMeasures(List<AudioMeter> measures) { }
+
+	public void setStemFile(IntFunction<String> file) { this.stemFileSupplier = file; }
 
 	public void setOutputFile(String file) { setOutputFile(() -> file); }
 	public void setOutputFile(Supplier<String> file) { this.outputFileSupplier = file; }
 
 	protected File getOutputFile() { return outputFile; }
 
+
 	@Override
 	public void reset() {
 		AudioHealthComputation.super.reset();
-		out.reset();
+		out.reset(); // TODO  Why is this called twice?
+		if (stems != null) stems.forEach(WaveOutput::reset);
 		measures.forEach(AudioMeter::reset);
 		out.reset();
 	}

@@ -33,12 +33,13 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 
 	private List<Runnable> silenceListeners;
 	
-	public SilenceDurationHealthComputation() {
-		this(2);
+	public SilenceDurationHealthComputation(int channels) {
+		this(channels, 2);
 	}
 	
 
-	public SilenceDurationHealthComputation(int maxSilenceSec) {
+	public SilenceDurationHealthComputation(int channels, int maxSilenceSec) {
+		super(channels);
 		setMaxSilence(maxSilenceSec);
 		silenceListeners = new ArrayList<>();
 	}

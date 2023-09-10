@@ -77,9 +77,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	private AudioScenePopulation<PackedCollection<?>> population;
 
 	public AudioSceneOptimizer(AudioScene<?> scene,
-							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
+							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 							   int totalCycles) {
-		super(null, breeder, generator, "Population.xml", totalCycles);
+		super(scene.getSourceCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
 					if (children.isEmpty()) throw new IllegalArgumentException();
@@ -87,7 +88,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 					if (population == null) {
 						population = new AudioScenePopulation<>(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
-						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
+						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
 					} else {
 						population.setGenomes(children);
 					}

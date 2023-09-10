@@ -66,7 +66,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 			System.out.println("Creating AudioScenePopulation...");
 			AudioScenePopulation<Scalar> pop = new AudioScenePopulation<>(scene, genomes);
 			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
-			pop.init(pop.getGenomes().get(0), hc.getMeasures(), hc.getOutput());
+			pop.init(pop.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
 			return pop;
 		});
 
@@ -96,7 +96,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 
 		IntStream.range(0, 3).forEach(j ->
 				dc(() -> {
-					StableDurationHealthComputation health = new StableDurationHealthComputation();
+					StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 					health.setMaxDuration(8);
 
 					health.setOutputFile(() -> "results/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
@@ -104,7 +104,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 					System.out.println("Creating LayeredOrganPopulation...");
 					AudioScenePopulation<Scalar> pop =
 							new AudioScenePopulation<>(null, AudioPopulationOptimizer.read(new FileInputStream("Population.xml")));
-					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getOutput());
+					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {
 						TemporalCellular organ = pop.enableGenome(i);

@@ -350,20 +350,24 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
 
-	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output) {
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		cells = getPatternCells(measures, output, setup);
+		cells = getPatternCells(measures, stems, output, setup);
 		return cells.addRequirement(time::tick);
 	}
 
-	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, OperationList setup) {
+	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures,
+									List<? extends Receptor<PackedCollection<?>>> stems,
+									Receptor<PackedCollection<?>> output, OperationList setup) {
 		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return mixdown.cells(cells, measures, output);
+		return mixdown.cells(cells, measures, stems, output);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {

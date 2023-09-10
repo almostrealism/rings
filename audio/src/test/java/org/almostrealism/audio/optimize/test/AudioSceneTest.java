@@ -111,12 +111,12 @@ public class AudioSceneTest implements CellFeatures {
 
 	protected Cells cells(AudioScene<?> scene, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, boolean filter) {
 		scene.assignGenome(scene.getGenome().random());
-		return scene.getCells(measures, output);
+		return scene.getCells(measures, null, output);
 	}
 
 	public Cells randomOrgan(AudioScene<?> scene, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
 		scene.assignGenome(scene.getGenome().random());
-		return scene.getCells(measures, output);
+		return scene.getCells(measures, null, output);
 	}
 
 	@Test

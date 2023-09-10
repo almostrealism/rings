@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -27,6 +28,8 @@ import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
+import org.almostrealism.graph.Cell;
+import org.almostrealism.graph.PassThroughCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
@@ -197,7 +200,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		return setup;
 	}
 
-	public CellList cells(CellList sources, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	public CellList cells(CellList sources,
+						  List<? extends Receptor<PackedCollection<?>>> measures,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output) {
 		CellList cells = sources;
 
 		if (AudioScene.enableMainFilterUp) {
@@ -235,6 +241,11 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		CellList main = branch[0];
 		CellList efx = branch[1];
+
+		if (stems != null && !stems.isEmpty()) {
+			main = main.branch(i -> new ReceptorCell<>(stems.get(i)),
+								i -> new PassThroughCell<>())[1];
+		}
 
 		// Sum the main layer
 		main = main.sum();
@@ -282,8 +293,14 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
 				return efx;
 			} else {
-				// Mix efx with main and measure #2
-				efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+				if (stems != null && !stems.isEmpty()) {
+					// Mix efx with main, measure #2, and the stem channel
+//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
+					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+				} else {
+					// Mix efx with main and measure #2
+					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+				}
 
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
