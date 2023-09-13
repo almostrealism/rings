@@ -28,6 +28,8 @@ import org.almostrealism.CodeFeatures;
 import java.util.function.Supplier;
 
 public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+	public static final double MIN_FREQUENCY = 10.0;
+
 	private AudioFilterData data;
 	private Producer<PackedCollection<?>> frequency;
 	private Producer<Scalar> resonance;
@@ -41,7 +43,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 
 	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, boolean high) {
 		this.data = data;
-		this.frequency = _bound(frequency, 0.0, 20000);
+		this.frequency = _bound(frequency, MIN_FREQUENCY, 20000);
 		this.resonance = resonance;
 		this.high = high;
 		setSampleRate(sampleRate);

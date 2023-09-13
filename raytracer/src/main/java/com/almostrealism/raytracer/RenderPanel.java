@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,6 +29,8 @@ import javax.swing.SwingUtilities;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
+import io.almostrealism.relation.Node;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.RGB;
@@ -40,11 +43,7 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.GraphicsConverter;
 
 import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.event.SceneCloseEvent;
-import com.almostrealism.event.SceneOpenEvent;
-import com.almostrealism.event.SurfaceEditEvent;
 import com.almostrealism.primitives.SurfaceUI;
-import io.almostrealism.relation.Pipeline;
 import io.almostrealism.relation.Evaluable;
 
 /**
@@ -53,7 +52,7 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Pipeline {
+public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Producer<Image> {
 	private T scene;
 	private EventHandler handler;
 
@@ -163,37 +162,39 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 	/** Method called when an event has been fired. */
 	@Override
 	public void eventFired(Event event) {
-		if (event instanceof SceneOpenEvent) {
-			this.scene = (T) ((SceneOpenEvent) event).getScene();
-			this.clearRenderedImage();
-		} else if (event instanceof SceneCloseEvent) {
-			this.scene = null;
-			this.clearRenderedImage();
-		}
-		
-		if (event instanceof SurfaceEditEvent) {
-			SurfaceEditEvent se = (SurfaceEditEvent) event;
+		clearRenderedImage();
 
-			if (se.isNameChangeEvent()) {
-				return;
-			} else if (se.isLocationChangeEvent()) {
-				render();
-			} else if (se.isSizeChangeEvent()) {
-				render();
-			} else if (se.isScaleCoefficientChangeEvent()) {
-				render();
-			} else if (se.isRotationCoefficientChangeEvent()) {
-				render();
-			} else if (se.isTransformationChangeEvent()) {
-				render();
-			} else if (se.isColorChangeEvent()) {
-				evaluateImage();
-			} else if (se.isShadingOptionChangeEvent()) {
-				render();
-			} else if (se.isDataChangeEvent()) {
-				render();
-			}
-		}
+//		if (event instanceof SceneOpenEvent) {
+//			this.scene = (T) ((SceneOpenEvent) event).getScene();
+//			this.clearRenderedImage();
+//		} else if (event instanceof SceneCloseEvent) {
+//			this.scene = null;
+//			this.clearRenderedImage();
+//		}
+//
+//		if (event instanceof SurfaceEditEvent) {
+//			SurfaceEditEvent se = (SurfaceEditEvent) event;
+//
+//			if (se.isNameChangeEvent()) {
+//				return;
+//			} else if (se.isLocationChangeEvent()) {
+//				render();
+//			} else if (se.isSizeChangeEvent()) {
+//				render();
+//			} else if (se.isScaleCoefficientChangeEvent()) {
+//				render();
+//			} else if (se.isRotationCoefficientChangeEvent()) {
+//				render();
+//			} else if (se.isTransformationChangeEvent()) {
+//				render();
+//			} else if (se.isColorChangeEvent()) {
+//				evaluateImage();
+//			} else if (se.isShadingOptionChangeEvent()) {
+//				render();
+//			} else if (se.isDataChangeEvent()) {
+//				render();
+//			}
+//		}
 	}
 
 	/** Returns the {@link Scene} that this {@link RenderPanel} displays. */
@@ -310,7 +311,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 
 	/** Update the displayed image to the first element of the specified argument. */
 	@Override
-	public Evaluable<Object> get() {
+	public Evaluable<Image> get() {
 		return images -> {
 			renderedImage = (Image) images[0];
 
@@ -338,4 +339,5 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			return renderedImage;
 		};
 	}
+
 }

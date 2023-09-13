@@ -21,8 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.almostrealism.relation.Editable;
-import org.almostrealism.algebra.ScalarProducerBase;
-import org.almostrealism.algebra.VectorProducerBase;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
+import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
 import org.almostrealism.algebra.Vector;
@@ -82,7 +83,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
-			return new DynamicRGBProducer(args -> {
+			return new DynamicCollectionProducer<>(RGB.shape(), args -> {
 					Vector point = p.getIntersection().get(0).get().evaluate(args).getOrigin();
 					return reflectiveColor.get().evaluate(new Object[] { p })
 							.multiply(p.getSurface().getValueAt(v(point)).get().evaluate());
@@ -106,14 +107,14 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		final Producer<RGB> fr = r;
 
-		VectorProducerBase point = origin(p.getIntersection().get(0));
+		ExpressionComputation<Vector> point = origin(p.getIntersection().get(0));
 		Producer<Vector> n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		Producer<Ray> transform = transform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
-		VectorProducerBase loc = origin(transform);
+		ExpressionComputation<Vector> loc = origin(transform);
 
-		ScalarProducerBase cp = length(nor).multiply(length(n));
+		Producer<Scalar> cp = length(nor).multiply(length(n));
 
 		Producer<RGB> tc = null;
 
@@ -138,9 +139,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducerBase c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			ScalarProducerBase reflective = v(reflectivity).add(v(1 - reflectivity)
-							.multiply(compileProducer(pow(c, v(5.0)))));
+			Producer<Scalar> c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
+			Producer<Scalar> reflective = scalarAdd(v(reflectivity), v(1 - reflectivity)
+							.multiply(scalarPow(c, v(5.0))));
 			Producer<RGB> fcolor = color;
 			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
 
@@ -171,8 +172,8 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			ScalarProducerBase c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			ScalarProducerBase reflective = v(reflectivity).add(
+			Producer<Scalar> c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
+			Producer<Scalar> reflective = v(reflectivity).add(
 					v(1 - reflectivity).multiply(pow(c, v(5.0))));
 			Producer<RGB> fcolor = color;
 			color = multiply(fcolor, multiply(fr, cfromScalar(reflective)));

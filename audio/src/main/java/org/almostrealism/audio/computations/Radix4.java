@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,23 +36,23 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);
 
-		ScalarProducerBase halfN = scalarsMultiply(nProducer, v(0.5));
-		ScalarProducerBase quarterN = scalarsMultiply(nProducer, v(0.25));
-		ScalarProducerBase tripleQuarterN = scalarsMultiply(nProducer, v(0.75));
+		Producer<Scalar> halfN = scalarsMultiply(nProducer, v(0.5));
+		Producer<Scalar> quarterN = scalarsMultiply(nProducer, v(0.25));
+		Producer<Scalar> tripleQuarterN = scalarsMultiply(nProducer, v(0.75));
 
-		ScalarProducerBase kPlusTripleQuarterN = scalarAdd(kProducer, tripleQuarterN);
-		ScalarProducerBase kPlusHalfN = scalarAdd(kProducer, halfN);
-		ScalarProducerBase kPlusQuarterN = scalarAdd(kProducer, quarterN);
+		Producer<Scalar> kPlusTripleQuarterN = scalarAdd(kProducer, tripleQuarterN);
+		Producer<Scalar> kPlusHalfN = scalarAdd(kProducer, halfN);
+		Producer<Scalar> kPlusQuarterN = scalarAdd(kProducer, quarterN);
 
-		PairProducerBase a = pairFromBank(bank, kProducer);
-		PairProducerBase b = pairFromBank(bank, kPlusQuarterN);
-		PairProducerBase c = pairFromBank(bank, kPlusHalfN);
-		PairProducerBase d = pairFromBank(bank, kPlusTripleQuarterN);
+		Producer<Pair<?>> a = pairFromBank(bank, c(kProducer));
+		Producer<Pair<?>> b = pairFromBank(bank, c(kPlusQuarterN));
+		Producer<Pair<?>> c = pairFromBank(bank, c(kPlusHalfN));
+		Producer<Pair<?>> d = pairFromBank(bank, c(kPlusTripleQuarterN));
 
 		Producer<Pair<?>> bMinusD = subtract(b, d);
 		Producer<Pair<?>> aMinusC = subtract(a, c);
 
-		PairProducerBase imaginaryTimesSub;
+		Producer<Pair<?>> imaginaryTimesSub;
 
 		if (pos) {
 			imaginaryTimesSub = pair(r(bMinusD).minus(), l(bMinusD));
@@ -60,8 +60,8 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 			imaginaryTimesSub = pair(r(bMinusD), l(bMinusD).minus());
 		}
 
-		ScalarProducerBase angleK = scalarsMultiply(angleProducer, kProducer);
-		ScalarProducerBase angleK3 = scalarsMultiply(angleK, v(3));
+		Producer<Scalar> angleK = scalarsMultiply(angleProducer, kProducer);
+		Producer<Scalar> angleK3 = scalarsMultiply(angleK, v(3));
 		Producer<Pair<?>> omega = complexFromAngle(angleK);
 		Producer<Pair<?>> omegaToPowerOf3 = complexFromAngle(angleK3);
 

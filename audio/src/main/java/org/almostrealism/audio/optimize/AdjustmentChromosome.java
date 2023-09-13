@@ -21,6 +21,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.SimpleChromosome;
 
+@Deprecated
 public class AdjustmentChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
 	public static final int SIZE = 6;
 
@@ -44,12 +45,19 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 			CollectionProducerComputation scale = c(p, 4);
 			CollectionProducerComputation offset = c(p, 5);
 
-			if (relative) scale = scale.multiply(initial);
-			CollectionProducerComputation pos = subtract(in, offset);
-			return _bound(pos._greaterThan(c(0.0),
-					polyWaveLength.pow(c(-1.0))
-							.multiply(pos).pow(polyExp)
-							.multiply(scale).add(initial), initial),
+//			if (relative) scale = scale.multiply(initial);
+//			CollectionProducerComputation pos = subtract(in, offset);
+//			return _bound(pos._greaterThan(c(0.0),
+//					polyWaveLength.pow(c(-1.0))
+//							.multiply(pos).pow(polyExp)
+//							.multiply(scale).add(initial), initial),
+//					min, max);
+			if (relative) scale = scale.relativeMultiply(initial);
+			CollectionProducerComputation pos = relativeSubtract(in, offset);
+			return relativeBound(pos._greaterThan(c(0.0),
+							relativeAdd(polyWaveLength.pow(c(-1.0))
+									.relativeMultiply(pos).pow(polyExp)
+									.relativeMultiply(scale), initial), initial),
 					min, max);
 		});
 	}
@@ -86,25 +94,5 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 		((SimpleChromosome) getSource()).setParameterRange(5,
 				factorForAdjustmentOffset(min),
 				factorForAdjustmentOffset(max));
-	}
-
-	public double factorForPeriodicAdjustmentDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double factorForPolyAdjustmentDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double factorForPolyAdjustmentExponent(double exp) {
-		return invertOneToInfinity(exp, 10, 1);
-	}
-
-	public double factorForAdjustmentInitial(double value) {
-		return invertOneToInfinity(value, 10, 1);
-	}
-
-	public double factorForAdjustmentOffset(double value) {
-		return invertOneToInfinity(value, 60, 3);
 	}
 }

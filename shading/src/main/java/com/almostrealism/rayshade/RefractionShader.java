@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.almostrealism.raytrace.LightingEngine;
 import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
 import org.almostrealism.geometry.DiscreteField;
@@ -35,7 +34,6 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
@@ -75,7 +73,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 	
 	/** Method specified by the {@link Shader} interface. */
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
-		KernelizedProducer pr = new KernelizedProducer<RGB>() {
+		Producer pr = new Producer<RGB>() {
 			@Override
 			public KernelizedEvaluable<RGB> get() {
 				return new KernelizedEvaluable<>() {

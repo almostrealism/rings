@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.almostrealism.network.test;
 
-import org.almostrealism.primitives.SphereIntersectAt;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
@@ -25,7 +25,7 @@ import org.junit.Test;
 public class IntersectionCompactTest extends AbstractIntersectionTest {
 	@Test
 	public void compact() {
-		SphereIntersectAt combined = combined();
+		Producer<Scalar> combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 		ev.compile();
 

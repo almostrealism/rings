@@ -92,18 +92,7 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 	@Override public Producer<Vector> getNormalAt(Producer<Vector> point) { return this.getSurface().getNormalAt(point); }
 	@Override public ContinuousField intersectAt(Producer<Ray> ray) { return this.getSurface().intersectAt(ray); }
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) { return getSurface().cancel(mayInterruptIfRunning); }
-
-	@Override public boolean isCancelled() { return getSurface().isCancelled(); }
-	@Override public boolean isDone() { return getSurface().isDone(); }
-
-	@Override public Operator<Scalar> get() throws ExecutionException, InterruptedException { return getSurface().get(); }
-
-	@Override
-	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		return getSurface().get(timeout, unit);
-	}
+	@Override public Operator<Scalar> get() { return getSurface().get(); }
 
 	@Override
 	public Operator<Scalar> expect() { return getSurface().expect(); }

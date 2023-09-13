@@ -16,8 +16,10 @@
 
 package org.almostrealism.audio.notes;
 
-import io.almostrealism.code.Tree;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Named;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.tone.KeyPosition;
@@ -29,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TreeNoteSource implements PatternNoteSource {
+public class TreeNoteSource implements PatternNoteSource, Named {
+	public static boolean alwaysComputeNotes = false;
+
 	private Tree<? extends Supplier<FileWaveDataProvider>> tree;
 	private List<PatternNote> notes;
 
@@ -53,11 +57,13 @@ public class TreeNoteSource implements PatternNoteSource {
 	public KeyPosition<?> getRoot() { return root; }
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
-	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() {
-		return tree;
-	}
+	@JsonIgnore
+	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() { return tree; }
+
+	@JsonIgnore
 	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
 		this.tree = tree;
+		if (!alwaysComputeNotes) computeNotes();
 	}
 
 	public List<Filter> getFilters() { return filters; }
@@ -73,29 +79,71 @@ public class TreeNoteSource implements PatternNoteSource {
 		}
 	}
 
+	@JsonIgnore
+	@Override
+	public String getName() {
+		if (filters.isEmpty()) return getOrigin();
+		if (filters.size() > 1) return getOrigin() + " (" + filters.size() + " filters)";
+		return filters.get(0).filterOn.name() + " " + filters.get(0).filterType.name() + " \"" + filters.get(0).filter + "\"";
+	}
+
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
 
+	@JsonIgnore
 	public List<PatternNote> getNotes() {
-		computeNotes();
-		return notes;
+		if (alwaysComputeNotes) computeNotes();
+		return notes == null ? new ArrayList<>() : notes;
+	}
+
+	public void refresh() {
+		if (alwaysComputeNotes) {
+			notes = null;
+		} else {
+			computeNotes();
+		}
 	}
 
 	private void computeNotes() {
 		notes = new ArrayList<>();
-		tree.forEach(f -> {
+		if (tree == null) return;
+		
+		tree.all().forEach(f -> {
 			FileWaveDataProvider p = f.get();
-			if (p == null) {
-				// System.out.println("WARN: FileWaveDataProvider produced null");
-				return;
-			}
 
-			boolean match = filters.stream()
-					.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
-					.reduce((a, b) -> a & b)
-					.orElse(true);
-			if (match) notes.add(new PatternNote(p, getRoot()));
+			try {
+				if (p == null) {
+					// System.out.println("WARN: FileWaveDataProvider produced null");
+					return;
+				}
+
+				if (p.getSampleRate() != OutputLine.sampleRate) {
+					return;
+				}
+
+				boolean match = filters.stream()
+						.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
+						.reduce((a, b) -> a & b)
+						.orElse(true);
+				if (match) notes.add(new PatternNote(p, getRoot()));
+			} catch (Exception e) {
+				System.out.println("WARN: " + e.getMessage() + "(" + p.getResourcePath() + ")");
+			}
 		});
 		notes.forEach(n -> n.setTuning(tuning));
+	}
+
+	public boolean checkResourceUsed(String canonicalPath) {
+		if (notes == null) computeNotes();
+
+		boolean match = notes.stream().anyMatch(note -> {
+			if (note.getProvider() instanceof FileWaveDataProvider) {
+				return ((FileWaveDataProvider) note.getProvider()).getResourcePath().equals(canonicalPath);
+			} else {
+				return false;
+			}
+		});
+
+		return match;
 	}
 
 	public static TreeNoteSource fromFile(File root, Filter filter) {
@@ -116,11 +164,15 @@ public class TreeNoteSource implements PatternNoteSource {
 	}
 
 	public enum FilterType {
-		STARTS_WITH;
+		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS;
 
 		boolean matches(String value, String filter) {
 			return switch (this) {
+				case EQUALS -> value.equals(filter);
+				case EQUALS_IGNORE_CASE -> value.equalsIgnoreCase(filter);
 				case STARTS_WITH -> value.startsWith(filter);
+				case ENDS_WITH -> value.endsWith(filter);
+				case CONTAINS -> value.contains(filter);
 			};
 		}
 	}
@@ -130,11 +182,22 @@ public class TreeNoteSource implements PatternNoteSource {
 		private FilterType filterType;
 		private String filter;
 
+		public Filter() { }
+
 		public Filter(FilterOn filterOn, FilterType filterType, String filter) {
 			this.filterOn = filterOn;
 			this.filterType = filterType;
 			this.filter = filter;
 		}
+
+		public FilterOn getFilterOn() { return filterOn; }
+		public void setFilterOn(FilterOn filterOn) { this.filterOn = filterOn; }
+
+		public FilterType getFilterType() { return filterType; }
+		public void setFilterType(FilterType filterType) { this.filterType = filterType; }
+
+		public String getFilter() { return filter; }
+		public void setFilter(String filter) { this.filter = filter; }
 
 		public static Filter nameStartsWith(String prefix) {
 			return new Filter(FilterOn.NAME, FilterType.STARTS_WITH, prefix);

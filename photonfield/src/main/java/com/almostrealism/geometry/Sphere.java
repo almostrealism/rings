@@ -18,7 +18,6 @@ package com.almostrealism.geometry;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
 import org.almostrealism.space.Volume;
 import org.almostrealism.CodeFeatures;
 
@@ -60,7 +59,7 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	 * @param x  {x, y, z} - Position vector.
 	 */
 	@Override
-	public VectorProducerBase getNormalAt(Producer<Vector> x) {
+	public Producer<Vector> getNormalAt(Producer<Vector> x) {
 		return normalize(x);
 	}
 	

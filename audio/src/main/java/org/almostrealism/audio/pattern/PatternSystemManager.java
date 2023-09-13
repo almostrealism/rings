@@ -16,25 +16,29 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleUnaryOperator;
@@ -91,7 +95,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
 
-		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
+		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 
 		OperationList process = new OperationList("PatternSystemManager Postprocess");
 
@@ -146,6 +150,30 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		getChoices().forEach(c -> c.setTuning(tuning));
 	}
 
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root) {
+		setTree(root, null);
+	}
+
+	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root, DoubleConsumer progress) {
+		List<PatternNoteSource> sources = getChoices()
+				.stream()
+				.flatMap(c -> c.getFactory().getSources().stream())
+				.collect(Collectors.toList());
+
+		if (progress != null && !sources.isEmpty())
+			progress.accept(0.0);
+
+		IntStream.range(0, sources.size()).forEach(i -> {
+			PatternNoteSource s = sources.get(i);
+
+			if (s instanceof TreeNoteSource)
+				((TreeNoteSource) s).setTree(root);
+
+			if (progress != null)
+				progress.accept((double) (i + 1) / sources.size());
+		});
+	}
+
 	public PatternLayerManager addPattern(int channel, double measures, boolean melodic) {
 		PatternLayerManager pattern = new PatternLayerManager(choices,
 								genome.addSimpleChromosome(3),
@@ -177,7 +205,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 		patternsForChannel.stream().map(i -> {
 			patterns.get(i).sum(offsetForPosition, timeForDuration, measures, scaleForPosition);
-			return v(patterns.get(i).getDestination());
+			return p(patterns.get(i).getDestination());
 		}).forEach(note -> {
 			PackedCollection<?> audio = traverse(1, note).get().evaluate();
 			int frames = Math.min(audio.getShape().getCount(),
@@ -208,7 +236,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setChannel(c);
 				pattern.setDuration(duration.applyAsInt(c));
 				pattern.setChordDepth(c == 3 ? 3 : 1);
-				pattern.setMelodic(c > 2 && c != 5);
+				pattern.setMelodic(c > 1 && c != 5);
 				pattern.setFactorySelection(ParameterFunction.random());
 
 				if (p < activePatterns.applyAsInt(c)) {

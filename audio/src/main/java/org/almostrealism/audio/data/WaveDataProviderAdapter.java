@@ -17,6 +17,7 @@
 package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
@@ -45,8 +46,8 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 						new PassThroughProducer<>(1, 0),
 						new PassThroughProducer<>(1, 1),
 						new PassThroughProducer<>(1, 2),
-						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(1.0 / OutputLine.sampleRate)),
-						v -> new Product(v, HardwareFeatures.ops().expressionForDouble(OutputLine.sampleRate))).get());
+						v -> new Product(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
+						v -> new Product(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
 
 	public abstract String getKey();
@@ -81,6 +82,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 		int len = (int) (audio.getMemLength() / playbackRate);
 		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
 
+		// TODO  This can use CollectionFeatures::integers instead of taking a timeline argument
 		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
 
 		interpolate.getValue().into(dest.traverse(1))

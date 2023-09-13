@@ -16,6 +16,7 @@
 
 package org.almostrealism.tensorflow;
 
+import io.almostrealism.code.Execution;
 import io.almostrealism.scope.Argument;
 import io.almostrealism.code.InstructionSet;
 import io.almostrealism.scope.Scope;
@@ -45,9 +46,11 @@ public class TensorFlowInstructionSet implements InstructionSet {
 	}
 
 	@Override
-	public Consumer<Object[]> get(String function, int argCount) {
-		return args -> {
+	public Execution get(String function, int argCount) {
+		return (args, dependsOn) -> {
+			if (dependsOn != null) dependsOn.waitFor();
 			assignArgs(args, func.call(getArguments()));
+			return null;
 		};
 	}
 

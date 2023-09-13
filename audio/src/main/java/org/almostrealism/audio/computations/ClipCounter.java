@@ -23,12 +23,12 @@ import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 import io.almostrealism.relation.Producer;
 
 import java.util.function.Consumer;
 
-public class ClipCounter extends DynamicOperationComputationAdapter {
+public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>> {
 	public ClipCounter(Producer<Scalar> clipCount, Producer<Pair<?>> clipSettings, Producer<PackedCollection<?>> value) {
 		super(new Producer[] { clipCount, clipSettings, value });
 	}

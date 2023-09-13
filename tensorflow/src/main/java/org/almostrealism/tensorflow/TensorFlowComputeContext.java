@@ -16,12 +16,18 @@
 
 package org.almostrealism.tensorflow;
 
+import io.almostrealism.code.LanguageOperations;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.hardware.ctx.AbstractComputeContext;
 
 public class TensorFlowComputeContext extends AbstractComputeContext {
 	public TensorFlowComputeContext() {
 		super(null, false, false);
+	}
+
+	@Override
+	public LanguageOperations getLanguage() {
+		return null;
 	}
 
 	@Override

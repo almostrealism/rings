@@ -19,20 +19,12 @@ package org.almostrealism.audio.filter.test;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
-import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.computations.Loop;
-import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -43,7 +35,18 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 	@Test
 	public void highPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(2000), v(0.1), true);
+		runFilter("high-pass", f, filter);
+	}
 
+	@Test
+	public void lowPass() throws IOException {
+		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(1800), v(0.1), false);
+		runFilter("low-pass", f, filter);
+	}
+
+	public void runFilter(String name, WavFile f, AudioPassFilter filter) throws IOException {
 		double data[][] = new double[f.getNumChannels()][(int) f.getFramesRemaining()];
 		f.readFrames(data, (int) f.getFramesRemaining());
 
@@ -51,7 +54,6 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		PackedCollection<?> out = new PackedCollection<>(values.getMemLength());
 		Scalar current = new Scalar();
 
-		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(2000), v(0.1), true);
 		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
 		Runnable tick = filter.tick().get();
 
@@ -61,7 +63,7 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 			tick.run();
 		}
 
-		WavFile wav = WavFile.newWavFile(new File("results/filter-test.wav"), 1, out.getMemLength(),
+		WavFile wav = WavFile.newWavFile(new File("results/" + name  + "-filter-test.wav"), 1, out.getMemLength(),
 				f.getValidBits(), f.getSampleRate());
 
 		for (int i = 0; i < out.getMemLength(); i++) {
@@ -75,34 +77,5 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		}
 
 		wav.close();
-	}
-
-	@Test
-	public void loopTest() {
-		/*
-		PackedCollection<?> values = new PackedCollection<>(100);
-		values.setMem(1.0, 2.0, 3.0, 4.0, 5.0);
-
-		PackedCollection<?> out = new PackedCollection<>(1);
-		CellList c = w(new WaveData(values, OutputLine.sampleRate)).map(new ReceptorCell<>());
-
-		OperationList op = new OperationList();
-		op.add(c.setup());
-
-		OperationList tick = new OperationList();
-		tick.add(c.tick());
-		 */
-
-		// MemoryDataArgumentMap.enableArgumentAggregation = false;
-
-		PackedCollection<?> in = new PackedCollection<>(1);
-		in.setMem(1.0);
-
-		PolymorphicAudioData data = new PolymorphicAudioData();
-		Scalar out = new Scalar();
-
-		Loop l = new Loop(new TestAudioPassFilterComputation(data, p(in), () -> new Provider<>(out)), 3);
-		l.get().run();
-		System.out.println(out.toDouble(0));
 	}
 }

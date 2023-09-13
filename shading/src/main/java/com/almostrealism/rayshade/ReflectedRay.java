@@ -18,19 +18,15 @@ package com.almostrealism.rayshade;
 
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.scope.Scope;
-import org.almostrealism.Ops;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
+import org.almostrealism.geometry.GeometryFeatures;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.RayFeatures;
 import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
 
-public class ReflectedRay implements ProducerComputation<Ray>, KernelizedProducer<Ray>, RayFeatures {
+public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures {
 	private Producer<Vector> point;
 	private Producer<Vector> normal;
 	private Producer<Vector> reflected;
@@ -99,15 +95,5 @@ public class ReflectedRay implements ProducerComputation<Ray>, KernelizedProduce
 	@Override
 	public Scope<Ray> getScope() {
 		throw new RuntimeException("Not implemented");
-	}
-
-	/**
-	 * Reflects the specified {@link Vector} across the normal vector represented by the
-	 * second specified {@link Vector} and returns the result.
-	 */
-	public static VectorProducerBase reflect(Producer<Vector> vector, Producer<Vector> normal) {
-		VectorProducerBase newVector = Ops.ops().vector(Ops.ops().minus(vector));
-		ScalarProducerBase s = Ops.ops().scalar(2).multiply(newVector.dotProduct(normal).divide(Ops.ops().lengthSq(normal)));
-		return newVector.subtract(Ops.ops().scalarMultiply(normal, s));
 	}
 }

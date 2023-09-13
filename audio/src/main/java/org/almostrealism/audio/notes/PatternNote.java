@@ -17,6 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
@@ -32,7 +33,9 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.cl.CLMemory;
 import org.almostrealism.heredity.Factor;
 
 import java.util.HashMap;
@@ -40,6 +43,26 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PatternNote implements CellFeatures, SamplingFeatures {
+
+	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
+
+	static {
+		OperationList accessListener = new OperationList();
+		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 300));
+		accessListener.add(() -> () -> {
+			if (Math.random() < 0.005) {
+				long size = audioCache.getCachedOrdered().stream()
+						.map(CachedValue::evaluate)
+						.map(PackedCollection::getMem)
+						.mapToLong(m -> m instanceof CLMemory ? ((CLMemory) m).getSize() : 0)
+						.sum();
+				System.out.println("PatternNote: Cache size = " + (size / 1024 / 1024) + "mb");
+			}
+		});
+
+		audioCache.setAccessListener(accessListener.get());
+		audioCache.setClear(PackedCollection::destroy);
+	}
 
 	private WaveDataProvider provider;
 	private PackedCollection<?> audio;
@@ -151,7 +174,7 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		if (delegate != null) {
 			return delegate.getAudio(target);
 		} else if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), new CachedValue<>(computeAudio(target, -1.0).get())));
+			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target, -1.0).get())));
 		}
 
 		return notes.get(target);
@@ -194,7 +217,12 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 		try {
 			valid = provider.getSampleRate() == OutputLine.sampleRate;
 		} catch (Exception e) {
-			System.out.println("WARN: " + e.getMessage());
+			if (provider instanceof FileWaveDataProvider) {
+				System.out.println("WARN: " + e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");
+			} else {
+				System.out.println("WARN: " + e.getMessage());
+			}
+
 			valid = false;
 		}
 

@@ -19,7 +19,6 @@ package org.almostrealism.audio.grains.test;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
@@ -32,9 +31,9 @@ import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.cl.HardwareOperator;
+import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
@@ -72,7 +71,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
-		HardwareOperator.verboseLog(() -> {
+		CLOperator.verboseLog(() -> {
 			source.getData().valueAt(cursor).get().into(result).evaluate();
 		});
 		System.out.println("GrainTest: Timeline kernel evaluated");

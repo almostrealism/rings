@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PatternElementFactory {
+	public static boolean enableEnvelope = true;
+
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 
 	private String id;
@@ -88,6 +90,7 @@ public class PatternElementFactory {
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 
+	@JsonIgnore
 	public List<PatternNote> getAllNotes() {
 		return sources.stream().map(PatternNoteSource::getNotes).flatMap(List::stream).collect(Collectors.toList());
 	}
@@ -137,6 +140,10 @@ public class PatternElementFactory {
 		getSources().forEach(n -> n.setTuning(tuning));
 	}
 
+	public boolean checkResourceUsed(String canonicalPath) {
+		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
+	}
+
 	@JsonIgnore
 	public List<PatternNote> getValidNotes() {
 		return getAllNotes().stream().filter(PatternNote::isValid).collect(Collectors.toList());
@@ -158,7 +165,9 @@ public class PatternElementFactory {
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		PatternNote choice = envelope.apply(params, notes.get((int) (note * notes.size())));
+		PatternNote choice = notes.get((int) (note * notes.size()));
+		if (enableEnvelope) choice = envelope.apply(params, choice);
+
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
 		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -2).apply(params));

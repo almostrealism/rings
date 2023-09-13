@@ -25,7 +25,7 @@ import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.DynamicOperationComputationAdapter;
+import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class ValueSequenceComputation extends DynamicOperationComputationAdapter implements CodeFeatures {
+public abstract class ValueSequenceComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
 	protected HybridScope scope;
 	protected final boolean repeat;
 
@@ -49,13 +49,13 @@ public abstract class ValueSequenceComputation extends DynamicOperationComputati
 	public ArrayVariable getWaveLength() { return getArgument(2); }
 	public ArrayVariable getDurationFrames() { return getArgument(3); }
 
-	public Producer<Scalar> output() { return (Producer<Scalar>) getInputs().get(0); }
-	public Producer<Scalar> wavePosition() { return (Producer<Scalar>) getInputs().get(1); }
-	public Producer<Scalar> durationFrames() { return (Producer<Scalar>) getInputs().get(3); }
+	public Producer<Scalar> output() { return (Producer) getInputs().get(0); }
+	public Producer<Scalar> wavePosition() { return (Producer) getInputs().get(1); }
+	public Producer<Scalar> durationFrames() { return (Producer) getInputs().get(3); }
 
 	public <T> List<T> choices(Function<Supplier<Evaluable<? extends Scalar>>, T> processor) {
 		return IntStream.range(4, getInputs().size())
-				.mapToObj(i -> processor.apply((Supplier<Evaluable<? extends Scalar>>) getInputs().get(i)))
+				.mapToObj(i -> (T) processor.apply((Supplier) getInputs().get(i)))
 				.collect(Collectors.toList());
 	}
 

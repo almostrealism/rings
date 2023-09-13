@@ -17,13 +17,14 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.KernelizedProducer;
+import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
@@ -101,12 +102,12 @@ public class PatternLayerManager implements CodeFeatures {
 	public void updateDestination(PackedCollection<?> destination) {
 		this.destination = destination;
 
-		KernelizedProducer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
+		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 
 		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
 		v.add(() -> () ->
-				volume.setMem(0, 1.0 / Math.max(1, chordDepth - 1)));
+				volume.setMem(0, 1.0 / chordDepth));
 		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		adjustVolume = v.get();
 	}
@@ -353,14 +354,25 @@ public class PatternLayerManager implements CodeFeatures {
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;
 
-						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
-						int frames = Math.min(audio.getShape().getCount(),
-								destination.getShape().length(0) - note.getOffset());
+//						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
+//						int frames = Math.min(audio.getShape().getCount(),
+//								destination.getShape().length(0) - note.getOffset());
+//
+//						TraversalPolicy shape = shape(frames).traverse(1);
+//						sum
+//								.into(destination.range(shape, note.getOffset()))
+//								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
 
-						TraversalPolicy shape = shape(frames).traverse(1);
-						sum
-								.into(destination.range(shape, note.getOffset()))
-								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
+								audio -> {
+									int frames = Math.min(audio.getShape().getCount(),
+											destination.getShape().length(0) - note.getOffset());
+
+									TraversalPolicy shape = shape(frames).traverse(1);
+									return sum
+											.into(destination.range(shape, note.getOffset()))
+											.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+								});
 					});
 		});
 

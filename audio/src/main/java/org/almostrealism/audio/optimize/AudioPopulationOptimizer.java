@@ -18,7 +18,6 @@ package org.almostrealism.audio.optimize;
 
 import org.almostrealism.audio.health.AudioHealthScore;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
@@ -50,6 +49,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
 
 	public static final boolean enableWavOutput = true;
+	public static boolean enableStemOutput = false;
 	public static boolean enableIsolatedContext = false;
 
 	private final String file;
@@ -58,15 +58,10 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	private Runnable cycleListener;
 
-	public AudioPopulationOptimizer(Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator, String file) {
-		this(children, breeder, generator, file, 100);
-	}
-
-	public AudioPopulationOptimizer(Function<List<Genome<PackedCollection<?>>>, Population> children,
+	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
 									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 									String file, int iterationsPerRun) {
-		this(AudioPopulationOptimizer::healthComputation, children, breeder, generator, file, iterationsPerRun);
+		this(() -> healthComputation(stemCount), children, breeder, generator, file, iterationsPerRun);
 	}
 
 	public AudioPopulationOptimizer(Supplier<HealthComputation<O, AudioHealthScore>> health,
@@ -82,6 +77,10 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public void init() {
 		if (enableWavOutput) {
 			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> outputDir + "/Output-" + count.incrementAndGet() + ".wav");
+
+			if (enableStemOutput) {
+				((StableDurationHealthComputation) getHealthComputation()).setStemFile(i -> outputDir + "/Output-" + count.get() + "." + i + ".wav");
+			}
 		}
 	}
 
@@ -191,7 +190,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		return genomes;
 	}
 
-	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation() {
-		return (HealthComputation<O, AudioHealthScore>) new StableDurationHealthComputation();
+	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation(int channels) {
+		return (HealthComputation<O, AudioHealthScore>) new StableDurationHealthComputation(channels);
 	}
 }

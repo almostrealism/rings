@@ -41,10 +41,12 @@ public class RemoteGenerationProvider implements GenerationProvider {
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicBoolean success = new AtomicBoolean(false);
 
-		client.refresh(requestId, generatorId, sources, s -> {
+		boolean valid = client.refresh(requestId, generatorId, sources, s -> {
 			success.set(s);
 			latch.countDown();
 		}, () -> { while (latch.getCount() > 0) latch.countDown(); });
+
+		if (!valid) return false;
 
 		try {
 			System.out.println("Awaiting status...");

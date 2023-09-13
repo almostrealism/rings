@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.data;
 
-import io.almostrealism.code.Tree;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Named;
 
 import java.io.File;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, Named {
+public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, PathResource, Named {
 	private File file;
 
 	public FileWaveDataProviderNode(File f) {
@@ -38,6 +38,15 @@ public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>,
 	public String getName() { return file.getName(); }
 
 	@Override
+	public String getResourcePath() {
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	public Collection<FileWaveDataProviderNode> getChildren() {
 		if (isLeaf()) return Collections.emptyList();
 		return Stream.of(file.listFiles()).map(FileWaveDataProviderNode::new).collect(Collectors.toList());
@@ -46,6 +55,11 @@ public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>,
 	@Override
 	public FileWaveDataProvider get() {
 		if (!isLeaf()) return null;
+		if (!file.exists()) return null;
+		if (file.getName().equals(".DS_Store")) return null;
+
+		String ext = file.getName().substring(file.getName().length() - 4);
+		if (!ext.contains("wav") && !ext.contains("WAV")) return null;
 
 		try {
 			return new FileWaveDataProvider(file.getCanonicalPath());

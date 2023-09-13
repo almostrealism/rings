@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,12 +14,19 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.raytrace;
+package com.almostrealism.network;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.color.RGB;
-import org.almostrealism.geometry.Ray;
+import io.almostrealism.code.DefaultLanguageOperations;
+import io.almostrealism.code.PhysicalScope;
 
-public interface Engine {
-	Producer<RGB> trace(Producer<Ray> r);
+public class JavaScriptLanguageOperations extends DefaultLanguageOperations {
+	public JavaScriptLanguageOperations() {
+		super(false);
+	}
+
+	@Override
+	public String nameForType(Class<?> type) { return ""; }
+
+	@Override
+	public String annotationForPhysicalScope(PhysicalScope scope) { return ""; }
 }

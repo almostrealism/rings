@@ -149,7 +149,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 				}
 			} else {
 				throw new IllegalArgumentException(a.getArguments().get(i).getProducer().getClass().getSimpleName() +
-						" is not a ProducerArgumentReference or KernelizedProducer");
+						" is not a ProducerArgumentReference nor does it provide a KernelizedEvaluable");
 			}
 		}
 	}

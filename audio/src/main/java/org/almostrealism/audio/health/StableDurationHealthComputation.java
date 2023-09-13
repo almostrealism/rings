@@ -19,6 +19,7 @@ package org.almostrealism.audio.health;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
@@ -56,8 +57,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private long startTime;
 	private Scalar abortFlag;
 	
-	public StableDurationHealthComputation() {
-		super(6);
+	public StableDurationHealthComputation(int channels) {
+		super(channels, 6);
 		addSilenceListener(() -> encounteredSilence = true);
 		setBatchSize(enableLoop ? OutputLine.sampleRate / 2 : 1);
 	}
@@ -148,7 +149,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 //		TODO  Restore average amplitude computation
 //		AverageAmplitude avg = new AverageAmplitude();
-//		meter.addListener(avg);
 
 		double score = 0.0;
 		double errorMultiplier = 1.0;
@@ -203,7 +203,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
 					System.out.println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds");
-				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 10) == 0) {
+				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20) == 0) {
 					System.out.print(">");
 				}
 			}
@@ -223,16 +223,18 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				System.out.println("\nStableDurationHealthComputation: Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
 		} finally {
 			endTimeoutTrigger();
-//			meter.removeListener(avg);
+
 			if (enableOutput && score > 0) {
-				if (enableVerbose) System.out.println("StableDurationHealthComputation: Cursor = " + getWaveOut().getCursor().getCursor());
+				if (enableVerbose)
+					System.out.println("StableDurationHealthComputation: Cursor = " + getWaveOut().getCursor().getCursor());
+
 				getWaveOut().write().get().run();
+				if (getStems() != null) getStems().forEach(s -> s.write().get().run());
 			}
 
 			getWaveOut().reset();
+			if (getStems() != null) getStems().forEach(WaveOutput::reset);
  			reset();
-
-//			ProducerCache.destroyEvaluableCache();
 		}
 
 		return new AudioHealthScore(score, Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null));

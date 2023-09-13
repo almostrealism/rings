@@ -1,15 +1,34 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.optimize;
 
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.ScaleFactor;
 
-public interface OptimizeFactorFeatures extends HeredityFeatures {
+public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 	default double valueForFactor(Factor<PackedCollection<?>> value) {
 		if (value instanceof ScaleFactor) {
 			return ((ScaleFactor) value).getScaleValue();
@@ -61,19 +80,99 @@ public interface OptimizeFactorFeatures extends HeredityFeatures {
 		return valueForFactor(f, 3, 60);
 	}
 
+	default double factorForExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	default double factorForPeriodicAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double factorForPolyAdjustmentDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double factorForPolyAdjustmentExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	default double factorForAdjustmentInitial(double value) {
+		return invertOneToInfinity(value, 10, 1);
+	}
+
+	default double factorForAdjustmentOffset(double value) {
+		return invertOneToInfinity(value, 60, 3);
+	}
+
+	default ProducerComputation<PackedCollection<?>> adjustment(Producer<PackedCollection<?>> periodicWavelength,
+																Producer<PackedCollection<?>> polyWaveLength,
+																Producer<PackedCollection<?>> polyExp,
+																Producer<PackedCollection<?>> initial,
+																Producer<PackedCollection<?>> scale,
+																Producer<PackedCollection<?>> offset,
+																Producer<PackedCollection<?>> time,
+																double min,
+																double max,
+																boolean relative) {
+		CollectionProducerComputation periodicAmp = c(1.0);
+
+		if (relative) scale = multiply(scale, initial);
+		CollectionProducerComputation pos = subtract(time, offset);
+		return _bound(pos._greaterThan(c(0.0),
+						pow(polyWaveLength, c(-1.0))
+								.multiply(pos).pow(polyExp)
+								.multiply(scale).add(initial), initial),
+				min, max);
+	}
+
+	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
+															  Producer<PackedCollection<?>> d,
+															  Producer<PackedCollection<?>> m,
+															  Producer<PackedCollection<?>> p,
+															  Producer<PackedCollection<?>> e,
+															  Producer<PackedCollection<?>> time,
+															  Producer<PackedCollection<?>> duration) {
+		PackedCollection<Scalar> directionChoices = Scalar.scalarBank(2);
+		directionChoices.set(0, -1);
+		directionChoices.set(1, 1);
+
+		double sc = maxValue - minValue;
+
+		CollectionProducerComputation scale = c(sc);
+		m = c(minScale).add(multiply(m, c(1.0 - minScale)));
+		p = multiply(p, subtract(c(1.0), m));
+
+		CollectionProducerComputation downOrigin = c(maxValue).subtract(multiply(scale, p));
+		CollectionProducerComputation upOrigin = c(minValue).add(multiply(scale, p));
+
+		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
+
+		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
+
+		CollectionProducerComputation magnitude = multiply(scale, m);
+		CollectionProducerComputation start = c(choice(2, toScalar(d), originChoices), 0);
+		CollectionProducerComputation end = multiply(direction, magnitude).add(start);
+
+		CollectionProducerComputation pos = pow(divide(time, duration), e);
+
+		return add(start, multiply(end.subtract(start), pos));
+	}
+
 	default ProducerComputation<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
 																	   Producer<PackedCollection<?>> speedUpOffset,
 																	   Producer<PackedCollection<?>> time) {
-		return Ops.op(o -> {
-			CollectionProducerComputation rp = o.c(params, 0);
-			CollectionProducerComputation speedUpDuration = o.c(params, 1);
+		return durationAdjustment(c(params, 0), c(params, 1), speedUpOffset, time);
+	}
 
-			CollectionProducerComputation initial = o.pow(o.c(2.0), o.c(16).multiply(o.c(-0.5).add(rp)));
+	default ProducerComputation<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,
+																		Producer<PackedCollection<?>> speedUpDuration,
+																		Producer<PackedCollection<?>> speedUpOffset,
+																		Producer<PackedCollection<?>> time) {
+		CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
-			Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, speedUpOffset));
-//			Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, c(0.0)));
-			speedUp = o.floor(o.divide(speedUp, speedUpDuration));
-			return initial.divide(o.pow(o.c(2.0), speedUp));
-		});
+		Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, speedUpOffset));
+//		Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, c(0.0)));
+		speedUp = floor(divide(speedUp, speedUpDuration));
+		return initial.divide(pow(c(2.0), speedUp));
 	}
 }

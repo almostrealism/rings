@@ -22,6 +22,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
+@Deprecated
 public class DelayChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
 	public static final int SIZE = 7;
 
@@ -42,9 +43,13 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 			CollectionProducerComputation slowDownAmp = c(p, 4);
 			CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 			CollectionProducerComputation polySpeedUpExp = c(p, 6);
-			return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-					.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-					.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
+//			return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+//					.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+//					.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
+
+			return c(1.0).relativeAdd(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+					.relativeMultiply(c(1.0).relativeSubtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+					.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));
 		});
 	}
 

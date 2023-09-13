@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
-import org.almostrealism.algebra.ScalarProducerBase;
-import org.almostrealism.algebra.VectorProducerBase;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
@@ -85,14 +85,14 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n = scalarMultiply(n, length(n).pow(-1.0));
-		VectorProducerBase h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
-		h = h.scalarMultiply(h.length().pow(-1.0));
+		ExpressionComputation<Vector> h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
+		h = scalarMultiply(h, length(h).pow(-1.0));
 
-		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(new Object[] {p}));
+		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(p));
 		if (super.size() > 0) hc = multiply(hc, super.shade(p, normals));
 
-		ScalarProducerBase cFront = h.dotProduct(n);
-		ScalarProducerBase cBack = h.dotProduct(scalarMultiply(n, -1.0));
+		ExpressionComputation<Scalar> cFront = dotProduct(h, n);
+		ExpressionComputation<Scalar> cBack = dotProduct(h, scalarMultiply(n, -1.0));
 
 		Producer<RGB> fhc = hc;
 
@@ -142,7 +142,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 	
 	/**
 	 * Returns the color used for the highlight shaded by this {@link HighlightShader}
-	 * as an {@link RGBEvaluable}.
+	 * as a {@link Producer}.
 	 */
 	public Producer<RGB> getHighlightColor() { return this.highlightColor; }
 	

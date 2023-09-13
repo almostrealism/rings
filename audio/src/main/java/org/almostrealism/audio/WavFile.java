@@ -13,20 +13,14 @@ package org.almostrealism.audio;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
-import org.almostrealism.algebra.ScalarBankHeap;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
-import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
 import java.io.*;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class WavFile implements AutoCloseable {
 
@@ -199,8 +193,9 @@ public class WavFile implements AutoCloseable {
 		return waveform;
 	}
 
-	public static ScalarBank channelScalar(int[][] data, int chan) {
-		ScalarBank waveform = new ScalarBank(data[chan].length);
+	@Deprecated
+	public static PackedCollection<Scalar> channelScalar(int[][] data, int chan) {
+		PackedCollection<Scalar> waveform = Scalar.scalarBank(data[chan].length);
 
 		int index = 0;
 		for (double frame : data[chan]) waveform.set(index++, frame);
@@ -699,33 +694,21 @@ public class WavFile implements AutoCloseable {
 
 		long start = System.currentTimeMillis();
 
-		WavFile wav;
+		try (WavFile wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate())) {
+			double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
 
-		try {
-			wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
+			for (int i = 0; i < frames.length; i++) {
+				// double value = data.valueAt(i).getValue();
+				double value = frames[i];
 
-		double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
-
-		for (int i = 0; i < frames.length; i++) {
-			// double value = data.valueAt(i).getValue();
-			double value = frames[i];
-
-			try {
-				wav.writeFrames(new double[][]{{value}, {value}}, 1);
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					wav.writeFrames(new double[][]{{value}, {value}}, 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-
-		try {
-			wav.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 }

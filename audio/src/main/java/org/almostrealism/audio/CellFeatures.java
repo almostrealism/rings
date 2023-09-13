@@ -544,7 +544,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	default Supplier<Runnable> export(CellList cells, PackedCollection<PackedCollection<?>> wavs) {
 		if (wavs.getCount() != cells.size()) throw new IllegalArgumentException("Destination count must match cell count");
 
-		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput()));
+		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(wavs.getAtomicMemLength())));
 
 		OperationList export = new OperationList("Export " + wavs.getAtomicMemLength() + " frames");
 		export.add(iter(cells, wavs.getAtomicMemLength()));

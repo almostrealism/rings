@@ -16,18 +16,19 @@
 
 package org.almostrealism.audio.computations;
 
+import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.HybridScope;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarProducerBase;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.computations.CollectionProducerComputationAdapter;
+import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 
 import java.util.function.Consumer;
 
-public class DefaultEnvelopeComputation extends CollectionProducerComputationAdapter<PackedCollection<?>, Scalar> implements ScalarProducerBase {
+@Deprecated
+public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar> {
 
 	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
 		super(Scalar.shape(), (Producer) notePosition);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@
 package org.almostrealism.audio.visual;
 
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.ScalarBank;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.time.AcceleratedTimeSeries;
@@ -31,7 +32,7 @@ import java.util.stream.IntStream;
 
 public class AnnotatedAudioRenderer implements CellFeatures {
 	private double sampleRate;
-	private ScalarBank wav;
+	private PackedCollection<Scalar> wav;
 	private AcceleratedTimeSeries annotation;
 	private IntFunction<RGB[]> typeColors;
 	private double annotationFrequency;
@@ -46,7 +47,7 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 		loadWav(wav);
 	}
 
-	public AnnotatedAudioRenderer(double sampleRate, ScalarBank wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
+	public AnnotatedAudioRenderer(double sampleRate, PackedCollection<Scalar> wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
 		this.sampleRate = sampleRate;
 		this.wav = wav;
 		this.annotation = annotation;
@@ -81,12 +82,13 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 	}
 
 	private void loadWav(File f) throws IOException {
-		WavFile in = WavFile.openWavFile(f);
-		sampleRate = in.getSampleRate();
-		double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
-		in.readFrames(data, (int) in.getFramesRemaining());
+		try (WavFile in = WavFile.openWavFile(f)) {
+			sampleRate = in.getSampleRate();
+			double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			in.readFrames(data, (int) in.getFramesRemaining());
 
-		wav = new ScalarBank(data[0].length);
-		IntStream.range(0, wav.getCount()).forEach(i -> wav.set(i, data[0][i]));
+			wav = Scalar.scalarBank(data[0].length);
+			IntStream.range(0, wav.getCount()).forEach(i -> wav.set(i, data[0][i]));
+		}
 	}
 }

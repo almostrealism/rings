@@ -43,10 +43,12 @@ public class AudioScenePopulation<G> implements Population<G, PackedCollection<?
 		this.pop = population;
 	}
 
-	@Override
-	public void init(Genome<G> templateGenome, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	public void init(Genome<G> templateGenome,
+					 List<? extends Receptor<PackedCollection<?>>> measures,
+					 List<? extends Receptor<PackedCollection<?>>> stems,
+					 Receptor<PackedCollection<?>> output) {
 		enableGenome(templateGenome);
-		this.cells = scene.getCells(measures, output);
+		this.cells = scene.getCells(measures, stems, output);
 
 		this.temporal = new TemporalCellular() {
 			@Override

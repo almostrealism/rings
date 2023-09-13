@@ -16,8 +16,11 @@
 
 package org.almostrealism.audio.notes;
 
+import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class ListNoteSource implements PatternNoteSource {
@@ -52,5 +55,20 @@ public class ListNoteSource implements PatternNoteSource {
 
 	public void setNotes(List<PatternNote> notes) {
 		this.notes = notes;
+	}
+
+	public boolean checkResourceUsed(String canonicalPath) {
+		return notes.stream().anyMatch(note -> {
+			if (note.getProvider() instanceof FileWaveDataProvider) {
+				try {
+					return new File(((FileWaveDataProvider) note.getProvider()).getResourcePath()).getCanonicalPath().equals(canonicalPath);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return false;
+				}
+			} else {
+				return false;
+			}
+		});
 	}
 }

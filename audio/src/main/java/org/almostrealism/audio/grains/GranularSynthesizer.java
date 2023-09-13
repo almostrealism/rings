@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
@@ -109,7 +108,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 		return new WaveDataProviderList(providers, () -> () -> {
 			ParameterSet params = new ParameterSet(evX.evaluate().getValue(), evY.evaluate().getValue(), evZ.evaluate().getValue());
 
-			ScalarBank playbackRate = new ScalarBank(1);
+			PackedCollection<Scalar> playbackRate = Scalar.scalarBank(1);
 
 			PackedCollection<?> w = new PackedCollection<>(1);
 			PackedCollection<?> p = new PackedCollection<>(1);

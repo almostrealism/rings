@@ -1,22 +1,36 @@
+/*
+ * Copyright 2023 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almostrealism.primitives.test;
 
 import com.almostrealism.projection.ThinLensCamera;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.computations.RankedChoiceEvaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.CachedMeshIntersectionKernel;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.MeshData;
 import org.almostrealism.space.Triangle;
-import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 import org.junit.Assert;
@@ -25,7 +39,7 @@ import org.junit.Test;
 
 public class MeshIntersectionTest implements CodeFeatures {
 	private MeshData data;
-	private KernelizedProducer<Ray> ray;
+	private Producer<Ray> ray;
 
 	private int width, height;
 
@@ -43,7 +57,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		return new Mesh(data);
 	}
 
-	protected KernelizedProducer<Ray> camera() {
+	protected Producer<Ray> camera() {
 		ThinLensCamera c = new ThinLensCamera();
 		c.setLocation(new Vector(0.0, 0.0, 10.0));
 		c.setViewDirection(new Vector(0.0, 0.0, -1.0));
@@ -54,7 +68,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 
 		width = 100;
 		height = (int)(c.getProjectionHeight() * (width / c.getProjectionWidth()));
-		return (KernelizedProducer<Ray>) c.rayAt((Producer) v(Pair.shape(), 0), pair(width, height));
+		return (Producer<Ray>) c.rayAt((Producer) v(Pair.shape(), 0), pair(width, height));
 	}
 
 	@Before
@@ -68,7 +82,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		CachedMeshIntersectionKernel kernel = new CachedMeshIntersectionKernel(data, ray);
 
 		PackedCollection<Pair<?>> input = RealizableImage.generateKernelInput(0, 0, width, height);
-		ScalarBank distances = new ScalarBank(input.getCount());
+		PackedCollection<Scalar> distances = Scalar.scalarBank(input.getCount());
 		kernel.setDimensions(width, height, 1, 1);
 		kernel.into(distances).evaluate(input);
 
@@ -82,7 +96,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 		System.out.println("distance(" + pos + ") = " + distances.get(pos).getValue());
 		Assert.assertEquals(1.0, distances.get(pos).getValue(), Math.pow(10, -10));
 
-		PackedCollection<?> n = closestNormal.evaluate(new Object[] { input.get(pos) });
+		PackedCollection<?> n = closestNormal.evaluate(input.get(pos));
 		System.out.println("normal(" + pos + ") = " + n);
 		Assert.assertEquals(0.0, n.toDouble(0), Math.pow(10, -10));
 		Assert.assertEquals(0.0, n.toDouble(1), Math.pow(10, -10));
@@ -102,7 +116,7 @@ public class MeshIntersectionTest implements CodeFeatures {
 	@Test
 	public void triangleIntersectAtKernel() {
 		PackedCollection<Ray> in = Ray.bank(1);
-		ScalarBank distances = new ScalarBank(1);
+		PackedCollection<Scalar> distances = Scalar.scalarBank(1);
 
 		in.set(0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0);
 		Triangle.intersectAt.into(distances).evaluate(in, data);

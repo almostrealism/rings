@@ -30,7 +30,6 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.KernelizedProducer;
 import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.CodeFeatures;
 
@@ -59,7 +58,7 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engin
 	}
 
 	@Override
-	public KernelizedProducer<RGB> trace(Producer<Ray> r) {
+	public Producer<RGB> trace(Producer<Ray> r) {
 		// TODO
 //		return new DistanceEstimationLightingEngine(r, allSurfaces, allLights, sparams, estimator, shaders);
 		return null;

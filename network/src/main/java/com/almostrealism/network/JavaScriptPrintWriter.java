@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 	public JavaScriptPrintWriter(PrintWriter p) {
-		super(p);
+		super(p, new JavaScriptLanguageOperations());
 	}
 
 	@Override
@@ -73,9 +73,6 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 
 	@Override
 	public void endScope() { p.println("}"); }
-
-	@Override
-	protected String nameForType(Class<?> type) { return ""; }
 
 	protected static String toString(Variable v) {
 		if (v instanceof ResourceVariable) {

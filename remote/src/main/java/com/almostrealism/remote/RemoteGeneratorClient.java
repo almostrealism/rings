@@ -66,23 +66,27 @@ public class RemoteGeneratorClient {
 		this.completion = new HashMap<>();
 	}
 
-	public void refresh(String requestId, String generatorId, List<PatternNoteSource> sources, Consumer<Boolean> success, Runnable end) {
+	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources, Consumer<Boolean> success, Runnable end) {
 		ensureRefresh();
+
+		List<WaveData> data = sources.stream()
+				.map(PatternNoteSource::getNotes)
+				.flatMap(List::stream)
+				.filter(PatternNote::isValid)
+				.map(PatternNote::getAudio)
+				.filter(Objects::nonNull)
+				.map(c -> new WaveData(c, OutputLine.sampleRate))
+				.collect(Collectors.toList());
+
+		if (data.isEmpty()) return false;
 
 		System.out.println("RemoteGeneratorClient: Submitting refresh request " + requestId);
 
 		refreshListeners.put(requestId, success);
 		refreshEndListeners.put(requestId, end);
 		completion.put(requestId, new AtomicInteger(1));
-		refresh.submit(requestId, generatorId,
-				sources.stream()
-						.map(PatternNoteSource::getNotes)
-						.flatMap(List::stream)
-						.filter(PatternNote::isValid)
-						.map(PatternNote::getAudio)
-						.filter(Objects::nonNull)
-						.map(c -> new WaveData(c, OutputLine.sampleRate))
-						.collect(Collectors.toList()));
+		refresh.submit(requestId, generatorId, data);
+		return true;
 	}
 
 	public void generate(String requestId, String generatorId, int count, Consumer<WaveData> output, Runnable end) {

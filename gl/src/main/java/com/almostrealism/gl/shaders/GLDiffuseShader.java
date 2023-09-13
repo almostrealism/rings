@@ -18,17 +18,18 @@ package com.almostrealism.gl.shaders;
 
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 
-public class GLDiffuseShader extends VertexShader {
+public class GLDiffuseShader extends VertexShader implements CodeFeatures {
 	@Override
 	public Scope<? extends Variable> getScope() {
 		Scope<Variable> s = new Scope<>();
 
-		Variable pos = new Variable("position", Vector.class, (Vector) null);
+		Variable pos = new Variable("position", Vector.class, p(null));
 		// pos.setAnnotation("attribute");
-		Variable tex = new Variable("texcoord", Pair.class, (Vector) null);
+		Variable tex = new Variable("texcoord", Pair.class, p(null));
 		// pos.setAnnotation("varying");
 		s.getVariables().add(tex);
 

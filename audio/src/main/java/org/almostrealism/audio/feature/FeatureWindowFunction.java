@@ -3,15 +3,14 @@ package org.almostrealism.audio.feature;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.PackedCollection;
 
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class FeatureWindowFunction implements CodeFeatures {
-	private final ScalarBank win;
-	Evaluable<ScalarBank> window;
+	private final PackedCollection<Scalar> win;
+	Evaluable<PackedCollection<Scalar>> window;
 
 	public FeatureWindowFunction(FrameExtractionSettings opts) {
 		this(opts.getWindowSize(), opts.getWindowType(), opts.getBlackmanCoeff());
@@ -20,7 +19,7 @@ public class FeatureWindowFunction implements CodeFeatures {
 	public FeatureWindowFunction(int frameLength, String windowType, Scalar blackmanCoeff) {
 		assert frameLength > 0;
 
-		win = new ScalarBank(frameLength);
+		win = Scalar.scalarBank(frameLength);
 
 		double a = 2.0 * Math.PI / (frameLength - 1);
 
@@ -49,11 +48,11 @@ public class FeatureWindowFunction implements CodeFeatures {
 		this.window = scalarBankProduct(win.getCount(), scalars(win), v(win.getCount() * 2, 0)).get();
 	}
 
-	public UnaryOperator<ScalarBank> getWindow() {
+	public UnaryOperator<PackedCollection<Scalar>> getWindow() {
 		return window::evaluate;
 	}
 
-	public Producer<ScalarBank> getWindow(Supplier<Evaluable<? extends ScalarBank>> input) {
+	public Producer<PackedCollection<Scalar>> getWindow(Producer<PackedCollection<Scalar>> input) {
 		return scalarBankProduct(win.getCount(), scalars(win), input);
 	}
 }

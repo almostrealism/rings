@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,22 +74,12 @@ public class SineWaveCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void withOutput() {
-		WaveOutput output = new WaveOutput(new File("results/sine-wave-cell-test.wav"));
+		CellList cells = w(new DefaultKeyboardTuning().getTone(WesternChromatic.G3))
+				.o(i -> new File("results/sine-wave-cell-test.wav"));
 
-		SineWaveCell cell = cell();
-		cell.setReceptor(output);
-
-		Runnable push = cell.push(c(0.0)).get();
-		Runnable tick = cell.tick().get();
-		IntStream.range(0, DURATION_FRAMES).forEach(i -> {
-			push.run();
-			tick.run();
-			if ((i + 1) % 1000 == 0) System.out.println("SineWaveCellTest: " + (i + 1) + " iterations");
-		});
-
-		System.out.println("SineWaveCellTest: Writing WAV...");
-		output.write().get().run();
-		System.out.println("SineWaveCellTest: Done");
+		TemporalRunner runner = new TemporalRunner(cells, DURATION_FRAMES);
+		runner.get().run();
+		cells.reset();
 	}
 
 	@Test

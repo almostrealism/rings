@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import com.almostrealism.raytrace.LightingEngineAggregator;
 import com.almostrealism.chem.PotentialMap;
@@ -71,27 +68,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	public static final boolean enableFrontBackDetection = false;
 
 	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return false;
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return false;
-	}
-
-	@Override
-	public boolean isDone() {
-		return false;
-	}
-
-	@Override
-	public Operator<Scalar> get() throws InterruptedException, ExecutionException {
-		return null;
-	}
-
-	@Override
-	public Operator<Scalar> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+	public Operator<Scalar> get() {
 		return null;
 	}
 

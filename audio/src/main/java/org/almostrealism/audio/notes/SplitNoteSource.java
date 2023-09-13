@@ -24,6 +24,8 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -76,6 +78,16 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 
 	public double getBpm() { return bpm; }
 	public void setBpm(double bpm) { this.bpm = bpm; notes = null; }
+
+	@Override
+	public boolean checkResourceUsed(String canonicalPath) {
+		try {
+			return new File(source).getCanonicalPath().equals(canonicalPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	@JsonIgnore
 	private PackedCollection getAudio() {

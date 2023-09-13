@@ -21,13 +21,11 @@ import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.color.ColorEvaluable;
-import org.almostrealism.color.computations.GeneratedColorProducer;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
 import io.almostrealism.relation.Compactable;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.hardware.KernelizedProducer;
 
 /**
  * A {@link SilhouetteShader} can be used to shade a surface with one color value
@@ -36,7 +34,7 @@ import org.almostrealism.hardware.KernelizedProducer;
  * @author  Michael Murray
  */
 public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, Shader<LightingContext>, RGBFeatures {
-	private KernelizedProducer<RGB> color;
+	private Producer<RGB> color;
 
 	private String names[] = { "Color" };
 	private String desc[] = { "The color of the silhouette" };
@@ -54,7 +52,7 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	 * 
 	 * @param color  RGB Producer to use.
 	 */
-	public SilhouetteShader(KernelizedProducer<RGB> color) { this.color = color; }
+	public SilhouetteShader(Producer<RGB> color) { this.color = color; }
 	
 	/**
 	 * @see  Shader#shade(LightingContext, DiscreteField)
@@ -65,7 +63,7 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	}
 
 	/**
-	 * @see ColorEvaluable#evaluate(java.lang.Object[])
+	 * @see Evaluable#evaluate(java.lang.Object[])
 	 */
 	@Override
 	public RGB evaluate(Object args[]) { return this.color.get().evaluate(args); }
@@ -74,61 +72,61 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	public void compact() { color.compact(); }
 
 	/**
-	 * @see org.almostrealism.util.Editable#getPropertyNames()
+	 * @see Editable#getPropertyNames()
 	 */
 	@Override
 	public String[] getPropertyNames() { return this.names; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#getPropertyDescriptions()
+	 * @see Editable#getPropertyDescriptions()
 	 */
 	@Override
 	public String[] getPropertyDescriptions() { return this.desc; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#getPropertyTypes()
+	 * @see Editable#getPropertyTypes()
 	 */
 	@Override
 	public Class[] getPropertyTypes() { return this.types; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#getPropertyValues()
+	 * @see Editable#getPropertyValues()
 	 */
 	@Override
 	public Object[] getPropertyValues() { return new Object[] {this.color}; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#setPropertyValue(java.lang.Object, int)
+	 * @see Editable#setPropertyValue(java.lang.Object, int)
 	 */
 	@Override
 	public void setPropertyValue(Object value, int index) {
 		if (index == 0)
-			this.color = (KernelizedProducer<RGB>) value;
+			this.color = (Producer<RGB>) value;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}
 
 	/**
-	 * @see org.almostrealism.util.Editable#setPropertyValues(java.lang.Object[])
+	 * @see Editable#setPropertyValues(java.lang.Object[])
 	 */
 	@Override
 	public void setPropertyValues(Object values[]) {
-		if (values.length > 0) this.color = (KernelizedProducer<RGB>) values[0];
+		if (values.length > 0) this.color = (Producer<RGB>) values[0];
 	}
 
 	/**
-	 * @see org.almostrealism.util.Editable#getInputPropertyValues()
+	 * @see Editable#getInputPropertyValues()
 	 */
 	@Override
 	public Producer[] getInputPropertyValues() { return new Producer[] { this.color }; }
 
 	/**
-	 * @see org.almostrealism.util.Editable#setInputPropertyValue(int, Producer)
+	 * @see Editable#setInputPropertyValue(int, Producer)
 	 */
 	@Override
 	public void setInputPropertyValue(int index, Producer p) {
 		if (index == 0)
-			this.color = (KernelizedProducer<RGB>) p;
+			this.color = (Producer<RGB>) p;
 		else
 			throw new IllegalArgumentException("Illegal property index: " + index);
 	}

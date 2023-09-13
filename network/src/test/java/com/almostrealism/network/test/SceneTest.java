@@ -7,7 +7,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.ShadableIntersection;
-import org.almostrealism.hardware.cl.HardwareOperator;
+import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class SceneTest implements TestFeatures {
 	public void lightingEngine() throws IOException {
 		TestScene scene = new TestScene();
 
-		HardwareOperator.verboseLog(() -> {
+		CLOperator.verboseLog(() -> {
 			ShaderContext context = new ShaderContext(scene.getSurfaces()[0], scene.getLights().get(0));
 			IntersectionalLightingEngine engine = new IntersectionalLightingEngine(ray(0, 0, 10, 0, 0, -1),
 					scene.getSurfaces()[0], Collections.emptyList(), scene.getLights().get(0), Collections.emptyList(), context);

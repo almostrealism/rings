@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.almostrealism.network.JavaScriptPrintWriter;
 import io.almostrealism.code.Accessibility;
+import io.almostrealism.expression.DoubleConstant;
 import io.almostrealism.expression.Expression;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.hardware.Hardware;
@@ -36,7 +37,7 @@ public class CodePrintWriterTest {
 		CodePrintWriter p = new JavaScriptPrintWriter(new PrintStreamPrintWriter(System.out));
 		
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new Expression<>(Double.class, Hardware.getLocalHardware().stringForDouble(1)));
+		args.add(new DoubleConstant(1.0));
 		
 		p.beginScope("test", null, new ArrayList<>(), Accessibility.EXTERNAL);
 		p.println(new Variable<>("v", new Method<>(Scalar.class, null, "func", args)));

@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.health;
+package org.almostrealism.audio.data;
 
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
-import org.almostrealism.heredity.TemporalCellular;
-import org.almostrealism.optimize.HealthComputation;
-
-import java.util.List;
-
-public interface AudioHealthComputation<T extends TemporalCellular> extends HealthComputation<T, AudioHealthScore> {
-	Receptor<PackedCollection<?>> getOutput();
-
-	List<? extends Receptor<PackedCollection<?>>> getStems();
-
-	List<? extends Receptor<PackedCollection<?>>> getMeasures();
+public interface PathResource {
+	String getResourcePath();
 }

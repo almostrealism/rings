@@ -38,6 +38,7 @@ public class ParameterizedEnvelope implements EnvelopeFeatures {
 	private ParameterFunction sustainSelection;
 	private ParameterFunction releaseSelection;
 
+	// TODO  Can't this be static, and reused by all envelopes?
 	private Evaluable<PackedCollection<?>> env;
 
 	public ParameterizedEnvelope() {
@@ -77,6 +78,7 @@ public class ParameterizedEnvelope implements EnvelopeFeatures {
 		return PatternNote.create(note, (audio, duration) -> () -> args -> {
 			PackedCollection<?> audioData = audio.get().evaluate();
 			PackedCollection<?> dr = duration.get().evaluate();
+
 			return env.evaluate(audioData, dr, a, d, s, r);
 		});
 	}

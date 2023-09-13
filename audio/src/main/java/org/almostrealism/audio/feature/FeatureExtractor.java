@@ -3,27 +3,15 @@ package org.almostrealism.audio.feature;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.ScalarBank;
 import org.almostrealism.algebra.Tensor;
+import org.almostrealism.collect.PackedCollection;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class FeatureExtractor {
@@ -106,7 +94,7 @@ public class FeatureExtractor {
 			assert channelCount > 0;
 			int channel = 0;
 
-			ScalarBank waveform = WavFile.channelScalar(wave, channel);
+			PackedCollection<Scalar> waveform = WavFile.channelScalar(wave, channel);
 			Tensor<Scalar> features = new Tensor<>();
 
 			try {

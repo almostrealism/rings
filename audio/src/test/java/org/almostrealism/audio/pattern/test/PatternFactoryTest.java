@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.FileNoteSource;
 import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -49,16 +50,44 @@ import java.util.stream.Collectors;
 
 public class PatternFactoryTest implements CellFeatures {
 
+	public static String LIBRARY = "Library";
+
+	static {
+		String env = System.getenv("AR_RINGS_LIBRARY");
+		if (env != null) LIBRARY = env;
+
+		String arg = System.getProperty("AR_RINGS_LIBRARY");
+		if (arg != null) LIBRARY = arg;
+	}
+
 	@Test
 	public void fixChoices() throws IOException {
 		List<PatternFactoryChoice> choices = readChoices();
 
+		TreeNoteSource pads = TreeNoteSource.fromFile(new File(LIBRARY),
+				TreeNoteSource.Filter.nameStartsWith("PD_"));
+		System.out.println("CellularAudioOptimizer: " + pads.getNotes().size() + " pad samples");
+		choices.add(PatternFactoryChoice.fromSource("PD", pads, 3, 5, true));
+
+		TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
+				TreeNoteSource.Filter.nameStartsWith("SN_"));
+		System.out.println("PatternFactoryTest: " + synths.getNotes().size() + " synth samples");
+		choices.add(PatternFactoryChoice.fromSource("SN", synths, 4, 5, true));
+
 		choices.forEach(c -> {
-			if ("Bass".equals(c.getFactory().getName())) {
-				c.setGranularity(4.0);
-				c.setSeedScale(4.0);
-				c.setSeedBias(0.0);
-				c.setMaxScale(8.0);
+			if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
+				c.setMinScale(0.0);
+				c.setMaxScale(16.0);
+			}
+
+			if ("Chord Synth".equals(c.getFactory().getName())) {
+				c.setSeedBias(0.4);
+			} else if ("Bass".equals(c.getFactory().getName())) {
+				c.setSeedBias(1.0);
+			} else if ("Rise".equals(c.getFactory().getName())) {
+				c.setSeedBias(1.0);
+			} else if ("SN".equals(c.getFactory().getName())) {
+				c.setSeedBias(0.4);
 			}
 		});
 
@@ -119,7 +148,12 @@ public class PatternFactoryTest implements CellFeatures {
 	}
 
 	public PatternFactoryChoiceList readChoices() throws IOException {
-		return new ObjectMapper().readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+		File f = new File("pattern-factory.json.old");
+		if (f.exists()) {
+			return new ObjectMapper().readValue(f, PatternFactoryChoiceList.class);
+		} else {
+			return new ObjectMapper().readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+		}
 	}
 
 	@Test
@@ -131,8 +165,12 @@ public class PatternFactoryTest implements CellFeatures {
 	public void runLayers() throws IOException {
 		Frequency bpm = bpm(120);
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
-		PackedCollection destination = new PackedCollection((int) (bpm.l(16) * OutputLine.sampleRate));
+		int measures = 32;
+		int beats = 4;
+		double measureDuration = bpm.l(beats);
+		double measureFrames = measureDuration * OutputLine.sampleRate;
+
+		PackedCollection destination = new PackedCollection((int) (measures * measureFrames));
 
 		List<PatternFactoryChoice> choices = readChoices();
 
@@ -141,17 +179,19 @@ public class PatternFactoryTest implements CellFeatures {
 
 		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 0, 1.0, false);
 
-		System.out.println(PatternLayerManager.layerHeader());
-		System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
+		// System.out.println(PatternLayerManager.layerHeader());
+		// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
 
 		for (int i = 0; i < 4; i++) {
 			manager.addLayer(new ParameterSet(0.1, 0.2, 0.3));
-			System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
+			// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
 		}
 
 		manager.updateDestination(destination);
-		manager.sum(pos -> (int) (pos * bpm.l(16) * OutputLine.sampleRate),
-				pos -> pos * bpm.l(4), 1, pos -> Scale.of(WesternChromatic.C1));
+		manager.sum(
+				pos -> (int) (pos * measureFrames),
+				pos -> pos * measureDuration,
+				measures, pos -> Scale.of(WesternChromatic.C1));
 
 		WaveData out = new WaveData(destination, OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));

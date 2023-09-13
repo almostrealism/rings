@@ -17,12 +17,16 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
+import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.data.PathResource;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
@@ -51,15 +55,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final int DEFAULT_SOURCE_COUNT = 6;
+	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
@@ -69,33 +74,34 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
 				switch (c) {
-					case 0 -> { yield 4; }
-					case 1 -> { yield 4; }
-					case 2 -> { yield 1; }
-					case 3 -> { yield 2; }
-					case 4 -> { yield 1; }
-					case 5 -> { yield 1; }
+					case 0 -> 4;
+					case 1 -> 4;
+					case 2 -> 1;
+					case 3 -> 2;
+					case 4 -> 1;
+					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
 		DEFAULT_LAYERS = c ->
 				switch (c) {
-					case 0 -> { yield 5; }
-					case 1 -> { yield 5; }
-					case 2 -> { yield 4; }
-					case 3 -> { yield 5; }
-					case 4 -> { yield 3; }
-					case 5 -> { yield 1; }
+					case 0 -> 5;
+					case 1 -> 5;
+					case 2 -> 4;
+					case 3 -> 5;
+					case 4 -> 4;
+					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
 		DEFAULT_DURATION = c ->
 				switch (c) {
-					case 0 -> { yield 1; }
-					case 1 -> { yield 4; }
-					case 2 -> { yield 16; }
-					case 3 -> { yield 16; }
-					case 5 -> { yield 16; }
+					case 0 -> 1;
+					case 1 -> 4;
+					case 2 -> 16;
+					case 3 -> 16;
+					case 4 -> 8;
+					case 5 -> 16;
 					default -> (int) Math.pow(2.0, c - 1);
 				};
 	}
@@ -125,6 +131,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
+	private Tree<? extends Supplier<FileWaveDataProvider>> library;
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
@@ -193,7 +200,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public Frequency getTempo() { return Frequency.forBPM(bpm); }
 
 	public void setTuning(KeyboardTuning tuning) {
+		this.tuning = tuning;
 		patterns.setTuning(tuning);
+	}
+
+	public KeyboardTuning getTuning() { return tuning; }
+
+	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+		setLibraryRoot(tree, null);
+	}
+
+	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree, DoubleConsumer progress) {
+		library = tree;
+		patterns.setTree(tree, progress);
 	}
 
 	public Animation<T> getScene() { return scene; }
@@ -271,15 +290,25 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.getBreaks().addAll(time.getResets());
 		settings.getSections().addAll(sections.getSections()
 				.stream().map(s -> new Settings.Section(s.getPosition(), s.getLength())).collect(Collectors.toList()));
+
+		if (library instanceof PathResource) {
+			settings.setLibraryRoot(((PathResource) library).getResourcePath());
+		}
+
 		settings.setChordProgression(progression.getSettings());
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
 		settings.setWetChannels(getEfxManager().getWetChannels());
 		settings.setGeneration(generation.getSettings());
+
 		return settings;
 	}
 
-	public void setSettings(Settings settings) {
+	public void setSettings(Settings settings) { setSettings(settings, this::createTree, null); }
+
+	public void setSettings(Settings settings,
+							Function<String, Tree<? extends Supplier<FileWaveDataProvider>>> libraryProvider,
+							DoubleConsumer progress) {
 		setBPM(settings.getBpm());
 		setMeasureSize(settings.getMeasureSize());
 		setTotalMeasures(settings.getTotalMeasures());
@@ -287,6 +316,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		time.getResets().clear();
 		settings.getBreaks().forEach(time::addReset);
 		settings.getSections().forEach(s -> sections.addSection(s.getPosition(), s.getLength()));
+
+		if (settings.getLibraryRoot() != null) {
+			setLibraryRoot(libraryProvider.apply(settings.getLibraryRoot()), progress);
+		}
+
 		progression.setSettings(settings.getChordProgression());
 		patterns.setSettings(settings.getPatternSystem());
 
@@ -309,23 +343,31 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
 
+	public boolean checkResourceUsed(String canonicalPath) {
+		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
+	}
+
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
 
-	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output) {
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		cells = getPatternCells(measures, output, setup);
+		cells = getPatternCells(measures, stems, output, setup);
 		return cells.addRequirement(time::tick);
 	}
 
-	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output, OperationList setup) {
+	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures,
+									List<? extends Receptor<PackedCollection<?>>> stems,
+									Receptor<PackedCollection<?>> output, OperationList setup) {
 		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return mixdown.cells(cells, measures, output);
+		return mixdown.cells(cells, measures, stems, output);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
@@ -376,14 +418,18 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void loadSettings(File file) throws IOException {
+		loadSettings(file, this::createTree, null);
+	}
+
+	public void loadSettings(File file, Function<String, Tree<? extends Supplier<FileWaveDataProvider>>> libraryProvider, DoubleConsumer progress) throws IOException {
 		if (file.exists()) {
-			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class));
+			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
 			setSettings(Settings.defaultSettings(getSourceCount(),
 					DEFAULT_PATTERNS_PER_CHANNEL,
 					DEFAULT_ACTIVE_PATTERNS,
 					DEFAULT_LAYERS,
-					DEFAULT_DURATION));
+					DEFAULT_DURATION), libraryProvider, progress);
 		}
 	}
 
@@ -393,6 +439,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private int totalMeasures = 64;
 		private List<Integer> breaks = new ArrayList<>();
 		private List<Section> sections = new ArrayList<>();
+		private String libraryRoot;
 
 		private ChordProgressionManager.Settings chordProgression;
 		private PatternSystemManager.Settings patternSystem;
@@ -420,6 +467,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public List<Section> getSections() { return sections; }
 		public void setSections(List<Section> sections) { this.sections = sections; }
+
+		public String getLibraryRoot() { return libraryRoot; }
+		public void setLibraryRoot(String libraryRoot) { this.libraryRoot = libraryRoot; }
 
 		public ChordProgressionManager.Settings getChordProgression() { return chordProgression; }
 		public void setChordProgression(ChordProgressionManager.Settings chordProgression) { this.chordProgression = chordProgression; }
@@ -460,12 +510,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
 			settings.getSections().add(new Section(16, 16));
-			settings.getSections().add(new Section(16, 8));
-			settings.getSections().add(new Section(24, 16));
+			settings.getSections().add(new Section(32, 8));
 			settings.getBreaks().add(40);
 			settings.getSections().add(new Section(40, 16));
-			settings.getSections().add(new Section(56, 24));
-			settings.setTotalMeasures(80);
+			settings.getSections().add(new Section(56, 16));
+			settings.getSections().add(new Section(72, 8));
+			settings.getBreaks().add(80);
+			settings.getSections().add(new Section(80, 64));
+			settings.setTotalMeasures(144);
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
@@ -474,5 +526,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setWetChannels(List.of(3, 4, 5));
 			return settings;
 		}
+	}
+
+	private Tree<? extends Supplier<FileWaveDataProvider>> createTree(String f) {
+		return new FileWaveDataProviderNode(new File(f));
 	}
 }

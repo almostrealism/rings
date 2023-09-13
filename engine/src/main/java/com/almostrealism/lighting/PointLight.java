@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.ScalarProducerBase;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorProducerBase;
+import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
@@ -156,7 +156,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		ScalarProducerBase d = lengthSq(add(point, scalarMultiply(v(location), -1.0)));
+		Producer<Scalar> d = lengthSq(add(point, scalarMultiply(v(location), -1.0)));
 
 		RGB color = getColor().multiply(getIntensity());
 		return GeneratedColorProducer.fromProducer(this, attenuation(da, db, dc, v(color), d));
@@ -194,9 +194,9 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	// TODO  This should be a method of the Light interface
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
-		VectorProducerBase point = origin(intersection);
-		VectorProducerBase direction = add(point, scalarMultiply(v(getLocation()), -1.0));
-		direction = direction.normalize().scalarMultiply(-1.0);
+		ExpressionComputation<Vector> point = origin(intersection);
+		Producer<Vector> direction = add(point, scalarMultiply(v(getLocation()), -1.0));
+		direction = scalarMultiply(normalize(direction), -1.0);
 		context.setLightDirection(direction);
 		return surface.shade(context);
 	}
