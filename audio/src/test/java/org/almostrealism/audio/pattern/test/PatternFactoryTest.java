@@ -177,7 +177,7 @@ public class PatternFactoryTest implements CellFeatures {
 		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
 		choices.forEach(c -> c.setTuning(tuning));
 
-		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 0, 1.0, false);
+		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3, PackedCollection::new), 0, 1.0, false);
 
 		// System.out.println(PatternLayerManager.layerHeader());
 		// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
