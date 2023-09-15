@@ -17,7 +17,7 @@
 
 package org.almostrealism.audio.computations;
 
-import io.almostrealism.code.HybridScope;
+import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.OperationMetadata;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Pair;
