@@ -125,6 +125,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PatternElementFactory.enableEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
+		AudioPopulationOptimizer.enableStemOutput = false;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -143,8 +144,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
-
-		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 
 		AudioScene<?> scene = createScene();
 		AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
