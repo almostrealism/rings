@@ -38,6 +38,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CombinedGenome;
@@ -168,7 +169,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(5);
+		PackedCollectionHeap genomeHeap = new PackedCollectionHeap(4096);
+		this.genome = new CombinedGenome(5, genomeHeap::allocate);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getTempo, this::getMeasureDuration, getSampleRate());
