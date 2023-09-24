@@ -40,6 +40,7 @@ import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
@@ -47,8 +48,10 @@ import org.almostrealism.hardware.cl.CLComputeContext;
 import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.ParameterGenome;
 import org.almostrealism.optimize.PopulationOptimizer;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
@@ -125,7 +128,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PatternElementFactory.enableEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
-		AudioPopulationOptimizer.enableStemOutput = true;
+		AudioPopulationOptimizer.enableStemOutput = false;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -145,16 +148,25 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		AudioScene<?> scene = createScene();
-		AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
-		opt.init();
-		opt.run();
+		Heap heap = new Heap(4 * 1024 * 1024);
+
+		heap.use(() -> {
+			try {
+				AudioScene<?> scene = createScene();
+				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
+				opt.init();
+				opt.run();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
 		int sourceCount = AudioScene.DEFAULT_SOURCE_COUNT;
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
+
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
 										OutputLine.sampleRate, new NoOpGenerationProvider());
 

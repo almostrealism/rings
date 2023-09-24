@@ -66,7 +66,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
 
-	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers, TimeCell clock, int sampleRate) {
+	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers,
+						  TimeCell clock, int sampleRate) {
 		this.clock = clock;
 		this.sampleRate = sampleRate;
 

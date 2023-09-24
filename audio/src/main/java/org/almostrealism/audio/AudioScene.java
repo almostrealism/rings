@@ -27,6 +27,7 @@ import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.PathResource;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
@@ -57,6 +58,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
@@ -169,8 +171,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		PackedCollectionHeap genomeHeap = new PackedCollectionHeap(4096);
-		this.genome = new CombinedGenome(5, genomeHeap::allocate);
+		this.genome = new CombinedGenome(5);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getTempo, this::getMeasureDuration, getSampleRate());
@@ -185,7 +186,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> patternDestination = null);
 
-		this.mixdown = new MixdownManager(genome.getGenome(3), sources, delayLayers, time.getClock(), getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(3), sources, delayLayers,
+										time.getClock(), getSampleRate());
 		this.efx = new EfxManager(genome.getGenome(4), sources, this::getBeatDuration, getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
@@ -392,7 +394,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				.forEach(patternSetup::add);
 
 		setup.add(patternSetup);
-		return w(c(getTotalDuration()), new WaveData(audio.traverseEach(), getSampleRate()));
+		return w(PolymorphicAudioData.supply(PackedCollection.factory()), null, c(getTotalDuration()),
+				new WaveData(audio.traverseEach(), getSampleRate()));
 	}
 
 	public Supplier<Runnable> getPatternSetup() { return getPatternSetup(null); }

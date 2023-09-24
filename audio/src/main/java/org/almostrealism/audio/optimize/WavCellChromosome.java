@@ -23,6 +23,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -126,8 +128,9 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
 
 		kernels.setParameters(pos, parameters(transformed));
-		WaveCell cell = new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
-		Factor<PackedCollection<?>> factor = cell.toFactor(Scalar::new,
+		WaveCell cell = new WaveCell(PolymorphicAudioData.supply(PackedCollection.factory()).get(),
+				(PackedCollection) kernels.valueAt(pos), sampleRate, 1.0, time);
+		Factor<PackedCollection<?>> factor = cell.toFactor(() -> new Scalar(0.0),
 				p -> protein -> new Assignment<>(1, p, protein), combine());
 		// return cell.toFactor();
 		result.add(factor);
