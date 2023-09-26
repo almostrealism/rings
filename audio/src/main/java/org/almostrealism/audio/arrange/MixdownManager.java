@@ -192,7 +192,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	@Override
 	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList();
+		OperationList setup = new OperationList("Mixdown Manager Setup");
 		setup.add(volume.expand());
 		if (AudioScene.enableMainFilterUp) setup.add(mainFilterUp.expand());
 		if (enableAdjustmentChromosome) setup.add(wetIn.expand());
@@ -296,8 +296,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			} else {
 				if (stems != null && !stems.isEmpty()) {
 					// Mix efx with main, measure #2, and the stem channel
-//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
-					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
+//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 				} else {
 					// Mix efx with main and measure #2
 					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
