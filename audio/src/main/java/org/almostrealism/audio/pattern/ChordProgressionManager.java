@@ -48,7 +48,7 @@ public class ChordProgressionManager {
 	private List<Region> regions;
 
 	public ChordProgressionManager() {
-		genome = new ConfigurableGenome();
+		this(new ConfigurableGenome(), WesternScales.major(WesternChromatic.C1, 1));
 	}
 
 	public ChordProgressionManager(ConfigurableGenome genome, Scale<?> key) {

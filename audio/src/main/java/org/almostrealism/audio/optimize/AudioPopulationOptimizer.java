@@ -49,7 +49,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
 
 	public static final boolean enableWavOutput = true;
-	public static boolean enableStemOutput = false;
+	public static boolean enableStemOutput = true;
 	public static boolean enableIsolatedContext = false;
 
 	private final String file;

@@ -20,6 +20,7 @@ import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -54,7 +55,6 @@ import java.util.stream.IntStream;
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableAutoVolume = true;
-
 	public static boolean enableWarnings = true;
 
 	private List<PatternFactoryChoice> choices;
@@ -89,7 +89,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		volume.setMem(0, 1.0);
 	}
 
-	private void updateDestination(PackedCollection<?> destination, Supplier<PackedCollection> intermediateDestination) {
+	private void updateDestination(PackedCollection<?> destination, Supplier<PackedCollection<?>> intermediateDestination) {
 		this.destination = destination;
 		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 
@@ -186,16 +186,13 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		patterns.clear();
 	}
 
-	public void sum(List<Integer> channels, DoubleToIntFunction offsetForPosition,
-					DoubleUnaryOperator timeForDuration,
-					int measures, DoubleFunction<Scale<?>> scaleForPosition,
-					PackedCollection destination, Supplier<PackedCollection> intermediateDestination) {
-		if (this.destination != destination) {
-			updateDestination(destination, intermediateDestination);
+	public void sum(AudioSceneContext context) {
+		if (this.destination != context.getDestination()) {
+			updateDestination(context.getDestination(), context.getIntermediateDestination());
 		}
 
 		List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
-				.filter(i -> channels == null || channels.contains(patterns.get(i).getChannel()))
+				.filter(i -> context.getChannels() == null || context.getChannels().contains(patterns.get(i).getChannel()))
 				.boxed().collect(Collectors.toList());
 
 		if (patternsForChannel.isEmpty()) {
@@ -204,7 +201,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		}
 
 		patternsForChannel.stream().map(i -> {
-			patterns.get(i).sum(offsetForPosition, timeForDuration, measures, scaleForPosition);
+			patterns.get(i).sum(context);
 			return p(patterns.get(i).getDestination());
 		}).forEach(note -> {
 			PackedCollection<?> audio = traverse(1, note).get().evaluate();

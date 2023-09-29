@@ -19,7 +19,6 @@ package org.almostrealism.audio.optimize;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
@@ -118,7 +117,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 
 		if (relative) scale = multiply(scale, initial);
 		CollectionProducerComputation pos = subtract(time, offset);
-		return _bound(pos._greaterThan(c(0.0),
+		return bound(pos._greaterThan(c(0.0),
 						pow(polyWaveLength, c(-1.0))
 								.multiply(pos).pow(polyExp)
 								.multiply(scale).add(initial), initial),
@@ -170,7 +169,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 																		Producer<PackedCollection<?>> time) {
 		CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
-		Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, speedUpOffset));
+		Producer<PackedCollection<?>> speedUp = max(c(0.0), subtract(time, speedUpOffset));
 //		Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, c(0.0)));
 		speedUp = floor(divide(speedUp, speedUpDuration));
 		return initial.divide(pow(c(2.0), speedUp));

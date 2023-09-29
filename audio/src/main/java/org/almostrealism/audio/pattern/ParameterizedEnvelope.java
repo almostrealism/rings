@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -28,16 +29,17 @@ import org.almostrealism.heredity.Factor;
 public class ParameterizedEnvelope implements EnvelopeFeatures {
 	public static final int MAX_SECONDS = 180;
 
-	public static double maxAttack = 1.0;
+	public static double maxAttack = 0.5; // 1.0;
 	public static double maxDecay = 2.0;
 	public static double maxSustain = 0.8;
-	public static double maxRelease = 3.0;
+	public static double maxRelease = 0.5; // 3.0;
 
 	private ParameterFunction attackSelection;
 	private ParameterFunction decaySelection;
 	private ParameterFunction sustainSelection;
 	private ParameterFunction releaseSelection;
 
+	@JsonIgnore
 	// TODO  Can't this be static, and reused by all envelopes?
 	private Evaluable<PackedCollection<?>> env;
 
@@ -58,6 +60,18 @@ public class ParameterizedEnvelope implements EnvelopeFeatures {
 		this.sustainSelection = sustainSelection;
 		this.releaseSelection = releaseSelection;
 	}
+
+	public ParameterFunction getAttackSelection() { return attackSelection; }
+	public void setAttackSelection(ParameterFunction attackSelection) { this.attackSelection = attackSelection; }
+
+	public ParameterFunction getDecaySelection() { return decaySelection; }
+	public void setDecaySelection(ParameterFunction decaySelection) { this.decaySelection = decaySelection; }
+
+	public ParameterFunction getSustainSelection() { return sustainSelection; }
+	public void setSustainSelection(ParameterFunction sustainSelection) { this.sustainSelection = sustainSelection; }
+
+	public ParameterFunction getReleaseSelection() { return releaseSelection; }
+	public void setReleaseSelection(ParameterFunction releaseSelection) { this.releaseSelection = releaseSelection; }
 
 	public PatternNote apply(ParameterSet params, PatternNote note) {
 		PackedCollection<?> a = new PackedCollection<>(1);

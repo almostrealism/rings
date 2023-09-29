@@ -16,14 +16,21 @@
 
 package org.almostrealism.audio.pattern.test;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.FileNoteSource;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
+import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -32,8 +39,10 @@ import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.audio.tone.WesternChromatic;
+import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.PackedCollectionHeap;
+import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
@@ -46,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PatternFactoryTest implements CellFeatures {
@@ -63,34 +73,6 @@ public class PatternFactoryTest implements CellFeatures {
 	@Test
 	public void fixChoices() throws IOException {
 		List<PatternFactoryChoice> choices = readChoices();
-
-		TreeNoteSource pads = TreeNoteSource.fromFile(new File(LIBRARY),
-				TreeNoteSource.Filter.nameStartsWith("PD_"));
-		System.out.println("CellularAudioOptimizer: " + pads.getNotes().size() + " pad samples");
-		choices.add(PatternFactoryChoice.fromSource("PD", pads, 3, 5, true));
-
-		TreeNoteSource synths = TreeNoteSource.fromFile(new File(LIBRARY),
-				TreeNoteSource.Filter.nameStartsWith("SN_"));
-		System.out.println("PatternFactoryTest: " + synths.getNotes().size() + " synth samples");
-		choices.add(PatternFactoryChoice.fromSource("SN", synths, 4, 5, true));
-
-		choices.forEach(c -> {
-			if (!"Kicks".equals(c.getFactory().getName()) && !"Rise".equals(c.getFactory().getName())) {
-				c.setMinScale(0.0);
-				c.setMaxScale(16.0);
-			}
-
-			if ("Chord Synth".equals(c.getFactory().getName())) {
-				c.setSeedBias(0.4);
-			} else if ("Bass".equals(c.getFactory().getName())) {
-				c.setSeedBias(1.0);
-			} else if ("Rise".equals(c.getFactory().getName())) {
-				c.setSeedBias(1.0);
-			} else if ("SN".equals(c.getFactory().getName())) {
-				c.setSeedBias(0.4);
-			}
-		});
-
 		new ObjectMapper().writeValue(new File("pattern-factory-new.json"), choices);
 	}
 
@@ -148,11 +130,18 @@ public class PatternFactoryTest implements CellFeatures {
 	}
 
 	public PatternFactoryChoiceList readChoices() throws IOException {
+		return readChoices(true);
+	}
+
+	public PatternFactoryChoiceList readChoices(boolean useOld) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 		File f = new File("pattern-factory.json.old");
-		if (f.exists()) {
-			return new ObjectMapper().readValue(f, PatternFactoryChoiceList.class);
+		if (useOld && f.exists()) {
+			return mapper.readValue(f, PatternFactoryChoiceList.class);
 		} else {
-			return new ObjectMapper().readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+			return mapper.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 		}
 	}
 
@@ -170,28 +159,42 @@ public class PatternFactoryTest implements CellFeatures {
 		double measureDuration = bpm.l(beats);
 		double measureFrames = measureDuration * OutputLine.sampleRate;
 
-		PackedCollection destination = new PackedCollection((int) (measures * measureFrames));
+		AudioScene.Settings settings = new ObjectMapper().readValue(new File("scene-settings.json"), AudioScene.Settings.class);
 
-		List<PatternFactoryChoice> choices = readChoices();
+		FileWaveDataProviderNode library = new FileWaveDataProviderNode(new File(LIBRARY));
+
+		List<PatternFactoryChoice> choices = readChoices(false);
+		choices.stream()
+				.flatMap(c -> c.getFactory().getSources().stream())
+				.map(c -> c instanceof TreeNoteSource ? (TreeNoteSource) c : null)
+				.filter(Objects::nonNull)
+				.forEach(c -> c.setTree(library));
 
 		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
 		choices.forEach(c -> c.setTuning(tuning));
 
-		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3, PackedCollection::new), 0, 1.0, false);
+		ChordProgressionManager chordProgression = new ChordProgressionManager();
+		chordProgression.setSettings(settings.getChordProgression());
+		chordProgression.refreshParameters();
 
-		// System.out.println(PatternLayerManager.layerHeader());
-		// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
+		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 3, 16.0, true);
+		manager.setChordDepth(3);
 
-		for (int i = 0; i < 4; i++) {
-			manager.addLayer(new ParameterSet(0.1, 0.2, 0.3));
-			// System.out.println(PatternLayerManager.layerString(manager.getTailElements()));
-		}
+		manager.addLayer(new ParameterSet(0.2, 0.3, 0.9));
+		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+//		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
 
+		PackedCollection destination = new PackedCollection((int) (measures * measureFrames));
 		manager.updateDestination(destination);
-		manager.sum(
-				pos -> (int) (pos * measureFrames),
-				pos -> pos * measureDuration,
-				measures, pos -> Scale.of(WesternChromatic.C1));
+
+		AudioSceneContext context = new AudioSceneContext();
+		context.setMeasures(measures);
+		context.setFrameForPosition(pos -> (int) (pos * measureFrames));
+		context.setTimeForDuration(pos -> pos * measureDuration);
+		context.setScaleForPosition(chordProgression::forPosition);
+
+		manager.sum(context);
 
 		WaveData out = new WaveData(destination, OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));

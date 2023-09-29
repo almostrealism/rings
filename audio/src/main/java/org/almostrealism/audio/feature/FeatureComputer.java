@@ -309,7 +309,7 @@ public class FeatureComputer implements CodeFeatures {
 		if (enableVerbose) System.out.println("--> applyLog: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		setZero(feature);  // in case there were NaNs.
+		feature.clear();  // in case there were NaNs.
 		addMatVec(feature, dctMatrix, melEnergies);
 		if (enableVerbose) System.out.println("--> dctMatrix: " + (System.currentTimeMillis() - start));
 

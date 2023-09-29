@@ -19,6 +19,7 @@ package org.almostrealism.audio.filter;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.heredity.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
@@ -35,6 +36,13 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 									 Producer<PackedCollection<?>> decay,
 									 Producer<PackedCollection<?>> sustain,
 									 Producer<PackedCollection<?>> release) {
+		Producer<PackedCollection<?>> eps = c(Hardware.getLocalHardware().getPrecision().epsilon());
+		Producer<PackedCollection<?>> drAttack = c(0.75);
+		Producer<PackedCollection<?>> drDecay = c(0.25);
+
+		attack = min(attack, multiply(drAttack, duration));
+		decay = min(decay, multiply(drDecay, duration));
+
 		return envelope(attack(attack))
 				.andThenDecay(attack, decay, sustain)
 				.andThen(add(attack, decay), sustain(sustain))
@@ -54,13 +62,13 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 			Producer<PackedCollection<?>> pos = divide(t, duration);
 			Producer<PackedCollection<?>> start = subtract(c(1.0), pos).multiply(startVolume);
 			Producer<PackedCollection<?>> end = multiply(endVolume, pos);
-			Producer<PackedCollection<?>> level = _max(c(0.0), add(start, end));
+			Producer<PackedCollection<?>> level = max(c(0.0), add(start, end));
 			return multiply(in, level);
 		};
 	}
 
 	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
-		return in -> multiply(in, _min(c(1.0), divide(time(), attack)));
+		return in -> multiply(in, min(c(1.0), divide(time(), attack)));
 	}
 
 	default Factor<PackedCollection<?>> decay(Producer<PackedCollection<?>> offset,

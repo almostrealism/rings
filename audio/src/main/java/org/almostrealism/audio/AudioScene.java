@@ -19,6 +19,7 @@ package org.almostrealism.audio;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -39,7 +40,6 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CombinedGenome;
@@ -58,7 +58,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
@@ -286,6 +285,17 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public int getSampleRate() { return sampleRate; }
 
+	public AudioSceneContext getContext() {
+		AudioSceneContext context = new AudioSceneContext();
+		context.setMeasures(getTotalMeasures());
+		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
+		context.setTimeForDuration(len -> len * getMeasureDuration());
+		context.setScaleForPosition(getChordProgression()::forPosition);
+		context.setDestination(patternDestination);
+		context.setIntermediateDestination(() -> WaveData.allocateCollection(getTotalSamples()));
+		return context;
+	}
+
 	public Settings getSettings() {
 		Settings settings = new Settings();
 		settings.setBpm(getBPM());
@@ -375,12 +385,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
-		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0); // WaveData.allocateCollection(getTotalSamples());
+		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0);
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
-		patternSetup.add(getPatternSetup(List.of(channel)));
+		patternSetup.add(getPatternSetup(channel));
 		patternSetup.add(() -> () ->
 				audio.setMem(0, patternDestination, 0, patternDestination.getMemLength()));
 
@@ -398,15 +408,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				new WaveData(audio.traverseEach(), getSampleRate()));
 	}
 
-	public Supplier<Runnable> getPatternSetup() { return getPatternSetup(null); }
-
-	public Supplier<Runnable> getPatternSetup(List<Integer> channels) {
+	public Supplier<Runnable> getPatternSetup(int channel) {
 		return () -> () -> {
 			refreshPatternDestination();
-			patterns.sum(channels, pos -> (int) (pos * getMeasureSamples()),
-					len -> len * getMeasureDuration(),
-					getTotalMeasures(), getChordProgression()::forPosition,
-					patternDestination, () -> WaveData.allocateCollection(getTotalSamples()));
+
+			AudioSceneContext context = getContext();
+			context.setChannels(List.of(channel));
+			context.setSections(sections.getChannelSections(channel));
+			patterns.sum(context);
 		};
 	}
 
@@ -527,7 +536,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead", "Atmosphere"));
-			// settings.setWetChannels(List.of(2, 3, 4));
 			settings.setWetChannels(List.of(3, 4, 5));
 			return settings;
 		}

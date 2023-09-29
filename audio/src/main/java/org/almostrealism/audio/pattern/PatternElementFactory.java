@@ -110,14 +110,8 @@ public class PatternElementFactory {
 	public ParameterFunction getNoteLengthSelection() { return noteLengthSelection; }
 	public void setNoteLengthSelection(ParameterFunction noteLengthSelection) { this.noteLengthSelection = noteLengthSelection; }
 
-	@Deprecated
-	public ParameterizedPositionFunction getScalePositionSelection() {
-		return null;
-	}
-
-	@Deprecated
-	public void setScalePositionSelection(ParameterizedPositionFunction scalePositionSelection) {
-	}
+	public ParameterizedEnvelope getEnvelope() { return envelope; }
+	public void setEnvelope(ParameterizedEnvelope envelope) { this.envelope = envelope; }
 
 	public ChordPositionFunction getChordNoteSelection() {
 		return chordNoteSelection;

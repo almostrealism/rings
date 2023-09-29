@@ -19,6 +19,7 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
@@ -53,7 +54,6 @@ public class PatternLayerManager implements CodeFeatures {
 	private double seedBias;
 	private int chordDepth;
 	private boolean melodic;
-	private boolean applyNoteDuration;
 
 	private Supplier<List<PatternFactoryChoice>> percChoices;
 	private Supplier<List<PatternFactoryChoice>> melodicChoices;
@@ -136,7 +136,6 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
-		this.applyNoteDuration = melodic;
 	}
 
 	public boolean isMelodic() { return melodic; }
@@ -177,7 +176,6 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.getLayers().addAll(layerParams);
-		// System.out.println("PatternLayerManager[Channel " + channel + "] getSettings: " + layerParams.size() + " layers");
 		return settings;
 	}
 
@@ -327,8 +325,7 @@ public class PatternLayerManager implements CodeFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(DoubleToIntFunction offsetForPosition, DoubleUnaryOperator timeForDuration,
-					int measures, DoubleFunction<Scale<?>> scaleForPosition) {
+	public void sum(AudioSceneContext context) {
 		List<PatternElement> elements = getAllElements(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -340,8 +337,8 @@ public class PatternLayerManager implements CodeFeatures {
 
 		// TODO  What about when duration is longer than measures?
 		// TODO  This results in count being 0, and nothing being output
-		int count = (int) (measures / duration);
-		if (measures / duration - count > 0.0001) {
+		int count = (int) (context.getMeasures() / duration);
+		if (context.getMeasures() / duration - count > 0.0001) {
 			System.out.println("PatternLayerManager: Pattern duration does not divide measures; there will be gaps");
 		}
 
@@ -349,19 +346,10 @@ public class PatternLayerManager implements CodeFeatures {
 			double offset = i * duration;
 
 			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, offsetForPosition, timeForDuration, scaleForPosition, this::nextNotePosition))
+					.map(e -> e.getNoteDestinations(melodic, offset, context, this::nextNotePosition))
 					.flatMap(List::stream)
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;
-
-//						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
-//						int frames = Math.min(audio.getShape().getCount(),
-//								destination.getShape().length(0) - note.getOffset());
-//
-//						TraversalPolicy shape = shape(frames).traverse(1);
-//						sum
-//								.into(destination.range(shape, note.getOffset()))
-//								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
 
 						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
 								audio -> {

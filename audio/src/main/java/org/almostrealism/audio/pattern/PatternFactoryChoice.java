@@ -91,6 +91,11 @@ public class PatternFactoryChoice {
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }
 
+	public ParameterFunction getGranularitySelection() { return granularitySelection; }
+	public void setGranularitySelection(ParameterFunction granularitySelection) {
+		this.granularitySelection = granularitySelection;
+	}
+
 	@Deprecated
 	public void setSeedUnits(int seedUnits) { }
 

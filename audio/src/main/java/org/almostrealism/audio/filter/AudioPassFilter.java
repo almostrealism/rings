@@ -43,7 +43,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 
 	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, boolean high) {
 		this.data = data;
-		this.frequency = _bound(frequency, MIN_FREQUENCY, 20000);
+		this.frequency = bound(frequency, MIN_FREQUENCY, 20000);
 		this.resonance = resonance;
 		this.high = high;
 		setSampleRate(sampleRate);
