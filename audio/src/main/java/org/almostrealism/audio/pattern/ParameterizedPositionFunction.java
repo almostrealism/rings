@@ -68,7 +68,10 @@ public class ParameterizedPositionFunction {
 	}
 
 	public double apply(ParameterSet params, double position, double scale) {
-		position = regularize(params, position, scale);
+		return apply(params, regularize(params, position, scale));
+	}
+
+	public double apply(ParameterSet params, double position) {
 		double r = 2 + rate.apply(params);
 		double o = rateOffset.apply(params);
 		return Math.sin(Math.PI * (Math.pow(2.0, 10) * position * r + Math.pow(2.0, 3) * o));

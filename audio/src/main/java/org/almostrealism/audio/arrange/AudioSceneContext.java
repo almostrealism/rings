@@ -101,4 +101,13 @@ public class AudioSceneContext {
 	public void setSections(List<ChannelSection> sections) {
 		this.sections = sections;
 	}
+
+	public ChannelSection getSection(double measure) {
+		if (sections == null || sections.isEmpty()) return null;
+
+		return sections.stream()
+				.filter(s -> s.getPosition() <= measure && measure < (s.getPosition() + s.getLength()))
+				.findFirst()
+				.orElse(null);
+	}
 }

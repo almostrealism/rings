@@ -20,6 +20,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
@@ -59,6 +60,7 @@ public class PatternLayerManager implements CodeFeatures {
 	private Supplier<List<PatternFactoryChoice>> melodicChoices;
 	private SimpleChromosome chromosome;
 	private ParameterFunction factorySelection;
+	private ParameterizedPositionFunction activeSelection;
 
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
@@ -92,6 +94,7 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public void init() {
 		factorySelection = ParameterFunction.random();
+		activeSelection = ParameterizedPositionFunction.random();
 
 		volume = new PackedCollection(1);
 		volume.setMem(0, 0.1);
@@ -175,6 +178,7 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setChordDepth(chordDepth);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
+		settings.setActiveSelection(activeSelection);
 		settings.getLayers().addAll(layerParams);
 		return settings;
 	}
@@ -185,6 +189,7 @@ public class PatternLayerManager implements CodeFeatures {
 		chordDepth = settings.getChordDepth();
 		melodic = settings.isMelodic();
 		factorySelection = settings.getFactorySelection();
+		activeSelection = settings.getActiveSelection();
 
 		clear(true);
 		settings.getLayers().forEach(this::addLayer);
@@ -291,11 +296,6 @@ public class PatternLayerManager implements CodeFeatures {
 		roots.forEach(layer -> layer.getLastParent().setChild(null));
 	}
 
-	public void replaceLayer(ParameterSet params) {
-		removeLayer(true);
-		addLayer(params);
-	}
-
 	public void clear(boolean removeGenes) {
 		if (removeGenes) {
 			while (getLayerCount() > 0) removeLayer(true);
@@ -343,7 +343,11 @@ public class PatternLayerManager implements CodeFeatures {
 		}
 
 		IntStream.range(0, count).forEach(i -> {
+			ChannelSection section = context.getSection(i * duration);
+
 			double offset = i * duration;
+			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition());
+			if (active < 0) return;
 
 			elements.stream()
 					.map(e -> e.getNoteDestinations(melodic, offset, context, this::nextNotePosition))
@@ -432,6 +436,7 @@ public class PatternLayerManager implements CodeFeatures {
 		private int chordDepth;
 		private boolean melodic;
 		private ParameterFunction factorySelection;
+		private ParameterizedPositionFunction activeSelection;
 		private List<ParameterSet> layers = new ArrayList<>();
 
 		public int getChannel() { return channel; }
@@ -448,6 +453,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public ParameterFunction getFactorySelection() { return factorySelection; }
 		public void setFactorySelection(ParameterFunction factorySelection) { this.factorySelection = factorySelection; }
+
+		public ParameterizedPositionFunction getActiveSelection() { return activeSelection; }
+		public void setActiveSelection(ParameterizedPositionFunction activeSelection) { this.activeSelection = activeSelection; }
 
 		public List<ParameterSet> getLayers() { return layers; }
 		public void setLayers(List<ParameterSet> layers) { this.layers = layers; }

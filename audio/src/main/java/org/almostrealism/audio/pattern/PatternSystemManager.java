@@ -235,6 +235,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 1 && c != 5);
 				pattern.setFactorySelection(ParameterFunction.random());
+				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 
 				if (p < activePatterns.applyAsInt(c)) {
 					IntStream.range(0, layersPerPattern.applyAsInt(c)).forEach(l -> {
