@@ -188,8 +188,12 @@ public class PatternLayerManager implements CodeFeatures {
 		duration = settings.getDuration();
 		chordDepth = settings.getChordDepth();
 		melodic = settings.isMelodic();
-		factorySelection = settings.getFactorySelection();
-		activeSelection = settings.getActiveSelection();
+
+		if (settings.getFactorySelection() != null)
+			factorySelection = settings.getFactorySelection();
+
+		if (settings.getActiveSelection() != null)
+			activeSelection = settings.getActiveSelection();
 
 		clear(true);
 		settings.getLayers().forEach(this::addLayer);

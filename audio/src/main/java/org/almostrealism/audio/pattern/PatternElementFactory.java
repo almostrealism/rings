@@ -164,7 +164,7 @@ public class PatternElementFactory {
 
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -2).apply(params));
+		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);

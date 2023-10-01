@@ -36,7 +36,6 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 									 Producer<PackedCollection<?>> decay,
 									 Producer<PackedCollection<?>> sustain,
 									 Producer<PackedCollection<?>> release) {
-		Producer<PackedCollection<?>> eps = c(Hardware.getLocalHardware().getPrecision().epsilon());
 		Producer<PackedCollection<?>> drAttack = c(0.75);
 		Producer<PackedCollection<?>> drDecay = c(0.25);
 

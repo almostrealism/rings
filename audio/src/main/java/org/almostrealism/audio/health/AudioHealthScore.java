@@ -19,20 +19,23 @@ package org.almostrealism.audio.health;
 import org.almostrealism.optimize.HealthScore;
 
 import java.io.File;
+import java.util.List;
 
 public class AudioHealthScore implements HealthScore {
 	private double score;
 	private String output;
+	private List<String> stems;
 
-	public AudioHealthScore() { this(0.0, null); }
+	public AudioHealthScore() { this(0.0, null, null); }
 
 	public AudioHealthScore(double score) {
-		this(score, null);
+		this(score, null, null);
 	}
 
-	public AudioHealthScore(double score, String output) {
+	public AudioHealthScore(double score, String output, List<String> stems) {
 		this.score = score;
 		this.output = output;
+		this.stems = stems;
 	}
 
 	@Override
@@ -43,4 +46,12 @@ public class AudioHealthScore implements HealthScore {
 	public String getOutput() { return output; }
 
 	public void setOutput(String output) { this.output = output; }
+
+	public List<String> getStems() {
+		return stems;
+	}
+
+	public void setStems(List<String> stems) {
+		this.stems = stems;
+	}
 }

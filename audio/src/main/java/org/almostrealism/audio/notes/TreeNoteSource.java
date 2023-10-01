@@ -164,7 +164,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	}
 
 	public enum FilterType {
-		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS;
+		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS, CONTAINS_IGNORE_CASE;
 
 		boolean matches(String value, String filter) {
 			return switch (this) {
@@ -173,6 +173,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 				case STARTS_WITH -> value.startsWith(filter);
 				case ENDS_WITH -> value.endsWith(filter);
 				case CONTAINS -> value.contains(filter);
+				case CONTAINS_IGNORE_CASE -> value.toLowerCase().contains(filter.toLowerCase());
 			};
 		}
 	}
