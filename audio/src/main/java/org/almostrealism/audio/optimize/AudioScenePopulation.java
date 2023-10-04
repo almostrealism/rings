@@ -136,13 +136,13 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					if (gen == null) gen = cells.iter(frames, false).get();
 
 					gen.run();
-					output.accept(outputPath);
 				} finally {
 					out.write().get().run();
 					out.reset();
 					if (cells != null) cells.reset();
 
 					disableGenome();
+					output.accept(outputPath);
 				}
 			}
 		};
