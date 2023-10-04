@@ -43,6 +43,7 @@ import org.almostrealism.heredity.SimpleGene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.TemporalList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
@@ -294,14 +295,17 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
 				return efx;
 			} else {
-				if (stems != null && !stems.isEmpty()) {
-					// Mix efx with main, measure #2, and the stem channel
-					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
+				List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
+				efxReceptors.add(main.get(0));
+				if (measures.size() > 1) efxReceptors.add(measures.get(1));
+				if (stems != null && !stems.isEmpty()) efxReceptors.add(stems.get(sources.size()));
+				efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
+
+//				if (stems != null && !stems.isEmpty()) {
+//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
+//				} else {
 //					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-				} else {
-					// Mix efx with main and measure #2
-					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-				}
+//				}
 
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
@@ -312,7 +316,11 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				}
 
 				// Deliver main to the output and measure #1
-				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+				if (measures.isEmpty()) {
+					return main.map(i -> new ReceptorCell<>(output));
+				} else {
+					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+				}
 
 				return cells(main, efx);
 			}

@@ -32,8 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
-	private static ContextSpecific<PackedCollectionHeap> collectionHeap;
-
 	private PackedCollection collection;
 	private int sampleRate;
 
@@ -120,19 +118,8 @@ public class WaveData implements SamplingFeatures {
 		}
 	}
 
-	public static PackedCollectionHeap getCollectionHeap() { return collectionHeap == null ? null : collectionHeap.getValue(); }
-
-	public static void setCollectionHeap(Supplier<PackedCollectionHeap> create, Consumer<PackedCollectionHeap> destroy) {
-		collectionHeap = new DefaultContextSpecific<>(create, destroy);
-		collectionHeap.init();
-	}
-
-	public static void dropHeap() {
-		collectionHeap = null;
-	}
-
 	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
 	public static PackedCollection<?> allocateCollection(int count) {
-		return Optional.ofNullable(getCollectionHeap()).map(h -> h.allocate(count)).orElse(new PackedCollection(count));
+		return new PackedCollection(count);
 	}
 }

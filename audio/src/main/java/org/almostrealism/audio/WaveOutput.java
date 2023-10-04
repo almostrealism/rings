@@ -78,7 +78,6 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	private WavFile wav;
 	private CursorPair cursor;
 	private AcceleratedTimeSeries data;
-	private Runnable reset;
 
 	public WaveOutput() { this(null); }
 
@@ -108,8 +107,6 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		this.sampleRate = sampleRate;
 		this.cursor = new CursorPair();
 		this.data = maxFrames <= 0 ? new AcceleratedTimeSeries() : new AcceleratedTimeSeries(maxFrames);
-
-		this.reset = a(2, p(cursor), pair(0.0, 1.0)).get();
 	}
 
 	public CursorPair getCursor() { return cursor; }
@@ -118,13 +115,11 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 
 	@Override
 	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
-		OperationList push = new OperationList("WaveOutput Push");
+		String description = "WaveOutput Push";
+		if (file != null) description += " (to file)";
+		OperationList push = new OperationList(description);
 		push.add(data.add(temporal(l(p(cursor)), (Producer) protein)));
-
-		// push.add(new MetricComputation<>("Incrementing cursor", 100000, p(cursor), 0, 2));
 		push.add(cursor.increment(v(1.0)));
-		// push.add(new MetricComputation<>("Incremented cursor", 100000, p(cursor), 0, 2));
-
 		return push;
 	}
 
@@ -246,7 +241,6 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		Lifecycle.super.reset();
 		cursor.setCursor(0);
 		cursor.setDelayCursor(1);
-//		reset.run();
 		data.reset();
 	}
 }

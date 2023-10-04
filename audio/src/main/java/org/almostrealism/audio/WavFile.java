@@ -175,8 +175,7 @@ public class WavFile implements AutoCloseable {
 	public static PackedCollection<?> channel(double[][] data, int chan) {
 		// System.out.println("WavFile: Allocating " + data[chan].length / OutputLine.sampleRate + " seconds");
 
-		PackedCollection<?> waveform = Optional.ofNullable(WaveData.getCollectionHeap())
-				.map(h -> h.allocate(data[chan].length)).orElseGet(() -> new PackedCollection(data[chan].length));
+		PackedCollection<?> waveform = new PackedCollection(data[chan].length);
 
 		for (int i = 0; i < data[chan].length; i++) {
 			waveform.setMem(i, data[chan][i]);
