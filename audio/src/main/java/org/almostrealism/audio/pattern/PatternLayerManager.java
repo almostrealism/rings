@@ -44,8 +44,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerManager implements CodeFeatures {
-	public static final int MAX_NOTES = 2048;
-
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
@@ -329,7 +327,7 @@ public class PatternLayerManager implements CodeFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(AudioSceneContext context) {
+	public void sum(Supplier<AudioSceneContext> context) {
 		List<PatternElement> elements = getAllElements(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -339,22 +337,24 @@ public class PatternLayerManager implements CodeFeatures {
 
 		destination.clear();
 
+		AudioSceneContext ctx = context.get();
+
 		// TODO  What about when duration is longer than measures?
 		// TODO  This results in count being 0, and nothing being output
-		int count = (int) (context.getMeasures() / duration);
-		if (context.getMeasures() / duration - count > 0.0001) {
+		int count = (int) (ctx.getMeasures() / duration);
+		if (ctx.getMeasures() / duration - count > 0.0001) {
 			System.out.println("PatternLayerManager: Pattern duration does not divide measures; there will be gaps");
 		}
 
 		IntStream.range(0, count).forEach(i -> {
-			ChannelSection section = context.getSection(i * duration);
+			ChannelSection section = ctx.getSection(i * duration);
 
 			double offset = i * duration;
 			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition());
 			if (active < 0) return;
 
 			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, context, this::nextNotePosition))
+					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
 					.flatMap(List::stream)
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;

@@ -132,9 +132,10 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 				TemporalCellular cells = null;
 
 				try {
+					outputPath = null;
 					cells = enableGenome(i);
-					if (gen == null) gen = cells.iter(frames, false).get();
 
+					if (gen == null) gen = cells.iter(frames, false).get();
 					gen.run();
 				} finally {
 					out.write().get().run();
@@ -142,7 +143,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					if (cells != null) cells.reset();
 
 					disableGenome();
-					output.accept(outputPath);
+					if (outputPath != null) output.accept(outputPath);
 				}
 			}
 		};

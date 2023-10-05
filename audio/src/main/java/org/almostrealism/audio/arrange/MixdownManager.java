@@ -75,17 +75,17 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
-		this.volume.setGlobalTime(clock.frame());
+		this.volume.setGlobalTime(clock);
 
 		SimpleChromosome fup = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fup.addGene());
 		this.mainFilterUp = new AdjustmentChromosome(fup, 0.0, 1.0, false, sampleRate);
-		this.mainFilterUp.setGlobalTime(clock.frame());
+		this.mainFilterUp.setGlobalTime(clock);
 
 		SimpleChromosome w = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> w.addGene());
 		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
-		this.wetIn.setGlobalTime(clock.frame());
+		this.wetIn.setGlobalTime(clock);
 
 		this.wetInSimple = genome.addSimpleChromosome(6);
 		IntStream.range(0, channels).forEach(i -> {
@@ -113,7 +113,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
 		this.delayDynamics = new DelayChromosome(d, sampleRate);
-		this.delayDynamics.setGlobalTime(clock.frame());
+		this.delayDynamics.setGlobalTime(clock);
 
 		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> wf.addGene());
@@ -122,7 +122,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		SimpleChromosome fdown = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fdown.addGene());
 		this.mainFilterDown = new AdjustmentChromosome(fdown, 0.0, 1.0, false, sampleRate);
-		this.mainFilterDown.setGlobalTime(clock.frame());
+		this.mainFilterDown.setGlobalTime(clock);
 
 		initRanges(new Configuration(channels), delayLayers);
 	}
