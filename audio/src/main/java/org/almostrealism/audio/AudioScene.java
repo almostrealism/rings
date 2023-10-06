@@ -62,6 +62,7 @@ import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
@@ -122,7 +123,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private int sampleRate;
 	private double bpm;
-	private int sourceCount;
+	private int channelCount;
 	private int delayLayerCount;
 	private int measureSize = 4;
 	private int totalMeasures = 1;
@@ -138,9 +139,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
 
-	private RiseManager riser;
 	private SceneSectionManager sections;
 	private EfxManager efx;
+	private RiseManager riser;
 	private MixdownManager mixdown;
 
 	private GenerationManager generation;
@@ -152,16 +153,16 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
 
-	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
+	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
 					  int sampleRate) {
-		this(scene, bpm, sources, delayLayers, sampleRate, new NoOpGenerationProvider());
+		this(scene, bpm, channels, delayLayers, sampleRate, new NoOpGenerationProvider());
 	}
 
-	public AudioScene(Animation<T> scene, double bpm, int sources, int delayLayers,
+	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
 					  int sampleRate, GenerationProvider generation) {
 		this.sampleRate = sampleRate;
 		this.bpm = bpm;
-		this.sourceCount = sources;
+		this.channelCount = channels;
 		this.delayLayerCount = delayLayers;
 		this.scene = scene;
 
@@ -173,7 +174,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.genome = new CombinedGenome(5);
 
 		this.tuning = new DefaultKeyboardTuning();
-		this.sections = new SceneSectionManager(genome.getGenome(0), sources, this::getTempo, this::getMeasureDuration, getSampleRate());
+		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
 		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
@@ -185,9 +186,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> patternDestination = null);
 
-		this.mixdown = new MixdownManager(genome.getGenome(3), sources, delayLayers,
+		this.mixdown = new MixdownManager(genome.getGenome(3), channels, delayLayers,
 										time.getClock(), getSampleRate());
-		this.efx = new EfxManager(genome.getGenome(4), sources, this::getBeatDuration, getSampleRate());
+		this.efx = new EfxManager(genome.getGenome(4), channels, this::getBeatDuration, getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -265,7 +266,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public void addDurationListener(DoubleConsumer listener) { this.durationListeners.add(listener); }
 	public void removeDurationListener(DoubleConsumer listener) { this.durationListeners.remove(listener); }
 
-	public int getSourceCount() { return sourceCount; }
+	public int getChannelCount() { return channelCount; }
 	public int getDelayLayerCount() { return delayLayerCount; }
 
 	public List<String> getChannelNames() { return channelNames; }
@@ -367,21 +368,35 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output) {
+		return getCells(measures, stems, output,
+				IntStream.range(0, getChannelCount())
+						.mapToObj(i -> i).collect(Collectors.toList()));
+	}
+
+	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output,
+						  List<Integer> channels) {
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		cells = getPatternCells(measures, stems, output, setup);
+		cells = getPatternCells(measures, stems, output, channels, setup);
 		return cells.addRequirement(time::tick);
 	}
 
 	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures,
 									List<? extends Receptor<PackedCollection<?>>> stems,
-									Receptor<PackedCollection<?>> output, OperationList setup) {
-		CellList cells = all(sourceCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		return mixdown.cells(cells, measures, stems, output);
+									Receptor<PackedCollection<?>> output,
+									List<Integer> channels,
+									OperationList setup) {
+		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
+
+//		CellList cells = all(channelCount, i -> efx.apply(i, getPatternChannel(i, setup)));
+		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], setup)));
+		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
 	}
 
 	public CellList getPatternChannel(int channel, OperationList setup) {
@@ -442,7 +457,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (file.exists()) {
 			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
-			setSettings(Settings.defaultSettings(getSourceCount(),
+			setSettings(Settings.defaultSettings(getChannelCount(),
 					DEFAULT_PATTERNS_PER_CHANNEL,
 					DEFAULT_ACTIVE_PATTERNS,
 					DEFAULT_LAYERS,

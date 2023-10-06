@@ -45,12 +45,9 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 	private String outputPath;
 	private File outputFile;
 
-	private int channel;
-
 	public AudioScenePopulation(AudioScene<?> scene, List<Genome<PackedCollection<?>>> population) {
 		this.scene = scene;
 		this.pop = population;
-		this.channel = -1;
 	}
 
 	public void init(Genome<PackedCollection<?>> templateGenome,
@@ -59,11 +56,25 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 	}
 
 	public void init(Genome<PackedCollection<?>> templateGenome,
+					 Receptor<PackedCollection<?>> output,
+					 List<Integer> channels) {
+		init(templateGenome, Collections.emptyList(), Collections.emptyList(), output, channels);
+	}
+
+	public void init(Genome<PackedCollection<?>> templateGenome,
 					 List<? extends Receptor<PackedCollection<?>>> measures,
 					 List<? extends Receptor<PackedCollection<?>>> stems,
 					 Receptor<PackedCollection<?>> output) {
+		init(templateGenome, measures, stems, output, null);
+	}
+
+	public void init(Genome<PackedCollection<?>> templateGenome,
+					 List<? extends Receptor<PackedCollection<?>>> measures,
+					 List<? extends Receptor<PackedCollection<?>>> stems,
+					 Receptor<PackedCollection<?>> output, List<Integer> channels) {
 		enableGenome(templateGenome);
-		this.cells = scene.getCells(measures, stems, output);
+		this.cells = channels == null ? scene.getCells(measures, stems, output) :
+									scene.getCells(measures, stems, output, channels);
 
 		this.temporal = new TemporalCellular() {
 			@Override
@@ -82,9 +93,6 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 
 		disableGenome();
 	}
-
-	public int getChannel() { return channel; }
-	public void setChannel(int channel) { this.channel = channel; }
 
 	@Override
 	public List<Genome<PackedCollection<?>>> getGenomes() { return pop; }
@@ -115,7 +123,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 	@Override
 	public int size() { return getGenomes().size(); }
 
-	public Runnable generate(int frames, Supplier<String> destinations, Consumer<String> output) {
+	public Runnable generate(int channel, int frames, Supplier<String> destinations, Consumer<String> output) {
 		return () -> {
 			WaveOutput out = new WaveOutput(() ->
 					Optional.ofNullable(destinations).map(s -> {
@@ -124,7 +132,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 						return outputFile;
 					}).orElse(null), 24);
 
-			init(getGenomes().get(0), out);
+			init(getGenomes().get(0), out, List.of(channel));
 
 			Runnable gen = null;
 

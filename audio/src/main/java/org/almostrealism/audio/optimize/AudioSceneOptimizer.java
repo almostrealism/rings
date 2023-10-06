@@ -40,18 +40,14 @@ import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLComputeContext;
-import org.almostrealism.hardware.cl.CLMemoryProvider;
-import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
-import org.almostrealism.heredity.ParameterGenome;
 import org.almostrealism.optimize.PopulationOptimizer;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
@@ -83,7 +79,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
 							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 							   int totalCycles) {
-		super(scene.getSourceCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
+		super(scene.getChannelCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
 					if (children.isEmpty()) throw new IllegalArgumentException();
