@@ -32,6 +32,7 @@ public class AudioSceneContext {
 	private DoubleToIntFunction frameForPosition;
 	private DoubleUnaryOperator timeForDuration;
 	private DoubleFunction<Scale<?>> scaleForPosition;
+	private double activityBias;
 
 	private PackedCollection<?> destination;
 	private Supplier<PackedCollection<?>> intermediateDestination;
@@ -77,6 +78,9 @@ public class AudioSceneContext {
 	public void setScaleForPosition(DoubleFunction<Scale<?>> scaleForPosition) {
 		this.scaleForPosition = scaleForPosition;
 	}
+
+	public double getActivityBias() { return activityBias; }
+	public void setActivityBias(double activityBias) { this.activityBias = activityBias; }
 
 	public PackedCollection<?> getDestination() {
 		return destination;

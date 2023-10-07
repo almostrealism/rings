@@ -350,7 +350,7 @@ public class PatternLayerManager implements CodeFeatures {
 			ChannelSection section = ctx.getSection(i * duration);
 
 			double offset = i * duration;
-			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition());
+			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
 			if (active < 0) return;
 
 			elements.stream()

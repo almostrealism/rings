@@ -84,7 +84,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	public String getName() {
 		if (filters.isEmpty()) return getOrigin();
 		if (filters.size() > 1) return getOrigin() + " (" + filters.size() + " filters)";
-		return filters.get(0).filterOn.name() + " " + filters.get(0).filterType.name() + " \"" + filters.get(0).filter + "\"";
+		return filters.get(0).filterOn.readableName() + " " + filters.get(0).filterType.readableName() + " \"" + filters.get(0).filter + "\"";
 	}
 
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
@@ -161,6 +161,21 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 				case PATH -> p.getResourcePath();
 			};
 		}
+
+		public String readableName() {
+			return switch (this) {
+				case NAME -> "File Name";
+				case PATH -> "File Path";
+			};
+		}
+
+		public static FilterOn fromReadableName(String name) {
+			return switch (name) {
+				case "File Name" -> NAME;
+				case "File Path" -> PATH;
+				default -> null;
+			};
+		}
 	}
 
 	public enum FilterType {
@@ -174,6 +189,29 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 				case ENDS_WITH -> value.endsWith(filter);
 				case CONTAINS -> value.contains(filter);
 				case CONTAINS_IGNORE_CASE -> value.toLowerCase().contains(filter.toLowerCase());
+			};
+		}
+
+		public String readableName() {
+			return switch (this) {
+				case EQUALS -> "Exactly Matches";
+				case EQUALS_IGNORE_CASE -> "Matches (Case Insensitive)";
+				case STARTS_WITH -> "Starts With";
+				case ENDS_WITH -> "Ends With";
+				case CONTAINS -> "Contains";
+				case CONTAINS_IGNORE_CASE -> "Contains (Case Insensitive)";
+			};
+		}
+
+		public static FilterType fromReadableName(String name) {
+			return switch (name) {
+				case "Exactly Matches" -> EQUALS;
+				case "Matches (Case Insensitive)" -> EQUALS_IGNORE_CASE;
+				case "Starts With" -> STARTS_WITH;
+				case "Ends With" -> ENDS_WITH;
+				case "Contains" -> CONTAINS;
+				case "Contains (Case Insensitive)" -> CONTAINS_IGNORE_CASE;
+				default -> null;
 			};
 		}
 	}

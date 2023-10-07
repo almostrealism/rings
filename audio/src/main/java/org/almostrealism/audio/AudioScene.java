@@ -138,6 +138,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private PatternSystemManager patterns;
 	private PackedCollection<?> patternDestination;
 	private List<String> channelNames;
+	private double patternActivityBias;
 
 	private SceneSectionManager sections;
 	private EfxManager efx;
@@ -268,6 +269,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public int getChannelCount() { return channelCount; }
 	public int getDelayLayerCount() { return delayLayerCount; }
+
+	public double getPatternActivityBias() { return patternActivityBias; }
+	public void setPatternActivityBias(double patternActivityBias) { this.patternActivityBias = patternActivityBias; }
 
 	public List<String> getChannelNames() { return channelNames; }
 
@@ -427,6 +431,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		Supplier<AudioSceneContext> ctx = () -> {
 			AudioSceneContext context = getContext();
 			context.setChannels(List.of(channel));
+			context.setActivityBias(patternActivityBias);
 			context.setSections(sections.getChannelSections(channel));
 			return context;
 		};
