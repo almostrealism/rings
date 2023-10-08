@@ -170,7 +170,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		op.add(() -> () -> this.destination = context.get().getDestination());
 		op.add(() -> () ->
 				IntStream.range(0, patterns.size()).forEach(i ->
-						patterns.get(i).updateDestination(context.get().getIntermediateDestination().get())));
+						patterns.get(i).updateDestination(context.get())));
 
 		op.add(() -> () -> {
 			AudioSceneContext ctx = context.get();

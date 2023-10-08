@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 
 public class AudioSceneContext {
 	private int measures;
+	private int frames;
 	private List<Integer> channels;
 
 	private DoubleToIntFunction frameForPosition;
@@ -35,7 +36,6 @@ public class AudioSceneContext {
 	private double activityBias;
 
 	private PackedCollection<?> destination;
-	private Supplier<PackedCollection<?>> intermediateDestination;
 
 	private List<ChannelSection> sections;
 
@@ -45,6 +45,14 @@ public class AudioSceneContext {
 
 	public void setMeasures(int measures) {
 		this.measures = measures;
+	}
+
+	public int getFrames() {
+		return frames;
+	}
+
+	public void setFrames(int frames) {
+		this.frames = frames;
 	}
 
 	public List<Integer> getChannels() {
@@ -91,11 +99,7 @@ public class AudioSceneContext {
 	}
 
 	public Supplier<PackedCollection<?>> getIntermediateDestination() {
-		return intermediateDestination;
-	}
-
-	public void setIntermediateDestination(Supplier<PackedCollection<?>> intermediateDestination) {
-		this.intermediateDestination = intermediateDestination;
+		return () -> new PackedCollection<>(frames);
 	}
 
 	public List<ChannelSection> getSections() {

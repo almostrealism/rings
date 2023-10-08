@@ -185,18 +185,17 @@ public class PatternFactoryTest implements CellFeatures {
 		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
 //		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
 
-		PackedCollection destination = new PackedCollection((int) (measures * measureFrames));
-		manager.updateDestination(destination);
-
 		AudioSceneContext context = new AudioSceneContext();
 		context.setMeasures(measures);
+		context.setFrames((int) (measures * measureFrames));
 		context.setFrameForPosition(pos -> (int) (pos * measureFrames));
 		context.setTimeForDuration(pos -> pos * measureDuration);
 		context.setScaleForPosition(chordProgression::forPosition);
 
-		manager.sum(context);
+		manager.updateDestination(context);
+		manager.sum(() -> context);
 
-		WaveData out = new WaveData(destination, OutputLine.sampleRate);
+		WaveData out = new WaveData(manager.getDestination(), OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));
 	}
 }

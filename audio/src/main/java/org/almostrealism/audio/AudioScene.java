@@ -185,7 +185,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.channelNames = new ArrayList<>();
 
-		addDurationListener(duration -> patternDestination = null);
+		addDurationListener(duration -> {
+			if (patternDestination != null) {
+				patternDestination.destroy();
+				patternDestination = null;
+			}
+		});
 
 		this.mixdown = new MixdownManager(genome.getGenome(3), channels, delayLayers,
 										time.getClock(), getSampleRate());
@@ -293,11 +298,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public AudioSceneContext getContext() {
 		AudioSceneContext context = new AudioSceneContext();
 		context.setMeasures(getTotalMeasures());
+		context.setFrames(getTotalSamples());
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
 		context.setDestination(patternDestination);
-		context.setIntermediateDestination(() -> WaveData.allocateCollection(getTotalSamples()));
 		return context;
 	}
 
@@ -417,8 +422,15 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				.map(section -> {
 					int pos = section.getPosition() * getMeasureSamples();
 					int len = section.getLength() * getMeasureSamples();
-					PackedCollection<?> sectionAudio = audio.range(shape(len), pos);
-					return section.process(p(sectionAudio), p(sectionAudio));
+
+					if (audio.getMemLength() < pos + len) {
+						System.out.println("WARN: Section at position " + pos +
+								" extends beyond the end of the pattern destination (" + audio.getMemLength() + " frames)");
+						return new OperationList("Section Processing (Invalid Size)");
+					} else {
+						PackedCollection<?> sectionAudio = audio.range(shape(len), pos);
+						return section.process(p(sectionAudio), p(sectionAudio));
+					}
 				})
 				.forEach(patternSetup::add);
 

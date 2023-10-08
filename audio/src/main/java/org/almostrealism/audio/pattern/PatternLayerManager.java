@@ -98,19 +98,29 @@ public class PatternLayerManager implements CodeFeatures {
 		volume.setMem(0, 0.1);
 	}
 
-	protected PackedCollection<?> getDestination() { return destination; }
+	public PackedCollection<?> getDestination() { return destination; }
 
-	public void updateDestination(PackedCollection<?> destination) {
-		this.destination = destination;
+	public void updateDestination(AudioSceneContext context) {
+		PackedCollection<?> dest = destination;
 
-		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
-		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
+		try {
+			if (destination == null || context.getFrames() != this.destination.getMemLength()) {
+				destination = context.getIntermediateDestination().get();
+			} else {
+				dest = null;
+			}
 
-		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-		v.add(() -> () ->
-				volume.setMem(0, 1.0 / chordDepth));
-		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
-		adjustVolume = v.get();
+			Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
+			this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
+
+			OperationList v = new OperationList("PatternLayerManager Adjust Volume");
+			v.add(() -> () ->
+					volume.setMem(0, 1.0 / chordDepth));
+			v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
+			adjustVolume = v.get();
+		} finally {
+			if (dest != null) dest.destroy();
+		}
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
