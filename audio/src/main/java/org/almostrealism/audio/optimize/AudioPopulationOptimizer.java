@@ -174,8 +174,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		}
 	}
 
-	public static <G> List<Genome<G>> read(InputStream in) {
-		List<Genome<G>> genomes = new ArrayList<>();
+	public static List<Genome<PackedCollection<?>>> read(InputStream in) {
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
 
 		try (XMLDecoder dec = new XMLDecoder(in)) {
 			Object read = null;
