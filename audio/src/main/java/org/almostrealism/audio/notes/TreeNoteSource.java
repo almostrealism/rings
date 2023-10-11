@@ -182,6 +182,8 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS, CONTAINS_IGNORE_CASE;
 
 		boolean matches(String value, String filter) {
+			if (filter == null || filter.isEmpty()) return false;
+
 			return switch (this) {
 				case EQUALS -> value.equals(filter);
 				case EQUALS_IGNORE_CASE -> value.equalsIgnoreCase(filter);
