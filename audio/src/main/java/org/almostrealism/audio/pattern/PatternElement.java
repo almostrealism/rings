@@ -19,16 +19,14 @@ package org.almostrealism.audio.pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
-import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.DoubleFunction;
-import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -120,9 +118,7 @@ public class PatternElement implements CodeFeatures {
 	}
 
 	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
-													DoubleToIntFunction frameForPosition,
-													DoubleUnaryOperator timeForDuration,
-													DoubleFunction<Scale<?>> scaleForPosition,
+													AudioSceneContext context,
 													DoubleUnaryOperator nextNotePosition) {
 		List<PatternNoteAudio> destinations = new ArrayList<>();
 
@@ -131,7 +127,7 @@ public class PatternElement implements CodeFeatures {
 			double actualPosition = offset + relativePosition;
 
 			List<KeyPosition<?>> keys = new ArrayList<>();
-			scaleForPosition.apply(actualPosition).forEach(keys::add);
+			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
 			p: for (double p : getScalePositions()) {
 				if (keys.isEmpty()) break p;
@@ -139,8 +135,8 @@ public class PatternElement implements CodeFeatures {
 
 				Producer<PackedCollection<?>> note = getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
 													nextNotePosition.applyAsDouble(relativePosition),
-													timeForDuration);
-				destinations.add(new PatternNoteAudio(note, frameForPosition.applyAsInt(actualPosition)));
+													context.getTimeForDuration());
+				destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 
 				keys.remove(keyIndex);
 			}

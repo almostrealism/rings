@@ -49,7 +49,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
 
 	public static final boolean enableWavOutput = true;
-	public static boolean enableStemOutput = false;
+	public static boolean enableStemOutput = true;
 	public static boolean enableIsolatedContext = false;
 
 	private final String file;
@@ -174,8 +174,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		}
 	}
 
-	public static <G> List<Genome<G>> read(InputStream in) {
-		List<Genome<G>> genomes = new ArrayList<>();
+	public static List<Genome<PackedCollection<?>>> read(InputStream in) {
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
 
 		try (XMLDecoder dec = new XMLDecoder(in)) {
 			Object read = null;

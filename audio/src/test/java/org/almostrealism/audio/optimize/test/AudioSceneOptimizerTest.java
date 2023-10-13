@@ -26,6 +26,7 @@ import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.TemporalCellular;
@@ -52,7 +53,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 		int delayLayers = 2;
 		int cycles = 1;
 
-		List<Genome<Scalar>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
@@ -64,7 +65,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating AudioScenePopulation...");
-			AudioScenePopulation<Scalar> pop = new AudioScenePopulation<>(scene, genomes);
+			AudioScenePopulation pop = new AudioScenePopulation(scene, genomes);
 			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
 			pop.init(pop.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
 			return pop;
@@ -102,8 +103,8 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 					health.setOutputFile(() -> "results/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");
 
 					System.out.println("Creating LayeredOrganPopulation...");
-					AudioScenePopulation<Scalar> pop =
-							new AudioScenePopulation<>(null, AudioPopulationOptimizer.read(new FileInputStream("Population.xml")));
+					AudioScenePopulation pop =
+							new AudioScenePopulation(null, AudioPopulationOptimizer.read(new FileInputStream("Population.xml")));
 					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {

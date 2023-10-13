@@ -22,6 +22,10 @@ import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.PooledMem;
+import org.almostrealism.hardware.mem.Heap;
+
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 public class PolymorphicAudioData extends DefaultWaveCellData implements SineWaveCellData, AudioFilterData, ValueSequenceData {
 	public PolymorphicAudioData() {
@@ -33,10 +37,14 @@ public class PolymorphicAudioData extends DefaultWaveCellData implements SineWav
 	}
 
 	@Override
-	public PooledMem getDefaultDelegate() { return PolymorphicAudioDataPool.getLocal(); }
+	public Heap getDefaultDelegate() { return Heap.getDefault(); }
 
 	public static PackedCollection<PolymorphicAudioData> bank(int count) {
 		return new PackedCollection<>(new TraversalPolicy(count, SIZE), 1, delegateSpec ->
 			new PolymorphicAudioData(delegateSpec.getDelegate(), delegateSpec.getOffset()));
+	}
+
+	public static Supplier<PolymorphicAudioData> supply(IntFunction<PackedCollection<?>> supply) {
+		return () -> new PolymorphicAudioData(supply.apply(SIZE), 0);
 	}
 }

@@ -43,9 +43,11 @@ import org.almostrealism.heredity.SimpleGene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.TemporalList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -66,24 +68,25 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
 
-	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers, TimeCell clock, int sampleRate) {
+	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers,
+						  TimeCell clock, int sampleRate) {
 		this.clock = clock;
 		this.sampleRate = sampleRate;
 
 		SimpleChromosome v = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> v.addGene());
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
-		this.volume.setGlobalTime(clock.frame());
+		this.volume.setGlobalTime(clock);
 
 		SimpleChromosome fup = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fup.addGene());
 		this.mainFilterUp = new AdjustmentChromosome(fup, 0.0, 1.0, false, sampleRate);
-		this.mainFilterUp.setGlobalTime(clock.frame());
+		this.mainFilterUp.setGlobalTime(clock);
 
 		SimpleChromosome w = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> w.addGene());
 		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
-		this.wetIn.setGlobalTime(clock.frame());
+		this.wetIn.setGlobalTime(clock);
 
 		this.wetInSimple = genome.addSimpleChromosome(6);
 		IntStream.range(0, channels).forEach(i -> {
@@ -111,7 +114,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
 		this.delayDynamics = new DelayChromosome(d, sampleRate);
-		this.delayDynamics.setGlobalTime(clock.frame());
+		this.delayDynamics.setGlobalTime(clock);
 
 		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> wf.addGene());
@@ -120,7 +123,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		SimpleChromosome fdown = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fdown.addGene());
 		this.mainFilterDown = new AdjustmentChromosome(fdown, 0.0, 1.0, false, sampleRate);
-		this.mainFilterDown.setGlobalTime(clock.frame());
+		this.mainFilterDown.setGlobalTime(clock);
 
 		initRanges(new Configuration(channels), delayLayers);
 	}
@@ -191,7 +194,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	@Override
 	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList();
+		OperationList setup = new OperationList("Mixdown Manager Setup");
 		setup.add(volume.expand());
 		if (AudioScene.enableMainFilterUp) setup.add(mainFilterUp.expand());
 		if (enableAdjustmentChromosome) setup.add(wetIn.expand());
@@ -203,13 +206,14 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public CellList cells(CellList sources,
 						  List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output) {
+						  Receptor<PackedCollection<?>> output,
+						  IntUnaryOperator channelIndex) {
 		CellList cells = sources;
 
 		if (AudioScene.enableMainFilterUp) {
 			// Apply dynamic high pass filters
 			cells = cells.map(fc(i -> {
-				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterUp.valueAt(i, 0);
+				TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterUp.valueAt(channelIndex.applyAsInt(i), 0);
 				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(FixedFilterChromosome.defaultResonance));
 			}));
 		}
@@ -225,7 +229,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		if (AudioScene.enableSourcesOnly) {
 			return cells
-					.map(fc(i -> factor(volume.valueAt(i, 0))))
+					.map(fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))))
 					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
@@ -234,10 +238,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		// Volume adjustment
 		CellList branch[] = cells.branch(
-				fc(i -> factor(volume.valueAt(i, 0))),
+				fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
 				AudioScene.enableEfxFilters ?
-						fc(i -> factor(volume.valueAt(i, 0)).andThen(wetFilter.valueAt(i, 0))) :
-						fc(i -> factor(volume.valueAt(i, 0))));
+						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0)).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
+						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];
@@ -262,7 +266,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 			if (enableAdjustmentChromosome) {
 				// Route each line to each delay layer
-				tg = i -> delayGene(delayLayers, wetIn.valueAt(i));
+				tg = i -> delayGene(delayLayers, wetIn.valueAt(channelIndex.applyAsInt(i)));
 			} else {
 				tg = i -> delayGene(delayLayers, new Gene<>() {
 					@Override
@@ -272,12 +276,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 					public Factor<PackedCollection<?>> valueAt(int pos) {
 						return in ->
 								multiply(adjustment(
-								wetInSimple.valueAt(i, 0).getResultant(c(1.0)),
-								wetInSimple.valueAt(i, 1).getResultant(c(1.0)),
-								wetInSimple.valueAt(i, 2).getResultant(c(1.0)),
-								wetInSimple.valueAt(i, 3).getResultant(c(1.0)),
-								wetInSimple.valueAt(i, 4).getResultant(c(1.0)),
-								wetInSimple.valueAt(i, 5).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 0).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 1).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 2).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 3).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 4).getResultant(c(1.0)),
+								wetInSimple.valueAt(channelIndex.applyAsInt(i), 5).getResultant(c(1.0)),
 								clock.time(sampleRate), 0.0, 1.0, false), in);
 					}
 				});
@@ -293,25 +297,32 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
 				return efx;
 			} else {
-				if (stems != null && !stems.isEmpty()) {
-					// Mix efx with main, measure #2, and the stem channel
+				List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
+				efxReceptors.add(main.get(0));
+				if (measures.size() > 1) efxReceptors.add(measures.get(1));
+				if (stems != null && !stems.isEmpty()) efxReceptors.add(stems.get(sources.size()));
+				efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
+
+//				if (stems != null && !stems.isEmpty()) {
 //					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
-					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-				} else {
-					// Mix efx with main and measure #2
-					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-				}
+//				} else {
+//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+//				}
 
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
-						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterDown.valueAt(i, 0);
+						TemporalFactor<PackedCollection<?>> f = (TemporalFactor<PackedCollection<?>>) mainFilterDown.valueAt(channelIndex.applyAsInt(i), 0);
 						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(FixedFilterChromosome.defaultResonance));
 					}));
 				}
 
 				// Deliver main to the output and measure #1
-				main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+				if (measures.isEmpty()) {
+					return main.map(i -> new ReceptorCell<>(output));
+				} else {
+					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+				}
 
 				return cells(main, efx);
 			}

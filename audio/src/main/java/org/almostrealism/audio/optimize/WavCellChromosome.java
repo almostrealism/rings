@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.KernelList;
 import org.almostrealism.hardware.MemoryBank;
@@ -59,7 +61,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	private int inputGenes, inputFactors;
 
 	private int sampleRate;
-	private Producer<Scalar> time;
+	private TimeCell time;
 
 	public WavCellChromosome(Chromosome<PackedCollection<?>> source, int inputFactors, int sampleRate) {
 		this.source = source;
@@ -75,7 +77,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		this.transforms.put(factor, transform);
 	}
 
-	public void setGlobalTime(Producer<Scalar> time) {
+	public void setGlobalTime(TimeCell time) {
 		this.time = time;
 	}
 
@@ -126,8 +128,9 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
 
 		kernels.setParameters(pos, parameters(transformed));
-		WaveCell cell = new WaveCell((PackedCollection) kernels.valueAt(pos), sampleRate, time);
-		Factor<PackedCollection<?>> factor = cell.toFactor(Scalar::new,
+		WaveCell cell = new WaveCell(PolymorphicAudioData.supply(PackedCollection.factory()).get(),
+				(PackedCollection) kernels.valueAt(pos), sampleRate, 1.0, time.frame());
+		Factor<PackedCollection<?>> factor = cell.toFactor(() -> new Scalar(0.0),
 				p -> protein -> new Assignment<>(1, p, protein), combine());
 		// return cell.toFactor();
 		result.add(factor);
@@ -174,7 +177,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	}
 
 	protected WaveCell cell(PackedCollection<PackedCollection<?>> data) {
-		return new WaveCell(data, sampleRate, time);
+		return new WaveCell(data, sampleRate, time.frame());
 	}
 
 	@Override

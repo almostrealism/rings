@@ -27,9 +27,11 @@ import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * The {@link StableDurationHealthComputation} is a {@link HealthComputationAdapter} which
@@ -237,7 +239,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
  			reset();
 		}
 
-		return new AudioHealthScore(score, Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null));
+		return new AudioHealthScore(score,
+				Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null),
+				Optional.ofNullable(getStemFiles()).map(l -> l.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
 	}
 
 	@Override

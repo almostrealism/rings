@@ -18,6 +18,7 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
@@ -35,8 +36,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
-	protected AudioScenePopulation population(AudioScene<?> scene, List<Receptor> measures, Receptor output) {
-		List<Genome> genomes = new ArrayList<>();
+	protected AudioScenePopulation population(AudioScene<?> scene, List<Receptor<PackedCollection<?>>> measures, Receptor output) {
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, false));
 		genomes.add(AssignableGenomeTest.genome(0.0, 0.0, 0.0, 0.0, false));

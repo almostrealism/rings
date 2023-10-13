@@ -115,8 +115,6 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		AudioScene.enableMainFilterUp = false;
 		AudioScene.enableEfxFilters = false;
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
-
 		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
 		StableDurationHealthComputation.setStandardDuration(150);
 
@@ -136,7 +134,6 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 	@Test
 	public void cellsPatternLarge() {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 		StableDurationHealthComputation.setStandardDuration(150);
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation(5);
@@ -169,8 +166,8 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 				health.setOutputFile(() -> "results/samples-pop-test-" + index.incrementAndGet() + ".wav");
 
 				System.out.println("Creating AudioScenePopulation...");
-				AudioScenePopulation<Scalar> pop =
-						new AudioScenePopulation<>(null, AudioPopulationOptimizer.read(new FileInputStream("Population.xml")));
+				AudioScenePopulation pop =
+						new AudioScenePopulation(null, (List) AudioPopulationOptimizer.read(new FileInputStream("Population.xml")));
 				pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 				IntStream.range(0, 2).forEach(i -> {

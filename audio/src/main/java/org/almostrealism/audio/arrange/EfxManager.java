@@ -31,7 +31,7 @@ import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
-	public static double maxFeedback = 1.0;
+	public static double maxFeedback = 0.5;
 
 	private ConfigurableGenome genome;
 	private SimpleChromosome delayTimes;

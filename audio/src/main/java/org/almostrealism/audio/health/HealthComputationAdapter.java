@@ -17,6 +17,7 @@
 package org.almostrealism.audio.health;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	protected File getOutputFile() { return outputFile; }
 
+	protected Collection<File> getStemFiles() { return stemFiles.values(); }
 
 	@Override
 	public void reset() {

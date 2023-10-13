@@ -19,6 +19,8 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.Scale;
@@ -42,8 +44,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerManager implements CodeFeatures {
-	public static final int MAX_NOTES = 2048;
-
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
@@ -53,12 +53,12 @@ public class PatternLayerManager implements CodeFeatures {
 	private double seedBias;
 	private int chordDepth;
 	private boolean melodic;
-	private boolean applyNoteDuration;
 
 	private Supplier<List<PatternFactoryChoice>> percChoices;
 	private Supplier<List<PatternFactoryChoice>> melodicChoices;
 	private SimpleChromosome chromosome;
 	private ParameterFunction factorySelection;
+	private ParameterizedPositionFunction activeSelection;
 
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
@@ -92,15 +92,22 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public void init() {
 		factorySelection = ParameterFunction.random();
+		activeSelection = ParameterizedPositionFunction.random();
 
 		volume = new PackedCollection(1);
 		volume.setMem(0, 0.1);
 	}
 
-	protected PackedCollection<?> getDestination() { return destination; }
+	public PackedCollection<?> getDestination() { return destination; }
 
-	public void updateDestination(PackedCollection<?> destination) {
-		this.destination = destination;
+	public void updateDestination(AudioSceneContext context) {
+		PackedCollection<?> dest = destination;
+
+		if (destination == null || context.getFrames() != this.destination.getMemLength()) {
+			destination = context.getIntermediateDestination().get();
+		} else {
+			return;
+		}
 
 		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
 		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
@@ -110,6 +117,8 @@ public class PatternLayerManager implements CodeFeatures {
 				volume.setMem(0, 1.0 / chordDepth));
 		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
 		adjustVolume = v.get();
+
+		if (dest != null) dest.destroy();
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
@@ -136,7 +145,6 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
-		this.applyNoteDuration = melodic;
 	}
 
 	public boolean isMelodic() { return melodic; }
@@ -176,8 +184,8 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setChordDepth(chordDepth);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
+		settings.setActiveSelection(activeSelection);
 		settings.getLayers().addAll(layerParams);
-		// System.out.println("PatternLayerManager[Channel " + channel + "] getSettings: " + layerParams.size() + " layers");
 		return settings;
 	}
 
@@ -186,7 +194,12 @@ public class PatternLayerManager implements CodeFeatures {
 		duration = settings.getDuration();
 		chordDepth = settings.getChordDepth();
 		melodic = settings.isMelodic();
-		factorySelection = settings.getFactorySelection();
+
+		if (settings.getFactorySelection() != null)
+			factorySelection = settings.getFactorySelection();
+
+		if (settings.getActiveSelection() != null)
+			activeSelection = settings.getActiveSelection();
 
 		clear(true);
 		settings.getLayers().forEach(this::addLayer);
@@ -293,11 +306,6 @@ public class PatternLayerManager implements CodeFeatures {
 		roots.forEach(layer -> layer.getLastParent().setChild(null));
 	}
 
-	public void replaceLayer(ParameterSet params) {
-		removeLayer(true);
-		addLayer(params);
-	}
-
 	public void clear(boolean removeGenes) {
 		if (removeGenes) {
 			while (getLayerCount() > 0) removeLayer(true);
@@ -327,8 +335,7 @@ public class PatternLayerManager implements CodeFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(DoubleToIntFunction offsetForPosition, DoubleUnaryOperator timeForDuration,
-					int measures, DoubleFunction<Scale<?>> scaleForPosition) {
+	public void sum(Supplier<AudioSceneContext> context) {
 		List<PatternElement> elements = getAllElements(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -338,30 +345,27 @@ public class PatternLayerManager implements CodeFeatures {
 
 		destination.clear();
 
+		AudioSceneContext ctx = context.get();
+
 		// TODO  What about when duration is longer than measures?
 		// TODO  This results in count being 0, and nothing being output
-		int count = (int) (measures / duration);
-		if (measures / duration - count > 0.0001) {
+		int count = (int) (ctx.getMeasures() / duration);
+		if (ctx.getMeasures() / duration - count > 0.0001) {
 			System.out.println("PatternLayerManager: Pattern duration does not divide measures; there will be gaps");
 		}
 
 		IntStream.range(0, count).forEach(i -> {
+			ChannelSection section = ctx.getSection(i * duration);
+
 			double offset = i * duration;
+			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
+			if (active < 0) return;
 
 			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, offsetForPosition, timeForDuration, scaleForPosition, this::nextNotePosition))
+					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
 					.flatMap(List::stream)
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;
-
-//						PackedCollection<?> audio = traverse(1, note.getProducer()).get().evaluate();
-//						int frames = Math.min(audio.getShape().getCount(),
-//								destination.getShape().length(0) - note.getOffset());
-//
-//						TraversalPolicy shape = shape(frames).traverse(1);
-//						sum
-//								.into(destination.range(shape, note.getOffset()))
-//								.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
 
 						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
 								audio -> {
@@ -444,6 +448,7 @@ public class PatternLayerManager implements CodeFeatures {
 		private int chordDepth;
 		private boolean melodic;
 		private ParameterFunction factorySelection;
+		private ParameterizedPositionFunction activeSelection;
 		private List<ParameterSet> layers = new ArrayList<>();
 
 		public int getChannel() { return channel; }
@@ -460,6 +465,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public ParameterFunction getFactorySelection() { return factorySelection; }
 		public void setFactorySelection(ParameterFunction factorySelection) { this.factorySelection = factorySelection; }
+
+		public ParameterizedPositionFunction getActiveSelection() { return activeSelection; }
+		public void setActiveSelection(ParameterizedPositionFunction activeSelection) { this.activeSelection = activeSelection; }
 
 		public List<ParameterSet> getLayers() { return layers; }
 		public void setLayers(List<ParameterSet> layers) { this.layers = layers; }

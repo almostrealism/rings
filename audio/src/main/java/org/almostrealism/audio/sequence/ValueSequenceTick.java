@@ -16,9 +16,8 @@
 
 package org.almostrealism.audio.sequence;
 
-import io.almostrealism.code.HybridScope;
+import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ScopeInputManager;
-import io.almostrealism.expression.Sum;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.ValueSequenceData;

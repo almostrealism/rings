@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.sequence;
 
-import io.almostrealism.code.HybridScope;
+import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;

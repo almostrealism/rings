@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.PatternNoteSource;
@@ -27,6 +28,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class PatternFactoryChoice {
+	public static boolean enableUniversalBias = true;
+
 	private PatternElementFactory factory;
 	private double weight;
 	private double minScale;
@@ -56,9 +59,6 @@ public class PatternFactoryChoice {
 		setMaxScale(maxScale);
 		setMaxChordDepth(1);
 		setSeed(true);
-		setSeedUnits(4);
-		setGranularity(0.25);
-		setSeedScale(0.25);
 		setSeedBias(-0.5);
 		setChannels(new ArrayList<>());
 		initSelectionFunctions();
@@ -91,20 +91,16 @@ public class PatternFactoryChoice {
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }
 
-	@Deprecated
-	public void setSeedUnits(int seedUnits) { }
-
-	@Deprecated
-	public void setGranularity(double granularity) { }
-
-	@Deprecated
-	public void setSeedScale(double seedScale) { }
+	public ParameterFunction getGranularitySelection() { return granularitySelection; }
+	public void setGranularitySelection(ParameterFunction granularitySelection) {
+		this.granularitySelection = granularitySelection;
+	}
 
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
-	@Deprecated
-	public void setSeedNoteFunction(ParameterizedPositionFunction seedNoteFunction) { }
+	@JsonIgnore
+	public double getBias() { return enableUniversalBias ? seedBias : 0.0; }
 
 	public void setTuning(KeyboardTuning tuning) {
 		getFactory().setTuning(tuning);
@@ -127,8 +123,8 @@ public class PatternFactoryChoice {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
 
-		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, 0.0, depth, true, params).ifPresent(layer.getElements()::add);
-		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, 0.0, depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
 	}
 

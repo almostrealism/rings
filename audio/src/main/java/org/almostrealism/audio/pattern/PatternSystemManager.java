@@ -16,10 +16,11 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.DynamicProducer;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -27,7 +28,6 @@ import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
-import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
@@ -39,9 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
-import java.util.function.DoubleFunction;
-import java.util.function.DoubleToIntFunction;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -54,7 +51,6 @@ import java.util.stream.IntStream;
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableAutoVolume = true;
-
 	public static boolean enableWarnings = true;
 
 	private List<PatternFactoryChoice> choices;
@@ -64,7 +60,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
 	private Evaluable<PackedCollection<?>> sum;
-	private Runnable postprocess;
 
 	public PatternSystemManager() {
 		this(new ArrayList<>());
@@ -87,29 +82,12 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public void init() {
 		volume = new PackedCollection(1);
 		volume.setMem(0, 1.0);
+
+		sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 	}
 
-	private void updateDestination(PackedCollection<?> destination, Supplier<PackedCollection> intermediateDestination) {
-		this.destination = destination;
-		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
-
-		IntStream.range(0, patterns.size()).forEach(i -> patterns.get(i).updateDestination(intermediateDestination.get()));
-
-		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
-
-		OperationList process = new OperationList("PatternSystemManager Postprocess");
-
-		if (enableAutoVolume) {
-			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(p(this.destination.traverse(0)));
-			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
-			process.add(a(1, p(volume), auto));
-//			process.add(() -> () -> {
-//				System.out.println("Setting volume to " + volume.toDouble(0));
-//			});
-		}
-
-		process.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
-		postprocess = process.get();
+	private DynamicProducer<PackedCollection<?>> destination() {
+		return new DynamicProducer<>(args -> destination);
 	}
 
 	@Override
@@ -186,38 +164,52 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		patterns.clear();
 	}
 
-	public void sum(List<Integer> channels, DoubleToIntFunction offsetForPosition,
-					DoubleUnaryOperator timeForDuration,
-					int measures, DoubleFunction<Scale<?>> scaleForPosition,
-					PackedCollection destination, Supplier<PackedCollection> intermediateDestination) {
-		if (this.destination != destination) {
-			updateDestination(destination, intermediateDestination);
-		}
+	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context) {
+		OperationList op = new OperationList("PatternSystemManager Sum");
 
-		List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
-				.filter(i -> channels == null || channels.contains(patterns.get(i).getChannel()))
-				.boxed().collect(Collectors.toList());
+		op.add(() -> () -> this.destination = context.get().getDestination());
+		op.add(() -> () ->
+				IntStream.range(0, patterns.size()).forEach(i ->
+						patterns.get(i).updateDestination(context.get())));
 
-		if (patternsForChannel.isEmpty()) {
-			if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
-			return;
-		}
+		op.add(() -> () -> {
+			AudioSceneContext ctx = context.get();
 
-		patternsForChannel.stream().map(i -> {
-			patterns.get(i).sum(offsetForPosition, timeForDuration, measures, scaleForPosition);
-			return p(patterns.get(i).getDestination());
-		}).forEach(note -> {
-			PackedCollection<?> audio = traverse(1, note).get().evaluate();
-			int frames = Math.min(audio.getShape().getCount(),
-					this.destination.getShape().length(0));
+			List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
+					.filter(i -> ctx.getChannels() == null || ctx.getChannels().contains(patterns.get(i).getChannel()))
+					.boxed().collect(Collectors.toList());
 
-			TraversalPolicy shape = shape(frames).traverse(1);
-			sum
-					.into(this.destination.range(shape))
-					.evaluate(this.destination.range(shape), audio.range(shape));
+			if (patternsForChannel.isEmpty()) {
+				if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
+				return;
+			}
+
+			patternsForChannel.stream().map(i -> {
+				patterns.get(i).sum(context);
+				return p(patterns.get(i).getDestination());
+			}).forEach(note -> {
+				PackedCollection<?> audio = traverse(1, note).get().evaluate();
+				int frames = Math.min(audio.getShape().getCount(),
+						this.destination.getShape().length(0));
+
+				TraversalPolicy shape = shape(frames).traverse(1);
+				sum
+						.into(this.destination.range(shape))
+						.evaluate(this.destination.range(shape), audio.range(shape));
+			});
 		});
 
-		postprocess.run();
+		Evaluable<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1)).get();
+
+		if (enableAutoVolume) {
+			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(destination());
+			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
+			op.add(a(1, p(volume), auto));
+		}
+
+		op.add(() -> () -> scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+
+		return op;
 	}
 
 	public static class Settings {
@@ -238,6 +230,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 1 && c != 5);
 				pattern.setFactorySelection(ParameterFunction.random());
+				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 
 				if (p < activePatterns.applyAsInt(c)) {
 					IntStream.range(0, layersPerPattern.applyAsInt(c)).forEach(l -> {

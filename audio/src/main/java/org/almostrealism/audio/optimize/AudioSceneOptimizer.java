@@ -44,9 +44,8 @@ import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLComputeContext;
-import org.almostrealism.hardware.cl.CLMemoryProvider;
-import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
@@ -74,19 +73,19 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		if (arg != null) STEMS = arg;
 	}
 
-	private AudioScenePopulation<PackedCollection<?>> population;
+	private AudioScenePopulation population;
 
 	public AudioSceneOptimizer(AudioScene<?> scene,
 							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
 							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 							   int totalCycles) {
-		super(scene.getSourceCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
+		super(scene.getChannelCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
 		setChildrenFunction(
 				children -> {
 					if (children.isEmpty()) throw new IllegalArgumentException();
 
 					if (population == null) {
-						population = new AudioScenePopulation<>(scene, children);
+						population = new AudioScenePopulation(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
 						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
 					} else {
@@ -125,6 +124,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PatternElementFactory.enableEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
+		AudioPopulationOptimizer.enableStemOutput = true;
 
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
@@ -144,18 +144,25 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		// WaveData.setCollectionHeap(() -> new PackedCollectionHeap(25000 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
+		Heap heap = new Heap(4 * 1024 * 1024);
 
-		AudioScene<?> scene = createScene();
-		AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
-		opt.init();
-		opt.run();
+		heap.use(() -> {
+			try {
+				AudioScene<?> scene = createScene();
+				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
+				opt.init();
+				opt.run();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	public static AudioScene<?> createScene() throws IOException {
 		double bpm = 120.0;
 		int sourceCount = AudioScene.DEFAULT_SOURCE_COUNT;
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
+
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
 										OutputLine.sampleRate, new NoOpGenerationProvider());
 

@@ -27,7 +27,8 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 
 	private boolean relative;
 
-	public AdjustmentChromosome(Chromosome<PackedCollection<?>> source, double min, double max, boolean relative, int sampleRate) {
+	public AdjustmentChromosome(Chromosome<PackedCollection<?>> source, double min, double max,
+								boolean relative, int sampleRate) {
 		super(source, 6, sampleRate);
 		this.relative = relative;
 		setTransform(0, g -> oneToInfinity(g.valueAt(0), 3.0).multiply(c(60.0)));

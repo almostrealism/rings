@@ -92,8 +92,6 @@ public class AudioSceneTest implements CellFeatures {
 
 	@Test
 	public void pattern() {
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
-
 		AudioScene pattern = pattern(2, 2, true);
 		pattern.assignGenome(pattern.getGenome().random());
 
@@ -125,7 +123,6 @@ public class AudioSceneTest implements CellFeatures {
 		AudioScene.enableEfxFilters = false;
 		AudioScene.enableEfx = false;
 
-		WaveData.setCollectionHeap(() -> new PackedCollectionHeap(600 * OutputLine.sampleRate), PackedCollectionHeap::destroy);
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/genetic-factory-test.wav")).get(0);
 		Cells organ = cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
 		organ.sec(6).get().run();
