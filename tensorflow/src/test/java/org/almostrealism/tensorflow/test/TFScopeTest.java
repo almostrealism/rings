@@ -18,6 +18,7 @@ package org.almostrealism.tensorflow.test;
 
 import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.DefaultScopeInputManager;
+import io.almostrealism.code.Execution;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.tensorflow.TensorFlowArgument;
@@ -26,8 +27,6 @@ import org.almostrealism.tensorflow.TensorFlowConstant;
 import org.almostrealism.tensorflow.TensorFlowInstructionSet;
 import org.almostrealism.CodeFeatures;
 import org.junit.Test;
-
-import java.util.function.Consumer;
 
 public class TFScopeTest implements CodeFeatures {
 	private int counter = 0;
@@ -47,7 +46,7 @@ public class TFScopeTest implements CodeFeatures {
 
 		TensorFlowComputeContext ctx = new TensorFlowComputeContext();
 		TensorFlowInstructionSet op = ctx.deliver(scope);
-		Consumer<Object[]> consumer = op.get();
+		Execution consumer = op.get();
 		consumer.accept(new Object[] { s });
 	}
 }
