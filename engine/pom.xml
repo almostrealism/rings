@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.30</version>
+		<version>0.31</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 

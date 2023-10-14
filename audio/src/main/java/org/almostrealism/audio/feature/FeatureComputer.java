@@ -28,6 +28,7 @@ import org.almostrealism.algebra.Tensor;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		PackedCollection<Pair<?>> fftOutput = Pair.bank(paddedWindowSize);
 
-		fft = new ComplexFFT(paddedWindowSize, true, v(2 * paddedWindowSize, 0));
+		fft = new ComplexFFT(Hardware.getLocalHardware().getComputeContext(), paddedWindowSize, true, v(2 * paddedWindowSize, 0));
 
 		int count = settings.getFrameExtractionSettings().getWindowSize();
 		Producer<PackedCollection<Scalar>> processWindow = null;
