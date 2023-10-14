@@ -47,7 +47,6 @@ import org.almostrealism.CodeFeatures;
 
 public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
 	public static boolean enableVerbose = false;
-	public static boolean enableKernelExport = true;
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
 
@@ -124,51 +123,27 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public Supplier<Runnable> export(PackedCollection<?> destination) {
-		if (enableKernelExport) {
-			Runnable export = () -> {
-				long start = System.currentTimeMillis();
+		Runnable export = () -> {
+			long start = System.currentTimeMillis();
 
-				HardwareOperator.disableDimensionMasks(() -> {
-					TraversalPolicy subset = shape(data.getCount() - 1, data.getAtomicMemLength());
-					PackedCollection<?> input = PackedCollection.range(data, subset, 2).traverse(1);
-					exportKernel.into(destination.traverse(1)).evaluate(input);
-				});
+			HardwareOperator.disableDimensionMasks(() -> {
+				TraversalPolicy subset = shape(data.getCount() - 1, data.getAtomicMemLength());
+				PackedCollection<?> input = PackedCollection.range(data, subset, 2).traverse(1);
+				exportKernel.into(destination.traverse(1)).evaluate(input);
+			});
 
-				if (enableVerbose)
-					System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
-			};
+			if (enableVerbose)
+				System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
+		};
 
-			return () -> () -> {
-				if (Hardware.getLocalHardware().getComputeContext().isKernelSupported()) {
-					export.run();
-				} else {
-					System.out.println("WaveOutput: Kernels not supported by " + Hardware.getLocalHardware().getComputeContext() + " - enabling new context");
-					cc(export, ComputeRequirement.CL);
-				}
-			};
-		} else {
-			return () -> () -> {
-				int frames = (int) cursor.left() - 1;
-
-				if (frames > 0) {
-					// System.out.println("Writing " + frames + " frames");
-				} else {
-					System.out.println("WaveOutput: No frames to write");
-					return;
-				}
-
-				long start = System.currentTimeMillis();
-
-				for (int i = 0; i < frames; i++) {
-					// double value = data.valueAt(i).getValue();
-					double value = data.get(i + 1).getValue();
-					destination.set(i, value);
-				}
-
-				if (enableVerbose)
-					System.out.println("WaveOutput: Wrote " + frames + " frames in " + (System.currentTimeMillis() - start) + " msec");
-			};
-		}
+		return () -> () -> {
+			if (Hardware.getLocalHardware().getComputeContext().isKernelSupported()) {
+				export.run();
+			} else {
+				System.out.println("WaveOutput: Kernels not supported by " + Hardware.getLocalHardware().getComputeContext() + " - enabling new context");
+				cc(export, ComputeRequirement.CL);
+			}
+		};
 	}
 
 	public Supplier<Runnable> write() {
