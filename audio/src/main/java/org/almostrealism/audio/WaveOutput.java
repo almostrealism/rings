@@ -105,7 +105,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		this.bits = bits;
 		this.sampleRate = sampleRate;
 		this.cursor = new CursorPair();
-		this.data = maxFrames <= 0 ? new AcceleratedTimeSeries() : new AcceleratedTimeSeries(maxFrames);
+		this.data = maxFrames <= 0 ? AcceleratedTimeSeries.defaultSeries() : new AcceleratedTimeSeries(maxFrames);
 	}
 
 	public CursorPair getCursor() { return cursor; }
