@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.almostrealism.hardware.ctx.AbstractComputeContext;
 
 public class TensorFlowComputeContext extends AbstractComputeContext {
 	public TensorFlowComputeContext() {
-		super(null, false, false);
+		super(null, null);
 	}
 
 	@Override
@@ -33,6 +33,11 @@ public class TensorFlowComputeContext extends AbstractComputeContext {
 	@Override
 	public TensorFlowInstructionSet deliver(Scope scope) {
 		return new TensorFlowInstructionSet(scope);
+	}
+
+	@Override
+	public boolean isCPU() {
+		return false;
 	}
 
 	@Override

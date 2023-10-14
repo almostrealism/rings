@@ -19,6 +19,7 @@ package com.almostrealism.gl;
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
 import io.almostrealism.code.ExpressionFeatures;
+import org.almostrealism.hardware.Precision;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
@@ -54,7 +55,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class GLDriver implements ExpressionFeatures {
-	protected boolean enableDoublePrecision = Hardware.getLocalHardware().isDoublePrecision();
+	protected boolean enableDoublePrecision = Hardware.getLocalHardware().getPrecision() == Precision.FP64;
 	protected boolean useGlMatrixStack = false;
 
 	protected GL2 gl;
