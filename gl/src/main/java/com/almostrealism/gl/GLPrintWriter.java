@@ -72,14 +72,18 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 	
 	public GLPrintWriter(String glMember, String matMember, String name, CodePrintWriter p) {
-		super(null);
+		super(p.getLanguage(), null);
 		this.glMember = glMember;
 		if (matMember !=null && matMember.length()>0) {
-			this.matrixMember=matMember;
+			this.matrixMember = matMember;
 		}
 		this.name = name;
 		this.p = p;
-		this.enableDoublePrecision = isJs.test(p);
+	}
+
+	@Override
+	public boolean isDoublePrecision() {
+		return isJs.test(p);
 	}
 
 	@Override
@@ -146,7 +150,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void glColor(RGBA color) {
 		if (gl != null) super.glColor(color);
 
-		String method = enableDoublePrecision ? "color4d" : "color4f";
+		String method = isDoublePrecision() ? "color4d" : "color4f";
 		p.println(glMethod(method, e(color.getRed()), e(color.getGreen()), e(color.getBlue()), e(color.getAlpha())));
 	}
 
@@ -282,7 +286,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 		v = transformPosition(v);
 
-		String method = enableDoublePrecision ? "vertex3d" : "vertex3f";
+		String method = isDoublePrecision() ? "vertex3d" : "vertex3f";
 
 		p.println(glMethod(method, e(v.getX()), e(v.getY()), e(v.getZ())));
 	}
@@ -291,7 +295,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void glVertex(Pair p) {
 		if (gl != null) super.glVertex(p);
 
-		String method = enableDoublePrecision ? "vertex2d" : "vertex2f";
+		String method = isDoublePrecision() ? "vertex2d" : "vertex2f";
 
 		this.p.println(glMethod(method, e(p.getX()), e(p.getY())));
 	}
@@ -302,7 +306,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 		n = transformDirection(n);
 
-		String method = enableDoublePrecision ? "normal3d" : "normal3f";
+		String method = isDoublePrecision() ? "normal3d" : "normal3f";
 		p.println(glMethod(method, e(n.getX()), e(n.getY()), e(n.getZ())));
 	}
 
@@ -374,7 +378,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void clearDepth(double d) {
 		if (gl != null) super.clearDepth(d);
 
-		String method = enableDoublePrecision ? "clearDepth" : "clearDepthf";
+		String method = isDoublePrecision() ? "clearDepth" : "clearDepthf";
 		p.println(glMethod(method, e(d)));
 	}
 
@@ -616,7 +620,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 	@Override
 	public void uv(Pair texCoord) {
-		String method = enableDoublePrecision ? "texCoord2d" : "texCoord2f";
+		String method = isDoublePrecision() ? "texCoord2d" : "texCoord2f";
 		p.println(glMethod(method, e(texCoord.getA()), e(texCoord.getB())));
 	}
 

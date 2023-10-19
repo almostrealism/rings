@@ -16,7 +16,7 @@
 
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.code.LanguageOperations;
+import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.hardware.ctx.AbstractComputeContext;
 

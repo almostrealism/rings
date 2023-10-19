@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.almostrealism.gl;
 
+import io.almostrealism.lang.LanguageOperations;
 import org.almostrealism.c.CPrintWriter;
 import io.almostrealism.code.CodePrintWriter;
 import org.almostrealism.io.PrintWriter;
@@ -27,10 +28,10 @@ import java.io.OutputStream;
  * a shading language similar to C.
  */
 public class GLSLPrintWriter extends CPrintWriter {
-	public GLSLPrintWriter(OutputStream out) { super(out, null); }
+	public GLSLPrintWriter(OutputStream out, LanguageOperations lang) { super(out, null, lang.getPrecision()); }
 
 	/**
 	 * Constructs a new {@link GLSLPrintWriter} for writing GLSL to the specified {@link PrintWriter}.
 	 */
-	public GLSLPrintWriter(PrintWriter p) { super(p, null); }
+	public GLSLPrintWriter(PrintWriter p, LanguageOperations lang) { super(p, null, lang.getPrecision()); }
 }

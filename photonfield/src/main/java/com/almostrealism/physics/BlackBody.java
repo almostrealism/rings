@@ -111,7 +111,7 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		VolumeAbsorber v = new VolumeAbsorber(new Sphere(500000), b);
 
 		PinholeCameraAbsorber camera = new PinholeCameraAbsorber(2.4, 35000,
-				Vector.NEG_Z_AXIS, Vector.Y_AXIS);
+				Vector.negZAxis(), Vector.yAxis());
 		camera.setPixelSize(10);
 		camera.setWidth(500);
 		camera.setHeight(500);

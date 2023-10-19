@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+import io.almostrealism.code.Precision;
+import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.GroundPlane;
 import com.almostrealism.renderable.Quad3;
@@ -202,7 +204,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl2 = drawable.getGL().getGL2();
-		gl = new GLDriver(gl2);
+		gl = new GLDriver(new CLanguageOperations(Precision.FP32, false, false), gl2);
 
 		sInit(gl);
 

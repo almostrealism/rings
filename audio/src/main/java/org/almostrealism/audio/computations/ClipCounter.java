@@ -38,10 +38,10 @@ public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>
 		HybridScope<Void> scope = new HybridScope<>(this);
 		scope.setMetadata(new OperationMetadata(getFunctionName(), "ClipCounter"));
 
-		String value = getArgument(2, 1).valueAt(0).getSimpleExpression();
-		String min = getArgument(1, 2).valueAt(0).getSimpleExpression();
-		String max = getArgument(1, 2).valueAt(1).getSimpleExpression();
-		String count = getArgument(0, 2).valueAt(0).getSimpleExpression();
+		String value = getArgument(2, 1).valueAt(0).getSimpleExpression(getLanguage());
+		String min = getArgument(1, 2).valueAt(0).getSimpleExpression(getLanguage());
+		String max = getArgument(1, 2).valueAt(1).getSimpleExpression(getLanguage());
+		String count = getArgument(0, 2).valueAt(0).getSimpleExpression(getLanguage());
 
 		Consumer<String> code = scope.code();
 		code.accept("if (" + value + " >= " + max + " || " + value

@@ -35,9 +35,9 @@ public class SilenceDurationComputation extends OperationComputationAdapter<Pack
 	public Scope<Void> getScope() {
 		HybridScope<Void> scope = new HybridScope<>(this);
 
-		String value = getArgument(2).valueAt(0).getSimpleExpression();
-		String min = getArgument(1).valueAt(0).getSimpleExpression();
-		String duration = getArgument(0).valueAt(0).getSimpleExpression();
+		String value = getArgument(2).valueAt(0).getSimpleExpression(getLanguage());
+		String min = getArgument(1).valueAt(0).getSimpleExpression(getLanguage());
+		String duration = getArgument(0).valueAt(0).getSimpleExpression(getLanguage());
 
 		Consumer<String> code = scope.code();
 		code.accept("if (" + value + " > " + min + ") " + duration + " = 0;\n");

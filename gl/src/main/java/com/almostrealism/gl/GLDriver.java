@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package com.almostrealism.gl;
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
 import io.almostrealism.code.ExpressionFeatures;
-import org.almostrealism.hardware.Precision;
+import io.almostrealism.code.Precision;
+import io.almostrealism.lang.LanguageOperations;
+import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
@@ -37,7 +39,6 @@ import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.Triangle;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.texture.ImageTexture;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
@@ -55,9 +56,9 @@ import java.util.List;
 import java.util.Stack;
 
 public class GLDriver implements ExpressionFeatures {
-	protected boolean enableDoublePrecision = Hardware.getLocalHardware().getPrecision() == Precision.FP64;
 	protected boolean useGlMatrixStack = false;
 
+	protected LanguageOperations lang;
 	protected GL2 gl;
 	protected GLU glu;
 	protected GLUT glut;
@@ -87,6 +88,11 @@ public class GLDriver implements ExpressionFeatures {
 	protected Stack<TransformMatrix> matrixStack;
 
 	public GLDriver(GL2 gl) {
+		this(new CLanguageOperations(Precision.FP32, false, false), gl);
+	}
+
+	public GLDriver(LanguageOperations lang, GL2 gl) {
+		this.lang = lang;
 		this.gl = gl;
 
 		if (gl != null) {
@@ -107,6 +113,10 @@ public class GLDriver implements ExpressionFeatures {
 
 		this.vertexShaderStack = new Stack<>();
 		this.fragmentShaderStack = new Stack<>();
+	}
+
+	public boolean isDoublePrecision() {
+		return lang.getPrecision() == Precision.FP64;
 	}
 
 	public void pushLighting() { this.lightingStack.push(this.lighting); }
@@ -133,7 +143,7 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public void glColor(RGB color) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glColor3d(color.getRed(), color.getGreen(), color.getBlue());
 		} else {
 			gl.glColor3f((float) color.getRed(),
@@ -143,7 +153,7 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public void glColor(RGBA color) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		} else {
 			gl.glColor4f((float) color.getRed(),
@@ -154,7 +164,7 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public void glMaterial(GLMaterial mat) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
 			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
@@ -235,7 +245,7 @@ public class GLDriver implements ExpressionFeatures {
 	public void glVertex(Vector v) {
 		v = transformPosition(v);
 
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glVertex3d(v.getX(), v.getY(), v.getZ());
 		} else {
 			gl.glVertex3f((float) v.getX(), (float) v.getY(), (float) v.getZ());
@@ -247,7 +257,7 @@ public class GLDriver implements ExpressionFeatures {
 	public void glNormal(Vector n) {
 		n = transformNormal(n);
 
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glNormal3d(n.getX(), n.getY(), n.getZ());
 		} else {
 			gl.glNormal3f((float) n.getX(), (float) n.getY(), (float) n.getZ());
@@ -311,7 +321,7 @@ public class GLDriver implements ExpressionFeatures {
 	public void glStencilOp(int sfail, int dpfail, int dppass) { gl.glStencilOp(sfail, dpfail, dppass); }
 
 	public void clearDepth(double d) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glClearDepth(d);
 		} else {
 			gl.glClearDepthf((float) d);
@@ -374,7 +384,7 @@ public class GLDriver implements ExpressionFeatures {
 		if (this.vertexShader == null) return;
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		GLSLPrintWriter p = new GLSLPrintWriter(out);
+		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named vshade
 		this.vertexShader.getScope().write(p);
 		String shader = new String(out.toByteArray());
@@ -387,7 +397,7 @@ public class GLDriver implements ExpressionFeatures {
 		if (this.fragmentShader == null) return;
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		GLSLPrintWriter p = new GLSLPrintWriter(out);
+		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named fshade
 		this.fragmentShader.getScope().write(p);
 		String shader = new String(out.toByteArray());
@@ -497,7 +507,7 @@ public class GLDriver implements ExpressionFeatures {
 	public void glSelectBuffer(int size, IntBuffer buf) { gl.glSelectBuffer(size, buf); }
 
 	public void uv(Pair texCoord) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glTexCoord2d(texCoord.getA(), texCoord.getB());
 		} else {
 			gl.glTexCoord2f((float) texCoord.getA(), (float) texCoord.getB());
@@ -535,7 +545,7 @@ public class GLDriver implements ExpressionFeatures {
 	public void setMatrix(TransformMatrix m) { transform = m; }
 
 	public void glRasterPos(Vector pos) {
-		if (enableDoublePrecision) {
+		if (isDoublePrecision()) {
 			gl.glRasterPos3d(pos.getX(), pos.getY(), pos.getZ());
 		} else {
 			gl.glRasterPos3f((float) pos.getX(), (float) pos.getY(), (float) pos.getZ());

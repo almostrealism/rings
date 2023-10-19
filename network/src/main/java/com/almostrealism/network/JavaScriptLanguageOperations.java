@@ -16,13 +16,16 @@
 
 package com.almostrealism.network;
 
-import io.almostrealism.code.DefaultLanguageOperations;
+import io.almostrealism.lang.DefaultLanguageOperations;
 import io.almostrealism.code.PhysicalScope;
 
 public class JavaScriptLanguageOperations extends DefaultLanguageOperations {
 	public JavaScriptLanguageOperations() {
 		super(false);
 	}
+
+	@Override
+	public String kernelIndex(int index) { return "0"; }
 
 	@Override
 	public String nameForType(Class<?> type) { return ""; }

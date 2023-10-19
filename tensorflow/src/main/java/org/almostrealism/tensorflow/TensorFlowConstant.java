@@ -1,5 +1,6 @@
 package org.almostrealism.tensorflow;
 
+import io.almostrealism.lang.LanguageOperations;
 import org.tensorflow.Operand;
 import org.tensorflow.types.TFloat64;
 
@@ -12,7 +13,7 @@ public class TensorFlowConstant extends TensorFlowExpression {
 	}
 
 	@Override
-	public String getExpression() {
+	public String getExpression(LanguageOperations lang) {
 		return String.valueOf(value);
 	}
 

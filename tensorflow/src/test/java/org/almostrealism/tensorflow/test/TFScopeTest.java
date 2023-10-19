@@ -19,7 +19,8 @@ package org.almostrealism.tensorflow.test;
 import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.DefaultScopeInputManager;
 import io.almostrealism.code.Execution;
-import io.almostrealism.code.LanguageOperations;
+import io.almostrealism.code.Precision;
+import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.c.CLanguageOperations;
@@ -35,9 +36,9 @@ public class TFScopeTest implements CodeFeatures {
 
 	@Test
 	public void scope() {
-		LanguageOperations lang = new CLanguageOperations(false, false);
+		LanguageOperations lang = new CLanguageOperations(Precision.FP64, false, false);
 		DefaultNameProvider nameProvider = new DefaultNameProvider(lang, "test");
-		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang, (p, input) -> new TensorFlowArgument<>(p, p.getArgumentName(counter++), input));
+		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang, (p, input) -> new TensorFlowArgument<>(lang, p, p.getArgumentName(counter++), input));
 
 		Scalar s = new Scalar();
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));
