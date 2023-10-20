@@ -165,15 +165,9 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	public int length() { return destination.length(); }
 
 	protected Supplier<Runnable> process() {
+		// TODO  This should just return kernels
 		Runnable run = kernels.get();
-
-		return () -> () -> {
-			if (cc().isKernelSupported()) {
-				run.run();
-			} else {
-				cc(() -> kernels.get().run(), ComputeRequirement.CL);
-			}
-		};
+		return () -> () -> run.run();
 	}
 
 	protected WaveCell cell(PackedCollection<PackedCollection<?>> data) {

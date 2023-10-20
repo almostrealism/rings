@@ -41,9 +41,6 @@ public class TensorFlowComputeContext extends AbstractComputeContext {
 	}
 
 	@Override
-	public boolean isKernelSupported() { return false; }
-
-	@Override
 	public void destroy() {
 		// TODO
 	}

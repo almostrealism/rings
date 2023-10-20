@@ -123,7 +123,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public Supplier<Runnable> export(PackedCollection<?> destination) {
-		Runnable export = () -> {
+		return () -> () -> {
 			long start = System.currentTimeMillis();
 
 			HardwareOperator.disableDimensionMasks(() -> {
@@ -134,15 +134,6 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 
 			if (enableVerbose)
 				System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
-		};
-
-		return () -> () -> {
-			if (Hardware.getLocalHardware().getComputeContext().isKernelSupported()) {
-				export.run();
-			} else {
-				System.out.println("WaveOutput: Kernels not supported by " + Hardware.getLocalHardware().getComputeContext() + " - enabling new context");
-				cc(export, ComputeRequirement.CL);
-			}
 		};
 	}
 
