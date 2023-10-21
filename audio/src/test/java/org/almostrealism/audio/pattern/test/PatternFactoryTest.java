@@ -173,6 +173,8 @@ public class PatternFactoryTest implements CellFeatures {
 		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
 		choices.forEach(c -> c.setTuning(tuning));
 
+		choices.forEach(c -> c.setSeedBias(1.0));
+
 		ChordProgressionManager chordProgression = new ChordProgressionManager();
 		chordProgression.setSettings(settings.getChordProgression());
 		chordProgression.refreshParameters();
@@ -180,10 +182,13 @@ public class PatternFactoryTest implements CellFeatures {
 		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 3, 16.0, true);
 		manager.setChordDepth(3);
 
-		manager.addLayer(new ParameterSet(0.2, 0.3, 0.9));
-		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
-		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+		double a = Math.random(); // 0.2;
+		manager.addLayer(new ParameterSet(a, 0.3, 0.9));
+		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
+		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
 //		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+
+		System.out.println("a = " + a);
 
 		AudioSceneContext context = new AudioSceneContext();
 		context.setMeasures(measures);

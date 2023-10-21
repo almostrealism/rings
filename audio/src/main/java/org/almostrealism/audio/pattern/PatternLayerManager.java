@@ -357,10 +357,14 @@ public class PatternLayerManager implements CodeFeatures {
 		IntStream.range(0, count).forEach(i -> {
 			ChannelSection section = ctx.getSection(i * duration);
 
-			double offset = i * duration;
-			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
-			if (active < 0) return;
+			if (section == null) {
+				System.out.println("WARN: No ChannelSection at measure " + i);
+			} else {
+				double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
+				if (active < 0) return;
+			}
 
+			double offset = i * duration;
 			elements.stream()
 					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
 					.flatMap(List::stream)
