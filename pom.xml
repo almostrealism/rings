@@ -35,6 +35,7 @@
 		<module>keyframing</module>
 		<module>remote</module>
 		<module>remote-server</module>
+		<module>rings-ml</module>
 	</modules>
 
 	<!-- Output to jar format -->
