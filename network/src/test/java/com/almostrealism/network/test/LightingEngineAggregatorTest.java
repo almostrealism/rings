@@ -139,7 +139,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 				continue i;
 			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedEvaluable) {
 				KernelizedEvaluable kp = (KernelizedEvaluable)  a.getArguments().get(i).getProducer();
-				MemoryBank output = kp.createKernelDestination(input.getCount());
+				MemoryBank output = (MemoryBank) kp.createDestination(input.getCount());
 				kp.into(output).evaluate(input, dim);
 
 				System.out.println("LightingEngineAggregatorTest: Comparing...");

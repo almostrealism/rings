@@ -49,7 +49,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 		return new KernelizedEvaluable<>() {
 
 			@Override
-			public MemoryBank<RGB> createKernelDestination(int size) {
+			public MemoryBank<RGB> createDestination(int size) {
 				return RGB.bank(size);
 			}
 

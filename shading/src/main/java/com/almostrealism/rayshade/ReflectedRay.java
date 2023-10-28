@@ -46,7 +46,7 @@ public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures 
 
 		return new KernelizedEvaluable<>() {
 			@Override
-			public MemoryBank<Ray> createKernelDestination(int size) { return Ray.bank(size); }
+			public MemoryBank<Ray> createDestination(int size) { return Ray.bank(size); }
 
 			@Override
 			public Ray evaluate(Object[] args) {
