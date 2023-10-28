@@ -16,12 +16,13 @@
 
 package com.almostrealism.network;
 
+import io.almostrealism.code.Precision;
 import io.almostrealism.lang.DefaultLanguageOperations;
 import io.almostrealism.code.PhysicalScope;
 
 public class JavaScriptLanguageOperations extends DefaultLanguageOperations {
 	public JavaScriptLanguageOperations() {
-		super(false);
+		super(Precision.FP32, false);
 	}
 
 	@Override

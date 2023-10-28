@@ -22,7 +22,7 @@ import org.almostrealism.hardware.ctx.AbstractComputeContext;
 
 public class TensorFlowComputeContext extends AbstractComputeContext {
 	public TensorFlowComputeContext() {
-		super(null, null);
+		super(null);
 	}
 
 	@Override

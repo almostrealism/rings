@@ -69,7 +69,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -108,7 +108,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -127,7 +127,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	@Test
 	public void compareDependents() throws IOException {
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
 		a.compact();

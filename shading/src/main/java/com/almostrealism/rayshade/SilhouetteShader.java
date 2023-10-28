@@ -20,7 +20,6 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.color.ColorEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
 import io.almostrealism.relation.Compactable;

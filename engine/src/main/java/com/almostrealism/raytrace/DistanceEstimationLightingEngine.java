@@ -104,17 +104,6 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 			return direction(get(0));
 		}
 
-		@Override
-		public Vector operate(Vector triple) {
-			try {
-				return get(0).get().evaluate(new Object[] { triple }).getOrigin();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
 		public ShaderSet getShaders() { return shaders; }
 
 		@Override

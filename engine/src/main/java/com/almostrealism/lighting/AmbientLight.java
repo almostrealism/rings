@@ -19,13 +19,10 @@ package com.almostrealism.lighting;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
-import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-
-import static org.almostrealism.Ops.*;
 
 /**
  * An AmbientLight object represents a light that is applied to all objects in the scene.
@@ -37,7 +34,7 @@ public class AmbientLight implements Light, RGBFeatures, CodeFeatures {
 	private double intensity;
 	private RGB color;
 
-	private Producer<RGB> colorProducer = GeneratedColorProducer.fromFunction(this, triple -> color.multiply(intensity));
+	private Producer<RGB> colorProducer = GeneratedColorProducer.fromProducer(this, multiply(() -> args -> color, c(intensity)));
 
 	/**
 	 * Constructs an AmbientLight object with the default intensity and color.
@@ -83,7 +80,7 @@ public class AmbientLight implements Light, RGBFeatures, CodeFeatures {
 	@Override
 	public RGB getColor() { return this.color; }
 	
-	/** Returns the {@link ColorEvaluable} for this {@link AmbientLight}. */
+	/** Returns the {@link RGB} {@link Producer} for this {@link AmbientLight}. */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
 		return GeneratedColorProducer.fromProducer(this,

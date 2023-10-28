@@ -24,6 +24,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.code.OperationProfile;
+import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
@@ -43,7 +45,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.cl.CLComputeContext;
+import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Genome;
@@ -112,9 +114,11 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
-		CLComputeContext.enableFastQueue = false;
+		HardwareOperator.profile = new OperationProfile();
+		KernelPreferences.enableSharedMemory = true;
+
 		StableDurationHealthComputation.enableTimeout = true;
-		AudioScene.enableMainFilterUp = true;
+		AudioScene.enableMainFilterUp = false; // true;
 		AudioScene.enableEfxFilters = true;
 		AudioScene.enableEfx = true;
 		AudioScene.enableWetInAdjustment = true;
@@ -125,16 +129,24 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
+		PopulationOptimizer.popSize = 5;
 
+		// Verbosity level 1
 		PopulationOptimizer.enableVerbose = verbosity > 0;
 		Hardware.enableVerbose = verbosity > 0;
+
+		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
+
+		// Verbosity level 3
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
+		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 2;
+
+		// Verbosity level 4
 		HardwareOperator.enableVerboseLog = verbosity > 3;
-		// CLMemoryProvider.enableLargeAllocationLogging = true;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
 		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
@@ -152,6 +164,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
 				opt.init();
 				opt.run();
+				HardwareOperator.profile.print();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

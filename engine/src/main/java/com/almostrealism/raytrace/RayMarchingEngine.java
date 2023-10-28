@@ -75,11 +75,6 @@ public class RayMarchingEngine extends ArrayList<Producer<Ray>> implements Engin
 	}
 
 	@Override
-	public RGB operate(Vector in) {
-		return getValueAt(v(in)).get().evaluate();
-	}
-
-	@Override
 	public Producer<RGB> shade(ShaderContext parameters) {
 		Producer<RGB> c = null;
 		
