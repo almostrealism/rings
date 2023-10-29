@@ -23,7 +23,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.ScaleFactor;
 

@@ -26,7 +26,7 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;

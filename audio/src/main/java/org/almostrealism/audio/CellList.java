@@ -26,7 +26,7 @@ import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;

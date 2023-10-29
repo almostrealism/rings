@@ -36,7 +36,7 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.cl.CLMemory;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -19,7 +19,7 @@ package org.almostrealism.audio.optimize;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
 @Deprecated

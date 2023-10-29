@@ -17,9 +17,8 @@
 package org.almostrealism.audio.filter;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 import java.util.function.Supplier;
 

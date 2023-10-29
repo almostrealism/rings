@@ -21,7 +21,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 

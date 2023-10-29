@@ -20,7 +20,7 @@ import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 import java.io.File;
 import java.io.IOException;

@@ -24,7 +24,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 public class ParameterizedEnvelope implements EnvelopeFeatures {
 	public static final int MAX_SECONDS = 180;

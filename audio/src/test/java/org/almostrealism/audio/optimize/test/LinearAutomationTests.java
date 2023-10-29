@@ -25,7 +25,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.junit.Test;
 
 import java.io.File;

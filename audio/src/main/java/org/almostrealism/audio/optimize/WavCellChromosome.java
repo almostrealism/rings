@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.optimize;
 
-import io.almostrealism.code.ComputeRequirement;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
@@ -35,7 +34,7 @@ import org.almostrealism.hardware.computations.Assignment;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.time.Temporal;

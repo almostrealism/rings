@@ -38,7 +38,7 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.SummationCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.IdentityFactor;
@@ -47,7 +47,6 @@ import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;

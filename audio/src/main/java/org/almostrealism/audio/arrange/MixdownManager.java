@@ -17,7 +17,6 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -28,7 +27,6 @@ import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
-import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.PassThroughCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
@@ -36,7 +34,7 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
