@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.computations.Loop;
+import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		runFilter("low-pass", f, filter);
 	}
 
-	public void runFilter(String name, WavFile f, AudioPassFilter filter) throws IOException {
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter) throws IOException {
 		double data[][] = new double[f.getNumChannels()][(int) f.getFramesRemaining()];
 		f.readFrames(data, (int) f.getFramesRemaining());
 
