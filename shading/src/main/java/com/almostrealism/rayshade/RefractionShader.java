@@ -150,11 +150,6 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 					}
 				};
 			}
-
-			@Override
-			public void compact() {
-				// TODO
-			}
 		};
 		
 		return GeneratedColorProducer.fromProducer(this, pr);

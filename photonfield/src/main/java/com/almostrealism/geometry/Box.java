@@ -296,49 +296,39 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> x) {
-		return new Producer<Vector>() {
-			@Override
-			public Evaluable<Vector> get() {
-				return args -> {
-					Iterator it = iterator();
-					Plane lowest = (Plane) it.next();
-					double d = Double.MAX_VALUE;
+		return () -> args -> {
+			Iterator it = iterator();
+			Plane lowest = (Plane) it.next();
+			double d = Double.MAX_VALUE;
 
-					//The plane which produces the smallest dot product between the plane's normal
-					//and the vector v between the point and the center of the box is the closest plane,
-					//so just take the normal from that plane.
+			//The plane which produces the smallest dot product between the plane's normal
+			//and the vector v between the point and the center of the box is the closest plane,
+			//so just take the normal from that plane.
 
-					int tot = 0;
+			int tot = 0;
 
-					w:
-					while (it.hasNext()) {
-						Plane current = (Plane) it.next();
-						if (!current.inside(v(x.get().evaluate(args)))) continue w;
-						Vector n = current.getNormalAt(x).get().evaluate(args);
-						double cd = Math.abs(x.get().evaluate(args).dotProduct(n));
+			w:
+			while (it.hasNext()) {
+				Plane current = (Plane) it.next();
+				if (!current.inside(v(x.get().evaluate(args)))) continue w;
+				Vector n = current.getNormalAt(x).get().evaluate(args);
+				double cd = Math.abs(x.get().evaluate(args).dotProduct(n));
 
-						tot++;
+				tot++;
 
-						if (cd < d) {
-							lowest = current;
-							d = cd;
-						}
+				if (cd < d) {
+					lowest = current;
+					d = cd;
+				}
 
-					}
-
-					if (Math.random() < Box.verbose) {
-						System.out.println("Box: Selected " + lowest + " from " + tot + " planes.");
-						System.out.println("Box: Normal is " + lowest.getNormalAt(x).get().evaluate(args));
-					}
-
-					return lowest.getNormalAt(x).get().evaluate(args);
-				};
 			}
 
-			@Override
-			public void compact() {
-				x.compact();
+			if (Math.random() < Box.verbose) {
+				System.out.println("Box: Selected " + lowest + " from " + tot + " planes.");
+				System.out.println("Box: Normal is " + lowest.getNormalAt(x).get().evaluate(args));
 			}
+
+			return lowest.getNormalAt(x).get().evaluate(args);
 		};
 	}
 

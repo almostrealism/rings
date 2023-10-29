@@ -59,14 +59,12 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	@Test
 	public void aggregateCompact() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
-		p.compact();
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
 	@Test
 	public void aggregateKernelCompare() throws IOException {
 		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
-		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
 		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
@@ -101,11 +99,9 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	public void aggregateAcceleratedCompare() throws IOException {
 		RayIntersectionEngine.enableAcceleratedAggregator = false;
 		Producer<RGB> agg = getScene().getProducer();
-		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
 		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
-		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
 		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
@@ -130,7 +126,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
-		a.compact();
 
 		i: for (int i = 1; i < a.getArguments().size(); i++) {
 			if (a.getArguments().get(i) == null) continue i;

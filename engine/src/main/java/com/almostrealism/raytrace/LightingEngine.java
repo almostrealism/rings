@@ -139,14 +139,6 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 	@Override
 	public Producer<Scalar> getRank() { return distance; }
 
-	@Override
-	public void compact() {
-		getProducer().compact();
-		getRank().compact();
-
-		System.out.println("Compacted LightingEngine");
-	}
-
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of intersection
 	 * on that surface using the lighting data from the specified Light objects and returns an RGB object

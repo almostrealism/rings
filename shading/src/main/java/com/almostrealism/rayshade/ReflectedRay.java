@@ -87,12 +87,6 @@ public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures 
 	}
 
 	@Override
-	public void compact() {
-		this.normal.compact();
-		this.reflected.compact();
-	}
-
-	@Override
 	public Scope<Ray> getScope() {
 		throw new RuntimeException("Not implemented");
 	}
