@@ -116,9 +116,4 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 		
 		return uv;
 	}
-
-	@Override
-	public Object operate(Vector triple) {
-		return null;
-	}
 }

@@ -127,9 +127,4 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 
 	@Override
 	public double[] getSurfaceCoords(Producer<Vector> xyz) { return new double[2]; }
-
-	@Override
-	public Object operate(Vector triple) {
-		return null;
-	}
 }

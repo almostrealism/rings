@@ -384,9 +384,4 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Object operate(Vector triple) {
-		return null;
-	}
 }
