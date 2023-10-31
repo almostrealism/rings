@@ -99,7 +99,7 @@ public class AmbientLight implements Light, RGBFeatures, CodeFeatures {
 	 * not include the specified surface for which the lighting calculations are to be done.
 	 */
 	public static Producer<RGB> ambientLightingCalculation(Curve<RGB> surface, AmbientLight light, Producer<Vector> point) {
-		Ops op = Ops.ops();
+		Ops op = Ops.o();
 		double iten = light.getIntensity();
 		Producer<RGB> color = op.multiply(op.v(light.getColor()), op.c(iten, iten, iten));
 		return op.multiply(color, surface.getValueAt(point));

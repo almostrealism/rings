@@ -43,7 +43,6 @@ import io.almostrealism.relation.Evaluable;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends ProducerWithRankAdapter<RGB>
@@ -85,7 +84,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
 
 		if (enableShadows && light.castShadows) {
-			shadow = new ShadowMask(light, allSurfaces, Ops.ops().origin(intersections.get(0)).get());
+			shadow = new ShadowMask(light, allSurfaces, Ops.o().origin(intersections.get(0)).get());
 		} else {
 			shadow = RGBFeatures.getInstance().white();
 		}
@@ -108,7 +107,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 			Vector l = (directionalLight.getDirection().divide(
 					directionalLight.getDirection().length())).minus();
 
-			context.setLightDirection(Ops.ops().v(l));
+			context.setLightDirection(Ops.o().v(l));
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {

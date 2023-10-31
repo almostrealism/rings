@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public class ComplexFFT extends AcceleratedEvaluable<PackedCollection<Pair<?>>, PackedCollection<Pair<?>>> implements Evaluable<PackedCollection<Pair<?>>> {
 	public ComplexFFT(ComputeContext<MemoryData> context, int count, boolean forward, Supplier<Evaluable<? extends PackedCollection<Pair<?>>>> input) {
 		super((CLComputeContext) context, "transform", () -> args -> Pair.bank(count),
-				input, Ops.ops().p(new Pair(count, forward ? 0 : 1)));
+				input, Ops.o().p(new Pair(count, forward ? 0 : 1)));
 		int powerOfTwo = 31 - Integer.numberOfLeadingZeros(count);
 
 		if (1 << powerOfTwo != count) {

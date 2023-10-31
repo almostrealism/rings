@@ -25,7 +25,6 @@ import javax.swing.JFrame;
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
 import com.almostrealism.primitives.Plane;
-import io.almostrealism.relation.Evaluable;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
@@ -39,8 +38,6 @@ import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
 import com.almostrealism.light.PlanarLight;
 import org.almostrealism.CodeFeatures;
-
-import static org.almostrealism.Ops.*;
 
 /**
  * 
@@ -70,7 +67,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		plane.setWidth(600);
 		plane.setHeight(600);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		//The focal length of the Cornell Box's lense is .035
@@ -80,7 +77,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(scale / 1.5);
 		pinhole.setThickness(scale / 100.0);
-		pinhole.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Box box1 = new Box();
@@ -98,9 +95,9 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(scale * 10.0);
 		a.addAbsorber(spec, ZeroVector.getInstance());
-		a.addAbsorber(plane, Ops.ops().vector(0.0, 0.0, scale * 2.2));
+		a.addAbsorber(plane, Ops.o().vector(0.0, 0.0, scale * 2.2));
 		// a.addAbsorber(pinhole, new double[] {0.0, 0.0, scale * 2.0});
-		a.addAbsorber(l, Ops.ops().vector(0.0, 0.0, scale * 1.95));
+		a.addAbsorber(l, Ops.o().vector(0.0, 0.0, scale * 1.95));
 		
 		PhotonField f = new DefaultPhotonField();
 		f.setAbsorber(a);

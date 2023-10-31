@@ -29,9 +29,9 @@ public class PatternAudio implements CellFeatures {
 	private static ContextSpecific<KernelizedEvaluable<PackedCollection<?>>> add;
 
 	static {
-		add = new DefaultContextSpecific<>(() -> Ops.ops().add(
-				Ops.ops().v(1, 0),
-				Ops.ops().v(1, 1)).get());
+		add = new DefaultContextSpecific<>(() -> Ops.o().add(
+				Ops.o().v(1, 0),
+				Ops.o().v(1, 1)).get());
 	}
 
 	private int sampleRate;

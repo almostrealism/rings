@@ -29,7 +29,6 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
-import static org.almostrealism.Ops.*;
 
 /**
  * A DirectionAmbientLight object represents an ambient light source that always
@@ -112,10 +111,10 @@ public class DirectionalAmbientLight extends AmbientLight {
 		Vector l = (light.getDirection().divide(light.getDirection().length())).minus();
 		
 		if (p == null) {
-			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, Ops.ops().v(l), light, otherLights, otherSurfaces)) : null;
+			color = surface instanceof Shadable ? ((Shadable) surface).shade(new ShaderContext(intersection, Ops.o().v(l), light, otherLights, otherSurfaces)) : null;
 		} else {
 			p.setIntersection(intersection);
-			p.setLightDirection(Ops.ops().v(l));
+			p.setLightDirection(Ops.o().v(l));
 			p.setLight(light);
 			p.setOtherLights(otherLights);
 			p.setOtherSurfaces(otherSurfaces);

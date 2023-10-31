@@ -339,7 +339,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
 	 * and it doesn't get invoked multiple times.
 	 */
-	private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
+	private TemporalFactor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
 		return v -> f.getResultant(v);
 	}
 
