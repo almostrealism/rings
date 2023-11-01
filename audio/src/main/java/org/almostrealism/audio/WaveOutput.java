@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
 import org.almostrealism.collect.PackedCollection;
@@ -36,9 +36,7 @@ import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.graph.Receptor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 import org.almostrealism.time.AcceleratedTimeSeries;
@@ -51,7 +49,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
-	private static KernelizedEvaluable<PackedCollection<?>> exportKernel;
+	private static Evaluable<PackedCollection<?>> exportKernel;
 
 	static {
 		timeline = new DefaultContextSpecific<>(

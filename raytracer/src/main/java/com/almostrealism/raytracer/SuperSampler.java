@@ -77,7 +77,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 			}
 
 			@Override
-			public Evaluable withDestination(MemoryBank<RGB> destination) {
+			public Evaluable withDestination(MemoryBank destination) {
 				return args -> {
 					int w = ev.length;
 					int h = ev[0].length;

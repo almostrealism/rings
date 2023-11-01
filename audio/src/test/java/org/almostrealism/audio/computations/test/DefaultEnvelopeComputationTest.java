@@ -17,6 +17,7 @@
 package org.almostrealism.audio.computations.test;
 
 import io.almostrealism.code.OperationAdapter;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.hardware.KernelizedEvaluable;
@@ -32,7 +33,7 @@ public class DefaultEnvelopeComputationTest implements TestFeatures {
 
 	@Test
 	public void evaluate() {
-		KernelizedEvaluable<Scalar> s = computation().get();
+		Evaluable<Scalar> s = computation().get();
 
 		input.setValue(0.5);
 		assertEquals(0.7071067811865, s.evaluate().getValue());

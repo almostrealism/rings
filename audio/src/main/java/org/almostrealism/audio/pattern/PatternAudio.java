@@ -16,17 +16,17 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
 // TODO  It would be better to use this in PatternLayerManager
 public class PatternAudio implements CellFeatures {
-	private static ContextSpecific<KernelizedEvaluable<PackedCollection<?>>> add;
+	private static ContextSpecific<Evaluable<PackedCollection<?>>> add;
 
 	static {
 		add = new DefaultContextSpecific<>(() -> Ops.o().add(
