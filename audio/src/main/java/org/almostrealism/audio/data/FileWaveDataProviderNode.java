@@ -17,7 +17,7 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.relation.Tree;
-import io.almostrealism.relation.Named;
+import io.almostrealism.uml.Named;
 
 import java.io.File;
 import java.io.IOException;

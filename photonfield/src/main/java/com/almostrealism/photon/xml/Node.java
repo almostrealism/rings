@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.physics.Absorber;
 import org.w3c.dom.Document;

@@ -22,8 +22,7 @@ import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Nameable;
-import io.almostrealism.relation.Evaluable;
+import io.almostrealism.uml.Nameable;
 
 /**
  * A {@link VolumeAbsorber} is a wrapper for {@link Absorber} implementations that

@@ -23,8 +23,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Nameable;
-import io.almostrealism.relation.Evaluable;
+import io.almostrealism.uml.Nameable;
 
 /**
  * An OverlayBRDF simply takes the sum of the samples provided by each

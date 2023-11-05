@@ -46,7 +46,7 @@ import org.almostrealism.stats.SphericalProbabilityDistribution;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 
 import com.almostrealism.geometry.Elipse;
 import com.almostrealism.buffers.ArrayColorBuffer;
