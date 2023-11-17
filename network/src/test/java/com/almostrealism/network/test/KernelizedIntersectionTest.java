@@ -40,7 +40,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 	}
 
 	@Test
-	public void kernel() {
+	public void intersectionKernel() {
 		Producer<Scalar> combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 
