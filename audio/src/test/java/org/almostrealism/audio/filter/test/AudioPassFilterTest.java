@@ -17,6 +17,7 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
@@ -48,15 +49,23 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 	}
 
 	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter) throws IOException {
+		runFilter(name, f, filter, false);
+	}
+
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize) throws IOException {
+		runFilter(name, f, filter, optimize, 0);
+	}
+
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize, int padFrames) throws IOException {
 		double data[][] = new double[f.getNumChannels()][(int) f.getFramesRemaining()];
 		f.readFrames(data, (int) f.getFramesRemaining());
 
-		PackedCollection<?> values = WavFile.channel(data, 0);
+		PackedCollection<?> values = WavFile.channel(data, 0, padFrames);
 		PackedCollection<?> out = new PackedCollection<>(values.getMemLength());
 		Scalar current = new Scalar();
 
 		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
-		Runnable tick = filter.tick().get();
+		Runnable tick = optimize ? Process.optimized(filter.tick()).get() : filter.tick().get();
 
 		for (int i = 0; i < values.getMemLength(); i++) {
 			current.setValue(values.toDouble(i));
