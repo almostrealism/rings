@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,9 @@
 
 package org.almostrealism.audio.computations;
 
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.ParallelProcess;
+import io.almostrealism.relation.Process;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
@@ -24,11 +27,23 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 import io.almostrealism.relation.Producer;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SilenceDurationComputation extends OperationComputationAdapter<PackedCollection<?>> {
-	public SilenceDurationComputation(Producer<Scalar> silenceDuration, Producer<Scalar> silenceSettings, Producer<PackedCollection<?>> value) {
-		super(new Producer[] { silenceDuration, silenceSettings, value });
+	public SilenceDurationComputation(Supplier<Evaluable<? extends Scalar>> silenceDuration,
+									  Supplier<Evaluable<? extends Scalar>> silenceSettings,
+									  Supplier<Evaluable<? extends PackedCollection<?>>> value) {
+		super(new Supplier[] { silenceDuration, silenceSettings, value });
+	}
+
+	@Override
+	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
+		return new SilenceDurationComputation(
+				(Supplier<Evaluable<? extends Scalar>>) children.get(0),
+				(Supplier<Evaluable<? extends Scalar>>) children.get(1),
+				(Supplier<Evaluable<? extends PackedCollection<?>>>) children.get(2));
 	}
 
 	@Override

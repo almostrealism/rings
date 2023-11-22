@@ -51,9 +51,10 @@ import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
+import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 1;
 
 	public static final boolean enableSourcesJson = true;
 	public static final int singleChannel = -1;
@@ -116,6 +117,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static void main(String args[]) throws IOException {
 		HardwareOperator.profile = new OperationProfile();
 		KernelPreferences.enableSharedMemory = true;
+		NativeComputeContext.enableLargeScopeMonitoring = false;
+		TemporalRunner.enableOptimization = true;
+		TemporalRunner.enableIsolation = true;
 
 		StableDurationHealthComputation.enableTimeout = true;
 		AudioScene.enableMainFilterUp = false; // true;
@@ -133,7 +137,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		// Verbosity level 1
 		PopulationOptimizer.enableVerbose = verbosity > 0;
-		Hardware.enableVerbose = verbosity > 0;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 0;
 
 		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
@@ -141,7 +145,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// Verbosity level 3
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
-		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
+		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 2;
 
@@ -152,7 +156,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
