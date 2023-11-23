@@ -34,7 +34,7 @@ Add ar-audio dependency:
             <version>0.31</version>
         </dependency>
 
-### Enabling Your Application
+### Tutorial
 
 To generate multimedia you can first create an **AudioScene**.
 
@@ -56,8 +56,6 @@ To generate multimedia you can first create an **AudioScene**.
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Tutorial
 
 ### What are the terms of the LICENSE?
 
