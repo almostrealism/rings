@@ -27,9 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.code.OperationProfile;
 import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
@@ -43,6 +45,7 @@ import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
+import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLMemoryProvider;
@@ -116,12 +119,15 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 */
 	public static void main(String args[]) throws IOException {
 		HardwareOperator.profile = new OperationProfile();
-		KernelPreferences.enableSharedMemory = true;
+
+		KernelPreferences.optimizeForMetal();
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = true;
-		TemporalRunner.enableIsolation = true;
+		TemporalRunner.enableIsolation = false;
 
+		HealthComputationAdapter.setStandardDuration(15);
 		StableDurationHealthComputation.enableTimeout = true;
+		MixdownManager.enableReverb = true;
 		AudioScene.enableMainFilterUp = false; // true;
 		AudioScene.enableEfxFilters = true;
 		AudioScene.enableEfx = true;
@@ -168,6 +174,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				opt.init();
 				opt.run();
 				HardwareOperator.profile.print();
+				AcceleratedOperation.printTimes();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

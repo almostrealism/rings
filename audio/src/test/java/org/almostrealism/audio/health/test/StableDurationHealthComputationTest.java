@@ -17,6 +17,7 @@
 package org.almostrealism.audio.health.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
@@ -112,7 +113,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		AudioScene.enableEfxFilters = false;
 
 		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
-		StableDurationHealthComputation.setStandardDuration(150);
+		HealthComputationAdapter.setStandardDuration(150);
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setOutputFile("results/cells-pattern-small.wav");
@@ -130,7 +131,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 	@Test
 	public void cellsPatternLarge() {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		StableDurationHealthComputation.setStandardDuration(150);
+		HealthComputationAdapter.setStandardDuration(150);
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation(5);
 		health.setOutputFile("results/small-cells-pattern-test.wav");

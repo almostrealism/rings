@@ -21,6 +21,7 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.filter.DelayNetwork;
 import org.almostrealism.audio.optimize.AdjustmentChromosome;
 import org.almostrealism.audio.optimize.DelayChromosome;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
@@ -51,6 +52,8 @@ import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableAdjustmentChromosome = true;
+	public static boolean enableReverb = false;
+	public static double reverbLevel = 0.1;
 
 	private TimeCell clock;
 	private int sampleRate;
@@ -239,10 +242,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
 				AudioScene.enableEfxFilters ?
 						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0)).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
-						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))));
+						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
+				fc(i -> sf(reverbLevel)));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];
+		CellList reverb = branch[2];
 
 		if (stems != null && !stems.isEmpty()) {
 			main = main.branch(i -> new ReceptorCell<>(stems.get(i)),
@@ -290,6 +295,14 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 					// Feedback grid
 					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
 					.sum();
+
+			if (enableReverb) {
+				// Combine inputs and apply reverb
+				reverb = reverb.sum().map(fc(i -> new DelayNetwork(32, sampleRate)));
+
+				// Combine reverb with efx
+				efx = cells(efx, reverb).sum();
+			}
 
 			if (AudioScene.disableClean) {
 				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));

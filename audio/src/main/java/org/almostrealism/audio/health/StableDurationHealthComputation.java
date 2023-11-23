@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
-	public static boolean enableLoop = true;
 	public static boolean enableTimeout = true;
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
@@ -62,7 +61,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public StableDurationHealthComputation(int channels) {
 		super(channels, 6);
 		addSilenceListener(() -> encounteredSilence = true);
-		setBatchSize(enableLoop ? OutputLine.sampleRate / 2 : 1);
+		setBatchSize(OutputLine.sampleRate / 2);
 	}
 
 	public void setBatchSize(int iter) {
@@ -70,13 +69,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 	
 	public void setMaxDuration(long sec) { this.max = (int) (sec * OutputLine.sampleRate); }
-
-	/**
-	 * This setting impacts all health computations, even though it is not a static method.
-	 */
-	public static void setStandardDuration(int sec) {
-		standardDuration = (int) (sec * OutputLine.sampleRate);
-	}
 
 	public void setTarget(TemporalCellular target) {
 		if (getTarget() == null) {

@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, CodeFeatures {
 	private double gain;
 	private int size;
-	private int sampleRate, maxDelayFrames;
+	private int maxDelayFrames;
 	private double[][] matrix;
 
 	private Producer<PackedCollection<?>> input;
@@ -38,13 +38,21 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, CodeFe
 	private PackedCollection<?> feedback;
 	private PackedCollection<?> output;
 
+
+	public DelayNetwork(int sampleRate) {
+		this(64, sampleRate);
+	}
+
+	public DelayNetwork(int size, int sampleRate) {
+		this(0.5 / size, size, 1.5, sampleRate);
+	}
+
 	public DelayNetwork(double gain, int size, double duration, int sampleRate) {
 		this.gain = gain;
 		this.size = size;
-		this.sampleRate = sampleRate;
 		this.maxDelayFrames = (int) (duration * sampleRate);
 
-		this.matrix = randomHouseholderMatrix(size, 1.5);
+		this.matrix = randomHouseholderMatrix(size, 1.3);
 		// this.matrix = householderMatrix(_normalize(c(1).repeat(size)), 1.3 / size);
 
 		this.delayIn = new PackedCollection<>(size);
@@ -68,16 +76,24 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, CodeFe
 
 	@Override
 	public Supplier<Runnable> tick() {
-		Supplier<Runnable> matmul = a(p(delayOut), matmul(p(feedback), p(delayIn)).add(c(input, 0).mul(gain).repeat(size)));
-
-		OperationList tick = new OperationList("FDN Tick");
+		/*
+		 * D = value from the buffer
+		 * New value in the buffer = D * F + Input
+		 * Output = D
+		 */
+		OperationList tick = new OperationList("DelayNetwork Tick");
+		// D = value from the buffer
 		tick.add(a(cp(delayIn).each(),
 				c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices)))));
-		tick.add(matmul);
+		// O = D * F + Input
+		tick.add(a(p(delayOut), matmul(p(feedback), p(delayIn)).add(c(input, 0).mul(gain).repeat(size))));
+		// New value in the buffer = O
 		tick.add(a(c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices))),
 				traverseEach(p(delayOut))));
+		// Step forward
 		tick.add(a(p(bufferIndices), add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
-		tick.add(a(p(output), sum(p(delayOut))));
+		// Output = D
+		tick.add(a(p(output), sum(p(delayIn))));
 		return tick;
 	}
 

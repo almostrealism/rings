@@ -98,7 +98,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 		AdjustableDelayCell delay = adjustableDelay();
 		OperationList ops = computation(delay);
 
-		Runnable op = loop(ops, 25).get();
+		Runnable op = lp(ops, 25).get();
 		op.run();
 		assertions(delay);
 	}

@@ -117,4 +117,8 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		measures.forEach(AudioMeter::reset);
 		out.reset();
 	}
+
+	public static void setStandardDuration(int sec) {
+		standardDuration = (int) (sec * OutputLine.sampleRate);
+	}
 }
