@@ -57,7 +57,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 1;
+	public static final int verbosity = 0;
 
 	public static final boolean enableSourcesJson = true;
 	public static final int singleChannel = -1;
@@ -122,10 +122,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		KernelPreferences.optimizeForMetal();
 		NativeComputeContext.enableLargeScopeMonitoring = false;
-		TemporalRunner.enableOptimization = true;
+		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
-		HealthComputationAdapter.setStandardDuration(15);
 		StableDurationHealthComputation.enableTimeout = true;
 		MixdownManager.enableReverb = true;
 		AudioScene.enableMainFilterUp = false; // true;

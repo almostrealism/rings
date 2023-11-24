@@ -29,6 +29,8 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	private double gain;
 	private int size;
 	private int maxDelayFrames;
+	private boolean parallel;
+
 	private double[][] matrix;
 
 	private Producer<PackedCollection<?>> input;
@@ -40,20 +42,21 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	private PackedCollection<?> output;
 
 
-	public DelayNetwork(int sampleRate) {
-		this(64, sampleRate);
+	public DelayNetwork(int sampleRate, boolean parallel) {
+		this(128, sampleRate, parallel);
 	}
 
-	public DelayNetwork(int size, int sampleRate) {
-		this(0.5 / size, size, 1.5, sampleRate);
+	public DelayNetwork(int size, int sampleRate, boolean parallel) {
+		this(0.5 / size, size, 1.5, sampleRate, parallel);
 	}
 
-	public DelayNetwork(double gain, int size, double duration, int sampleRate) {
+	public DelayNetwork(double gain, int size, double duration, int sampleRate, boolean parallel) {
 		this.gain = gain;
 		this.size = size;
 		this.maxDelayFrames = (int) (duration * sampleRate);
+		this.parallel = parallel;
 
-		this.matrix = randomHouseholderMatrix(size, 1.3);
+		this.matrix = randomHouseholderMatrix(size, 1.0);
 		// this.matrix = householderMatrix(_normalize(c(1).repeat(size)), 1.3 / size);
 
 		this.delayIn = new PackedCollection<>(size);
@@ -82,20 +85,43 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 		 * New value in the buffer = D * F + Input
 		 * Output = D
 		 */
-		OperationList tick = new OperationList("DelayNetwork Tick");
-		// D = value from the buffer
-		tick.add(a(cp(delayIn).each(),
-				c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices)))));
-		// O = D * F + Input
-		tick.add(a(p(delayOut), matmul(p(feedback), p(delayIn)).add(c(input, 0).mul(gain).repeat(size))));
-		// New value in the buffer = O
-		tick.add(a(c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices))),
-				traverseEach(p(delayOut))));
-		// Step forward
-		tick.add(a(p(bufferIndices), add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
-		// Output = D
-		tick.add(a(p(output), sum(p(delayIn))));
-		return tick;
+		if (parallel) {
+			OperationList tick = new OperationList("DelayNetwork Tick");
+			// D = value from the buffer
+			tick.add(a(cp(delayIn).each(),
+					c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices)))));
+			// O = D * F + Input (TODO Should be parallel)
+			tick.add(a(p(delayOut), matmul(p(feedback), p(delayIn)).add(c(input, 0).mul(gain).repeat(size))));
+			// New value in the buffer = O
+			tick.add(a(c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices))),
+					traverseEach(p(delayOut))));
+			// Step forward (TODO Should be parallel)
+			tick.add(a(p(bufferIndices), add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
+			// Output = D
+			tick.add(a(p(output), sum(p(delayIn))));
+			return tick;
+		} else {
+			OperationList tick = new OperationList("DelayNetwork Tick");
+			// D = value from the buffer
+			tick.add(a(
+					cp(delayIn),
+					traverse(0, c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices))))));
+			// O = D * F + Input
+			tick.add(a(
+					p(delayOut),
+					matmul(p(feedback), p(delayIn)).add(c(input, 0).mul(gain).repeat(size))));
+			// New value in the buffer = O
+			tick.add(a(
+					traverse(0, c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices)))),
+					p(delayOut)));
+			// Step forward
+			tick.add(a(
+					p(bufferIndices),
+					add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
+			// Output = D
+			tick.add(a(p(output), sum(p(delayIn))));
+			return tick;
+		}
 	}
 
 	@Override

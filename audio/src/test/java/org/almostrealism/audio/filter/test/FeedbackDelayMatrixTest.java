@@ -30,7 +30,7 @@ public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
 		KernelPreferences.optimizeForMetal();
 
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate());
+		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
 		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 }

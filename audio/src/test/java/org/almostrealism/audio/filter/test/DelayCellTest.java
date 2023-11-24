@@ -118,15 +118,21 @@ public class DelayCellTest implements CellFeatures {
 
 	@Test
 	public void reverb() {
+		TemporalRunner.enableFlatten = true;
+		TemporalRunner.enableOptimization = false;
+
 		KernelPreferences.optimizeForMetal();
 		Supplier<Runnable> r =
 				iter(w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
 						.d(i -> v(2.0))
-						.map(fc(i -> new DelayNetwork(32, OutputLine.sampleRate)))
+						.map(fc(i -> new DelayNetwork(32, OutputLine.sampleRate, false)))
 						.o(i -> new File("results/reverb-delay-cell-test.wav")),
 						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
-		r.get().run();
+
+		HardwareOperator.verboseLog(() -> {
+			r.get().run();
+		});
 	}
 
 	@Test
