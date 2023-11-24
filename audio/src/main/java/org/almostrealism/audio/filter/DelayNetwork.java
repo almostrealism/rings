@@ -17,6 +17,7 @@
 package org.almostrealism.audio.filter;
 
 import io.almostrealism.relation.Producer;
+import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
@@ -24,7 +25,7 @@ import org.almostrealism.heredity.TemporalFactor;
 
 import java.util.function.Supplier;
 
-public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, CodeFeatures {
+public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecycle, CodeFeatures {
 	private double gain;
 	private int size;
 	private int maxDelayFrames;
@@ -95,6 +96,14 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, CodeFe
 		// Output = D
 		tick.add(a(p(output), sum(p(delayIn))));
 		return tick;
+	}
+
+	@Override
+	public void reset() {
+		this.delayIn.fill(0.0);
+		this.delayOut.fill(0.0);
+		this.delayBuffer.fill(0.0);
+		this.bufferIndices.fill(0.0);
 	}
 
 	public double[][] randomHouseholderMatrix(int size, double scale) {
