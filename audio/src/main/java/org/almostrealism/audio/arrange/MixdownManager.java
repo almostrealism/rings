@@ -53,7 +53,7 @@ import java.util.stream.IntStream;
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableAdjustmentChromosome = true;
 	public static boolean enableReverb = false;
-	public static double reverbLevel = 0.1;
+	public static double reverbLevel = 0.25;
 
 	private TimeCell clock;
 	private int sampleRate;
@@ -66,6 +66,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private SimpleChromosome wetOut;
 	private SimpleChromosome delay;
 	private DelayChromosome delayDynamics;
+	private SimpleChromosome reverb;
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
 
@@ -116,6 +117,9 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
 		this.delayDynamics = new DelayChromosome(d, sampleRate);
 		this.delayDynamics.setGlobalTime(clock);
+
+		this.reverb = genome.addSimpleChromosome(1);
+		IntStream.range(0, channels).forEach(i -> reverb.addGene());
 
 		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> wf.addGene());
@@ -182,6 +186,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		delayDynamics.setOverallSpeedUpDurationRange(config.overallSpeedUpDurationMin, config.overallSpeedUpDurationMax);
 		delayDynamics.setOverallSpeedUpExponentRange(config.overallSpeedUpExponentMin, config.overallSpeedUpExponentMax);
 
+		reverb.setParameterRange(0, 0.0, 1.0);
+
 		wetFilter.setHighPassRange(config.minHighPass, config.maxHighPass);
 		wetFilter.setLowPassRange(config.minLowPass, config.maxLowPass);
 
@@ -243,7 +249,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				AudioScene.enableEfxFilters ?
 						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0)).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
 						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
-				fc(i -> sf(reverbLevel)));
+				fc(i -> factor(reverb.valueAt(channelIndex.applyAsInt(i), 0))));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];
