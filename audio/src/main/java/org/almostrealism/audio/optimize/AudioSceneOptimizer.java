@@ -127,7 +127,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		StableDurationHealthComputation.enableTimeout = true;
 		MixdownManager.enableReverb = true;
-		AudioScene.enableMainFilterUp = false; // true;
+		AudioScene.enableMainFilterUp = true;
 		AudioScene.enableEfxFilters = true;
 		AudioScene.enableEfx = true;
 		AudioScene.enableWetInAdjustment = true;
