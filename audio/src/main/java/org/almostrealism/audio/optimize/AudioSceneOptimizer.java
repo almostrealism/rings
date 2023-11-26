@@ -120,7 +120,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static void main(String args[]) throws IOException {
 		HardwareOperator.profile = new OperationProfile();
 
-		KernelPreferences.optimizeForMetal();
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;

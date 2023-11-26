@@ -22,21 +22,27 @@ import java.io.File;
 import java.util.List;
 
 public class AudioHealthScore implements HealthScore {
+	private long frames;
 	private double score;
 	private String output;
 	private List<String> stems;
 
-	public AudioHealthScore() { this(0.0, null, null); }
+	public AudioHealthScore() { this(0, 0.0, null, null); }
 
-	public AudioHealthScore(double score) {
-		this(score, null, null);
+	public AudioHealthScore(long frames, double score) {
+		this(frames, score, null, null);
 	}
 
-	public AudioHealthScore(double score, String output, List<String> stems) {
+	public AudioHealthScore(long frames, double score, String output, List<String> stems) {
+		this.frames = frames;
 		this.score = score;
 		this.output = output;
 		this.stems = stems;
 	}
+
+	public long getFrames() { return frames; }
+
+	public void setFrames(long frames) { this.frames = frames; }
 
 	@Override
 	public double getScore() { return score; }

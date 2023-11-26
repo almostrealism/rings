@@ -20,6 +20,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.time.Temporal;
@@ -150,14 +151,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		Runnable start;
 		Runnable iterate;
 
+		long l = 0;
+
 		try {
 			start = runner.get();
 			iterate = runner.getContinue();
 
 			startTime = System.currentTimeMillis();
 			if (enableTimeout) startTimeoutTrigger();
-
-			long l;
 
 			l:
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
@@ -216,6 +217,10 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			if (enableVerbose)
 				System.out.println("\nStableDurationHealthComputation: Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
 		} finally {
+			if (l > 0) {
+				AudioScenePopulation.recordGenerationTime(l, System.currentTimeMillis() - startTime);
+			}
+
 			endTimeoutTrigger();
 
 			if (enableOutput && score > 0) {
@@ -231,9 +236,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
  			reset();
 		}
 
-		return new AudioHealthScore(score,
+		return new AudioHealthScore(l, score,
 				Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null),
-				Optional.ofNullable(getStemFiles()).map(l -> l.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
+				Optional.ofNullable(getStemFiles()).map(s -> s.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
 	}
 
 	@Override
