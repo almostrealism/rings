@@ -53,7 +53,6 @@ import java.util.stream.IntStream;
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static boolean enableAdjustmentChromosome = true;
 	public static boolean enableReverb = false;
-	public static double reverbLevel = 0.25;
 
 	private TimeCell clock;
 	private int sampleRate;
@@ -69,6 +68,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private SimpleChromosome reverb;
 	private FixedFilterChromosome wetFilter;
 	private AdjustmentChromosome mainFilterDown;
+
+	private List<Integer> reverbChannels;
 
 	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers,
 						  TimeCell clock, int sampleRate) {
@@ -131,6 +132,16 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.mainFilterDown.setGlobalTime(clock);
 
 		initRanges(new Configuration(channels), delayLayers);
+
+		this.reverbChannels = new ArrayList<>();
+	}
+
+	public List<Integer> getReverbChannels() {
+		return reverbChannels;
+	}
+
+	public void setReverbChannels(List<Integer> reverbChannels) {
+		this.reverbChannels = reverbChannels;
 	}
 
 	public void initRanges(Configuration config, int delayLayers) {
@@ -249,7 +260,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				AudioScene.enableEfxFilters ?
 						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0)).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
 						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
-				fc(i -> factor(reverb.valueAt(channelIndex.applyAsInt(i), 0))));
+				fc(i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
+							factor(reverb.valueAt(channelIndex.applyAsInt(i), 0)) : sf(0.0)));
 
 		CellList main = branch[0];
 		CellList efx = branch[1];

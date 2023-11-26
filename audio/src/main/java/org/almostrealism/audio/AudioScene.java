@@ -264,6 +264,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public ChordProgressionManager getChordProgression() { return progression; }
 	public PatternSystemManager getPatternManager() { return patterns; }
 	public EfxManager getEfxManager() { return efx; }
+	public MixdownManager getMixdownManager() { return mixdown; }
 	public GenerationManager getGenerationManager() { return generation; }
 
 	public void addTempoListener(Consumer<Frequency> listener) { this.tempoListeners.add(listener); }
@@ -323,6 +324,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
 		settings.setWetChannels(getEfxManager().getWetChannels());
+		settings.setReverbChannels(getMixdownManager().getReverbChannels());
 		settings.setGeneration(generation.getSettings());
 
 		return settings;
@@ -356,6 +358,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		if (settings.getWetChannels() != null) {
 			getEfxManager().getWetChannels().addAll(settings.getWetChannels());
 			getSectionManager().getWetChannels().addAll(settings.getWetChannels());
+		}
+
+		getMixdownManager().getReverbChannels().clear();
+		if (settings.getReverbChannels() != null) {
+			getMixdownManager().getReverbChannels().addAll(settings.getReverbChannels());
 		}
 
 		generation.setSettings(settings.getGeneration());
@@ -494,6 +501,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private PatternSystemManager.Settings patternSystem;
 		private List<String> channelNames;
 		private List<Integer> wetChannels;
+		private List<Integer> reverbChannels;
 
 		private GenerationManager.Settings generation;
 
@@ -531,6 +539,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public List<Integer> getWetChannels() { return wetChannels; }
 		public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
+
+		public List<Integer> getReverbChannels() { return reverbChannels; }
+		public void setReverbChannels(List<Integer> reverbChannels) { this.reverbChannels = reverbChannels; }
 
 		public GenerationManager.Settings getGeneration() { return generation; }
 		public void setGeneration(GenerationManager.Settings generation) { this.generation = generation; }
@@ -571,7 +582,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead", "Atmosphere"));
-			settings.setWetChannels(List.of(3, 4, 5));
+			settings.setWetChannels(List.of(2, 3, 4, 5));
+			settings.setReverbChannels(List.of(1, 2, 3, 4, 5));
 			return settings;
 		}
 	}

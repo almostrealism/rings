@@ -795,7 +795,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 			} else if (s.absorber instanceof VolumeAbsorber) {
 				dist = ((VolumeAbsorber) s.absorber).getVolume().intersect(x, d);
 			} else {
-				Console.warn("Unconstrained absorber", null);
+				Console.root().warn("Unconstrained absorber", null);
 			}
 			
 			if (dist < l) {
