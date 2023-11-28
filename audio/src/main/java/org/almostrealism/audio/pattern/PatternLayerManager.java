@@ -19,6 +19,7 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.Ops;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -47,6 +48,14 @@ public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
+	private static final Evaluable<PackedCollection<?>> sum;
+	private static final Evaluable<PackedCollection<?>> scaleVolume;
+
+	static {
+		sum = Ops.op(o -> o.add(o.v(o.shape(1), 0), o.v(o.shape(1), 1)).get());
+		scaleVolume = Ops.op(o -> o.multiply(o.v(o.shape(1), 0), o.v(o.shape(1), 1)).get());
+	}
+
 	private int channel;
 	private double duration;
 	private double scale;
@@ -65,7 +74,6 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private Evaluable<PackedCollection<?>> sum;
 	private Runnable adjustVolume;
 
 	public PatternLayerManager(List<PatternFactoryChoice> choices, SimpleChromosome chromosome, int channel, double measures,
@@ -109,14 +117,14 @@ public class PatternLayerManager implements CodeFeatures {
 			return;
 		}
 
-		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
-		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
-
-		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-		v.add(() -> () ->
-				volume.setMem(0, 1.0 / chordDepth));
-		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
-		adjustVolume = v.get();
+		if (this.adjustVolume == null) {
+			OperationList v = new OperationList("PatternLayerManager Adjust Volume");
+			v.add(() -> () ->
+					volume.setMem(0, 1.0 / chordDepth));
+			v.add(() -> () ->
+					scaleVolume.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+			adjustVolume = v.get();
+		}
 
 		if (dest != null) dest.destroy();
 	}

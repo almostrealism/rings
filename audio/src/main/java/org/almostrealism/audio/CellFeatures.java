@@ -43,6 +43,7 @@ import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
@@ -66,6 +67,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFeatures {
+	Console console = Console.root().child();
 
 	default Receptor<PackedCollection<?>> a(Supplier<Evaluable<? extends PackedCollection<?>>>... destinations) {
 		if (destinations.length == 1) {

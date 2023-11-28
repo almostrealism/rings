@@ -46,6 +46,7 @@ import org.almostrealism.heredity.CombinedGenome;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.io.Console;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
@@ -66,6 +67,8 @@ import java.util.stream.IntStream;
 
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
+	public static final Console console = CellFeatures.console.child();
+
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
@@ -409,8 +412,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 									List<Integer> channels,
 									OperationList setup) {
 		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
-
-//		CellList cells = all(channelCount, i -> efx.apply(i, getPatternChannel(i, setup)));
 		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], setup)));
 		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
 	}
@@ -419,7 +420,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0);
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
-		patternSetup.add(() -> () -> patterns.setTuning(tuning));
+		patternSetup.add(() -> () -> {
+			log("Setting tuning for channel " + channel);
+			patterns.setTuning(tuning);
+		});
 		patternSetup.add(sections.setup());
 		patternSetup.add(getPatternSetup(channel));
 		patternSetup.add(() -> () ->

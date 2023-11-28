@@ -18,6 +18,7 @@ package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
@@ -32,6 +33,7 @@ import org.almostrealism.heredity.ConfigurableGenome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 
 import java.util.Arrays;
@@ -141,6 +143,9 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 		return setup;
 	}
 
+	@Override
+	public Console console() { return AudioScene.console; }
+
 	public class Section implements ChannelSection {
 		private int position, length;
 		private int channel;
@@ -207,6 +212,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 			process.add(new MemoryDataCopy("DefaultChannelSection Input", () -> source.get().evaluate(), () -> input, samples));
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
+			process.add(() -> () -> log("Channel " + channel + " section (" + position + ", " + length + ") processed"));
 			return process;
 		}
 
