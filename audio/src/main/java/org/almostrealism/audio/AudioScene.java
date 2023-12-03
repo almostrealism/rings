@@ -17,6 +17,7 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.code.LogOperation;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -420,11 +421,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0);
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
-		patternSetup.add(() -> () -> {
-			log("Setting tuning for channel " + channel);
-			patterns.setTuning(tuning);
-		});
+		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
+		patternSetup.add(new LogOperation(console(), "Finished Sections Setup"));
 		patternSetup.add(getPatternSetup(channel));
 		patternSetup.add(() -> () ->
 				audio.setMem(0, patternDestination, 0, patternDestination.getMemLength()));
@@ -459,7 +458,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			return context;
 		};
 
-		OperationList op = new OperationList("AudioScene Pattern Setup");
+		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
 		op.add(() -> () -> refreshPatternDestination());
 		op.add(patterns.sum(ctx));
 		return op;
