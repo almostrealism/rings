@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
-	public static boolean enableTimeout = true;
+	public static boolean enableTimeout = false;
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
 
