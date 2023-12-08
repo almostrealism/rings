@@ -17,13 +17,21 @@
 package org.almostrealism.rml.unet.test;
 
 import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.ml.DiffusionFeatures;
+import org.almostrealism.model.Block;
 import org.junit.Test;
 
-public class UNetTest {
+public class UNetTest implements DiffusionFeatures {
+	int blockOutChannels[] = { 128, 128, 256, 256, 512, 512 };
+
 	@Test
 	public void unet() {
-		int width = 100, height = 100;
+		int width = 256, height = 256;
+		int timeInputDim = blockOutChannels[0];
+		int timeEmbedDim = blockOutChannels[0] * 4;
 
-		TraversalPolicy policy = new TraversalPolicy(height, width);
+		TraversalPolicy inputShape = new TraversalPolicy(height, width);
+
+		Block timeEmbedding = timestepEmbeddings(timeInputDim, timeEmbedDim);
 	}
 }
