@@ -95,7 +95,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 		if (new File(file).exists()) {
 			genomes = read(new FileInputStream(file));
-			PopulationOptimizer.console.println("Read chromosome data from " + file);
+			log("Read chromosome data from " + file);
 		}
 
 		if (genomes == null || genomes.isEmpty()) {
@@ -103,12 +103,12 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
 							.mapToObj(i -> gen.get()).collect(Collectors.toList()))
 					.orElseGet(ArrayList::new);
-			PopulationOptimizer.console.println("Generated initial population");
+			log("Generated initial population");
 		}
 
 		setPopulation(getChildrenFunction().apply(genomes));
 		storePopulation();
-		PopulationOptimizer.console.println(getPopulation().size() + " networks in population");
+		log(getPopulation().size() + " networks in population");
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public void storePopulation() {
 		try {
 			store(new FileOutputStream(file));
-			PopulationOptimizer.console.println("Wrote " + file);
+			log("Wrote " + file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

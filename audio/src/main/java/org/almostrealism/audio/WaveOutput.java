@@ -39,27 +39,58 @@ import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.io.Console;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.CursorPair;
 import org.almostrealism.CodeFeatures;
 
 public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
 	public static boolean enableVerbose = false;
+	public static boolean enableKernelTimeline = true;
 
-	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 180);
+	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 260);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
 	private static Evaluable<PackedCollection<?>> exportKernel;
 
 	static {
-		timeline = new DefaultContextSpecific<>(
-				() -> {
-					PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
-					List<Double> values = IntStream.range(0, defaultTimelineFrames)
-							.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
-					for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
-					return data;
-				}, PackedCollection::destroy);
+		Supplier<PackedCollection<PackedCollection<?>>> timelineSupply;
+
+		if (enableKernelTimeline) {
+			timelineSupply = () -> {
+				if (enableVerbose) {
+					CellFeatures.console.println("WaveOutput: Generating timeline");
+				}
+
+				PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
+				Ops.o().integers(0, defaultTimelineFrames).divide(Ops.o().c(OutputLine.sampleRate)).into(data).evaluate();
+
+				if (enableVerbose) {
+					CellFeatures.console.println("WaveOutput: Finished generating timeline");
+				}
+
+				return data;
+			};
+		} else {
+			timelineSupply = () -> {
+				if (enableVerbose) {
+					CellFeatures.console.println("WaveOutput: Generating timeline");
+				}
+
+				PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
+				List<Double> values = IntStream.range(0, defaultTimelineFrames)
+						.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
+				for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
+
+				if (enableVerbose) {
+					CellFeatures.console.println("WaveOutput: Finished generating timeline");
+				}
+
+				return data;
+			};
+		}
+
+		timeline = new DefaultContextSpecific<>(timelineSupply, PackedCollection::destroy);
 		timeline.init();
 
 		exportKernel = Ops.op(o ->
@@ -131,7 +162,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 			});
 
 			if (enableVerbose)
-				System.out.println("WaveOutput: Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
+				log("Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
 		};
 	}
 
@@ -141,9 +172,9 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 			int frames = (int) cursor.left() - 1;
 
 			if (frames > 0) {
-				// System.out.println("Writing " + frames + " frames");
+				// log("Writing " + frames + " frames");
 			} else {
-				System.out.println("WaveOutput: No frames to write");
+				log("No frames to write");
 				return;
 			}
 
@@ -177,7 +208,8 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				return;
 			}
 
-			if (enableVerbose) System.out.println("WaveOutput: Wrote " + frames + " frames in " + (System.currentTimeMillis() - start) + " msec");
+			if (enableVerbose)
+				log(" Wrote " + frames + " frames in " + (System.currentTimeMillis() - start) + " msec");
 		};
 	}
 
@@ -207,4 +239,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		cursor.setDelayCursor(1);
 		data.reset();
 	}
+
+	@Override
+	public Console console() { return CellFeatures.console; }
 }

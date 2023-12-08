@@ -48,6 +48,7 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
 import org.almostrealism.io.Console;
+import org.almostrealism.io.TimingMetric;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
@@ -69,6 +70,7 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final Console console = CellFeatures.console.child();
+	private static TimingMetric getCellsTime = console.metric("getCells");
 
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
@@ -388,9 +390,15 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output) {
-		return getCells(measures, stems, output,
-				IntStream.range(0, getChannelCount())
-						.mapToObj(i -> i).collect(Collectors.toList()));
+		long start = System.nanoTime();
+
+		try {
+			return getCells(measures, stems, output,
+					IntStream.range(0, getChannelCount())
+							.mapToObj(i -> i).collect(Collectors.toList()));
+		} finally {
+			getCellsTime.addEntry(System.nanoTime() - start);
+		}
 	}
 
 	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
@@ -423,7 +431,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
-		patternSetup.add(new LogOperation(console(), "Finished Sections Setup"));
 		patternSetup.add(getPatternSetup(channel));
 		patternSetup.add(() -> () ->
 				audio.setMem(0, patternDestination, 0, patternDestination.getMemLength()));

@@ -36,6 +36,7 @@ import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
@@ -51,6 +52,7 @@ import java.util.stream.IntStream;
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableAutoVolume = true;
+	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
 
 	private List<PatternFactoryChoice> choices;
@@ -193,10 +195,15 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 						this.destination.getShape().length(0));
 
 				TraversalPolicy shape = shape(frames).traverse(1);
+				if (enableVerbose) log("Rendering " + frames + " frames");
 				sum
 						.into(this.destination.range(shape))
 						.evaluate(this.destination.range(shape), audio.range(shape));
+				if (enableVerbose) log("Rendered " + frames + " frames");
 			});
+
+			if (enableVerbose)
+				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
 		});
 
 		Evaluable<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1)).get();

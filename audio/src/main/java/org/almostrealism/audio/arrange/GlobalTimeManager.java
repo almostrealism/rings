@@ -58,7 +58,6 @@ public class GlobalTimeManager implements Setup, Temporal, ConsoleFeatures {
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("GlobalTimeManager Setup");
 		setup.add(() -> () -> {
-			log("Resetting clocks...");
 			IntStream.range(0, resets.size()).forEach(i -> clock.setReset(i, frameForMeasure.applyAsInt(resets.get(i))));
 		});
 		setup.add(clock.setup());

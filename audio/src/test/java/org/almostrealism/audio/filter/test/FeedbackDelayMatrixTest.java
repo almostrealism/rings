@@ -27,6 +27,7 @@ import java.io.IOException;
 public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
 	@Test
 	public void reverb() throws IOException {
+		KernelPreferences.enableSharedMemory = true;
 		KernelPreferences.optimizeForMetal();
 
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));

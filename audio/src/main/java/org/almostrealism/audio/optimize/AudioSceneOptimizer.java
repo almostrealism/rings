@@ -51,6 +51,7 @@ import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
@@ -58,6 +59,7 @@ import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
+	public static boolean enableVerbose = false;
 
 	public static final boolean enableSourcesJson = true;
 	public static final int singleChannel = -1;
@@ -93,7 +95,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 					if (population == null) {
 						population = new AudioScenePopulation(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
+
+						if (enableVerbose) log("Initializing AudioScenePopulation");
 						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
+						if (enableVerbose) log("AudioScenePopulation initialized (getCells duration = " + AudioScene.console.metric("getCells").getTotalSeconds() + ")");
 					} else {
 						population.setGenomes(children);
 					}
@@ -118,7 +123,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
-		HardwareOperator.profile = new OperationProfile();
+		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
@@ -137,7 +143,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
-		PopulationOptimizer.popSize = 35;
+		PopulationOptimizer.popSize = 10;
 
 		// Verbosity level 1
 		PopulationOptimizer.enableVerbose = verbosity > 0;
@@ -145,8 +151,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
+		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 
 		// Verbosity level 3
+		PatternSystemManager.enableVerbose = verbosity > 2;
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		Hardware.enableVerbose = verbosity > 2;
@@ -172,6 +180,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				opt.init();
 				opt.run();
 				HardwareOperator.profile.print();
+				MemoryDataArgumentMap.profile.print();
 				AcceleratedOperation.printTimes();
 			} catch (IOException e) {
 				throw new RuntimeException(e);

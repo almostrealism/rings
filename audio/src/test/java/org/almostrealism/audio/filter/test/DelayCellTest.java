@@ -121,6 +121,7 @@ public class DelayCellTest implements CellFeatures {
 		TemporalRunner.enableFlatten = true;
 		TemporalRunner.enableOptimization = false;
 
+		KernelPreferences.enableSharedMemory = true;
 		KernelPreferences.optimizeForMetal();
 		Supplier<Runnable> r =
 				iter(w("Library/Snare Perc DD.wav")
