@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.filter.DelayNetwork;
 import org.junit.Test;
@@ -27,11 +26,9 @@ import java.io.IOException;
 public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
 	@Test
 	public void reverb() throws IOException {
-		KernelPreferences.enableSharedMemory = true;
-		KernelPreferences.optimizeForMetal();
-
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
+//		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
+		DelayNetwork verb = new DelayNetwork((int) f.getSampleRate(), false);
 		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 }
