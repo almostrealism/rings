@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PackedCollectionMapTests" type="JUnit" factoryName="JUnit" folderName="Mapping">
+    <module name="ar-utils" />
+    <option name="PACKAGE_NAME" value="org.almostrealism.collect.computations.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.collect.computations.test.PackedCollectionMapTests" />
+    <option name="METHOD_NAME" value="map3d" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -13,6 +13,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-physics</artifactId>
+			<version>0.60</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-engine</artifactId>
 			<version>0.31</version>

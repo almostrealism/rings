@@ -14,6 +14,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-audio</artifactId>
+			<version>0.31</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-remote</artifactId>
 			<version>0.31</version>
 		</dependency>

@@ -25,6 +25,8 @@ import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.computations.Loop;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
@@ -34,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class AudioPassFilterTest implements CellFeatures, TestFeatures {
+	public static boolean enableVerbose = false;
+
 	@Test
 	public void highPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
@@ -67,10 +71,18 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
 		Runnable tick = optimize ? Process.optimized(filter.tick()).get() : filter.tick().get();
 
-		for (int i = 0; i < values.getMemLength(); i++) {
-			current.setValue(values.toDouble(i));
-			out.setMem(i, ev.evaluate().toDouble(0));
-			tick.run();
+		Runnable r = () -> {
+			for (int i = 0; i < values.getMemLength(); i++) {
+				current.setValue(values.toDouble(i));
+				out.setMem(i, ev.evaluate().toDouble(0));
+				tick.run();
+			}
+		};
+
+		if (enableVerbose) {
+			HardwareOperator.verboseLog(r);
+		} else {
+			r.run();
 		}
 
 		WavFile wav = WavFile.newWavFile(new File("results/" + name  + "-filter-test.wav"), 1, out.getMemLength(),

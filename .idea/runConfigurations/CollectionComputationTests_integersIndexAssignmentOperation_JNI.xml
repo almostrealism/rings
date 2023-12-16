@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CollectionComputationTests.integersIndexAssignmentOperation JNI" type="JUnit" factoryName="JUnit" folderName="Collections">
+    <module name="ar-utils" />
+    <option name="PACKAGE_NAME" value="org.almostrealism.collect.computations.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.collect.computations.test.CollectionComputationTests" />
+    <option name="METHOD_NAME" value="integersIndexAssignmentOperation" />
+    <option name="TEST_OBJECT" value="method" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_DRIVER=native -DAR_HARDWARE_PREFER_LOOPS=enabled" />
+    <method v="2" />
+  </configuration>
+</component>

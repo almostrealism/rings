@@ -254,9 +254,4 @@ public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Vo
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }
-
-	@Override
-	public Ray operate(Vector v) {
-		return null;
-	}
 }
