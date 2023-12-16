@@ -17,7 +17,6 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.almostrealism.code.LogOperation;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -70,7 +69,7 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
 	public static final Console console = CellFeatures.console.child();
-	private static TimingMetric getCellsTime = console.metric("getCells");
+	private static TimingMetric getCellsTime = console.timing("getCells");
 
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;

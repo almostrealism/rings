@@ -25,13 +25,11 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.code.OperationProfile;
-import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
-import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
@@ -98,7 +96,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 						if (enableVerbose) log("Initializing AudioScenePopulation");
 						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
-						if (enableVerbose) log("AudioScenePopulation initialized (getCells duration = " + AudioScene.console.metric("getCells").getTotalSeconds() + ")");
+						if (enableVerbose) log("AudioScenePopulation initialized (getCells duration = " + AudioScene.console.timing("getCells").getTotal() + ")");
 					} else {
 						population.setGenomes(children);
 					}
@@ -143,7 +141,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
-		PopulationOptimizer.popSize = 10;
+		PopulationOptimizer.popSize = 14;
 
 		// Verbosity level 1
 		PopulationOptimizer.enableVerbose = verbosity > 0;
