@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AcceleratedConditionalStatementTests" type="JUnit" factoryName="JUnit" folderName="Common">
+    <module name="ar-utils" />
+    <option name="PACKAGE_NAME" value="org.almostrealism.math.bool.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.math.bool.test.AcceleratedConditionalStatementTests" />
+    <option name="METHOD_NAME" value="map3d" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2" />
+  </configuration>
+</component>

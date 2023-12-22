@@ -8,3 +8,5 @@ audio/Kit/**
 audio/Library/**
 audio/pattern-factory.json
 audio/Population.xml
+
+lib/**SNAPSHOT.jar

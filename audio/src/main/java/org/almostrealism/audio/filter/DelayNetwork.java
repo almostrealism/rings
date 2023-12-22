@@ -68,7 +68,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 		this.output = new PackedCollection<>(1);
 
 		this.feedback.fill(pos -> matrix[pos[0]][pos[1]]);
-		this.bufferLengths.fill(pos -> Math.floor(0.1 * maxDelayFrames + 0.9 * Math.random() * maxDelayFrames));
+		this.bufferLengths.fill(pos -> Math.max(1, Math.floor(0.1 * maxDelayFrames + 0.9 * Math.random() * maxDelayFrames)));
 		this.bufferIndices.fill(pos -> 0.0);
 	}
 
@@ -80,13 +80,14 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 
 	@Override
 	public Supplier<Runnable> tick() {
+		OperationList tick = new OperationList("DelayNetwork Tick");
+
 		/*
 		 * D = value from the buffer
 		 * New value in the buffer = D * F + Input
 		 * Output = D
 		 */
 		if (parallel) {
-			OperationList tick = new OperationList("DelayNetwork Tick");
 			// D = value from the buffer
 			tick.add(a(cp(delayIn).each(),
 					c(p(delayBuffer), shape(delayBuffer), integers(0, size), traverseEach(p(bufferIndices)))));
@@ -99,9 +100,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 			tick.add(a(p(bufferIndices), add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
 			// Output = D
 			tick.add(a(p(output), sum(p(delayIn))));
-			return tick;
 		} else {
-			OperationList tick = new OperationList("DelayNetwork Tick");
 			// D = value from the buffer
 			tick.add(a(
 					cp(delayIn),
@@ -120,8 +119,22 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 					add(p(bufferIndices), c(1).repeat(size)).mod(p(bufferLengths))));
 			// Output = D
 			tick.add(a(p(output), sum(p(delayIn))));
-			return tick;
 		}
+
+//		OperationList op = new OperationList("Tick debug");
+//		op.add(tick.isolate());
+//		op.add(() -> () -> {
+//			System.out.println("tick: " +
+//					input.getClass() + " " +
+//					delayIn.getCount() + " " +
+//					delayOut.getCount() + " " +
+//					bufferIndices.getCount() + " " +
+//					bufferLengths.getCount() + " " +
+//					delayBuffer.getCount() + " " +
+//					output.getCount());
+//		});
+
+		return tick;
 	}
 
 	@Override

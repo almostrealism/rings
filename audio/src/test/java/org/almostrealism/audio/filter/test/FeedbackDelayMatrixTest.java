@@ -25,10 +25,23 @@ import java.io.IOException;
 
 public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
 	@Test
+	public void parallelVerb() throws IOException {
+		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
+		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
+		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
+	}
+
+	@Test
+	public void singleFrameVerb() throws IOException {
+		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
+		DelayNetwork verb = new DelayNetwork(0.5, 2, 1.0 / 44100.0, (int) f.getSampleRate(), false);
+		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
+	}
+
+	@Test
 	public void reverb() throws IOException {
-		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-//		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
-		DelayNetwork verb = new DelayNetwork((int) f.getSampleRate(), false);
+		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
+		DelayNetwork verb = new DelayNetwork(0.5, 64, 1.5, (int) f.getSampleRate(), false);
 		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 }

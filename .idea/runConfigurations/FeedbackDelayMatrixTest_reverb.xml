@@ -1,6 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FeedbackDelayMatrixTest.reverb" type="JUnit" factoryName="JUnit" folderName="Audio">
     <module name="ar-audio" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
     <option name="PACKAGE_NAME" value="org.almostrealism.audio.filter.test" />
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.audio.filter.test.FeedbackDelayMatrixTest" />
     <option name="METHOD_NAME" value="reverb" />

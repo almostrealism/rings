@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SwitchTest.threeChoices" type="JUnit" factoryName="JUnit" folderName="Common">
+    <module name="ar-utils" />
+    <option name="PACKAGE_NAME" value="org.almostrealism.algebra.computations.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.computations.test.SwitchTest" />
+    <option name="METHOD_NAME" value="threeChoices" />
+    <option name="TEST_OBJECT" value="method" />
+    <method v="2" />
+  </configuration>
+</component>
