@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ExpressionSimplificationTests" type="JUnit" factoryName="JUnit" folderName="Code">
+    <module name="ar-utils" />
+    <option name="PACKAGE_NAME" value="io.almostrealism.expression.test" />
+    <option name="MAIN_CLASS_NAME" value="io.almostrealism.expression.test.ExpressionSimplificationTests" />
+    <option name="METHOD_NAME" value="divideMultiply1" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2" />
+  </configuration>
+</component>
