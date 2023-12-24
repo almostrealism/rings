@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="CollectionComputationTests.integersIndexAssignmentOperation CL" type="JUnit" factoryName="JUnit" folderName="Collections">
+  <configuration default="false" name="TraversableDeltaComputationTests.polynomial2" type="JUnit" factoryName="JUnit" folderName="Algebra">
     <module name="ar-utils" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />
@@ -7,10 +7,10 @@
       <option name="useCurrentConnection" value="false" />
     </extension>
     <option name="PACKAGE_NAME" value="org.almostrealism.collect.computations.test" />
-    <option name="MAIN_CLASS_NAME" value="org.almostrealism.collect.computations.test.CollectionComputationTests" />
-    <option name="METHOD_NAME" value="integersIndexAssignmentOperation" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.collect.computations.test.TraversableDeltaComputationTests" />
+    <option name="METHOD_NAME" value="polynomial2" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_DRIVER=cl,native" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_OFF_HEAP_SIZE=0" />
     <method v="2" />
   </configuration>
 </component>
