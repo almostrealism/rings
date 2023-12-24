@@ -16,6 +16,7 @@
 
 package com.almostrealism.gl;
 
+import io.almostrealism.expression.Expression;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
@@ -97,8 +98,8 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 			added.add(s);
 		}
 
-		Variable program = gl.createProgram();
-		Variable shader = gl.createShader("VERTEX_SHADER");
+		Expression program = gl.createProgram();
+		Expression shader = gl.createShader("VERTEX_SHADER");
 
 		gl.shaderSource(shader, VERTEX_SHADER.replaceAll("\n", " "));
 		gl.compileShader(shader);

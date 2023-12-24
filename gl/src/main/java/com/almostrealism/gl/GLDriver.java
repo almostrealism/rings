@@ -20,6 +20,7 @@ import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
 import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.code.Precision;
+import io.almostrealism.expression.Expression;
 import io.almostrealism.lang.LanguageOperations;
 import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
@@ -32,7 +33,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import io.almostrealism.scope.Variable;
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
@@ -452,51 +452,51 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
 
-	public Variable createProgram() {
+	public Expression createProgram() {
 		return null; // TODO
 	}
 
-	public void linkProgram(Variable program) {
+	public void linkProgram(Expression program) {
 		// TODO
 	}
 
-	public void useProgram(Variable program) {
+	public void useProgram(Expression program) {
 		// TODO
 	}
 
-	public void mapProgramAttributes(Variable program) {
+	public void mapProgramAttributes(Expression program) {
 		// TODO
 	}
 
-	public Variable createShader(String type) {
+	public Expression createShader(String type) {
 		return null; // TODO
 	}
 
-	public void shaderSource(Variable shader, String source) {
+	public void shaderSource(Expression shader, String source) {
 		// TODO
 	}
 
-	public void compileShader(Variable shader) {
+	public void compileShader(Expression shader) {
 		// TODO
 	}
 
-	public void attachShader(Variable program, Variable shader) {
+	public void attachShader(Expression program, Expression shader) {
 		// TODO
 	}
 
-	public void deleteShader(Variable shader) {
+	public void deleteShader(Expression shader) {
 		// TODO
 	}
 
-	public Variable<String, ?> createBuffer() {
+	public Expression<String> createBuffer() {
 		return null; // TODO
 	}
 
-	public void bindBuffer(String code, Variable buffer) {
+	public void bindBuffer(String code, Expression buffer) {
 		// TODO
 	}
 
-	public void bufferData(Variable buffer, List<Double> data) {
+	public void bufferData(Expression buffer, List<Double> data) {
 		// TODO
 	}
 

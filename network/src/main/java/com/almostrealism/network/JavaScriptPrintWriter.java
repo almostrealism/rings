@@ -17,6 +17,7 @@
 package com.almostrealism.network;
 
 import io.almostrealism.code.*;
+import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.resource.Resource;
@@ -44,11 +45,11 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 	}
 
 	@Override
-	public void println(Variable v) {
+	public void println(ExpressionAssignment<?> v) {
 		if (v.isDeclaration()) {
-			p.println("var " + v.getName() + " = " + toString(v) + ";");
+			p.println("var " + v.getDestination().getExpression(getLanguage()) + " = " + toString(v.getExpression()) + ";");
 		} else {
-			p.println(v.getName() + " = " + toString(v) + ";");
+			p.println(v.getDestination().getExpression(getLanguage()) + " = " + toString(v.getExpression()) + ";");
 		}
 	}
 
@@ -92,6 +93,25 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 			return b.toString();
 		} else {
 			return v.getProducer().toString();
+		}
+	}
+
+	protected String toString(Expression e) {
+		if (e instanceof Method) {
+			Method m = (Method) e;
+
+			StringBuffer b = new StringBuffer();
+			if (m.getMember() != null)
+				b.append(m.getMember() + ".");
+
+			b.append(m.getName());
+			b.append("(");
+			b.append(toString(m.getArguments()));
+			b.append(")");
+
+			return b.toString();
+		} else {
+			return e.getExpression(getLanguage());
 		}
 	}
 	

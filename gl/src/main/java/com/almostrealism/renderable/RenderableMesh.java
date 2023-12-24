@@ -20,8 +20,8 @@ import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
 import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
+import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.expression.Expression;
-import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.expression.StaticReference;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
@@ -73,7 +73,7 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 			vertices.add(n[2].getZ());
 		}
 
-		Variable buffer = gl.createBuffer();
+		Expression buffer = gl.createBuffer();
 		gl.bindBuffer("ARRAY_BUFFER", buffer);
 		gl.bufferData(buffer, vertices);
 	} 
@@ -117,8 +117,8 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		String glMember = "gl";
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
-		
-		Variable positionBuffer = new Variable("positionBuffer", new Method(glMember, "createBuffer"));
+
+		ExpressionAssignment positionBuffer = declare("positionBuffer", new Method(glMember, "createBuffer"));
 		
 		GLPrintWriter glPrintWriter = (GLPrintWriter)gl;
 		CodePrintWriter p = glPrintWriter.getPrintWriter();
@@ -132,8 +132,8 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		
 		p.println(bindBuf);
 
-		
-		Variable positions = new Variable<>("positions", new StaticReference<>(String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]"));
+
+		ExpressionAssignment positions = declare("positions", new StaticReference<>(String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]"));
 		p.println(positions);
 		
 		
@@ -143,28 +143,28 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 				glPrintWriter.glParam("STATIC_DRAW")));
 		
 		//var buffers = { position: positionBuffer, };
-		
-		Variable buffers = new Variable<>("buffers", new StaticReference<>(String.class, "{ position: positionBuffer, }"));
+
+		ExpressionAssignment buffers = declare("buffers", new StaticReference<>(String.class, "{ position: positionBuffer, }"));
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<Variable>();
-		List<Variable<?, ?>> vars = bufferBinding.getVariables();
-		Variable numC = new Variable("numComponents", e(2));
+		List<ExpressionAssignment<?>> vars = bufferBinding.getVariables();
+		ExpressionAssignment numC = declare("numComponents", e(2));
 		vars.add(numC);
 
-		Variable norm = new Variable("normalize", e(false));
+		ExpressionAssignment norm = declare("normalize", e(false));
 		vars.add(norm);
-		Variable strd = new Variable("stride", e(0));
+		ExpressionAssignment strd = declare("stride", e(0));
 		vars.add(strd);
-		Variable offs = new Variable("offset", e(0));
+		ExpressionAssignment offs = declare("offset", e(0));
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glPrintWriter.glMethod("bindBuffer", glPrintWriter.glParam("ARRAY_BUFFER"),
 				new StaticReference<>(Vector.class, "buffers.position")));
 		methods.add(glPrintWriter.glMethod("vertexAttribPointer",
 				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition"),
-				new InstanceReference<>(numC),
-				glPrintWriter.glParam("FLOAT"), new InstanceReference<>(norm),
-				new InstanceReference<>(strd), new InstanceReference<>(offs)));
+				numC.getDestination(),
+				glPrintWriter.glParam("FLOAT"), norm.getDestination(),
+				strd.getDestination(), offs.getDestination()));
 		
 		//add
 //		gl.enableVertexAttribArray(
@@ -172,8 +172,8 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		methods.add(glPrintWriter.glMethod("enableVertexAttribArray",
 				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition")));
 		
-		for (Iterator it = vars.iterator(); it.hasNext();) {
-			Variable v = (Variable) it.next();
+		for (Iterator<ExpressionAssignment<?>> it = vars.iterator(); it.hasNext();) {
+			ExpressionAssignment v = it.next();
 			p.println(v);
 		}
 		for (Iterator iterator = methods.iterator(); iterator.hasNext();) {
@@ -186,19 +186,19 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		
 		Method m4fv = glPrintWriter.glMethod("uniformMatrix4fv",
 				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
-				new InstanceReference<>(norm), new StaticReference<>(TransformMatrix.class, "projectionMatrix"));
+				norm.getDestination(), new StaticReference<>(TransformMatrix.class, "projectionMatrix"));
 		Method m4fvModel = glPrintWriter.glMethod("uniformMatrix4fv",
 				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
-				new InstanceReference<>(norm),
+				norm.getDestination(),
 				new StaticReference<>(TransformMatrix.class, "modelViewMatrix"));
 
 		//pass identity matrices instead because conversion is on server side
 //		p.println(m4fv);
 //		p.println(m4fvModel);
-		
-		Variable vCount = new Variable("vertexCount", e(4));
+
+		ExpressionAssignment vCount = declare("vertexCount", e(4));
 		Method drawIt = glPrintWriter.glMethod("drawArrays", glPrintWriter.glParam("TRIANGLE_STRIP"),
-				new InstanceReference<>(offs), new InstanceReference<>(vCount));
+				offs.getDestination(), vCount.getDestination());
 		p.println(vCount);
 		p.println(drawIt);
 	}

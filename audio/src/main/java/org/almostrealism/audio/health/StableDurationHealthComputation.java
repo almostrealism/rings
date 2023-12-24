@@ -178,17 +178,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				(l == 0 ? start : iterate).run();
 
 				if ((int) getWaveOut().getCursor().getCursor() != l + iter) {
-					if (enableVerbose) {
-						log("Cursor out of sync (" +
-								(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
-						System.exit(1);
-					} else {
-						console().print("N");
-					}
-
-					// TODO  This should just throw an exception: working around it should no longer be necessary
-					errorMultiplier *= 0.55;
-					break l;
+					log("Cursor out of sync (" +
+							(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
+					throw new RuntimeException();
 				}
 
 				getMeasures().forEach(m -> {
