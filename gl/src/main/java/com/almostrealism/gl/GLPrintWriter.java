@@ -509,7 +509,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		p.println(pos);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
-							new InstanceReference(new Variable(program.getName() + ".positionAttribute", (Expression) null))));
+							new StaticReference(String.class, program.getName() + ".positionAttribute")));
 
 		ExpressionAssignment norm = assign(program.getName() + ".normalAttribute",
 				new Method<String>(glMember, "getAttribLocation",
@@ -770,13 +770,13 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		p.println(clientWidth);
 		p.println(clientHeight);
 		Expression<Double> aspect = new StaticReference<>(Double.class, "clientWidth / clientHeight");
-		Variable zNear = new Variable ("zNear", e(0.1));
-		Variable zFar = new Variable("zFar", e(100.0));
+		ExpressionAssignment zNear = declare("zNear", e(0.1));
+		ExpressionAssignment zFar = declare("zFar", e(100.0));
 		arguments.add(projMatrix);
 		arguments.add(fieldOfView);
 		arguments.add(aspect);
-		arguments.add(new InstanceReference(zNear));
-		arguments.add(new InstanceReference(zFar));
+		arguments.add(zNear.getDestination());
+		arguments.add(zFar.getDestination());
 
 		Method persp = new Method("mat4","perspective", arguments);
 		p.println(persp);
