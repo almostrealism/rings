@@ -27,14 +27,14 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="dcache-releases" />
-      <option name="name" value="dCache.ORG maven repository" />
-      <option name="url" value="https://download.dcache.org/nexus/repository/public/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="github" />
       <option name="name" value="github" />
       <option name="url" value="https://maven.pkg.github.com/almostrealism/common" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dcache-releases" />
+      <option name="name" value="dCache.ORG maven repository" />
+      <option name="url" value="https://download.dcache.org/nexus/repository/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
