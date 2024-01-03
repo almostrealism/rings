@@ -10,7 +10,7 @@
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.graph.model.test.TrainModelTest" />
     <option name="METHOD_NAME" value="trainSmall" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_MEMORY_SCALE=6 -DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_METADATA=enabled -DAR_HARDWARE_MEMORY_WARNINGS=disabled" />
+    <option name="VM_PARAMETERS" value="-ea -Xmx20g -XX:+HeapDumpOnOutOfMemoryError -DAR_HARDWARE_MEMORY_SCALE=7 -DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_METADATA=enabled -DAR_HARDWARE_MEMORY_WARNINGS=disabled" />
     <method v="2" />
   </configuration>
 </component>
