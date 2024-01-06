@@ -46,8 +46,8 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 						new PassThroughProducer<>(1, 0),
 						new PassThroughProducer<>(1, 1),
 						new PassThroughProducer<>(1, 2),
-						v -> new Product(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
-						v -> new Product(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
+						v -> Product.of(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
+						v -> Product.of(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
 
 	public abstract String getKey();
