@@ -17,7 +17,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../common/ml/results/linear3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../common/ml/results/linear4.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../common/utils/results/linear1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
