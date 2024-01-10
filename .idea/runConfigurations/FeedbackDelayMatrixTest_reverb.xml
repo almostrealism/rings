@@ -10,7 +10,7 @@
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.audio.filter.test.FeedbackDelayMatrixTest" />
     <option name="METHOD_NAME" value="reverb" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_PREFER_LOOPS=enabled -DAR_HARDWARE_METADATA=enabled" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_METADATA=enabled" />
     <method v="2" />
   </configuration>
 </component>

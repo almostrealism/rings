@@ -2,7 +2,7 @@
   <configuration default="false" name="AudioSceneOptimizer" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.audio.optimize.AudioSceneOptimizer" />
     <module name="ar-audio" />
-    <option name="VM_PARAMETERS" value="-DAR_HARDWARE_MEMORY_SCALE=6 -DAR_HARDWARE_SHARED_MEMORY=enabled -DAR_HARDWARE_PREFER_LOOPS=enabled -DAR_HARDWARE_MEMORY_WARNINGS=disabled -DAR_CODE_EXPRESSION_WARNINGS=disabled -DAR_PATTERN_WARNINGS=disabled -DAR_HARDWARE_METADATA=disabled -DAR_AUDIO_OUTPUT=$USER_HOME$/Library/CloudStorage/Dropbox/health -DAR_RINGS_LIBRARY=$USER_HOME$/Music/Samples" />
+    <option name="VM_PARAMETERS" value="-DAR_HARDWARE_MEMORY_SCALE=6 -DAR_HARDWARE_SHARED_MEMORY=enabled -DAR_HARDWARE_MEMORY_WARNINGS=disabled -DAR_CODE_EXPRESSION_WARNINGS=disabled -DAR_PATTERN_WARNINGS=disabled -DAR_HARDWARE_METADATA=disabled -DAR_AUDIO_OUTPUT=$USER_HOME$/Library/CloudStorage/Dropbox/health -DAR_RINGS_LIBRARY=$USER_HOME$/Music/Samples" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />

@@ -30,6 +30,7 @@ import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.time.TemporalList;
 import org.almostrealism.util.TestFeatures;
@@ -90,10 +91,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		CellList cells = w("Library/Snare Perc DD.wav")
 				.o(i -> new File("results/snare-clean-test.wav"));
 
-		// OperationList l = (OperationList) cells.sec(bpm(128).l(count));
-		// AcceleratedComputationOperation op = (AcceleratedComputationOperation) l.get(1).get();
-		// System.out.println(op.getFunctionDefinition());
-
+		NativeCompiler.enableInstructionSetMonitoring = true;
 		cells.sec(bpm(128).l(count)).get().run();
 	}
 
@@ -105,6 +103,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 						"Library/GT_HAT_31.wav")
 				.o(i -> new File("results/hat-repeat-test.wav"));
 
+		NativeCompiler.enableInstructionSetMonitoring = true;
 		cells.sec(bpm(128).l(count)).get().run();
 	}
 
