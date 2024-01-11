@@ -76,6 +76,9 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void init() {
 		if (enableWavOutput) {
+			File d = new File(outputDir);
+			if (!d.exists()) d.mkdir();
+
 			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> outputDir + "/Output-" + count.incrementAndGet() + ".wav");
 
 			if (enableStemOutput) {

@@ -34,10 +34,11 @@ import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.optimize.HealthComputation;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
 	public static final int MEASURE_COUNT = 2;
-	public static int standardDuration = (int) (240 * OutputLine.sampleRate);
+	public static int standardDuration = (int) (230 * OutputLine.sampleRate);
 
 	private TemporalCellular target;
 	private int channels;
@@ -70,7 +71,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 					Optional.ofNullable(outputFileSupplier).map(s -> {
 						outputFile = new File(s.get());
 						return outputFile;
-					}).orElse(null), 24);
+					}).orElse(null), standardDuration, 24);
 		}
 
 		return out;
@@ -92,7 +93,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 							File f = new File(stemFileSupplier.apply(i));
 							stemFiles.put(i, f);
 							return f;
-						}, 24)).collect(Collectors.toList());
+						}, HealthComputationAdapter.standardDuration, 24)).collect(Collectors.toList());
 		}
 
 		return stems;

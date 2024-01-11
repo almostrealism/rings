@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
@@ -50,13 +51,14 @@ import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
+import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 2;
 	public static boolean enableVerbose = false;
 
 	public static final boolean enableSourcesJson = true;
@@ -150,6 +152,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
+		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 1;
+		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 1;
 
 		// Verbosity level 3
 		PatternSystemManager.enableVerbose = verbosity > 2;
@@ -157,7 +161,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
-		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 2;
 
 		// Verbosity level 4
 		HardwareOperator.enableVerboseLog = verbosity > 3;
@@ -226,7 +229,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 	private static List<PatternFactoryChoice> createChoices() throws IOException {
 		if (enableSourcesJson) {
-			PatternFactoryChoiceList choices = new ObjectMapper()
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			PatternFactoryChoiceList choices = mapper
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 			return choices;
 		} else {

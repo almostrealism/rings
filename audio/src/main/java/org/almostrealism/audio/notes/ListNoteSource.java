@@ -21,6 +21,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class ListNoteSource implements PatternNoteSource {
@@ -41,7 +42,7 @@ public class ListNoteSource implements PatternNoteSource {
 	public void setTuning(KeyboardTuning tuning) {
 		this.tuning = tuning;
 
-		for (PatternNote note : notes) {
+		for (PatternNote note : getNotes()) {
 			note.setTuning(tuning);
 		}
 	}
@@ -50,7 +51,7 @@ public class ListNoteSource implements PatternNoteSource {
 
 	@Override
 	public List<PatternNote> getNotes() {
-		return notes;
+		return notes == null ? Collections.emptyList() : notes;
 	}
 
 	public void setNotes(List<PatternNote> notes) {

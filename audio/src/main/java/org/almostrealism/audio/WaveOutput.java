@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,10 +125,12 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		this(f, -1, bits);
 	}
 
+	// TODO  Reorder bits/maxFrames arguments
 	public WaveOutput(Supplier<File> f, int maxFrames, int bits) {
 		this(f, maxFrames, bits, OutputLine.sampleRate);
 	}
 
+	// TODO  Reorder bits/maxFrames arguments
 	public WaveOutput(Supplier<File> f, int maxFrames, int bits, long sampleRate) {
 		this.file = f;
 		this.bits = bits;
