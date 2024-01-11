@@ -3,6 +3,8 @@
 **/*.versionsBackup
 **/hs_err*
 
+.idea/misc.xml
+
 audio/results/**
 audio/Kit/**
 audio/Library/**
