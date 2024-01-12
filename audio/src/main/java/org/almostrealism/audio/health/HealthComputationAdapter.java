@@ -27,14 +27,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.AudioMeter;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
-import org.almostrealism.optimize.HealthComputation;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
 	public static final int MEASURE_COUNT = 2;
@@ -71,7 +69,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 					Optional.ofNullable(outputFileSupplier).map(s -> {
 						outputFile = new File(s.get());
 						return outputFile;
-					}).orElse(null), standardDuration, 24);
+					}).orElse(null), 24, standardDuration);
 		}
 
 		return out;
@@ -93,7 +91,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 							File f = new File(stemFileSupplier.apply(i));
 							stemFiles.put(i, f);
 							return f;
-						}, HealthComputationAdapter.standardDuration, 24)).collect(Collectors.toList());
+						}, 24, HealthComputationAdapter.standardDuration)).collect(Collectors.toList());
 		}
 
 		return stems;

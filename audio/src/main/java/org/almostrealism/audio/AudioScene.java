@@ -33,6 +33,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -419,13 +420,21 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 									Receptor<PackedCollection<?>> output,
 									List<Integer> channels,
 									OperationList setup) {
+		int totalSamples;
+		if (getTotalSamples() > HealthComputationAdapter.standardDuration) {
+			warn("AudioScene arrangement extends beyond the standard duration");
+			totalSamples = HealthComputationAdapter.standardDuration;
+		} else {
+			totalSamples = getTotalSamples();
+		}
+
 		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
-		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], setup)));
+		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], totalSamples, setup)));
 		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
 	}
 
-	public CellList getPatternChannel(int channel, OperationList setup) {
-		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0);
+	public CellList getPatternChannel(int channel, int frames, OperationList setup) {
+		PackedCollection<?> audio = new PackedCollection<>(shape(frames), 0);
 
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));

@@ -96,7 +96,7 @@ public class AudioSceneTest implements CellFeatures {
 		OperationList setup = new OperationList();
 		setup.add(pattern.getTimeManager().setup());
 
-		CellList cells = pattern.getPatternChannel(0, setup);
+		CellList cells = pattern.getPatternChannel(0, pattern.getTotalSamples(), setup);
 		cells.addSetup(() -> setup);
 		cells.o(i -> new File("results/pattern-test.wav")).sec(20).get().run();
 	}

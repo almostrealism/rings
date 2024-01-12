@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,9 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.OperationList;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,13 +38,13 @@ public class AudioCellTest implements CellFeatures {
 						.map(i -> new ReceptorCell<>(out))
 						.iter(10);
 		Runnable r = op.get();
-		System.out.println(Arrays.toString(out.getData().toArray(0, 12)));
+		System.out.println(Arrays.toString(out.getData().toArray(0, 5)));
 
 		r.run();
-		System.out.println(Arrays.toString(out.getData().toArray(0, 12)));
+		System.out.println(Arrays.toString(out.getData().toArray(0, 5)));
 
-		Assert.assertTrue(out.getData().toDouble(5) == 0.0);
-		Assert.assertFalse(out.getData().toDouble(7) == 0.0);
+		Assert.assertTrue(out.getData().toDouble(2) == 0.0);
+		Assert.assertFalse(out.getData().toDouble(3) == 0.0);
 	}
 
 	@Test

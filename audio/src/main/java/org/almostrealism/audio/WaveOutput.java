@@ -22,81 +22,45 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.graph.Receptor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.io.Console;
-import org.almostrealism.time.AcceleratedTimeSeries;
-import org.almostrealism.time.CursorPair;
 import org.almostrealism.CodeFeatures;
 
 public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
 	public static boolean enableVerbose = false;
-	public static boolean enableKernelTimeline = true;
 
-	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 260);
+	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 230);
 
 	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
-	private static Evaluable<PackedCollection<?>> exportKernel;
 
 	static {
-		Supplier<PackedCollection<PackedCollection<?>>> timelineSupply;
+		Supplier<PackedCollection<PackedCollection<?>>> timelineSupply = () -> {
+			if (enableVerbose) {
+				CellFeatures.console.features(WaveOutput.class).log("Generating timeline");
+			}
 
-		if (enableKernelTimeline) {
-			timelineSupply = () -> {
-				if (enableVerbose) {
-					CellFeatures.console.println("WaveOutput: Generating timeline");
-				}
+			PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
+			Ops.o().integers(0, defaultTimelineFrames).divide(Ops.o().c(OutputLine.sampleRate)).into(data).evaluate();
 
-				PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
-				Ops.o().integers(0, defaultTimelineFrames).divide(Ops.o().c(OutputLine.sampleRate)).into(data).evaluate();
+			if (enableVerbose) {
+				CellFeatures.console.features(WaveOutput.class).log("Finished generating timeline");
+			}
 
-				if (enableVerbose) {
-					CellFeatures.console.println("WaveOutput: Finished generating timeline");
-				}
-
-				return data;
-			};
-		} else {
-			timelineSupply = () -> {
-				if (enableVerbose) {
-					CellFeatures.console.println("WaveOutput: Generating timeline");
-				}
-
-				PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
-				List<Double> values = IntStream.range(0, defaultTimelineFrames)
-						.mapToObj(i -> i / (double) OutputLine.sampleRate).collect(Collectors.toList());
-				for (int i = 0; i < values.size(); i++) data.set(i, values.get(i));
-
-				if (enableVerbose) {
-					CellFeatures.console.println("WaveOutput: Finished generating timeline");
-				}
-
-				return data;
-			};
-		}
+			return data;
+		};
 
 		timeline = new DefaultContextSpecific<>(timelineSupply, PackedCollection::destroy);
 		timeline.init();
-
-		exportKernel = Ops.op(o ->
-			new ExpressionComputation<>(List.of(args -> args.get(1).getValueRelative(1)),
-						o.v(o.shape(defaultTimelineFrames, 2).traverse(1), 0))
-		).get();
 	}
 
 	private Supplier<File> file;
@@ -104,13 +68,13 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	private long sampleRate;
 
 	private WavFile wav;
-	private CursorPair cursor;
-	private AcceleratedTimeSeries data;
+	private PackedCollection<?> cursor;
+	private PackedCollection<?> data;
 
 	public WaveOutput() { this(null); }
 
 	public WaveOutput(int maxFrames) {
-		this(null, maxFrames, 24);
+		this(null, 24, maxFrames);
 	}
 
 	public WaveOutput(File f) {
@@ -118,60 +82,54 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public WaveOutput(File f, int bits) {
-		this(() -> f, 240 * OutputLine.sampleRate, bits);
+		this(() -> f, bits);
 	}
 
 	public WaveOutput(Supplier<File> f, int bits) {
-		this(f, -1, bits);
+		this(f, bits, -1);
 	}
 
-	// TODO  Reorder bits/maxFrames arguments
-	public WaveOutput(Supplier<File> f, int maxFrames, int bits) {
-		this(f, maxFrames, bits, OutputLine.sampleRate);
+	public WaveOutput(Supplier<File> f, int bits, int maxFrames) {
+		this(f, bits, OutputLine.sampleRate, maxFrames);
 	}
 
-	// TODO  Reorder bits/maxFrames arguments
-	public WaveOutput(Supplier<File> f, int maxFrames, int bits, long sampleRate) {
+	public WaveOutput(Supplier<File> f, int bits, long sampleRate, int maxFrames) {
 		this.file = f;
 		this.bits = bits;
 		this.sampleRate = sampleRate;
-		this.cursor = new CursorPair();
-		this.data = maxFrames <= 0 ? AcceleratedTimeSeries.defaultSeries() : new AcceleratedTimeSeries(maxFrames);
+		this.cursor = new PackedCollection<>(1);
+		this.data = new PackedCollection<>(maxFrames <= 0 ? defaultTimelineFrames : maxFrames).traverseEach();
 	}
 
-	public CursorPair getCursor() { return cursor; }
+	public PackedCollection<?> getCursor() { return cursor; }
 
-	public AcceleratedTimeSeries getData() { return data; }
+	public PackedCollection<?> getData() { return data; }
 
 	@Override
 	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
 		String description = "WaveOutput Push";
 		if (file != null) description += " (to file)";
 		OperationList push = new OperationList(description);
-		push.add(data.add(temporal(l(p(cursor)), (Producer) protein)));
-		push.add(cursor.increment(v(1.0)));
+
+		if (shape(protein).getSize() == 2) {
+			protein = c(protein, 0);
+		}
+
+		Producer slot = c(shape(1), p(data), p(cursor));
+
+		push.add(a("WaveOutput Insert", slot, (Producer) protein));
+		push.add(a("WaveOutput Cursor Increment", cp(cursor), cp(cursor).add(1)));
 		return push;
 	}
 
 	public Supplier<Runnable> export(PackedCollection<?> destination) {
-		return () -> () -> {
-			long start = System.currentTimeMillis();
-
-			HardwareOperator.disableDimensionMasks(() -> {
-				TraversalPolicy subset = shape(data.getCount() - 1, data.getAtomicMemLength());
-				PackedCollection<?> input = PackedCollection.range(data, subset, 2).traverse(1);
-				exportKernel.into(destination.traverse(1)).evaluate(input);
-			});
-
-			if (enableVerbose)
-				log("Wrote " + destination.getCount() + " frames in " + (System.currentTimeMillis() - start) + " msec");
-		};
+		return new MemoryDataCopy("WaveOutput Export", data, destination);
 	}
 
 	public Supplier<Runnable> write() {
 		// TODO  Write frames in larger batches than 1
 		return () -> () -> {
-			int frames = (int) cursor.left() - 1;
+			int frames = (int) cursor.toDouble(0) - 1;
 
 			if (frames > 0) {
 				// log("Writing " + frames + " frames");
@@ -189,12 +147,10 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 				return;
 			}
 
-			double frameData[] = data.toArray(data.getAtomicMemLength(), data.getAtomicMemLength() * frames);
+			double frameData[] = data.toArray(0, frames);
 
 			for (int i = 0; i < frames; i++) {
-				// double value = data.valueAt(i).getValue();
-				// double value = data.get(i + 1).getValue();
-				double value = frameData[2 * i + 1];
+				double value = frameData[i];
 
 				try {
 					wav.writeFrames(new double[][]{{value}, {value}}, 1);
@@ -219,10 +175,10 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 		return () -> () -> {
 			StringBuffer buf = new StringBuffer();
 
-			int frames = (int) cursor.left();
+			int frames = (int) cursor.toDouble(0);
 
 			for (int i = 0; i < frames; i++) {
-				double value = data.get(i).getValue();
+				double value = data.toDouble(i);
 				buf.append(i + "," + value + "\n");
 			}
 
@@ -237,9 +193,10 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	@Override
 	public void reset() {
 		Lifecycle.super.reset();
-		cursor.setCursor(0);
-		cursor.setDelayCursor(1);
-		data.reset();
+		cursor.setMem(0.0);
+		// TODO  The data should be cleared, but this can cause problems for
+		// TODO  systems that are resetting the WaveOutput prior to writing
+		// collection.clear();
 	}
 
 	@Override

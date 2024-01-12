@@ -72,7 +72,8 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
 		CLOperator.verboseLog(() -> {
-			source.getData().valueAt(cursor).get().into(result).evaluate();
+//			source.getData().valueAt(cursor).get().into(result).evaluate();
+			c((Producer) p(source.getData()), cursor).get().into(result).evaluate();
 		});
 		System.out.println("GrainTest: Timeline kernel evaluated");
 

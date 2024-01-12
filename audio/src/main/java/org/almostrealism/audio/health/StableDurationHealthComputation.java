@@ -177,9 +177,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if ((int) getWaveOut().getCursor().getCursor() != l + iter) {
+				if ((int) getWaveOut().getCursor().toDouble(0) != l + iter) {
 					log("Cursor out of sync (" +
-							(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
+							(int) getWaveOut().getCursor().toDouble(0) + " != " + (l + iter) + ")");
 					throw new RuntimeException();
 				}
 
@@ -234,7 +234,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 			if (enableOutput && score > 0) {
 				if (enableVerbose)
-					log("Cursor = " + getWaveOut().getCursor().getCursor());
+					log("Cursor = " + getWaveOut().getCursor().toDouble(0));
 
 				getWaveOut().write().get().run();
 				if (getStems() != null) getStems().forEach(s -> s.write().get().run());

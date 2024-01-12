@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,17 +48,19 @@ import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLMemoryProvider;
+import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
+import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 2;
+	public static final int verbosity = 1;
 	public static boolean enableVerbose = false;
 
 	public static final boolean enableSourcesJson = true;
@@ -146,21 +148,24 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.popSize = 14;
 
 		// Verbosity level 1
-		PopulationOptimizer.enableVerbose = verbosity > 0;
-		SilenceDurationHealthComputation.enableVerbose = verbosity > 0;
+		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
+		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
+		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 
 		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
-		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 1;
-		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 1;
+		PopulationOptimizer.enableVerbose = verbosity > 1;
+		MetalProgram.enableLargeProgramMonitoring = verbosity > 1;
 
 		// Verbosity level 3
 		PatternSystemManager.enableVerbose = verbosity > 2;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
+		NativeCompiler.enableInstructionSetMonitoring = verbosity > 2;
 
 		// Verbosity level 4
 		HardwareOperator.enableVerboseLog = verbosity > 3;
