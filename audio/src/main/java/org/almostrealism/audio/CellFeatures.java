@@ -637,4 +637,8 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	default AudioPassFilter lp(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
 		return new AudioPassFilter(sampleRate, frequency, resonance, false);
 	}
+
+	static CellFeatures getInstance() {
+		return new CellFeatures() { };
+	}
 }

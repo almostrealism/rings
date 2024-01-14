@@ -82,4 +82,8 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 
 		return linear(offset, release, startVolume, endVolume);
 	}
+	
+	static EnvelopeFeatures getInstance() {
+		return new EnvelopeFeatures() { };
+	}
 }

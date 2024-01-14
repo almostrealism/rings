@@ -10,7 +10,11 @@ audio/Kit/**
 audio/Library/**
 audio/pattern-factory.json
 audio/Population.xml
+
+results/**
+health/**
 pattern-factory.json
 Population.xml
 
+Extensions/**
 lib/**SNAPSHOT.jar

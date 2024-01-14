@@ -145,7 +145,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
-		PopulationOptimizer.popSize = 14;
+		PopulationOptimizer.popSize = 60;
 
 		// Verbosity level 1
 		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
