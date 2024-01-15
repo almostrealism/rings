@@ -481,7 +481,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private void refreshPatternDestination() {
 		if (patternDestination == null) {
-			patternDestination = new PackedCollection(getTotalSamples());
+			patternDestination = new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples()));
 		} else {
 			patternDestination.clear();
 		}
