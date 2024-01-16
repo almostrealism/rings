@@ -108,7 +108,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 		Producer<PackedCollection<?>> pos  = start.add(relativeMod(relativeMod(series, duration), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
-		generate = generate.multiply(_sinw(series, wavelength, c(1.0)));
+		generate = generate.multiply(sinw(series, wavelength, c(1.0)));
 
 		System.out.println("GrainTest: Evaluating kernel...");
 		Evaluable<PackedCollection<?>> ev = generate.get();

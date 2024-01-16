@@ -40,6 +40,7 @@ import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -60,7 +61,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 1;
+	public static final int verbosity = 2;
 	public static boolean enableVerbose = false;
 
 	public static final boolean enableSourcesJson = true;
@@ -132,7 +133,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
-		StableDurationHealthComputation.enableTimeout = true;
+		StableDurationHealthComputation.enableTimeout = false;
 		MixdownManager.enableReverb = true;
 		AudioScene.enableMainFilterUp = true;
 		AudioScene.enableEfxFilters = true;
@@ -142,10 +143,11 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableEnvelope = true;
+		PatternLayerManager.enableVolumeAdjustment = false; // true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
-		PopulationOptimizer.popSize = 60;
+		PopulationOptimizer.popSize = 4;
 
 		// Verbosity level 1
 		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
@@ -185,8 +187,17 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
 				opt.init();
 				opt.run();
+
 				HardwareOperator.profile.print();
-				MemoryDataArgumentMap.profile.print();
+
+				if (WavCellChromosome.timing.getTotal() > 60)
+					WavCellChromosome.timing.print();
+
+				PatternLayerManager.sizes.print();
+
+				if (MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
+					MemoryDataArgumentMap.profile.print();
+
 				AcceleratedOperation.printTimes();
 			} catch (IOException e) {
 				throw new RuntimeException(e);

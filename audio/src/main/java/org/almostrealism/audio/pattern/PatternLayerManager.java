@@ -20,6 +20,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -32,6 +33,7 @@ import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.io.DistributionMetric;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
@@ -47,6 +49,9 @@ import java.util.stream.Stream;
 public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
+	public static boolean enableVolumeAdjustment = true;
+
+	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
 
 	private static final Evaluable<PackedCollection<?>> sum;
 	private static final Evaluable<PackedCollection<?>> scaleVolume;
@@ -121,8 +126,12 @@ public class PatternLayerManager implements CodeFeatures {
 			OperationList v = new OperationList("PatternLayerManager Adjust Volume");
 			v.add(() -> () ->
 					volume.setMem(0, 1.0 / chordDepth));
-			v.add(() -> () ->
-					scaleVolume.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+			v.add(() -> () -> {
+				if (volume.toDouble(0) != 1.0) {
+					scaleVolume.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume);
+				}
+			});
+
 			adjustVolume = v.get();
 		}
 
@@ -383,6 +392,7 @@ public class PatternLayerManager implements CodeFeatures {
 								audio -> {
 									int frames = Math.min(audio.getShape().getCount(),
 											destination.getShape().length(0) - note.getOffset());
+									sizes.addEntry(frames);
 
 									TraversalPolicy shape = shape(frames).traverse(1);
 									return sum
@@ -392,7 +402,7 @@ public class PatternLayerManager implements CodeFeatures {
 					});
 		});
 
-		adjustVolume.run();
+		if (enableVolumeAdjustment) adjustVolume.run();
 	}
 
 	public double nextNotePosition(double position) {

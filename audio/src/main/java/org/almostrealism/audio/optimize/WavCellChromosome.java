@@ -37,6 +37,7 @@ import org.almostrealism.heredity.Chromosome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.TemporalFactor;
+import org.almostrealism.io.TimingMetric;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
@@ -51,6 +52,8 @@ import java.util.stream.IntStream;
 
 @Deprecated
 public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Temporal, Setup, CellFeatures {
+	public static TimingMetric timing = CellFeatures.console.timing("WavCellChromosome");
+
 	private Chromosome<PackedCollection<?>> source;
 	private Map<Integer, Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>>> transforms;
 
@@ -70,7 +73,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		this.sampleRate = sampleRate;
 	}
 
-	public Chromosome<PackedCollection<?>> getSource() {return source;}
+	public Chromosome<PackedCollection<?>> getSource() { return source; }
 
 	public void setTransform(int factor, Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> transform) {
 		this.transforms.put(factor, transform);
@@ -119,7 +122,14 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 					.collect(Collectors.toCollection(ArrayListChromosome::new));
 		});
 
-		prepare.get().run();
+		long start = System.nanoTime();
+
+		try {
+			prepare.get().run();
+		} finally {
+			timing.addEntry("prepare", System.nanoTime() - start);
+		}
+
 		return process();
 	}
 
@@ -139,13 +149,14 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 
 	@Override
 	public Supplier<Runnable> tick() {
-		System.out.println("WavCellChromosome.tick()");
-		return destination.stream()
-				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
-				.map(f -> f instanceof TemporalFactor ? (TemporalFactor) f : null)
-				.filter(Objects::nonNull)
-				.map(Temporal::tick)
-				.collect(OperationList.collector());
+		// System.out.println("WavCellChromosome.tick()");
+		throw new UnsupportedOperationException();
+//		return destination.stream()
+//				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
+//				.map(f -> f instanceof TemporalFactor ? (TemporalFactor) f : null)
+//				.filter(Objects::nonNull)
+//				.map(Temporal::tick)
+//				.collect(OperationList.collector());
 	}
 
 	public TemporalList getTemporals() {
@@ -166,7 +177,16 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	protected Supplier<Runnable> process() {
 		// TODO  This should just return kernels
 		Runnable run = kernels.get();
-		return () -> () -> run.run();
+
+		return () -> () -> {
+			long start = System.nanoTime();
+
+			try {
+				run.run();
+			} finally {
+				timing.addEntry("process", System.nanoTime() - start);
+			}
+		};
 	}
 
 	protected WaveCell cell(PackedCollection<PackedCollection<?>> data) {
@@ -184,6 +204,5 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 
 	protected BiFunction<Producer<PackedCollection<?>>, Producer<PackedCollection<?>>, Producer<PackedCollection<?>>> combine() {
 		return (a, b) -> (Producer) scalarsMultiply(toScalar(a), toScalar(b));
-		// return (a, b) -> a;
 	}
 }
