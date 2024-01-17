@@ -29,6 +29,7 @@ import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
@@ -61,7 +62,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 2;
+	public static final int verbosity = 0;
 	public static boolean enableVerbose = false;
 
 	public static final boolean enableSourcesJson = true;
@@ -193,7 +194,11 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				if (WavCellChromosome.timing.getTotal() > 60)
 					WavCellChromosome.timing.print();
 
-				PatternLayerManager.sizes.print();
+				if (enableVerbose)
+					PatternLayerManager.sizes.print();
+
+				if (AudioSumProvider.timing.getTotal() > 120)
+					AudioSumProvider.timing.print();
 
 				if (MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
 					MemoryDataArgumentMap.profile.print();

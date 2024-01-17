@@ -134,29 +134,20 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	}
 
 	private Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
-		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
-
 		kernels.setParameters(pos, parameters(transformed));
 		WaveCell cell = new WaveCell(PolymorphicAudioData.supply(PackedCollection.factory()).get(),
 				(PackedCollection) kernels.valueAt(pos), sampleRate, 1.0, time.frame());
 		Factor<PackedCollection<?>> factor = cell.toFactor(() -> new Scalar(0.0),
 				p -> protein -> new Assignment<>(1, p, protein), combine());
-		// return cell.toFactor();
-		result.add(factor);
 
+		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
+		result.add(factor);
 		return result;
 	}
 
 	@Override
 	public Supplier<Runnable> tick() {
-		// System.out.println("WavCellChromosome.tick()");
 		throw new UnsupportedOperationException();
-//		return destination.stream()
-//				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
-//				.map(f -> f instanceof TemporalFactor ? (TemporalFactor) f : null)
-//				.filter(Objects::nonNull)
-//				.map(Temporal::tick)
-//				.collect(OperationList.collector());
 	}
 
 	public TemporalList getTemporals() {

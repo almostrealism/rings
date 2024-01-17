@@ -16,8 +16,10 @@
 
 package org.almostrealism.audio.optimize;
 
+import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.KernelList;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.SimpleChromosome;
 
@@ -46,20 +48,23 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 			CollectionProducerComputation scale = c(p, 4);
 			CollectionProducerComputation offset = c(p, 5);
 
-//			if (relative) scale = scale.multiply(initial);
-//			CollectionProducerComputation pos = subtract(in, offset);
-//			return _bound(pos._greaterThan(c(0.0),
-//					polyWaveLength.pow(c(-1.0))
-//							.multiply(pos).pow(polyExp)
-//							.multiply(scale).add(initial), initial),
-//					min, max);
-			if (relative) scale = scale.relativeMultiply(initial);
-			CollectionProducerComputation pos = relativeSubtract(in, offset);
-			return relativeBound(pos._greaterThan(c(0.0),
-							relativeAdd(polyWaveLength.pow(c(-1.0))
-									.relativeMultiply(pos).pow(polyExp)
-									.relativeMultiply(scale), initial), initial),
-					min, max);
+			if (KernelList.enableKernels) {
+				if (relative) scale = scale.relativeMultiply(initial);
+				CollectionProducerComputation pos = relativeSubtract(in, offset);
+				return relativeBound(pos._greaterThan(c(0.0),
+								relativeAdd(polyWaveLength.pow(c(-1.0))
+										.relativeMultiply(pos).pow(polyExp)
+										.relativeMultiply(scale), initial), initial),
+						min, max);
+			} else {
+				if (relative) scale = scale.relativeMultiply(initial);
+				CollectionProducerComputation pos = relativeSubtract(in, offset);
+				return relativeBound(pos._greaterThan(c(0.0),
+								relativeAdd(polyWaveLength.pow(c(-1.0))
+										.relativeMultiply(pos).pow(polyExp)
+										.relativeMultiply(scale), initial), initial),
+						min, max).toRepeated();
+			}
 		});
 	}
 

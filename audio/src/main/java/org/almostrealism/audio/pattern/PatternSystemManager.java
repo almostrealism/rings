@@ -24,6 +24,7 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
@@ -55,13 +56,14 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
 
+	private static AudioSumProvider sum = new AudioSumProvider();
+
 	private List<PatternFactoryChoice> choices;
 	private List<PatternLayerManager> patterns;
 	private ConfigurableGenome genome;
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private Evaluable<PackedCollection<?>> sum;
 
 	public PatternSystemManager() {
 		this(new ArrayList<>());
@@ -84,8 +86,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public void init() {
 		volume = new PackedCollection(1);
 		volume.setMem(0, 1.0);
-
-		sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 	}
 
 	private DynamicProducer<PackedCollection<?>> destination() {
@@ -194,11 +194,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				int frames = Math.min(audio.getShape().getCount(),
 						this.destination.getShape().length(0));
 
-				TraversalPolicy shape = shape(frames).traverse(1);
+				TraversalPolicy shape = shape(frames);
 				if (enableVerbose) log("Rendering " + frames + " frames");
-				sum
-						.into(this.destination.range(shape))
-						.evaluate(this.destination.range(shape), audio.range(shape));
+				sum.sum(this.destination.range(shape), audio.range(shape));
 				if (enableVerbose) log("Rendered " + frames + " frames");
 			});
 

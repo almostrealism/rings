@@ -16,8 +16,10 @@
 
 package org.almostrealism.audio.optimize;
 
+import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.KernelList;
 import org.almostrealism.heredity.Chromosome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
@@ -35,7 +37,7 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 		setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 		setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
 		setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
-		// addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
+
 		setFactor((p, in) -> {
 			CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
 			CollectionProducerComputation speedUpAmp = c(p, 2);
@@ -43,13 +45,16 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 			CollectionProducerComputation slowDownAmp = c(p, 4);
 			CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 			CollectionProducerComputation polySpeedUpExp = c(p, 6);
-//			return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-//					.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-//					.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
 
-			return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-					.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-					.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));
+			if (KernelList.enableKernels) {
+				return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+						.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+						.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));
+			} else {
+				return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+						.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+						.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp))).toRepeated();
+			}
 		});
 	}
 

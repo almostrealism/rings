@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
@@ -53,13 +54,7 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
 
-	private static final Evaluable<PackedCollection<?>> sum;
-	private static final Evaluable<PackedCollection<?>> scaleVolume;
-
-	static {
-		sum = Ops.op(o -> o.add(o.v(o.shape(1), 0), o.v(o.shape(1), 1)).get());
-		scaleVolume = Ops.op(o -> o.multiply(o.v(o.shape(1), 0), o.v(o.shape(1), 1)).get());
-	}
+	private static final AudioSumProvider sum = new AudioSumProvider();
 
 	private int channel;
 	private double duration;
@@ -128,7 +123,7 @@ public class PatternLayerManager implements CodeFeatures {
 					volume.setMem(0, 1.0 / chordDepth));
 			v.add(() -> () -> {
 				if (volume.toDouble(0) != 1.0) {
-					scaleVolume.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume);
+					sum.adjustVolume(this.destination, volume);
 				}
 			});
 
@@ -394,10 +389,8 @@ public class PatternLayerManager implements CodeFeatures {
 											destination.getShape().length(0) - note.getOffset());
 									sizes.addEntry(frames);
 
-									TraversalPolicy shape = shape(frames).traverse(1);
-									return sum
-											.into(destination.range(shape, note.getOffset()))
-											.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+									TraversalPolicy shape = shape(frames);
+									return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
 								});
 					});
 		});
