@@ -46,7 +46,7 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 			CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 			CollectionProducerComputation polySpeedUpExp = c(p, 6);
 
-			if (KernelList.enableKernels) {
+			if (enableKernels) {
 				return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
 						.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 						.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));

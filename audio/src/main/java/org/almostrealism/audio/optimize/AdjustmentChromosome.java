@@ -47,7 +47,7 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 			CollectionProducerComputation scale = c(p, 4);
 			CollectionProducerComputation offset = c(p, 5);
 
-			if (KernelList.enableKernels) {
+			if (enableKernels) {
 				if (relative) scale = scale.relativeMultiply(initial);
 				CollectionProducerComputation pos = relativeSubtract(in, offset);
 				return relativeBound(pos._greaterThan(c(0.0),

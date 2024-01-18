@@ -58,6 +58,7 @@ import java.util.stream.IntStream;
 @Deprecated
 public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Temporal, Setup, CellFeatures {
 	public static TimingMetric timing = CellFeatures.console.timing("WavCellChromosome");
+	public static boolean enableKernels = true;
 
 	private ProducerComputation<PackedCollection<?>> computation;
 	private BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computationProvider;
@@ -202,7 +203,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		IntStream.range(0, inputGenes).forEach(i -> {
 			if (parameterValues.containsKey(i)) op.add(assignParameters(parameterValues.get(i)));
 			op.add(() -> () -> {
-				if (KernelList.enableKernels) {
+				if (enableKernels) {
 					ev.into(data.get(i)).evaluate(input, ((Shape) this.parameters).traverse(0));
 				} else {
 					ev.into(((Shape) data.get(i)).traverse(0))
