@@ -204,15 +204,15 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
 		});
 
-		Evaluable<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1)).get();
-
 		if (enableAutoVolume) {
 			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(destination());
 			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 
-		op.add(() -> () -> scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+		op.add(() -> () -> {
+			sum.adjustVolume(destination, volume);
+		});
 
 		return op;
 	}

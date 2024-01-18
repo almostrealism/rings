@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.optimize;
 
-import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.KernelList;
