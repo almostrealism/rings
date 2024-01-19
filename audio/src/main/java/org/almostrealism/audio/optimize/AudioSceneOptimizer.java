@@ -144,16 +144,17 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableEnvelope = true;
-		PatternLayerManager.enableVolumeAdjustment = false; // true;
+		PatternLayerManager.enableVolumeAdjustment = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
-		PopulationOptimizer.popSize = 12;
+		PopulationOptimizer.popSize = 65;
 
 		// Verbosity level 1
 		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
+		PatternNote.enableVerbose = verbosity > 0;
 
 		// Verbosity level 2
 		WaveOutput.enableVerbose = verbosity > 1;
@@ -174,13 +175,13 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
 		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
+		PopulationOptimizer.enableBreeding = verbosity < 1;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		Heap heap = new Heap(4 * 1024 * 1024);
+		Heap heap = new Heap(12 * 1024 * 1024);
 
 		heap.use(() -> {
 			try {

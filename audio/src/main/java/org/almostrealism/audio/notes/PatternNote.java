@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PatternNote implements CellFeatures, SamplingFeatures {
+	public static boolean enableVerbose = false;
 
 	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
 
@@ -57,8 +59,8 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 						.map(PackedCollection::getMem)
 						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
-				if (size > 1024)
-					System.out.println("PatternNote: Cache size = " + (size / 1024 / 1024) + "mb");
+				if (enableVerbose && size > 1024)
+					AudioScene.console.features(PatternNote.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 
