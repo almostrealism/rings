@@ -440,8 +440,17 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
 		patternSetup.add(getPatternSetup(channel));
-		patternSetup.add(() -> () ->
-				audio.setMem(0, patternDestination, 0, patternDestination.getMemLength()));
+		patternSetup.add(() -> () -> {
+			log("Channel " + channel +
+					": Audio[" + audio.getShape().toString() +
+					"] -> PatternDestination[" + patternDestination.getShape().toString() +
+					"] (frames = " + frames + ", memLength = " + patternDestination.getMemLength() + ")");
+			log("\tAudio mem = " +  audio.getMem() +
+					" offset = " + audio.getOffset() +
+					" | patternDestination mem = " + patternDestination.getMem() +
+					" offset = " + patternDestination.getOffset());
+				audio.setMem(0, patternDestination, 0, Math.min(frames, patternDestination.getMemLength()));
+		});
 
 		sections.getChannelSections(channel).stream()
 				.map(section -> {
