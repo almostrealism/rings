@@ -40,37 +40,88 @@
 
 	<!-- Output to jar format -->
 	<packaging>pom</packaging>
-	
-	<dependencies>
-		<dependency>
-			<groupId>io.flowtree</groupId>
-			<artifactId>ar-treeview</artifactId>
-			<version>${flowtree.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.flowtree</groupId>
-			<artifactId>ar-graphpersist</artifactId>
-			<version>${flowtree.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.joml</groupId>
-			<artifactId>joml</artifactId>
-			<version>1.9.9</version>
-		</dependency>
-
-	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-algebra</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-color</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-space</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-swing</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-utils</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.flowtree</groupId>
+				<artifactId>ar-flowtreeapi</artifactId>
+				<version>${flowtree.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.flowtree</groupId>
+				<artifactId>ar-treeview</artifactId>
+				<version>${flowtree.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.flowtree</groupId>
+				<artifactId>ar-graphpersist</artifactId>
+				<version>${flowtree.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.joml</groupId>
+				<artifactId>joml</artifactId>
+				<version>1.9.9</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jogamp.gluegen</groupId>
+				<artifactId>gluegen-rt-main</artifactId>
+				<version>2.3.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jogamp.jogl</groupId>
+				<artifactId>jogl-all-main</artifactId>
+				<version>2.3.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.16.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>

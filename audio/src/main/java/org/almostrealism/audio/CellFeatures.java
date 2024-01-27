@@ -19,6 +19,7 @@ package org.almostrealism.audio;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
@@ -221,16 +222,20 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
+	default CellList w(Supplier<PolymorphicAudioData> data, int sampleRate, int frames, Producer<PackedCollection<?>> offset,
+					   Producer<PackedCollection<?>> repeat, Producer<PackedCollection<?>>... waves) {
+		CellList cells = new CellList();
+		Stream.of(waves)
+				.map(w -> new WaveCell(data.get(), w, sampleRate, 1.0, Ops.o().toScalar(offset),
+					Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(frames))).forEach(cells::addRoot);
+		return cells;
+	}
+
 	default CellList w(Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... waves) {
 		CellList cells = new CellList();
-		Stream.of(waves).map(f -> {
-			try {
-				return WavFile.load(f, 1.0, offset, repeat).apply(data.get());
-			} catch (IOException e) {
-				e.printStackTrace();
-				return silence().get(0);
-			}
-		}).forEach(cells::addRoot);
+		Stream.of(waves)
+				.map(w -> w.toCell(1.0, offset, repeat).apply(data.get()))
+				.forEach(cells::addRoot);
 		return cells;
 	}
 

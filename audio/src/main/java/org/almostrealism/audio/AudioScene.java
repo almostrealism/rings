@@ -17,6 +17,8 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -142,7 +144,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private Tree<? extends Supplier<FileWaveDataProvider>> library;
 	private PatternSystemManager patterns;
-	private PackedCollection<?> patternDestination;
+	private List<PackedCollection<?>> patternDestinations;
 	private List<String> channelNames;
 	private double patternActivityBias;
 
@@ -192,9 +194,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.channelNames = new ArrayList<>();
 
 		addDurationListener(duration -> {
-			if (patternDestination != null) {
-				patternDestination.destroy();
-				patternDestination = null;
+			if (patternDestinations != null) {
+				patternDestinations.forEach(PackedCollection::destroy);
+				patternDestinations = null;
 			}
 		});
 
@@ -299,17 +301,25 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public int getTotalBeats() { return totalMeasures * measureSize; }
 	public double getTotalDuration() { return getTempo().l(getTotalBeats()); }
 	public int getTotalSamples() { return (int) (getTotalDuration() * getSampleRate()); }
+	public int getAvailableSamples() {
+		return Math.min(HealthComputationAdapter.standardDuration, getTotalSamples());
+	}
 
 	public int getSampleRate() { return sampleRate; }
 
-	public AudioSceneContext getContext() {
+	public AudioSceneContext getContext(List<Integer> channels) {
+		if (channels.size() != 1) {
+			throw new IllegalArgumentException();
+		}
+
 		AudioSceneContext context = new AudioSceneContext();
+		context.setChannels(channels);
 		context.setMeasures(getTotalMeasures());
 		context.setFrames(getTotalSamples());
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
-		context.setDestination(patternDestination);
+		context.setDestination(patternDestinations.get(channels.get(0)));
 		return context;
 	}
 
@@ -378,8 +388,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		durationListeners.forEach(l -> l.accept(getTotalDuration()));
 	}
 
-	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
-
 	public boolean checkResourceUsed(String canonicalPath) {
 		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
 	}
@@ -434,65 +442,64 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public CellList getPatternChannel(int channel, int frames, OperationList setup) {
-		PackedCollection<?> audio = new PackedCollection<>(shape(frames), 0);
-
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
 		patternSetup.add(getPatternSetup(channel));
-		patternSetup.add(() -> () -> {
-			log("Channel " + channel +
-					": Audio[" + audio.getShape().toString() +
-					"] -> PatternDestination[" + patternDestination.getShape().toString() +
-					"] (frames = " + frames + ", memLength = " + patternDestination.getMemLength() + ")");
-			log("\tAudio mem = " +  audio.getMem() +
-					" offset = " + audio.getOffset() +
-					" | patternDestination mem = " + patternDestination.getMem() +
-					" offset = " + patternDestination.getOffset());
-				audio.setMem(0, patternDestination, 0, Math.min(frames, patternDestination.getMemLength()));
-		});
+
+		TraversalPolicy audioShape =
+				(frames > getAvailableSamples() ? shape(getAvailableSamples()) : shape(frames))
+						.traverseEach();
 
 		sections.getChannelSections(channel).stream()
 				.map(section -> {
 					int pos = section.getPosition() * getMeasureSamples();
 					int len = section.getLength() * getMeasureSamples();
 
-					if (audio.getMemLength() < pos + len) {
+					if (audioShape.getTotalSize() < pos + len) {
 						System.out.println("WARN: Section at position " + pos +
-								" extends beyond the end of the pattern destination (" + audio.getMemLength() + " frames)");
+								" extends beyond the end of the pattern destination (" +
+								audioShape.getTotalSize() + " frames)");
 						return new OperationList("Section Processing (Invalid Size)");
 					} else {
-						PackedCollection<?> sectionAudio = audio.range(shape(len), pos);
-						return section.process(p(sectionAudio), p(sectionAudio));
+						Producer<PackedCollection<?>> sectionAudio =
+								func(audioShape, args ->
+										patternDestinations.get(channel).range(shape(len), pos), false);
+						return section.process(sectionAudio, sectionAudio);
 					}
 				})
 				.forEach(patternSetup::add);
 
 		setup.add(patternSetup);
-		return w(PolymorphicAudioData.supply(PackedCollection.factory()), null, c(getTotalDuration()),
-				new WaveData(audio.traverseEach(), getSampleRate()));
+
+		Producer<PackedCollection<?>> result =
+				func(audioShape, args -> patternDestinations.get(channel).range(audioShape), false);
+		return w(PolymorphicAudioData.supply(PackedCollection.factory()), getSampleRate(), audioShape.getTotalSize(),
+				null, c(getTotalDuration()), result);
 	}
 
 	public Supplier<Runnable> getPatternSetup(int channel) {
 		Supplier<AudioSceneContext> ctx = () -> {
-			AudioSceneContext context = getContext();
-			context.setChannels(List.of(channel));
+			AudioSceneContext context = getContext(List.of(channel));
 			context.setActivityBias(patternActivityBias);
 			context.setSections(sections.getChannelSections(channel));
 			return context;
 		};
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
-		op.add(() -> () -> refreshPatternDestination());
+		op.add(() -> () -> refreshPatternDestination(channel));
 		op.add(patterns.sum(ctx));
 		return op;
 	}
 
-	private void refreshPatternDestination() {
-		if (patternDestination == null) {
-			patternDestination = new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples()));
+	private void refreshPatternDestination(int channel) {
+		if (patternDestinations == null) {
+			patternDestinations = new ArrayList<>();
+			for (int i = 0; i < getChannelCount(); i++) {
+				patternDestinations.add(new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+			}
 		} else {
-			patternDestination.clear();
+			patternDestinations.get(channel).clear();
 		}
 	}
 

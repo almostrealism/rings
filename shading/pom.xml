@@ -14,8 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-color</artifactId>
-			<version>${common.version}</version>
+			<artifactId>ar-utils</artifactId>
 		</dependency>
 
 		<dependency>

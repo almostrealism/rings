@@ -17,5 +17,21 @@
 			<artifactId>ar-engine</artifactId>
 			<version>0.31</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-swing</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-utils</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

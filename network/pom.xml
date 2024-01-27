@@ -26,8 +26,18 @@
 
 		<dependency>
 			<groupId>io.flowtree</groupId>
+			<artifactId>ar-graphpersist</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.flowtree</groupId>
 			<artifactId>ar-flowtreeapi</artifactId>
-			<version>${flowtree.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
