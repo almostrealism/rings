@@ -212,7 +212,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 			process.add(new MemoryDataCopy("DefaultChannelSection Input", () -> source.get().evaluate(), () -> input, samples));
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
-			// process.add(() -> () -> log("Channel " + channel + " section (" + position + ", " + length + ") processed"));
 			return process;
 		}
 
