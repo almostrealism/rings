@@ -186,19 +186,23 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				return;
 			}
 
-			patternsForChannel.stream().map(i -> {
+			patternsForChannel.stream().forEach(i -> {
 				patterns.get(i).sum(context);
-				return p(patterns.get(i).getDestination());
-			}).forEach(note -> {
-				PackedCollection<?> audio = traverse(1, note).get().evaluate();
-				int frames = Math.min(audio.getShape().getCount(),
-						this.destination.getShape().length(0));
-
-				TraversalPolicy shape = shape(frames);
-				if (enableVerbose) log("Rendering " + frames + " frames");
-				sum.sum(this.destination.range(shape), audio.range(shape));
-				if (enableVerbose) log("Rendered " + frames + " frames");
 			});
+
+//			patternsForChannel.stream().map(i -> {
+//				patterns.get(i).sum(context);
+//				return p(patterns.get(i).getDestination());
+//			}).forEach(note -> {
+//				PackedCollection<?> audio = traverse(1, note).get().evaluate();
+//				int frames = Math.min(audio.getShape().getCount(),
+//						this.destination.getShape().length(0));
+//
+//				TraversalPolicy shape = shape(frames);
+//				if (enableVerbose) log("Rendering " + frames + " frames");
+//				sum.sum(this.destination.range(shape), audio.range(shape));
+//				if (enableVerbose) log("Rendered " + frames + " frames");
+//			});
 
 			if (enableVerbose)
 				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));

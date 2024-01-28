@@ -16,17 +16,13 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.Ops;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
-import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
@@ -39,9 +35,6 @@ import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.DoubleFunction;
-import java.util.function.DoubleToIntFunction;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,7 +43,7 @@ import java.util.stream.Stream;
 public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
-	public static boolean enableVolumeAdjustment = true;
+	public static boolean enableVolumeAdjustment = false;
 
 	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
 
@@ -109,28 +102,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public PackedCollection<?> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
-		PackedCollection<?> dest = destination;
-
-		if (destination == null || context.getFrames() != this.destination.getMemLength()) {
-			destination = context.getIntermediateDestination().get();
-		} else {
-			return;
-		}
-
-		if (this.adjustVolume == null) {
-			OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-			v.add(() -> () ->
-					volume.setMem(0, 1.0 / chordDepth));
-			v.add(() -> () -> {
-				if (volume.toDouble(0) != 1.0) {
-					sum.adjustVolume(this.destination, volume);
-				}
-			});
-
-			adjustVolume = v.get();
-		}
-
-		if (dest != null) dest.destroy();
+		destination = context.getDestination();
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
@@ -355,7 +327,7 @@ public class PatternLayerManager implements CodeFeatures {
 			return;
 		}
 
-		destination.clear();
+		// destination.clear();
 
 		AudioSceneContext ctx = context.get();
 
@@ -395,7 +367,7 @@ public class PatternLayerManager implements CodeFeatures {
 					});
 		});
 
-		if (enableVolumeAdjustment) adjustVolume.run();
+		if (enableVolumeAdjustment && adjustVolume != null) adjustVolume.run();
 	}
 
 	public double nextNotePosition(double position) {
