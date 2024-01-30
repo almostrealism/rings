@@ -51,13 +51,14 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
-	public static boolean enableAdjustmentChromosome = true;
+	public static boolean enableAdjustmentChromosome = false;
 	public static boolean enableReverb = false;
 
 	private TimeCell clock;
 	private int sampleRate;
 
 	private AdjustmentChromosome volume;
+	private SimpleChromosome volumeSimple;
 	private AdjustmentChromosome mainFilterUp;
 	private AdjustmentChromosome wetIn;
 	private SimpleChromosome wetInSimple;
@@ -81,6 +82,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.volume = new AdjustmentChromosome(v, 0.0, 1.0, true, sampleRate);
 		this.volume.setGlobalTime(clock);
 
+		this.volumeSimple = initializeAdjustment(channels, genome.addSimpleChromosome(6));
+
 		SimpleChromosome fup = genome.addSimpleChromosome(AdjustmentChromosome.SIZE);
 		IntStream.range(0, channels).forEach(i -> fup.addGene());
 		this.mainFilterUp = new AdjustmentChromosome(fup, 0.0, 1.0, false, sampleRate);
@@ -91,16 +94,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.wetIn = new AdjustmentChromosome(w, 0.0, 1.0, false, sampleRate);
 		this.wetIn.setGlobalTime(clock);
 
-		this.wetInSimple = genome.addSimpleChromosome(6);
-		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = wetInSimple.addGene();
-			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
-			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
-			g.setTransform(4, p -> p);
-			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-		});
+		this.wetInSimple = initializeAdjustment(channels, genome.addSimpleChromosome(6));
 
 		this.transmission = genome.addSimpleChromosome(delayLayers);
 		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene());
@@ -147,10 +141,27 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public void initRanges(Configuration config, int delayLayers) {
 		volume.setPeriodicDurationRange(config.periodicVolumeDurationMin, config.periodicVolumeDurationMax);
 		volume.setOverallDurationRange(config.overallVolumeDurationMin, config.overallVolumeDurationMax);
+		volume.setOverallExponentRange(config.overallVolumeExponentMin, config.overallVolumeExponentMax);
 		volume.setOverallInitialRange(config.minVolumeValue, config.maxVolumeValue);
 		volume.setOverallScaleRange(-1.0, -1.0);
-		volume.setOverallExponentRange(config.overallVolumeExponentMin, config.overallVolumeExponentMax);
 		volume.setOverallOffsetRange(config.overallVolumeOffsetMin, config.overallVolumeOffsetMax);
+
+		volumeSimple.setParameterRange(0,
+				factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
+				factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
+		volumeSimple.setParameterRange(1,
+				factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
+				factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
+		volumeSimple.setParameterRange(2,
+				factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
+				factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
+		volumeSimple.setParameterRange(3,
+				factorForAdjustmentInitial(config.minVolumeValue),
+				factorForAdjustmentInitial(config.maxVolumeValue));
+		volumeSimple.setParameterRange(4, -1.0, -1.0);
+		volumeSimple.setParameterRange(5,
+				factorForAdjustmentOffset(config.overallVolumeOffsetMin),
+				factorForAdjustmentOffset(config.overallVolumeOffsetMax));
 
 		mainFilterUp.setPeriodicDurationRange(config.periodicFilterUpDurationMin, config.periodicFilterUpDurationMax);
 		mainFilterUp.setOverallDurationRange(config.overallFilterUpDurationMin, config.overallFilterUpDurationMax);
@@ -213,7 +224,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("Mixdown Manager Setup");
-		setup.add(volume.expand());
+		if (enableAdjustmentChromosome) setup.add(volume.expand());
 		if (AudioScene.enableMainFilterUp) setup.add(mainFilterUp.expand());
 		if (enableAdjustmentChromosome) setup.add(wetIn.expand());
 		if (!AudioScene.enableSourcesOnly) setup.add(delayDynamics.expand());
@@ -237,7 +248,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		}
 
 		TemporalList temporals = new TemporalList();
-		temporals.addAll(volume.getTemporals());
+		if (enableAdjustmentChromosome) temporals.addAll(volume.getTemporals());
 		if (AudioScene.enableMainFilterUp) temporals.addAll(mainFilterUp.getTemporals());
 		if (enableAdjustmentChromosome) temporals.addAll(wetIn.getTemporals());
 		if (!AudioScene.enableSourcesOnly) temporals.addAll(delayDynamics.getTemporals());
@@ -245,9 +256,17 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
+		IntFunction<Factor<PackedCollection<?>>> v;
+
+		if (enableAdjustmentChromosome) {
+			v = i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0));
+		} else {
+			v = i -> factor(toAdjustmentGene(clock, sampleRate, volumeSimple, channelIndex.applyAsInt(i)).valueAt(0));
+		}
+
 		if (AudioScene.enableSourcesOnly) {
 			return cells
-					.map(fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))))
+					.map(fc(v))
 					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
@@ -256,10 +275,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		// Volume adjustment
 		CellList branch[] = cells.branch(
-				fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
+				fc(v),
 				AudioScene.enableEfxFilters ?
-						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0)).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
-						fc(i -> factor(volume.valueAt(channelIndex.applyAsInt(i), 0))),
+						fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
+						fc(v),
 				fc(i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
 							factor(reverb.valueAt(channelIndex.applyAsInt(i), 0)) : sf(0.0)));
 
@@ -289,23 +308,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				// Route each line to each delay layer
 				tg = i -> delayGene(delayLayers, wetIn.valueAt(channelIndex.applyAsInt(i)));
 			} else {
-				tg = i -> delayGene(delayLayers, new Gene<>() {
-					@Override
-					public int length() { return 1; }
-
-					@Override
-					public Factor<PackedCollection<?>> valueAt(int pos) {
-						return in ->
-								multiply(adjustment(
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 0).getResultant(c(1.0)),
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 1).getResultant(c(1.0)),
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 2).getResultant(c(1.0)),
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 3).getResultant(c(1.0)),
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 4).getResultant(c(1.0)),
-								wetInSimple.valueAt(channelIndex.applyAsInt(i), 5).getResultant(c(1.0)),
-								clock.time(sampleRate), 0.0, 1.0, false), in);
-					}
-				});
+				tg = i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, wetInSimple, channelIndex.applyAsInt(i)));
 			}
 
 			// Route each line to each delay layer

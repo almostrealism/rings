@@ -24,10 +24,50 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.graph.TimeCell;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.SimpleGene;
+
+import java.util.stream.IntStream;
 
 public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
+	default SimpleChromosome initializeAdjustment(int channels, SimpleChromosome chromosome) {
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = chromosome.addGene();
+			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setTransform(4, p -> p);
+			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+		});
+		return chromosome;
+	}
+
+	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate, Chromosome<PackedCollection<?>> chromosome, int i) {
+		return new Gene<>() {
+			@Override
+			public int length() { return 1; }
+
+			@Override
+			public Factor<PackedCollection<?>> valueAt(int pos) {
+				return in ->
+						multiply(adjustment(
+								chromosome.valueAt(i, 0).getResultant(c(1.0)),
+								chromosome.valueAt(i, 1).getResultant(c(1.0)),
+								chromosome.valueAt(i, 2).getResultant(c(1.0)),
+								chromosome.valueAt(i, 3).getResultant(c(1.0)),
+								chromosome.valueAt(i, 4).getResultant(c(1.0)),
+								chromosome.valueAt(i, 5).getResultant(c(1.0)),
+								clock.time(sampleRate), 0.0, 1.0, false), in);
+			}
+		};
+	}
+
 	default double valueForFactor(Factor<PackedCollection<?>> value) {
 		if (value instanceof ScaleFactor) {
 			return ((ScaleFactor) value).getScaleValue();
