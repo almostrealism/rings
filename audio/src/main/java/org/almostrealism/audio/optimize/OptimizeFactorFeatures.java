@@ -210,7 +210,6 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
 		Producer<PackedCollection<?>> speedUp = max(c(0.0), subtract(time, speedUpOffset));
-//		Producer<PackedCollection<?>> speedUp = _max(c(0.0), subtract(time, c(0.0)));
 		speedUp = floor(divide(speedUp, speedUpDuration));
 		return initial.divide(pow(c(2.0), speedUp));
 	}
