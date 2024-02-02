@@ -319,7 +319,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
-		context.setDestination(patternDestinations.get(channels.get(0)));
+		if (patternDestinations != null) context.setDestination(patternDestinations.get(channels.get(0)));
 		return context;
 	}
 

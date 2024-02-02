@@ -30,7 +30,6 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.hardware.KernelList;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.OperationList;
@@ -41,7 +40,6 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.Chromosome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.io.TimingMetric;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
@@ -199,7 +197,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	protected Supplier<Runnable> process() {
 		Evaluable<PackedCollection<?>> ev = computation.get();
 
-		OperationList op = new OperationList("KernelList Parameter Assignments and Kernel Evaluations");
+		OperationList op = new OperationList("WaveCellChromosome Parameter Assignments and Kernel Evaluations");
 		IntStream.range(0, inputGenes).forEach(i -> {
 			if (parameterValues.containsKey(i)) op.add(assignParameters(parameterValues.get(i)));
 			op.add(() -> () -> {

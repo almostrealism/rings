@@ -65,6 +65,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 	public static boolean enableVerbose = false;
 
+	public static int DEFAULT_HEAP_SIZE = 16 * 1024 * 1024;
 	public static final boolean enableSourcesJson = true;
 	public static final int singleChannel = -1;
 
@@ -181,7 +182,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
 		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		Heap heap = new Heap(12 * 1024 * 1024);
+		Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 
 		heap.use(() -> {
 			try {

@@ -18,13 +18,11 @@ package org.almostrealism.audio.optimize;
 
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.KernelList;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.SimpleChromosome;
 
 @Deprecated
 public class AdjustmentChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
-	public static final int SIZE = 6;
 
 	private boolean relative;
 

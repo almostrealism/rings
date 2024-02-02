@@ -35,6 +35,9 @@ import org.almostrealism.heredity.SimpleGene;
 import java.util.stream.IntStream;
 
 public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
+	int ADJUSTMENT_CHROMOSOME_SIZE = 6;
+	int POLYCYCLIC_CHROMOSOME_SIZE = 6;
+
 	default SimpleChromosome initializeAdjustment(int channels, SimpleChromosome chromosome) {
 		IntStream.range(0, channels).forEach(i -> {
 			SimpleGene g = chromosome.addGene();
@@ -44,6 +47,19 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setTransform(4, p -> p);
 			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+		});
+		return chromosome;
+	}
+
+	default SimpleChromosome initializePolycyclic(int channels, SimpleChromosome chromosome) {
+		IntStream.range(0, channels).forEach(i -> {
+			SimpleGene g = chromosome.addGene();
+			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(1, p -> oneToInfinity(p, 0.5).multiply(c(10.0)));
+			g.setTransform(2, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(3, p -> p);
+			g.setTransform(4, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setTransform(5, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 		});
 		return chromosome;
 	}
@@ -64,6 +80,26 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 								chromosome.valueAt(i, 4).getResultant(c(1.0)),
 								chromosome.valueAt(i, 5).getResultant(c(1.0)),
 								clock.time(sampleRate), 0.0, 1.0, false), in);
+			}
+		};
+	}
+
+	default Gene<PackedCollection<?>> toPolycyclicGene(TimeCell clock, int sampleRate, Chromosome<PackedCollection<?>> chromosome, int i) {
+		return new Gene<>() {
+			@Override
+			public int length() { return 1; }
+
+			@Override
+			public Factor<PackedCollection<?>> valueAt(int pos) {
+				return in ->
+						multiply(polycyclic(
+								chromosome.valueAt(i, 0).getResultant(c(1.0)),
+								chromosome.valueAt(i, 1).getResultant(c(1.0)),
+								chromosome.valueAt(i, 2).getResultant(c(1.0)),
+								chromosome.valueAt(i, 3).getResultant(c(1.0)),
+								chromosome.valueAt(i, 4).getResultant(c(1.0)),
+								chromosome.valueAt(i, 5).getResultant(c(1.0)),
+								clock.time(sampleRate)), in);
 			}
 		};
 	}
@@ -143,6 +179,55 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(value, 60, 3);
 	}
 
+
+	default double factorForSpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double speedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	default double factorForSpeedUpPercentage(double decimal) {
+		return invertOneToInfinity(decimal, 10, 0.5);
+	}
+
+	default double speedUpPercentageForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 0.5, 10);
+	}
+
+	default double factorForSlowDownDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double slowDownDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	default double factorForSlowDownPercentage(double decimal) {
+		return decimal;
+	}
+
+	default double slowDownPercentageForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f);
+	}
+
+	default double factorForPolySpeedUpDuration(double seconds) {
+		return invertOneToInfinity(seconds, 60, 3);
+	}
+
+	default double polySpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 3, 60);
+	}
+
+	default double factorForPolySpeedUpExponent(double exp) {
+		return invertOneToInfinity(exp, 10, 1);
+	}
+
+	default double polySpeedUpExponentForFactor(Factor<PackedCollection<?>> f) {
+		return valueForFactor(f, 1, 10);
+	}
+
 	default ProducerComputation<PackedCollection<?>> adjustment(Producer<PackedCollection<?>> periodicWavelength,
 																Producer<PackedCollection<?>> polyWaveLength,
 																Producer<PackedCollection<?>> polyExp,
@@ -162,6 +247,24 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 								.multiply(pos).pow(polyExp)
 								.multiply(scale).add(initial), initial),
 				min, max);
+	}
+
+	default ProducerComputation<PackedCollection<?>> polycyclic(Producer<PackedCollection<?>> speedUpWavelength,
+																Producer<PackedCollection<?>> speedUpAmp,
+																Producer<PackedCollection<?>> slowDownWavelength,
+																Producer<PackedCollection<?>> slowDownAmp,
+																Producer<PackedCollection<?>> polySpeedUpWaveLength,
+																Producer<PackedCollection<?>> polySpeedUpExp,
+																Producer<PackedCollection<?>> time) {
+
+//		return c(1.0).relativeAdd(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+//					.relativeMultiply(c(1.0).relativeSubtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+//					.relativeMultiply(c(1.0).relativeAdd(pow(polySpeedUpWaveLength, c(-1.0))
+//							.relativeMultiply(time).pow(polySpeedUpExp)));
+		return c(1.0).add(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+				.multiply(c(1.0).subtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
+						.multiply(time).pow(polySpeedUpExp)));
 	}
 
 	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,

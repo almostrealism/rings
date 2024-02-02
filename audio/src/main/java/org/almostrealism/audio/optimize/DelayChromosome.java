@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package org.almostrealism.audio.optimize;
 
-import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.KernelList;
 import org.almostrealism.heredity.Chromosome;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
 @Deprecated
@@ -96,54 +93,6 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 		((SimpleChromosome) getSource()).setParameterRange(6,
 				factorForPolySpeedUpExponent(min),
 				factorForPolySpeedUpExponent(max));
-	}
-
-	public double factorForSpeedUpDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double speedUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForSpeedUpPercentage(double decimal) {
-		return invertOneToInfinity(decimal, 10, 0.5);
-	}
-
-	public double speedUpPercentageForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 0.5, 10);
-	}
-
-	public double factorForSlowDownDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double slowDownDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForSlowDownPercentage(double decimal) {
-		return decimal;
-	}
-
-	public double slowDownPercentageForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f);
-	}
-
-	public double factorForPolySpeedUpDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double polySpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForPolySpeedUpExponent(double exp) {
-		return invertOneToInfinity(exp, 10, 1);
-	}
-
-	public double polySpeedUpExponentForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 1, 10);
 	}
 
 }
