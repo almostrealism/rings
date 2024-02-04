@@ -132,6 +132,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 
 		NativeComputeContext.enableLargeScopeMonitoring = false;
+		NativeCompiler.enableInstructionSetMonitoring = true;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
@@ -149,38 +150,39 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
+
+		PopulationOptimizer.THREADS = 1;
 		PopulationOptimizer.popSize = 45;
 
-		// Verbosity level 1
-		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
+		// Verbosity level 0
+		PopulationOptimizer.enableBreeding = true; //verbosity < 1;
+
+		// Verbosity level 1;
+		PatternNote.enableVerbose = verbosity > 0;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
-		PatternNote.enableVerbose = verbosity > 0;
+		MetalProgram.enableLargeProgramMonitoring = verbosity > 0;
+		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
 
 		// Verbosity level 2
-		WaveOutput.enableVerbose = verbosity > 1;
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 		PopulationOptimizer.enableVerbose = verbosity > 1;
-		MetalProgram.enableLargeProgramMonitoring = verbosity > 1;
+		MetalProgram.enableProgramMonitoring = verbosity > 1;
+		NativeCompiler.enableInstructionSetMonitoring = verbosity > 1;
 
 		// Verbosity level 3
+		WaveOutput.enableVerbose = verbosity > 2;
 		PatternSystemManager.enableVerbose = verbosity > 2;
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
 		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
-		NativeCompiler.enableInstructionSetMonitoring = verbosity > 2;
 
 		// Verbosity level 4
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
-		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = verbosity < 1;
-
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
-		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
 		Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 

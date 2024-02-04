@@ -509,8 +509,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			overallWetInOffsetMin = offset;
 			overallWetInOffsetMax = offset + 40;
 
-			minWetOut = 1.0;
-			maxWetOut = 1.7;
+			minWetOut = 0.5;
+			maxWetOut = 1.4;
 			minHighPass = 0.0;
 			maxHighPass = 5000.0;
 			minLowPass = 15000.0;
