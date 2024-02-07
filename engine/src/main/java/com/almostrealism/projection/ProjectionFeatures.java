@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.geometry.computations.RayExpressionComputation;
+import org.almostrealism.geometry.Ray;
 
 public interface ProjectionFeatures extends CodeFeatures {
-	default RayExpressionComputation rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
-												 double blur, double focalLength, Vector u, Vector v, Vector w) {
+	default CollectionProducer<Ray> rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
+											 double blur, double focalLength, Vector u, Vector v, Vector w) {
 		return ray(v(location),
 				direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}

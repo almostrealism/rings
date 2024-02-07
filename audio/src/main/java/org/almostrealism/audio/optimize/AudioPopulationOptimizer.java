@@ -51,12 +51,14 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static final boolean enableWavOutput = true;
 	public static boolean enableStemOutput = true;
 	public static boolean enableIsolatedContext = false;
+	public static boolean enableExplicitGc = false;
 
 	private final String file;
 	private int tot;
 	private final AtomicInteger count;
 
 	private Runnable cycleListener;
+	private Runnable completionListener;
 
 	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
 									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
@@ -91,6 +93,10 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void setCycleListener(Runnable r) {
 		this.cycleListener = r;
+	}
+
+	public void setCompletionListener(Runnable r) {
+		this.completionListener = r;
 	}
 
 	public void readPopulation() throws FileNotFoundException {
@@ -144,7 +150,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				resetGenerator();
 			}
 
-			System.gc();
+			if (completionListener != null) completionListener.run();
+			if (enableExplicitGc) System.gc();
 		}
 	}
 

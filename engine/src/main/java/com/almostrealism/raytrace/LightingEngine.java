@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.SurfaceLight;
-import io.almostrealism.code.ProducerComputation;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.computations.ProducerWithRankAdapter;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
@@ -66,10 +66,10 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 		this.distance = ((ShadableIntersection) intersections).getDistance();
 	}
 
-	protected ProducerComputation<RGB> shadowAndShadeProduct(ContinuousField intersections,
-																	Curve<RGB> surface,
-																	Collection<Curve<RGB>> otherSurfaces,
-																	Light light, Iterable<Light> otherLights, ShaderContext p) {
+	protected CollectionProducer<RGB> shadowAndShadeProduct(ContinuousField intersections,
+															Curve<RGB> surface,
+															Collection<Curve<RGB>> otherSurfaces,
+															Light light, Iterable<Light> otherLights, ShaderContext p) {
 		Supplier shadowAndShade[] = shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p);
 		return rgb(multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1]));
 	}
