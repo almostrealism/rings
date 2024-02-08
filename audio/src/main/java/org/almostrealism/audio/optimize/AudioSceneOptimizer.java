@@ -62,12 +62,12 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 1;
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 16 * 1024 * 1024;
 	public static final boolean enableSourcesJson = true;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 2;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -132,7 +132,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 
 		NativeComputeContext.enableLargeScopeMonitoring = false;
-		NativeCompiler.enableInstructionSetMonitoring = true;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
@@ -146,6 +145,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableEnvelope = true;
+		PatternElementFactory.enableSequence = true;
 		PatternLayerManager.enableVolumeAdjustment = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
@@ -155,7 +155,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.popSize = 45;
 
 		// Verbosity level 0
-		PopulationOptimizer.enableBreeding = true; //verbosity < 1;
+		PopulationOptimizer.enableBreeding = verbosity < 1;
 
 		// Verbosity level 1;
 		PatternNote.enableVerbose = verbosity > 0;

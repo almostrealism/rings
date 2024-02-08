@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 public class PatternElementFactory {
 	public static boolean enableEnvelope = true;
+	public static boolean enableSequence = false;
 
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 
@@ -144,7 +145,8 @@ public class PatternElementFactory {
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
-	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias, int depth, boolean repeat, ParameterSet params) {
+	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias,
+										  int depth, boolean repeat, ParameterSet params) {
 		if (parity == ElementParity.LEFT) {
 			position -= scale;
 		} else if (parity == ElementParity.RIGHT) {
@@ -168,8 +170,6 @@ public class PatternElementFactory {
 		element.setDurationStrategy(isMelodic() ?
 				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
-
-		// System.out.println("PatternElementFactory: duration = " + element.getNoteDurationSelection());
 
 		double r = repeatSelection.apply(params, position, scale);
 
