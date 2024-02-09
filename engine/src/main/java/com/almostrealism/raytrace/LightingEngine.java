@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.PointLight;
 import com.almostrealism.lighting.SurfaceLight;
-import io.almostrealism.code.ProducerComputation;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.computations.ProducerWithRankAdapter;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.geometry.ContinuousField;
 import org.almostrealism.geometry.Intersectable;
@@ -43,7 +43,6 @@ import io.almostrealism.relation.Evaluable;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends ProducerWithRankAdapter<RGB>
@@ -67,10 +66,10 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 		this.distance = ((ShadableIntersection) intersections).getDistance();
 	}
 
-	protected ProducerComputation<RGB> shadowAndShadeProduct(ContinuousField intersections,
-																	Curve<RGB> surface,
-																	Collection<Curve<RGB>> otherSurfaces,
-																	Light light, Iterable<Light> otherLights, ShaderContext p) {
+	protected CollectionProducer<RGB> shadowAndShadeProduct(ContinuousField intersections,
+															Curve<RGB> surface,
+															Collection<Curve<RGB>> otherSurfaces,
+															Light light, Iterable<Light> otherLights, ShaderContext p) {
 		Supplier shadowAndShade[] = shadowAndShade(intersections, surface, otherSurfaces, light, otherLights, p);
 		return rgb(multiply((Producer) shadowAndShade[0], (Producer) shadowAndShade[1]));
 	}
@@ -85,7 +84,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 		if (surface instanceof Intersectable) allSurfaces.add((Intersectable) surface);
 
 		if (enableShadows && light.castShadows) {
-			shadow = new ShadowMask(light, allSurfaces, Ops.ops().origin(intersections.get(0)).get());
+			shadow = new ShadowMask(light, allSurfaces, Ops.o().origin(intersections.get(0)).get());
 		} else {
 			shadow = RGBFeatures.getInstance().white();
 		}
@@ -108,7 +107,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 			Vector l = (directionalLight.getDirection().divide(
 					directionalLight.getDirection().length())).minus();
 
-			context.setLightDirection(Ops.ops().v(l));
+			context.setLightDirection(Ops.o().v(l));
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
@@ -138,14 +137,6 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 
 	@Override
 	public Producer<Scalar> getRank() { return distance; }
-
-	@Override
-	public void compact() {
-		getProducer().compact();
-		getRank().compact();
-
-		System.out.println("Compacted LightingEngine");
-	}
 
 	/**
 	 * Performs the lighting calculations for the specified surface at the specified point of intersection

@@ -20,6 +20,8 @@ import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.expression.Max;
 import io.almostrealism.expression.Min;
+import io.almostrealism.relation.ParallelProcess;
+import io.almostrealism.relation.Process;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
@@ -29,6 +31,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
@@ -54,6 +57,16 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 				(Supplier) data.getOutputHistory2(),
 				(Supplier) input);
 		this.high = high;
+	}
+
+	private AudioPassFilterComputation(boolean high, Supplier... arguments) {
+		super(arguments);
+		this.high = high;
+	}
+
+	@Override
+	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
+		return new AudioPassFilterComputation(high, children.toArray(Supplier[]::new));
 	}
 
 	public ArrayVariable<Double> getOutput() { return getArgument(0, 1); }

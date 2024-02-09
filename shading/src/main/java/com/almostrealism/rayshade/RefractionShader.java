@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
+import io.almostrealism.uml.Multiple;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Scalar;
@@ -78,7 +79,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 			public KernelizedEvaluable<RGB> get() {
 				return new KernelizedEvaluable<>() {
 					@Override
-					public MemoryBank<RGB> createKernelDestination(int size) {
+					public Multiple<RGB> createDestination(int size) {
 						return RGB.bank(size);
 					}
 
@@ -148,11 +149,6 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 						return color.get().evaluate(args);
 					}
 				};
-			}
-
-			@Override
-			public void compact() {
-				// TODO
 			}
 		};
 		

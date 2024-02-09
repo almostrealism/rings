@@ -98,6 +98,4 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 	public Operator<Scalar> expect() { return getSurface().expect(); }
 
 	@Override public Producer<RGB> shade(ShaderContext p) { return this.getSurface().shade(p); }
-
-	@Override public RGB operate(Vector in) { return getSurface().operate(in); }
 }

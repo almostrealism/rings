@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,12 +125,17 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 
 		try {
 			if (WaveOutput.enableVerbose)
-				System.out.println("WaveDataProvider: Loading " + resourcePath);
+				log("Loading " + resourcePath);
 
 			return WaveData.load(new File(resourcePath));
 		} catch (IOException e) {
 			corruptFiles.add(getResourcePath());
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public Console console() {
+		return CellFeatures.console;
 	}
 }

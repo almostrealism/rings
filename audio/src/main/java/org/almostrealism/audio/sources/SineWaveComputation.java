@@ -30,7 +30,7 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 	protected static final double TWO_PI = 2 * Math.PI;
 
 	public SineWaveComputation(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
-		super((Supplier) Ops.ops().p(output),
+		super((Supplier) Ops.o().p(output),
 				(Supplier) data.getWavePosition(),
 				(Supplier) data.getWaveLength(),
 				(Supplier) data.getNotePosition(),

@@ -19,7 +19,6 @@ import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
 
 import java.io.*;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class WavFile implements AutoCloseable {
@@ -173,9 +172,13 @@ public class WavFile implements AutoCloseable {
 	}
 
 	public static PackedCollection<?> channel(double[][] data, int chan) {
+		return channel(data, chan, 0);
+	}
+
+	public static PackedCollection<?> channel(double[][] data, int chan, int padFrames) {
 		// System.out.println("WavFile: Allocating " + data[chan].length / OutputLine.sampleRate + " seconds");
 
-		PackedCollection<?> waveform = new PackedCollection(data[chan].length);
+		PackedCollection<?> waveform = new PackedCollection(data[chan].length + padFrames);
 
 		for (int i = 0; i < data[chan].length; i++) {
 			waveform.setMem(i, data[chan][i]);
@@ -674,13 +677,8 @@ public class WavFile implements AutoCloseable {
 
 	public static Function<WaveCellData, WaveCell> load(File f, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
 		WaveData waveform = WaveData.load(f);
-		return data -> new WaveCell(data, waveform.getCollection(), waveform.getSampleRate(), amplitude, Ops.ops().toScalar(offset),
-				Ops.ops().toScalar(repeat), Ops.ops().v(0.0), Ops.ops().v(waveform.getCollection().getMemLength()));
-	}
-
-	public static Function<WaveCellData, WaveCell> load(WaveData w, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
-		return data -> new WaveCell(data, w.getCollection(), w.getSampleRate(), amplitude, Ops.ops().toScalar(offset),
-				Ops.ops().toScalar(repeat), Ops.ops().v(0.0), Ops.ops().v(w.getCollection().getMemLength()));
+		return data -> new WaveCell(data, waveform.getCollection(), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
+				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(waveform.getCollection().getMemLength()));
 	}
 
 	public static void write(WaveData data, File f) throws IOException {

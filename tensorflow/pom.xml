@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.30</version>
+		<version>0.31</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -15,14 +15,20 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-utils</artifactId>
-			<version>${common.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.tensorflow</groupId>
 			<artifactId>tensorflow-platform</artifactId>
 			<version>0.4.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../lib/tensorflow-core-platform-0.4.0-SNAPSHOT.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

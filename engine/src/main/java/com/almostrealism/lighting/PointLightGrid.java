@@ -26,10 +26,6 @@ import io.almostrealism.code.Operator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.geometry.ShadableIntersection;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 /** A {@link PointLightGrid} object stores a grid of {@link PointLight}s. */
 public class PointLightGrid extends AbstractSurface implements Light {
 	private double intensity;

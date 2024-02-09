@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package org.almostrealism.audio.optimize;
 
-import io.almostrealism.code.ComputeRequirement;
 import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.collect.Shape;
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WaveOutput;
@@ -28,16 +30,17 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.hardware.KernelList;
 import org.almostrealism.hardware.MemoryBank;
+import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.hardware.computations.Assignment;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.TemporalFactor;
+import org.almostrealism.io.TimingMetric;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
 
@@ -52,13 +55,24 @@ import java.util.stream.IntStream;
 
 @Deprecated
 public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Temporal, Setup, CellFeatures {
+	public static TimingMetric timing = CellFeatures.console.timing("WavCellChromosome");
+	public static boolean enableKernels = true;
+
+	private ProducerComputation<PackedCollection<?>> computation;
+	private BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computationProvider;
+
+	private PackedCollection<PackedCollection<?>> input;
+	private MemoryBank<PackedCollection<?>> parameters;
+	private MemoryBank<PackedCollection<MemoryData>> data;
+
+	private Map<Integer, Producer<PackedCollection<PackedCollection<?>>>> parameterValues;
+
 	private Chromosome<PackedCollection<?>> source;
 	private Map<Integer, Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>>> transforms;
 
 	private ArrayListChromosome<PackedCollection<?>> destination;
 
-	private KernelList<PackedCollection<?>> kernels;
-	private int inputGenes, inputFactors;
+	private int inputGenes;
 
 	private int sampleRate;
 	private TimeCell time;
@@ -67,11 +81,13 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		this.source = source;
 		this.transforms = new HashMap<>();
 		this.inputGenes = source.length();
-		this.inputFactors = inputFactors;
+		this.parameters = inputFactors > 0 ?
+				PackedCollection.bank(new TraversalPolicy(1)).apply(inputFactors) : null;
+		this.parameterValues = new HashMap<>();
 		this.sampleRate = sampleRate;
 	}
 
-	public Chromosome<PackedCollection<?>> getSource() {return source;}
+	public Chromosome<PackedCollection<?>> getSource() { return source; }
 
 	public void setTransform(int factor, Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> transform) {
 		this.transforms.put(factor, transform);
@@ -81,15 +97,30 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 		this.time = time;
 	}
 
-	public void setTimeline(PackedCollection<PackedCollection<?>> timeline) { kernels.setInput(timeline); }
+	public void setTimeline(PackedCollection<PackedCollection<?>> timeline) {
+		this.input = timeline;
+		this.data = PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
+				new PackedCollection<>(new TraversalPolicy(width, 1), 1,
+						delegateSpec.getDelegate(), delegateSpec.getOffset()))
+				.apply(input.getCount(), inputGenes);
 
-	public KernelList<PackedCollection<?>> getKernelList() { return kernels; }
+		TraversalPolicy shape = ((Shape) input).getShape();
+		TraversalPolicy parameterShape = ((Shape) parameters).getShape();
+		this.computation = computationProvider.apply(
+				new PassThroughProducer<>(parameterShape.traverse(0), 1),
+				new PassThroughProducer<>(shape, 0));
+	}
 
 	public void setFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
-		this.kernels = new KernelList(PackedCollection.bank(new TraversalPolicy(1)),
-				PackedCollection.table(new TraversalPolicy(1), (delegateSpec, width) ->
-						new PackedCollection<>(new TraversalPolicy(width, 1), 1, delegateSpec.getDelegate(), delegateSpec.getOffset())),
-				computation, inputGenes, inputFactors);
+		this.computationProvider = computation;
+	}
+
+	public void setParameters(int pos, Producer<PackedCollection<PackedCollection<?>>> parameters) {
+		this.parameterValues.put(pos, parameters);
+	}
+
+	public Supplier<Runnable> assignParameters(Producer<PackedCollection<PackedCollection<?>>> parameters) {
+		return new Assignment<>(this.parameters.getMemLength(), () -> new Provider(this.parameters), parameters);
 	}
 
 	public Function<Gene<PackedCollection<?>>, Producer<PackedCollection<?>>> id(int index) {
@@ -120,33 +151,32 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 					.collect(Collectors.toCollection(ArrayListChromosome::new));
 		});
 
-		prepare.get().run();
+		long start = System.nanoTime();
+
+		try {
+			prepare.get().run();
+		} finally {
+			timing.addEntry("prepare", System.nanoTime() - start);
+		}
+
 		return process();
 	}
 
 	private Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
-		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
-
-		kernels.setParameters(pos, parameters(transformed));
+		setParameters(pos, parameters(transformed));
 		WaveCell cell = new WaveCell(PolymorphicAudioData.supply(PackedCollection.factory()).get(),
-				(PackedCollection) kernels.valueAt(pos), sampleRate, 1.0, time.frame());
+				data.get(pos), sampleRate, 1.0, time.frame());
 		Factor<PackedCollection<?>> factor = cell.toFactor(() -> new Scalar(0.0),
 				p -> protein -> new Assignment<>(1, p, protein), combine());
-		// return cell.toFactor();
-		result.add(factor);
 
+		ArrayListGene<PackedCollection<?>> result = new ArrayListGene<>();
+		result.add(factor);
 		return result;
 	}
 
 	@Override
 	public Supplier<Runnable> tick() {
-		System.out.println("WavCellChromosome.tick()");
-		return destination.stream()
-				.flatMap(g -> IntStream.range(0, g.length()).mapToObj(g::valueAt))
-				.map(f -> f instanceof TemporalFactor ? (TemporalFactor) f : null)
-				.filter(Objects::nonNull)
-				.map(Temporal::tick)
-				.collect(OperationList.collector());
+		throw new UnsupportedOperationException();
 	}
 
 	public TemporalList getTemporals() {
@@ -165,13 +195,31 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	public int length() { return destination.length(); }
 
 	protected Supplier<Runnable> process() {
-		Runnable run = kernels.get();
+		Evaluable<PackedCollection<?>> ev = computation.get();
+
+		OperationList op = new OperationList("WaveCellChromosome Parameter Assignments and Kernel Evaluations");
+		IntStream.range(0, inputGenes).forEach(i -> {
+			if (parameterValues.containsKey(i)) op.add(assignParameters(parameterValues.get(i)));
+			op.add(() -> () -> {
+				if (enableKernels) {
+					ev.into(data.get(i)).evaluate(input, ((Shape) this.parameters).traverse(0));
+				} else {
+					ev.into(((Shape) data.get(i)).traverse(0))
+							.evaluate(((Shape) input).traverse(0),
+									((Shape) this.parameters).traverse(0));
+				}
+			});
+		});
+
+		Runnable run = op.get();
 
 		return () -> () -> {
-			if (cc().isKernelSupported()) {
+			long start = System.nanoTime();
+
+			try {
 				run.run();
-			} else {
-				cc(() -> kernels.get().run(), ComputeRequirement.CL);
+			} finally {
+				timing.addEntry("process", System.nanoTime() - start);
 			}
 		};
 	}
@@ -191,6 +239,5 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 
 	protected BiFunction<Producer<PackedCollection<?>>, Producer<PackedCollection<?>>, Producer<PackedCollection<?>>> combine() {
 		return (a, b) -> (Producer) scalarsMultiply(toScalar(a), toScalar(b));
-		// return (a, b) -> a;
 	}
 }

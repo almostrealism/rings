@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,13 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
@@ -37,24 +41,33 @@ import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
+import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.cl.CLComputeContext;
+import org.almostrealism.hardware.cl.CLMemoryProvider;
+import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
+import org.almostrealism.hardware.metal.MetalMemoryProvider;
+import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.optimize.PopulationOptimizer;
+import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
-	public static final int verbosity = 0;
+	public static final int verbosity = 1;
+	public static boolean enableVerbose = false;
 
+	public static int DEFAULT_HEAP_SIZE = 16 * 1024 * 1024;
 	public static final boolean enableSourcesJson = true;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 2;
 
 	public static String LIBRARY = "Library";
 	public static String STEMS = "Stems";
@@ -87,7 +100,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 					if (population == null) {
 						population = new AudioScenePopulation(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
+
+						if (enableVerbose) log("Initializing AudioScenePopulation");
 						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
+						if (enableVerbose) log("AudioScenePopulation initialized (getCells duration = " + AudioScene.console.timing("getCells").getTotal() + ")");
 					} else {
 						population.setGenomes(children);
 					}
@@ -112,8 +128,15 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
-		CLComputeContext.enableFastQueue = false;
-		StableDurationHealthComputation.enableTimeout = true;
+		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
+
+		NativeComputeContext.enableLargeScopeMonitoring = false;
+		TemporalRunner.enableOptimization = false;
+		TemporalRunner.enableIsolation = false;
+
+		StableDurationHealthComputation.enableTimeout = false;
+		MixdownManager.enableReverb = true;
 		AudioScene.enableMainFilterUp = true;
 		AudioScene.enableEfxFilters = true;
 		AudioScene.enableEfx = true;
@@ -122,29 +145,46 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableEnvelope = true;
+		PatternElementFactory.enableSequence = true;
+		PatternLayerManager.enableVolumeAdjustment = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
 
-		PopulationOptimizer.enableVerbose = verbosity > 0;
-		Hardware.enableVerbose = verbosity > 0;
-		WaveOutput.enableVerbose = verbosity > 1;
+		PopulationOptimizer.THREADS = 1;
+		PopulationOptimizer.popSize = 45;
+
+		// Verbosity level 0
+		PopulationOptimizer.enableBreeding = verbosity < 1;
+
+		// Verbosity level 1;
+		PatternNote.enableVerbose = verbosity > 0;
+		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
+		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
+		MetalProgram.enableLargeProgramMonitoring = verbosity > 0;
+		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
+
+		// Verbosity level 2
+		AudioSceneOptimizer.enableVerbose = verbosity > 1;
+		PopulationOptimizer.enableVerbose = verbosity > 1;
+		MetalProgram.enableProgramMonitoring = verbosity > 1;
+		NativeCompiler.enableInstructionSetMonitoring = verbosity > 1;
+
+		// Verbosity level 3
+		WaveOutput.enableVerbose = verbosity > 2;
+		PatternSystemManager.enableVerbose = verbosity > 2;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
 		PopulationOptimizer.enableDisplayGenomes = verbosity > 2;
 		NativeComputeContext.enableVerbose = verbosity > 2;
-		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
+		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
-		HardwareOperator.enableVerboseLog = verbosity > 3;
-		// CLMemoryProvider.enableLargeAllocationLogging = true;
 
-		// PopulationOptimizer.THREADS = verbosity < 1 ? 2 : 1;
-		PopulationOptimizer.enableBreeding = false; // verbosity < 3;
+		// Verbosity level 4
+		HardwareOperator.enableVerboseLog = verbosity > 3;
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-		// HealthCallable.setComputeRequirements(ComputeRequirement.C);
-		// HealthCallable.setComputeRequirements(ComputeRequirement.PROFILING);
-		// Hardware.getLocalHardware().setMaximumOperationDepth(7);
 
-		Heap heap = new Heap(4 * 1024 * 1024);
+		Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 
 		heap.use(() -> {
 			try {
@@ -152,6 +192,22 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
 				opt.init();
 				opt.run();
+
+				HardwareOperator.profile.print();
+
+				if (WavCellChromosome.timing.getTotal() > 60)
+					WavCellChromosome.timing.print();
+
+				if (enableVerbose)
+					PatternLayerManager.sizes.print();
+
+				if (AudioSumProvider.timing.getTotal() > 120)
+					AudioSumProvider.timing.print();
+
+				if (MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
+					MemoryDataArgumentMap.profile.print();
+
+				AcceleratedOperation.printTimes();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -198,7 +254,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 	private static List<PatternFactoryChoice> createChoices() throws IOException {
 		if (enableSourcesJson) {
-			PatternFactoryChoiceList choices = new ObjectMapper()
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			PatternFactoryChoiceList choices = mapper
 					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
 			return choices;
 		} else {

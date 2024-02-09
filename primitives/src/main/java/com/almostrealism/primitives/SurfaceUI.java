@@ -25,7 +25,7 @@ import org.almostrealism.geometry.Camera;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.ShadableSurfaceWrapper;
 import org.almostrealism.swing.Dialog;
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 
 /**
  * The SurfaceUI interface is implemented by classes that represent a Surface object that can be used

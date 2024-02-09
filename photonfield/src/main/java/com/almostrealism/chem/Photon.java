@@ -1,7 +1,8 @@
 package com.almostrealism.chem;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.color.ColorEvaluable;
+import org.almostrealism.color.RGB;
 import org.almostrealism.physics.PhysicalConstants;
 
 public class Photon extends Pair implements PhysicalConstants {
@@ -26,7 +27,7 @@ public class Photon extends Pair implements PhysicalConstants {
 	 */
 	public double getEnergy() { return HC / getWavelength(); }
 
-	public static ColorEvaluable merge(Photon... p) {
+	public static Evaluable<RGB> merge(Photon... p) {
 		// TODO Combine Photons taking phase into account so interference patterns are reproduced
 		throw new RuntimeException("Not implemented");
 	}

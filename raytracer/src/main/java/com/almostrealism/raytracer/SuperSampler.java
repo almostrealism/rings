@@ -49,7 +49,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 		return new KernelizedEvaluable<>() {
 
 			@Override
-			public MemoryBank<RGB> createKernelDestination(int size) {
+			public MemoryBank<RGB> createDestination(int size) {
 				return RGB.bank(size);
 			}
 
@@ -77,7 +77,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 			}
 
 			@Override
-			public Evaluable withDestination(MemoryBank<RGB> destination) {
+			public Evaluable withDestination(MemoryBank destination) {
 				return args -> {
 					int w = ev.length;
 					int h = ev[0].length;
@@ -116,15 +116,6 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 				};
 			}
 		};
-	}
-
-	@Override
-	public void compact() {
-		for (int i = 0; i < samples.length; i++) {
-			for (int j = 0; j < samples[i].length; j++) {
-				samples[i][j].compact();
-			}
-		}
 	}
 
 	@Override

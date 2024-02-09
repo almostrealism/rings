@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;

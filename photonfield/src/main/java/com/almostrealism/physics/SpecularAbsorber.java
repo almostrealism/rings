@@ -41,9 +41,6 @@ import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.PlanarLight;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.util.PriorityQueue;
-import io.almostrealism.relation.Evaluable;
-
-import static org.almostrealism.Ops.*;
 
 import java.lang.Math;
 
@@ -78,7 +75,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 		SpecularAbsorber b = new SpecularAbsorber();
 		//b.setVolume(new Sphere(x / 10.0));
 		Plane p = new Plane();
-		p.setSurfaceNormal(Ops.ops().vector(0.0, -1.0, 0.0));
+		p.setSurfaceNormal(Ops.o().vector(0.0, -1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(x / 2.0);
 		p.setHeight(x / 2.0);
@@ -94,13 +91,13 @@ public class SpecularAbsorber extends VolumeAbsorber
 		plane.setWidth(300);
 		plane.setHeight(300);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(x / 8.0);
 		pinhole.setThickness(0.05);
-		pinhole.setSurfaceNormal(Ops.ops().vector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb
@@ -115,11 +112,11 @@ public class SpecularAbsorber extends VolumeAbsorber
 		// Add SpecularAbsorber and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(2.0 * x);
-		a.addAbsorber(b, Ops.ops().vector(0.0, -x, 0.0));
+		a.addAbsorber(b, Ops.o().vector(0.0, -x, 0.0));
 		// a.addAbsorber(bl, new double[] {0.0, 0.0, 0.0});
-		a.addAbsorber(l, Ops.ops().vector(0.0, 0.0, -x));
-		a.addAbsorber(plane, Ops.ops().vector(0.0, 0.0, x + 10.0));
-		a.addAbsorber(pinhole, Ops.ops().vector(0.0, 0.0, x));
+		a.addAbsorber(l, Ops.o().vector(0.0, 0.0, -x));
+		a.addAbsorber(plane, Ops.o().vector(0.0, 0.0, x + 10.0));
+		a.addAbsorber(pinhole, Ops.o().vector(0.0, 0.0, x));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the stuff we want to look at...

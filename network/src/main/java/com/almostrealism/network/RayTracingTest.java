@@ -1,4 +1,4 @@
-package com.almostrealism.network.test;
+package com.almostrealism.network;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,6 @@ import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
-import org.junit.Test;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
@@ -166,23 +165,6 @@ public class RayTracingTest {
 			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
 						ImageCanvas.JPEGEncoding);
 			System.out.println("Wrote image");
-		} catch (FileNotFoundException fnf) {
-			System.out.println("ERROR: Output file not found");
-		} catch (IOException ioe) {
-			System.out.println("IO ERROR");
-		}
-	}
-
-	@Test
-	public void test() throws IOException {
-		RealizableImage img = generateImage();
-
-		try {
-			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
-					ImageCanvas.JPEGEncoding);
-			System.out.println("Wrote image");
-		} catch (HardwareException e) {
-			e.printStackTrace();
 		} catch (FileNotFoundException fnf) {
 			System.out.println("ERROR: Output file not found");
 		} catch (IOException ioe) {

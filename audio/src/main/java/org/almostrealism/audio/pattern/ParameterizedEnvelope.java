@@ -18,13 +18,15 @@ package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
+import org.almostrealism.Ops;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 public class ParameterizedEnvelope implements EnvelopeFeatures {
 	public static final int MAX_SECONDS = 180;
@@ -34,22 +36,25 @@ public class ParameterizedEnvelope implements EnvelopeFeatures {
 	public static double maxSustain = 0.8;
 	public static double maxRelease = 0.5; // 3.0;
 
+	private static Evaluable<PackedCollection<?>> env;
+
+	static {
+		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
+
+		Factor<PackedCollection<?>> factor =
+				o.envelope(o.v(1, 1),
+						o.v(1, 2), o.v(1, 3),
+						o.v(1, 4), o.v(1, 5)).get();
+		env = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
+				() -> factor.getResultant(o.v(1, 0))).get();
+	}
+
 	private ParameterFunction attackSelection;
 	private ParameterFunction decaySelection;
 	private ParameterFunction sustainSelection;
 	private ParameterFunction releaseSelection;
 
-	@JsonIgnore
-	// TODO  Can't this be static, and reused by all envelopes?
-	private Evaluable<PackedCollection<?>> env;
-
 	public ParameterizedEnvelope() {
-		Factor<PackedCollection<?>> factor =
-				envelope(v(1, 1),
-						v(1, 2), v(1, 3),
-						v(1, 4), v(1, 5)).get();
-		env = sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> factor.getResultant(v(1, 0))).get();
 	}
 
 	public ParameterizedEnvelope(ParameterFunction attackSelection, ParameterFunction decaySelection,

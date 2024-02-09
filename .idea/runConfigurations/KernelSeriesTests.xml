@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="KernelSeriesTests" type="JUnit" factoryName="JUnit" folderName="Code">
+    <module name="ar-utils" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <option name="PACKAGE_NAME" value="io.almostrealism.expression.test" />
+    <option name="MAIN_CLASS_NAME" value="io.almostrealism.expression.test.KernelSeriesTests" />
+    <option name="METHOD_NAME" value="divideMultiply1" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2" />
+  </configuration>
+</component>

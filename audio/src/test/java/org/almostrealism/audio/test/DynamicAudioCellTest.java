@@ -34,7 +34,7 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.graph.CellPair;
@@ -117,7 +117,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		op.add(cell.push(c(0.0)));
 		op.add(cell.tick());
 
-		AcceleratedComputationOperation o = (AcceleratedComputationOperation) loop(op, DURATION_FRAMES).get();
+		AcceleratedComputationOperation o = (AcceleratedComputationOperation) lp(op, DURATION_FRAMES).get();
 		o.run();
 
 		System.out.println("DynamicAudioCellTest: Writing WAV...");

@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
@@ -35,6 +36,8 @@ import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
 public class AudioScenePopulation implements Population<PackedCollection<?>, PackedCollection<?>, TemporalCellular>, CodeFeatures {
+	private static long totalGeneratedFrames, totalGenerationTime;
+
 	private AudioScene<?> scene;
 
 	private List<Genome<PackedCollection<?>>> pop;
@@ -138,6 +141,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 
 			for (int i = 0; i < getGenomes().size(); i++) {
 				TemporalCellular cells = null;
+				long start = System.currentTimeMillis();
 
 				try {
 					outputPath = null;
@@ -146,6 +150,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					if (gen == null) gen = cells.iter(frames, false).get();
 					gen.run();
 				} finally {
+					recordGenerationTime(frames, System.currentTimeMillis() - start);
+
 					out.write().get().run();
 					out.reset();
 					if (cells != null) cells.reset();
@@ -155,5 +161,16 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 				}
 			}
 		};
+	}
+
+	public static void recordGenerationTime(long generatedFrames, long generationTime) {
+		totalGeneratedFrames += generatedFrames;
+		totalGenerationTime += generationTime;
+	}
+
+	public static double getGenerationTimePerSecond() {
+		double seconds = totalGeneratedFrames / (double) OutputLine.sampleRate;
+		double generationTime = totalGenerationTime / 1000.0;
+		return seconds == 0 ? 0 : (generationTime / seconds);
 	}
 }

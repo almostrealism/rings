@@ -17,6 +17,9 @@
 
 package org.almostrealism.audio.computations;
 
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.ParallelProcess;
+import io.almostrealism.relation.Process;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.OperationMetadata;
 import io.almostrealism.scope.Scope;
@@ -26,11 +29,23 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 import io.almostrealism.relation.Producer;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>> {
-	public ClipCounter(Producer<Scalar> clipCount, Producer<Pair<?>> clipSettings, Producer<PackedCollection<?>> value) {
-		super(new Producer[] { clipCount, clipSettings, value });
+	public ClipCounter(Supplier<Evaluable<? extends Scalar>> clipCount,
+					   Supplier<Evaluable<? extends Pair<?>>> clipSettings,
+					   Supplier<Evaluable<? extends PackedCollection<?>>> value) {
+		super(new Supplier[] { clipCount, clipSettings, value });
+	}
+
+	@Override
+	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
+		return new ClipCounter(
+				(Supplier<Evaluable<? extends Scalar>>) children.get(0),
+				(Supplier<Evaluable<? extends Pair<?>>>) children.get(1),
+				(Supplier<Evaluable<? extends PackedCollection<?>>>) children.get(2));
 	}
 
 	@Override
@@ -38,10 +53,10 @@ public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>
 		HybridScope<Void> scope = new HybridScope<>(this);
 		scope.setMetadata(new OperationMetadata(getFunctionName(), "ClipCounter"));
 
-		String value = getArgument(2, 1).valueAt(0).getSimpleExpression();
-		String min = getArgument(1, 2).valueAt(0).getSimpleExpression();
-		String max = getArgument(1, 2).valueAt(1).getSimpleExpression();
-		String count = getArgument(0, 2).valueAt(0).getSimpleExpression();
+		String value = getArgument(2, 1).valueAt(0).getSimpleExpression(getLanguage());
+		String min = getArgument(1, 2).valueAt(0).getSimpleExpression(getLanguage());
+		String max = getArgument(1, 2).valueAt(1).getSimpleExpression(getLanguage());
+		String count = getArgument(0, 2).valueAt(0).getSimpleExpression(getLanguage());
 
 		Consumer<String> code = scope.code();
 		code.accept("if (" + value + " >= " + max + " || " + value

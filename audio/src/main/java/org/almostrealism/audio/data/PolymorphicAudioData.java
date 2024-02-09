@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,6 @@ public class PolymorphicAudioData extends DefaultWaveCellData implements SineWav
 	}
 
 	public static Supplier<PolymorphicAudioData> supply(IntFunction<PackedCollection<?>> supply) {
-		return () -> new PolymorphicAudioData(supply.apply(SIZE), 0);
+		return () -> new PolymorphicAudioData(supply.apply(2 * SIZE), 0);
 	}
 }

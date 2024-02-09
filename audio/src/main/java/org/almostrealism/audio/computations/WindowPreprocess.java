@@ -37,6 +37,6 @@ public class WindowPreprocess extends ScalarBankPad {
 		super(windowSize, paddedWindowSize,
 				new FeatureWindowFunction(windowSize, windowType, blackmanCoeff).getWindow(
 						ScalarBankFeatures.getInstance().preemphasize(windowSize,
-								input, Ops.ops().v(preemphCoeff))));
+								input, Ops.o().v(preemphCoeff))));
 	}
 }

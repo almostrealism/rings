@@ -22,13 +22,10 @@ import com.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
-import org.almostrealism.audio.generative.LocalResourceManager;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,7 +133,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 
 			if (request.getSource().getSegment().getIsFinal()) {
 				System.out.println("RefreshOperation: Adding source (" + currentSource.getMemLength() + " samples)");
-				sources.add(new ListNoteSource(new PatternNote(currentSource)));
+				sources.add(new ListNoteSource(PatternNote.create(() -> currentSource)));
 				currentSource = null;
 				currentIndex = 0;
 			}

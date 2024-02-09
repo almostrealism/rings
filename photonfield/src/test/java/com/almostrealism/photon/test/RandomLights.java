@@ -56,8 +56,8 @@ public class RandomLights {
 					Math.random() * 400 - 200,
 					3 * Math.random() - 1.5};
 			
-			a.addAbsorber(v, ops().vector(p[0], p[1], p[2]));
-			a.addAbsorber(l, ops().vector(p[0], p[1], p[2] - r * 1.1));
+			a.addAbsorber(v, o().vector(p[0], p[1], p[2]));
+			a.addAbsorber(l, o().vector(p[0], p[1], p[2] - r * 1.1));
 		}
 		
 		// Create an AbsorptionPlane to display radiation that is
@@ -69,9 +69,9 @@ public class RandomLights {
 		plane.setThickness(1); // One micrometer thick
 		// Facing the negative X direction and oriented so
 		// that the positive Y axis is "upward".
-		plane.setSurfaceNormal(Ops.ops().vector(-1.0, 0.0, 0.0));
+		plane.setSurfaceNormal(Ops.o().vector(-1.0, 0.0, 0.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
-		a.addAbsorber(plane, ops().vector(5.0, 0.0, 0.0));
+		a.addAbsorber(plane, o().vector(5.0, 0.0, 0.0));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb

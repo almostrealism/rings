@@ -17,6 +17,8 @@
 package org.almostrealism.audio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -33,6 +35,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -46,6 +49,8 @@ import org.almostrealism.heredity.CombinedGenome;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.TimingMetric;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
@@ -66,6 +71,9 @@ import java.util.stream.IntStream;
 
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
+	public static final Console console = CellFeatures.console.child();
+	private static TimingMetric getCellsTime = console.timing("getCells");
+
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
@@ -136,7 +144,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private Tree<? extends Supplier<FileWaveDataProvider>> library;
 	private PatternSystemManager patterns;
-	private PackedCollection<?> patternDestination;
+	private List<PackedCollection<?>> patternDestinations;
 	private List<String> channelNames;
 	private double patternActivityBias;
 
@@ -186,9 +194,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.channelNames = new ArrayList<>();
 
 		addDurationListener(duration -> {
-			if (patternDestination != null) {
-				patternDestination.destroy();
-				patternDestination = null;
+			if (patternDestinations != null) {
+				patternDestinations.forEach(PackedCollection::destroy);
+				patternDestinations = null;
 			}
 		});
 
@@ -264,6 +272,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public ChordProgressionManager getChordProgression() { return progression; }
 	public PatternSystemManager getPatternManager() { return patterns; }
 	public EfxManager getEfxManager() { return efx; }
+	public MixdownManager getMixdownManager() { return mixdown; }
 	public GenerationManager getGenerationManager() { return generation; }
 
 	public void addTempoListener(Consumer<Frequency> listener) { this.tempoListeners.add(listener); }
@@ -292,17 +301,25 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public int getTotalBeats() { return totalMeasures * measureSize; }
 	public double getTotalDuration() { return getTempo().l(getTotalBeats()); }
 	public int getTotalSamples() { return (int) (getTotalDuration() * getSampleRate()); }
+	public int getAvailableSamples() {
+		return Math.min(HealthComputationAdapter.standardDuration, getTotalSamples());
+	}
 
 	public int getSampleRate() { return sampleRate; }
 
-	public AudioSceneContext getContext() {
+	public AudioSceneContext getContext(List<Integer> channels) {
+		if (channels.size() != 1) {
+			throw new IllegalArgumentException();
+		}
+
 		AudioSceneContext context = new AudioSceneContext();
+		context.setChannels(channels);
 		context.setMeasures(getTotalMeasures());
 		context.setFrames(getTotalSamples());
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
-		context.setDestination(patternDestination);
+		if (patternDestinations != null) context.setDestination(patternDestinations.get(channels.get(0)));
 		return context;
 	}
 
@@ -323,6 +340,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.setPatternSystem(patterns.getSettings());
 		settings.setChannelNames(channelNames);
 		settings.setWetChannels(getEfxManager().getWetChannels());
+		settings.setReverbChannels(getMixdownManager().getReverbChannels());
 		settings.setGeneration(generation.getSettings());
 
 		return settings;
@@ -358,14 +376,17 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			getSectionManager().getWetChannels().addAll(settings.getWetChannels());
 		}
 
+		getMixdownManager().getReverbChannels().clear();
+		if (settings.getReverbChannels() != null) {
+			getMixdownManager().getReverbChannels().addAll(settings.getReverbChannels());
+		}
+
 		generation.setSettings(settings.getGeneration());
 	}
 
 	protected void triggerDurationChange() {
 		durationListeners.forEach(l -> l.accept(getTotalDuration()));
 	}
-
-	public WaveData getPatternDestination() { return new WaveData(patternDestination, getSampleRate()); }
 
 	public boolean checkResourceUsed(String canonicalPath) {
 		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
@@ -377,9 +398,15 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output) {
-		return getCells(measures, stems, output,
-				IntStream.range(0, getChannelCount())
-						.mapToObj(i -> i).collect(Collectors.toList()));
+		long start = System.nanoTime();
+
+		try {
+			return getCells(measures, stems, output,
+					IntStream.range(0, getChannelCount())
+							.mapToObj(i -> i).collect(Collectors.toList()));
+		} finally {
+			getCellsTime.addEntry(System.nanoTime() - start);
+		}
 	}
 
 	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
@@ -401,64 +428,78 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 									Receptor<PackedCollection<?>> output,
 									List<Integer> channels,
 									OperationList setup) {
-		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
+		int totalSamples;
+		if (getTotalSamples() > HealthComputationAdapter.standardDuration) {
+			warn("AudioScene arrangement extends beyond the standard duration");
+			totalSamples = HealthComputationAdapter.standardDuration;
+		} else {
+			totalSamples = getTotalSamples();
+		}
 
-//		CellList cells = all(channelCount, i -> efx.apply(i, getPatternChannel(i, setup)));
-		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], setup)));
+		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
+		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], totalSamples, setup)));
 		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
 	}
 
-	public CellList getPatternChannel(int channel, OperationList setup) {
-		PackedCollection<?> audio = new PackedCollection<>(shape(getTotalSamples()), 0);
-
+	public CellList getPatternChannel(int channel, int frames, OperationList setup) {
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
 		patternSetup.add(getPatternSetup(channel));
-		patternSetup.add(() -> () ->
-				audio.setMem(0, patternDestination, 0, patternDestination.getMemLength()));
+
+		TraversalPolicy audioShape =
+				(frames > getAvailableSamples() ? shape(getAvailableSamples()) : shape(frames))
+						.traverseEach();
 
 		sections.getChannelSections(channel).stream()
 				.map(section -> {
 					int pos = section.getPosition() * getMeasureSamples();
 					int len = section.getLength() * getMeasureSamples();
 
-					if (audio.getMemLength() < pos + len) {
+					if (audioShape.getTotalSize() < pos + len) {
 						System.out.println("WARN: Section at position " + pos +
-								" extends beyond the end of the pattern destination (" + audio.getMemLength() + " frames)");
+								" extends beyond the end of the pattern destination (" +
+								audioShape.getTotalSize() + " frames)");
 						return new OperationList("Section Processing (Invalid Size)");
 					} else {
-						PackedCollection<?> sectionAudio = audio.range(shape(len), pos);
-						return section.process(p(sectionAudio), p(sectionAudio));
+						Producer<PackedCollection<?>> sectionAudio =
+								func(audioShape, args ->
+										patternDestinations.get(channel).range(shape(len), pos), false);
+						return section.process(sectionAudio, sectionAudio);
 					}
 				})
 				.forEach(patternSetup::add);
 
 		setup.add(patternSetup);
-		return w(PolymorphicAudioData.supply(PackedCollection.factory()), null, c(getTotalDuration()),
-				new WaveData(audio.traverseEach(), getSampleRate()));
+
+		Producer<PackedCollection<?>> result =
+				func(audioShape, args -> patternDestinations.get(channel).range(audioShape), false);
+		return w(PolymorphicAudioData.supply(PackedCollection.factory()), getSampleRate(), audioShape.getTotalSize(),
+				null, c(getTotalDuration()), result);
 	}
 
 	public Supplier<Runnable> getPatternSetup(int channel) {
 		Supplier<AudioSceneContext> ctx = () -> {
-			AudioSceneContext context = getContext();
-			context.setChannels(List.of(channel));
+			AudioSceneContext context = getContext(List.of(channel));
 			context.setActivityBias(patternActivityBias);
 			context.setSections(sections.getChannelSections(channel));
 			return context;
 		};
 
-		OperationList op = new OperationList("AudioScene Pattern Setup");
-		op.add(() -> () -> refreshPatternDestination());
+		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
+		op.add(() -> () -> refreshPatternDestination(channel));
 		op.add(patterns.sum(ctx));
 		return op;
 	}
 
-	private void refreshPatternDestination() {
-		if (patternDestination == null) {
-			patternDestination = new PackedCollection(getTotalSamples());
+	private void refreshPatternDestination(int channel) {
+		if (patternDestinations == null) {
+			patternDestinations = new ArrayList<>();
+			for (int i = 0; i < getChannelCount(); i++) {
+				patternDestinations.add(new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+			}
 		} else {
-			patternDestination.clear();
+			patternDestinations.get(channel).clear();
 		}
 	}
 
@@ -494,6 +535,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		private PatternSystemManager.Settings patternSystem;
 		private List<String> channelNames;
 		private List<Integer> wetChannels;
+		private List<Integer> reverbChannels;
 
 		private GenerationManager.Settings generation;
 
@@ -531,6 +573,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		public List<Integer> getWetChannels() { return wetChannels; }
 		public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
+
+		public List<Integer> getReverbChannels() { return reverbChannels; }
+		public void setReverbChannels(List<Integer> reverbChannels) { this.reverbChannels = reverbChannels; }
 
 		public GenerationManager.Settings getGeneration() { return generation; }
 		public void setGeneration(GenerationManager.Settings generation) { this.generation = generation; }
@@ -571,7 +616,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setPatternSystem(PatternSystemManager.Settings
 					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead", "Atmosphere"));
-			settings.setWetChannels(List.of(3, 4, 5));
+			settings.setWetChannels(List.of(2, 3, 4, 5));
+			settings.setReverbChannels(List.of(1, 2, 3, 4, 5));
 			return settings;
 		}
 	}

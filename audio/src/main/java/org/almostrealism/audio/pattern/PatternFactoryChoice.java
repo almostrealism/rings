@@ -34,7 +34,7 @@ public class PatternFactoryChoice {
 	private double weight;
 	private double minScale;
 	private double maxScale;
-	private int maxChordDepth;
+	private int maxScaleTraversalDepth;
 	private List<Integer> channels;
 
 	private boolean seed;
@@ -57,7 +57,7 @@ public class PatternFactoryChoice {
 		setWeight(weight);
 		setMinScale(minScale);
 		setMaxScale(maxScale);
-		setMaxChordDepth(1);
+		setMaxScaleTraversalDepth(1);
 		setSeed(true);
 		setSeedBias(-0.5);
 		setChannels(new ArrayList<>());
@@ -82,8 +82,8 @@ public class PatternFactoryChoice {
 	public double getMaxScale() { return maxScale; }
 	public void setMaxScale(double maxScale) { this.maxScale = maxScale; }
 
-	public int getMaxChordDepth() { return maxChordDepth; }
-	public void setMaxChordDepth(int maxChordDepth) { this.maxChordDepth = maxChordDepth; }
+	public int getMaxScaleTraversalDepth() { return maxScaleTraversalDepth; }
+	public void setMaxScaleTraversalDepth(int maxScaleTraversalDepth) { this.maxScaleTraversalDepth = maxScaleTraversalDepth; }
 
 	public List<Integer> getChannels() { return channels; }
 	public void setChannels(List<Integer> channels) { this.channels = channels; }
@@ -129,12 +129,13 @@ public class PatternFactoryChoice {
 	}
 
 	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
-												  int channel, int maxChordDepth, boolean melodic) {
+												  int channel, int maxScaleTraversalDepth,
+												  boolean melodic) {
 		PatternElementFactory f = new PatternElementFactory(name, source);
 		f.setMelodic(melodic);
 
 		PatternFactoryChoice c = new PatternFactoryChoice(f);
-		c.setMaxChordDepth(maxChordDepth);
+		c.setMaxScaleTraversalDepth(maxScaleTraversalDepth);
 		c.getChannels().add(channel);
 		return c;
 	}

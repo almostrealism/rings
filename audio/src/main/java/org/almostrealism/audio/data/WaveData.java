@@ -16,19 +16,19 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.ctx.DefaultContextSpecific;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
+import org.almostrealism.graph.temporal.WaveCell;
+import org.almostrealism.graph.temporal.WaveCellData;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
@@ -116,6 +116,11 @@ public class WaveData implements SamplingFeatures {
 
 			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
 		}
+	}
+
+	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
+		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
+				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(getCollection().getMemLength()));
 	}
 
 	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable

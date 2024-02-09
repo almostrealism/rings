@@ -16,7 +16,8 @@
 
 package com.almostrealism.gl;
 
-import io.almostrealism.expression.Constant;
+import io.almostrealism.code.ExpressionAssignment;
+import io.almostrealism.expression.ConstantValue;
 import io.almostrealism.expression.IntegerConstant;
 import io.almostrealism.expression.StaticReference;
 import org.almostrealism.CodeFeatures;
@@ -37,7 +38,6 @@ import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
-import org.almostrealism.hardware.Hardware;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -72,14 +72,18 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 	
 	public GLPrintWriter(String glMember, String matMember, String name, CodePrintWriter p) {
-		super(null);
+		super(p.getLanguage(), null);
 		this.glMember = glMember;
 		if (matMember !=null && matMember.length()>0) {
-			this.matrixMember=matMember;
+			this.matrixMember = matMember;
 		}
 		this.name = name;
 		this.p = p;
-		this.enableDoublePrecision = isJs.test(p);
+	}
+
+	@Override
+	public boolean isDoublePrecision() {
+		return isJs.test(p);
 	}
 
 	@Override
@@ -119,8 +123,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		if (c == null) return; // TODO  Set to a "default" projection
 		PinholeCamera pinCam = (PinholeCamera) c;
 		
-		Variable aspect = new Variable("aspect", e(pinCam.getAspectRatio()));
-		
+		ExpressionAssignment aspect = declare("aspect", e(pinCam.getAspectRatio()));
 		p.println(aspect);
 	}
 
@@ -146,7 +149,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void glColor(RGBA color) {
 		if (gl != null) super.glColor(color);
 
-		String method = enableDoublePrecision ? "color4d" : "color4f";
+		String method = isDoublePrecision() ? "color4d" : "color4f";
 		p.println(glMethod(method, e(color.getRed()), e(color.getGreen()), e(color.getBlue()), e(color.getAlpha())));
 	}
 
@@ -282,7 +285,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 		v = transformPosition(v);
 
-		String method = enableDoublePrecision ? "vertex3d" : "vertex3f";
+		String method = isDoublePrecision() ? "vertex3d" : "vertex3f";
 
 		p.println(glMethod(method, e(v.getX()), e(v.getY()), e(v.getZ())));
 	}
@@ -291,7 +294,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void glVertex(Pair p) {
 		if (gl != null) super.glVertex(p);
 
-		String method = enableDoublePrecision ? "vertex2d" : "vertex2f";
+		String method = isDoublePrecision() ? "vertex2d" : "vertex2f";
 
 		this.p.println(glMethod(method, e(p.getX()), e(p.getY())));
 	}
@@ -302,7 +305,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 		n = transformDirection(n);
 
-		String method = enableDoublePrecision ? "normal3d" : "normal3f";
+		String method = isDoublePrecision() ? "normal3d" : "normal3f";
 		p.println(glMethod(method, e(n.getX()), e(n.getY()), e(n.getZ())));
 	}
 
@@ -374,7 +377,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	public void clearDepth(double d) {
 		if (gl != null) super.clearDepth(d);
 
-		String method = enableDoublePrecision ? "clearDepth" : "clearDepthf";
+		String method = isDoublePrecision() ? "clearDepth" : "clearDepthf";
 		p.println(glMethod(method, e(d)));
 	}
 
@@ -478,92 +481,92 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 
 	@Override
-	public Variable createProgram() {
+	public Expression createProgram() {
 		String name = "program" + (varIndex++);
-		Variable v = new Variable(name, new Method<>(String.class, glMember, "createProgram",
+		ExpressionAssignment v = declare(name, new Method<>(String.class, glMember, "createProgram",
 				new ArrayList<>()));
 		p.println(v);
-		return v;
+		return v.getDestination();
 	}
 
 	@Override
-	public void linkProgram(Variable program) {
+	public void linkProgram(Expression program) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference(program));
+		args.add(program);
 		p.println(new Method(glMember, "linkProgram", args));
 	}
 
 	@Override
-	public void useProgram(Variable program) {
-		p.println(new Method(glMember, "useProgram", new InstanceReference(program)));
+	public void useProgram(Expression program) {
+		p.println(new Method(glMember, "useProgram", program));
 	}
 
 	public void mapProgramAttributes(Variable program) {
-		Variable pos = new Variable(program.getName() + ".positionAttribute", false,
+		ExpressionAssignment pos = assign(program.getName() + ".positionAttribute",
 									new Method<String>(glMember, "getAttribLocation",
 														new InstanceReference<>(program),
 														new StaticReference<>(null, "pos")));
 		p.println(pos);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
-							new InstanceReference(new Variable(program.getName() + ".positionAttribute", (Expression) null))));
+							new StaticReference(String.class, program.getName() + ".positionAttribute")));
 
-		Variable norm = new Variable(program.getName() + ".normalAttribute", false,
+		ExpressionAssignment norm = assign(program.getName() + ".normalAttribute",
 				new Method<String>(glMember, "getAttribLocation",
 						new InstanceReference<>(program), new StaticReference<>(Vector.class, "normal")));
 		p.println(norm);
 
 		p.println(new Method(glMember, "enableVertexAttribArray",
-				new InstanceReference(new Variable(program.getName() + ".normalAttribute", (Expression) null))));
+				new StaticReference<>(String.class, program.getName() + ".normalAttribute")));
 	}
 
 	@Override
-	public Variable createShader(String type) {
+	public Expression createShader(String type) {
 		List<Expression<?>> args = new ArrayList<>();
 		args.add(glParam(type));
 
 		String name = "shader" + (varIndex++);
-		Variable v = new Variable(name, new Method<String>(glMember, "createShader", args));
+		ExpressionAssignment v = declare(name, new Method<String>(glMember, "createShader", args));
 		p.println(v);
-		return v;
+		return v.getDestination();
 	}
 
 	@Override
-	public void shaderSource(Variable shader, String source) {
+	public void shaderSource(Expression shader, String source) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference<>(shader));
+		args.add(shader);
 		args.add(new StaticReference<>(String.class, source));
 		p.println(new Method(glMember, "shaderSource", args));
 	}
 
 	@Override
-	public void compileShader(Variable shader) {
+	public void compileShader(Expression shader) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference<>(shader));
+		args.add(shader);
 		p.println(new Method(glMember, "compileShader", args));
 	}
 
 	@Override
-	public void attachShader(Variable program, Variable shader) {
+	public void attachShader(Expression program, Expression shader) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference<>(program));
-		args.add(new InstanceReference<>(shader));
+		args.add(program);
+		args.add(shader);
 		p.println(new Method(glMember, "attachShader", args));
 	}
 
 	@Override
-	public void deleteShader(Variable shader) {
+	public void deleteShader(Expression shader) {
 		List<Expression<?>> args = new ArrayList<>();
-		args.add(new InstanceReference<>(shader));
+		args.add(shader);
 		p.println(new Method(glMember, "deleteShader", args));
 	}
 
 	@Override
-	public Variable<String, ?> createBuffer() {
+	public Expression<String> createBuffer() {
 		String name = "buffer" + (varIndex++);
-		Variable v = new Variable(name, new Method<String>(glMember, "createBuffer"));
+		ExpressionAssignment v = declare(name, new Method<>(glMember, "createBuffer"));
 		p.println(v);
-		return v;
+		return v.getDestination();
 	}
 
 	public void bindBuffer(String code, Variable v) {
@@ -574,12 +577,12 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 
 	public void bufferData(Variable buffer, List<Double> data) {
-		Variable v = new Variable("vertices" + (varIndex++), List.class, p(data));
+		ExpressionAssignment v = declare("vertices" + (varIndex++), new ConstantValue<>(List.class, data));
 
 		p.println(v);
 
 		List<Expression<?>> nargs = new ArrayList<>();
-		nargs.add(new InstanceReference(v));
+		nargs.add(v.getDestination());
 
 		Method n = new Method("new Float32Array", nargs);
 
@@ -616,7 +619,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 
 	@Override
 	public void uv(Pair texCoord) {
-		String method = enableDoublePrecision ? "texCoord2d" : "texCoord2f";
+		String method = isDoublePrecision() ? "texCoord2d" : "texCoord2f";
 		p.println(glMethod(method, e(texCoord.getA()), e(texCoord.getB())));
 	}
 
@@ -757,30 +760,30 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		enable("DEPTH_TEST");
 		glDepthFunc("LEQUAL");
 		glClearColorAndDepth();
-		Variable projectionMatrix = new Variable("projectionMatrix", new StaticReference<>(String.class, matrixMember + ".create()"));
+		ExpressionAssignment projectionMatrix = declare("projectionMatrix", new StaticReference<>(String.class, matrixMember + ".create()"));
 		p.println(projectionMatrix);
 		List<Expression<?>> arguments = new ArrayList<>();
 		StaticReference<TransformMatrix> projMatrix = new StaticReference<>(TransformMatrix.class, "projectionMatrix");
 		Expression<Double> fieldOfView = e(45 * Math.PI / 180);
-		Variable clientWidth = new Variable("clientWidth", new StaticReference<>(String.class,"gl.canvas.clientWidth"));
-		Variable clientHeight = new Variable("clientHeight", new StaticReference<>(String.class,"gl.canvas.clientHeight"));
+		ExpressionAssignment clientWidth = declare("clientWidth", new StaticReference<>(String.class,"gl.canvas.clientWidth"));
+		ExpressionAssignment clientHeight = declare("clientHeight", new StaticReference<>(String.class,"gl.canvas.clientHeight"));
 		p.println(clientWidth);
 		p.println(clientHeight);
 		Expression<Double> aspect = new StaticReference<>(Double.class, "clientWidth / clientHeight");
-		Variable zNear = new Variable ("zNear", e(0.1));
-		Variable zFar = new Variable("zFar", e(100.0));
+		ExpressionAssignment zNear = declare("zNear", e(0.1));
+		ExpressionAssignment zFar = declare("zFar", e(100.0));
 		arguments.add(projMatrix);
 		arguments.add(fieldOfView);
 		arguments.add(aspect);
-		arguments.add(new InstanceReference(zNear));
-		arguments.add(new InstanceReference(zFar));
+		arguments.add(zNear.getDestination());
+		arguments.add(zFar.getDestination());
 
 		Method persp = new Method("mat4","perspective", arguments);
 		p.println(persp);
 		
-		Variable modelViewMatrix = new Variable("modelViewMatrix", new StaticReference<>(String.class, matrixMember + ".create()"));
+		ExpressionAssignment modelViewMatrix = declare("modelViewMatrix", new StaticReference<>(String.class, matrixMember + ".create()"));
 		p.println(modelViewMatrix);
-		Variable amtToTranslate = new Variable("amountToTranslate", new StaticReference<>(String.class, "[-0.0,0.0,-6.0]"));
+		ExpressionAssignment amtToTranslate = declare("amountToTranslate", new StaticReference<>(String.class, "[-0.0,0.0,-6.0]"));
 		p.println(amtToTranslate);
 		
 		List<Expression<?>> tranArgs = new ArrayList<>();
@@ -797,7 +800,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		List<String> emptyList = new ArrayList<String>();
 		Map<String,Variable> emptyMap = new HashMap<String,Variable>();
 		
-		Variable positionBuffer = new Variable("positionBuffer", new Method(glMember,"createBuffer"));
+		ExpressionAssignment positionBuffer = declare("positionBuffer", new Method(glMember,"createBuffer"));
 		
 		p.println(positionBuffer);
 		
@@ -810,7 +813,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		p.println(bindBuf);
 
 		
-		Variable positions = new Variable("positions", new StaticReference<>(String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]"));
+		ExpressionAssignment positions = declare("positions", new StaticReference<>(String.class, "[1.0,1.0,-1.0,1.0,1.0,-1.0,-1.0,-1.0]"));
 		p.println(positions);
 
 
@@ -819,19 +822,19 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 				glParam("STATIC_DRAW")));
 		
 		//var buffers = { position: positionBuffer, };
-		
-		Variable buffers = new Variable("buffers", new StaticReference<>(String.class, "{ position: positionBuffer, }"));
+
+		ExpressionAssignment buffers = declare("buffers", new StaticReference<>(String.class, "{ position: positionBuffer, }"));
 		p.println(buffers);
 		Scope<Variable> bufferBinding = new Scope<>();
-		List<Variable<?, ?>> vars = bufferBinding.getVariables();
-		Variable numC = new Variable("numComponents", e(2));
+		List<ExpressionAssignment<?>> vars = bufferBinding.getVariables();
+		ExpressionAssignment numC = declare("numComponents", e(2));
 		vars.add(numC);
 
-		Variable norm = new Variable("normalize", e(false));
+		ExpressionAssignment norm = declare("normalize", e(false));
 		vars.add(norm);
-		Variable strd = new Variable("stride", e(0));
+		ExpressionAssignment strd = declare("stride", e(0));
 		vars.add(strd);
-		Variable offs = new Variable("offset", e(0));
+		ExpressionAssignment offs = declare("offset", e(0));
 		vars.add(offs);
 		List<Method> methods = bufferBinding.getMethods();
 		methods.add(glMethod("bindBuffer",
@@ -839,9 +842,9 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 				new StaticReference<>(null, "buffers.position")));
 		methods.add(glMethod("vertexAttribPointer",
 				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition"),
-				new InstanceReference<>(numC),
-				glParam("FLOAT"), new InstanceReference<>(norm),
-				new InstanceReference<>(strd), new InstanceReference<>(offs)));
+				numC.getDestination(),
+				glParam("FLOAT"), norm.getDestination(),
+				strd.getDestination(), offs.getDestination()));
 		
 		//add
 //		gl.enableVertexAttribArray(
@@ -849,10 +852,11 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		methods.add(glMethod("enableVertexAttribArray",
 				new StaticReference<>(Vector.class, "programInfo.attribLocations.vertexPosition")));
 		
-		for (Iterator it = vars.iterator(); it.hasNext();) {
-			Variable v = (Variable) it.next();
+		for (Iterator<ExpressionAssignment<?>> it = vars.iterator(); it.hasNext();) {
+			ExpressionAssignment v = it.next();
 			p.println(v);
 		}
+
 		for (Iterator iterator = methods.iterator(); iterator.hasNext();) {
 			Method method = (Method) iterator.next();
 			p.println(method);
@@ -863,18 +867,18 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 		
 		Method m4fv = glMethod("uniformMatrix4fv",
 				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.projectionMatrix"),
-				new InstanceReference<>(norm), new StaticReference<>(TransformMatrix.class, "projectionMatrix"));
+				norm.getDestination(), new StaticReference<>(TransformMatrix.class, "projectionMatrix"));
 		Method m4fvModel = glMethod("uniformMatrix4fv",
 				new StaticReference<>(TransformMatrix.class, "programInfo.uniformLocations.modelViewMatrix"),
-				new InstanceReference(norm),
+				norm.getDestination(),
 				new StaticReference<>(TransformMatrix.class, "modelViewMatrix"));
 		
 		p.println(m4fv);
 		p.println(m4fvModel);
 		
-		Variable vCount = new Variable("vertexCount", e(4));
+		ExpressionAssignment vCount = declare("vertexCount", e(4));
 		Method drawIt = glMethod("drawArrays", glParam("TRIANGLE_STRIP"),
-				new InstanceReference<>(offs), new InstanceReference<>(vCount));
+				offs.getDestination(), vCount.getDestination());
 		p.println(vCount);
 		p.println(drawIt);
 		

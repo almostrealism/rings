@@ -22,7 +22,6 @@ import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
-import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
@@ -36,9 +35,9 @@ import org.almostrealism.CodeFeatures;
  * @author  Michael Murray
  */
 public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
-  private static final String propNames[] = {"Highlight Color", "Highlight Exponent"};
-  private static final String propDesc[] = {"The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)"};
-  private static final Class propTypes[] = {ColorEvaluable.class, Double.class};
+  private static final String propNames[] = { "Highlight Color", "Highlight Exponent" };
+  private static final String propDesc[] = { "The base color for the highlight", "The exponent used to dampen the highlight (phong exponent)" };
+  private static final Class propTypes[] = { Producer.class, Double.class };
   
   private Producer<RGB> highlightColor;
   private double highlightExponent;

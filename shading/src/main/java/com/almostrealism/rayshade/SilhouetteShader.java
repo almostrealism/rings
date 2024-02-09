@@ -20,10 +20,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.color.ColorEvaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.LightingContext;
-import io.almostrealism.relation.Compactable;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
 
@@ -33,7 +31,7 @@ import io.almostrealism.relation.Evaluable;
  * 
  * @author  Michael Murray
  */
-public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, Shader<LightingContext>, RGBFeatures {
+public class SilhouetteShader implements Evaluable<RGB>, Editable, Shader<LightingContext>, RGBFeatures {
 	private Producer<RGB> color;
 
 	private String names[] = { "Color" };
@@ -67,9 +65,6 @@ public class SilhouetteShader implements Evaluable<RGB>, Compactable, Editable, 
 	 */
 	@Override
 	public RGB evaluate(Object args[]) { return this.color.get().evaluate(args); }
-
-	@Override
-	public void compact() { color.compact(); }
 
 	/**
 	 * @see Editable#getPropertyNames()

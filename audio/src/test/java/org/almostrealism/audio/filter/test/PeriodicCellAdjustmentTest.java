@@ -20,7 +20,6 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;

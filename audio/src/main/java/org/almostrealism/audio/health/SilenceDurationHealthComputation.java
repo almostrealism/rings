@@ -81,7 +81,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 			for (AudioMeter m : getMeasures()) {
 				// If silence occurs for too long, report the health score
 				if (checkForSilence(m)) {
-					return new AudioHealthScore((double) l / standardDuration);
+					return new AudioHealthScore(l, (double) l / standardDuration);
 				}
 			}
 			
@@ -95,6 +95,6 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 		
 		// If no silence which was too long in duration
 		// has occurred, return a perfect health score.
-		return new AudioHealthScore(1.0);
+		return new AudioHealthScore(l, 1.0);
 	}
 }

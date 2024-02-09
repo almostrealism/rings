@@ -17,7 +17,6 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Triple;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.*;
@@ -136,10 +135,10 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 * Sets the coefficients a, b, and c for the quadratic function used for distance attenuation
 	 * of the light represented by this PointLight object to the specified double values.
 	 */
-	public void setAttenuationCoefficients(Triple a) {
-		this.da = a.getA();
-		this.db = a.getB();
-		this.dc = a.getC();
+	public void setAttenuationCoefficients(Vector a) {
+		this.da = a.getX();
+		this.db = a.getY();
+		this.dc = a.getZ();
 	}
 	
 	/** Returns the intensity of this PointLight object as a double value. */

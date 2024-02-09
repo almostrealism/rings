@@ -23,7 +23,6 @@ import org.almostrealism.heredity.SimpleChromosome;
 
 @Deprecated
 public class AdjustmentChromosome extends WavCellChromosome implements OptimizeFactorFeatures {
-	public static final int SIZE = 6;
 
 	private boolean relative;
 
@@ -46,20 +45,23 @@ public class AdjustmentChromosome extends WavCellChromosome implements OptimizeF
 			CollectionProducerComputation scale = c(p, 4);
 			CollectionProducerComputation offset = c(p, 5);
 
-//			if (relative) scale = scale.multiply(initial);
-//			CollectionProducerComputation pos = subtract(in, offset);
-//			return _bound(pos._greaterThan(c(0.0),
-//					polyWaveLength.pow(c(-1.0))
-//							.multiply(pos).pow(polyExp)
-//							.multiply(scale).add(initial), initial),
-//					min, max);
-			if (relative) scale = scale.relativeMultiply(initial);
-			CollectionProducerComputation pos = relativeSubtract(in, offset);
-			return relativeBound(pos._greaterThan(c(0.0),
-							relativeAdd(polyWaveLength.pow(c(-1.0))
-									.relativeMultiply(pos).pow(polyExp)
-									.relativeMultiply(scale), initial), initial),
-					min, max);
+			if (enableKernels) {
+				if (relative) scale = scale.relativeMultiply(initial);
+				CollectionProducerComputation pos = relativeSubtract(in, offset);
+				return relativeBound(pos._greaterThan(c(0.0),
+								relativeAdd(polyWaveLength.pow(c(-1.0))
+										.relativeMultiply(pos).pow(polyExp)
+										.relativeMultiply(scale), initial), initial),
+						min, max);
+			} else {
+				if (relative) scale = scale.relativeMultiply(initial);
+				CollectionProducerComputation pos = relativeSubtract(in, offset);
+				return relativeBound(pos._greaterThan(c(0.0),
+								relativeAdd(polyWaveLength.pow(c(-1.0))
+										.relativeMultiply(pos).pow(polyExp)
+										.relativeMultiply(scale), initial), initial),
+						min, max).toRepeated();
+			}
 		});
 	}
 

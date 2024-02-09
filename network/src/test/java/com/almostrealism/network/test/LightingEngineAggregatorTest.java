@@ -59,17 +59,15 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	@Test
 	public void aggregateCompact() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
-		p.compact();
 		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
 	}
 
 	@Test
 	public void aggregateKernelCompare() throws IOException {
 		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
-		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -101,14 +99,12 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	public void aggregateAcceleratedCompare() throws IOException {
 		RayIntersectionEngine.enableAcceleratedAggregator = false;
 		Producer<RGB> agg = getScene().getProducer();
-		agg.compact();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
 		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
-		p.compact();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 		PackedCollection<RGB> output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
@@ -127,10 +123,9 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	@Test
 	public void compareDependents() throws IOException {
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 
 		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
-		a.compact();
 
 		i: for (int i = 1; i < a.getArguments().size(); i++) {
 			if (a.getArguments().get(i) == null) continue i;
@@ -139,7 +134,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 				continue i;
 			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedEvaluable) {
 				KernelizedEvaluable kp = (KernelizedEvaluable)  a.getArguments().get(i).getProducer();
-				MemoryBank output = kp.createKernelDestination(input.getCount());
+				MemoryBank output = (MemoryBank) kp.createDestination(input.getCount());
 				kp.into(output).evaluate(input, dim);
 
 				System.out.println("LightingEngineAggregatorTest: Comparing...");

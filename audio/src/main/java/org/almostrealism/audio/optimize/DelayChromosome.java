@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.almostrealism.audio.optimize;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.Factor;
 import org.almostrealism.heredity.SimpleChromosome;
 
 @Deprecated
@@ -35,7 +34,7 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 		setTransform(4, g -> g.valueAt(4).getResultant(c(1.0)));
 		setTransform(5, g -> oneToInfinity(g.valueAt(5).getResultant(c(1.0)), 3.0).multiply(c(60.0)));
 		setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
-		// addFactor(g -> g.valueAt(0).getResultant(c(1.0)));
+
 		setFactor((p, in) -> {
 			CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
 			CollectionProducerComputation speedUpAmp = c(p, 2);
@@ -43,13 +42,16 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 			CollectionProducerComputation slowDownAmp = c(p, 4);
 			CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 			CollectionProducerComputation polySpeedUpExp = c(p, 6);
-//			return c(1.0).add(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-//					.multiply(c(1.0).subtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-//					.multiply(c(1.0).add(polySpeedUpWaveLength.pow(c(-1.0)).multiply(in).pow(polySpeedUpExp)));
 
-			return c(1.0).relativeAdd(_sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-					.relativeMultiply(c(1.0).relativeSubtract(_sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-					.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));
+			if (enableKernels) {
+				return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+						.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+						.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp)));
+			} else {
+				return c(1.0).relativeAdd(sinw(in, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+						.relativeMultiply(c(1.0).relativeSubtract(sinw(in, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+						.relativeMultiply(c(1.0).relativeAdd(polySpeedUpWaveLength.pow(c(-1.0)).relativeMultiply(in).pow(polySpeedUpExp))).toRepeated();
+			}
 		});
 	}
 
@@ -91,54 +93,6 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 		((SimpleChromosome) getSource()).setParameterRange(6,
 				factorForPolySpeedUpExponent(min),
 				factorForPolySpeedUpExponent(max));
-	}
-
-	public double factorForSpeedUpDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double speedUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForSpeedUpPercentage(double decimal) {
-		return invertOneToInfinity(decimal, 10, 0.5);
-	}
-
-	public double speedUpPercentageForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 0.5, 10);
-	}
-
-	public double factorForSlowDownDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double slowDownDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForSlowDownPercentage(double decimal) {
-		return decimal;
-	}
-
-	public double slowDownPercentageForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f);
-	}
-
-	public double factorForPolySpeedUpDuration(double seconds) {
-		return invertOneToInfinity(seconds, 60, 3);
-	}
-
-	public double polySpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 3, 60);
-	}
-
-	public double factorForPolySpeedUpExponent(double exp) {
-		return invertOneToInfinity(exp, 10, 1);
-	}
-
-	public double polySpeedUpExponentForFactor(Factor<PackedCollection<?>> f) {
-		return valueForFactor(f, 1, 10);
 	}
 
 }

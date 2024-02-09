@@ -72,7 +72,8 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
 		CLOperator.verboseLog(() -> {
-			source.getData().valueAt(cursor).get().into(result).evaluate();
+//			source.getData().valueAt(cursor).get().into(result).evaluate();
+			c((Producer) p(source.getData()), cursor).get().into(result).evaluate();
 		});
 		System.out.println("GrainTest: Timeline kernel evaluated");
 
@@ -104,10 +105,10 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 
 		Producer<PackedCollection<?>> series = integers(0, frames);
 		Producer<PackedCollection<?>> max = c(wav.getCollection().getCount()).subtract(start);
-		Producer<PackedCollection<?>> pos  = start.add(mod(mod(series, duration), max));
+		Producer<PackedCollection<?>> pos  = start.add(relativeMod(relativeMod(series, duration), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
-		generate = generate.multiply(_sinw(series, wavelength, c(1.0)));
+		generate = generate.multiply(sinw(series, wavelength, c(1.0)));
 
 		System.out.println("GrainTest: Evaluating kernel...");
 		Evaluable<PackedCollection<?>> ev = generate.get();

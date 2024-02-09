@@ -18,7 +18,7 @@ package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Tree;
-import io.almostrealism.relation.Named;
+import io.almostrealism.uml.Named;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -107,7 +107,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 		notes = new ArrayList<>();
 		if (tree == null) return;
 		
-		tree.all().forEach(f -> {
+		tree.children().forEach(f -> {
 			FileWaveDataProvider p = f.get();
 
 			try {

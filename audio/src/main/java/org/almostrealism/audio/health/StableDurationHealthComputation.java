@@ -20,8 +20,10 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.io.Console;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalRunner;
 
@@ -42,8 +44,7 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
-	public static boolean enableLoop = true;
-	public static boolean enableTimeout = true;
+	public static boolean enableTimeout = false;
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
 
@@ -56,13 +57,13 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	private Thread timeoutTrigger;
 	private boolean endTimeoutTrigger;
-	private long startTime;
+	private long startTime, iterStart;
 	private Scalar abortFlag;
 	
 	public StableDurationHealthComputation(int channels) {
 		super(channels, 6);
 		addSilenceListener(() -> encounteredSilence = true);
-		setBatchSize(enableLoop ? OutputLine.sampleRate / 2 : 1);
+		setBatchSize(OutputLine.sampleRate / 2);
 	}
 
 	public void setBatchSize(int iter) {
@@ -70,13 +71,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 	
 	public void setMaxDuration(long sec) { this.max = (int) (sec * OutputLine.sampleRate); }
-
-	/**
-	 * This setting impacts all health computations, even though it is not a static method.
-	 */
-	public static void setStandardDuration(int sec) {
-		standardDuration = (int) (sec * OutputLine.sampleRate);
-	}
 
 	public void setTarget(TemporalCellular target) {
 		if (getTarget() == null) {
@@ -111,14 +105,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				}
 
 				if (!endTimeoutTrigger && isTimeout()) {
-					if (enableVerbose) System.out.println("Trigger timeout");
+					if (enableVerbose) log("Trigger timeout");
 
 					abortFlag.setValue(1.0);
 
 					if (enableVerbose) {
-						System.out.println("Timeout flag set");
+						log("Timeout flag set");
 					} else {
-						System.out.print("T");
+						console().print("T");
 					}
 
 					endTimeoutTrigger = true;
@@ -145,7 +139,18 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 	@Override
+	public void reset() {
+		abortFlag.setValue(0.0);
+		super.reset();
+		getTarget().reset();
+	}
+
+	@Override
 	public AudioHealthScore computeHealth() {
+		if (WaveOutput.defaultTimelineFrames < standardDuration) {
+			throw new IllegalArgumentException("WaveOutput timeline is too short (" + WaveOutput.defaultTimelineFrames + " < " + standardDuration + ")");
+		}
+
 		encounteredSilence = false;
 		OperationList.setAbortFlag(abortFlag);
 
@@ -158,44 +163,37 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		Runnable start;
 		Runnable iterate;
 
+		long l = 0;
+
 		try {
 			start = runner.get();
 			iterate = runner.getContinue();
 
 			startTime = System.currentTimeMillis();
+			iterStart = startTime;
 			if (enableTimeout) startTimeoutTrigger();
-
-			long l;
 
 			l:
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if ((int) getWaveOut().getCursor().getCursor() != l + iter) {
-					if (enableVerbose) {
-						System.out.println("StableDurationHealthComputation: Cursor out of sync (" +
-								(int) getWaveOut().getCursor().getCursor() + " != " + (l + iter) + ")");
-						System.exit(1);
-					} else {
-						System.out.print("N");
-					}
-
-					// TODO  This should just throw an exception: working around it should no longer be necessary
-					errorMultiplier *= 0.55;
-					break l;
+				if ((int) getWaveOut().getCursor().toDouble(0) != l + iter) {
+					log("Cursor out of sync (" +
+							(int) getWaveOut().getCursor().toDouble(0) + " != " + (l + iter) + ")");
+					throw new RuntimeException();
 				}
 
 				getMeasures().forEach(m -> {
 					checkForSilence(m);
 
 					if (m.getClipCount() > 0) {
-						System.out.print("C");
-						if (enableVerbose) System.out.println();
+						console().print("C");
+						if (enableVerbose) console().println();
 					}
 
 					if (encounteredSilence) {
-						System.out.print("S");
-						if (enableVerbose) System.out.println();
+						console().print("S");
+						if (enableVerbose) console().println();
 					}
 				});
 
@@ -204,9 +202,11 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
-					System.out.println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds");
+					console().println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds (rendered in " +
+							(System.currentTimeMillis() - iterStart) + " msec)");
+					iterStart = System.currentTimeMillis();
 				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20) == 0) {
-					System.out.print(">");
+					console().print(">");
 				}
 			}
 
@@ -221,14 +221,20 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 //					((double) avg.framesUntilAverage()) / standardDuration;
 			score = (double) (l + iter) * errorMultiplier / (standardDuration + iter);
 
-			if (enableVerbose)
-				System.out.println("\nStableDurationHealthComputation: Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
+			if (enableVerbose) {
+				console().println();
+				log("Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
+			}
 		} finally {
+			if (l > 0) {
+				AudioScenePopulation.recordGenerationTime(l, System.currentTimeMillis() - startTime);
+			}
+
 			endTimeoutTrigger();
 
 			if (enableOutput && score > 0) {
 				if (enableVerbose)
-					System.out.println("StableDurationHealthComputation: Cursor = " + getWaveOut().getCursor().getCursor());
+					log("Cursor = " + getWaveOut().getCursor().toDouble(0));
 
 				getWaveOut().write().get().run();
 				if (getStems() != null) getStems().forEach(s -> s.write().get().run());
@@ -239,17 +245,13 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
  			reset();
 		}
 
-		return new AudioHealthScore(score,
+		return new AudioHealthScore(l, score,
 				Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null),
-				Optional.ofNullable(getStemFiles()).map(l -> l.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
+				Optional.ofNullable(getStemFiles()).map(s -> s.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
 	}
 
 	@Override
-	public void reset() {
-		abortFlag.setValue(0.0);
-		super.reset();
-		getTarget().reset();
-	}
+	public Console console() { return console; }
 
 	private class AverageAmplitude implements Consumer<Scalar> {
 		private List<Scalar> values = new ArrayList<>();

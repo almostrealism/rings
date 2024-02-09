@@ -38,7 +38,7 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	
 	private Vector position = new Vector(0.0, 0.0, 0.0);
 	private double orientationAngle = 0.0;
-	private Vector orientationVector = Vector.Z_AXIS;
+	private Vector orientationVector = Vector.zAxis();
 	
 	private GLMaterial mat;
 	private ImageSource texture;

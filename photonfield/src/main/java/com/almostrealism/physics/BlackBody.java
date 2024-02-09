@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 import com.almostrealism.absorption.PinholeCameraAbsorber;
 import com.almostrealism.chem.ElectronCloud;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
@@ -41,7 +40,7 @@ import org.almostrealism.physics.Clock;
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.LightBulb;
 
-import static org.almostrealism.Ops.ops;
+import static org.almostrealism.Ops.o;
 
 /**
  * A {@link BlackBody} absorbs all photons it detects and keeps track of
@@ -111,7 +110,7 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		VolumeAbsorber v = new VolumeAbsorber(new Sphere(500000), b);
 
 		PinholeCameraAbsorber camera = new PinholeCameraAbsorber(2.4, 35000,
-				Vector.NEG_Z_AXIS, Vector.Y_AXIS);
+				Vector.negZAxis(), Vector.yAxis());
 		camera.setPixelSize(10);
 		camera.setWidth(500);
 		camera.setHeight(500);
@@ -123,11 +122,11 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(100000000);
-		a.addAbsorber(v, ops().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
-		a.addAbsorber(l, ops().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(v, o().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(l, o().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
 
 		// Add the absorption plane
-		a.addAbsorber(camera, ops().vector(0.0, 0.0, 1000000));
+		a.addAbsorber(camera, o().vector(0.0, 0.0, 1000000));
 //		a.setColorBufferDimensions((int) (camera.getWidth() / camera.getPixelSize()),
 //				(int) (camera.getHeight() / camera.getPixelSize()),
 //				1.0);
@@ -142,7 +141,7 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		// Add a SpectralLineDiagram
 		SpectralLineDiagram d = new SpectralLineDiagram(1200, 40);
 		v = new VolumeAbsorber(new Sphere(1000.0), d);
-		a.addAbsorber(v, ops().vector(0.0, 0.0, -1000000.0));
+		a.addAbsorber(v, o().vector(0.0, 0.0, -1000000.0));
 
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb

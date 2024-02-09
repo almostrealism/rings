@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.30</version>
+		<version>0.31</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,14 +14,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-color</artifactId>
-			<version>${common.version}</version>
+			<artifactId>ar-utils</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-engine</artifactId>
-			<version>0.30</version>
+			<version>0.31</version>
 		</dependency>
 	</dependencies>
 </project>

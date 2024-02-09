@@ -17,8 +17,10 @@
 package com.almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
+import io.almostrealism.code.Precision;
 import org.almostrealism.algebra.Pair;
 import io.almostrealism.code.Computation;
+import org.almostrealism.c.CLanguageOperations;
 import org.junit.Test;
 
 public class GLSLTestSuite {
@@ -39,7 +41,7 @@ public class GLSLTestSuite {
 			throw new IllegalArgumentException(f + " is not a Computation, a requirement for encoding to GLSL");
 		}
 
-		GLSLPrintWriter p = new GLSLPrintWriter(System.out);
+		GLSLPrintWriter p = new GLSLPrintWriter(System.out, new CLanguageOperations(Precision.FP32, false, false));
 		p.println(f.getScope());
 	}
 

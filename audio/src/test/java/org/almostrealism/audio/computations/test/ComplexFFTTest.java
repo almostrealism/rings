@@ -3,6 +3,7 @@ package org.almostrealism.audio.computations.test;
 import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.util.TestFeatures;
@@ -59,7 +60,7 @@ public class ComplexFFTTest implements TestFeatures {
 		ComplexFFT fft = ComplexFFTTest.fft.get();
 
 		if (fft == null) {
-			fft = new ComplexFFT(input.length, true, v(input.length, 0));
+			fft = new ComplexFFT(Hardware.getLocalHardware().getComputeContext(), input.length, true, v(input.length, 0));
 			ComplexFFTTest.fft.set(fft);
 		}
 

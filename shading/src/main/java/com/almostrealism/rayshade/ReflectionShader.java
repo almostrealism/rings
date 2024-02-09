@@ -53,7 +53,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
   private static final String propDesc[] = {"The reflectivity of the surface at a direct (normal) viewing angle, usually in the range [0,1].",
 										"The base color of the reflection.", "Blur factor.",
 										"Texture to use as an environment map."};
-  private static final Class propTypes[] = {Double.class, ColorEvaluable.class, Double.class, Texture.class};
+  private static final Class propTypes[] = {Double.class, Producer.class, Double.class, Texture.class};
   
   private double reflectivity, blur;
   private Producer<RGB> reflectiveColor;
@@ -85,7 +85,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 		if (p.getReflectionCount() > ReflectionShader.maxReflections) {
 			return new DynamicCollectionProducer<>(RGB.shape(), args -> {
 					Vector point = p.getIntersection().get(0).get().evaluate(args).getOrigin();
-					return reflectiveColor.get().evaluate(new Object[] { p })
+					return reflectiveColor.get().evaluate(p)
 							.multiply(p.getSurface().getValueAt(v(point)).get().evaluate());
 				});
 		}

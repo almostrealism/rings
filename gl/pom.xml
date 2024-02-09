@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>Rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.30</version>
+		<version>0.31</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -21,25 +21,34 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-primitives</artifactId>
-			<version>0.30</version>
+			<version>0.31</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-shading</artifactId>
-			<version>0.30</version>
+			<version>0.31</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.joml</groupId>
+			<artifactId>joml</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jogamp.gluegen</groupId>
 			<artifactId>gluegen-rt-main</artifactId>
-			<version>2.3.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jogamp.jogl</groupId>
 			<artifactId>jogl-all-main</artifactId>
-			<version>2.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

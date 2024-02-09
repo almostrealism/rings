@@ -16,6 +16,8 @@
 
 package com.almostrealism.gl.shaders;
 
+import io.almostrealism.code.ExpressionAssignment;
+import io.almostrealism.expression.ConstantValue;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
 import org.almostrealism.CodeFeatures;
@@ -27,9 +29,9 @@ public class GLDiffuseShader extends VertexShader implements CodeFeatures {
 	public Scope<? extends Variable> getScope() {
 		Scope<Variable> s = new Scope<>();
 
-		Variable pos = new Variable("position", Vector.class, p(null));
+		ExpressionAssignment pos = declare("position", new ConstantValue<>(Vector.class, null));
 		// pos.setAnnotation("attribute");
-		Variable tex = new Variable("texcoord", Pair.class, p(null));
+		ExpressionAssignment tex = declare("texcoord", new ConstantValue<>(Pair.class,null));
 		// pos.setAnnotation("varying");
 		s.getVariables().add(tex);
 

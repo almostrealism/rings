@@ -51,12 +51,14 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public static final boolean enableWavOutput = true;
 	public static boolean enableStemOutput = true;
 	public static boolean enableIsolatedContext = false;
+	public static boolean enableExplicitGc = false;
 
 	private final String file;
 	private int tot;
 	private final AtomicInteger count;
 
 	private Runnable cycleListener;
+	private Runnable completionListener;
 
 	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
 									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
@@ -76,6 +78,9 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void init() {
 		if (enableWavOutput) {
+			File d = new File(outputDir);
+			if (!d.exists()) d.mkdir();
+
 			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> outputDir + "/Output-" + count.incrementAndGet() + ".wav");
 
 			if (enableStemOutput) {
@@ -90,12 +95,16 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		this.cycleListener = r;
 	}
 
+	public void setCompletionListener(Runnable r) {
+		this.completionListener = r;
+	}
+
 	public void readPopulation() throws FileNotFoundException {
 		List<Genome<PackedCollection<?>>> genomes = null;
 
 		if (new File(file).exists()) {
 			genomes = read(new FileInputStream(file));
-			PopulationOptimizer.console.println("Read chromosome data from " + file);
+			log("Read chromosome data from " + file);
 		}
 
 		if (genomes == null || genomes.isEmpty()) {
@@ -103,12 +112,12 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
 							.mapToObj(i -> gen.get()).collect(Collectors.toList()))
 					.orElseGet(ArrayList::new);
-			PopulationOptimizer.console.println("Generated initial population");
+			log("Generated initial population");
 		}
 
 		setPopulation(getChildrenFunction().apply(genomes));
 		storePopulation();
-		PopulationOptimizer.console.println(getPopulation().size() + " networks in population");
+		log(getPopulation().size() + " networks in population");
 	}
 
 	@Override
@@ -141,7 +150,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 				resetGenerator();
 			}
 
-			System.gc();
+			if (completionListener != null) completionListener.run();
+			if (enableExplicitGc) System.gc();
 		}
 	}
 
@@ -154,7 +164,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	public void storePopulation() {
 		try {
 			store(new FileOutputStream(file));
-			PopulationOptimizer.console.println("Wrote " + file);
+			log("Wrote " + file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

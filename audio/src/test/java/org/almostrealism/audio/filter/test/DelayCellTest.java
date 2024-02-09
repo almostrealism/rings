@@ -16,14 +16,22 @@
 
 package org.almostrealism.audio.filter.test;
 
+import io.almostrealism.code.OperationProfile;
+import io.almostrealism.kernel.KernelPreferences;
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.filter.DelayNetwork;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.AcceleratedOperation;
+import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CellularTemporalFactor;
+import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
 
 import java.io.File;
@@ -61,7 +69,7 @@ public class DelayCellTest implements CellFeatures {
 	}
 
 	@Test
-	public void filter() throws IOException {
+	public void filter() {
 		Supplier<Runnable> r =
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
@@ -69,6 +77,61 @@ public class DelayCellTest implements CellFeatures {
 						.o(i -> new File("results/filter-delay-cell-test.wav"))
 						.sec(6);
 		r.get().run();
+	}
+
+	@Test
+	public void filterLoopComparison() {
+		Supplier<Runnable> r =
+				iter(w("Library/Snare Perc DD.wav")
+						.f(i -> hp(2000, 0.1))
+						.d(i -> v(2.0))
+						.o(i -> new File("results/filter-loop-comparison-a.wav")),
+						t -> loop(t.tick(), 6 * OutputLine.sampleRate), true);
+
+		OperationProfile profiles = new OperationProfile("Native Loop");
+		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		System.out.println("Running native loop...");
+		((OperationList) r).get(profiles).run();
+		profiles.print();
+		System.out.println();
+		HardwareOperator.profile.print();
+		System.out.println("\n-----\n");
+
+		r =
+				iter(w("Library/Snare Perc DD.wav")
+								.f(i -> hp(2000, 0.1))
+								.d(i -> v(2.0))
+								.o(i -> new File("results/filter-loop-comparison-b.wav")),
+						t -> loop(Process.isolated(t.tick()), 6 * OutputLine.sampleRate), true);
+
+		profiles = new OperationProfile("Java Loop");
+		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		System.out.println("Running Java loop...");
+		((OperationList) r).get(profiles).run();
+		profiles.print();
+		System.out.println();
+		HardwareOperator.profile.print();
+		System.out.println();
+
+		AcceleratedOperation.printTimes();
+	}
+
+	@Test
+	public void reverb() {
+		TemporalRunner.enableFlatten = true;
+		TemporalRunner.enableOptimization = false;
+
+		Supplier<Runnable> r =
+				iter(w("Library/Snare Perc DD.wav")
+						.f(i -> hp(2000, 0.1))
+						.d(i -> v(2.0))
+						.map(fc(i -> new DelayNetwork(32, OutputLine.sampleRate, false)))
+						.o(i -> new File("results/reverb-delay-cell-test.wav")),
+						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
+
+		HardwareOperator.verboseLog(() -> {
+			r.get().run();
+		});
 	}
 
 	@Test

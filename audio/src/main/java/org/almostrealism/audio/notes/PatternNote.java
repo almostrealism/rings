@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -35,28 +36,31 @@ import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.RAM;
 import org.almostrealism.hardware.cl.CLMemory;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class PatternNote implements CellFeatures, SamplingFeatures {
+	public static boolean enableVerbose = false;
 
 	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
 
 	static {
 		OperationList accessListener = new OperationList();
-		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 300));
+		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 200));
 		accessListener.add(() -> () -> {
 			if (Math.random() < 0.005) {
 				long size = audioCache.getCachedOrdered().stream()
 						.map(CachedValue::evaluate)
 						.map(PackedCollection::getMem)
-						.mapToLong(m -> m instanceof CLMemory ? ((CLMemory) m).getSize() : 0)
+						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
-				System.out.println("PatternNote: Cache size = " + (size / 1024 / 1024) + "mb");
+				if (enableVerbose && size > 1024)
+					AudioScene.console.features(PatternNote.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 

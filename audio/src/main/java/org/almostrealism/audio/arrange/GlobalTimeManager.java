@@ -17,8 +17,11 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.time.Temporal;
 
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class GlobalTimeManager implements Setup, Temporal {
+public class GlobalTimeManager implements Setup, Temporal, ConsoleFeatures {
 	public static final int MAX_RESETS = 32;
 
 	private TimeCell clock;
@@ -65,4 +68,7 @@ public class GlobalTimeManager implements Setup, Temporal {
 	public Supplier<Runnable> tick() {
 		return clock.tick();
 	}
+
+	@Override
+	public Console console() { return AudioScene.console; }
 }

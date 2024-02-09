@@ -28,6 +28,7 @@ import org.almostrealism.algebra.Tensor;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		PackedCollection<Pair<?>> fftOutput = Pair.bank(paddedWindowSize);
 
-		fft = new ComplexFFT(paddedWindowSize, true, v(2 * paddedWindowSize, 0));
+		fft = new ComplexFFT(Hardware.getLocalHardware().getComputeContext(), paddedWindowSize, true, v(2 * paddedWindowSize, 0));
 
 		int count = settings.getFrameExtractionSettings().getWindowSize();
 		Producer<PackedCollection<Scalar>> processWindow = null;
@@ -266,6 +267,51 @@ public class FeatureComputer implements CodeFeatures {
 	private void removeDcOffset(PackedCollection<Scalar> window) {
 		double dcOffset = window.stream().mapToDouble(Scalar::getValue).sum();
 		window.forEach(scalar -> scalar.setValue(scalar.getValue() - dcOffset));
+	}
+
+
+	@Deprecated
+	protected void addMatVec(PackedCollection<Scalar> bank, ScalarTable matrix, PackedCollection<Scalar> vector) {
+		int m = matrix.getCount();
+		int n = matrix.getWidth();
+		assert n == vector.getCount();
+
+		for (int i = 0; i < m; i++) {
+			double v = 0;
+
+			for (int j = 0; j < n; j++) {
+				v += matrix.get(i, j).getValue() * vector.get(j).getValue();
+			}
+
+			bank.set(i, v, 1.0);
+		}
+	}
+
+	@Deprecated
+	protected void mulElements(PackedCollection<Scalar> bank, PackedCollection<Scalar> vals) {
+		int size = bank.getCount();
+		assert size == vals.getCount();
+
+		IntStream.range(0, size)
+				.forEach(i ->
+						bank.set(i,
+								bank.get(i).getValue() * vals.get(i).getValue(),
+								bank.get(i).getCertainty() * vals.get(i).getCertainty()));
+	}
+
+	@Deprecated
+	protected void applyFloor(PackedCollection<Scalar> bank, double floor) {
+		for (int i = 0; i < bank.getCount(); i++) {
+			double v = bank.get(i).getValue();
+			if (v < floor) bank.set(i, floor);
+		}
+	}
+
+	@Deprecated
+	protected void applyLog(PackedCollection<Scalar> bank) {
+		for (int i = 0; i < bank.getCount(); i++) {
+			bank.set(i, Math.log(bank.get(i).getValue()));
+		}
 	}
 
 	protected void compute(Scalar signalRawLogEnergy,

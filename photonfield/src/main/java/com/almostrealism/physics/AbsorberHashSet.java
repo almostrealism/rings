@@ -34,7 +34,7 @@ import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.ShadableIntersection;
-import org.almostrealism.hardware.Issues;
+import org.almostrealism.io.Console;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.physics.PhysicalConstants;
@@ -46,7 +46,7 @@ import org.almostrealism.stats.SphericalProbabilityDistribution;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 
 import com.almostrealism.geometry.Elipse;
 import com.almostrealism.buffers.ArrayColorBuffer;
@@ -795,7 +795,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 			} else if (s.absorber instanceof VolumeAbsorber) {
 				dist = ((VolumeAbsorber) s.absorber).getVolume().intersect(x, d);
 			} else {
-				Issues.warn(null, "Unconstrained absorber", null);
+				Console.root().warn("Unconstrained absorber", null);
 			}
 			
 			if (dist < l) {
@@ -827,12 +827,6 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 		Volume<?> v = this.getVolume(this.rclosest.absorber);
 		if (v == null) return ZeroVector.getInstance();
 		return v.getNormalAt(add(point, scalarMultiply(rclosest.position, -1.0)));
-	}
-	
-	/** Delegates to {@link #getValueAt(Producer)}.*/
-	@Override
-	public RGB operate(Vector in) {
-		return getValueAt(v(in)).get().evaluate();
 	}
 
 	@Override

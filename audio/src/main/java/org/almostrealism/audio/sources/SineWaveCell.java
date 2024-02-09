@@ -25,7 +25,7 @@ import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.algebra.Scalar;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 import java.util.function.Supplier;
 

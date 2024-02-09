@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,10 +28,8 @@ import javax.swing.SwingUtilities;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
-import io.almostrealism.relation.Node;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RealizableImage;
-import org.almostrealism.color.ColorEvaluable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;

@@ -18,24 +18,24 @@ package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.DynamicProducer;
 import io.almostrealism.relation.Tree;
-import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
@@ -51,7 +51,10 @@ import java.util.stream.IntStream;
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableAutoVolume = true;
+	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
+
+	private static AudioSumProvider sum = new AudioSumProvider();
 
 	private List<PatternFactoryChoice> choices;
 	private List<PatternLayerManager> patterns;
@@ -59,7 +62,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private Evaluable<PackedCollection<?>> sum;
 
 	public PatternSystemManager() {
 		this(new ArrayList<>());
@@ -82,8 +84,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public void init() {
 		volume = new PackedCollection(1);
 		volume.setMem(0, 1.0);
-
-		sum = add(v(shape(1), 0), v(shape(1), 1)).get();
 	}
 
 	private DynamicProducer<PackedCollection<?>> destination() {
@@ -184,22 +184,27 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				return;
 			}
 
-			patternsForChannel.stream().map(i -> {
+			patternsForChannel.stream().forEach(i -> {
 				patterns.get(i).sum(context);
-				return p(patterns.get(i).getDestination());
-			}).forEach(note -> {
-				PackedCollection<?> audio = traverse(1, note).get().evaluate();
-				int frames = Math.min(audio.getShape().getCount(),
-						this.destination.getShape().length(0));
-
-				TraversalPolicy shape = shape(frames).traverse(1);
-				sum
-						.into(this.destination.range(shape))
-						.evaluate(this.destination.range(shape), audio.range(shape));
 			});
-		});
 
-		Evaluable<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1)).get();
+//			patternsForChannel.stream().map(i -> {
+//				patterns.get(i).sum(context);
+//				return p(patterns.get(i).getDestination());
+//			}).forEach(note -> {
+//				PackedCollection<?> audio = traverse(1, note).get().evaluate();
+//				int frames = Math.min(audio.getShape().getCount(),
+//						this.destination.getShape().length(0));
+//
+//				TraversalPolicy shape = shape(frames);
+//				if (enableVerbose) log("Rendering " + frames + " frames");
+//				sum.sum(this.destination.range(shape), audio.range(shape));
+//				if (enableVerbose) log("Rendered " + frames + " frames");
+//			});
+
+			if (enableVerbose)
+				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
+		});
 
 		if (enableAutoVolume) {
 			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(destination());
@@ -207,7 +212,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			op.add(a(1, p(volume), auto));
 		}
 
-		op.add(() -> () -> scale.into(this.destination.traverse(1)).evaluate(this.destination.traverse(1), volume));
+		op.add(() -> () -> {
+			sum.adjustVolume(destination, volume);
+		});
 
 		return op;
 	}
@@ -227,8 +234,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				PatternLayerManager.Settings pattern = new PatternLayerManager.Settings();
 				pattern.setChannel(c);
 				pattern.setDuration(duration.applyAsInt(c));
-				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 1 && c != 5);
+				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 3 : 1 /* c == 3 ? 3 : 1*/ );
 				pattern.setFactorySelection(ParameterFunction.random());
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 

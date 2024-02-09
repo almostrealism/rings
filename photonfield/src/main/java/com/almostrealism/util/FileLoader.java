@@ -47,7 +47,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;
-import io.almostrealism.relation.Nameable;
+import io.almostrealism.uml.Nameable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

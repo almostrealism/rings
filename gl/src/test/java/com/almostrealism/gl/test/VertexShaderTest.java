@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.almostrealism.gl.test;
 
+import io.almostrealism.code.Precision;
+import org.almostrealism.c.CLanguageOperations;
 import org.junit.Test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
@@ -25,7 +27,9 @@ public class VertexShaderTest {
 	@Test
 	public void test() {
 		DotProductVertexShader s = new DotProductVertexShader();
-		GLSLPrintWriter shaderOutput = new GLSLPrintWriter(System.out);
+		GLSLPrintWriter shaderOutput =
+				new GLSLPrintWriter(System.out,
+					new CLanguageOperations(Precision.FP32, false, false));
 		shaderOutput.println(s.getScope());
 	}
 }

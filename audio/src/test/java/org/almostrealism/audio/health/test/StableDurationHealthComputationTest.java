@@ -17,22 +17,19 @@
 package org.almostrealism.audio.health.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.audio.optimize.test.AudioScenePopulationTest;
-import io.almostrealism.code.OperationAdapter;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.graph.CellAdapter;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.junit.AfterClass;
@@ -116,7 +113,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		AudioScene.enableEfxFilters = false;
 
 		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
-		StableDurationHealthComputation.setStandardDuration(150);
+		HealthComputationAdapter.setStandardDuration(150);
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setOutputFile("results/cells-pattern-small.wav");
@@ -134,7 +131,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 	@Test
 	public void cellsPatternLarge() {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		StableDurationHealthComputation.setStandardDuration(150);
+		HealthComputationAdapter.setStandardDuration(150);
 
 		StableDurationHealthComputation health = new StableDurationHealthComputation(5);
 		health.setOutputFile("results/small-cells-pattern-test.wav");

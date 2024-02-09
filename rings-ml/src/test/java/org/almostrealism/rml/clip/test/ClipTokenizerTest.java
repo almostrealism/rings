@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,14 +14,24 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.tensorflow;
+package org.almostrealism.rml.clip.test;
 
-import io.almostrealism.scope.Variable;
+import org.almostrealism.rml.clip.ClipTokenizer;
+import org.junit.Test;
 
-public class TensorFlowVariable extends Variable<Double, TensorFlowVariable> {
-	public TensorFlowVariable(String name, TensorFlowConstant expression) {
-		super(name, expression);
+import java.io.IOException;
+
+public class ClipTokenizerTest {
+	@Test
+	public void tokenize() throws IOException {
+		String text = "Hello, my name is bob";
+
+		ClipTokenizer tokenizer = new ClipTokenizer("src/main/resources/openai/bpe_simple_vocab_16e6.txt");
+		int tokens[] = tokenizer.encodeAsInt(text);
+
+		for (int i = 0; i < tokens.length; i++) {
+			System.out.println(tokens[i]);
+		}
 	}
-
-	public TensorFlowConstant getExpression() { return (TensorFlowConstant) super.getExpression(); }
 }
+

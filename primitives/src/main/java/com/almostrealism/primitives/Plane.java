@@ -155,9 +155,4 @@ public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
 		return new double[] { 0.5 + new Vector(this.across).dotProduct(new Vector(xyz)) / this.w,
 							0.5 - new Vector(this.up).dotProduct(new Vector(xyz)) / this.h };
 	}
-
-	@Override
-	public RGB operate(Vector triple) {
-		return null;
-	}
 }

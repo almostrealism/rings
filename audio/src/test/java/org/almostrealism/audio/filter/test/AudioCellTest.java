@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,23 +16,13 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.relation.Operation;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Cell;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.Hardware;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
@@ -48,17 +38,17 @@ public class AudioCellTest implements CellFeatures {
 						.map(i -> new ReceptorCell<>(out))
 						.iter(10);
 		Runnable r = op.get();
-		System.out.println(Arrays.toString(out.getData().toArray(0, 12)));
+		System.out.println(Arrays.toString(out.getData().toArray(0, 5)));
 
 		r.run();
-		System.out.println(Arrays.toString(out.getData().toArray(0, 12)));
+		System.out.println(Arrays.toString(out.getData().toArray(0, 5)));
 
-		Assert.assertTrue(out.getData().toDouble(5) == 0.0);
-		Assert.assertFalse(out.getData().toDouble(7) == 0.0);
+		Assert.assertTrue(out.getData().toDouble(2) == 0.0);
+		Assert.assertFalse(out.getData().toDouble(3) == 0.0);
 	}
 
 	@Test
-	public void filter() throws IOException {
+	public void filter() {
 		Supplier<Runnable> op =
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
@@ -69,7 +59,7 @@ public class AudioCellTest implements CellFeatures {
 	}
 
 	@Test
-	public void repeat() throws IOException {
+	public void repeat() {
 		Supplier<Runnable> op =
 				w(c(1.0), "Library/Snare Perc DD.wav")
 						.om(i -> new File("results/repeat-cell-test.wav"))

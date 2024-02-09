@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.almostrealism</groupId>
 		<artifactId>Rings</artifactId>
-		<version>0.30</version>
+		<version>0.31</version>
 	</parent>
 
 	<artifactId>ar-remote-server</artifactId>
@@ -14,14 +14,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-audio</artifactId>
+			<version>0.31</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-remote</artifactId>
-			<version>0.30</version>
+			<version>0.31</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-torch</artifactId>
-			<version>0.30</version>
+			<version>0.31</version>
 		</dependency>
 
 		<dependency>

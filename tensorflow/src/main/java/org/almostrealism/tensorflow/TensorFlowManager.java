@@ -16,6 +16,7 @@
 
 package org.almostrealism.tensorflow;
 
+import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.scope.Variable;
 import org.tensorflow.Operand;
 import org.tensorflow.Signature;
@@ -44,6 +45,10 @@ public class TensorFlowManager {
 
 	protected Collection<TensorFlowInput> getVariables() {
 		return variables.values();
+	}
+
+	public void addVariable(ExpressionAssignment<?> v) {
+		throw new UnsupportedOperationException();
 	}
 
 	public void addVariable(Variable<?, ?> v) {

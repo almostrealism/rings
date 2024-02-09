@@ -18,8 +18,12 @@ package org.almostrealism.tensorflow.test;
 
 import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.DefaultScopeInputManager;
+import io.almostrealism.code.Execution;
+import io.almostrealism.code.Precision;
+import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.tensorflow.TensorFlowArgument;
 import org.almostrealism.tensorflow.TensorFlowComputeContext;
 import org.almostrealism.tensorflow.TensorFlowConstant;
@@ -27,15 +31,14 @@ import org.almostrealism.tensorflow.TensorFlowInstructionSet;
 import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
-import java.util.function.Consumer;
-
 public class TFScopeTest implements CodeFeatures {
 	private int counter = 0;
 
 	@Test
 	public void scope() {
-		DefaultNameProvider nameProvider = new DefaultNameProvider("test");
-		DefaultScopeInputManager manager = new DefaultScopeInputManager((p, input) -> new TensorFlowArgument<>(p, p.getArgumentName(counter++), input));
+		LanguageOperations lang = new CLanguageOperations(Precision.FP64, false, false);
+		DefaultNameProvider nameProvider = new DefaultNameProvider(lang, "test");
+		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang, (p, input) -> new TensorFlowArgument<>(lang, p, p.getArgumentName(counter++), input));
 
 		Scalar s = new Scalar();
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));
@@ -47,7 +50,7 @@ public class TFScopeTest implements CodeFeatures {
 
 		TensorFlowComputeContext ctx = new TensorFlowComputeContext();
 		TensorFlowInstructionSet op = ctx.deliver(scope);
-		Consumer<Object[]> consumer = op.get();
+		Execution consumer = op.get();
 		consumer.accept(new Object[] { s });
 	}
 }

@@ -18,13 +18,11 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.test.PatternFactoryTest;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.PackedCollectionHeap;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.time.TemporalRunner;
@@ -98,7 +96,7 @@ public class AudioSceneTest implements CellFeatures {
 		OperationList setup = new OperationList();
 		setup.add(pattern.getTimeManager().setup());
 
-		CellList cells = pattern.getPatternChannel(0, setup);
+		CellList cells = pattern.getPatternChannel(0, pattern.getTotalSamples(), setup);
 		cells.addSetup(() -> setup);
 		cells.o(i -> new File("results/pattern-test.wav")).sec(20).get().run();
 	}

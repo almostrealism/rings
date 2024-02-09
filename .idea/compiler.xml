@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ar-space" />
+        <module name="ar-flowtree" />
+        <module name="ar-shading" />
+        <module name="ar-raytracer" />
+        <module name="ar-algebra" />
+        <module name="ar-io" />
+        <module name="ar-audio" />
+        <module name="ar-gl" />
+        <module name="ar-swing" />
+        <module name="ar-treeview" />
+        <module name="ar-color" />
+        <module name="ar-relation" />
+        <module name="ar-network" />
+        <module name="ar-remote" />
+        <module name="ar-optimize" />
+        <module name="ar-replicate" />
+        <module name="ar-physics" />
+        <module name="ar-torch" />
+        <module name="ar-engine" />
+        <module name="ar-uml" />
+        <module name="ar-flowtreeapi" />
+        <module name="ar-chemistry" />
+        <module name="ar-time" />
+        <module name="ar-utils" />
+        <module name="ar-hardware" />
+        <module name="ar-llvm" />
+        <module name="ar-code" />
+        <module name="ar-geometry" />
+        <module name="ar-keyframing" />
+        <module name="ar-flowtree-shaded" />
+        <module name="ar-rings-ml" />
+        <module name="ar-tensorflow" />
+        <module name="ar-heredity" />
+        <module name="ar-graphpersist" />
+        <module name="ar-photonfield" />
+        <module name="ar-stats" />
+        <module name="ar-ml" />
+        <module name="ar-graph" />
+        <module name="ar-absorption" />
+        <module name="ar-collect" />
+        <module name="ar-primitives" />
+        <module name="ar-economics" />
+        <module name="ar-remote-server" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ar-algebra" options="-h target/headers" />
+      <module name="ar-chemistry" options="-h target/headers" />
+      <module name="ar-code" options="-h target/headers" />
+      <module name="ar-collect" options="-h target/headers" />
+      <module name="ar-color" options="-h target/headers" />
+      <module name="ar-economics" options="-h target/headers" />
+      <module name="ar-geometry" options="-h target/headers" />
+      <module name="ar-graph" options="-h target/headers" />
+      <module name="ar-hardware" options="-h target/headers" />
+      <module name="ar-heredity" options="-h target/headers" />
+      <module name="ar-io" options="-h target/headers" />
+      <module name="ar-llvm" options="-h target/headers" />
+      <module name="ar-ml" options="-h target/headers" />
+      <module name="ar-optimize" options="-h target/headers" />
+      <module name="ar-physics" options="-h target/headers" />
+      <module name="ar-relation" options="-h target/headers" />
+      <module name="ar-space" options="-h target/headers" />
+      <module name="ar-stats" options="-h target/headers" />
+      <module name="ar-swing" options="-h target/headers" />
+      <module name="ar-time" options="-h target/headers" />
+      <module name="ar-uml" options="-h target/headers" />
+      <module name="ar-utils" options="-h target/headers" />
+      <module name="common" options="-h target/headers" />
+    </option>
+  </component>
+</project>

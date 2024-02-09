@@ -38,9 +38,9 @@ import java.util.function.Supplier;
  * @author  Michael Murray
  */
 public class BlendingShader implements Shader<LightingContext>, Editable, RGBFeatures, CodeFeatures {
-  private static final String names[] = {"Hot color", "Cold color"};
-  private static final String desc[] = {"Color for hot (lit) area.", "Color for cold (dim) area."};
-  private static final Class types[] = {ColorEvaluable.class, ColorEvaluable.class};
+  private static final String names[] = { "Hot color", "Cold color" };
+  private static final String desc[] = { "Color for hot (lit) area.", "Color for cold (dim) area." };
+  private static final Class types[] = { Producer.class, Producer.class };
   
   private Producer<RGB> hotColor, coldColor;
 

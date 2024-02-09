@@ -19,6 +19,7 @@ package org.almostrealism.audio;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
@@ -38,16 +39,16 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.SummationCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.heredity.ScaleFactor;
+import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +68,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFeatures {
+	Console console = Console.root().child();
 
 	default Receptor<PackedCollection<?>> a(Supplier<Evaluable<? extends PackedCollection<?>>>... destinations) {
 		if (destinations.length == 1) {
@@ -220,16 +222,20 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
+	default CellList w(Supplier<PolymorphicAudioData> data, int sampleRate, int frames, Producer<PackedCollection<?>> offset,
+					   Producer<PackedCollection<?>> repeat, Producer<PackedCollection<?>>... waves) {
+		CellList cells = new CellList();
+		Stream.of(waves)
+				.map(w -> new WaveCell(data.get(), w, sampleRate, 1.0, Ops.o().toScalar(offset),
+					Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(frames))).forEach(cells::addRoot);
+		return cells;
+	}
+
 	default CellList w(Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... waves) {
 		CellList cells = new CellList();
-		Stream.of(waves).map(f -> {
-			try {
-				return WavFile.load(f, 1.0, offset, repeat).apply(data.get());
-			} catch (IOException e) {
-				e.printStackTrace();
-				return silence().get(0);
-			}
-		}).forEach(cells::addRoot);
+		Stream.of(waves)
+				.map(w -> w.toCell(1.0, offset, repeat).apply(data.get()))
+				.forEach(cells::addRoot);
 		return cells;
 	}
 
@@ -635,5 +641,9 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 	default AudioPassFilter lp(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
 		return new AudioPassFilter(sampleRate, frequency, resonance, false);
+	}
+
+	static CellFeatures getInstance() {
+		return new CellFeatures() { };
 	}
 }

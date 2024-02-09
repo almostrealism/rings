@@ -19,8 +19,7 @@ package org.almostrealism.audio.filter;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.Hardware;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
 	default Factor<PackedCollection<?>> volume(Producer<PackedCollection<?>> volume) {
@@ -82,5 +81,9 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 											  Producer<PackedCollection<?>> endVolume) {
 
 		return linear(offset, release, startVolume, endVolume);
+	}
+	
+	static EnvelopeFeatures getInstance() {
+		return new EnvelopeFeatures() { };
 	}
 }

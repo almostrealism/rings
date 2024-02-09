@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CodeFeaturesTests" type="JUnit" factoryName="JUnit" folderName="Common">
+    <module name="ar-utils" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <option name="PACKAGE_NAME" value="org.almostrealism.util" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.util.CodeFeaturesTests" />
+    <option name="METHOD_NAME" value="loop1" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2" />
+  </configuration>
+</component>

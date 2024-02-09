@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,24 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.tone.Scale;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
-import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.io.DistributionMetric;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.DoubleFunction;
-import java.util.function.DoubleToIntFunction;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -46,12 +42,17 @@ import java.util.stream.Stream;
 public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
+	public static boolean enableVolumeAdjustment = false;
+
+	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
+
+	private static final AudioSumProvider sum = new AudioSumProvider();
 
 	private int channel;
 	private double duration;
 	private double scale;
 	private double seedBias;
-	private int chordDepth;
+	private int scaleTraversalDepth;
 	private boolean melodic;
 
 	private Supplier<List<PatternFactoryChoice>> percChoices;
@@ -65,7 +66,6 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private Evaluable<PackedCollection<?>> sum;
 	private Runnable adjustVolume;
 
 	public PatternLayerManager(List<PatternFactoryChoice> choices, SimpleChromosome chromosome, int channel, double measures,
@@ -79,7 +79,7 @@ public class PatternLayerManager implements CodeFeatures {
 		this.channel = channel;
 		this.duration = measures;
 		this.scale = 1.0;
-		this.chordDepth = 1;
+		this.scaleTraversalDepth = 1;
 		setMelodic(melodic);
 
 		this.percChoices = percChoices;
@@ -101,24 +101,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public PackedCollection<?> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
-		PackedCollection<?> dest = destination;
-
-		if (destination == null || context.getFrames() != this.destination.getMemLength()) {
-			destination = context.getIntermediateDestination().get();
-		} else {
-			return;
-		}
-
-		Producer<PackedCollection<?>> scale = multiply(value(1, 0), value(1, 1));
-		this.sum = add(v(shape(1), 0), v(shape(1), 1)).get();
-
-		OperationList v = new OperationList("PatternLayerManager Adjust Volume");
-		v.add(() -> () ->
-				volume.setMem(0, 1.0 / chordDepth));
-		v.add(scale, this.destination.traverse(1), this.destination.traverse(1), volume);
-		adjustVolume = v.get();
-
-		if (dest != null) dest.destroy();
+		destination = context.getDestination();
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
@@ -128,7 +111,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public Stream<PatternFactoryChoice> choices() {
 		return getChoices().stream()
 				.filter(c -> c.getChannels() == null || c.getChannels().contains(channel))
-				.filter(c -> chordDepth <= c.getMaxChordDepth());
+				.filter(c -> scaleTraversalDepth <= c.getMaxScaleTraversalDepth());
 	}
 
 	public int getChannel() { return channel; }
@@ -137,8 +120,8 @@ public class PatternLayerManager implements CodeFeatures {
 	public void setDuration(double measures) { duration = measures; }
 	public double getDuration() { return duration; }
 
-	public int getChordDepth() { return chordDepth; }
-	public void setChordDepth(int chordDepth) { this.chordDepth = chordDepth; }
+	public int getScaleTraversalDepth() { return scaleTraversalDepth; }
+	public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
@@ -181,7 +164,7 @@ public class PatternLayerManager implements CodeFeatures {
 		Settings settings = new Settings();
 		settings.setChannel(channel);
 		settings.setDuration(duration);
-		settings.setChordDepth(chordDepth);
+		settings.setScaleTraversalDepth(scaleTraversalDepth);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.setActiveSelection(activeSelection);
@@ -192,7 +175,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public void setSettings(Settings settings) {
 		channel = settings.getChannel();
 		duration = settings.getDuration();
-		chordDepth = settings.getChordDepth();
+		scaleTraversalDepth = settings.getScaleTraversalDepth();
 		melodic = settings.isMelodic();
 
 		if (settings.getFactorySelection() != null)
@@ -254,7 +237,7 @@ public class PatternLayerManager implements CodeFeatures {
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
 			if (seeds != null) {
-				seeds.generator(0, duration, seedBias, chordDepth).forEach(roots::add);
+				seeds.generator(0, duration, seedBias, scaleTraversalDepth).forEach(roots::add);
 				scale = seeds.getScale();
 			}
 
@@ -273,7 +256,7 @@ public class PatternLayerManager implements CodeFeatures {
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, chordDepth, params);
+					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
@@ -343,7 +326,7 @@ public class PatternLayerManager implements CodeFeatures {
 			return;
 		}
 
-		destination.clear();
+		// destination.clear();
 
 		AudioSceneContext ctx = context.get();
 
@@ -357,10 +340,14 @@ public class PatternLayerManager implements CodeFeatures {
 		IntStream.range(0, count).forEach(i -> {
 			ChannelSection section = ctx.getSection(i * duration);
 
-			double offset = i * duration;
-			double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
-			if (active < 0) return;
+			if (section == null) {
+				System.out.println("WARN: No ChannelSection at measure " + i);
+			} else {
+				double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
+				if (active < 0) return;
+			}
 
+			double offset = i * duration;
 			elements.stream()
 					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
 					.flatMap(List::stream)
@@ -371,16 +358,15 @@ public class PatternLayerManager implements CodeFeatures {
 								audio -> {
 									int frames = Math.min(audio.getShape().getCount(),
 											destination.getShape().length(0) - note.getOffset());
+									sizes.addEntry(frames);
 
-									TraversalPolicy shape = shape(frames).traverse(1);
-									return sum
-											.into(destination.range(shape, note.getOffset()))
-											.evaluate(destination.range(shape, note.getOffset()), audio.range(shape));
+									TraversalPolicy shape = shape(frames);
+									return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
 								});
 					});
 		});
 
-		adjustVolume.run();
+		if (enableVolumeAdjustment && adjustVolume != null) adjustVolume.run();
 	}
 
 	public double nextNotePosition(double position) {
@@ -445,7 +431,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public static class Settings {
 		private int channel;
 		private double duration;
-		private int chordDepth;
+		private int scaleTraversalDepth;
 		private boolean melodic;
 		private ParameterFunction factorySelection;
 		private ParameterizedPositionFunction activeSelection;
@@ -457,8 +443,8 @@ public class PatternLayerManager implements CodeFeatures {
 		public double getDuration() { return duration; }
 		public void setDuration(double duration) { this.duration = duration; }
 
-		public int getChordDepth() { return chordDepth; }
-		public void setChordDepth(int chordDepth) { this.chordDepth = chordDepth; }
+		public int getScaleTraversalDepth() { return scaleTraversalDepth; }
+		public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
 		public boolean isMelodic() { return melodic; }
 		public void setMelodic(boolean melodic) { this.melodic = melodic; }

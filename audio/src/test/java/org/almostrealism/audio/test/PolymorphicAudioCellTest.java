@@ -22,7 +22,6 @@ import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import io.almostrealism.code.Computation;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.PolymorphicAudioCell;
@@ -37,7 +36,7 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.computations.Loop;
-import org.almostrealism.heredity.Factor;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.graph.CellPair;
@@ -109,7 +108,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 			OperationList list = new OperationList("PolymorphicAudioCell Push and Tick");
 			list.add(cell.push(c(0.0)));
 			list.add(cell.tick());
-			Loop loop = (Loop) loop(list, enableLoop ? DURATION_FRAMES : 1);
+			Loop loop = (Loop) lp(list, enableLoop ? DURATION_FRAMES : 1);
 
 			Runnable setup = cells.setup().get();
 			Runnable tick = loop.get();
@@ -143,13 +142,13 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		OperationList list1 = new OperationList("One");
 		list1.add(cell1.push(c(0.0)));
 		list1.add(cell1.tick());
-		Loop loop1 = (Loop) loop(list1, DURATION_FRAMES);
+		Loop loop1 = (Loop) lp(list1, DURATION_FRAMES);
 		Runnable setup1 = cells1.setup().get();
 		Runnable tick1 = loop1.get();
 
 		/* Two */
 		Computation list2 = (Computation) cells2.tick();
-		Loop loop2 = (Loop) loop((Computation) list2, DURATION_FRAMES);
+		Loop loop2 = (Loop) lp(list2, DURATION_FRAMES);
 		Runnable setup2 = cells2.setup().get();
 		Runnable tick2 = loop2.get();
 

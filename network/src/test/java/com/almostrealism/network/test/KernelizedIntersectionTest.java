@@ -16,6 +16,7 @@
 
 package com.almostrealism.network.test;
 
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
@@ -39,12 +40,12 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 	}
 
 	@Test
-	public void kernel() {
+	public void intersectionKernel() {
 		Producer<Scalar> combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
 
 		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = Pair.bank(width * height, pair(width, height).get());
+		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
 		PackedCollection<Scalar> output = Scalar.scalarBank(input.getCount());
 
 		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
@@ -55,5 +56,15 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 			Scalar value = ev.evaluate(input.get(i), dim.get(i));
 			Assert.assertEquals(value.getValue(), output.get(i).getValue(), Math.pow(10, -10));
 		}
+	}
+
+	@Deprecated
+	protected static PackedCollection<Pair<?>> bank(int count, Evaluable<Pair<?>> source) {
+		PackedCollection<Pair<?>> bank = Pair.bank(count);
+		for (int i = 0; i < bank.getCount(); i++) {
+			bank.set(i, source.evaluate());
+		}
+
+		return bank;
 	}
 }

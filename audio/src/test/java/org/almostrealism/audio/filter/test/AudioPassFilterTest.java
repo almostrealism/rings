@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2023 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
@@ -24,7 +25,10 @@ import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.computations.Loop;
+import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -32,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class AudioPassFilterTest implements CellFeatures, TestFeatures {
+	public static boolean enableVerbose = false;
+
 	@Test
 	public void highPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
@@ -46,21 +52,37 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		runFilter("low-pass", f, filter);
 	}
 
-	public void runFilter(String name, WavFile f, AudioPassFilter filter) throws IOException {
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter) throws IOException {
+		runFilter(name, f, filter, false);
+	}
+
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize) throws IOException {
+		runFilter(name, f, filter, optimize, 0);
+	}
+
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize, int padFrames) throws IOException {
 		double data[][] = new double[f.getNumChannels()][(int) f.getFramesRemaining()];
 		f.readFrames(data, (int) f.getFramesRemaining());
 
-		PackedCollection<?> values = WavFile.channel(data, 0);
+		PackedCollection<?> values = WavFile.channel(data, 0, padFrames);
 		PackedCollection<?> out = new PackedCollection<>(values.getMemLength());
 		Scalar current = new Scalar();
 
 		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
-		Runnable tick = filter.tick().get();
+		Runnable tick = optimize ? Process.optimized(filter.tick()).get() : filter.tick().get();
 
-		for (int i = 0; i < values.getMemLength(); i++) {
-			current.setValue(values.toDouble(i));
-			out.setMem(i, ev.evaluate().toDouble(0));
-			tick.run();
+		Runnable r = () -> {
+			for (int i = 0; i < values.getMemLength(); i++) {
+				current.setValue(values.toDouble(i));
+				out.setMem(i, ev.evaluate().toDouble(0));
+				tick.run();
+			}
+		};
+
+		if (enableVerbose) {
+			HardwareOperator.verboseLog(r);
+		} else {
+			r.run();
 		}
 
 		WavFile wav = WavFile.newWavFile(new File("results/" + name  + "-filter-test.wav"), 1, out.getMemLength(),

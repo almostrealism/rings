@@ -26,15 +26,11 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.Clock;
 
 import com.almostrealism.light.LightBulb;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
-
-import static org.almostrealism.Ops.ops;
 
 /**
  * A HarmonicAbsorber object represents a spherical absorber that stores
@@ -68,7 +64,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		
 		// Facing the negative X direction and oriented so
 		// that the positive Y axis is "upward".
-		plane.setSurfaceNormal(Ops.ops().vector(-1.0, 0.0, 0.0));
+		plane.setSurfaceNormal(Ops.o().vector(-1.0, 0.0, 0.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb
@@ -78,9 +74,9 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(3.0 * Math.pow(10.0, 1.0));
-		a.addAbsorber(b, Ops.ops().vector(0.5, 0.0, 0.0));
-		a.addAbsorber(l, Ops.ops().vector(-1.0, 0.0, 0.0));
-		a.addAbsorber(plane, Ops.ops().vector(2.5, 0.0, 0.0));
+		a.addAbsorber(b, Ops.o().vector(0.5, 0.0, 0.0));
+		a.addAbsorber(l, Ops.o().vector(-1.0, 0.0, 0.0));
+		a.addAbsorber(plane, Ops.o().vector(2.5, 0.0, 0.0));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb
@@ -150,7 +146,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	protected void updateDisplacement() {
 		this.d = radius * Math.sqrt(energy / k);
 		double off = d / place.length();
-		this.dp = Ops.ops().vector(off, off, off);
+		this.dp = Ops.o().vector(off, off, off);
 	}
 	
 	public boolean absorb(Vector x, Vector p, double energy) {

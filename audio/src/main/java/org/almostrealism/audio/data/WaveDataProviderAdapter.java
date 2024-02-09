@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeFeatures {
-	public static boolean enableHeap = false;
-
 	private static Map<String, ContextSpecific<WaveData>> loaded;
 	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;
 
@@ -46,8 +44,8 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 						new PassThroughProducer<>(1, 0),
 						new PassThroughProducer<>(1, 1),
 						new PassThroughProducer<>(1, 2),
-						v -> new Product(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
-						v -> new Product(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
+						v -> Product.of(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
+						v -> Product.of(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
 
 	public abstract String getKey();
@@ -75,12 +73,12 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 			return null;
 		}
 
-		PackedCollection<?> rate = new PackedCollection(1);
+		PackedCollection<?> rate = PackedCollection.factory().apply(1);
 		rate.setMem(0, playbackRate);
 
 		PackedCollection<?> audio = original.getCollection();
 		int len = (int) (audio.getMemLength() / playbackRate);
-		PackedCollection<?> dest = enableHeap ? WaveData.allocateCollection(len) : new PackedCollection<>(len);
+		PackedCollection<?> dest = new PackedCollection<>(len);
 
 		// TODO  This can use CollectionFeatures::integers instead of taking a timeline argument
 		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
