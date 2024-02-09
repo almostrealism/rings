@@ -235,7 +235,10 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setChannel(c);
 				pattern.setDuration(duration.applyAsInt(c));
 				pattern.setMelodic(c > 1 && c != 5);
-				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 3 : 1 /* c == 3 ? 3 : 1*/ );
+				pattern.setScaleTraversalStrategy((c == 2 || c == 4) ?
+						ScaleTraversalStrategy.SEQUENCE :
+						ScaleTraversalStrategy.CHORD);
+				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 3 : 1);
 				pattern.setFactorySelection(ParameterFunction.random());
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 

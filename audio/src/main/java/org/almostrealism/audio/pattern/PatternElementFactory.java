@@ -146,6 +146,7 @@ public class PatternElementFactory {
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
 	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias,
+										  ScaleTraversalStrategy scaleTraversalStrategy,
 										  int depth, boolean repeat, ParameterSet params) {
 		if (parity == ElementParity.LEFT) {
 			position -= scale;
@@ -168,7 +169,8 @@ public class PatternElementFactory {
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
 		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		element.setDurationStrategy(isMelodic() ?
-				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
+				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?
+						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
 
 		double r = repeatSelection.apply(params, position, scale);
@@ -177,14 +179,15 @@ public class PatternElementFactory {
 			element.setRepeatCount(1);
 		} else {
 			int c;
-			for (c = 0; r < 1.0 & c < 4; c++) {
+			for (c = 0; r < 1.5 & c < 6; c++) {
 				r *= 2;
 			}
 
 			element.setRepeatCount(c);
 		}
 
-		element.setRepeatDuration(scale / 2.0);
+		element.setScaleTraversalStrategy(scaleTraversalStrategy);
+		element.setRepeatDuration(element.getNoteDurationSelection());
 		return Optional.of(element);
 	}
 }
