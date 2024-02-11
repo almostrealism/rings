@@ -1,8 +1,29 @@
+/*
+ * Copyright 2024 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.computations.test;
 
+import io.almostrealism.code.OperationProfile;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.AcceleratedComputationOperation;
+import org.almostrealism.hardware.AcceleratedOperation;
+import org.almostrealism.hardware.HardwareOperator;
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -74,9 +95,23 @@ public class SplitRadixFFTTest {
 		return compute(index < 0, input, null);
 	}
 
-	// TODO  @Test
-	public void fft() {
-		compute(-1, new double[32]).run();
+	@Test
+	public void fft() throws InterruptedException {
+		try {
+			HardwareOperator.profile = new OperationProfile("default");
+			compute(-1, new double[32]).run();
+		} finally {
+			HardwareOperator.profile.print();
+			AcceleratedComputationOperation.printTimes();
+
+			if (totalComputations > 0) {
+				System.out.println("FFT required " +
+						totalTime / totalComputations +
+						" msec on average");
+			}
+		}
+
+		// System.exit(totalComputations > 0 ? 0 : 1);
 	}
 
 	// 1 - FFT required 223 msec on average

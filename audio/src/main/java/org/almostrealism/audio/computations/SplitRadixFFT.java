@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.computations;
 
-import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
@@ -49,8 +49,11 @@ public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, Code
 		radix4Part2Pos = new Radix4(1, true);
 		radix4Part2Neg = new Radix4(1, false);
 
-		result = transform(v(2 * bins, 0), bins, forward).get();
-		((OperationAdapter) result).compile();
+		Producer<PackedCollection<Pair<?>>> comp = transform(v(2 * bins, 0), bins, forward);
+		log("Created Computation");
+//		result = (Evaluable<PackedCollection<Pair<?>>>) Process.optimized(comp).get();
+		result = comp.get();
+		log("Created Evaluable");
 	}
 
 	@Override
@@ -103,9 +106,9 @@ public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, Code
 				radix4Part2.set(k, radix4Part2P.build(angle, ks, ns, input, length));
 			}
 
-			PairBankFromPairsBuilder radix2FFT = calculateTransform(radix2, radix2.getCount(), inverseTransform, false);
-			PairBankFromPairsBuilder radix4Part1FFT = calculateTransform(radix4Part1, radix2.getCount(), inverseTransform, false);
-			PairBankFromPairsBuilder radix4Part2FFT = calculateTransform(radix4Part2, radix2.getCount(), inverseTransform, false);
+			PairBankFromPairsBuilder radix2FFT = calculateTransform(radix2, radix2.getProducerCount(), inverseTransform, false);
+			PairBankFromPairsBuilder radix4Part1FFT = calculateTransform(radix4Part1, radix2.getProducerCount(), inverseTransform, false);
+			PairBankFromPairsBuilder radix4Part2FFT = calculateTransform(radix4Part2, radix2.getProducerCount(), inverseTransform, false);
 
 			PairBankFromPairsBuilder transformed = new PairBankFromPairsBuilder(length);
 
@@ -157,8 +160,8 @@ public class SplitRadixFFT implements Evaluable<PackedCollection<Pair<?>>>, Code
 				odd.set(k, radix2Odd.build(angle, ks, ns, input, length));
 			}
 
-			PairBankFromPairsBuilder evenFFT = calculateRadix2Transform(even, even.getCount(), inverseTransform, false);
-			PairBankFromPairsBuilder oddFFT = calculateRadix2Transform(odd, odd.getCount(), inverseTransform, false);
+			PairBankFromPairsBuilder evenFFT = calculateRadix2Transform(even, even.getProducerCount(), inverseTransform, false);
+			PairBankFromPairsBuilder oddFFT = calculateRadix2Transform(odd, odd.getProducerCount(), inverseTransform, false);
 
 			PairBankFromPairsBuilder transformed = new PairBankFromPairsBuilder(length);
 

@@ -63,7 +63,7 @@ void calculateRadix2Transform(float *output, float *input, int len, int inverseT
 	}
 }
 
- void calculateTransform(float *output, float *input, int len, int inverseTransform, int isFirstSplit) {
+void calculateTransform(float *output, float *input, int len, int inverseTransform, int isFirstSplit) {
     float radix2[512];
 	float radix4Part1[256];
 	float radix4Part2[256];
