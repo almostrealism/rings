@@ -207,13 +207,21 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.generation = new GenerationManager(patterns, generation);
 	}
 
+	@Deprecated
 	public void setBPM(double bpm) {
 		this.bpm = bpm;
 		tempoListeners.forEach(l -> l.accept(Frequency.forBPM(bpm)));
 		triggerDurationChange();
 	}
 
+	@Deprecated
 	public double getBPM() { return this.bpm; }
+
+	public void setTempo(Frequency tempo) {
+		this.bpm = tempo.asBPM();
+		tempoListeners.forEach(l -> l.accept(tempo));
+		triggerDurationChange();
+	}
 
 	public Frequency getTempo() { return Frequency.forBPM(bpm); }
 
