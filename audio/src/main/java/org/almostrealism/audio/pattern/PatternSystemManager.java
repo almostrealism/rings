@@ -21,6 +21,7 @@ import io.almostrealism.relation.Tree;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
@@ -128,11 +129,11 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		getChoices().forEach(c -> c.setTuning(tuning));
 	}
 
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root) {
+	public void setTree(FileWaveDataProviderTree<?> root) {
 		setTree(root, null);
 	}
 
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root, DoubleConsumer progress) {
+	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
 		List<PatternNoteSource> sources = getChoices()
 				.stream()
 				.flatMap(c -> c.getFactory().getSources().stream())
