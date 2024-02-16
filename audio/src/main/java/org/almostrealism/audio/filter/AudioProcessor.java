@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audio.arrange;
+package org.almostrealism.audio.filter;
 
-import org.almostrealism.audio.filter.AudioProcessor;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
 
-public interface ChannelSection extends AudioProcessor {
-	/** Position of the section, in measures. */
-	int getPosition();
+import java.util.function.Supplier;
 
-	/** Length of the section, in measures. */
-	int getLength();
+public interface AudioProcessor {
+	Supplier<Runnable> process(Producer<PackedCollection<?>> destination,
+							   Producer<PackedCollection<?>> source);
 }

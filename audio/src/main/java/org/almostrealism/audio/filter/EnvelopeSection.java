@@ -43,6 +43,14 @@ public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, E
 		this.envelope = envelope;
 	}
 
+	public Supplier<Producer<PackedCollection<?>>> getTime() {
+		return time;
+	}
+
+	public void setTime(Supplier<Producer<PackedCollection<?>>> time) {
+		this.time = time;
+	}
+
 	public EnvelopeSection andThen(Producer<PackedCollection<?>> start, Factor<PackedCollection<?>> envelope) {
 		return new EnvelopeSection(time, start, this, envelope);
 	}
@@ -65,7 +73,7 @@ public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, E
 		if (lastEnvelope == null) {
 			return envelope;
 		} else {
-			return in -> greaterThanConditional(time.get(), start,
+			return in -> greaterThanConditional(time.get(), repeat(shape(time.get()).getCount(), start),
 					envelope.getResultant(in),
 					lastEnvelope.get().getResultant(in));
 		}

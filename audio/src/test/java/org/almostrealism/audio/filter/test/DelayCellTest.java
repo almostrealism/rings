@@ -74,7 +74,7 @@ public class DelayCellTest implements CellFeatures {
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
 						.d(i -> v(2.0))
-						.o(i -> new File("results/filter-delay-cell-test.wav"))
+						.o(i -> new File("results/filter-delay-cell.wav"))
 						.sec(6);
 		r.get().run();
 	}

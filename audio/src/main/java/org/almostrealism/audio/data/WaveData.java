@@ -18,6 +18,7 @@ package org.almostrealism.audio.data;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
@@ -38,6 +39,8 @@ public class WaveData implements SamplingFeatures {
 	public WaveData(PackedCollection wave, int sampleRate) {
 		if (wave == null) {
 			System.out.println("WARN: Wave data is null");
+		} else if (wave.getCount() == 1) {
+			warn("Wave data appears to be the wrong shape");
 		}
 
 		this.collection = wave;
@@ -104,6 +107,15 @@ public class WaveData implements SamplingFeatures {
 		}
 	}
 
+	public WaveCell toCell(Producer<Scalar> frame) {
+		return new WaveCell(getCollection(), getSampleRate(), frame);
+	}
+
+	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
+		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
+				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(getCollection().getMemLength()));
+	}
+
 	public static WaveData load(File f) throws IOException {
 		try (WavFile w = WavFile.openWavFile(f)) {
 			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
@@ -116,11 +128,6 @@ public class WaveData implements SamplingFeatures {
 
 			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
 		}
-	}
-
-	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
-		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(getCollection().getMemLength()));
 	}
 
 	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable

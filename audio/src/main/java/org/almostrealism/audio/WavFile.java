@@ -35,14 +35,14 @@ public class WavFile implements AutoCloseable {
 	private final static int RIFF_TYPE_ID = 0x45564157;
 
 	private File file;                        // File that will be read from or written to
-	private ReaderState readerState;                // Specifies the IO State of the Wav File (used for snaity checking)
-	private int bytesPerSample;            // Number of bytes required to store a single sample
-	private long numFrames;                    // Number of frames within the data section
-	private FileOutputStream oStream;    // Output stream used for writting data
-	private FileInputStream iStream;        // Input stream used for reading data
+	private ReaderState readerState;          // Specifies the IO State of the Wav File (used for snaity checking)
+	private int bytesPerSample;               // Number of bytes required to store a single sample
+	private long numFrames;                   // Number of frames within the data section
+	private FileOutputStream oStream;         // Output stream used for writing data
+	private FileInputStream iStream;          // Input stream used for reading data
 	private double floatScale;                // Scaling factor used for int <-> float conversion
-	private double floatOffset;            // Offset factor used for int <-> float conversion
-	private boolean wordAlignAdjust;        // Specify if an extra byte at the end of the data chunk is required for word alignment
+	private double floatOffset;               // Offset factor used for int <-> float conversion
+	private boolean wordAlignAdjust;          // Specify if an extra byte at the end of the data chunk is required for word alignment
 
 	// Wav Header
 	private int numChannels;                // 2 bytes unsigned, 0x0001 (1) to 0xFFFF (65,535)
@@ -533,11 +533,11 @@ public class WavFile implements AutoCloseable {
 		return numFramesToWrite;
 	}
 
-	public int writeFrames(long[][] sampleBuffer, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(long[][] sampleBuffer, int numFramesToWrite) throws IOException {
 		return writeFrames(sampleBuffer, 0, numFramesToWrite);
 	}
 
-	public int writeFrames(long[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(long[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException {
 		if (readerState != ReaderState.WRITING) throw new IOException("Cannot write to WavFile instance");
 
 		for (int f = 0; f < numFramesToWrite; f++) {
@@ -554,11 +554,11 @@ public class WavFile implements AutoCloseable {
 
 	// Double
 	// ------
-	public int readFrames(double[] sampleBuffer, int numFramesToRead) throws IOException, IOException {
+	public int readFrames(double[] sampleBuffer, int numFramesToRead) throws IOException {
 		return readFrames(sampleBuffer, 0, numFramesToRead);
 	}
 
-	public int readFrames(double[] sampleBuffer, int offset, int numFramesToRead) throws IOException, IOException {
+	public int readFrames(double[] sampleBuffer, int offset, int numFramesToRead) throws IOException {
 		if (readerState != ReaderState.READING) throw new IOException("Cannot read from WavFile instance");
 
 		for (int f = 0; f < numFramesToRead; f++) {

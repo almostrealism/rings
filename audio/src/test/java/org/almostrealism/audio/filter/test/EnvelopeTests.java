@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,21 +16,28 @@
 
 package org.almostrealism.audio.filter.test;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
+import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
+import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.TimeCell;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-public class EnvelopeTests implements EnvelopeFeatures {
+public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	@Test
 	public void attack() throws IOException {
 		WaveData.load(new File("Library/organ.wav"))
 				.sample(attack(c(1.0)))
-				.save(new File("results/attack-test.wav"));
+				.save(new File("results/attack.wav"));
 	}
 
 	@Test
@@ -51,7 +58,43 @@ public class EnvelopeTests implements EnvelopeFeatures {
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
-				.sample(env).save(new File("results/adsr-test.wav"));
+				.sample(env).save(new File("results/adsr.wav"));
+	}
+
+	@Test
+	public void adsrFilter() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
+
+		EnvelopeSection env = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+
+		TimeCell clock = new TimeCell();
+		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
+
+		PackedCollection<PackedCollection<?>> output = new PackedCollection<>(44100 * 4);
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		cells(1, i -> audio.toCell(clock.frameScalar()))
+				.addRequirement(clock)
+				.f(i -> lp(freq, c(0.1)))
+				.o(i -> new File("results/adsr-filter.wav"))
+				.sec(4)
+				.get().run();
+
+		new WaveData(output, 44100).save(new File("results/adsr-filter.wav"));
+	}
+
+	@Test
+	public void parameterizedFilterEnvelope() {
+		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope.random();
+		PatternNote result = penv.apply(ParameterSet.random(),
+				PatternNote.create("Library/organ.wav"));
+		result.setTuning(new DefaultKeyboardTuning());
+		new WaveData(result.getAudio(result.getRoot(), 4.0).evaluate(), 44100)
+				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 
 	@Test
@@ -68,6 +111,6 @@ public class EnvelopeTests implements EnvelopeFeatures {
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
-				.sample(env).save(new File("results/envelope-test.wav"));
+				.sample(env).save(new File("results/envelope.wav"));
 	}
 }

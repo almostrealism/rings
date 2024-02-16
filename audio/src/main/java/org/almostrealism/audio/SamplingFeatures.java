@@ -41,7 +41,14 @@ public interface SamplingFeatures extends CodeFeatures {
 		}
 	}
 
-	default Producer<PackedCollection<?>> frame() { return frames.get(); }
+	default Producer<PackedCollection<?>> frame() {
+		Producer<PackedCollection<?>> f = frames.get();
+		if (f == null) {
+			throw new UnsupportedOperationException();
+		}
+
+		return f;
+	}
 
 	default Producer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
 
