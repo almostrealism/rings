@@ -16,44 +16,35 @@
 
 package com.almostrealism.audio.stream;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.filter.AudioProcessor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 public class AudioServer {
-	private WaveData audioData;
+	private HttpServer server;
 
-	public AudioServer(WaveData audioData) {
-		this.audioData = audioData;
+	public AudioServer(int port) throws IOException {
+		server = HttpServer.create(new InetSocketAddress(port), 0);
 	}
 
-	public void startServer() throws IOException {
-		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-		server.createContext("/audio", new HttpHandler() {
-			@Override
-			public void handle(HttpExchange exchange) throws IOException {
-				exchange.getResponseHeaders().add("Content-Type", "audio/wav");
-//				TODO  Create and stream WavFile
-//				exchange.sendResponseHeaders(200, audioData.length);
-//				OutputStream os = exchange.getResponseBody();
-//				os.write(audioData);
-//				os.close();
-			}
-		});
+	public void start() throws IOException {
 		server.start();
+	}
 
-		System.out.println("Server is listening on port 8000");
+	public void addStream(String channel, AudioProcessor source, int totalFrames, int sampleRate) {
+		server.createContext("/" + channel, new AudioStreamHandler(source, totalFrames, sampleRate));
 	}
 
 	public static void main(String[] args) throws IOException {
-		AudioServer server = new AudioServer(WaveData.load(new File("Library/organ.wav")));
-		server.startServer();
+		AudioServer server = new AudioServer(7799);
+		server.start();
+		WaveData data = WaveData.load(new File("Library/organ.wav"));
+		server.addStream("test", AudioProcessor.fromWave(data),
+				data.getCollection().getMemLength(), data.getSampleRate());
 	}
 }
 

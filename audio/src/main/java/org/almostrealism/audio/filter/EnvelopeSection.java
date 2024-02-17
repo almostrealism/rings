@@ -23,6 +23,8 @@ import io.almostrealism.relation.Factor;
 import java.util.function.Supplier;
 
 public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, EnvelopeFeatures {
+	public static boolean enableRepeat = false;
+
 	private Supplier<Producer<PackedCollection<?>>> time;
 	private Producer<PackedCollection<?>> start;
 	private Supplier<Factor<PackedCollection<?>>> lastEnvelope;
@@ -72,10 +74,16 @@ public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, E
 	public Factor<PackedCollection<?>> get() {
 		if (lastEnvelope == null) {
 			return envelope;
-		} else {
-			return in -> greaterThanConditional(time.get(), repeat(shape(time.get()).getCount(), start),
+		} else if (enableRepeat) {
+			return in ->
+					greaterThanConditional(time.get(), repeat(shape(time.get()).getCount(), start),
 					envelope.getResultant(in),
 					lastEnvelope.get().getResultant(in));
+		} else {
+			return in ->
+					greaterThanConditional(time.get(), start,
+							envelope.getResultant(in),
+							lastEnvelope.get().getResultant(in));
 		}
 	}
 }

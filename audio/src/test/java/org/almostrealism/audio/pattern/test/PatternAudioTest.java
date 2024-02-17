@@ -55,7 +55,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 	public void noteAudio() {
 		PatternNote note = PatternNote.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
 		note.setTuning(new DefaultKeyboardTuning());
-		new WaveData(note.getAudio(WesternChromatic.C2, 1.0).get().evaluate(), note.getSampleRate())
+		new WaveData(note.getAudio(WesternChromatic.G2, 1.0).get().evaluate(), note.getSampleRate())
 				.save(new File("results/pattern-note-audio.wav"));
 	}
 

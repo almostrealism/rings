@@ -145,6 +145,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;
+		PatternElementFactory.enableFilterEnvelope = true;
 		PatternLayerManager.enableVolumeAdjustment = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;

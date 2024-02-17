@@ -24,9 +24,9 @@ import org.almostrealism.collect.PackedCollection;
 public class ParameterizedFilterEnvelope extends ParameterizedEnvelope {
 	public static final int MAX_SECONDS = 90;
 
-	public static double maxAttack = 0.2;
-	public static double maxDecay = 2.0;
-	public static double maxSustain = 0.8;
+	public static double maxAttack = 0.1;
+	public static double maxDecay = 0.05;
+	public static double maxSustain = 0.2;
 	public static double maxRelease = 5.0;
 
 	private static FilterEnvelopeProcessor processor;

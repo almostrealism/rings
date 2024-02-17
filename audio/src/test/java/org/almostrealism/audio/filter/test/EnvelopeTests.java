@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
+import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -74,8 +75,6 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		TimeCell clock = new TimeCell();
 		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
 
-		PackedCollection<PackedCollection<?>> output = new PackedCollection<>(44100 * 4);
-
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
 		cells(1, i -> audio.toCell(clock.frameScalar()))
 				.addRequirement(clock)
@@ -83,8 +82,16 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.o(i -> new File("results/adsr-filter.wav"))
 				.sec(4)
 				.get().run();
+	}
 
-		new WaveData(output, 44100).save(new File("results/adsr-filter.wav"));
+	@Test
+	public void parameterizedVolumeEnvelope() {
+		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope.random();
+		PatternNote result = penv.apply(ParameterSet.random(),
+				PatternNote.create("Library/organ.wav"));
+		result.setTuning(new DefaultKeyboardTuning());
+		new WaveData(result.getAudio(result.getRoot(), 4.0).evaluate(), 44100)
+				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
 	@Test

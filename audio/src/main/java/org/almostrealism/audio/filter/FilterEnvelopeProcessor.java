@@ -26,6 +26,8 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 import java.io.File;
 
 public class FilterEnvelopeProcessor implements CellFeatures, EnvelopeFeatures {
+	public static double filterPeak = 20000;
+
 	private TimeCell clock;
 
 	private PackedCollection<?> input;
@@ -51,7 +53,7 @@ public class FilterEnvelopeProcessor implements CellFeatures, EnvelopeFeatures {
 		EnvelopeSection env = envelope(cp(duration), cp(attack), cp(decay), cp(sustain), cp(release));
 
 		clock = new TimeCell();
-		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
+		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
 
 		WaveData audio = new WaveData(input.traverse(1), sampleRate);
 		process = cells(1, i -> audio.toCell(clock.frameScalar()))

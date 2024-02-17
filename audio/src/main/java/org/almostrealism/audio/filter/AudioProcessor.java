@@ -16,7 +16,10 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.Supplier;
@@ -24,4 +27,24 @@ import java.util.function.Supplier;
 public interface AudioProcessor {
 	Supplier<Runnable> process(Producer<PackedCollection<?>> destination,
 							   Producer<PackedCollection<?>> source);
+
+	static AudioProcessor fromWave(WaveData data) {
+		PackedCollection<?> position = new PackedCollection<>(1);
+
+		return (destination, source) -> () -> {
+			Evaluable<PackedCollection<?>> dest = destination.get();
+
+			return () -> {
+				PackedCollection<?> out = dest.evaluate();
+				int len = out.getMemLength();
+				int pos = (int) position.toDouble(0);
+				if (pos + len > data.getCollection().getMemLength()) {
+					len = data.getCollection().getMemLength() - pos;
+				}
+
+				out.setMem(data.getCollection().range(new TraversalPolicy(len), pos).toArray());
+				position.set(0, position.toDouble(0) + len);
+			};
+		};
+	}
 }

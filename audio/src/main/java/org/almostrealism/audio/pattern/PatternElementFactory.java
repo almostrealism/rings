@@ -170,7 +170,7 @@ public class PatternElementFactory {
 		if (note < 0.0) return Optional.empty();
 
 		PatternNote choice = notes.get((int) (note * notes.size()));
-		if (enableFilterEnvelope) choice = filterEnvelope.apply(params, choice);
+		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
 		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
 
 		PatternElement element = new PatternElement(choice, position);
