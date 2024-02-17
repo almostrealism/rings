@@ -37,8 +37,8 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.RAM;
-import org.almostrealism.hardware.cl.CLMemory;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -265,6 +265,6 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	}
 
 	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier, KeyPosition root) {
-		return new PatternNote(new SupplierWaveDataProvider(audioSupplier, OutputLine.sampleRate), root);
+		return new PatternNote(new SupplierWaveDataProvider(KeyUtils.generateKey(), audioSupplier, OutputLine.sampleRate), root);
 	}
 }

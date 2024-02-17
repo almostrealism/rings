@@ -48,8 +48,6 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeF
 						v -> Product.of(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
 
-	public abstract String getKey();
-
 	protected void clearKey(String key) {
 		loaded.remove(key);
 	}
