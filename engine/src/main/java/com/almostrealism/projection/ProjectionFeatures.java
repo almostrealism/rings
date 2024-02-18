@@ -77,11 +77,11 @@ public interface ProjectionFeatures extends CodeFeatures {
 	}
 
 	private Producer<Vector> t(CollectionProducer<Vector> pqr) {
-		Producer<Vector> ft = lessThanv(y(pqr), x(pqr)).and(lessThanv(y(pqr), z(pqr)),
+		Producer<Vector> ft = scalarLessThan(y(pqr), x(pqr)).and(scalarLessThan(y(pqr), z(pqr)),
 				vector(x(pqr), scalar(1.0), z(pqr)),
 				vector(x(pqr), y(pqr), scalar(1.0)));
 
-		Producer<Vector> t = lessThanv(x(pqr), y(pqr)).and(lessThanv(y(pqr), z(pqr)),
+		Producer<Vector> t = scalarLessThan(x(pqr), y(pqr)).and(scalarLessThan(y(pqr), z(pqr)),
 				vector(scalar(1.0), y(pqr), z(pqr)), ft);
 
 		return t;
