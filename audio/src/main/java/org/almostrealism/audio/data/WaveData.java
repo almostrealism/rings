@@ -16,8 +16,11 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
+import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
@@ -33,6 +36,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
+	public static final int FFT_BINS = 1024;
+
+	private static Evaluable<Pair<?>> toComplex;
+	private static Evaluable<PackedCollection<?>> fft;
+
+	static {
+		toComplex = Ops.op(o -> o.complexFromParts(o.v(o.shape(FFT_BINS), 0), o.v(o.shape(FFT_BINS), 1))).get();
+		fft = Ops.op(o -> o.fft(FFT_BINS, o.v(o.shape(FFT_BINS), 0))).get();
+	}
+
 	private PackedCollection collection;
 	private int sampleRate;
 
@@ -81,6 +94,29 @@ public class WaveData implements SamplingFeatures {
 					() -> processor.get().getResultant(c(p(getCollection()), frame())))
 				.get().into(result).evaluate();
 		return new WaveData(result, getSampleRate());
+	}
+
+	public PackedCollection<?> fft() {
+		return cc(() -> {
+			int count = getCollection().getMemLength() / FFT_BINS;
+
+			PackedCollection<?> frameIn = PackedCollection.factory().apply(2 * FFT_BINS);
+			PackedCollection<?> frameOut = PackedCollection.factory().apply(2 * FFT_BINS);
+			PackedCollection<?> out = new PackedCollection<>(shape(count, FFT_BINS, 2));
+
+			for (int i = 0; i < count; i++) {
+				int offset = i * frameIn.getMemLength();
+				frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
+				fft.into(frameOut).evaluate(frameIn);
+				toComplex
+						.into(out.range(shape(FFT_BINS, 2), offset).traverse())
+						.evaluate(
+								frameOut.range(shape(FFT_BINS), 0).traverse(),
+								frameOut.range(shape(FFT_BINS), FFT_BINS).traverse());
+			}
+
+			return out;
+		}, ComputeRequirement.JNI);
 	}
 
 	public void save(File file) {
