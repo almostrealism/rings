@@ -37,13 +37,25 @@ import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
 	public static final int FFT_BINS = 1024;
+	public static final int FFT_POOL = 8;
+	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL;
 
 	private static Evaluable<Pair<?>> toComplex;
 	private static Evaluable<PackedCollection<?>> fft;
+	private static Evaluable<PackedCollection<?>> pool2d;
 
 	static {
 		toComplex = Ops.op(o -> o.complexFromParts(o.v(o.shape(FFT_BINS), 0), o.v(o.shape(FFT_BINS), 1))).get();
 		fft = Ops.op(o -> o.fft(FFT_BINS, o.v(o.shape(FFT_BINS), 0))).get();
+		pool2d = Ops.op(o -> {
+			return o.c(o.v(o.shape(FFT_BINS, FFT_BINS, 2), 0))
+					.enumerate(2, 1)
+					.enumerate(2, FFT_POOL)
+					.enumerate(2, FFT_POOL)
+					.traverse(3)
+					.max()
+					.reshape(FFT_POOL_BINS, FFT_POOL_BINS, 2);
+		}).get();
 	}
 
 	private PackedCollection collection;
@@ -115,7 +127,19 @@ public class WaveData implements SamplingFeatures {
 								frameOut.range(shape(FFT_BINS), FFT_BINS).traverse());
 			}
 
-			return out;
+			PackedCollection<?> pool = new PackedCollection<>(shape(count, FFT_POOL_BINS, 2));
+
+			count = out.getMemLength() / (FFT_BINS * FFT_BINS * 2);
+			int window = FFT_BINS * FFT_BINS * 2;
+			int poolWindow = FFT_POOL_BINS * FFT_POOL_BINS * 2;
+
+			for (int i = 0; i < count; i++) {
+				pool2d
+						.into(pool.range(shape(FFT_POOL_BINS, FFT_POOL_BINS, 2), i * poolWindow).traverseEach())
+						.evaluate(out.range(shape(FFT_BINS, FFT_BINS, 2), i * window).traverseEach());
+			}
+
+			return pool;
 		}, ComputeRequirement.JNI);
 	}
 
