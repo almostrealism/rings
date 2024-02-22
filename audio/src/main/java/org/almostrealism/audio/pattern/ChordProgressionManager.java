@@ -281,7 +281,7 @@ public class ChordProgressionManager {
 			settings.setRoot(WesternChromatic.D1);
 			settings.setSize(16);
 			settings.setDuration(8);
-			settings.setChordDepth(4);
+			settings.setChordDepth(5);
 			settings.setRegionLengthSelection(IntStream.range(0, MAX_SIZE)
 					.mapToObj(i -> ParameterFunction.random())
 					.collect(Collectors.toUnmodifiableList()));
