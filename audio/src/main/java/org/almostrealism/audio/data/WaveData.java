@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,25 +37,28 @@ import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
 	public static final int FFT_BINS = 1024;
-	public static final int FFT_POOL = 8;
+	public static final int FFT_POOL = 16;
 	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL;
 
-	private static Evaluable<Pair<?>> toComplex;
+	private static Evaluable<PackedCollection<?>> magnitude;
 	private static Evaluable<PackedCollection<?>> fft;
 	private static Evaluable<PackedCollection<?>> pool2d;
 
 	static {
-		toComplex = Ops.op(o -> o.complexFromParts(o.v(o.shape(FFT_BINS), 0), o.v(o.shape(FFT_BINS), 1))).get();
-		fft = Ops.op(o -> o.fft(FFT_BINS, o.v(o.shape(FFT_BINS), 0))).get();
-		pool2d = Ops.op(o -> {
-			return o.c(o.v(o.shape(FFT_BINS, FFT_BINS, 2), 0))
-					.enumerate(2, 1)
-					.enumerate(2, FFT_POOL)
-					.enumerate(2, FFT_POOL)
-					.traverse(3)
-					.max()
-					.reshape(FFT_POOL_BINS, FFT_POOL_BINS, 2);
-		}).get();
+		fft = Ops.op(o ->
+				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS), 0))).get();
+		magnitude = Ops.op(o ->
+				o.complexFromParts(
+						o.v(o.shape(FFT_BINS), 0),
+						o.v(o.shape(FFT_BINS), 1)).magnitude()).get();
+		pool2d = Ops.op(o ->
+				o.c(o.v(o.shape(FFT_BINS, FFT_BINS, 1), 0))
+				.enumerate(2, 1)
+				.enumerate(2, FFT_POOL)
+				.enumerate(2, FFT_POOL)
+				.traverse(3)
+				.max()
+				.reshape(FFT_POOL_BINS, FFT_POOL_BINS, 1)).get();
 	}
 
 	private PackedCollection collection;
@@ -114,29 +117,38 @@ public class WaveData implements SamplingFeatures {
 
 			PackedCollection<?> frameIn = PackedCollection.factory().apply(2 * FFT_BINS);
 			PackedCollection<?> frameOut = PackedCollection.factory().apply(2 * FFT_BINS);
-			PackedCollection<?> out = new PackedCollection<>(shape(count, FFT_BINS, 2));
+			PackedCollection<?> out = new PackedCollection<>(shape(count, FFT_BINS, 1));
 
 			for (int i = 0; i < count; i++) {
-				int offset = i * frameIn.getMemLength();
 				frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
 				fft.into(frameOut).evaluate(frameIn);
-				toComplex
-						.into(out.range(shape(FFT_BINS, 2), offset).traverse())
+				magnitude
+						.into(out.range(shape(FFT_BINS, 1), i * FFT_BINS).traverseEach())
 						.evaluate(
-								frameOut.range(shape(FFT_BINS), 0).traverse(),
-								frameOut.range(shape(FFT_BINS), FFT_BINS).traverse());
+								frameOut.range(shape(FFT_BINS), 0).traverseEach(),
+								frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
+//				TODO  Remove
+//				for (int j = 0; j < FFT_BINS; j++) {
+//					double expected = Math.hypot(
+//							frameOut.range(shape(FFT_BINS), 0).valueAt(j),
+//							frameOut.range(shape(FFT_BINS), FFT_BINS).valueAt(j));
+//					double actual = out.range(shape(FFT_BINS, 1), i * FFT_BINS).valueAt(j, 0);
+//					if (Math.abs(expected - actual) > 1e-3) {
+//						throw new RuntimeException("FFT magnitude mismatch");
+//					}
+//				}
 			}
 
-			PackedCollection<?> pool = new PackedCollection<>(shape(count, FFT_POOL_BINS, 2));
+			PackedCollection<?> pool = new PackedCollection<>(shape(count, FFT_POOL_BINS, 1));
 
-			count = out.getMemLength() / (FFT_BINS * FFT_BINS * 2);
-			int window = FFT_BINS * FFT_BINS * 2;
-			int poolWindow = FFT_POOL_BINS * FFT_POOL_BINS * 2;
+			count = out.getMemLength() / (FFT_BINS * FFT_BINS);
+			int window = FFT_BINS * FFT_BINS;
+			int poolWindow = FFT_POOL_BINS * FFT_POOL_BINS;
 
 			for (int i = 0; i < count; i++) {
 				pool2d
-						.into(pool.range(shape(FFT_POOL_BINS, FFT_POOL_BINS, 2), i * poolWindow).traverseEach())
-						.evaluate(out.range(shape(FFT_BINS, FFT_BINS, 2), i * window).traverseEach());
+						.into(pool.range(shape(FFT_POOL_BINS, FFT_POOL_BINS, 1), i * poolWindow).traverseEach())
+						.evaluate(out.range(shape(FFT_BINS, FFT_BINS, 1), i * window).traverseEach());
 			}
 
 			return pool;

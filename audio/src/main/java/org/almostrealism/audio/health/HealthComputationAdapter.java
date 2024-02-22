@@ -35,6 +35,7 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
+	public static final String FFT_SUFFIX = "fft";
 	public static final int MEASURE_COUNT = 2;
 	public static int standardDuration = (int) (230 * OutputLine.sampleRate);
 
@@ -105,6 +106,11 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	public void setOutputFile(Supplier<String> file) { this.outputFileSupplier = file; }
 
 	protected File getOutputFile() { return outputFile; }
+	protected File getFftOutputFile() {
+		return Optional.ofNullable(outputFile)
+				.map(f -> getAuxFile(f, FFT_SUFFIX))
+				.orElse(null);
+	}
 
 	protected Collection<File> getStemFiles() { return stemFiles.values(); }
 
@@ -119,5 +125,10 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	public static void setStandardDuration(int sec) {
 		standardDuration = (int) (sec * OutputLine.sampleRate);
+	}
+
+	public static File getAuxFile(File file, String suffix) {
+		if (file == null) return null;
+		return new File(file.getParentFile(), file.getName().replace(".wav", "." + suffix));
 	}
 }
