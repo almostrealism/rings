@@ -46,7 +46,7 @@ public class WaveData implements SamplingFeatures {
 
 	static {
 		fft = Ops.op(o ->
-				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS), 0))).get();
+				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0))).get();
 		magnitude = Ops.op(o ->
 				o.complexFromParts(
 						o.v(o.shape(FFT_BINS), 0),
@@ -115,8 +115,8 @@ public class WaveData implements SamplingFeatures {
 		return cc(() -> {
 			int count = getCollection().getMemLength() / FFT_BINS;
 
-			PackedCollection<?> frameIn = PackedCollection.factory().apply(2 * FFT_BINS);
-			PackedCollection<?> frameOut = PackedCollection.factory().apply(2 * FFT_BINS);
+			PackedCollection<?> frameIn = PackedCollection.factory().apply(2 * FFT_BINS).reshape(FFT_BINS, 2);
+			PackedCollection<?> frameOut = PackedCollection.factory().apply(2 * FFT_BINS).reshape(FFT_BINS, 2);
 			PackedCollection<?> out = new PackedCollection<>(shape(count, FFT_BINS, 1));
 
 			for (int i = 0; i < count; i++) {
@@ -127,24 +127,14 @@ public class WaveData implements SamplingFeatures {
 						.evaluate(
 								frameOut.range(shape(FFT_BINS), 0).traverseEach(),
 								frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
-//				TODO  Remove
-//				for (int j = 0; j < FFT_BINS; j++) {
-//					double expected = Math.hypot(
-//							frameOut.range(shape(FFT_BINS), 0).valueAt(j),
-//							frameOut.range(shape(FFT_BINS), FFT_BINS).valueAt(j));
-//					double actual = out.range(shape(FFT_BINS, 1), i * FFT_BINS).valueAt(j, 0);
-//					if (Math.abs(expected - actual) > 1e-3) {
-//						throw new RuntimeException("FFT magnitude mismatch");
-//					}
-//				}
 			}
 
-			PackedCollection<?> pool = new PackedCollection<>(shape(count, FFT_POOL_BINS, 1));
-
-			count = out.getMemLength() / (FFT_BINS * FFT_BINS);
+			int resultSize = count / FFT_POOL;
+			PackedCollection<?> pool = new PackedCollection<>(shape(resultSize, FFT_POOL_BINS, 1));
 			int window = FFT_BINS * FFT_BINS;
 			int poolWindow = FFT_POOL_BINS * FFT_POOL_BINS;
 
+			count = resultSize / FFT_POOL_BINS;
 			for (int i = 0; i < count; i++) {
 				pool2d
 						.into(pool.range(shape(FFT_POOL_BINS, FFT_POOL_BINS, 1), i * poolWindow).traverseEach())
