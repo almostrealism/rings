@@ -41,7 +41,14 @@ public interface SamplingFeatures extends CodeFeatures {
 		}
 	}
 
-	default Producer<PackedCollection<?>> frame() { return frames.get(); }
+	default Producer<PackedCollection<?>> frame() {
+		Producer<PackedCollection<?>> f = frames.get();
+		if (f == null) {
+			throw new UnsupportedOperationException();
+		}
+
+		return f;
+	}
 
 	default Producer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
 
@@ -59,8 +66,9 @@ public interface SamplingFeatures extends CodeFeatures {
 	default int sampleRate() { return sampleRate.get() == null ? OutputLine.sampleRate : sampleRate.get(); }
 
 	default <T> T sampling(int rate, double duration, Supplier<T> r) {
-		int frames = (int) (rate * duration);
-		return sampleRate(rate, () -> frames(integers(0, frames), r));
+//		int frames = (int) (rate * duration);
+//		return sampleRate(rate, () -> frames(integers(0, frames), r));
+		return sampleRate(rate, () -> frames(integers(), r));
 	}
 
 	default int toFrames(double sec) { return (int) (sampleRate() * sec); }

@@ -34,7 +34,7 @@ public class PatternFactoryChoice {
 	private double weight;
 	private double minScale;
 	private double maxScale;
-	private int maxChordDepth;
+	private int maxScaleTraversalDepth;
 	private List<Integer> channels;
 
 	private boolean seed;
@@ -57,7 +57,7 @@ public class PatternFactoryChoice {
 		setWeight(weight);
 		setMinScale(minScale);
 		setMaxScale(maxScale);
-		setMaxChordDepth(1);
+		setMaxScaleTraversalDepth(1);
 		setSeed(true);
 		setSeedBias(-0.5);
 		setChannels(new ArrayList<>());
@@ -82,8 +82,8 @@ public class PatternFactoryChoice {
 	public double getMaxScale() { return maxScale; }
 	public void setMaxScale(double maxScale) { this.maxScale = maxScale; }
 
-	public int getMaxChordDepth() { return maxChordDepth; }
-	public void setMaxChordDepth(int maxChordDepth) { this.maxChordDepth = maxChordDepth; }
+	public int getMaxScaleTraversalDepth() { return maxScaleTraversalDepth; }
+	public void setMaxScaleTraversalDepth(int maxScaleTraversalDepth) { this.maxScaleTraversalDepth = maxScaleTraversalDepth; }
 
 	public List<Integer> getChannels() { return channels; }
 	public void setChannels(List<Integer> channels) { this.channels = channels; }
@@ -112,29 +112,30 @@ public class PatternFactoryChoice {
 		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
 	}
 
-	public PatternLayer apply(List<PatternElement> elements, double scale, int depth, ParameterSet params) {
+	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
-		elements.forEach(e -> layer.getElements().addAll(apply(e, scale, depth, params).getElements()));
+		elements.forEach(e -> layer.getElements().addAll(apply(e, scale, scaleTraversalStrategy, depth, params).getElements()));
 		return layer;
 	}
 
-	public PatternLayer apply(PatternElement element, double scale, int depth, ParameterSet params) {
+	public PatternLayer apply(PatternElement element, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
 
-		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
-		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
 	}
 
 	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
-												  int channel, int maxChordDepth, boolean melodic) {
+												  int channel, int maxScaleTraversalDepth,
+												  boolean melodic) {
 		PatternElementFactory f = new PatternElementFactory(name, source);
 		f.setMelodic(melodic);
 
 		PatternFactoryChoice c = new PatternFactoryChoice(f);
-		c.setMaxChordDepth(maxChordDepth);
+		c.setMaxScaleTraversalDepth(maxScaleTraversalDepth);
 		c.getChannels().add(channel);
 		return c;
 	}

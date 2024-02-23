@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
@@ -37,6 +36,8 @@ public class PatternElement implements CodeFeatures {
 
 	private NoteDurationStrategy durationStrategy;
 	private double noteDuration;
+
+	private ScaleTraversalStrategy scaleTraversalStrategy;
 	private List<Double> scalePositions;
 
 	private PatternDirection direction;
@@ -51,6 +52,7 @@ public class PatternElement implements CodeFeatures {
 		setNote(note);
 		setPosition(position);
 		setDurationStrategy(NoteDurationStrategy.NONE);
+		setScaleTraversalStrategy(ScaleTraversalStrategy.CHORD);
 		setDirection(PatternDirection.FORWARD);
 		setRepeatCount(1);
 		setRepeatDuration(1);
@@ -71,6 +73,14 @@ public class PatternElement implements CodeFeatures {
 	public NoteDurationStrategy getDurationStrategy() { return durationStrategy; }
 	public void setDurationStrategy(NoteDurationStrategy durationStrategy) {
 		this.durationStrategy = durationStrategy;
+	}
+
+	public ScaleTraversalStrategy getScaleTraversalStrategy() {
+		return scaleTraversalStrategy;
+	}
+
+	public void setScaleTraversalStrategy(ScaleTraversalStrategy scaleTraversalStrategy) {
+		this.scaleTraversalStrategy = scaleTraversalStrategy;
 	}
 
 	public double getNoteDuration(DoubleUnaryOperator timeForDuration, double position, double nextPosition,
@@ -120,29 +130,7 @@ public class PatternElement implements CodeFeatures {
 	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
 													AudioSceneContext context,
 													DoubleUnaryOperator nextNotePosition) {
-		List<PatternNoteAudio> destinations = new ArrayList<>();
-
-		for (int i = 0; i < getRepeatCount(); i++) {
-			double relativePosition = getPosition() + i * getRepeatDuration();
-			double actualPosition = offset + relativePosition;
-
-			List<KeyPosition<?>> keys = new ArrayList<>();
-			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
-
-			p: for (double p : getScalePositions()) {
-				if (keys.isEmpty()) break p;
-				int keyIndex = (int) (p * keys.size());
-
-				Producer<PackedCollection<?>> note = getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
-													nextNotePosition.applyAsDouble(relativePosition),
-													context.getTimeForDuration());
-				destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
-
-				keys.remove(keyIndex);
-			}
-		}
-
-		return destinations;
+		return getScaleTraversalStrategy().getNoteDestinations(this, melodic, offset, context, nextNotePosition);
 	}
 
 	public Producer<PackedCollection<?>> getNoteAudio(boolean melodic, KeyPosition<?> target,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 	private Supplier<PackedCollection<?>> source;
 	private int sampleRate;
 
-	public SupplierWaveDataProvider() { }
-
-	public SupplierWaveDataProvider(Supplier<PackedCollection<?>> source, int sampleRate) {
+	public SupplierWaveDataProvider(String key, Supplier<PackedCollection<?>> source, int sampleRate) {
+		this.key = key;
 		this.source = source;
 		this.sampleRate = sampleRate;
 	}
@@ -49,6 +48,10 @@ public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 
 	@Override
 	public String getKey() {
+		if (key == null) {
+			throw new NullPointerException();
+		}
+
 		return key;
 	}
 

@@ -80,12 +80,17 @@ public class PatternLayerSeeds {
 	public double getBias() { return bias; }
 	public void setBias(double bias) { this.bias = bias; }
 
-	public Stream<PatternLayer> generator(double offset, double duration, double bias, int chordDepth) {
+	public Stream<PatternLayer> generator(double offset, double duration,
+										  double bias,
+										  ScaleTraversalStrategy scaleTraversalStrategy,
+										  int scaleTraversalDepth) {
 		double count = Math.max(1.0, duration / granularity);
 
 		List<PatternLayer> layers = IntStream.range(0, (int) count)
 				.mapToObj(i ->
-						factory.apply(null, position + offset + i * granularity, granularity, this.bias + bias, chordDepth, false, params).orElse(null))
+						factory.apply(null, position + offset + i * granularity, granularity,
+								this.bias + bias, scaleTraversalStrategy, scaleTraversalDepth,
+								false, params).orElse(null))
 				.filter(Objects::nonNull)
 				.map(List::of)
 				.map(PatternLayer::new)

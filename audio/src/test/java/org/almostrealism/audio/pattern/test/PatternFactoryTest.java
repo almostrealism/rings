@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.almostrealism.audio.pattern.test;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
@@ -27,7 +25,6 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.FileNoteSource;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
@@ -174,7 +171,7 @@ public class PatternFactoryTest implements CellFeatures {
 		chordProgression.refreshParameters();
 
 		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 3, 16.0, true);
-		manager.setChordDepth(3);
+		manager.setScaleTraversalDepth(3);
 
 		double a = Math.random(); // 0.2;
 		manager.addLayer(new ParameterSet(a, 0.3, 0.9));

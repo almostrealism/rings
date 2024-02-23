@@ -29,6 +29,7 @@ import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.PathResource;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
@@ -142,7 +143,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
-	private Tree<? extends Supplier<FileWaveDataProvider>> library;
+	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> library;
 	private PatternSystemManager patterns;
 	private List<PackedCollection<?>> patternDestinations;
 	private List<String> channelNames;
@@ -207,13 +208,21 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.generation = new GenerationManager(patterns, generation);
 	}
 
+	@Deprecated
 	public void setBPM(double bpm) {
 		this.bpm = bpm;
 		tempoListeners.forEach(l -> l.accept(Frequency.forBPM(bpm)));
 		triggerDurationChange();
 	}
 
+	@Deprecated
 	public double getBPM() { return this.bpm; }
+
+	public void setTempo(Frequency tempo) {
+		this.bpm = tempo.asBPM();
+		tempoListeners.forEach(l -> l.accept(tempo));
+		triggerDurationChange();
+	}
 
 	public Frequency getTempo() { return Frequency.forBPM(bpm); }
 
@@ -224,11 +233,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public KeyboardTuning getTuning() { return tuning; }
 
-	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getLibrary() { return library; }
+
+	public void setLibraryRoot(FileWaveDataProviderTree tree) {
 		setLibraryRoot(tree, null);
 	}
 
-	public void setLibraryRoot(Tree<? extends Supplier<FileWaveDataProvider>> tree, DoubleConsumer progress) {
+	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
 		library = tree;
 		patterns.setTree(tree, progress);
 	}
@@ -349,7 +360,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public void setSettings(Settings settings) { setSettings(settings, this::createTree, null); }
 
 	public void setSettings(Settings settings,
-							Function<String, Tree<? extends Supplier<FileWaveDataProvider>>> libraryProvider,
+							Function<String, FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>>> libraryProvider,
 							DoubleConsumer progress) {
 		setBPM(settings.getBpm());
 		setMeasureSize(settings.getMeasureSize());
@@ -511,7 +522,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		loadSettings(file, this::createTree, null);
 	}
 
-	public void loadSettings(File file, Function<String, Tree<? extends Supplier<FileWaveDataProvider>>> libraryProvider, DoubleConsumer progress) throws IOException {
+	public void loadSettings(File file, Function<String, FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>>> libraryProvider, DoubleConsumer progress) throws IOException {
 		if (file.exists()) {
 			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
@@ -622,7 +633,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 	}
 
-	private Tree<? extends Supplier<FileWaveDataProvider>> createTree(String f) {
+	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> createTree(String f) {
 		return new FileWaveDataProviderNode(new File(f));
 	}
 }

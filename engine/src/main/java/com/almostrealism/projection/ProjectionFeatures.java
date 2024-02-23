@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.geometry.computations.RayExpressionComputation;
+import org.almostrealism.geometry.Ray;
 
 public interface ProjectionFeatures extends CodeFeatures {
-	default RayExpressionComputation rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
-												 double blur, double focalLength, Vector u, Vector v, Vector w) {
+	default CollectionProducer<Ray> rayAt(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Vector location, Pair projectionDimensions,
+											 double blur, double focalLength, Vector u, Vector v, Vector w) {
 		return ray(v(location),
 				direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
@@ -77,11 +77,11 @@ public interface ProjectionFeatures extends CodeFeatures {
 	}
 
 	private Producer<Vector> t(CollectionProducer<Vector> pqr) {
-		Producer<Vector> ft = lessThanv(y(pqr), x(pqr)).and(lessThanv(y(pqr), z(pqr)),
+		Producer<Vector> ft = scalarLessThan(y(pqr), x(pqr)).and(scalarLessThan(y(pqr), z(pqr)),
 				vector(x(pqr), scalar(1.0), z(pqr)),
 				vector(x(pqr), y(pqr), scalar(1.0)));
 
-		Producer<Vector> t = lessThanv(x(pqr), y(pqr)).and(lessThanv(y(pqr), z(pqr)),
+		Producer<Vector> t = scalarLessThan(x(pqr), y(pqr)).and(scalarLessThan(y(pqr), z(pqr)),
 				vector(scalar(1.0), y(pqr), z(pqr)), ft);
 
 		return t;

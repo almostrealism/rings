@@ -26,7 +26,6 @@ import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
-import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -53,8 +52,10 @@ public class PatternLayerManager implements CodeFeatures {
 	private double duration;
 	private double scale;
 	private double seedBias;
-	private int chordDepth;
+
 	private boolean melodic;
+	private int scaleTraversalDepth;
+	private ScaleTraversalStrategy scaleTraversalStrategy;
 
 	private Supplier<List<PatternFactoryChoice>> percChoices;
 	private Supplier<List<PatternFactoryChoice>> melodicChoices;
@@ -80,7 +81,8 @@ public class PatternLayerManager implements CodeFeatures {
 		this.channel = channel;
 		this.duration = measures;
 		this.scale = 1.0;
-		this.chordDepth = 1;
+		this.scaleTraversalStrategy = ScaleTraversalStrategy.CHORD;
+		this.scaleTraversalDepth = 1;
 		setMelodic(melodic);
 
 		this.percChoices = percChoices;
@@ -112,7 +114,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public Stream<PatternFactoryChoice> choices() {
 		return getChoices().stream()
 				.filter(c -> c.getChannels() == null || c.getChannels().contains(channel))
-				.filter(c -> chordDepth <= c.getMaxChordDepth());
+				.filter(c -> scaleTraversalDepth <= c.getMaxScaleTraversalDepth());
 	}
 
 	public int getChannel() { return channel; }
@@ -121,17 +123,25 @@ public class PatternLayerManager implements CodeFeatures {
 	public void setDuration(double measures) { duration = measures; }
 	public double getDuration() { return duration; }
 
-	public int getChordDepth() { return chordDepth; }
-	public void setChordDepth(int chordDepth) { this.chordDepth = chordDepth; }
-
-	public double getSeedBias() { return seedBias; }
-	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
+	public int getScaleTraversalDepth() { return scaleTraversalDepth; }
+	public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
 	}
 
 	public boolean isMelodic() { return melodic; }
+
+	public ScaleTraversalStrategy getScaleTraversalStrategy() {
+		return scaleTraversalStrategy;
+	}
+
+	public void setScaleTraversalStrategy(ScaleTraversalStrategy scaleTraversalStrategy) {
+		this.scaleTraversalStrategy = scaleTraversalStrategy;
+	}
+
+	public double getSeedBias() { return seedBias; }
+	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
 		List<PatternLayerSeeds> options = choices()
@@ -165,7 +175,8 @@ public class PatternLayerManager implements CodeFeatures {
 		Settings settings = new Settings();
 		settings.setChannel(channel);
 		settings.setDuration(duration);
-		settings.setChordDepth(chordDepth);
+		settings.setScaleTraversalStrategy(scaleTraversalStrategy);
+		settings.setScaleTraversalDepth(scaleTraversalDepth);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.setActiveSelection(activeSelection);
@@ -176,7 +187,8 @@ public class PatternLayerManager implements CodeFeatures {
 	public void setSettings(Settings settings) {
 		channel = settings.getChannel();
 		duration = settings.getDuration();
-		chordDepth = settings.getChordDepth();
+		scaleTraversalStrategy = settings.getScaleTraversalStrategy();
+		scaleTraversalDepth = settings.getScaleTraversalDepth();
 		melodic = settings.isMelodic();
 
 		if (settings.getFactorySelection() != null)
@@ -238,7 +250,7 @@ public class PatternLayerManager implements CodeFeatures {
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
 			if (seeds != null) {
-				seeds.generator(0, duration, seedBias, chordDepth).forEach(roots::add);
+				seeds.generator(0, duration, seedBias, scaleTraversalStrategy, scaleTraversalDepth).forEach(roots::add);
 				scale = seeds.getScale();
 			}
 
@@ -257,7 +269,7 @@ public class PatternLayerManager implements CodeFeatures {
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, chordDepth, params);
+					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
@@ -432,7 +444,8 @@ public class PatternLayerManager implements CodeFeatures {
 	public static class Settings {
 		private int channel;
 		private double duration;
-		private int chordDepth;
+		private ScaleTraversalStrategy scaleTraversalStrategy;
+		private int scaleTraversalDepth;
 		private boolean melodic;
 		private ParameterFunction factorySelection;
 		private ParameterizedPositionFunction activeSelection;
@@ -444,8 +457,11 @@ public class PatternLayerManager implements CodeFeatures {
 		public double getDuration() { return duration; }
 		public void setDuration(double duration) { this.duration = duration; }
 
-		public int getChordDepth() { return chordDepth; }
-		public void setChordDepth(int chordDepth) { this.chordDepth = chordDepth; }
+		public ScaleTraversalStrategy getScaleTraversalStrategy() { return scaleTraversalStrategy; }
+		public void setScaleTraversalStrategy(ScaleTraversalStrategy scaleTraversalStrategy) { this.scaleTraversalStrategy = scaleTraversalStrategy; }
+
+		public int getScaleTraversalDepth() { return scaleTraversalDepth; }
+		public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
 		public boolean isMelodic() { return melodic; }
 		public void setMelodic(boolean melodic) { this.melodic = melodic; }

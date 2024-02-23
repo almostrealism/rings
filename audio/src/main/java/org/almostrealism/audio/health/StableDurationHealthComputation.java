@@ -20,6 +20,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
@@ -28,6 +29,7 @@ import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
+	public static boolean enableFft = true;
 	public static boolean enableTimeout = false;
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
@@ -232,12 +235,23 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 			endTimeoutTrigger();
 
-			if (enableOutput && score > 0) {
-				if (enableVerbose)
-					log("Cursor = " + getWaveOut().getCursor().toDouble(0));
+			if (score > 0) {
+				if (enableOutput) {
+					if (enableVerbose)
+						log("Cursor = " + getWaveOut().getCursor().toDouble(0));
 
-				getWaveOut().write().get().run();
-				if (getStems() != null) getStems().forEach(s -> s.write().get().run());
+					getWaveOut().write().get().run();
+					if (getStems() != null) getStems().forEach(s -> s.write().get().run());
+				}
+
+				if (enableFft) {
+					try {
+						new WaveData(getWaveOut().getData(),  OutputLine.sampleRate)
+								.fft().store(getFftOutputFile());
+					} catch (IOException e) {
+						warn("Could not store FFT", e);
+					}
+				}
 			}
 
 			getWaveOut().reset();

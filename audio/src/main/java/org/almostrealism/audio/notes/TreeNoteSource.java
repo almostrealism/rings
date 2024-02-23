@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.relation.Tree;
 import io.almostrealism.uml.Named;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class TreeNoteSource implements PatternNoteSource, Named {
 	public static boolean alwaysComputeNotes = false;
 
-	private Tree<? extends Supplier<FileWaveDataProvider>> tree;
+	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
 	private List<PatternNote> notes;
 
 	private KeyboardTuning tuning;
@@ -44,11 +44,11 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 	public TreeNoteSource() { this(null); }
 
-	public TreeNoteSource(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree) {
 		this(tree, WesternChromatic.C1);
 	}
 
-	public TreeNoteSource(Tree<? extends Supplier<FileWaveDataProvider>> tree, KeyPosition<?> root) {
+	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree, KeyPosition<?> root) {
 		setTree(tree);
 		setRoot(root);
 		this.filters = new ArrayList<>();
@@ -58,10 +58,10 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
 	@JsonIgnore
-	public Tree<? extends Supplier<FileWaveDataProvider>> getTree() { return tree; }
+	public FileWaveDataProviderTree<?> getTree() { return tree; }
 
 	@JsonIgnore
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> tree) {
+	public void setTree(FileWaveDataProviderTree tree) {
 		this.tree = tree;
 		if (!alwaysComputeNotes) computeNotes();
 	}
@@ -112,7 +112,6 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 			try {
 				if (p == null) {
-					// System.out.println("WARN: FileWaveDataProvider produced null");
 					return;
 				}
 
@@ -121,7 +120,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 				}
 
 				boolean match = filters.stream()
-						.map(filter -> filter.filterType.matches(filter.filterOn.select(p), filter.filter))
+						.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
 						.reduce((a, b) -> a & b)
 						.orElse(true);
 				if (match) notes.add(new PatternNote(p, getRoot()));
@@ -155,10 +154,10 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	public enum FilterOn {
 		PATH, NAME;
 
-		String select(FileWaveDataProvider p) {
+		String select(FileWaveDataProviderTree tree, FileWaveDataProvider p) {
 			return switch (this) {
 				case NAME -> new File(p.getResourcePath()).getName();
-				case PATH -> p.getResourcePath();
+				case PATH -> new File(tree.getRelativePath(p.getResourcePath())).getParentFile().getPath();
 			};
 		}
 

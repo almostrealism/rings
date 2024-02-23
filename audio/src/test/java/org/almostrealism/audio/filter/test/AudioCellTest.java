@@ -34,7 +34,6 @@ public class AudioCellTest implements CellFeatures {
 		Supplier<Runnable> op =
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
-						// .f(i -> new TestAudioPassFilter(OutputLine.sampleRate))
 						.map(i -> new ReceptorCell<>(out))
 						.iter(10);
 		Runnable r = op.get();
@@ -62,7 +61,7 @@ public class AudioCellTest implements CellFeatures {
 	public void repeat() {
 		Supplier<Runnable> op =
 				w(c(1.0), "Library/Snare Perc DD.wav")
-						.om(i -> new File("results/repeat-cell-test.wav"))
+						.om(i -> new File("results/repeat-cell.wav"))
 						.sec(10);
 		Runnable r = op.get();
 		r.run();

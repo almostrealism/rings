@@ -18,10 +18,10 @@ package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.DynamicProducer;
 import io.almostrealism.relation.Tree;
-import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
@@ -31,7 +31,6 @@ import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.computations.PackedCollectionMax;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
@@ -130,11 +129,11 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		getChoices().forEach(c -> c.setTuning(tuning));
 	}
 
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root) {
+	public void setTree(FileWaveDataProviderTree<?> root) {
 		setTree(root, null);
 	}
 
-	public void setTree(Tree<? extends Supplier<FileWaveDataProvider>> root, DoubleConsumer progress) {
+	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
 		List<PatternNoteSource> sources = getChoices()
 				.stream()
 				.flatMap(c -> c.getFactory().getSources().stream())
@@ -236,8 +235,11 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				PatternLayerManager.Settings pattern = new PatternLayerManager.Settings();
 				pattern.setChannel(c);
 				pattern.setDuration(duration.applyAsInt(c));
-				pattern.setChordDepth(c == 3 ? 3 : 1);
 				pattern.setMelodic(c > 1 && c != 5);
+				pattern.setScaleTraversalStrategy((c == 2 || c == 4) ?
+						ScaleTraversalStrategy.SEQUENCE :
+						ScaleTraversalStrategy.CHORD);
+				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 3 : 1);
 				pattern.setFactorySelection(ParameterFunction.random());
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 

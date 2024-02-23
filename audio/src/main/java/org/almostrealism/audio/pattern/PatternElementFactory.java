@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.almostrealism.audio.pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
+import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
@@ -31,7 +33,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PatternElementFactory {
-	public static boolean enableEnvelope = true;
+	public static boolean enableVolumeEnvelope = true;
+	public static boolean enableFilterEnvelope = true;
 
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 
@@ -42,7 +45,8 @@ public class PatternElementFactory {
 
 	private ParameterizedPositionFunction noteSelection;
 	private ParameterFunction noteLengthSelection;
-	private ParameterizedEnvelope envelope;
+	private ParameterizedVolumeEnvelope volumeEnvelope;
+	private ParameterizedFilterEnvelope filterEnvelope;
 
 	private ChordPositionFunction chordNoteSelection;
 
@@ -79,7 +83,8 @@ public class PatternElementFactory {
 	public void initSelectionFunctions() {
 		noteSelection = ParameterizedPositionFunction.random();
 		noteLengthSelection = ParameterFunction.random();
-		envelope = ParameterizedEnvelope.random();
+		volumeEnvelope = ParameterizedVolumeEnvelope.random();
+		filterEnvelope = ParameterizedFilterEnvelope.random();
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
 	}
@@ -110,8 +115,11 @@ public class PatternElementFactory {
 	public ParameterFunction getNoteLengthSelection() { return noteLengthSelection; }
 	public void setNoteLengthSelection(ParameterFunction noteLengthSelection) { this.noteLengthSelection = noteLengthSelection; }
 
-	public ParameterizedEnvelope getEnvelope() { return envelope; }
-	public void setEnvelope(ParameterizedEnvelope envelope) { this.envelope = envelope; }
+	public ParameterizedVolumeEnvelope getVolumeEnvelope() { return volumeEnvelope; }
+	public void setVolumeEnvelope(ParameterizedVolumeEnvelope volumeEnvelope) { this.volumeEnvelope = volumeEnvelope; }
+
+	public ParameterizedFilterEnvelope getFilterEnvelope() { return filterEnvelope; }
+	public void setFilterEnvelope(ParameterizedFilterEnvelope filterEnvelope) { this.filterEnvelope = filterEnvelope; }
 
 	public ChordPositionFunction getChordNoteSelection() {
 		return chordNoteSelection;
@@ -144,7 +152,9 @@ public class PatternElementFactory {
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
-	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias, int depth, boolean repeat, ParameterSet params) {
+	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias,
+										  ScaleTraversalStrategy scaleTraversalStrategy,
+										  int depth, boolean repeat, ParameterSet params) {
 		if (parity == ElementParity.LEFT) {
 			position -= scale;
 		} else if (parity == ElementParity.RIGHT) {
@@ -160,16 +170,16 @@ public class PatternElementFactory {
 		if (note < 0.0) return Optional.empty();
 
 		PatternNote choice = notes.get((int) (note * notes.size()));
-		if (enableEnvelope) choice = envelope.apply(params, choice);
+		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
+		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
 
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
 		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		element.setDurationStrategy(isMelodic() ?
-				(depth > 1 ? CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
+				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?
+						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
-
-		// System.out.println("PatternElementFactory: duration = " + element.getNoteDurationSelection());
 
 		double r = repeatSelection.apply(params, position, scale);
 
@@ -177,14 +187,15 @@ public class PatternElementFactory {
 			element.setRepeatCount(1);
 		} else {
 			int c;
-			for (c = 0; r < 1.0 & c < 4; c++) {
+			for (c = 0; r < 1.5 & c < 6; c++) {
 				r *= 2;
 			}
 
 			element.setRepeatCount(c);
 		}
 
-		element.setRepeatDuration(scale / 2.0);
+		element.setScaleTraversalStrategy(scaleTraversalStrategy);
+		element.setRepeatDuration(element.getNoteDurationSelection());
 		return Optional.of(element);
 	}
 }

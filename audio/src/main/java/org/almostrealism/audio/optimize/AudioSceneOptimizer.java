@@ -132,7 +132,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 
 		NativeComputeContext.enableLargeScopeMonitoring = false;
-		NativeCompiler.enableInstructionSetMonitoring = true;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
@@ -145,7 +144,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.enableMasterFilterDown = true;
 		AudioScene.disableClean = false;
 		AudioScene.enableSourcesOnly = false;
-		PatternElementFactory.enableEnvelope = true;
+		PatternElementFactory.enableVolumeEnvelope = true;
+		PatternElementFactory.enableFilterEnvelope = true;
 		PatternLayerManager.enableVolumeAdjustment = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
@@ -155,7 +155,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		PopulationOptimizer.popSize = 45;
 
 		// Verbosity level 0
-		PopulationOptimizer.enableBreeding = true; //verbosity < 1;
+		PopulationOptimizer.enableBreeding = verbosity < 1;
 
 		// Verbosity level 1;
 		PatternNote.enableVerbose = verbosity > 0;

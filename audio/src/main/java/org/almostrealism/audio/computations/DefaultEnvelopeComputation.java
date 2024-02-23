@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar> {
 
 	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
-		super(Scalar.shape(), (Producer) notePosition);
+		super(null, Scalar.shape(), (Producer) notePosition);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.RAM;
-import org.almostrealism.hardware.cl.CLMemory;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -200,7 +200,10 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 
 	@JsonIgnore
 	public PackedCollection<?> getAudio() {
-		if (audio == null && provider != null) {
+		if (delegate != null) {
+			warn("Attempting to get audio from a delegated PatternNote");
+			// return getAudio(getRoot()).get().evaluate();
+		} else if (audio == null && provider != null) {
 			WaveData data = provider.get();
 			if (data.getSampleRate() == OutputLine.sampleRate) {
 				audio = provider.get().getCollection();
@@ -262,6 +265,6 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	}
 
 	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier, KeyPosition root) {
-		return new PatternNote(new SupplierWaveDataProvider(audioSupplier, OutputLine.sampleRate), root);
+		return new PatternNote(new SupplierWaveDataProvider(KeyUtils.generateKey(), audioSupplier, OutputLine.sampleRate), root);
 	}
 }

@@ -16,27 +16,21 @@
 
 package org.almostrealism.audio.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.almostrealism.cycle.Setup;
-import io.almostrealism.relation.Countable;
-import org.almostrealism.hardware.OperationList;
+import io.almostrealism.relation.Tree;
 
+import java.io.File;
 import java.util.function.Supplier;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup {
+public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T> {
+	String getRelativePath(String path);
 
-	@JsonIgnore
-	String getKey();
+	static String getRelativePath(File root, String path) {
+		String rootPath = root.getAbsolutePath();
 
-	double getDuration();
-
-	double getDuration(double playbackRate);
-
-	int getSampleRate();
-
-	default Supplier<Runnable> setup() { return new OperationList(); }
-
-	WaveData get(double playbackRate);
+		if (path.startsWith(rootPath)) {
+			return path.substring(rootPath.length());
+		} else {
+			return path;
+		}
+	}
 }

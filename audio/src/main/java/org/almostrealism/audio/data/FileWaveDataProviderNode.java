@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.data;
 
-import io.almostrealism.relation.Tree;
 import io.almostrealism.uml.Named;
 
 import java.io.File;
@@ -27,7 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, PathResource, Named {
+public class FileWaveDataProviderNode implements FileWaveDataProviderTree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, PathResource, Named {
 	private File file;
 
 	public FileWaveDataProviderNode(File f) {
@@ -44,6 +43,11 @@ public class FileWaveDataProviderNode implements Tree<FileWaveDataProviderNode>,
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public String getRelativePath(String path) {
+		return FileWaveDataProviderTree.getRelativePath(file, path);
 	}
 
 	@Override
