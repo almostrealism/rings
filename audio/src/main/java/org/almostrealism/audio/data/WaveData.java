@@ -117,7 +117,7 @@ public class WaveData implements SamplingFeatures {
 
 			PackedCollection<?> frameIn = PackedCollection.factory().apply(2 * FFT_BINS).reshape(FFT_BINS, 2);
 			PackedCollection<?> frameOut = PackedCollection.factory().apply(2 * FFT_BINS).reshape(FFT_BINS, 2);
-			PackedCollection<?> out = new PackedCollection<>(shape(count, FFT_BINS, 1));
+			PackedCollection<?> out =  PackedCollection.factory().apply(count * FFT_BINS).reshape(count, FFT_BINS, 1);
 
 			for (int i = 0; i < count; i++) {
 				frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
@@ -130,7 +130,8 @@ public class WaveData implements SamplingFeatures {
 			}
 
 			int resultSize = count / FFT_POOL;
-			PackedCollection<?> pool = new PackedCollection<>(shape(resultSize, FFT_POOL_BINS, 1));
+			PackedCollection<?> pool =  PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+													.reshape(resultSize, FFT_POOL_BINS, 1);
 			int window = FFT_BINS * FFT_BINS;
 			int poolWindow = FFT_POOL_BINS * FFT_POOL_BINS;
 
