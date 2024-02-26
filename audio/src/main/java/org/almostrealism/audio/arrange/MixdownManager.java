@@ -263,7 +263,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		if (AudioScene.enableSourcesOnly) {
 			return cells
 					.map(fc(v))
-					.sum().map(fc(i -> sf(0.2))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+					.sum().map(fc(i -> sf(0.8))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
 		if (AudioScene.enableMixdown)

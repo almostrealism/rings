@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 
 import io.almostrealism.uml.Lifecycle;
 import org.almostrealism.Ops;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import io.almostrealism.relation.Producer;
@@ -104,6 +105,12 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public PackedCollection<?> getCursor() { return cursor; }
 
 	public PackedCollection<?> getData() { return data; }
+
+	public WaveData getWaveData() {
+		return new WaveData(getData()
+				.range(shape((int) getCursor().toDouble(0))).traverseEach(),
+				OutputLine.sampleRate);
+	}
 
 	@Override
 	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {

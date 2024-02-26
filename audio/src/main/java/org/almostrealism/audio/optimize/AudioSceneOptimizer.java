@@ -65,7 +65,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	public static final int verbosity = 0;
 	public static boolean enableVerbose = false;
 
-	public static int DEFAULT_HEAP_SIZE = 32 * 1024 * 1024;
+	public static int DEFAULT_HEAP_SIZE = 256 * 1024 * 1024;
 	public static final boolean enableSourcesJson = true;
 	public static final int singleChannel = -1;
 

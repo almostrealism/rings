@@ -229,10 +229,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				log("Score computed after " + (System.currentTimeMillis() - startTime) + " msec");
 			}
 		} finally {
-			if (l > 0) {
-				AudioScenePopulation.recordGenerationTime(l, System.currentTimeMillis() - startTime);
-			}
-
 			endTimeoutTrigger();
 
 			if (score > 0) {
@@ -246,12 +242,15 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 				if (enableFft) {
 					try {
-						new WaveData(getWaveOut().getData(),  OutputLine.sampleRate)
-								.fft().store(getFftOutputFile());
+						getWaveOut().getWaveData().fft().store(getFftOutputFile());
 					} catch (IOException e) {
 						warn("Could not store FFT", e);
 					}
 				}
+			}
+
+			if (l > 0) {
+				AudioScenePopulation.recordGenerationTime(l, System.currentTimeMillis() - startTime);
 			}
 
 			getWaveOut().reset();
