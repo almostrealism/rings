@@ -40,7 +40,7 @@ public class WaveData implements SamplingFeatures {
 	public static final int FFT_POOL = 8;
 	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL;
 
-	public static final int POOL_BATCH_IN = FFT_BINS; // TODO  Should be smaller to avoid cutting off the end of the wave
+	public static final int POOL_BATCH_IN = FFT_BINS;
 	public static final int POOL_BATCH_OUT = POOL_BATCH_IN / FFT_POOL;
 
 	private static Evaluable<PackedCollection<?>> magnitude;
@@ -115,57 +115,57 @@ public class WaveData implements SamplingFeatures {
 	}
 
 	public PackedCollection<?> fft() {
-		PackedCollection<?> inRoot = PackedCollection.factory().apply(FFT_BINS * FFT_BINS);
-		PackedCollection<?> outRoot = PackedCollection.factory().apply(POOL_BATCH_OUT * POOL_BATCH_OUT);
+		PackedCollection<?> inRoot = new PackedCollection<>(FFT_BINS * FFT_BINS);
+		PackedCollection<?> outRoot = new PackedCollection<>(POOL_BATCH_OUT * POOL_BATCH_OUT);
 
 		int count = getCollection().getMemLength() / FFT_BINS;
-		int resultSize = count / FFT_POOL;
+		PackedCollection<?> out = new PackedCollection<>(count * FFT_BINS).reshape(count, FFT_BINS, 1);
 
-		PackedCollection<?> out =  PackedCollection.factory().apply(count * FFT_BINS).reshape(count, FFT_BINS, 1);
-		PackedCollection<?> pool =  PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
-				.reshape(resultSize, FFT_POOL_BINS, 1);
+		try {
+			int resultSize = count / FFT_POOL;
 
-		cc(() -> {
-			PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
-			PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
+			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+					.reshape(resultSize, FFT_POOL_BINS, 1);
 
-			for (int i = 0; i < count; i++) {
-				frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
-				fft.into(frameOut).evaluate(frameIn);
-				magnitude
-						.into(out.range(shape(FFT_BINS, 1), i * FFT_BINS).traverseEach())
-						.evaluate(
-								frameOut.range(shape(FFT_BINS), 0).traverseEach(),
-								frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
+			cc(() -> {
+				PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
+				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
+
+				for (int i = 0; i < count; i++) {
+					frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
+					fft.into(frameOut).evaluate(frameIn);
+					magnitude
+							.into(out.range(shape(FFT_BINS, 1), i * FFT_BINS).traverseEach())
+							.evaluate(
+									frameOut.range(shape(FFT_BINS), 0).traverseEach(),
+									frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
+				}
+			}, ComputeRequirement.JNI);
+
+			int window = POOL_BATCH_IN * POOL_BATCH_IN;
+			int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;
+			int pcount = resultSize / POOL_BATCH_OUT;
+			if (resultSize % POOL_BATCH_OUT != 0) pcount++;
+
+			PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
+			PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
+
+			for (int i = 0; i < pcount; i++) {
+				int remaining = out.getMemLength() - i * window;
+				poolIn.setMem(0, out, i * window, Math.min(window, remaining));
+
+				pool2d.into(poolOut.traverseEach()).evaluate(poolIn.traverseEach());
+
+				remaining = pool.getMemLength() - i * poolWindow;
+				pool.setMem(i * poolWindow, poolOut, 0, Math.min(poolWindow, remaining));
 			}
-		}, ComputeRequirement.JNI);
 
-		int window = POOL_BATCH_IN * POOL_BATCH_IN;
-		int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;
-		int pcount = resultSize / POOL_BATCH_OUT;
-		if (resultSize % POOL_BATCH_OUT != 0) pcount++;
-
-		PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
-		PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
-
-		// double frequencyTimeScale = WaveData.FFT_BINS / (double) OutputLine.sampleRate;
-		// log("FFT pool duration will be " + (pcount * POOL_BATCH_IN) * frequencyTimeScale + " seconds");
-
-		for (int i = 0; i < pcount; i++) {
-			int remaining = out.getMemLength() - i * window;
-			poolIn.setMem(0, out, i * window, Math.min(window, remaining));
-
-			pool2d.into(poolOut.traverseEach()).evaluate(poolIn.traverseEach());
-
-			remaining = pool.getMemLength() - i * poolWindow;
-			pool.setMem(i * poolWindow, poolOut, 0, Math.min(poolWindow, remaining));
+			return pool.range(shape(getCollection().getMemLength() / (FFT_BINS * FFT_POOL), FFT_POOL_BINS, 1));
+		} finally {
+			inRoot.destroy();
+			outRoot.destroy();
+			out.destroy();
 		}
-
-		// int outFrames = getCollection().getMemLength() / (FFT_BINS * FFT_POOL);
-		// frequencyTimeScale = WaveData.FFT_POOL * WaveData.FFT_BINS / (double) OutputLine.sampleRate;
-		// log("FFT result duration will be " + outFrames * frequencyTimeScale + " seconds");
-
-		return pool.range(shape(getCollection().getMemLength() / (FFT_BINS * FFT_POOL), FFT_POOL_BINS, 1));
 	}
 
 	public void save(File file) {
