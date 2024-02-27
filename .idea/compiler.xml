@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ar-space" />
         <module name="ar-flowtree" />
+        <module name="ar-space" />
         <module name="ar-shading" />
         <module name="ar-raytracer" />
         <module name="ar-algebra" />
@@ -33,13 +33,13 @@
         <module name="ar-hardware" />
         <module name="ar-llvm" />
         <module name="ar-code" />
-        <module name="ar-geometry" />
-        <module name="ar-keyframing" />
         <module name="ar-flowtree-shaded" />
+        <module name="ar-keyframing" />
+        <module name="ar-geometry" />
         <module name="ar-rings-ml" />
         <module name="ar-tensorflow" />
-        <module name="ar-heredity" />
         <module name="ar-graphpersist" />
+        <module name="ar-heredity" />
         <module name="ar-photonfield" />
         <module name="ar-stats" />
         <module name="ar-ml" />

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="TrainModelTest.trainSmall" type="JUnit" factoryName="JUnit" folderName="ML">
+  <configuration default="false" name="TrainModelTest.trainMedium" type="JUnit" factoryName="JUnit" folderName="ML">
     <module name="ar-utils" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />
@@ -8,7 +8,7 @@
     </extension>
     <option name="PACKAGE_NAME" value="org.almostrealism.graph.model.test" />
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.graph.model.test.TrainModelTest" />
-    <option name="METHOD_NAME" value="trainSmall" />
+    <option name="METHOD_NAME" value="trainMedium" />
     <option name="TEST_OBJECT" value="method" />
     <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -DAR_TRAIN_TESTS=enabled -DAR_HARDWARE_MEMORY_SCALE=7 -DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_METADATA=enabled -DAR_HARDWARE_MEMORY_WARNINGS=disabled" />
     <method v="2" />
