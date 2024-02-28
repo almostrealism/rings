@@ -35,12 +35,12 @@ import org.almostrealism.algebra.Defaults;
  */
 public abstract class Settings extends Defaults {
   /** String containing the version number of this software. */
-  public static final String version = "0.4";
+  public static final String version = "0.32";
   
   /** String containing "Written by Michael Murray". */
   public static final String writtenByInfo = "Written by Michael Murray";
   
-  /** String containing "ashesfall@users.sf.net". */
+  /** String containing "michael@almostrealism.com". */
   private static final String adminEmail = "michael@almostrealism.com";
   
   /** String containing "http://almostrealism.org/". */
