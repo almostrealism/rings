@@ -165,7 +165,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	private Gene<PackedCollection<?>> assemble(int pos, Gene<PackedCollection<?>> transformed) {
 		setParameters(pos, parameters(transformed));
 		WaveCell cell = new WaveCell(PolymorphicAudioData.supply(PackedCollection.factory()).get(),
-				data.get(pos), sampleRate, 1.0, time.frame());
+				data.get(pos), sampleRate, 1.0, time.frameScalar());
 		Factor<PackedCollection<?>> factor = cell.toFactor(() -> new Scalar(0.0),
 				p -> protein -> new Assignment<>(1, p, protein), combine());
 
@@ -225,7 +225,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	}
 
 	protected WaveCell cell(PackedCollection<PackedCollection<?>> data) {
-		return new WaveCell(data, sampleRate, time.frame());
+		return new WaveCell(data, sampleRate, time.frameScalar());
 	}
 
 	@Override

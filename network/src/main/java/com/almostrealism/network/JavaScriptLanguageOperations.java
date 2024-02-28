@@ -33,4 +33,9 @@ public class JavaScriptLanguageOperations extends DefaultLanguageOperations {
 
 	@Override
 	public String annotationForPhysicalScope(PhysicalScope scope) { return ""; }
+
+	@Override
+	public String pi() {
+		return "Math.PI";
+	}
 }

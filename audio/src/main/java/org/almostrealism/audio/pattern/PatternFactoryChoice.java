@@ -112,19 +112,19 @@ public class PatternFactoryChoice {
 		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
 	}
 
-	public PatternLayer apply(List<PatternElement> elements, double scale, int depth, ParameterSet params) {
+	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
-		elements.forEach(e -> layer.getElements().addAll(apply(e, scale, depth, params).getElements()));
+		elements.forEach(e -> layer.getElements().addAll(apply(e, scale, scaleTraversalStrategy, depth, params).getElements()));
 		return layer;
 	}
 
-	public PatternLayer apply(PatternElement element, double scale, int depth, ParameterSet params) {
+	public PatternLayer apply(PatternElement element, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
 
-		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
-		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
+		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
 	}
 

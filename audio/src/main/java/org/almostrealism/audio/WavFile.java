@@ -1,12 +1,10 @@
-// Wav file IO class
-// A.Greensted
-// http://www.labbookpages.co.uk
-
-// File format is based on the information from
-// http://www.sonicspot.com/guide/wavefiles.html
-// http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/wave.htm
-
-// Version 1.0
+/*
+ * Inspired by the work of A.Greensted (http://www.labbookpages.co.uk)
+ *
+ * File format is based on the information from
+ * http://www.sonicspot.com/guide/wavefiles.html
+ * http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/wave.htm
+ */
 
 package org.almostrealism.audio;
 
@@ -35,14 +33,14 @@ public class WavFile implements AutoCloseable {
 	private final static int RIFF_TYPE_ID = 0x45564157;
 
 	private File file;                        // File that will be read from or written to
-	private ReaderState readerState;                // Specifies the IO State of the Wav File (used for snaity checking)
-	private int bytesPerSample;            // Number of bytes required to store a single sample
-	private long numFrames;                    // Number of frames within the data section
-	private FileOutputStream oStream;    // Output stream used for writting data
-	private FileInputStream iStream;        // Input stream used for reading data
+	private ReaderState readerState;          // Specifies the IO State of the Wav File (used for snaity checking)
+	private int bytesPerSample;               // Number of bytes required to store a single sample
+	private long numFrames;                   // Number of frames within the data section
+	private OutputStream oStream;             // Output stream used for writing data
+	private FileInputStream iStream;          // Input stream used for reading data
 	private double floatScale;                // Scaling factor used for int <-> float conversion
-	private double floatOffset;            // Offset factor used for int <-> float conversion
-	private boolean wordAlignAdjust;        // Specify if an extra byte at the end of the data chunk is required for word alignment
+	private double floatOffset;               // Offset factor used for int <-> float conversion
+	private boolean wordAlignAdjust;          // Specify if an extra byte at the end of the data chunk is required for word alignment
 
 	// Wav Header
 	private int numChannels;                // 2 bytes unsigned, 0x0001 (1) to 0xFFFF (65,535)
@@ -76,12 +74,17 @@ public class WavFile implements AutoCloseable {
 
 	public long getSampleRate() { return sampleRate; }
 
-	public int getValidBits() {
-		return validBits;
-	}
+	public int getValidBits() { return validBits; }
 
 	public static WavFile newWavFile(File file, int numChannels, long numFrames, int validBits, long sampleRate) throws IOException {
-		// Instantiate new Wavfile and initialise
+		return newWavFile(file, new FileOutputStream(file), numChannels, numFrames, validBits, sampleRate);
+	}
+
+	public static WavFile newWavFile(OutputStream stream, int numChannels, long numFrames, int validBits, long sampleRate) throws IOException {
+		return newWavFile(null, stream, numChannels, numFrames, validBits, sampleRate);
+	}
+
+	protected static WavFile newWavFile(File file, OutputStream stream, int numChannels, long numFrames, int validBits, long sampleRate) throws IOException {
 		WavFile wavFile = new WavFile();
 		wavFile.file = file;
 		wavFile.numChannels = numChannels;
@@ -99,14 +102,14 @@ public class WavFile implements AutoCloseable {
 			throw new IOException("Illegal number of valid bits, valid range 2 to 65536");
 		if (sampleRate < 0) throw new IOException("Sample rate must be positive");
 
-		// Create output stream for writing data
-		wavFile.oStream = new FileOutputStream(file);
+		// Output stream for writing data
+		wavFile.oStream = stream;
 
 		// Calculate the chunk sizes
 		long dataChunkSize = wavFile.blockAlign * numFrames;
 		long mainChunkSize = 4 +    // Riff Type
 				8 +    // Format ID and size
-				16 +    // Format data
+				16 +   // Format data
 				8 +    // Data ID and size
 				dataChunkSize;
 
@@ -533,11 +536,11 @@ public class WavFile implements AutoCloseable {
 		return numFramesToWrite;
 	}
 
-	public int writeFrames(long[][] sampleBuffer, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(long[][] sampleBuffer, int numFramesToWrite) throws IOException {
 		return writeFrames(sampleBuffer, 0, numFramesToWrite);
 	}
 
-	public int writeFrames(long[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException, IOException {
+	public int writeFrames(long[][] sampleBuffer, int offset, int numFramesToWrite) throws IOException {
 		if (readerState != ReaderState.WRITING) throw new IOException("Cannot write to WavFile instance");
 
 		for (int f = 0; f < numFramesToWrite; f++) {
@@ -554,11 +557,11 @@ public class WavFile implements AutoCloseable {
 
 	// Double
 	// ------
-	public int readFrames(double[] sampleBuffer, int numFramesToRead) throws IOException, IOException {
+	public int readFrames(double[] sampleBuffer, int numFramesToRead) throws IOException {
 		return readFrames(sampleBuffer, 0, numFramesToRead);
 	}
 
-	public int readFrames(double[] sampleBuffer, int offset, int numFramesToRead) throws IOException, IOException {
+	public int readFrames(double[] sampleBuffer, int offset, int numFramesToRead) throws IOException {
 		if (readerState != ReaderState.READING) throw new IOException("Cannot read from WavFile instance");
 
 		for (int f = 0; f < numFramesToRead; f++) {
@@ -667,7 +670,7 @@ public class WavFile implements AutoCloseable {
 	}
 
 	public void display(PrintStream out) {
-		out.printf("File: %s\n", file);
+		if (file != null) out.printf("File: %s\n", file);
 		out.printf("Channels: %d, Frames: %d\n", numChannels, numFrames);
 		out.printf("IO State: %s\n", readerState);
 		out.printf("Sample Rate: %d, Block Align: %d\n", sampleRate, blockAlign);

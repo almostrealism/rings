@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class DelayCellTest implements CellFeatures {
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
 						.d(i -> v(2.0))
-						.o(i -> new File("results/filter-delay-cell-test.wav"))
+						.o(i -> new File("results/filter-delay-cell.wav"))
 						.sec(6);
 		r.get().run();
 	}

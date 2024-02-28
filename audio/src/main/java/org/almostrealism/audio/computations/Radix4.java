@@ -44,10 +44,10 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		Producer<Scalar> kPlusHalfN = scalarAdd(kProducer, halfN);
 		Producer<Scalar> kPlusQuarterN = scalarAdd(kProducer, quarterN);
 
-		Producer<Pair<?>> a = pairFromBank(bank, c(kProducer));
-		Producer<Pair<?>> b = pairFromBank(bank, c(kPlusQuarterN));
-		Producer<Pair<?>> c = pairFromBank(bank, c(kPlusHalfN));
-		Producer<Pair<?>> d = pairFromBank(bank, c(kPlusTripleQuarterN));
+		Producer<Pair<?>> a = pairFromBank(bank, c(kProducer, 0));
+		Producer<Pair<?>> b = pairFromBank(bank, c(kPlusQuarterN, 0));
+		Producer<Pair<?>> c = pairFromBank(bank, c(kPlusHalfN, 0));
+		Producer<Pair<?>> d = pairFromBank(bank, c(kPlusTripleQuarterN, 0));
 
 		Producer<Pair<?>> bMinusD = subtract(b, d);
 		Producer<Pair<?>> aMinusC = subtract(a, c);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,17 +16,12 @@
 
 package org.almostrealism.audio.arrange;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.audio.filter.AudioProcessor;
 
-import java.util.function.Supplier;
-
-public interface ChannelSection {
+public interface ChannelSection extends AudioProcessor {
 	/** Position of the section, in measures. */
 	int getPosition();
 
 	/** Length of the section, in measures. */
-	 int getLength();
-
-	Supplier<Runnable> process(Producer<PackedCollection<?>> destination, Producer<PackedCollection<?>> source);
+	int getLength();
 }

@@ -52,8 +52,10 @@ public class PatternLayerManager implements CodeFeatures {
 	private double duration;
 	private double scale;
 	private double seedBias;
-	private int scaleTraversalDepth;
+
 	private boolean melodic;
+	private int scaleTraversalDepth;
+	private ScaleTraversalStrategy scaleTraversalStrategy;
 
 	private Supplier<List<PatternFactoryChoice>> percChoices;
 	private Supplier<List<PatternFactoryChoice>> melodicChoices;
@@ -79,6 +81,7 @@ public class PatternLayerManager implements CodeFeatures {
 		this.channel = channel;
 		this.duration = measures;
 		this.scale = 1.0;
+		this.scaleTraversalStrategy = ScaleTraversalStrategy.CHORD;
 		this.scaleTraversalDepth = 1;
 		setMelodic(melodic);
 
@@ -123,14 +126,22 @@ public class PatternLayerManager implements CodeFeatures {
 	public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 	public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
-	public double getSeedBias() { return seedBias; }
-	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
-
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
 	}
 
 	public boolean isMelodic() { return melodic; }
+
+	public ScaleTraversalStrategy getScaleTraversalStrategy() {
+		return scaleTraversalStrategy;
+	}
+
+	public void setScaleTraversalStrategy(ScaleTraversalStrategy scaleTraversalStrategy) {
+		this.scaleTraversalStrategy = scaleTraversalStrategy;
+	}
+
+	public double getSeedBias() { return seedBias; }
+	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
 		List<PatternLayerSeeds> options = choices()
@@ -164,6 +175,7 @@ public class PatternLayerManager implements CodeFeatures {
 		Settings settings = new Settings();
 		settings.setChannel(channel);
 		settings.setDuration(duration);
+		settings.setScaleTraversalStrategy(scaleTraversalStrategy);
 		settings.setScaleTraversalDepth(scaleTraversalDepth);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
@@ -175,6 +187,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public void setSettings(Settings settings) {
 		channel = settings.getChannel();
 		duration = settings.getDuration();
+		scaleTraversalStrategy = settings.getScaleTraversalStrategy();
 		scaleTraversalDepth = settings.getScaleTraversalDepth();
 		melodic = settings.isMelodic();
 
@@ -237,7 +250,7 @@ public class PatternLayerManager implements CodeFeatures {
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
 			if (seeds != null) {
-				seeds.generator(0, duration, seedBias, scaleTraversalDepth).forEach(roots::add);
+				seeds.generator(0, duration, seedBias, scaleTraversalStrategy, scaleTraversalDepth).forEach(roots::add);
 				scale = seeds.getScale();
 			}
 
@@ -256,7 +269,7 @@ public class PatternLayerManager implements CodeFeatures {
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalDepth, params);
+					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
@@ -431,6 +444,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public static class Settings {
 		private int channel;
 		private double duration;
+		private ScaleTraversalStrategy scaleTraversalStrategy;
 		private int scaleTraversalDepth;
 		private boolean melodic;
 		private ParameterFunction factorySelection;
@@ -442,6 +456,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public double getDuration() { return duration; }
 		public void setDuration(double duration) { this.duration = duration; }
+
+		public ScaleTraversalStrategy getScaleTraversalStrategy() { return scaleTraversalStrategy; }
+		public void setScaleTraversalStrategy(ScaleTraversalStrategy scaleTraversalStrategy) { this.scaleTraversalStrategy = scaleTraversalStrategy; }
 
 		public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 		public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }

@@ -18,7 +18,6 @@
 package org.almostrealism.audio.sources.test;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
@@ -28,7 +27,6 @@ import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.heredity.ScaleFactor;
@@ -182,7 +180,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		data.setMem(IntStream.range(0, OutputLine.sampleRate).mapToDouble(i -> Math.sin(i * rate)).toArray());
 
 		TimeCell clock = new TimeCell();
-		WaveCell cell = new WaveCell(data, OutputLine.sampleRate, clock.frame());
+		WaveCell cell = new WaveCell(data, OutputLine.sampleRate, clock.frameScalar());
 
 		TemporalList tick = new TemporalList();
 		tick.add(clock);
@@ -200,7 +198,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		op.add(sec(temporals, 0.3));
 		op.get().run();
 
-		System.out.println("Clock after 0.3s: " + clock.frame().get().evaluate().toDouble(0) +
+		System.out.println("Clock after 0.3s: " + clock.frameScalar().get().evaluate().toDouble(0) +
 				" (expected " + 0.3 * OutputLine.sampleRate + ")");
 		System.out.println("Result after 0.3s: " + out.toDouble(0) + " (expected " +
 				data.toDouble((int) (0.3 * OutputLine.sampleRate) - 1) + ")");

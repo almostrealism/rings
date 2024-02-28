@@ -9,6 +9,6 @@ import java.util.function.Supplier;
 
 public class TensorFlowArgument<T> extends ArrayVariable<T> {
 	public TensorFlowArgument(LanguageOperations lang, NameProvider np, String name, Supplier<Evaluable<? extends T>> producer) {
-		super(lang, np, name, producer);
+		super(np, name, producer);
 	}
 }
