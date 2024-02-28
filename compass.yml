@@ -1,0 +1,18 @@
+name: rings
+id: ari:cloud:compass:a158e1a1-12d9-425a-a3c4-f5ff83e10cb2:component/d9bc3aba-252d-40c5-9afc-82f68c42bfdd/60736ea4-9d0c-415d-87a7-8dfeab1a3e3a
+description: HPC tools for audio visual experimentation
+configVersion: 1
+typeId: LIBRARY
+ownerId: null
+fields:
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: https://github.com/almostrealism/rings
+relationships:
+  DEPENDS_ON: []
+labels:
+  - language:java
+  - source:github
+customFields: null
