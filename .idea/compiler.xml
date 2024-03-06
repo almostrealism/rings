@@ -16,6 +16,7 @@
         <module name="ar-gl" />
         <module name="ar-swing" />
         <module name="ar-treeview" />
+        <module name="ar-ml-script" />
         <module name="ar-color" />
         <module name="ar-relation" />
         <module name="ar-network" />
@@ -42,6 +43,7 @@
         <module name="ar-heredity" />
         <module name="ar-photonfield" />
         <module name="ar-stats" />
+        <module name="ar-llama2" />
         <module name="ar-ml" />
         <module name="ar-graph" />
         <module name="ar-absorption" />
@@ -65,6 +67,7 @@
       <module name="ar-hardware" options="-h target/headers" />
       <module name="ar-heredity" options="-h target/headers" />
       <module name="ar-io" options="-h target/headers" />
+      <module name="ar-llama2" options="-h target/headers" />
       <module name="ar-llvm" options="-h target/headers" />
       <module name="ar-ml" options="-h target/headers" />
       <module name="ar-optimize" options="-h target/headers" />
