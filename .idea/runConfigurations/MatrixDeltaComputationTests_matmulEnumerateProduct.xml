@@ -10,7 +10,7 @@
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.computations.test.MatrixDeltaComputationTests" />
     <option name="METHOD_NAME" value="matmulEnumerateProduct" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_DRIVER=native -DAR_HARDWARE_SHARED_MEMORY=disabled -DAR_HARDWARE_OFF_HEAP_SIZE=0" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_DRIVER=native" />
     <method v="2" />
   </configuration>
 </component>
