@@ -10,7 +10,7 @@
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.graph.model.test.GradientDescentTests" />
     <option name="METHOD_NAME" value="linear4" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_MEMORY_WARNINGS=disabled" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_MEMORY_WARNINGS=disabled -DAR_HARDWARE_KERNEL_SIZE_WARNINGS=disabled" />
     <method v="2" />
   </configuration>
 </component>
