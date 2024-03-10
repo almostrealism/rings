@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="DeltaFeaturesTestsTests.embedded1" type="JUnit" factoryName="JUnit" folderName="Algebra">
+  <configuration default="false" name="MatrixMathTests.matrix1" type="JUnit" factoryName="JUnit" folderName="Algebra">
     <module name="ar-utils" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />
       <option name="region" />
       <option name="useCurrentConnection" value="false" />
     </extension>
-    <option name="PACKAGE_NAME" value="org.almostrealism.algebra.test" />
-    <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.test.DeltaFeaturesTests" />
-    <option name="METHOD_NAME" value="embedded1" />
+    <option name="PACKAGE_NAME" value="org.almostrealism.algebra.computations.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.computations.test.MatrixMathTests" />
+    <option name="METHOD_NAME" value="matrix1" />
     <option name="TEST_OBJECT" value="method" />
     <option name="VM_PARAMETERS" value="-ea -DAR_HARDWARE_OFF_HEAP_SIZE=0" />
     <method v="2" />
