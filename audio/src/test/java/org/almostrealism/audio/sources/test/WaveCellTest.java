@@ -89,7 +89,6 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		CellList cells = w("Library/Snare Perc DD.wav")
 				.o(i -> new File("results/snare-clean-test.wav"));
 
-		NativeCompiler.enableInstructionSetMonitoring = true;
 		cells.sec(bpm(128).l(count)).get().run();
 	}
 
@@ -101,7 +100,6 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 						"Library/GT_HAT_31.wav")
 				.o(i -> new File("results/hat-repeat-test.wav"));
 
-		NativeCompiler.enableInstructionSetMonitoring = true;
 		cells.sec(bpm(128).l(count)).get().run();
 	}
 
