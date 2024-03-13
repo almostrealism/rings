@@ -491,6 +491,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public Supplier<Runnable> getPatternSetup(int channel) {
 		Supplier<AudioSceneContext> ctx = () -> {
+			refreshPatternDestination(channel, false);
 			AudioSceneContext context = getContext(List.of(channel));
 			context.setActivityBias(patternActivityBias);
 			context.setSections(sections.getChannelSections(channel));
@@ -498,18 +499,18 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		};
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
-		op.add(() -> () -> refreshPatternDestination(channel));
+		op.add(() -> () -> refreshPatternDestination(channel, true));
 		op.add(patterns.sum(ctx));
 		return op;
 	}
 
-	private void refreshPatternDestination(int channel) {
+	private void refreshPatternDestination(int channel, boolean clear) {
 		if (patternDestinations == null) {
 			patternDestinations = new ArrayList<>();
 			for (int i = 0; i < getChannelCount(); i++) {
 				patternDestinations.add(new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
 			}
-		} else {
+		} else if (clear) {
 			patternDestinations.get(channel).clear();
 		}
 	}

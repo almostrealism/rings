@@ -104,7 +104,9 @@ public class PatternLayerManager implements CodeFeatures {
 	public PackedCollection<?> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
-		destination = context.getDestination();
+		if (context.getChannels().contains(channel)) {
+			destination = context.getDestination();
+		}
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
