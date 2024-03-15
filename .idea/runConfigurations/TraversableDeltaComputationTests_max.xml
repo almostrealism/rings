@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="TraversableDeltaComputationTests Fast" type="JUnit" factoryName="JUnit" folderName="Algebra">
+  <configuration default="false" name="TraversableDeltaComputationTests.max" type="JUnit" factoryName="JUnit" folderName="Algebra">
     <module name="ar-utils" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />
@@ -8,9 +8,8 @@
     </extension>
     <option name="PACKAGE_NAME" value="org.almostrealism.collect.computations.test" />
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.collect.computations.test.TraversableDeltaComputationTests" />
-    <option name="METHOD_NAME" value="matmul3" />
-    <option name="TEST_OBJECT" value="class" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_LONG_TESTS=disabled" />
+    <option name="METHOD_NAME" value="max" />
+    <option name="TEST_OBJECT" value="method" />
     <method v="2" />
   </configuration>
 </component>

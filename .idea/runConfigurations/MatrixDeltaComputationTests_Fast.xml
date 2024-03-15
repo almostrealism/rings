@@ -10,7 +10,7 @@
     <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.computations.test.MatrixDeltaComputationTests" />
     <option name="METHOD_NAME" value="denseWeightsSmall" />
     <option name="TEST_OBJECT" value="class" />
-    <option name="VM_PARAMETERS" value="-ea -DAR_LONG_TESTS=disabled -DAR_HARDWARE_OFF_HEAP_SIZE=0" />
+    <option name="VM_PARAMETERS" value="-ea -DAR_LONG_TESTS=disabled" />
     <method v="2" />
   </configuration>
 </component>
