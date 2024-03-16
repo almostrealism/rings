@@ -20,6 +20,7 @@ import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
@@ -93,7 +94,7 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		return branch(this, dest);
 	}
 
-	public CellList poly(IntFunction<ProducerComputation<PackedCollection<?>>> decision) {
+	public CellList poly(IntFunction<CollectionProducer<PackedCollection<?>>> decision) {
 		CellList l = poly(1, () -> null, decision,
 				stream().map(c -> (Function<DefaultWaveCellData, CollectionTemporalCellAdapter>) data -> (CollectionTemporalCellAdapter) c).toArray(Function[]::new));
 		// TODO  By dropping the parent, we may be losing necessary dependencies

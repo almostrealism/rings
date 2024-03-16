@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.optimize;
 
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
@@ -36,9 +37,9 @@ public class DelayChromosome extends WavCellChromosome implements OptimizeFactor
 		setTransform(6, g -> oneToInfinity(g.valueAt(6).getResultant(c(1.0)), 1.0).multiply(c(10.0)));
 
 		setFactor((p, in) -> {
-			CollectionProducerComputation speedUpWavelength = c(p, 1).multiply(c(2.0));
+			CollectionProducer speedUpWavelength = c(p, 1).multiply(c(2.0));
 			CollectionProducerComputation speedUpAmp = c(p, 2);
-			CollectionProducerComputation slowDownWavelength = c(p, 3).multiply(c(2.0));
+			CollectionProducer slowDownWavelength = c(p, 3).multiply(c(2.0));
 			CollectionProducerComputation slowDownAmp = c(p, 4);
 			CollectionProducerComputation polySpeedUpWaveLength = c(p, 5);
 			CollectionProducerComputation polySpeedUpExp = c(p, 6);

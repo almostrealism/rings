@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.Switch;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.graph.Cell;
@@ -39,13 +40,13 @@ import java.util.stream.IntStream;
 
 public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapter implements CellFeatures {
 
-	private ProducerComputation<PackedCollection<?>> decision;
+	private CollectionProducer<PackedCollection<?>> decision;
 	private final List<CollectionTemporalCellAdapter> cells;
 	private final boolean parallel;
 
 	private final PackedCollection<PackedCollection<?>> storage;
 
-	public AudioCellChoiceAdapter(ProducerComputation<PackedCollection<?>> decision,
+	public AudioCellChoiceAdapter(CollectionProducer<PackedCollection<?>> decision,
 								  IntFunction<PolymorphicAudioData> data,
 								  List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices,
 								  boolean parallel) {
@@ -54,7 +55,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 			.collect(Collectors.toList()), parallel);
 	}
 
-	public AudioCellChoiceAdapter(ProducerComputation<PackedCollection<?>> decision,
+	public AudioCellChoiceAdapter(CollectionProducer<PackedCollection<?>> decision,
 								  List<CollectionTemporalCellAdapter> choices,
 								  boolean parallel) {
 		this.decision = decision;
@@ -70,7 +71,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 		}
 	}
 
-	public void setDecision(ProducerComputation<PackedCollection<?>> decision) {
+	public void setDecision(CollectionProducer<PackedCollection<?>> decision) {
 		this.decision = decision;
 	}
 

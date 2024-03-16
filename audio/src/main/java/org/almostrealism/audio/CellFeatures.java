@@ -24,6 +24,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
@@ -239,28 +240,28 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<ProducerComputation<PackedCollection<?>>> decision, String... choices) {
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, String... choices) {
 		return poly(count, data, decision, Stream.of(choices).map(File::new).toArray(File[]::new));
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<ProducerComputation<PackedCollection<?>>> decision, File... choices) {
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, File... choices) {
 		return poly(count, data, decision, Stream.of(choices)
 				.map(f -> (Function<PolymorphicAudioData, CollectionTemporalCellAdapter>) d -> (CollectionTemporalCellAdapter) w(data, f).get(0)).
 				toArray(Function[]::new));
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<ProducerComputation<PackedCollection<?>>> decision, Frequency... choices) {
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, Frequency... choices) {
 		return poly(count, data, decision, Stream.of(choices)
 				.map(f -> (Function<PolymorphicAudioData, CollectionTemporalCellAdapter>) d -> (CollectionTemporalCellAdapter) w(data, f).get(0)).
 				toArray(Function[]::new));
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<ProducerComputation<PackedCollection<?>>> decision,
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision,
 						  Function<PolymorphicAudioData, CollectionTemporalCellAdapter>... choices) {
 		return poly(count, i -> data.get(), decision, choices);
 	}
 
-	default CellList poly(int count, IntFunction<PolymorphicAudioData> data, IntFunction<ProducerComputation<PackedCollection<?>>> decision,
+	default CellList poly(int count, IntFunction<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision,
 						  Function<PolymorphicAudioData, CollectionTemporalCellAdapter>... choices) {
 		CellList cells = new CellList();
 		IntStream.range(0, count).mapToObj(i -> new PolymorphicAudioCell(data.apply(i), decision.apply(i), choices)).forEach(cells::addRoot);
