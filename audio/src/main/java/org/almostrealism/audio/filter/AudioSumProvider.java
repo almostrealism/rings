@@ -38,14 +38,14 @@ public class AudioSumProvider implements CellFeatures {
 	public AudioSumProvider(boolean parallel) {
 		this.parallel = parallel;
 
-		CollectionProducerComputationBase sum = add(v(shape(1), 0), v(shape(1), 1));
+		CollectionProducer sum = add(v(shape(1), 0), v(shape(1), 1));
 		CollectionProducer scaleVolume = multiply(v(shape(1), 0), v(shape(1), 1));
 
 		if (parallel) {
 			this.sum = sum.get();
 			this.scaleVolume = scaleVolume.get();
 		} else {
-			this.sum = sum.toRepeated().get();
+			this.sum = ((CollectionProducerComputationBase) sum).toRepeated().get();
 			this.scaleVolume = ((CollectionProducerComputationBase) scaleVolume).toRepeated().get();
 		}
 	}

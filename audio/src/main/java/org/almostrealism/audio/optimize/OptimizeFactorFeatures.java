@@ -241,7 +241,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		CollectionProducer periodicAmp = c(1.0);
 
 		if (relative) scale = multiply(scale, initial);
-		CollectionProducerComputation pos = subtract(time, offset);
+		CollectionProducer pos = subtract(time, offset);
 		return bound(pos._greaterThan(c(0.0),
 						pow(polyWaveLength, c(-1.0))
 								.multiply(pos).pow(polyExp)
@@ -267,7 +267,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 						.multiply(time).pow(polySpeedUpExp)));
 	}
 
-	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
+	default CollectionProducer<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
 															  Producer<PackedCollection<?>> d,
 															  Producer<PackedCollection<?>> m,
 															  Producer<PackedCollection<?>> p,
@@ -284,16 +284,16 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		m = c(minScale).add(multiply(m, c(1.0 - minScale)));
 		p = multiply(p, subtract(c(1.0), m));
 
-		CollectionProducerComputation downOrigin = c(maxValue).subtract(multiply(scale, p));
-		CollectionProducerComputation upOrigin = c(minValue).add(multiply(scale, p));
+		CollectionProducer downOrigin = c(maxValue).subtract(multiply(scale, p));
+		CollectionProducer upOrigin = c(minValue).add(multiply(scale, p));
 
 		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
 
 		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
 
 		CollectionProducer magnitude = multiply(scale, m);
-		CollectionProducerComputation start = c(choice(2, toScalar(d), originChoices), 0);
-		CollectionProducerComputation end = multiply(direction, magnitude).add(start);
+		CollectionProducer start = c(choice(2, toScalar(d), originChoices), 0);
+		CollectionProducer end = multiply(direction, magnitude).add(start);
 
 		CollectionProducer pos = pow(divide(time, duration), e);
 
