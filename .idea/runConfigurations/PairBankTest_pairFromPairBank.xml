@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PairBankTest.pairFromPairBank" type="JUnit" factoryName="JUnit" folderName="Collections">
+    <module name="ar-utils" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <option name="PACKAGE_NAME" value="org.almostrealism.algebra.test" />
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.algebra.test.PairBankTest" />
+    <option name="METHOD_NAME" value="pairFromPairBank" />
+    <option name="TEST_OBJECT" value="method" />
+    <method v="2" />
+  </configuration>
+</component>
