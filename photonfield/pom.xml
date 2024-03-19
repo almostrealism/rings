@@ -15,7 +15,6 @@
 		<dependency>
 			<groupId>io.flowtree</groupId>
 			<artifactId>ar-flowtree</artifactId>
-			<version>${flowtree.version}</version>
 		</dependency>
 
 		<dependency>
