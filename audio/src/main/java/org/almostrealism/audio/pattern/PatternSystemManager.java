@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.DynamicProducer;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
@@ -204,8 +205,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			}
 
 			// CollectionProducer<PackedCollection<?>> max = c(destination()).traverse(0).max();
-			CollectionProducer<PackedCollection<?>> max = cp(destination).traverse(0).max();
-			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
+			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
+			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 
