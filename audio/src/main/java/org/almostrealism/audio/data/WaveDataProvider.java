@@ -30,6 +30,9 @@ public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup {
 	@JsonIgnore
 	String getKey();
 
+	@JsonIgnore
+	String getIdentifier();
+
 	double getDuration();
 
 	double getDuration(double playbackRate);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -143,7 +143,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private KeyboardTuning tuning;
 	private ChordProgressionManager progression;
 
-	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> library;
+	private AudioLibrary library;
 	private PatternSystemManager patterns;
 	private List<PackedCollection<?>> patternDestinations;
 	private List<String> channelNames;
@@ -233,14 +233,16 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public KeyboardTuning getTuning() { return tuning; }
 
-	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getLibrary() { return library; }
+	public AudioLibrary getLibrary() { return library; }
+
+	public void setLibrary(AudioLibrary library) { this.library = library; }
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree) {
 		setLibraryRoot(tree, null);
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
-		library = tree;
+		library = AudioLibrary.load(tree, progress);
 		patterns.setTree(tree, progress);
 	}
 
