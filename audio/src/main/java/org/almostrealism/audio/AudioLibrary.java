@@ -17,9 +17,12 @@
 package org.almostrealism.audio;
 
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.WaveDetails;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
@@ -38,12 +41,29 @@ public class AudioLibrary {
 		return root;
 	}
 
+	public Collection<WaveDetails> getDetails() {
+		return info.values();
+	}
+
 	public void refresh() {
 		root.children().forEach(f -> {
 			FileWaveDataProvider provider = f.get();
-			String id = provider.getIdentifier();
-			// TODO  Create WaveDetails and add to info Map
+			if (provider == null) return;
+
+			try {
+				WaveDetails details = WaveDetails.create(provider);
+				if (details != null) {
+					info.put(details.getIdentifier(), details);
+				}
+			} catch (Exception e) {
+				AudioScene.console.warn("Failed to create WaveDetails for " +
+						provider.getKey() + " (" + e.getMessage() + ")");
+			}
 		});
+	}
+
+	public static AudioLibrary load(File root) {
+		return load(new FileWaveDataProviderNode(root), null);
 	}
 
 	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root) {

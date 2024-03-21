@@ -122,11 +122,6 @@ public class WaveData implements SamplingFeatures {
 		PackedCollection<?> out = new PackedCollection<>(count * FFT_BINS).reshape(count, FFT_BINS, 1);
 
 		try {
-			int resultSize = count / FFT_POOL;
-
-			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
-					.reshape(resultSize, FFT_POOL_BINS, 1);
-
 			cc(() -> {
 				PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
 				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
@@ -141,6 +136,12 @@ public class WaveData implements SamplingFeatures {
 									frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
 				}
 			}, ComputeRequirement.JNI);
+
+			int resultSize = count / FFT_POOL;
+			if (count % FFT_POOL != 0) resultSize++;
+
+			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+					.reshape(resultSize, FFT_POOL_BINS, 1);
 
 			int window = POOL_BATCH_IN * POOL_BATCH_IN;
 			int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;

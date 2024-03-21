@@ -16,7 +16,9 @@
 
 package org.almostrealism.audio.data;
 
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.ConsoleFeatures;
 
 public class WaveDetails {
 	private String identifier;
@@ -26,7 +28,7 @@ public class WaveDetails {
 	private int frameCount;
 	private PackedCollection<?> data;
 
-	private int fftSampleRate;
+	private double fftSampleRate;
 	private int fftChannelCount;
 	private int fftFrameCount;
 	private PackedCollection<?> fftData;
@@ -71,11 +73,11 @@ public class WaveDetails {
 		this.data = data;
 	}
 
-	public int getFftSampleRate() {
+	public double getFftSampleRate() {
 		return fftSampleRate;
 	}
 
-	public void setFftSampleRate(int fftSampleRate) {
+	public void setFftSampleRate(double fftSampleRate) {
 		this.fftSampleRate = fftSampleRate;
 	}
 
@@ -101,5 +103,24 @@ public class WaveDetails {
 
 	public void setFftData(PackedCollection<?> fftData) {
 		this.fftData = fftData;
+	}
+
+	public static WaveDetails create(WaveDataProvider provider) {
+		System.out.println(provider.getKey() + " - " + provider.getIdentifier());
+
+		WaveDetails details = new WaveDetails(provider.getIdentifier());
+		WaveData data = provider.get();
+		details.setSampleRate(data.getSampleRate());
+		details.setChannelCount(1);
+		details.setFrameCount(data.getCollection().getMemLength());
+		details.setData(data.getCollection());
+
+		PackedCollection<?> fft = data.fft();
+		details.setFftSampleRate(data.getSampleRate() / (double) WaveData.FFT_POOL * WaveData.FFT_BINS);
+		details.setFftChannelCount(1);
+		details.setFftFrameCount(fft.getMemLength());
+		details.setFftData(fft);
+
+		return details;
 	}
 }
