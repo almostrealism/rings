@@ -36,4 +36,17 @@ public class CollectionEncoder {
 		data.setTraversalAxis(shape.getTraversalAxis());
 		return data.build();
 	}
+
+	public static PackedCollection<?> decode(Audio.CollectionData data) {
+		TraversalPolicy shape = decode(data.getTraversalPolicy());
+		PackedCollection<?> c = new PackedCollection<>(shape);
+		c.setMem(data.getDataList().stream().mapToDouble(d -> d).toArray());
+		return c;
+	}
+
+	public static TraversalPolicy decode(Audio.TraversalPolicyData data) {
+		return new TraversalPolicy(
+				data.getDimsList().stream().mapToInt(i -> i).toArray())
+					.traverse(data.getTraversalAxis());
+	}
 }

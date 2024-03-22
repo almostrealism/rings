@@ -26,8 +26,9 @@ message WaveDetailData {
   int32 frame_count = 4;
   CollectionData data = 5;
 
-  double fft_sample_rate = 6;
-  int32 fft_channel_count = 7;
-  int32 fft_frame_count = 8;
-  CollectionData fft_data = 9;
+  double freq_sample_rate = 6;
+  int32 freq_channel_count = 7;
+  int32 freq_bin_count = 8;
+  int32 freq_frame_count = 9;
+  CollectionData freq_data = 10;
 }

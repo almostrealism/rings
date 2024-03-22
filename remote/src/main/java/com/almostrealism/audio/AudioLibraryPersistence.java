@@ -33,23 +33,26 @@ import java.util.function.Supplier;
 public class AudioLibraryPersistence {
 	public static int batchSize = Integer.MAX_VALUE / 2;
 
-	public static void saveLibrary(AudioLibrary library, String filePrefix) {
+	public static void saveLibrary(AudioLibrary library, String dataPrefix) {
 		try {
-			saveLibrary(library, new LibraryDestination(filePrefix).out());
+			saveLibrary(library, new LibraryDestination(dataPrefix).out());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	public static void saveLibrary(AudioLibrary library, Supplier<OutputStream> out) throws IOException {
+		saveLibrary(library, false, out);
+	}
+
+	public static void saveLibrary(AudioLibrary library, boolean includeAudio, Supplier<OutputStream> out) throws IOException {
 		Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
 		List<WaveDetails> details = new ArrayList<>(library.getDetails());
 
 		int byteCount = 0;
 
 		for (int i = 0; i < details.size(); i++) {
-			if (byteCount > batchSize) {
+			if (byteCount > batchSize || i == details.size() - 1) {
 				OutputStream o = out.get();
 
 				try {
@@ -62,24 +65,65 @@ public class AudioLibraryPersistence {
 				}
 			}
 
-			Audio.WaveDetailData d = encode(details.get(i));
+			Audio.WaveDetailData d = encode(details.get(i), includeAudio);
 			byteCount += d.getSerializedSize();
 			data.putInfo(d.getIdentifier(), d);
 		}
 	}
 
-	public static Audio.WaveDetailData encode(WaveDetails details) {
-		return Audio.WaveDetailData.newBuilder()
+	public static AudioLibrary loadLibrary(File root, int sampleRate, String dataPrefix) {
+		try {
+			return loadLibrary(root, sampleRate, new LibraryDestination(dataPrefix).in());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static AudioLibrary loadLibrary(File root, int sampleRate, Supplier<InputStream> in) throws IOException {
+		AudioLibrary library = AudioLibrary.load(root, sampleRate);
+
+		InputStream input = in.get();
+
+		while (input != null) {
+			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
+
+			for (Audio.WaveDetailData d : data.getInfoMap().values()) {
+				library.include(decode(d));
+			}
+
+			input = in.get();
+		}
+
+		return library;
+	}
+
+	public static Audio.WaveDetailData encode(WaveDetails details, boolean includeAudio) {
+		Audio.WaveDetailData.Builder data = Audio.WaveDetailData.newBuilder()
 				.setIdentifier(details.getIdentifier())
 				.setSampleRate(details.getSampleRate())
 				.setChannelCount(details.getChannelCount())
 				.setFrameCount(details.getFrameCount())
-				.setData(CollectionEncoder.encode(details.getData()))
-				.setFftSampleRate(details.getFftSampleRate())
-				.setFftChannelCount(details.getFftChannelCount())
-				.setFftFrameCount(details.getFftFrameCount())
-				.setFftData(CollectionEncoder.encode(details.getFftData()))
-				.build();
+				.setFreqSampleRate(details.getFreqSampleRate())
+				.setFreqBinCount(details.getFreqBinCount())
+				.setFreqChannelCount(details.getFreqChannelCount())
+				.setFreqFrameCount(details.getFreqFrameCount())
+				.setFreqData(CollectionEncoder.encode(details.getFreqData()));
+		if (includeAudio) data.setData(CollectionEncoder.encode(details.getData()));
+		return data.build();
+	}
+
+	public static WaveDetails decode(Audio.WaveDetailData data) {
+		WaveDetails details = new WaveDetails(data.getIdentifier());
+		details.setSampleRate(data.getSampleRate());
+		details.setChannelCount(data.getChannelCount());
+		details.setFrameCount(data.getFrameCount());
+		details.setFreqSampleRate(data.getFreqSampleRate());
+		details.setFreqBinCount(data.getFreqBinCount());
+		details.setFreqChannelCount(data.getFreqChannelCount());
+		details.setFreqFrameCount(data.getFreqFrameCount());
+		details.setFreqData(CollectionEncoder.decode(data.getFreqData()));
+		if (data.hasData()) details.setData(CollectionEncoder.decode(data.getData()));
+		return details;
 	}
 
 	public static class LibraryDestination {

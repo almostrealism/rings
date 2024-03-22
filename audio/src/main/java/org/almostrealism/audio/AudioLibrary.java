@@ -19,12 +19,15 @@ package org.almostrealism.audio;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
+import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.audio.data.WaveDetailsFactory;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 
@@ -32,29 +35,59 @@ public class AudioLibrary {
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
 	private Map<String, WaveDetails> info;
 
-	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root) {
+	private int sampleRate;
+	private WaveDetailsFactory factory;
+
+	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
 		this.root = root;
 		this.info = new HashMap<>();
+		this.sampleRate = sampleRate;
+		this.factory = new WaveDetailsFactory(8, 0.5, sampleRate);
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
 		return root;
 	}
 
+	public int getSampleRate() {
+		return sampleRate;
+	}
+
 	public Collection<WaveDetails> getDetails() {
 		return info.values();
+	}
+
+	public WaveDetails getDetails(WaveDataProvider provider) {
+		return info.computeIfAbsent(provider.getIdentifier(), k -> factory.forProvider(provider));
+	}
+
+	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
+		WaveDetails details = getDetails(provider);
+		return info.values().stream()
+				.filter(d -> d != details)
+				.collect(HashMap::new, (m, d) -> m.put(d.getIdentifier(), factory.similarity(details, d)), HashMap::putAll);
+	}
+
+	public WaveDataProvider find(String identifier) {
+		return root.children()
+				.map(Supplier::get)
+				.filter(Objects::nonNull)
+				.filter(f -> Objects.equals(identifier, f.getIdentifier()))
+				.findFirst()
+				.orElse(null);
+	}
+
+	public void include(WaveDetails details) {
+		info.put(details.getIdentifier(), details);
 	}
 
 	public void refresh() {
 		root.children().forEach(f -> {
 			FileWaveDataProvider provider = f.get();
-			if (provider == null) return;
+			if (provider == null || info.containsKey(provider.getIdentifier())) return;
 
 			try {
-				WaveDetails details = WaveDetails.create(provider);
-				if (details != null) {
-					info.put(details.getIdentifier(), details);
-				}
+				getDetails(provider);
 			} catch (Exception e) {
 				AudioScene.console.warn("Failed to create WaveDetails for " +
 						provider.getKey() + " (" + e.getMessage() + ")");
@@ -62,16 +95,16 @@ public class AudioLibrary {
 		});
 	}
 
-	public static AudioLibrary load(File root) {
-		return load(new FileWaveDataProviderNode(root), null);
+	public static AudioLibrary load(File root, int sampleRate) {
+		return load(new FileWaveDataProviderNode(root), sampleRate, null);
 	}
 
-	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root) {
-		return load(root, null);
+	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
+		return load(root, sampleRate, null);
 	}
 
-	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root,
+	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate,
 									DoubleConsumer progress) {
-		return new AudioLibrary(root);
+		return new AudioLibrary(root, sampleRate);
 	}
 }

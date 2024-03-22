@@ -242,7 +242,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
-		library = AudioLibrary.load(tree, progress);
+		library = AudioLibrary.load(tree, getSampleRate(), progress);
 		patterns.setTree(tree, progress);
 	}
 

@@ -16,9 +16,7 @@
 
 package org.almostrealism.audio.data;
 
-import org.almostrealism.audio.AudioScene;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.io.ConsoleFeatures;
 
 public class WaveDetails {
 	private String identifier;
@@ -28,10 +26,11 @@ public class WaveDetails {
 	private int frameCount;
 	private PackedCollection<?> data;
 
-	private double fftSampleRate;
-	private int fftChannelCount;
-	private int fftFrameCount;
-	private PackedCollection<?> fftData;
+	private double freqSampleRate;
+	private int freqChannelCount;
+	private int freqBinCount;
+	private int freqFrameCount;
+	private PackedCollection<?> freqData;
 
 	public WaveDetails(String identifier) {
 		this.identifier = identifier;
@@ -73,54 +72,43 @@ public class WaveDetails {
 		this.data = data;
 	}
 
-	public double getFftSampleRate() {
-		return fftSampleRate;
+	public double getFreqSampleRate() {
+		return freqSampleRate;
 	}
 
-	public void setFftSampleRate(double fftSampleRate) {
-		this.fftSampleRate = fftSampleRate;
+	public void setFreqSampleRate(double freqSampleRate) {
+		this.freqSampleRate = freqSampleRate;
 	}
 
-	public int getFftChannelCount() {
-		return fftChannelCount;
+	public int getFreqChannelCount() {
+		return freqChannelCount;
 	}
 
-	public void setFftChannelCount(int fftChannelCount) {
-		this.fftChannelCount = fftChannelCount;
+	public void setFreqChannelCount(int freqChannelCount) {
+		this.freqChannelCount = freqChannelCount;
 	}
 
-	public int getFftFrameCount() {
-		return fftFrameCount;
+	public int getFreqBinCount() {
+		return freqBinCount;
 	}
 
-	public void setFftFrameCount(int fftFrameCount) {
-		this.fftFrameCount = fftFrameCount;
+	public void setFreqBinCount(int freqBinCount) {
+		this.freqBinCount = freqBinCount;
 	}
 
-	public PackedCollection<?> getFftData() {
-		return fftData;
+	public int getFreqFrameCount() {
+		return freqFrameCount;
 	}
 
-	public void setFftData(PackedCollection<?> fftData) {
-		this.fftData = fftData;
+	public void setFreqFrameCount(int freqFrameCount) {
+		this.freqFrameCount = freqFrameCount;
 	}
 
-	public static WaveDetails create(WaveDataProvider provider) {
-		System.out.println(provider.getKey() + " - " + provider.getIdentifier());
+	public PackedCollection<?> getFreqData() {
+		return freqData;
+	}
 
-		WaveDetails details = new WaveDetails(provider.getIdentifier());
-		WaveData data = provider.get();
-		details.setSampleRate(data.getSampleRate());
-		details.setChannelCount(1);
-		details.setFrameCount(data.getCollection().getMemLength());
-		details.setData(data.getCollection());
-
-		PackedCollection<?> fft = data.fft();
-		details.setFftSampleRate(data.getSampleRate() / (double) WaveData.FFT_POOL * WaveData.FFT_BINS);
-		details.setFftChannelCount(1);
-		details.setFftFrameCount(fft.getMemLength());
-		details.setFftData(fft);
-
-		return details;
+	public void setFreqData(PackedCollection<?> freqData) {
+		this.freqData = freqData;
 	}
 }
