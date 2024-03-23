@@ -681,7 +681,7 @@ public class WavFile implements AutoCloseable {
 	public static Function<WaveCellData, WaveCell> load(File f, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
 		WaveData waveform = WaveData.load(f);
 		return data -> new WaveCell(data, waveform.getCollection(), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(waveform.getCollection().getMemLength()));
+				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(waveform.getCollection().getMemLength()));
 	}
 
 	public static void write(WaveData data, File f) throws IOException {

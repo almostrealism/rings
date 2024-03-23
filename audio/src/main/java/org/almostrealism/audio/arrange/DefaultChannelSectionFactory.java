@@ -205,7 +205,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 
 				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
-				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
+				cells = cells.map(fc(i -> lp(lp, scalar(FixedFilterChromosome.defaultResonance))));
 			}
 
 			OperationList process = new OperationList();

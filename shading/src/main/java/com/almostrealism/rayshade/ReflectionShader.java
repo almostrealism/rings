@@ -139,9 +139,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			Producer<Scalar> c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			Producer<Scalar> reflective = scalarAdd(v(reflectivity), v(1 - reflectivity)
-							.multiply(scalarPow(c, v(5.0))));
+			Producer<Scalar> c = scalar(1).subtract(dotProduct(minus(n), nor).divide(cp));
+			Producer<Scalar> reflective = scalarAdd(scalar(reflectivity), scalar(1 - reflectivity)
+							.multiply(scalarPow(c, scalar(5.0))));
 			Producer<RGB> fcolor = color;
 			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
 
@@ -172,9 +172,9 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			}
 			 */
 
-			Producer<Scalar> c = v(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			Producer<Scalar> reflective = v(reflectivity).add(
-					v(1 - reflectivity).multiply(pow(c, v(5.0))));
+			Producer<Scalar> c = scalar(1).subtract(dotProduct(minus(n), nor).divide(cp));
+			Producer<Scalar> reflective = scalar(reflectivity).add(
+					scalar(1 - reflectivity).multiply(pow(c, scalar(5.0))));
 			Producer<RGB> fcolor = color;
 			color = multiply(fcolor, multiply(fr, cfromScalar(reflective)));
 

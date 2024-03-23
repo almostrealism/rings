@@ -17,7 +17,6 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.code.OperationProfile;
-import io.almostrealism.kernel.KernelPreferences;
 import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
@@ -35,14 +34,13 @@ import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.function.Supplier;
 
 public class DelayCellTest implements CellFeatures {
 	@Test
 	public void delay() {
 		CellList c = w("Library/Snare Perc DD.wav")
-				.d(i -> v(2.0))
+				.d(i -> scalar(2.0))
 				.o(i -> new File("results/delay-cell-test.wav"));
 		Supplier<Runnable> r = c.sec(6);
 		r.get().run();
@@ -51,7 +49,7 @@ public class DelayCellTest implements CellFeatures {
 	@Test
 	public void delaySum() {
 		CellList c = w("Library/Snare Perc DD.wav", "Library/Snare Perc DD.wav")
-				.d(i -> i > 0 ? v(2.0) : v(1.0))
+				.d(i -> i > 0 ? scalar(2.0) : scalar(1.0))
 				.sum()
 				.o(i -> new File("results/delay-cell-sum-test.wav"));
 		Supplier<Runnable> r = c.sec(6);
@@ -61,7 +59,7 @@ public class DelayCellTest implements CellFeatures {
 	@Test
 	public void delayScaleFactor() {
 		CellList c = w("Library/Snare Perc DD.wav")
-				.d(i -> v(2.0))
+				.d(i -> scalar(2.0))
 				.map(fc(i -> sf(0.5)))
 				.o(i -> new File("results/delay-cell-scale-factor-test.wav"));
 		Supplier<Runnable> r = c.sec(6);
@@ -73,7 +71,7 @@ public class DelayCellTest implements CellFeatures {
 		Supplier<Runnable> r =
 				w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
-						.d(i -> v(2.0))
+						.d(i -> scalar(2.0))
 						.o(i -> new File("results/filter-delay-cell.wav"))
 						.sec(6);
 		r.get().run();
@@ -84,7 +82,7 @@ public class DelayCellTest implements CellFeatures {
 		Supplier<Runnable> r =
 				iter(w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
-						.d(i -> v(2.0))
+						.d(i -> scalar(2.0))
 						.o(i -> new File("results/filter-loop-comparison-a.wav")),
 						t -> loop(t.tick(), 6 * OutputLine.sampleRate), true);
 
@@ -100,7 +98,7 @@ public class DelayCellTest implements CellFeatures {
 		r =
 				iter(w("Library/Snare Perc DD.wav")
 								.f(i -> hp(2000, 0.1))
-								.d(i -> v(2.0))
+								.d(i -> scalar(2.0))
 								.o(i -> new File("results/filter-loop-comparison-b.wav")),
 						t -> loop(Process.isolated(t.tick()), 6 * OutputLine.sampleRate), true);
 
@@ -124,7 +122,7 @@ public class DelayCellTest implements CellFeatures {
 		Supplier<Runnable> r =
 				iter(w("Library/Snare Perc DD.wav")
 						.f(i -> hp(2000, 0.1))
-						.d(i -> v(2.0))
+						.d(i -> scalar(2.0))
 						.map(fc(i -> new DelayNetwork(32, OutputLine.sampleRate, false)))
 						.o(i -> new File("results/reverb-delay-cell-test.wav")),
 						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
@@ -150,7 +148,7 @@ public class DelayCellTest implements CellFeatures {
 		cells.addRequirement(adjustment);
 
 		cells = cells
-				.d(i -> v(2.6), i -> c(2.0).add((Producer) adjustment.getResultant(c(1.0))))
+				.d(i -> scalar(2.6), i -> c(2.0).add((Producer) adjustment.getResultant(c(1.0))))
 				.o(i -> new File("results/adjust-delay-cell-test.wav"));
 
 		Supplier<Runnable> r = cells.sec(7.5);
@@ -165,12 +163,12 @@ public class DelayCellTest implements CellFeatures {
 
 		Supplier<Runnable> r =
 				w("Library/Snare Perc DD.wav")
-						.d(i -> v(2.0))
+						.d(i -> scalar(2.0))
 						.o(i -> new File("results/delay-cell-abort-test.wav"))
 						.sec(120);
 		Runnable op = r.get();
 
-		Runnable abort = a(1, p((Scalar) OperationList.getAbortFlag()), v(1.0)).get();
+		Runnable abort = a(1, p((Scalar) OperationList.getAbortFlag()), scalar(1.0)).get();
 
 		new Thread(() -> {
 			try {

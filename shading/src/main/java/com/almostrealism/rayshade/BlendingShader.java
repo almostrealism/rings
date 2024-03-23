@@ -17,7 +17,6 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
@@ -81,7 +80,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 		
 		Supplier<Evaluable<? extends Vector>> l = p.getLightDirection();
 
-		Producer<Scalar> k = dotProduct(direction(n), l).add(v(1.0));
+		Producer<Scalar> k = dotProduct(direction(n), l).add(scalar(1.0));
 		Producer<Scalar> oneMinusK = scalar(1.0).subtract(k);
 		
 		RGB hc = this.hotColor.get().evaluate(p);
