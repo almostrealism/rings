@@ -37,6 +37,7 @@ import java.util.function.Supplier;
 public class AudioLibrary implements ConsoleFeatures {
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
 	private Map<String, WaveDetails> info;
+	private Map<String, String> identifiers;
 
 	private int sampleRate;
 	private WaveDetailsFactory factory;
@@ -44,8 +45,9 @@ public class AudioLibrary implements ConsoleFeatures {
 	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
 		this.root = root;
 		this.info = new HashMap<>();
+		this.identifiers = new HashMap<>();
 		this.sampleRate = sampleRate;
-		this.factory = new WaveDetailsFactory(8, 0.5, sampleRate);
+		this.factory = new WaveDetailsFactory(8, 0.25, sampleRate);
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
@@ -60,8 +62,14 @@ public class AudioLibrary implements ConsoleFeatures {
 		return info.values();
 	}
 
+	public WaveDetails getDetails(String key) {
+		String id = identifiers.computeIfAbsent(key, k -> new FileWaveDataProvider(key).getIdentifier());
+		return info.computeIfAbsent(id, k -> factory.forProvider(new FileWaveDataProvider(key)));
+	}
+
 	public WaveDetails getDetails(WaveDataProvider provider) {
-		return info.computeIfAbsent(provider.getIdentifier(), k -> factory.forProvider(provider));
+		String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
+		return info.computeIfAbsent(id, k -> factory.forProvider(provider));
 	}
 
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
