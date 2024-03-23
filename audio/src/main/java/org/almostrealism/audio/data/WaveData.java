@@ -128,7 +128,8 @@ public class WaveData implements SamplingFeatures {
 				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
 
 				for (int i = 0; i < count; i++) {
-					frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
+					frameIn.setMem(0, getCollection(), i * FFT_BINS,
+							Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
 					fft.into(frameOut).evaluate(frameIn);
 					magnitude
 							.into(out.range(shape(finalBins, 1), i * finalBins).traverseEach())

@@ -69,7 +69,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	public WaveDetails forWaveData(String identifier, WaveData data) {
 		if (data.getSampleRate() != getSampleRate()) {
-			throw new IllegalArgumentException("Sample rate mismatch");
+			return new WaveDetails(identifier, data.getSampleRate());
 		}
 
 		WaveDetails details = new WaveDetails(identifier);
@@ -97,10 +97,14 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 		TraversalPolicy overlap = shape(n, freqBins, 1);
 
-		PackedCollection<?> aFft = a.getFreqData().range(overlap).traverse(1);
-		PackedCollection<?> bFft = b.getFreqData().range(overlap).traverse(1);
-		PackedCollection diff = difference.evaluate(aFft, bFft);
-		double d = diff.doubleStream().sum();
+		double d = 0.0;
+
+		if (n > 0) {
+			PackedCollection<?> aFft = a.getFreqData().range(overlap).traverse(1);
+			PackedCollection<?> bFft = b.getFreqData().range(overlap).traverse(1);
+			PackedCollection diff = difference.evaluate(aFft, bFft);
+			d += diff.doubleStream().sum();
+		}
 
 		if (a.getFreqFrameCount() > n) {
 			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize()).doubleStream().sum();

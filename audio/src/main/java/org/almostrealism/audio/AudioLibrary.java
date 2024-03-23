@@ -22,16 +22,19 @@ import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.data.WaveDetailsFactory;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 
-public class AudioLibrary {
+public class AudioLibrary implements ConsoleFeatures {
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
 	private Map<String, WaveDetails> info;
 
@@ -62,10 +65,19 @@ public class AudioLibrary {
 	}
 
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
-		WaveDetails details = getDetails(provider);
-		return info.values().stream()
-				.filter(d -> d != details)
-				.collect(HashMap::new, (m, d) -> m.put(d.getIdentifier(), factory.similarity(details, d)), HashMap::putAll);
+		try {
+			WaveDetails details = getDetails(provider);
+			log("Loading similarities for " + details.getIdentifier() + " (" + info.size() + " alternatives)");
+
+			return info.values().stream()
+					.filter(d -> d != details)
+					.collect(HashMap::new, (m, d) -> m.put(d.getIdentifier(), factory.similarity(details, d)), HashMap::putAll);
+		} catch (Exception e) {
+			log("Failed to load similarities for " + provider.getIdentifier() + " (" + e.getMessage() + ")");
+			return new HashMap<>();
+		} finally {
+			log("Loaded similarities for " + provider.getIdentifier());
+		}
 	}
 
 	public WaveDataProvider find(String identifier) {
@@ -82,6 +94,17 @@ public class AudioLibrary {
 	}
 
 	public void refresh() {
+		refresh(null);
+	}
+
+	public void refresh(DoubleConsumer progress) {
+		double count = progress == null ? 0 : root.children().count();
+		if (count > 0) {
+			progress.accept(0.0);
+		}
+
+		AtomicLong total = new AtomicLong(0);
+
 		root.children().forEach(f -> {
 			FileWaveDataProvider provider = f.get();
 			if (provider == null || info.containsKey(provider.getIdentifier())) return;
@@ -91,8 +114,17 @@ public class AudioLibrary {
 			} catch (Exception e) {
 				AudioScene.console.warn("Failed to create WaveDetails for " +
 						provider.getKey() + " (" + e.getMessage() + ")");
+			} finally {
+				if (count > 0) {
+					progress.accept(total.addAndGet(1) / count);
+				}
 			}
 		});
+	}
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 
 	public static AudioLibrary load(File root, int sampleRate) {

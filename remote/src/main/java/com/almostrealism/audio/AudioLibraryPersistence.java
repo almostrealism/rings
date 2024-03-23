@@ -79,9 +79,19 @@ public class AudioLibraryPersistence {
 		}
 	}
 
-	public static AudioLibrary loadLibrary(File root, int sampleRate, Supplier<InputStream> in) throws IOException {
-		AudioLibrary library = AudioLibrary.load(root, sampleRate);
+	public static AudioLibrary loadLibrary(AudioLibrary library, String dataPrefix) {
+		try {
+			return loadLibrary(library, new LibraryDestination(dataPrefix).in());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
+	public static AudioLibrary loadLibrary(File root, int sampleRate, Supplier<InputStream> in) throws IOException {
+		return loadLibrary(AudioLibrary.load(root, sampleRate), in);
+	}
+
+	public static AudioLibrary loadLibrary(AudioLibrary library, Supplier<InputStream> in) throws IOException {
 		InputStream input = in.get();
 
 		while (input != null) {

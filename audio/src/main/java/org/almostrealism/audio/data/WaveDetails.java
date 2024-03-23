@@ -33,7 +33,12 @@ public class WaveDetails {
 	private PackedCollection<?> freqData;
 
 	public WaveDetails(String identifier) {
+		this(identifier, -1);
+	}
+
+	public WaveDetails(String identifier, int sampleRate) {
 		this.identifier = identifier;
+		this.sampleRate = sampleRate;
 	}
 
 	public String getIdentifier() {

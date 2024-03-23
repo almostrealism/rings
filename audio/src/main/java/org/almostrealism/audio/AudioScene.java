@@ -235,15 +235,21 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public AudioLibrary getLibrary() { return library; }
 
-	public void setLibrary(AudioLibrary library) { this.library = library; }
+	public void setLibrary(AudioLibrary library) {
+		setLibrary(library, null);
+	}
+
+	public void setLibrary(AudioLibrary library, DoubleConsumer progress) {
+		this.library = library;
+		patterns.setTree(getLibrary().getRoot(), progress);
+	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree) {
 		setLibraryRoot(tree, null);
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
-		library = AudioLibrary.load(tree, getSampleRate(), progress);
-		patterns.setTree(tree, progress);
+		setLibrary(AudioLibrary.load(tree, getSampleRate(), progress), progress);
 	}
 
 	public Animation<T> getScene() { return scene; }
@@ -359,10 +365,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		return settings;
 	}
 
-	public void setSettings(Settings settings) { setSettings(settings, this::createTree, null); }
+	public void setSettings(Settings settings) { setSettings(settings, this::createLibrary, null); }
 
 	public void setSettings(Settings settings,
-							Function<String, FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>>> libraryProvider,
+							Function<String, AudioLibrary> libraryProvider,
 							DoubleConsumer progress) {
 		setBPM(settings.getBpm());
 		setMeasureSize(settings.getMeasureSize());
@@ -373,7 +379,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.getSections().forEach(s -> sections.addSection(s.getPosition(), s.getLength()));
 
 		if (settings.getLibraryRoot() != null) {
-			setLibraryRoot(libraryProvider.apply(settings.getLibraryRoot()), progress);
+			setLibrary(libraryProvider.apply(settings.getLibraryRoot()), progress);
 		}
 
 		progression.setSettings(settings.getChordProgression());
@@ -522,10 +528,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void loadSettings(File file) throws IOException {
-		loadSettings(file, this::createTree, null);
+		loadSettings(file, this::createLibrary, null);
 	}
 
-	public void loadSettings(File file, Function<String, FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>>> libraryProvider, DoubleConsumer progress) throws IOException {
+	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) throws IOException {
 		if (file.exists()) {
 			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
@@ -634,6 +640,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setReverbChannels(List.of(1, 2, 3, 4, 5));
 			return settings;
 		}
+	}
+
+	private AudioLibrary createLibrary(String f) {
+		return new AudioLibrary(createTree(f), getSampleRate());
 	}
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> createTree(String f) {
