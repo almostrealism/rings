@@ -65,7 +65,6 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public WaveDetails forProvider(WaveDataProvider provider) {
-		System.out.println(provider.getKey() + " - " + provider.getIdentifier());
 		return forWaveData(provider.getIdentifier(), provider.get());
 	}
 
