@@ -117,7 +117,8 @@ public class AudioLibraryPersistence {
 				.setFreqBinCount(details.getFreqBinCount())
 				.setFreqChannelCount(details.getFreqChannelCount())
 				.setFreqFrameCount(details.getFreqFrameCount())
-				.setFreqData(CollectionEncoder.encode(details.getFreqData()));
+				.setFreqData(CollectionEncoder.encode(details.getFreqData()))
+				.putAllSimilarities(details.getSimilarities());
 		if (includeAudio) data.setData(CollectionEncoder.encode(details.getData()));
 		return data.build();
 	}
@@ -132,6 +133,7 @@ public class AudioLibraryPersistence {
 		details.setFreqChannelCount(data.getFreqChannelCount());
 		details.setFreqFrameCount(data.getFreqFrameCount());
 		details.setFreqData(CollectionEncoder.decode(data.getFreqData()));
+		details.getSimilarities().putAll(data.getSimilaritiesMap());
 		if (data.hasData()) details.setData(CollectionEncoder.decode(data.getData()));
 		return details;
 	}

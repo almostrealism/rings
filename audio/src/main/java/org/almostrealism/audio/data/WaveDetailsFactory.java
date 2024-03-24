@@ -107,14 +107,26 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		if (a.getFreqFrameCount() > n) {
-			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize()).doubleStream().sum();
+			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize())
+					.doubleStream().map(Math::abs).sum();
 		}
 
 		if (b.getFreqFrameCount() > n) {
-			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize()).doubleStream().sum();
+			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize())
+					.doubleStream().map(Math::abs).sum();
 		}
 
-		return d;
+		double max = Math.max(
+				a.getFreqFrameCount() <= 0 ? 0.0 : a.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0),
+				b.getFreqFrameCount() <= 0 ? 0.0 : b.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0));
+		max = max * freqBins * Math.max(a.getFreqFrameCount(), b.getFreqFrameCount());
+		double r = max == 0 ? Double.MAX_VALUE : (d / max);
+
+		if (r > 1.0 && max != 0) {
+			warn("Similarity = " + r);
+		}
+
+		return r;
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft) {

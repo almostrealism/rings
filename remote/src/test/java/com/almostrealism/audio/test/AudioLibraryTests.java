@@ -61,7 +61,7 @@ public class AudioLibraryTests {
 		FileWaveDataProvider f = new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Clap 707 Mod 37.wav");
 		WaveDetails d = library.getDetails(f);
 
-		Map<String, Double> similarities = library.getSimilarities(f);
+		Map<String, Double> similarities = library.getDetails(f).getSimilarities();
 		similarities.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)

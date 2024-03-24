@@ -18,6 +18,9 @@ package org.almostrealism.audio.data;
 
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WaveDetails {
 	private String identifier;
 
@@ -32,6 +35,8 @@ public class WaveDetails {
 	private int freqFrameCount;
 	private PackedCollection<?> freqData;
 
+	private Map<String, Double> similarities;
+
 	public WaveDetails(String identifier) {
 		this(identifier, -1);
 	}
@@ -39,6 +44,7 @@ public class WaveDetails {
 	public WaveDetails(String identifier, int sampleRate) {
 		this.identifier = identifier;
 		this.sampleRate = sampleRate;
+		this.similarities = new HashMap<>();
 	}
 
 	public String getIdentifier() {
@@ -115,5 +121,13 @@ public class WaveDetails {
 
 	public void setFreqData(PackedCollection<?> freqData) {
 		this.freqData = freqData;
+	}
+
+	public Map<String, Double> getSimilarities() {
+		return similarities;
+	}
+
+	public void setSimilarities(Map<String, Double> similarities) {
+		this.similarities = similarities;
 	}
 }

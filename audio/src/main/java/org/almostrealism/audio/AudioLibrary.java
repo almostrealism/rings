@@ -63,29 +63,12 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public WaveDetails getDetails(String key) {
-		String id = identifiers.computeIfAbsent(key, k -> new FileWaveDataProvider(key).getIdentifier());
-		return info.computeIfAbsent(id, k -> factory.forProvider(new FileWaveDataProvider(key)));
+		return getDetails(new FileWaveDataProvider(key));
 	}
 
 	public WaveDetails getDetails(WaveDataProvider provider) {
 		String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
-		return info.computeIfAbsent(id, k -> factory.forProvider(provider));
-	}
-
-	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
-		try {
-			WaveDetails details = getDetails(provider);
-			log("Loading similarities for " + details.getIdentifier() + " (" + info.size() + " alternatives)");
-
-			return info.values().stream()
-					.filter(d -> d != details)
-					.collect(HashMap::new, (m, d) -> m.put(d.getIdentifier(), factory.similarity(details, d)), HashMap::putAll);
-		} catch (Exception e) {
-			log("Failed to load similarities for " + provider.getIdentifier() + " (" + e.getMessage() + ")");
-			return new HashMap<>();
-		} finally {
-			log("Loaded similarities for " + provider.getIdentifier());
-		}
+		return computeSimilarities(info.computeIfAbsent(id, k -> computeDetails(provider)));
 	}
 
 	public WaveDataProvider find(String identifier) {
@@ -99,6 +82,27 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public void include(WaveDetails details) {
 		info.put(details.getIdentifier(), details);
+	}
+
+	protected WaveDetails computeDetails(WaveDataProvider provider) {
+		return factory.forProvider(provider);
+	}
+
+	protected WaveDetails computeSimilarities(WaveDetails details) {
+		try {
+			info.values().stream()
+					.filter(d -> !Objects.equals(d.getIdentifier(), details.getIdentifier()))
+					.filter(d -> !details.getSimilarities().containsKey(d.getIdentifier()))
+					.forEach(d -> {
+						double similarity = factory.similarity(details, d);
+						details.getSimilarities().put(d.getIdentifier(), similarity);
+						d.getSimilarities().put(details.getIdentifier(), similarity);
+					});
+		} catch (Exception e) {
+			log("Failed to load similarities for " + details.getIdentifier() + " (" + e.getMessage() + ")");
+		}
+
+		return details;
 	}
 
 	public void refresh() {
@@ -115,9 +119,9 @@ public class AudioLibrary implements ConsoleFeatures {
 
 		root.children().forEach(f -> {
 			FileWaveDataProvider provider = f.get();
-			if (provider == null || info.containsKey(provider.getIdentifier())) return;
 
 			try {
+				if (provider == null) return;
 				getDetails(provider);
 			} catch (Exception e) {
 				AudioScene.console.warn("Failed to create WaveDetails for " +

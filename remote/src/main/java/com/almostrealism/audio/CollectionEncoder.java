@@ -24,6 +24,8 @@ import java.util.stream.IntStream;
 
 public class CollectionEncoder {
 	public static Audio.CollectionData encode(PackedCollection<?> c) {
+		if (c == null) return Audio.CollectionData.getDefaultInstance();
+
 		Audio.CollectionData.Builder data = Audio.CollectionData.newBuilder();
 		data.setTraversalPolicy(encode(c.getShape()));
 		c.doubleStream().forEach(data::addData);
@@ -39,6 +41,8 @@ public class CollectionEncoder {
 
 	public static PackedCollection<?> decode(Audio.CollectionData data) {
 		TraversalPolicy shape = decode(data.getTraversalPolicy());
+		if (shape.getDimensions() == 0) return null;
+
 		PackedCollection<?> c = new PackedCollection<>(shape);
 		c.setMem(data.getDataList().stream().mapToDouble(d -> d).toArray());
 		return c;

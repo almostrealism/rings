@@ -31,4 +31,6 @@ message WaveDetailData {
   int32 freq_bin_count = 8;
   int32 freq_frame_count = 9;
   CollectionData freq_data = 10;
+
+  map<string, double> similarities = 11;
 }
