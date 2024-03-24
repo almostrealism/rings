@@ -22,6 +22,8 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
+	public static boolean enableNormalizeSimilarity = false;
+
 	private int sampleRate;
 	private double fftSampleRate;
 
@@ -116,17 +118,21 @@ public class WaveDetailsFactory implements CodeFeatures {
 					.doubleStream().map(Math::abs).sum();
 		}
 
-		double max = Math.max(
-				a.getFreqFrameCount() <= 0 ? 0.0 : a.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0),
-				b.getFreqFrameCount() <= 0 ? 0.0 : b.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0));
-		max = max * freqBins * Math.max(a.getFreqFrameCount(), b.getFreqFrameCount());
-		double r = max == 0 ? Double.MAX_VALUE : (d / max);
+		if (enableNormalizeSimilarity) {
+			double max = Math.max(
+					a.getFreqFrameCount() <= 0 ? 0.0 : a.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0),
+					b.getFreqFrameCount() <= 0 ? 0.0 : b.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0));
+			max = max * freqBins * Math.max(a.getFreqFrameCount(), b.getFreqFrameCount());
+			double r = max == 0 ? Double.MAX_VALUE : (d / max);
 
-		if (r > 1.0 && max != 0) {
-			warn("Similarity = " + r);
+			if (r > 1.0 && max != 0) {
+				warn("Similarity = " + r);
+			}
+
+			return r;
+		} else {
+			return d;
 		}
-
-		return r;
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft) {

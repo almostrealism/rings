@@ -22,12 +22,13 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Map;
 
-public class AudioLibraryTests {
+public class AudioLibraryTests implements TestFeatures {
 	public static String LIBRARY = "Library";
 
 	static {
@@ -41,7 +42,6 @@ public class AudioLibraryTests {
 	@Test
 	public void loadDetails() {
 		AudioLibrary library = AudioLibrary.load(new File(LIBRARY), OutputLine.sampleRate);
-		// WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Clap 707 Mod 37.wav"));
 		WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav"));
 		System.out.println(details.getFreqSampleRate());
 	}
@@ -58,16 +58,18 @@ public class AudioLibraryTests {
 	public void similarities() {
 		AudioLibrary library = AudioLibraryPersistence.loadLibrary(new File(LIBRARY), OutputLine.sampleRate, "library");
 
-		FileWaveDataProvider f = new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Clap 707 Mod 37.wav");
-		WaveDetails d = library.getDetails(f);
+//		String f = "/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Clap 707 Mod 37.wav";
+		String f = "/Users/michael/Music/Samples/Essential WAV From Mars/Drums/01. Individual Hits/12. Various Percussion/Bongo 727 Clean Lo.wav";
 
-		Map<String, Double> similarities = library.getDetails(f).getSimilarities();
+		log("Similarities for " + f);
+
+		Map<String, Double> similarities = library.getSimilarities(f);
 		similarities.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)
 				.map(library::find)
 				.map(WaveDataProvider::getKey)
-				.limit(10)
+				.limit(20)
 				.forEach(System.out::println);
 	}
 }

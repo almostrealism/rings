@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
 	public static final int FFT_BINS = 1024;
-	public static final int FFT_POOL = 8;
+	public static final int FFT_POOL = 4;
 	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL / 2;
 
 	public static final int POOL_BATCH_IN = FFT_BINS / 2;
