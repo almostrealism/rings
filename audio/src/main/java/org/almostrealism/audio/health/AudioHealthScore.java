@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.health;
 
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.optimize.HealthScore;
 
 import java.io.File;
@@ -43,6 +44,10 @@ public class AudioHealthScore implements HealthScore {
 	public long getFrames() { return frames; }
 
 	public void setFrames(long frames) { this.frames = frames; }
+
+	public double getDuration() {
+		return frames / (double) OutputLine.sampleRate;
+	}
 
 	@Override
 	public double getScore() { return score; }

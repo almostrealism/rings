@@ -21,7 +21,7 @@ import io.almostrealism.relation.Tree;
 import java.io.File;
 import java.util.function.Supplier;
 
-public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T> {
+public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T>, PathResource {
 	String getRelativePath(String path);
 
 	static String getRelativePath(File root, String path) {

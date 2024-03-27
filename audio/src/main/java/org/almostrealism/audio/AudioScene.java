@@ -351,8 +351,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		settings.getSections().addAll(sections.getSections()
 				.stream().map(s -> new Settings.Section(s.getPosition(), s.getLength())).collect(Collectors.toList()));
 
-		if (library instanceof PathResource) {
-			settings.setLibraryRoot(((PathResource) library).getResourcePath());
+		if (library != null && library.getRoot() != null) {
+			settings.setLibraryRoot(library.getRoot().getResourcePath());
 		}
 
 		settings.setChordProgression(progression.getSettings());

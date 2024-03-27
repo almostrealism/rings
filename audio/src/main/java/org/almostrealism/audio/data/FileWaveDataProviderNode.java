@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileWaveDataProviderNode implements FileWaveDataProviderTree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, PathResource, Named {
+public class FileWaveDataProviderNode implements FileWaveDataProviderTree<FileWaveDataProviderNode>, Supplier<FileWaveDataProvider>, Named {
 	private File file;
 
 	public FileWaveDataProviderNode(File f) {
