@@ -221,8 +221,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
 										OutputLine.sampleRate, new NoOpGenerationProvider());
+		loadChoices(scene);
 
-		scene.getPatternManager().getChoices().addAll(createChoices());
 		scene.setTuning(new DefaultKeyboardTuning());
 		scene.setLibraryRoot(new FileWaveDataProviderNode(new File(LIBRARY)));
 
@@ -252,13 +252,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		return scene;
 	}
 
-	private static List<PatternFactoryChoice> createChoices() throws IOException {
+	private static void loadChoices(AudioScene scene) throws IOException {
 		if (enableSourcesJson) {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			PatternFactoryChoiceList choices = mapper
-					.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
-			return choices;
+			scene.loadPatterns("pattern-factory.json");
 		} else {
 			List<PatternFactoryChoice> choices = new ArrayList<>();
 
@@ -281,7 +277,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 			hats.setMaxScale(0.25);
 			choices.add(hats);
 
-			return choices;
+			scene.getPatternManager().getChoices().addAll(choices);
 		}
 	}
 }
