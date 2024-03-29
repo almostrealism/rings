@@ -214,17 +214,5 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
 			return process;
 		}
-
-		/**
-		 * This method wraps the specified {@link Factor} to prevent it from
-		 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
-		 * that would proceed to invoke the {@link org.almostrealism.time.Temporal#tick()} operation.
-		 * This is not a good solution, and this process needs to be reworked, so
-		 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
-		 * and it doesn't get invoked multiple times.
-		 */
-		private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
-			return v -> f.getResultant(v);
-		}
 	}
 }

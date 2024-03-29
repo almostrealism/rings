@@ -271,7 +271,7 @@ public class PatternLayerManager implements CodeFeatures {
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
+					next = choice.apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();

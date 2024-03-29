@@ -35,8 +35,10 @@ import java.util.stream.Collectors;
 public class PatternElementFactory {
 	public static boolean enableVolumeEnvelope = true;
 	public static boolean enableFilterEnvelope = true;
+	public static boolean enableScaleNoteLength = true;
 
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
+	public static double minNoteLengthFactor = 0.25;
 
 	private String id;
 	private String name;
@@ -175,11 +177,17 @@ public class PatternElementFactory {
 
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
+
+		if (enableScaleNoteLength) {
+			// element.setNoteDurationSelection(scale * noteLengthSelection.power(2.0, 2, -2).apply(params));
+			element.setNoteDurationSelection(scale * Math.max(minNoteLengthFactor, noteLengthSelection.positive().apply(params)));
+		} else {
+			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
+		}
 
 		double r = repeatSelection.apply(params, position, scale);
 

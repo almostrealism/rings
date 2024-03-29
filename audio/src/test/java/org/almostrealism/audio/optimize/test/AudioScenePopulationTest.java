@@ -17,6 +17,8 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
+import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.collect.PackedCollection;
@@ -115,6 +117,10 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void generate() throws Exception {
+		DefaultChannelSectionFactory.enableVolumeRiseFall = false;
+		DefaultChannelSectionFactory.enableFilter = false;
+		EfxManager.enableEfx = false;
+
 		if (!new File("Population.xml").exists()) {
 			createGenomes();
 		}

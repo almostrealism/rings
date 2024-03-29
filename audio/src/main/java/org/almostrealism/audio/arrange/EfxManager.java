@@ -31,6 +31,7 @@ import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
+	public static boolean enableEfx = true;
 	public static double maxFeedback = 0.5;
 
 	private ConfigurableGenome genome;
@@ -79,7 +80,7 @@ public class EfxManager implements CellFeatures {
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
 	public CellList apply(int channel, CellList cells) {
-		if (!wetChannels.contains(channel)) {
+		if (!enableEfx || !wetChannels.contains(channel)) {
 			return cells;
 		}
 

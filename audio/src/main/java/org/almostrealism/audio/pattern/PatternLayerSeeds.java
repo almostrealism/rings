@@ -84,7 +84,7 @@ public class PatternLayerSeeds {
 										  double bias,
 										  ScaleTraversalStrategy scaleTraversalStrategy,
 										  int scaleTraversalDepth) {
-		double count = Math.max(1.0, duration / granularity);
+		double count = Math.max(1.0, duration / granularity) + 1;
 
 		List<PatternLayer> layers = IntStream.range(0, (int) count)
 				.mapToObj(i ->
