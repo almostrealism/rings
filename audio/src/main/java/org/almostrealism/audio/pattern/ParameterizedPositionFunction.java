@@ -87,7 +87,7 @@ public class ParameterizedPositionFunction {
 	}
 
 	private double applyPositionalAlt(ParameterSet params, double position, double scale) {
-		double selection = regularity.power(2.0, 3, 1).apply(params);
+		double selection = regularity.power(2.0, 3, 4).apply(params);
 		position = mod(position, 1.0);
 
 		double regularity = scale * selection;

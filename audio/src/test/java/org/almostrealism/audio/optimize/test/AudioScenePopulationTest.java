@@ -100,7 +100,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void createGenomes() throws IOException {
-		int count = 3;
+		int count = 12;
 
 		File settings = new File("scene-settings.json");
 
@@ -108,11 +108,16 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 									AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
 		if (!settings.exists()) scene.saveSettings(settings);
 
-//		AudioScenePopulation pop = new AudioScenePopulation(scene,
-//				IntStream.range(0, count)
-//						.mapToObj(i -> scene.getGenome().random())
-//						.collect(Collectors.toList()));
-//		pop.store(new FileOutputStream("Population.xml"));
+		if (new File("Population.xml").exists()) {
+			log("Population.xml already exists");
+			return;
+		}
+
+		AudioScenePopulation pop = new AudioScenePopulation(scene,
+				IntStream.range(0, count)
+						.mapToObj(i -> scene.getGenome().random())
+						.collect(Collectors.toList()));
+		pop.store(new FileOutputStream("Population.xml"));
 	}
 
 	@Test
@@ -125,13 +130,16 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			createGenomes();
 		}
 
-		int channel = 2;
-		int count = 10;
+		int channel = 3;
 		double duration = 16;
 
 		AudioScene scene = AudioScene.load(
 				"scene-settings.json", "pattern-factory.json",
 				AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
+
+		long activeLayers = scene.getPatternManager().getPatterns()
+				.stream().filter(c -> c.getChannel() == channel).filter(c -> c.getLayerCount() > 0).count();
+		log("Channel " + channel + " has " + activeLayers  + " active pattern layers");
 
 		int frames = scene.getContext(List.of(channel)).getFrameForPosition().applyAsInt(duration);
 
@@ -140,7 +148,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		try {
 			scene.setPatternActivityBias(1.0);
 			heap.wrap(() -> {
-				AudioScenePopulation pop = loadPopulation(scene, count);
+				AudioScenePopulation pop = loadPopulation(scene);
 				return pop.generate(channel, frames,
 						() -> "generated/" + KeyUtils.generateKey() + ".wav",
 						result -> log("Generated " + result));
@@ -151,7 +159,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		}
 	}
 
-	protected AudioScenePopulation loadPopulation(AudioScene<?> scene, int count) throws FileNotFoundException {
+	protected AudioScenePopulation loadPopulation(AudioScene<?> scene) throws FileNotFoundException {
 		File file = new File("Population.xml");
 
 		if (file.exists()) {
@@ -160,9 +168,6 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			return new AudioScenePopulation(scene, genomes);
 		}
 
-		return new AudioScenePopulation(scene,
-				IntStream.range(0, count)
-						.mapToObj(i -> scene.getGenome().random())
-						.collect(Collectors.toList()));
+		throw new FileNotFoundException("Population.xml not found");
 	}
 }

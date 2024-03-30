@@ -17,17 +17,20 @@
 package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class PatternFactoryChoice {
+public class PatternFactoryChoice implements ConsoleFeatures {
 	public static boolean enableUniversalBias = true;
 
 	private PatternElementFactory factory;
@@ -126,6 +129,11 @@ public class PatternFactoryChoice {
 		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
+	}
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 
 	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
