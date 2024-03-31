@@ -88,12 +88,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
 				switch (c) {
-					case 0 -> 5; // 4;
-					case 1 -> 5; // 4;
-					case 2 -> 2; // 1;
-					case 3 -> 2; // 2;
-					case 4 -> 2; // 1;
-					case 5 -> 2; // 1;
+					case 0 -> 5;
+					case 1 -> 5;
+					case 2 -> 1;
+					case 3 -> 1;
+					case 4 -> 1;
+					case 5 -> 2;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
@@ -101,9 +101,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				switch (c) {
 					case 0 -> 5;
 					case 1 -> 5;
-					case 2 -> 6; // 4;
-					case 3 -> 6; // 5;
-					case 4 -> 5; // 4;
+					case 2 -> 6;
+					case 3 -> 6;
+					case 4 -> 5;
 					case 5 -> 1;
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};

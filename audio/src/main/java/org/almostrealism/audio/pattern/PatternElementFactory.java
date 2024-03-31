@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
@@ -25,6 +26,8 @@ import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
@@ -32,14 +35,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PatternElementFactory {
+public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableVolumeEnvelope = true;
 	public static boolean enableFilterEnvelope = true;
 	public static boolean enableScaleNoteLength = true;
 	public static boolean enableRegularizedNoteLength = false;
 
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
-	public static double noteLengthFactory = 0.5;
+	public static double noteLengthFactor = 0.5;
 
 	private String id;
 	private String name;
@@ -184,10 +187,12 @@ public class PatternElementFactory {
 					NoteDurationStrategy.NONE);
 
 		if (enableScaleNoteLength) {
+			double ls = scale > 1.0 ? 1.0 : scale;
+
 			if (enableRegularizedNoteLength) {
-				element.setNoteDurationSelection(scale * noteLengthSelection.power(2.0, 2, -2).apply(params));
+				element.setNoteDurationSelection(ls * noteLengthSelection.power(2.0, 2, -2).apply(params));
 			} else {
-				element.setNoteDurationSelection(scale * noteLengthFactory * noteLengthSelection.positive().apply(params));
+				element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
 			}
 		} else {
 			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
@@ -209,5 +214,10 @@ public class PatternElementFactory {
 		element.setScaleTraversalStrategy(scaleTraversalStrategy);
 		element.setRepeatDuration(element.getNoteDurationSelection());
 		return Optional.of(element);
+	}
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 }
