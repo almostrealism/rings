@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class PatternFactoryChoice implements ConsoleFeatures {
-	public static boolean enableUniversalBias = true;
+	public static int[] GRANULARITY_DIST;
 
 	private PatternElementFactory factory;
 	private double weight;
@@ -99,20 +99,31 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 		this.granularitySelection = granularitySelection;
 	}
 
+	// TODO  Rename to just bias
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
 	@JsonIgnore
-	public double getBias() { return enableUniversalBias ? seedBias : 0.0; }
+	public double getBias() { return seedBias; }
 
 	public void setTuning(KeyboardTuning tuning) {
 		getFactory().setTuning(tuning);
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
-		double granularity = getMaxScale() * granularitySelection.power(2, 3, -2).apply(params);
-		granularity = Math.max(getMinScale(), granularity);
-		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
+		double granularity = granularitySelection.power(2, 3, -3).apply(params);
+
+		if (GRANULARITY_DIST != null) {
+			int i;
+			double g = granularity;
+			for (i = 0; g < 1.0; i++) {
+				g *= 2;
+			}
+
+			GRANULARITY_DIST[i]++;
+		}
+
+		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), seedBias, factory, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {

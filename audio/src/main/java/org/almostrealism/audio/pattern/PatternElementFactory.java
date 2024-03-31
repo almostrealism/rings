@@ -44,6 +44,8 @@ public class PatternElementFactory implements ConsoleFeatures {
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 	public static double noteLengthFactor = 0.5;
 
+	public static int[] REPEAT_DIST;
+
 	private String id;
 	private String name;
 	private List<PatternNoteSource> sources;
@@ -186,9 +188,9 @@ public class PatternElementFactory implements ConsoleFeatures {
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
 
-		if (enableScaleNoteLength) {
-			double ls = scale > 1.0 ? 1.0 : scale;
+		double ls = scale > 1.0 ? 1.0 : scale;
 
+		if (enableScaleNoteLength) {
 			if (enableRegularizedNoteLength) {
 				element.setNoteDurationSelection(ls * noteLengthSelection.power(2.0, 2, -2).apply(params));
 			} else {
@@ -204,15 +206,23 @@ public class PatternElementFactory implements ConsoleFeatures {
 			element.setRepeatCount(1);
 		} else {
 			int c;
-			for (c = 0; r < 1.5 & c < 6; c++) {
-				r *= 2;
+			for (c = 0; r < 3 & c < 6; c++) {
+				r *= 1.8;
 			}
 
 			element.setRepeatCount(c);
 		}
 
+		if (REPEAT_DIST != null) {
+			if (repeat) {
+				REPEAT_DIST[element.getRepeatCount()]++;
+			} else {
+				REPEAT_DIST[0]++;
+			}
+		}
+
 		element.setScaleTraversalStrategy(scaleTraversalStrategy);
-		element.setRepeatDuration(element.getNoteDurationSelection());
+		element.setRepeatDuration(ls * noteLengthFactor);
 		return Optional.of(element);
 	}
 

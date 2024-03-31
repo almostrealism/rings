@@ -253,7 +253,7 @@ public class PatternLayerManager implements CodeFeatures {
 			PatternLayerSeeds seeds = getSeeds(params);
 			if (seeds != null) {
 				seeds.generator(0, duration, seedBias, scaleTraversalStrategy, scaleTraversalDepth).forEach(roots::add);
-				scale = seeds.getScale();
+				scale = seeds.getScale(duration);
 			}
 
 			if (rootCount() <= 0) {

@@ -21,6 +21,8 @@ import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
+import org.almostrealism.audio.pattern.PatternElementFactory;
+import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.time.TemporalRunner;
@@ -130,7 +132,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			createGenomes();
 		}
 
-		int channel = 3;
+		int channel = 2;
 		double duration = 16;
 
 		AudioScene scene = AudioScene.load(
@@ -156,6 +158,20 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		} finally {
 			scene.setPatternActivityBias(0.0);
 			heap.destroy();
+
+			if (PatternFactoryChoice.GRANULARITY_DIST != null) {
+				log("Granularity distribution:");
+				for (int i = 0; i < PatternFactoryChoice.GRANULARITY_DIST.length; i++) {
+					log("\t" + i + ": " + PatternFactoryChoice.GRANULARITY_DIST[i]);
+				}
+			}
+
+			if (PatternElementFactory.REPEAT_DIST != null) {
+				log("Repeat distribution:");
+				for (int i = 0; i < PatternElementFactory.REPEAT_DIST.length; i++) {
+					log("\t" + i + ": " + PatternElementFactory.REPEAT_DIST[i]);
+				}
+			}
 		}
 	}
 
