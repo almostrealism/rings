@@ -126,7 +126,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	public void generate() throws Exception {
 		DefaultChannelSectionFactory.enableVolumeRiseFall = false;
 		DefaultChannelSectionFactory.enableFilter = false;
-		EfxManager.enableEfx = false;
+		// EfxManager.enableEfx = false;
 
 		if (!new File("Population.xml").exists()) {
 			createGenomes();
