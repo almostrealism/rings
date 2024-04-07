@@ -99,7 +99,7 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 
 	@JsonIgnore
 	@Override
-	public int getCount() {
+	public long getCountLong() {
 		if (corruptFiles.contains(getResourcePath())) return 0;
 
 		if (count == null) {
