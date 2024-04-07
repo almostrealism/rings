@@ -36,7 +36,7 @@ public class PatternLayerSeeds {
 	private ParameterSet params;
 
 	public PatternLayerSeeds() {
-		this(0, 1.0, 0.0, 64.0, 0.0, null, null);
+		this(0, 1.0, 0.0625, 64.0, 0.0, null, null);
 	}
 
 	public PatternLayerSeeds(double position, double granularity, double minScale, double maxScale,
