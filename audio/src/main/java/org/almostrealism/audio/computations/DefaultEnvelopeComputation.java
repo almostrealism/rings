@@ -17,6 +17,7 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
@@ -35,7 +36,7 @@ public class DefaultEnvelopeComputation extends CollectionProducerComputationBas
 	}
 
 	@Override
-	public Scope<Scalar> getScope() {
+	public Scope<Scalar> getScope(KernelStructureContext context) {
 		HybridScope<Scalar> scope = new HybridScope<>(this);
 
 		String position = getArgument(1).valueAt(0).getSimpleExpression(getLanguage());

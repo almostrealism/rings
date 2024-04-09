@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.computations;
 
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.ParallelProcess;
 import io.almostrealism.relation.Process;
@@ -24,7 +25,6 @@ import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
-import io.almostrealism.relation.Producer;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,7 +46,7 @@ public class SilenceDurationComputation extends OperationComputationAdapter<Pack
 	}
 
 	@Override
-	public Scope<Void> getScope() {
+	public Scope<Void> getScope(KernelStructureContext context) {
 		HybridScope<Void> scope = new HybridScope<>(this);
 
 		String value = getArgument(2).valueAt(0).getSimpleExpression(getLanguage());

@@ -17,7 +17,6 @@
 package org.almostrealism.audio.sequence;
 
 import io.almostrealism.scope.HybridScope;
-import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
@@ -46,6 +45,6 @@ public class ValueSequencePush extends ValueSequenceComputation implements CodeF
 		choice.prepareScope(manager);
 
 		scope = new HybridScope(this);
-		scope.add(choice.getScope());
+		scope.add(choice.getScope(null));
 	}
 }
