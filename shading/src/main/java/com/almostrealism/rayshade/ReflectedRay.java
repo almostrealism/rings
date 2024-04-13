@@ -17,6 +17,7 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.GeometryFeatures;
@@ -87,7 +88,7 @@ public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures 
 	}
 
 	@Override
-	public Scope<Ray> getScope() {
+	public Scope<Ray> getScope(KernelStructureContext context) {
 		throw new RuntimeException("Not implemented");
 	}
 }

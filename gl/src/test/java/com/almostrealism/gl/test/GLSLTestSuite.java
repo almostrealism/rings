@@ -42,7 +42,7 @@ public class GLSLTestSuite {
 		}
 
 		GLSLPrintWriter p = new GLSLPrintWriter(System.out, new CLanguageOperations(Precision.FP32, false, false));
-		p.println(f.getScope());
+		p.println(f.getScope(null));
 	}
 
 	public static void main(String args[]) {

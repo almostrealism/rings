@@ -30,6 +30,6 @@ public class VertexShaderTest {
 		GLSLPrintWriter shaderOutput =
 				new GLSLPrintWriter(System.out,
 					new CLanguageOperations(Precision.FP32, false, false));
-		shaderOutput.println(s.getScope());
+		shaderOutput.println(s.getScope(null));
 	}
 }

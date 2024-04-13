@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -386,7 +386,7 @@ public class GLDriver implements ExpressionFeatures {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named vshade
-		this.vertexShader.getScope().write(p);
+		this.vertexShader.getScope(null).write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_VERTEX_SHADER", shader);
 	}
@@ -399,7 +399,7 @@ public class GLDriver implements ExpressionFeatures {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named fshade
-		this.fragmentShader.getScope().write(p);
+		this.fragmentShader.getScope(null).write(p);
 		String shader = new String(out.toByteArray());
 		compileShader("GL_FRAGMENT_SHADER", shader);
 	}
