@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sequence;
 
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
@@ -40,9 +41,9 @@ public class ValueSequencePush extends ValueSequenceComputation implements CodeF
 	}
 
 	@Override
-	public void prepareScope(ScopeInputManager manager) {
-		super.prepareScope(manager);
-		choice.prepareScope(manager);
+	public void prepareScope(ScopeInputManager manager, KernelStructureContext context) {
+		super.prepareScope(manager, context);
+		choice.prepareScope(manager, context);
 
 		scope = new HybridScope(this);
 		scope.add(choice.getScope(null));
