@@ -19,7 +19,7 @@ package com.almostrealism.renderable;
 import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
-import io.almostrealism.code.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
+import io.almostrealism.lang.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
 import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.StaticReference;

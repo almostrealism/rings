@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import io.almostrealism.lang.LanguageOperations;
 import org.almostrealism.c.CPrintWriter;
-import io.almostrealism.code.CodePrintWriter;
+import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.io.PrintWriter;
 
 import java.io.OutputStream;
