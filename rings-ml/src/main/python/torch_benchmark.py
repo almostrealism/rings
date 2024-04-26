@@ -24,7 +24,7 @@ def train(model, input_tensor, epochs, steps_per_epoch):
             optimizer.step()
 
 if __name__ == "__main__":
-    dim = 86
+    dim = 64
     filters = 8
     conv_size = 3
     epochs = 100
