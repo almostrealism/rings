@@ -88,8 +88,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
 				switch (c) {
-					case 0 -> 5;
-					case 1 -> 5;
+					case 0 -> 4; // 5;
+					case 1 -> 4; // 5;
 					case 2 -> 1;
 					case 3 -> 1;
 					case 4 -> 1;
@@ -99,8 +99,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		DEFAULT_LAYERS = c ->
 				switch (c) {
-					case 0 -> 5;
-					case 1 -> 5;
+					case 0 -> 4; // 5;
+					case 1 -> 3; // 5;
 					case 2 -> 3; // 6;
 					case 3 -> 3; // 6;
 					case 4 -> 4; // 5;

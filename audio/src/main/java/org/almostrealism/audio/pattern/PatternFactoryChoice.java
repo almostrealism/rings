@@ -52,7 +52,7 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight) {
-		this(factory, weight, 0.0, 16.0);
+		this(factory, weight, 0.0625, 16.0);
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
