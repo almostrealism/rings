@@ -238,10 +238,10 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 																double min,
 																double max,
 																boolean relative) {
-		CollectionProducerComputation periodicAmp = c(1.0);
+		CollectionProducer periodicAmp = c(1.0);
 
 		if (relative) scale = multiply(scale, initial);
-		CollectionProducerComputation pos = subtract(time, offset);
+		CollectionProducer pos = subtract(time, offset);
 		return bound(pos._greaterThan(c(0.0),
 						pow(polyWaveLength, c(-1.0))
 								.multiply(pos).pow(polyExp)
@@ -249,7 +249,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 				min, max);
 	}
 
-	default ProducerComputation<PackedCollection<?>> polycyclic(Producer<PackedCollection<?>> speedUpWavelength,
+	default CollectionProducer<PackedCollection<?>> polycyclic(Producer<PackedCollection<?>> speedUpWavelength,
 																Producer<PackedCollection<?>> speedUpAmp,
 																Producer<PackedCollection<?>> slowDownWavelength,
 																Producer<PackedCollection<?>> slowDownAmp,
@@ -267,7 +267,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 						.multiply(time).pow(polySpeedUpExp)));
 	}
 
-	default ProducerComputation<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
+	default CollectionProducer<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
 															  Producer<PackedCollection<?>> d,
 															  Producer<PackedCollection<?>> m,
 															  Producer<PackedCollection<?>> p,
@@ -280,37 +280,37 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 
 		double sc = maxValue - minValue;
 
-		CollectionProducerComputation scale = c(sc);
+		CollectionProducer scale = c(sc);
 		m = c(minScale).add(multiply(m, c(1.0 - minScale)));
 		p = multiply(p, subtract(c(1.0), m));
 
-		CollectionProducerComputation downOrigin = c(maxValue).subtract(multiply(scale, p));
-		CollectionProducerComputation upOrigin = c(minValue).add(multiply(scale, p));
+		CollectionProducer downOrigin = c(maxValue).subtract(multiply(scale, p));
+		CollectionProducer upOrigin = c(minValue).add(multiply(scale, p));
 
 		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
 
 		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
 
-		CollectionProducerComputation magnitude = multiply(scale, m);
-		CollectionProducerComputation start = c(choice(2, toScalar(d), originChoices), 0);
-		CollectionProducerComputation end = multiply(direction, magnitude).add(start);
+		CollectionProducer magnitude = multiply(scale, m);
+		CollectionProducer start = c(choice(2, toScalar(d), originChoices), 0);
+		CollectionProducer end = multiply(direction, magnitude).add(start);
 
-		CollectionProducerComputation pos = pow(divide(time, duration), e);
+		CollectionProducer pos = pow(divide(time, duration), e);
 
 		return add(start, multiply(end.subtract(start), pos));
 	}
 
-	default ProducerComputation<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
+	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
 																	   Producer<PackedCollection<?>> speedUpOffset,
 																	   Producer<PackedCollection<?>> time) {
 		return durationAdjustment(c(params, 0), c(params, 1), speedUpOffset, time);
 	}
 
-	default ProducerComputation<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,
+	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,
 																		Producer<PackedCollection<?>> speedUpDuration,
 																		Producer<PackedCollection<?>> speedUpOffset,
 																		Producer<PackedCollection<?>> time) {
-		CollectionProducerComputation initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
+		CollectionProducer initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
 		Producer<PackedCollection<?>> speedUp = max(c(0.0), subtract(time, speedUpOffset));
 		speedUp = floor(divide(speedUp, speedUpDuration));

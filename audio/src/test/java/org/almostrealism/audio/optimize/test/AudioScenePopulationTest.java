@@ -17,8 +17,14 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
+import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
+import org.almostrealism.audio.pattern.PatternElementFactory;
+import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
@@ -27,12 +33,18 @@ import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.util.KeyUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
@@ -86,5 +98,92 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			health.computeHealth();
 			pop.disableGenome();
 		});
+	}
+
+	@Test
+	public void createGenomes() throws IOException {
+		int count = 12;
+
+		File settings = new File("scene-settings.json");
+
+		AudioScene scene = AudioScene.load(settings.getCanonicalPath(), "pattern-factory.json",
+									AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
+		if (!settings.exists()) scene.saveSettings(settings);
+
+		if (new File("Population.xml").exists()) {
+			log("Population.xml already exists");
+			return;
+		}
+
+		AudioScenePopulation pop = new AudioScenePopulation(scene,
+				IntStream.range(0, count)
+						.mapToObj(i -> scene.getGenome().random())
+						.collect(Collectors.toList()));
+		pop.store(new FileOutputStream("Population.xml"));
+	}
+
+	@Test
+	public void generate() throws Exception {
+		DefaultChannelSectionFactory.enableVolumeRiseFall = false;
+		DefaultChannelSectionFactory.enableFilter = false;
+		// EfxManager.enableEfx = false;
+
+		if (!new File("Population.xml").exists()) {
+			createGenomes();
+		}
+
+		int channel = 2;
+		double duration = 16;
+
+		AudioScene scene = AudioScene.load(
+				"scene-settings.json", "pattern-factory.json",
+				AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
+
+		long activeLayers = scene.getPatternManager().getPatterns()
+				.stream().filter(c -> c.getChannel() == channel).filter(c -> c.getLayerCount() > 0).count();
+		log("Channel " + channel + " has " + activeLayers  + " active pattern layers");
+
+		int frames = scene.getContext(List.of(channel)).getFrameForPosition().applyAsInt(duration);
+
+		Heap heap = new Heap(8 * 1024 * 1024);
+
+		try {
+			scene.setPatternActivityBias(1.0);
+			heap.wrap(() -> {
+				AudioScenePopulation pop = loadPopulation(scene);
+				return pop.generate(channel, frames,
+						() -> "generated/" + KeyUtils.generateKey() + ".wav",
+						result -> log("Generated " + result));
+			}).call().run();
+		} finally {
+			scene.setPatternActivityBias(0.0);
+			heap.destroy();
+
+			if (PatternFactoryChoice.GRANULARITY_DIST != null) {
+				log("Granularity distribution:");
+				for (int i = 0; i < PatternFactoryChoice.GRANULARITY_DIST.length; i++) {
+					log("\t" + i + ": " + PatternFactoryChoice.GRANULARITY_DIST[i]);
+				}
+			}
+
+			if (PatternElementFactory.REPEAT_DIST != null) {
+				log("Repeat distribution:");
+				for (int i = 0; i < PatternElementFactory.REPEAT_DIST.length; i++) {
+					log("\t" + i + ": " + PatternElementFactory.REPEAT_DIST[i]);
+				}
+			}
+		}
+	}
+
+	protected AudioScenePopulation loadPopulation(AudioScene<?> scene) throws FileNotFoundException {
+		File file = new File("Population.xml");
+
+		if (file.exists()) {
+			List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
+			log("Loaded " + genomes.size() + " genomes from " + file);
+			return new AudioScenePopulation(scene, genomes);
+		}
+
+		throw new FileNotFoundException("Population.xml not found");
 	}
 }

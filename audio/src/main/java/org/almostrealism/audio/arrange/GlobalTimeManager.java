@@ -50,6 +50,7 @@ public class GlobalTimeManager implements Setup, Temporal, ConsoleFeatures {
 	public void addReset(int measure) {
 		if (resets.size() >= MAX_RESETS) throw new IllegalArgumentException("Maximum number of resets exceeded");
 		resets.add(measure);
+		resets.sort(Integer::compareTo);
 	}
 
 	public List<Integer> getResets() { return resets; }

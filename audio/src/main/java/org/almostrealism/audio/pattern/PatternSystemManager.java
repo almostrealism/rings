@@ -17,10 +17,9 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.DynamicProducer;
-import io.almostrealism.relation.Tree;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -31,7 +30,6 @@ import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.computations.PackedCollectionMax;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 
@@ -52,6 +50,7 @@ import java.util.stream.IntStream;
 
 public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableAutoVolume = true;
+	public static final boolean enableLazyDestination = false;
 	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
 
@@ -166,12 +165,19 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context) {
-		OperationList op = new OperationList("PatternSystemManager Sum");
-
-		op.add(() -> () -> this.destination = context.get().getDestination());
-		op.add(() -> () ->
+		OperationList updateDestinations = new OperationList("PatternSystemManager Update Destinations");
+		updateDestinations.add(() -> () -> this.destination = context.get().getDestination());
+		updateDestinations.add(() -> () ->
 				IntStream.range(0, patterns.size()).forEach(i ->
 						patterns.get(i).updateDestination(context.get())));
+
+		OperationList op = new OperationList("PatternSystemManager Sum");
+
+		if (enableLazyDestination) {
+			op.add(updateDestinations);
+		} else {
+			updateDestinations.get().run();
+		}
 
 		op.add(() -> () -> {
 			AudioSceneContext ctx = context.get();
@@ -189,32 +195,23 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				patterns.get(i).sum(context);
 			});
 
-//			patternsForChannel.stream().map(i -> {
-//				patterns.get(i).sum(context);
-//				return p(patterns.get(i).getDestination());
-//			}).forEach(note -> {
-//				PackedCollection<?> audio = traverse(1, note).get().evaluate();
-//				int frames = Math.min(audio.getShape().getCount(),
-//						this.destination.getShape().length(0));
-//
-//				TraversalPolicy shape = shape(frames);
-//				if (enableVerbose) log("Rendering " + frames + " frames");
-//				sum.sum(this.destination.range(shape), audio.range(shape));
-//				if (enableVerbose) log("Rendered " + frames + " frames");
-//			});
-
 			if (enableVerbose)
 				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
 		});
 
 		if (enableAutoVolume) {
-			CollectionProducer<PackedCollection<?>> max = new PackedCollectionMax(destination());
-			CollectionProducer<PackedCollection<?>> auto = max._greaterThan(c(0.0), c(0.8).divide(max), c(1.0));
+			if (enableLazyDestination) {
+				throw new UnsupportedOperationException("Lazy destination not compatible with computing max");
+			}
+
+			// CollectionProducer<PackedCollection<?>> max = c(destination()).traverse(0).max();
+			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
+			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 
 		op.add(() -> () -> {
-			sum.adjustVolume(destination, volume);
+			sum.adjustVolume(context.get().getDestination(), volume);
 		});
 
 		return op;
@@ -239,7 +236,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setScaleTraversalStrategy((c == 2 || c == 4) ?
 						ScaleTraversalStrategy.SEQUENCE :
 						ScaleTraversalStrategy.CHORD);
-				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 3 : 1);
+				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 5 : 1);
 				pattern.setFactorySelection(ParameterFunction.random());
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 

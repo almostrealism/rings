@@ -45,14 +45,14 @@ public interface ProjectionFeatures extends CodeFeatures {
 		ExpressionComputation<Scalar> pdy = r(pd);
 
 		CollectionProducer<Scalar> p = pdx.multiply(l(pos))
-								.multiply(sdx.add(v(-1.0)).pow(v(-1.0))).add(pdx.multiply(v(-0.5)));
+								.multiply(sdx.add(scalar(-1.0)).pow(scalar(-1.0))).add(pdx.multiply(scalar(-0.5)));
 		CollectionProducer<Scalar> q = pdy.multiply(r(pos))
-								.multiply(sdy.add(v(-1.0)).pow(-1.0)).add(pdy.multiply(v(-0.5)));
+								.multiply(sdy.add(scalar(-1.0)).pow(-1.0)).add(pdy.multiply(scalar(-0.5)));
 		CollectionProducer<Scalar> r = scalar(-focalLength);
 
-		CollectionProducer<Scalar> x = p.multiply(v(u.getX())).add(q.multiply(v(v.getX()))).add(r.multiply(v(w.getX())));
-		CollectionProducer<Scalar> y = p.multiply(v(u.getY())).add(q.multiply(v(v.getY()))).add(r.multiply(v(w.getY())));
-		CollectionProducer<Scalar> z = p.multiply(v(u.getZ())).add(q.multiply(v(v.getZ()))).add(r.multiply(v(w.getZ())));
+		CollectionProducer<Scalar> x = p.multiply(scalar(u.getX())).add(q.multiply(scalar(v.getX()))).add(r.multiply(scalar(w.getX())));
+		CollectionProducer<Scalar> y = p.multiply(scalar(u.getY())).add(q.multiply(scalar(v.getY()))).add(r.multiply(scalar(w.getY())));
+		CollectionProducer<Scalar> z = p.multiply(scalar(u.getZ())).add(q.multiply(scalar(v.getZ()))).add(r.multiply(scalar(w.getZ())));
 
 		CollectionProducer<Vector> pqr = vector(x, y, z);
 		CollectionProducer<Scalar> len = length(pqr);
@@ -88,16 +88,16 @@ public interface ProjectionFeatures extends CodeFeatures {
 	}
 
 	private ExpressionComputation<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
-		CollectionProducer<Scalar>  x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(v(-1.0)));
-		CollectionProducer<Scalar> y = z(t).multiply(x(w)).add(x(t).multiply(z(w)).multiply(v(-1.0)));
-		CollectionProducer<Scalar>  z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(v(-1.0)));
+		CollectionProducer<Scalar>  x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar> y = z(t).multiply(x(w)).add(x(t).multiply(z(w)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar>  z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
 		return normalize(vector(x, y, z));
 	}
 
 	private CollectionProducer<Vector> v(CollectionProducer<Vector> w, CollectionProducer<Vector> u) {
-		CollectionProducer<Scalar>  x = y(w).multiply(z(u)).add(z(w).multiply(y(u)).multiply(v(-1.0)));
-		CollectionProducer<Scalar>  y = z(w).multiply(x(u)).add(x(w).multiply(z(u)).multiply(v(-1.0)));
-		CollectionProducer<Scalar>  z = x(w).multiply(y(u)).add(y(w).multiply(x(u)).multiply(v(-1.0)));
+		CollectionProducer<Scalar>  x = y(w).multiply(z(u)).add(z(w).multiply(y(u)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar>  y = z(w).multiply(x(u)).add(x(w).multiply(z(u)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar>  z = x(w).multiply(y(u)).add(y(w).multiply(x(u)).multiply(scalar(-1.0)));
 		return vector(x, y, z);
 	}
 }

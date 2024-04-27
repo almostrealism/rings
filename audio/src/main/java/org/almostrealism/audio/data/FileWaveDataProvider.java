@@ -17,24 +17,25 @@
 package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 import org.almostrealism.io.Console;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class FileWaveDataProvider extends WaveDataProviderAdapter implements PathResource {
 	private static List<String> corruptFiles = new ArrayList<>();
+	private static Map<String, String> identifiers = new HashMap<>();
 
 	private Integer sampleRate;
 	private Integer count;
@@ -63,6 +64,17 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 	public void setResourcePath(String resourcePath) {
 		clearKey(resourcePath);
 		this.resourcePath = resourcePath;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifiers.computeIfAbsent(getKey(), k -> {
+			try (InputStream is = Files.newInputStream(Paths.get(getKey()))) {
+				return DigestUtils.md5Hex(is);
+			} catch (IOException e) {
+				return null;
+			}
+		});
 	}
 
 	@JsonIgnore

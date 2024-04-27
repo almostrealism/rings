@@ -40,7 +40,6 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.AcceleratedTimeSeries;
-import org.almostrealism.time.Temporal;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -140,9 +139,9 @@ public class AssignableGenomeTest implements CellFeatures {
 
 		CellList cells =
 					w(frequencies.iterator().next(), frequencies.iterator().next())
-							.d(i -> v(1.0))
-							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, c(0.0), v(0.1), true)
-										.andThen(new AudioPassFilter(OutputLine.sampleRate, c(20000), v(0.1), false))),
+							.d(i -> scalar(1.0))
+							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, c(0.0), scalar(0.1), true)
+										.andThen(new AudioPassFilter(OutputLine.sampleRate, c(20000), scalar(0.1), false))),
 									i -> {
 										if (i == 0) {
 											return g(0.0, 1.0);

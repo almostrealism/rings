@@ -31,11 +31,13 @@ import java.util.function.DoubleSupplier;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
+	public static boolean enableEfx = true;
+	public static double maxWet = 0.5;
 	public static double maxFeedback = 0.5;
 
 	private ConfigurableGenome genome;
 	private SimpleChromosome delayTimes;
-	private SimpleChromosome delayFeedbacks;
+	private SimpleChromosome delayLevels;
 	private int channels;
 	private List<Integer> wetChannels;
 
@@ -68,10 +70,11 @@ public class EfxManager implements CellFeatures {
 		delayTimes = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
 
-		delayFeedbacks = genome.addSimpleChromosome(1);
+		delayLevels = genome.addSimpleChromosome(2);
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = delayFeedbacks.addGene();
-			if (maxFeedback != 1.0) g.setTransform(p -> multiply(p, c(maxFeedback)));
+			SimpleGene g = delayLevels.addGene();
+			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
+			if (maxFeedback != 1.0) g.setTransform(1, p -> multiply(p, c(maxFeedback)));
 		});
 	}
 
@@ -79,8 +82,12 @@ public class EfxManager implements CellFeatures {
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
 	public CellList apply(int channel, CellList cells) {
-		if (!wetChannels.contains(channel)) {
+		if (!enableEfx || !wetChannels.contains(channel)) {
 			return cells;
+		}
+
+		if (cells.size() != 1) {
+			warn("CellList size is " + cells.size());
 		}
 
 		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
@@ -88,12 +95,18 @@ public class EfxManager implements CellFeatures {
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
 						scalar(shape(1), multiply(c(beatDuration.getAsDouble()), delay), 0),
-						v(1.0)))
+						scalar(1.0)))
 				.collect(CellList.collector());
 
-		cells = cells.m(fi(), delays)
-				.mself(fi(), i -> g(delayFeedbacks.valueAt(channel, 0)))
+		CellList branch[] = cells.branch(fc(i -> delayLevels.valueAt(channel, 0)),
+										fc(i -> sf(1.0)));
+		CellList wet = branch[0];
+		CellList dry = branch[1];
+
+		wet = wet.m(fi(), delays)
+				.mself(fi(), i -> g(delayLevels.valueAt(channel, 1)))
 				.sum();
+		cells = cells(wet, dry).sum();
 
 		return cells;
 	}

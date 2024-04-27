@@ -56,6 +56,11 @@ public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 	}
 
 	@Override
+	public String getIdentifier() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	protected WaveData load() {
 		return new WaveData(source.get(), sampleRate);
 	}

@@ -54,7 +54,7 @@ public class ChordProgressionManager {
 	public ChordProgressionManager(ConfigurableGenome genome, Scale<?> key) {
 		this.genome = genome;
 		setKey(key);
-		setChordDepth(4);
+		setChordDepth(5);
 		init();
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio;
 
-import io.almostrealism.code.ProducerComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 
@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.function.Function;
 
 public class DynamicAudioCell extends AudioCellChoiceAdapter {
-	public DynamicAudioCell(ProducerComputation<PackedCollection<?>> decision,
-								List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
+	public DynamicAudioCell(CollectionProducer<PackedCollection<?>> decision,
+							List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
 		this(PolymorphicAudioData.bank(choices.size()), decision, choices);
 	}
 
-	public DynamicAudioCell(PackedCollection<PolymorphicAudioData> data, ProducerComputation<PackedCollection<?>> decision,
+	public DynamicAudioCell(PackedCollection<PolymorphicAudioData> data, CollectionProducer<PackedCollection<?>> decision,
 							List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
 		super(decision, data::get, choices, true);
 	}

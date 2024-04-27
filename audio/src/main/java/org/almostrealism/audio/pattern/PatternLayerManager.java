@@ -104,7 +104,9 @@ public class PatternLayerManager implements CodeFeatures {
 	public PackedCollection<?> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
-		destination = context.getDestination();
+		if (context.getChannels().contains(channel)) {
+			destination = context.getDestination();
+		}
 	}
 
 	public List<PatternFactoryChoice> getChoices() {
@@ -251,7 +253,7 @@ public class PatternLayerManager implements CodeFeatures {
 			PatternLayerSeeds seeds = getSeeds(params);
 			if (seeds != null) {
 				seeds.generator(0, duration, seedBias, scaleTraversalStrategy, scaleTraversalDepth).forEach(roots::add);
-				scale = seeds.getScale();
+				scale = seeds.getScale(duration);
 			}
 
 			if (rootCount() <= 0) {
@@ -269,7 +271,7 @@ public class PatternLayerManager implements CodeFeatures {
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choose(scale, params).apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
+					next = choice.apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();

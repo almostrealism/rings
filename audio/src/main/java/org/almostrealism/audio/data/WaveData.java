@@ -21,7 +21,6 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
@@ -37,10 +36,10 @@ import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
 	public static final int FFT_BINS = 1024;
-	public static final int FFT_POOL = 8;
-	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL;
+	public static final int FFT_POOL = 4;
+	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL / 2;
 
-	public static final int POOL_BATCH_IN = FFT_BINS;
+	public static final int POOL_BATCH_IN = FFT_BINS / 2;
 	public static final int POOL_BATCH_OUT = POOL_BATCH_IN / FFT_POOL;
 
 	private static Evaluable<PackedCollection<?>> magnitude;
@@ -52,8 +51,8 @@ public class WaveData implements SamplingFeatures {
 				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0))).get();
 		magnitude = Ops.op(o ->
 				o.complexFromParts(
-						o.v(o.shape(FFT_BINS), 0),
-						o.v(o.shape(FFT_BINS), 1)).magnitude()).get();
+						o.v(o.shape(FFT_BINS / 2), 0),
+						o.v(o.shape(FFT_BINS / 2), 1)).magnitude()).get();
 		pool2d = Ops.op(o ->
 				o.c(o.v(o.shape(POOL_BATCH_IN, POOL_BATCH_IN, 1), 0))
 						.enumerate(2, 1)
@@ -118,29 +117,32 @@ public class WaveData implements SamplingFeatures {
 		PackedCollection<?> inRoot = new PackedCollection<>(FFT_BINS * FFT_BINS);
 		PackedCollection<?> outRoot = new PackedCollection<>(POOL_BATCH_OUT * POOL_BATCH_OUT);
 
-		int count = getCollection().getMemLength() / FFT_BINS;
-		PackedCollection<?> out = new PackedCollection<>(count * FFT_BINS).reshape(count, FFT_BINS, 1);
+		int count = getCollection().getMemLength() > FFT_BINS ? getCollection().getMemLength() / FFT_BINS : 1;
+		int finalBins = FFT_BINS / 2;
+		PackedCollection<?> out = new PackedCollection<>(count * finalBins).reshape(count, finalBins, 1);
 
 		try {
-			int resultSize = count / FFT_POOL;
-
-			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
-					.reshape(resultSize, FFT_POOL_BINS, 1);
-
 			cc(() -> {
 				PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
 				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
 
 				for (int i = 0; i < count; i++) {
-					frameIn.setMem(0, getCollection(), i * FFT_BINS, FFT_BINS);
+					frameIn.setMem(0, getCollection(), i * FFT_BINS,
+							Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
 					fft.into(frameOut).evaluate(frameIn);
 					magnitude
-							.into(out.range(shape(FFT_BINS, 1), i * FFT_BINS).traverseEach())
+							.into(out.range(shape(finalBins, 1), i * finalBins).traverseEach())
 							.evaluate(
-									frameOut.range(shape(FFT_BINS), 0).traverseEach(),
-									frameOut.range(shape(FFT_BINS), FFT_BINS).traverseEach());
+									frameOut.range(shape(finalBins), 0).traverseEach(),
+									frameOut.range(shape(finalBins), FFT_BINS).traverseEach());
 				}
 			}, ComputeRequirement.JNI);
+
+			int resultSize = count / FFT_POOL;
+			if (count % FFT_POOL != 0) resultSize++;
+
+			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+					.reshape(resultSize, FFT_POOL_BINS, 1);
 
 			int window = POOL_BATCH_IN * POOL_BATCH_IN;
 			int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;
@@ -149,6 +151,10 @@ public class WaveData implements SamplingFeatures {
 
 			PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
 			PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
+
+			if (pcount < 1) {
+				throw new IllegalArgumentException();
+			}
 
 			for (int i = 0; i < pcount; i++) {
 				int remaining = out.getMemLength() - i * window;
@@ -160,7 +166,7 @@ public class WaveData implements SamplingFeatures {
 				pool.setMem(i * poolWindow, poolOut, 0, Math.min(poolWindow, remaining));
 			}
 
-			return pool.range(shape(getCollection().getMemLength() / (FFT_BINS * FFT_POOL), FFT_POOL_BINS, 1));
+			return pool.range(shape(resultSize, FFT_POOL_BINS, 1));
 		} finally {
 			inRoot.destroy();
 			outRoot.destroy();
@@ -198,7 +204,7 @@ public class WaveData implements SamplingFeatures {
 
 	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
 		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().v(0.0), Ops.o().v(getCollection().getMemLength()));
+				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(getCollection().getMemLength()));
 	}
 
 	public static WaveData load(File f) throws IOException {

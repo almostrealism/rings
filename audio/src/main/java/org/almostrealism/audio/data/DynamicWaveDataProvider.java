@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements 
 		this(key, destination, new OperationList());
 	}
 
-	public DynamicWaveDataProvider(String key, WaveData destination,Supplier<Runnable> setup) {
+	public DynamicWaveDataProvider(String key, WaveData destination, Supplier<Runnable> setup) {
 		this.key = key;
 		this.destination = destination;
 		this.setup = setup;
@@ -38,6 +38,11 @@ public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements 
 
 	@Override
 	public String getKey() { return key; }
+
+	@Override
+	public String getIdentifier() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public int getCount() {

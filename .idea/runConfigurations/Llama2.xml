@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Llama2" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.almostrealism.llama2.Llama2" />
+    <module name="ar-llama2" />
+    <option name="VM_PARAMETERS" value="-DAR_HARDWARE_OFF_HEAP_SIZE=0 -DAR_HARDWARE_MEMORY_WARNINGS=disabled -DAR_GRAPH_IO_TRACKING=disabled" />
+    <option name="WORKING_DIRECTORY" value="$ModuleFileDir$" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -83,15 +83,14 @@ public class ParameterizedPositionFunction {
 	}
 
 	protected double regularize(ParameterSet params, double position, double scale) {
-		return applyPositionalAlt(params, position + regularityOffset.apply(params), scale);
+		return applyPositional(params, position + regularityOffset.apply(params), scale);
 	}
 
-	private double applyPositionalAlt(ParameterSet params, double position, double scale) {
-		double selection = regularity.power(2.0, 3, 1).apply(params);
+	private double applyPositional(ParameterSet params, double position, double scale) {
+		double selection = regularity.power(2.0, 3, 4).apply(params);
 		position = mod(position, 1.0);
 
 		double regularity = scale * selection;
-		// System.out.println("Regularity = " + regularity);
 		position = position / regularity;
 		position = mod(position, 1.0);
 
@@ -101,29 +100,6 @@ public class ParameterizedPositionFunction {
 	private double mod(double value, double denominator) {
 		int result = (int) Math.floor(value / denominator);
 		return value - result * denominator;
-	}
-
-	private static double applyPositional(double selection, double position, double scale) {
-		if (selection > 0.0) selection = Math.floor(3 * selection);
-		if (selection < 0.0) selection = Math.ceil(3 * selection);
-
-		while (position < 0.0) position = position + 1.0;
-		while (position > 1.0) position = position - 1.0;
-
-		double regularity = scale * Math.pow(2.0, selection);
-
-		int i;
-		for (i = 0; position > 0; i++) {
-			position -= regularity;
-		}
-
-//		if (i % 2 == 0) {
-//			return operator.applyAsDouble(position);
-//		} else {
-//			return -operator.applyAsDouble(position);
-//		}
-
-		return position;
 	}
 
 	public static ParameterizedPositionFunction random() {

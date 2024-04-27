@@ -205,7 +205,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 
 				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
-				cells = cells.map(fc(i -> lp(lp, v(FixedFilterChromosome.defaultResonance))));
+				cells = cells.map(fc(i -> lp(lp, scalar(FixedFilterChromosome.defaultResonance))));
 			}
 
 			OperationList process = new OperationList();
@@ -213,18 +213,6 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
 			return process;
-		}
-
-		/**
-		 * This method wraps the specified {@link Factor} to prevent it from
-		 * being detected as Temporal by {@link org.almostrealism.graph.FilteredCell}s
-		 * that would proceed to invoke the {@link org.almostrealism.time.Temporal#tick()} operation.
-		 * This is not a good solution, and this process needs to be reworked, so
-		 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
-		 * and it doesn't get invoked multiple times.
-		 */
-		private Factor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
-			return v -> f.getResultant(v);
 		}
 	}
 }

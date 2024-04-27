@@ -36,9 +36,9 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		Producer<Scalar> kProducer = v(k);
 		Producer<Scalar> nProducer = v(n);
 
-		Producer<Scalar> halfN = scalarsMultiply(nProducer, v(0.5));
-		Producer<Scalar> quarterN = scalarsMultiply(nProducer, v(0.25));
-		Producer<Scalar> tripleQuarterN = scalarsMultiply(nProducer, v(0.75));
+		Producer<Scalar> halfN = scalarsMultiply(nProducer, scalar(0.5));
+		Producer<Scalar> quarterN = scalarsMultiply(nProducer, scalar(0.25));
+		Producer<Scalar> tripleQuarterN = scalarsMultiply(nProducer, scalar(0.75));
 
 		Producer<Scalar> kPlusTripleQuarterN = scalarAdd(kProducer, tripleQuarterN);
 		Producer<Scalar> kPlusHalfN = scalarAdd(kProducer, halfN);
@@ -61,7 +61,7 @@ public class Radix4 implements RadixComputationFactory, CodeFeatures {
 		}
 
 		Producer<Scalar> angleK = scalarsMultiply(angleProducer, kProducer);
-		Producer<Scalar> angleK3 = scalarsMultiply(angleK, v(3));
+		Producer<Scalar> angleK3 = scalarsMultiply(angleK, scalar(3));
 		Producer<Pair<?>> omega = complexFromAngle(angleK);
 		Producer<Pair<?>> omegaToPowerOf3 = complexFromAngle(angleK3);
 

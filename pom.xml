@@ -7,8 +7,8 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.61</common.version>
-		<flowtree.version>0.17</flowtree.version>
+		<common.version>0.62</common.version>
+		<flowtree.version>0.18</flowtree.version>
 
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
@@ -17,7 +17,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>Rings</artifactId>
-	<version>0.32</version>
+	<version>0.33</version>
 
 	<modules>
 		<module>audio</module>
@@ -75,6 +75,12 @@
 
 			<dependency>
 				<groupId>io.flowtree</groupId>
+				<artifactId>ar-flowtree</artifactId>
+				<version>${flowtree.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.flowtree</groupId>
 				<artifactId>ar-flowtreeapi</artifactId>
 				<version>${flowtree.version}</version>
 			</dependency>
@@ -110,16 +116,27 @@
 			</dependency>
 
 			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.16.1</version>
+			</dependency>
+
+			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>2.16.1</version>
 			</dependency>
 
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>${protobuf.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java-util</artifactId>
+				<version>${protobuf.version}</version>
 			</dependency>
 
 			<dependency>
@@ -128,6 +145,20 @@
 				<version>${grpc.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>annotations-api</artifactId>
+				<version>6.0.53</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

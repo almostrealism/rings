@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.optimize;
 
-import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.collect.Shape;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Evaluable;
@@ -26,6 +25,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
@@ -58,8 +58,8 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 	public static TimingMetric timing = CellFeatures.console.timing("WavCellChromosome");
 	public static boolean enableKernels = true;
 
-	private ProducerComputation<PackedCollection<?>> computation;
-	private BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computationProvider;
+	private CollectionProducer<PackedCollection<?>> computation;
+	private BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, CollectionProducer<PackedCollection<?>>> computationProvider;
 
 	private PackedCollection<PackedCollection<?>> input;
 	private MemoryBank<PackedCollection<?>> parameters;
@@ -111,7 +111,7 @@ public class WavCellChromosome implements Chromosome<PackedCollection<?>>, Tempo
 				new PassThroughProducer<>(shape, 0));
 	}
 
-	public void setFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, ProducerComputation<PackedCollection<?>>> computation) {
+	public void setFactor(BiFunction<Producer<MemoryBank<PackedCollection<?>>>, Producer<PackedCollection<?>>, CollectionProducer<PackedCollection<?>>> computation) {
 		this.computationProvider = computation;
 	}
 

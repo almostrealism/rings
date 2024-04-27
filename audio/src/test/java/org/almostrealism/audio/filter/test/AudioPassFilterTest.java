@@ -18,16 +18,12 @@ package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Process;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
-import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.computations.Loop;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
@@ -41,14 +37,14 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 	@Test
 	public void highPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(2000), v(0.1), true);
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(2000), scalar(0.1), true);
 		runFilter("high-pass", f, filter);
 	}
 
 	@Test
 	public void lowPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(1800), v(0.1), false);
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(1800), scalar(0.1), false);
 		runFilter("low-pass", f, filter);
 	}
 

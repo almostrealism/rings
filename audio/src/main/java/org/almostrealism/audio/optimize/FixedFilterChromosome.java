@@ -63,8 +63,8 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, C
 		public Factor<PackedCollection<?>> valueAt(int pos) {
 			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), source.valueAt(index, 0).getResultant(c(1.0)));
 			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), source.valueAt(index, 1).getResultant(c(1.0)));
-			return new AudioPassFilter(sampleRate, lowFrequency, v(defaultResonance), true)
-					.andThen(new AudioPassFilter(sampleRate, highFrequency, v(defaultResonance), false));
+			return new AudioPassFilter(sampleRate, lowFrequency, scalar(defaultResonance), true)
+					.andThen(new AudioPassFilter(sampleRate, highFrequency, scalar(defaultResonance), false));
 		}
 	}
 

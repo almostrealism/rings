@@ -209,7 +209,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 		GrainSet set = synth.addFile("Library/organ.wav");
 		set.addGrain(new Grain(0.2, 0.015, 2.0));
 
-		WaveDataProviderList providers = synth.create(v(0.0), v(0.0), v(0.0), List.of(new Frequency(1.0)));
+		WaveDataProviderList providers = synth.create(scalar(0.0), scalar(0.0), scalar(0.0), List.of(new Frequency(1.0)));
 		providers.setup().get().run();
 		providers.getProviders().get(0).get().save(new File("results/granular-synth-test.wav"));
 	}

@@ -24,6 +24,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.Switch;
 import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 
 public class ValueSequencePush extends ValueSequenceComputation implements CodeFeatures {
@@ -35,7 +36,7 @@ public class ValueSequencePush extends ValueSequenceComputation implements CodeF
 
 	public ValueSequencePush(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output, boolean repeat, Producer<PackedCollection<?>>... choices) {
 		super(data, durationFrames, output, repeat, choices);
-		choice = new Switch((ProducerComputation) divide(wavePosition(), durationFrames()),
+		choice = new Switch((CollectionProducer) divide(wavePosition(), durationFrames()),
 						choices(in -> a(1, output(), in)));
 	}
 

@@ -19,6 +19,7 @@ package org.almostrealism.audio.filter;
 import io.almostrealism.kernel.KernelPreferences;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 import org.almostrealism.io.TimingMetric;
@@ -37,15 +38,15 @@ public class AudioSumProvider implements CellFeatures {
 	public AudioSumProvider(boolean parallel) {
 		this.parallel = parallel;
 
-		CollectionProducerComputationBase sum = add(v(shape(1), 0), v(shape(1), 1));
-		CollectionProducerComputationBase scaleVolume = multiply(v(shape(1), 0), v(shape(1), 1));
+		CollectionProducer sum = add(v(shape(1), 0), v(shape(1), 1));
+		CollectionProducer scaleVolume = multiply(v(shape(1), 0), v(shape(1), 1));
 
 		if (parallel) {
 			this.sum = sum.get();
 			this.scaleVolume = scaleVolume.get();
 		} else {
-			this.sum = sum.toRepeated().get();
-			this.scaleVolume = scaleVolume.toRepeated().get();
+			this.sum = ((CollectionProducerComputationBase) sum).toRepeated().get();
+			this.scaleVolume = ((CollectionProducerComputationBase) scaleVolume).toRepeated().get();
 		}
 	}
 

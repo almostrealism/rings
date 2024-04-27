@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+      - staging
   pull_request:
     branches:
       - main
@@ -18,8 +19,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  common:
-    name: common
+  rings:
+    name: rings
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo

@@ -74,13 +74,13 @@ public interface SamplingFeatures extends CodeFeatures {
 	default int toFrames(double sec) { return (int) (sampleRate() * sec); }
 
 	default Producer<Scalar> toFrames(Supplier<Evaluable<? extends Scalar>> sec) {
-		return scalarsMultiply(v(sampleRate()), sec);
+		return scalarsMultiply(scalar(sampleRate()), sec);
 	}
 
 	default int toFramesMilli(int msec) { return (int) (sampleRate() * msec / 1000d); }
 
 	default Producer<Scalar> toFramesMilli(Supplier<Evaluable<? extends Scalar>> msec) {
-		return scalarsMultiply(v(sampleRate() / 1000d), msec);
+		return scalarsMultiply(scalar(sampleRate() / 1000d), msec);
 	}
 
 	default CollectionProducer<PackedCollection<?>> grains(Producer<PackedCollection<?>> input,

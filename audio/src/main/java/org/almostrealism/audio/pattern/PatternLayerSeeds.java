@@ -25,32 +25,26 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerSeeds {
-	/**
-	 * When units is higher than 1, the seed process can easily produce
-	 * more notes than the specified count. There are ways this could be
-	 * handled directly via the positional function the determines note
-	 * presence/absence, but trimming is a simpler solution. While the
-	 * number of generated notes is above count, alternating notes are
-	 * removed.
-	 */
-	public static boolean enableTrimming = true;
 
 	private double position;
-	private double scale;
 	private double granularity;
+	private double minScale;
+	private double maxScale;
 	private double bias;
 
 	private PatternElementFactory factory;
 	private ParameterSet params;
 
 	public PatternLayerSeeds() {
-		this(0, 1.0, 1.0, 0.0, null, null);
+		this(0, 1.0, 0.0625, 64.0, 0.0, null, null);
 	}
 
-	public PatternLayerSeeds(double position, double scale, double granularity, double bias, PatternElementFactory factory, ParameterSet params) {
+	public PatternLayerSeeds(double position, double granularity, double minScale, double maxScale,
+							 double bias, PatternElementFactory factory, ParameterSet params) {
 		this.position = position;
-		this.scale = scale;
 		this.granularity = granularity;
+		this.minScale = minScale;
+		this.maxScale = maxScale;
 		this.bias = bias;
 		this.factory = factory;
 		this.params = params;
@@ -63,11 +57,8 @@ public class PatternLayerSeeds {
 		this.position = position;
 	}
 
-	public double getScale() {
-		return scale;
-	}
-	public void setScale(double scale) {
-		this.scale = scale;
+	public double getScale(double duration) {
+		return Math.min(maxScale, Math.max(minScale, duration * granularity));
 	}
 
 	public double getGranularity() {
@@ -84,11 +75,12 @@ public class PatternLayerSeeds {
 										  double bias,
 										  ScaleTraversalStrategy scaleTraversalStrategy,
 										  int scaleTraversalDepth) {
-		double count = Math.max(1.0, duration / granularity);
+		double g = getScale(duration);
+		double count = Math.max(1.0, duration / g) + 1;
 
 		List<PatternLayer> layers = IntStream.range(0, (int) count)
 				.mapToObj(i ->
-						factory.apply(null, position + offset + i * granularity, granularity,
+						factory.apply(null, position + offset + i * g, g,
 								this.bias + bias, scaleTraversalStrategy, scaleTraversalDepth,
 								false, params).orElse(null))
 				.filter(Objects::nonNull)

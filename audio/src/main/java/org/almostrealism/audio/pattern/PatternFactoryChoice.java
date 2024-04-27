@@ -17,18 +17,21 @@
 package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class PatternFactoryChoice {
-	public static boolean enableUniversalBias = true;
+public class PatternFactoryChoice implements ConsoleFeatures {
+	public static int[] GRANULARITY_DIST;
 
 	private PatternElementFactory factory;
 	private double weight;
@@ -49,7 +52,7 @@ public class PatternFactoryChoice {
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight) {
-		this(factory, weight, 0.0, 16.0);
+		this(factory, weight, 0.0625, 16.0);
 	}
 
 	public PatternFactoryChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
@@ -96,20 +99,31 @@ public class PatternFactoryChoice {
 		this.granularitySelection = granularitySelection;
 	}
 
+	// TODO  Rename to just bias
 	public double getSeedBias() { return seedBias; }
 	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
 
 	@JsonIgnore
-	public double getBias() { return enableUniversalBias ? seedBias : 0.0; }
+	public double getBias() { return seedBias; }
 
 	public void setTuning(KeyboardTuning tuning) {
 		getFactory().setTuning(tuning);
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
-		double granularity = getMaxScale() * granularitySelection.power(2, 3, -2).apply(params);
-		granularity = Math.max(getMinScale(), granularity);
-		return new PatternLayerSeeds(0, granularity, granularity, seedBias, factory, params);
+		double granularity = granularitySelection.power(2, 3, -3).apply(params);
+
+		if (GRANULARITY_DIST != null) {
+			int i;
+			double g = granularity;
+			for (i = 0; g < 1.0; i++) {
+				g *= 2;
+			}
+
+			GRANULARITY_DIST[i]++;
+		}
+
+		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), seedBias, factory, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
@@ -126,6 +140,11 @@ public class PatternFactoryChoice {
 		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
 		return layer;
+	}
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 
 	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,

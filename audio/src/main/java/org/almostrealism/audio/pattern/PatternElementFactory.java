@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
@@ -25,6 +26,8 @@ import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
@@ -32,11 +35,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PatternElementFactory {
+public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableVolumeEnvelope = true;
 	public static boolean enableFilterEnvelope = true;
+	public static boolean enableScaleNoteLength = true;
+	public static boolean enableRegularizedNoteLength = false;
 
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
+	public static double noteLengthFactor = 0.5;
+
+	public static int[] REPEAT_DIST;
 
 	private String id;
 	private String name;
@@ -175,11 +183,22 @@ public class PatternElementFactory {
 
 		PatternElement element = new PatternElement(choice, position);
 		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		element.setDurationStrategy(isMelodic() ?
 				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
+
+		double ls = scale > 1.0 ? 1.0 : scale;
+
+		if (enableScaleNoteLength) {
+			if (enableRegularizedNoteLength) {
+				element.setNoteDurationSelection(ls * noteLengthSelection.power(2.0, 2, -2).apply(params));
+			} else {
+				element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
+			}
+		} else {
+			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
+		}
 
 		double r = repeatSelection.apply(params, position, scale);
 
@@ -187,15 +206,28 @@ public class PatternElementFactory {
 			element.setRepeatCount(1);
 		} else {
 			int c;
-			for (c = 0; r < 1.5 & c < 6; c++) {
-				r *= 2;
+			for (c = 0; r < 3 & c < 6; c++) {
+				r *= 1.8;
 			}
 
 			element.setRepeatCount(c);
 		}
 
+		if (REPEAT_DIST != null) {
+			if (repeat) {
+				REPEAT_DIST[element.getRepeatCount()]++;
+			} else {
+				REPEAT_DIST[0]++;
+			}
+		}
+
 		element.setScaleTraversalStrategy(scaleTraversalStrategy);
-		element.setRepeatDuration(element.getNoteDurationSelection());
+		element.setRepeatDuration(ls * noteLengthFactor);
 		return Optional.of(element);
+	}
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 }

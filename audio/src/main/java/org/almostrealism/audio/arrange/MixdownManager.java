@@ -249,7 +249,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			// Apply dynamic high pass filters
 			cells = cells.map(fc(i -> {
 				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate, mainFilterUpSimple, channelIndex.applyAsInt(i)).valueAt(0);
-				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), v(FixedFilterChromosome.defaultResonance));
+				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 			}));
 		}
 
@@ -344,7 +344,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
 						Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate, mainFilterDownSimple, channelIndex.applyAsInt(i)).valueAt(0);
-						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), v(FixedFilterChromosome.defaultResonance));
+						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 					}));
 				}
 

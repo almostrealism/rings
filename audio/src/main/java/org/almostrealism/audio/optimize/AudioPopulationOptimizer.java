@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,10 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.time.Temporal;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +99,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		List<Genome<PackedCollection<?>>> genomes = null;
 
 		if (new File(file).exists()) {
-			genomes = read(new FileInputStream(file));
+			genomes = AudioScenePopulation.read(new FileInputStream(file));
 			log("Read chromosome data from " + file);
 		}
 
@@ -163,41 +159,11 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 
 	public void storePopulation() {
 		try {
-			store(new FileOutputStream(file));
+			((AudioScenePopulation) getPopulation()).store(new FileOutputStream(file));
 			log("Wrote " + file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void store(OutputStream s) {
-		store(getPopulation().getGenomes(), s);
-	}
-
-	public static <G> void store(List<Genome<G>> genomes, OutputStream s) {
-		try (XMLEncoder enc = new XMLEncoder(s)) {
-			for (int i = 0; i < genomes.size(); i++) {
-				enc.writeObject(genomes.get(i));
-			}
-
-			enc.flush();
-		}
-	}
-
-	public static List<Genome<PackedCollection<?>>> read(InputStream in) {
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
-
-		try (XMLDecoder dec = new XMLDecoder(in)) {
-			Object read = null;
-
-			while ((read = dec.readObject()) != null) {
-				genomes.add((Genome) read);
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// End of file
-		}
-
-		return genomes;
 	}
 
 	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation(int channels) {

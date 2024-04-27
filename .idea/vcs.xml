@@ -4,5 +4,6 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../common" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../flowtree" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../llama2" vcs="Git" />
   </component>
 </project>

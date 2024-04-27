@@ -16,7 +16,12 @@
 
 package org.almostrealism.audio.optimize;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -163,6 +168,11 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 		};
 	}
 
+
+	public void store(OutputStream s) {
+		store(getGenomes(), s);
+	}
+
 	public static void recordGenerationTime(long generatedFrames, long generationTime) {
 		totalGeneratedFrames += generatedFrames;
 		totalGenerationTime += generationTime;
@@ -172,5 +182,31 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 		double seconds = totalGeneratedFrames / (double) OutputLine.sampleRate;
 		double generationTime = totalGenerationTime / 1000.0;
 		return seconds == 0 ? 0 : (generationTime / seconds);
+	}
+
+	public static <G> void store(List<Genome<G>> genomes, OutputStream s) {
+		try (XMLEncoder enc = new XMLEncoder(s)) {
+			for (int i = 0; i < genomes.size(); i++) {
+				enc.writeObject(genomes.get(i));
+			}
+
+			enc.flush();
+		}
+	}
+
+	public static List<Genome<PackedCollection<?>>> read(InputStream in) {
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+
+		try (XMLDecoder dec = new XMLDecoder(in)) {
+			Object read = null;
+
+			while ((read = dec.readObject()) != null) {
+				genomes.add((Genome) read);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// End of file
+		}
+
+		return genomes;
 	}
 }

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package almostrealism.audio;
+
+option java_package = "com.almostrealism.audio.api";
+
+message AudioLibraryData {
+  map<string, WaveDetailData> info = 1;
+}
+
+message TraversalPolicyData {
+  repeated int32 dims = 1;
+  int32 traversal_axis = 2;
+}
+
+message CollectionData {
+  TraversalPolicyData traversal_policy = 1;
+  repeated double data = 2;
+}
+
+message WaveDetailData {
+  string identifier = 1;
+
+  int32 sample_rate = 2;
+  int32 channel_count = 3;
+  int32 frame_count = 4;
+  CollectionData data = 5;
+
+  double freq_sample_rate = 6;
+  int32 freq_channel_count = 7;
+  int32 freq_bin_count = 8;
+  int32 freq_frame_count = 9;
+  CollectionData freq_data = 10;
+
+  map<string, double> similarities = 11;
+}
