@@ -24,7 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.function.Supplier;
 
-import io.almostrealism.uml.Lifecycle;
+import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;

@@ -26,6 +26,7 @@ import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -34,6 +35,7 @@ import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -42,6 +44,7 @@ import java.util.stream.Stream;
 public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
+	public static boolean enableHeapStages = true;
 	public static boolean enableVolumeAdjustment = false;
 
 	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
@@ -369,15 +372,20 @@ public class PatternLayerManager implements CodeFeatures {
 					.forEach(note -> {
 						if (note.getOffset() >= destination.getShape().length(0)) return;
 
-						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
-								audio -> {
-									int frames = Math.min(audio.getShape().getCount(),
-											destination.getShape().length(0) - note.getOffset());
-									sizes.addEntry(frames);
+						Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+							int frames = Math.min(audio.getShape().getCount(),
+									destination.getShape().length(0) - note.getOffset());
+							sizes.addEntry(frames);
 
-									TraversalPolicy shape = shape(frames);
-									return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-								});
+							TraversalPolicy shape = shape(frames);
+							return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+						};
+
+						if (enableHeapStages) {
+							Heap.stage(() -> process.apply(traverse(1, note.getProducer()).get().evaluate()));
+						} else {
+							AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate, process);
+						}
 					});
 		});
 

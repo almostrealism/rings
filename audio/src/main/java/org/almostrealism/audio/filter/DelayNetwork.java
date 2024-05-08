@@ -17,7 +17,7 @@
 package org.almostrealism.audio.filter;
 
 import io.almostrealism.relation.Producer;
-import io.almostrealism.uml.Lifecycle;
+import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
