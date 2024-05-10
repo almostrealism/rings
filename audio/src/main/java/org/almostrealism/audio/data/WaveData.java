@@ -35,7 +35,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WaveData implements SamplingFeatures {
-	public static final int FFT_BINS = 1024;
+	public static final int FFT_BINS = 256; // 1024;
 	public static final int FFT_POOL = 4;
 	public static final int FFT_POOL_BINS = FFT_BINS / FFT_POOL / 2;
 
@@ -48,7 +48,7 @@ public class WaveData implements SamplingFeatures {
 
 	static {
 		fft = Ops.op(o ->
-				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0))).get();
+				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0), ComputeRequirement.CPU)).get();
 		magnitude = Ops.op(o ->
 				o.complexFromParts(
 						o.v(o.shape(FFT_BINS / 2), 0),
@@ -122,21 +122,19 @@ public class WaveData implements SamplingFeatures {
 		PackedCollection<?> out = new PackedCollection<>(count * finalBins).reshape(count, finalBins, 1);
 
 		try {
-			cc(() -> {
-				PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
-				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
+			PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
+			PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
 
-				for (int i = 0; i < count; i++) {
-					frameIn.setMem(0, getCollection(), i * FFT_BINS,
-							Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
-					fft.into(frameOut).evaluate(frameIn);
-					magnitude
-							.into(out.range(shape(finalBins, 1), i * finalBins).traverseEach())
-							.evaluate(
-									frameOut.range(shape(finalBins), 0).traverseEach(),
-									frameOut.range(shape(finalBins), FFT_BINS).traverseEach());
-				}
-			}, ComputeRequirement.JNI);
+			for (int i = 0; i < count; i++) {
+				frameIn.setMem(0, getCollection(), i * FFT_BINS,
+						Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
+				fft.into(frameOut).evaluate(frameIn);
+				magnitude
+						.into(out.range(shape(finalBins, 1), i * finalBins).traverseEach())
+						.evaluate(
+								frameOut.range(shape(finalBins), 0).traverseEach(),
+								frameOut.range(shape(finalBins), FFT_BINS).traverseEach());
+			}
 
 			int resultSize = count / FFT_POOL;
 			if (count % FFT_POOL != 0) resultSize++;

@@ -16,6 +16,7 @@
 
 package com.almostrealism.network;
 
+import io.almostrealism.code.Accessibility;
 import io.almostrealism.code.Precision;
 import io.almostrealism.lang.DefaultLanguageOperations;
 import io.almostrealism.code.PhysicalScope;
@@ -32,7 +33,7 @@ public class JavaScriptLanguageOperations extends DefaultLanguageOperations {
 	public String nameForType(Class<?> type) { return ""; }
 
 	@Override
-	public String annotationForPhysicalScope(PhysicalScope scope) { return ""; }
+	public String annotationForPhysicalScope(Accessibility access, PhysicalScope scope) { return ""; }
 
 	@Override
 	public String pi() {
