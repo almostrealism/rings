@@ -17,8 +17,10 @@
 package org.almostrealism.audio.pattern;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PatternLayer {
@@ -27,10 +29,6 @@ public class PatternLayer {
 	private PatternLayer child;
 
 	public PatternLayer() { this(null, new ArrayList<>()); }
-
-	public PatternLayer(List<PatternElement> elements) {
-		this(null, elements);
-	}
 
 	public PatternLayer(PatternFactoryChoice choice, List<PatternElement> elements) {
 		this.choice = choice;
@@ -53,11 +51,30 @@ public class PatternLayer {
 		this.elements = elements;
 	}
 
-	public List<PatternElement> getAllElements(double start, double end) {
-		List<PatternElement> result = new ArrayList<>(elements.stream()
+	public List<PatternElement> getElements(double start, double end) {
+		return elements.stream()
 				.filter(e -> e.getPosition() >= start && e.getPosition() < end)
-				.collect(Collectors.toList()));
-		if (child != null) result.addAll(child.getAllElements(start, end));
+				.collect(Collectors.toList());
+	}
+
+	public void putAllElementsByChoice(Map<PatternFactoryChoice, List<PatternElement>> result,
+									   double start, double end) {
+		if (elements == null || elements.isEmpty()) return;
+
+		if (choice == null) {
+			throw new UnsupportedOperationException();
+		}
+
+		result.computeIfAbsent(getChoice(), c -> new ArrayList<>()).addAll(getElements(start, end));
+		if (child != null)
+			child.putAllElementsByChoice(result, start, end);
+	}
+
+	public List<PatternElement> getAllElements(double start, double end) {
+		List<PatternElement> result = new ArrayList<>();
+		result.addAll(getElements(start, end));
+		if (child != null)
+			result.addAll(child.getAllElements(start, end));
 		return result;
 	}
 

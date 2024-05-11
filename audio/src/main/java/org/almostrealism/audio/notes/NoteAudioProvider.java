@@ -95,6 +95,10 @@ public class NoteAudioProvider implements SamplingFeatures {
 	}
 
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+		if (target == null) {
+			target = getRoot();
+		}
+
 		if (!notes.containsKey(target)) {
 			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target).get())));
 		}

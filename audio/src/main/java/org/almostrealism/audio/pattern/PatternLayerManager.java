@@ -23,6 +23,7 @@ import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
+import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.AcceleratedOperation;
@@ -34,7 +35,9 @@ import org.almostrealism.io.DistributionMetric;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -167,6 +170,12 @@ public class PatternLayerManager implements CodeFeatures {
 				.map(PatternLayer::getElements)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
+	}
+
+	public Map<PatternFactoryChoice, List<PatternElement>> getAllElementsByChoice(double start, double end) {
+		Map<PatternFactoryChoice, List<PatternElement>> result = new HashMap<>();
+		roots.stream().forEach(l -> l.putAllElementsByChoice(result, start, end));
+		return result;
 	}
 
 	public List<PatternElement> getAllElements(double start, double end) {
@@ -337,7 +346,7 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void sum(Supplier<AudioSceneContext> context) {
-		List<PatternElement> elements = getAllElements(0.0, duration);
+		Map<PatternFactoryChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
 				warn("No pattern elements (channel " + channel + ")");
@@ -366,27 +375,30 @@ public class PatternLayerManager implements CodeFeatures {
 			}
 
 			double offset = i * duration;
-			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
-					.flatMap(List::stream)
-					.forEach(note -> {
-						if (note.getOffset() >= destination.getShape().length(0)) return;
+			elements.keySet().forEach(choice -> {
+				NoteAudioContext audioContext =
+						new NoteAudioContext(
+							choice.getFactory().getValidNotes(),
+							this::nextNotePosition);
 
-						Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
-							int frames = Math.min(audio.getShape().getCount(),
-									destination.getShape().length(0) - note.getOffset());
-							sizes.addEntry(frames);
+				elements.get(choice).stream()
+						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
+						.flatMap(List::stream)
+						.forEach(note -> {
+							if (note.getOffset() >= destination.getShape().length(0)) return;
 
-							TraversalPolicy shape = shape(frames);
-							return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-						};
+							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+								int frames = Math.min(audio.getShape().getCount(),
+										destination.getShape().length(0) - note.getOffset());
+								sizes.addEntry(frames);
 
-						if (enableHeapStages) {
+								TraversalPolicy shape = shape(frames);
+								return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+							};
+
 							Heap.stage(() -> process.apply(traverse(1, note.getProducer()).get().evaluate()));
-						} else {
-							AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate, process);
-						}
-					});
+						});
+			});
 		});
 
 		if (enableVolumeAdjustment && adjustVolume != null) adjustVolume.run();

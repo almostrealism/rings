@@ -105,11 +105,10 @@ public class PatternElementFactory implements ConsoleFeatures {
 	public void setName(String name) { this.name = name; }
 
 	@JsonIgnore
-	public List<PatternNote> getAllNotes() {
+	public List<NoteAudioProvider> getAllNotes() {
 		return sources.stream()
 				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
-				.map(PatternNote::new)
 				.collect(Collectors.toList());
 	}
 
@@ -160,8 +159,8 @@ public class PatternElementFactory implements ConsoleFeatures {
 	}
 
 	@JsonIgnore
-	public List<PatternNote> getValidNotes() {
-		return getAllNotes().stream().filter(PatternNote::isValid).collect(Collectors.toList());
+	public List<NoteAudioProvider> getValidNotes() {
+		return getAllNotes().stream().filter(NoteAudioProvider::isValid).collect(Collectors.toList());
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
@@ -173,16 +172,12 @@ public class PatternElementFactory implements ConsoleFeatures {
 		} else if (parity == ElementParity.RIGHT) {
 			position += scale;
 		}
-		
-		List<PatternNote> notes = getValidNotes();
-
-		if (notes.isEmpty()) return Optional.empty();
 
 		double note = noteSelection.apply(params, position, scale) + bias;
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		PatternNote choice = notes.get((int) (note * notes.size()));
+		PatternNote choice = new PatternNote(note);
 		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
 		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
 

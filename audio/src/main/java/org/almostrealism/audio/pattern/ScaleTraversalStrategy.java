@@ -18,6 +18,7 @@ package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
 
@@ -31,7 +32,7 @@ public enum ScaleTraversalStrategy {
 	public List<PatternNoteAudio> getNoteDestinations(PatternElement element,
 													  boolean melodic, double offset,
 													  AudioSceneContext context,
-													  DoubleUnaryOperator nextNotePosition) {
+													  NoteAudioContext audioContext) {
 		List<PatternNoteAudio> destinations = new ArrayList<>();
 
 		for (int i = 0; i < element.getRepeatCount(); i++) {
@@ -46,10 +47,14 @@ public enum ScaleTraversalStrategy {
 					if (keys.isEmpty()) break p;
 					int keyIndex = (int) (p * keys.size());
 
-					Producer<PackedCollection<?>> note = element.getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
-							nextNotePosition.applyAsDouble(relativePosition),
-							context.getTimeForDuration());
-					destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
+					Producer<PackedCollection<?>> note =
+							element.getNoteAudio(melodic,
+								keys.get(keyIndex), relativePosition,
+								audioContext.nextNotePosition(relativePosition),
+								audioContext.getAudioSelection(),
+								context.getTimeForDuration());
+					destinations.add(new PatternNoteAudio(note,
+							context.frameForPosition(actualPosition)));
 
 					keys.remove(keyIndex);
 				}
@@ -58,8 +63,10 @@ public enum ScaleTraversalStrategy {
 				if (keys.isEmpty()) break;
 
 				int keyIndex = (int) (p * keys.size());
-				Producer<PackedCollection<?>> note = element.getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
-							nextNotePosition.applyAsDouble(relativePosition),
+				Producer<PackedCollection<?>> note = element.getNoteAudio(
+							melodic, keys.get(keyIndex), relativePosition,
+							audioContext.nextNotePosition(relativePosition),
+							audioContext.getAudioSelection(),
 							context.getTimeForDuration());
 				destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 			} else {

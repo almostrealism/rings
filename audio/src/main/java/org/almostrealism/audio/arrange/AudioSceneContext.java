@@ -71,6 +71,10 @@ public class AudioSceneContext {
 		this.frameForPosition = frameForPosition;
 	}
 
+	public int frameForPosition(double pos) {
+		return frameForPosition.applyAsInt(pos);
+	}
+
 	public DoubleUnaryOperator getTimeForDuration() {
 		return timeForDuration;
 	}

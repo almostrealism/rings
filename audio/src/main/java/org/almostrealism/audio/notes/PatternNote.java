@@ -27,9 +27,9 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
 
+import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 public class PatternNote implements CellFeatures, SamplingFeatures {
@@ -42,6 +42,10 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	private Boolean valid;
 
 	public PatternNote() { this(null); }
+
+	public PatternNote(double noteAudioSelection) {
+		setNoteAudioSelection(noteAudioSelection);
+	}
 
 	public PatternNote(NoteAudioProvider provider) {
 		this.provider = provider;
@@ -64,11 +68,6 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 
 	public void setProvider(NoteAudioProvider provider) { this.provider = provider; }
 
-	public KeyPosition<?> getRoot() {
-		if (delegate != null) return delegate.getRoot();
-		return provider.getRoot();
-	}
-
 	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
 		if (delegate != null) {
@@ -79,43 +78,42 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	}
 
 	@JsonIgnore
-	public int getSampleRate() {
-		if (delegate != null) return delegate.getSampleRate();
-		return provider.getSampleRate();
+	public int getSampleRate(DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getSampleRate(audioSelection);
+		return (provider == null ? audioSelection.apply(noteAudioSelection) : provider).getSampleRate();
 	}
 
 	@JsonIgnore
-	public double getDuration(KeyPosition<?> target) {
-		if (delegate != null) return delegate.getDuration(target);
-		return provider.getDuration(target);
+	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getDuration(target, audioSelection);
+		return (provider == null ? audioSelection.apply(noteAudioSelection) : provider).getDuration(target);
 	}
 
-	public TraversalPolicy getShape(KeyPosition<?> target) {
-		if (delegate != null) return delegate.getShape(target);
-		return provider.getShape(target);
-	}
-
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration) {
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+												  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (delegate == null) {
 			System.out.println("WARN: No AudioNoteFilter for PatternNote, note duration will be ignored");
-			return getAudio(target);
+			return getAudio(target, audioSelection);
 		} else {
 			// System.out.println("PatternNote: duration = " + noteDuration);
-			return computeAudio(target, noteDuration);
+			return computeAudio(target, noteDuration, audioSelection);
 		}
 	}
 
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
-		if (delegate != null) return delegate.getAudio(target);
-		return provider.getAudio(target);
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+												  DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getAudio(target, audioSelection);
+		return (provider == null ? audioSelection.apply(noteAudioSelection) : provider).getAudio(target);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration) {
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (delegate == null) {
-			return provider.computeAudio(target);
+			return (provider == null ? audioSelection.apply(noteAudioSelection) : provider)
+						.computeAudio(target);
 		} else if (noteDuration > 0) {
-			return sampling(getSampleRate(), getDuration(target),
-					() -> filter.apply(delegate.getAudio(target), c(noteDuration)));
+			return sampling(getSampleRate(audioSelection), getDuration(target, audioSelection),
+					() -> filter.apply(delegate.getAudio(target, audioSelection), c(noteDuration)));
 		} else {
 			throw new UnsupportedOperationException();
 		}

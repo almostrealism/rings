@@ -32,7 +32,7 @@ public class PatternLayerSeeds {
 	private double maxScale;
 	private double bias;
 
-	private PatternElementFactory factory;
+	private PatternFactoryChoice choice;
 	private ParameterSet params;
 
 	public PatternLayerSeeds() {
@@ -40,13 +40,13 @@ public class PatternLayerSeeds {
 	}
 
 	public PatternLayerSeeds(double position, double granularity, double minScale, double maxScale,
-							 double bias, PatternElementFactory factory, ParameterSet params) {
+							 double bias, PatternFactoryChoice choice, ParameterSet params) {
 		this.position = position;
 		this.granularity = granularity;
 		this.minScale = minScale;
 		this.maxScale = maxScale;
 		this.bias = bias;
-		this.factory = factory;
+		this.choice = choice;
 		this.params = params;
 	}
 
@@ -80,12 +80,12 @@ public class PatternLayerSeeds {
 
 		List<PatternLayer> layers = IntStream.range(0, (int) count)
 				.mapToObj(i ->
-						factory.apply(null, position + offset + i * g, g,
+						choice.getFactory().apply(null, position + offset + i * g, g,
 								this.bias + bias, scaleTraversalStrategy, scaleTraversalDepth,
 								false, params).orElse(null))
 				.filter(Objects::nonNull)
 				.map(List::of)
-				.map(PatternLayer::new)
+				.map(elements -> new PatternLayer(choice, elements))
 				.collect(Collectors.toList());
 
 		if (layers.size() <= 0 && (this.bias + bias) >= 1.0) {

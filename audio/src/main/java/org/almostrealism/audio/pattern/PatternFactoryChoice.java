@@ -123,7 +123,7 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 			GRANULARITY_DIST[i]++;
 		}
 
-		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), seedBias, factory, params);
+		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), seedBias, this, params);
 	}
 
 	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
