@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
@@ -147,7 +147,7 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 		return AudioScene.console;
 	}
 
-	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
+	public static PatternFactoryChoice fromSource(String name, NoteAudioSource source,
 												  int channel, int maxScaleTraversalDepth,
 												  boolean melodic) {
 		PatternElementFactory f = new PatternElementFactory(name, source);

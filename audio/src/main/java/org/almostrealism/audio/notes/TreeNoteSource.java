@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TreeNoteSource implements PatternNoteSource, Named {
+public class TreeNoteSource implements NoteAudioSource, Named {
 	public static boolean alwaysComputeNotes = false;
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
-	private List<PatternNote> notes;
+	private List<NoteAudioProvider> notes;
 
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
@@ -73,7 +73,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 		this.tuning = tuning;
 
 		if (notes != null) {
-			for (PatternNote note : notes) {
+			for (NoteAudioProvider note : notes) {
 				note.setTuning(tuning);
 			}
 		}
@@ -90,7 +90,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
 
 	@JsonIgnore
-	public List<PatternNote> getNotes() {
+	public List<NoteAudioProvider> getNotes() {
 		if (alwaysComputeNotes) computeNotes();
 		return notes == null ? new ArrayList<>() : notes;
 	}
@@ -123,7 +123,7 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 						.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
 						.reduce((a, b) -> a & b)
 						.orElse(true);
-				if (match) notes.add(new PatternNote(p, getRoot()));
+				if (match) notes.add(new NoteAudioProvider(p, getRoot()));
 			} catch (Exception e) {
 				System.out.println("WARN: " + e.getMessage() + "(" + p.getResourcePath() + ")");
 			}
@@ -136,7 +136,8 @@ public class TreeNoteSource implements PatternNoteSource, Named {
 
 		boolean match = notes.stream().anyMatch(note -> {
 			if (note.getProvider() instanceof FileWaveDataProvider) {
-				return ((FileWaveDataProvider) note.getProvider()).getResourcePath().equals(canonicalPath);
+				return ((FileWaveDataProvider) note.getProvider())
+						.getResourcePath().equals(canonicalPath);
 			} else {
 				return false;
 			}

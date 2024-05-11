@@ -24,7 +24,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 		private String requestId;
 		private String generatorId;
 
-		private List<PatternNoteSource> sources;
+		private List<NoteAudioSource> sources;
 		private PackedCollection<?> currentSource;
 		private int currentIndex;
 
@@ -111,7 +111,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 
 		public String getGeneratorId() { return generatorId; }
 
-		public List<PatternNoteSource> getSources() { return sources; }
+		public List<NoteAudioSource> getSources() { return sources; }
 
 		public void append(Generation.RefreshRequest request) {
 			if (!Objects.equals(request.getRequestId(), requestId))

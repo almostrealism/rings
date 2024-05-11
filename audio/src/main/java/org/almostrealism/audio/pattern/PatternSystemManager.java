@@ -25,7 +25,7 @@ import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteSourceProvider;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
@@ -91,7 +91,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	@Override
-	public List<PatternNoteSource> getSource(String id) {
+	public List<NoteAudioSource> getSource(String id) {
 		return choices.stream()
 				.map(PatternFactoryChoice::getFactory)
 				.filter(f -> Objects.equals(id, f.getId()))
@@ -133,7 +133,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
-		List<PatternNoteSource> sources = getChoices()
+		List<NoteAudioSource> sources = getChoices()
 				.stream()
 				.flatMap(c -> c.getFactory().getSources().stream())
 				.collect(Collectors.toList());
@@ -142,7 +142,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			progress.accept(0.0);
 
 		IntStream.range(0, sources.size()).forEach(i -> {
-			PatternNoteSource s = sources.get(i);
+			NoteAudioSource s = sources.get(i);
 
 			if (s instanceof TreeNoteSource)
 				((TreeNoteSource) s).setTree(root);

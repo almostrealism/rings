@@ -19,7 +19,7 @@ package com.almostrealism.remote;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class RemoteGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
+	public boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources) {
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicBoolean success = new AtomicBoolean(false);
 
@@ -64,8 +64,8 @@ public class RemoteGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public List<PatternNoteSource> generate(String requestId, String generatorId, int count) {
-		List<PatternNoteSource> results = new ArrayList<>();
+	public List<NoteAudioSource> generate(String requestId, String generatorId, int count) {
+		List<NoteAudioSource> results = new ArrayList<>();
 		CountDownLatch latch = new CountDownLatch(count);
 
 		client.generate(requestId, generatorId, count, wave -> {

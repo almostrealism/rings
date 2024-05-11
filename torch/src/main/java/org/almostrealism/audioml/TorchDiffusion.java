@@ -18,8 +18,9 @@ package org.almostrealism.audioml;
 
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.ProcessFeatures;
 
 import java.io.File;
@@ -43,10 +44,10 @@ public class TorchDiffusion implements ProcessFeatures {
 		run("rm", "-rf", MODELS + "/latest");
 	}
 
-	public void loadAudio(List<PatternNoteSource> sources) {
-		List<PatternNote> audio = sources.stream()
+	public void loadAudio(List<NoteAudioSource> sources) {
+		List<NoteAudioProvider> audio = sources.stream()
 				.flatMap(s -> s.getNotes().stream())
-				.filter(PatternNote::isValid)
+				.filter(NoteAudioProvider::isValid)
 				.collect(Collectors.toList());
 		System.out.println("TorchDiffusion: Saving " + audio.size() + " audio files");
 		IntStream.range(0, audio.size()).forEach(i ->

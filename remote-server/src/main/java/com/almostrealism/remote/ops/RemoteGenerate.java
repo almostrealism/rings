@@ -22,8 +22,9 @@ import com.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -56,7 +57,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		}
 	}
 
-	protected void output(String requestId, String generatorId, List<PatternNoteSource> results) {
+	protected void output(String requestId, String generatorId, List<NoteAudioSource> results) {
 		if (results == null) {
 			System.out.println("RemoteGenerate: Generation failed");
 			// TODO  Send back status info to client
@@ -67,12 +68,12 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		IntStream.range(0, results.size()).forEach(i -> output(requestId, generatorId, i, results.get(i)));
 	}
 
-	protected void output(String requestId, String generatorId, int index, PatternNoteSource result) {
+	protected void output(String requestId, String generatorId, int index, NoteAudioSource result) {
 		if (result.getNotes().size() != 1) throw new UnsupportedOperationException();
 		output(requestId, generatorId, index, result.getNotes().get(0));
 	}
 
-	protected void output(String requestId, String generatorId, int index, PatternNote note) {
+	protected void output(String requestId, String generatorId, int index, NoteAudioProvider note) {
 		if (note.getAudio() == null) {
 			System.out.println("RemoteGenerate: Empty result will not be published");
 			return;
@@ -103,9 +104,9 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		private String requestId;
 		private String generatorId;
 		private int count;
-		private Consumer<List<PatternNoteSource>> results;
+		private Consumer<List<NoteAudioSource>> results;
 
-		public GenerationOperation(String requestId, String generatorId, int count, Consumer<List<PatternNoteSource>> results) {
+		public GenerationOperation(String requestId, String generatorId, int count, Consumer<List<NoteAudioSource>> results) {
 			this.requestId = requestId;
 			this.generatorId = generatorId;
 			this.count = count;

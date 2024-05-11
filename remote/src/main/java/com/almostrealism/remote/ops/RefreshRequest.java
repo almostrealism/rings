@@ -16,20 +16,20 @@
 
 package com.almostrealism.remote.ops;
 
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.List;
 
 public class RefreshRequest {
 	private String requestId;
 	private String generatorId;
-	private List<PatternNoteSource> sources;
+	private List<NoteAudioSource> sources;
 	private boolean complete;
 	private boolean error;
 
 	public RefreshRequest() { }
 
-	public RefreshRequest(String requestId, String generatorId, List<PatternNoteSource> sources) {
+	public RefreshRequest(String requestId, String generatorId, List<NoteAudioSource> sources) {
 		this.requestId = requestId;
 		this.generatorId = generatorId;
 		this.sources = sources;
@@ -41,8 +41,8 @@ public class RefreshRequest {
 	public String getGeneratorId() { return generatorId; }
 	public void setGeneratorId(String generatorId) { this.generatorId = generatorId; }
 
-	public List<PatternNoteSource> getSources() { return sources; }
-	public void setSources(List<PatternNoteSource> sources) { this.sources = sources; }
+	public List<NoteAudioSource> getSources() { return sources; }
+	public void setSources(List<NoteAudioSource> sources) { this.sources = sources; }
 
 	public boolean isComplete() { return complete; }
 	public void setComplete(boolean complete) { this.complete = complete; }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.pattern;
+package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;

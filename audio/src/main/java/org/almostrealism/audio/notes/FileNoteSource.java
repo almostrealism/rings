@@ -20,16 +20,14 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-public class FileNoteSource implements PatternNoteSource {
+public class FileNoteSource implements NoteAudioSource {
 	private String source;
 	private KeyPosition<?> root;
 	private KeyboardTuning tuning;
 
-	private PatternNote note;
+	private NoteAudioProvider note;
 
 	public FileNoteSource() { this((String) null); }
 
@@ -58,9 +56,9 @@ public class FileNoteSource implements PatternNoteSource {
 	public KeyPosition<?> getRoot() { return root; }
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
-	public List<PatternNote> getNotes() {
+	public List<NoteAudioProvider> getNotes() {
 		if (note == null) {
-			note = PatternNote.create(source, root);
+			note = NoteAudioProvider.create(source, root);
 			note.setTuning(tuning);
 		}
 

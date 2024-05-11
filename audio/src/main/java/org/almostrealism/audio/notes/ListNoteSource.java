@@ -24,17 +24,17 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class ListNoteSource implements PatternNoteSource {
+public class ListNoteSource implements NoteAudioSource {
 	private KeyboardTuning tuning;
-	private List<PatternNote> notes;
+	private List<NoteAudioProvider> notes;
 
 	public ListNoteSource() { }
 
-	public ListNoteSource(PatternNote... notes) {
+	public ListNoteSource(NoteAudioProvider... notes) {
 		this(List.of(notes));
 	}
 
-	public ListNoteSource(List<PatternNote> notes) {
+	public ListNoteSource(List<NoteAudioProvider> notes) {
 		this.notes = notes;
 	}
 
@@ -42,7 +42,7 @@ public class ListNoteSource implements PatternNoteSource {
 	public void setTuning(KeyboardTuning tuning) {
 		this.tuning = tuning;
 
-		for (PatternNote note : getNotes()) {
+		for (NoteAudioProvider note : getNotes()) {
 			note.setTuning(tuning);
 		}
 	}
@@ -50,11 +50,11 @@ public class ListNoteSource implements PatternNoteSource {
 	public String getOrigin() { return null; }
 
 	@Override
-	public List<PatternNote> getNotes() {
+	public List<NoteAudioProvider> getNotes() {
 		return notes == null ? Collections.emptyList() : notes;
 	}
 
-	public void setNotes(List<PatternNote> notes) {
+	public void setNotes(List<NoteAudioProvider> notes) {
 		this.notes = notes;
 	}
 

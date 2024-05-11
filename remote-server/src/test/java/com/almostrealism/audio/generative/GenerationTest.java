@@ -23,7 +23,7 @@ import com.almostrealism.remote.RemoteGenerationProvider;
 import com.almostrealism.remote.mgr.DefaultAccessManager;
 import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternFactoryChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
@@ -64,7 +64,7 @@ public class GenerationTest {
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 					PatternFactoryChoiceList.class);
 
-		List<PatternNoteSource> sources = choices.stream()
+		List<NoteAudioSource> sources = choices.stream()
 				.map(PatternFactoryChoice::getFactory)
 				// .filter(c -> "Hats".equals(c.getName()))
 				.map(PatternElementFactory::getSources)
@@ -82,7 +82,7 @@ public class GenerationTest {
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 						PatternFactoryChoiceList.class);
 
-		List<PatternNoteSource> sources = choices.stream()
+		List<NoteAudioSource> sources = choices.stream()
 				.map(PatternFactoryChoice::getFactory)
 				// .filter(c -> "Hats".equals(c.getName()))
 				.map(PatternElementFactory::getSources)
@@ -108,7 +108,7 @@ public class GenerationTest {
 										resources("local"));
 
 		String req = "test123";
-		List<PatternNoteSource> result = provider.generate(req, "test5", 15);
+		List<NoteAudioSource> result = provider.generate(req, "test5", 15);
 		System.out.println("GenerationTest: Received " + result.size() + " results");
 	}
 }

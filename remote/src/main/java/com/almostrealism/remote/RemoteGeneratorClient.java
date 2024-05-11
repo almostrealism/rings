@@ -23,8 +23,9 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Channel;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,14 +67,14 @@ public class RemoteGeneratorClient {
 		this.completion = new HashMap<>();
 	}
 
-	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources, Consumer<Boolean> success, Runnable end) {
+	public boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources, Consumer<Boolean> success, Runnable end) {
 		ensureRefresh();
 
 		List<WaveData> data = sources.stream()
-				.map(PatternNoteSource::getNotes)
+				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
-				.filter(PatternNote::isValid)
-				.map(PatternNote::getAudio)
+				.filter(NoteAudioProvider::isValid)
+				.map(NoteAudioProvider::getAudio)
 				.filter(Objects::nonNull)
 				.map(c -> new WaveData(c, OutputLine.sampleRate))
 				.collect(Collectors.toList());

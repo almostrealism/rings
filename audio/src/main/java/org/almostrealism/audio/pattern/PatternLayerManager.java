@@ -340,7 +340,7 @@ public class PatternLayerManager implements CodeFeatures {
 		List<PatternElement> elements = getAllElements(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
-				System.out.println("PatternLayerManager: No pattern elements (channel " + channel + ")");
+				warn("No pattern elements (channel " + channel + ")");
 			return;
 		}
 
@@ -352,7 +352,7 @@ public class PatternLayerManager implements CodeFeatures {
 		// TODO  This results in count being 0, and nothing being output
 		int count = (int) (ctx.getMeasures() / duration);
 		if (ctx.getMeasures() / duration - count > 0.0001) {
-			System.out.println("PatternLayerManager: Pattern duration does not divide measures; there will be gaps");
+			warn("Pattern duration does not divide measures; there will be gaps");
 		}
 
 		IntStream.range(0, count).forEach(i -> {
@@ -438,7 +438,7 @@ public class PatternLayerManager implements CodeFeatures {
 			if (i % divide == 0) buf.append("|");
 			for (PatternElement e : elements) {
 				if (e.isPresent(i * scale, (i + 1) * scale)) {
-					String s = e.getNote().getSource();
+					String s = e.getNote().toString();
 					if (s.contains("/")) s = s.substring(s.lastIndexOf("/") + 1, s.lastIndexOf("/") + 2);
 					buf.append(s);
 					continue i;

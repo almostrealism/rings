@@ -23,8 +23,9 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.ListNoteSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
@@ -48,7 +49,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 	private String id;
 	private String name;
-	private List<PatternNoteSource> sources;
+	private List<NoteAudioSource> sources;
 	private boolean melodic;
 
 	private ParameterizedPositionFunction noteSelection;
@@ -61,26 +62,26 @@ public class PatternElementFactory implements ConsoleFeatures {
 	private ParameterizedPositionFunction repeatSelection;
 
 	public PatternElementFactory() {
-		this(new PatternNoteSource[0]);
+		this(new NoteAudioSource[0]);
 	}
 
 	public PatternElementFactory(String name) {
-		this(name, new PatternNoteSource[0]);
+		this(name, new NoteAudioSource[0]);
 	}
 
-	public PatternElementFactory(PatternNote... notes) {
+	public PatternElementFactory(NoteAudioProvider... notes) {
 		this(null, notes);
 	}
 
-	public PatternElementFactory(PatternNoteSource... sources) {
+	public PatternElementFactory(NoteAudioSource... sources) {
 		this(null, sources);
 	}
 
-	public PatternElementFactory(String name, PatternNote... notes) {
+	public PatternElementFactory(String name, NoteAudioProvider... notes) {
 		this(name, new ListNoteSource(notes));
 	}
 
-	public PatternElementFactory(String name, PatternNoteSource... sources) {
+	public PatternElementFactory(String name, NoteAudioSource... sources) {
 		setId(KeyUtils.generateKey());
 		setName(name);
 		setSources(new ArrayList<>());
@@ -105,11 +106,15 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 	@JsonIgnore
 	public List<PatternNote> getAllNotes() {
-		return sources.stream().map(PatternNoteSource::getNotes).flatMap(List::stream).collect(Collectors.toList());
+		return sources.stream()
+				.map(NoteAudioSource::getNotes)
+				.flatMap(List::stream)
+				.map(PatternNote::new)
+				.collect(Collectors.toList());
 	}
 
-	public List<PatternNoteSource> getSources() { return sources; }
-	public void setSources(List<PatternNoteSource> sources) {
+	public List<NoteAudioSource> getSources() { return sources; }
+	public void setSources(List<NoteAudioSource> sources) {
 		this.sources = sources;
 	}
 

@@ -25,7 +25,8 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternElementFactory;
@@ -75,7 +76,7 @@ public class PatternFactoryTest implements CellFeatures {
 
 		choices.forEach(c -> {
 			dirs.put(c.getFactory().getName().replaceAll(" ", "_"),
-					c.getFactory().getSources().stream().map(PatternNoteSource::getOrigin).map(File::new).collect(Collectors.toList()));
+					c.getFactory().getSources().stream().map(NoteAudioSource::getOrigin).map(File::new).collect(Collectors.toList()));
 		});
 
 		dirs.forEach((name, files) -> {
@@ -98,18 +99,18 @@ public class PatternFactoryTest implements CellFeatures {
 	public static List<PatternFactoryChoice> createChoices() {
 		List<PatternFactoryChoice> choices = new ArrayList<>();
 
-		PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
+		PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", NoteAudioProvider.create("Kit/Kick.wav")));
 		kick.setSeed(true);
 		kick.setMinScale(0.25);
 		choices.add(kick);
 
-		PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
+		PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", NoteAudioProvider.create("Kit/Clap.wav")));
 		clap.setMaxScale(0.5);
 		choices.add(clap);
 
 		PatternFactoryChoice toms = new PatternFactoryChoice(
-				new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
-						PatternNote.create("Kit/Tom2.wav")));
+				new PatternElementFactory("Toms", NoteAudioProvider.create("Kit/Tom1.wav"),
+						NoteAudioProvider.create("Kit/Tom2.wav")));
 		toms.setMaxScale(0.25);
 		choices.add(toms);
 

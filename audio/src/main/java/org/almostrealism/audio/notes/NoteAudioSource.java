@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import java.util.List;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface PatternNoteSource {
+public interface NoteAudioSource {
 	@JsonIgnore
 	String getOrigin();
 
@@ -31,7 +31,7 @@ public interface PatternNoteSource {
 	void setTuning(KeyboardTuning tuning);
 
 	@JsonIgnore
-	List<PatternNote> getNotes();
+	List<NoteAudioProvider> getNotes();
 
 	boolean checkResourceUsed(String canonicalPath);
 }
