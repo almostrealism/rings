@@ -18,5 +18,5 @@ package org.almostrealism.audio.pattern;
 
 import java.util.ArrayList;
 
-public class PatternFactoryChoiceList extends ArrayList<PatternFactoryChoice> {
+public class PatternFactoryChoiceList extends ArrayList<NoteAudioChoice> {
 }

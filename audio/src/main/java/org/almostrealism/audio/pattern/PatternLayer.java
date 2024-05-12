@@ -17,29 +17,28 @@
 package org.almostrealism.audio.pattern;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PatternLayer {
-	private PatternFactoryChoice choice;
+	private NoteAudioChoice choice;
 	private List<PatternElement> elements;
 	private PatternLayer child;
 
 	public PatternLayer() { this(null, new ArrayList<>()); }
 
-	public PatternLayer(PatternFactoryChoice choice, List<PatternElement> elements) {
+	public PatternLayer(NoteAudioChoice choice, List<PatternElement> elements) {
 		this.choice = choice;
 		this.elements = elements;
 	}
 
-	public PatternFactoryChoice getChoice() {
+	public NoteAudioChoice getChoice() {
 		return choice;
 	}
 
-	public void setChoice(PatternFactoryChoice node) {
+	public void setChoice(NoteAudioChoice node) {
 		this.choice = node;
 	}
 
@@ -57,7 +56,7 @@ public class PatternLayer {
 				.collect(Collectors.toList());
 	}
 
-	public void putAllElementsByChoice(Map<PatternFactoryChoice, List<PatternElement>> result,
+	public void putAllElementsByChoice(Map<NoteAudioChoice, List<PatternElement>> result,
 									   double start, double end) {
 		if (elements == null || elements.isEmpty()) return;
 

@@ -56,7 +56,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private static AudioSumProvider sum = new AudioSumProvider();
 
-	private List<PatternFactoryChoice> choices;
+	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
 	private ConfigurableGenome genome;
 
@@ -67,7 +67,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this(new ArrayList<>());
 	}
 
-	public PatternSystemManager(List<PatternFactoryChoice> choices) {
+	public PatternSystemManager(List<NoteAudioChoice> choices) {
 		this(choices, new ConfigurableGenome());
 	}
 
@@ -75,14 +75,14 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this(new ArrayList<>(), genome);
 	}
 
-	public PatternSystemManager(List<PatternFactoryChoice> choices, ConfigurableGenome genome) {
+	public PatternSystemManager(List<NoteAudioChoice> choices, ConfigurableGenome genome) {
 		this.choices = choices;
 		this.patterns = new ArrayList<>();
 		this.genome = genome;
 	}
 
 	public void init() {
-		volume = new PackedCollection(1);
+		volume = new PackedCollection<>(1);
 		volume.setMem(0, 1.0);
 	}
 
@@ -93,13 +93,12 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	@Override
 	public List<NoteAudioSource> getSource(String id) {
 		return choices.stream()
-				.map(PatternFactoryChoice::getFactory)
 				.filter(f -> Objects.equals(id, f.getId()))
-				.map(PatternElementFactory::getSources)
+				.map(NoteAudioChoice::getSources)
 				.findFirst().orElse(null);
 	}
 
-	public List<PatternFactoryChoice> getChoices() {
+	public List<NoteAudioChoice> getChoices() {
 		return choices;
 	}
 
@@ -125,7 +124,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTuning(KeyboardTuning tuning) {
-		getChoices().forEach(c -> c.setTuning(tuning));
+		choices.forEach(c -> c.setTuning(tuning));
 	}
 
 	public void setTree(FileWaveDataProviderTree<?> root) {
@@ -135,7 +134,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
 		List<NoteAudioSource> sources = getChoices()
 				.stream()
-				.flatMap(c -> c.getFactory().getSources().stream())
+				.flatMap(c -> c.getSources().stream())
 				.collect(Collectors.toList());
 
 		if (progress != null && !sources.isEmpty())

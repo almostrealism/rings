@@ -415,6 +415,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 
 		generation.setSettings(settings.getGeneration());
+
+		if (tuning != null) {
+			setTuning(tuning);
+		}
 	}
 
 	protected void triggerDurationChange() {
@@ -422,7 +426,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public boolean checkResourceUsed(String canonicalPath) {
-		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
+		return getPatternManager().getChoices().stream().anyMatch(p -> p.checkResourceUsed(canonicalPath));
 	}
 
 	@Override

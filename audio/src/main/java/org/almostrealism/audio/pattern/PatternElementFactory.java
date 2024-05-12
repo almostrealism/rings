@@ -47,9 +47,13 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 	public static int[] REPEAT_DIST;
 
+	@Deprecated
 	private String id;
+	@Deprecated
 	private String name;
+	@Deprecated
 	private List<NoteAudioSource> sources;
+	@Deprecated
 	private boolean melodic;
 
 	private ParameterizedPositionFunction noteSelection;
@@ -67,10 +71,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 	public PatternElementFactory(String name) {
 		this(name, new NoteAudioSource[0]);
-	}
-
-	public PatternElementFactory(NoteAudioProvider... notes) {
-		this(null, notes);
 	}
 
 	public PatternElementFactory(NoteAudioSource... sources) {
@@ -98,12 +98,17 @@ public class PatternElementFactory implements ConsoleFeatures {
 		repeatSelection = ParameterizedPositionFunction.random();
 	}
 
+	@Deprecated
 	public String getId() { return id; }
+	@Deprecated
 	public void setId(String id) { this.id = id; }
 
+	@Deprecated
 	public String getName() { return name; }
+	@Deprecated
 	public void setName(String name) { this.name = name; }
 
+	@Deprecated
 	@JsonIgnore
 	public List<NoteAudioProvider> getAllNotes() {
 		return sources.stream()
@@ -112,7 +117,9 @@ public class PatternElementFactory implements ConsoleFeatures {
 				.collect(Collectors.toList());
 	}
 
+	@Deprecated
 	public List<NoteAudioSource> getSources() { return sources; }
+	@Deprecated
 	public void setSources(List<NoteAudioSource> sources) {
 		this.sources = sources;
 	}
@@ -147,17 +154,17 @@ public class PatternElementFactory implements ConsoleFeatures {
 		this.repeatSelection = repeatSelection;
 	}
 
+	@Deprecated
 	public boolean isMelodic() { return melodic; }
+	@Deprecated
 	public void setMelodic(boolean melodic) { this.melodic = melodic; }
 
-	public void setTuning(KeyboardTuning tuning) {
-		getSources().forEach(n -> n.setTuning(tuning));
-	}
-
+	@Deprecated
 	public boolean checkResourceUsed(String canonicalPath) {
 		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
 	}
 
+	@Deprecated
 	@JsonIgnore
 	public List<NoteAudioProvider> getValidNotes() {
 		return getAllNotes().stream().filter(NoteAudioProvider::isValid).collect(Collectors.toList());

@@ -25,7 +25,7 @@ import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.PatternFactoryChoice;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audioml.DiffusionGenerationProvider;
 import org.almostrealism.audio.generative.LocalResourceManager;
@@ -60,14 +60,13 @@ public class GenerationTest {
 
 	@Test
 	public void train() throws IOException {
-		List<PatternFactoryChoice> choices =
+		List<NoteAudioChoice> choices =
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 					PatternFactoryChoiceList.class);
 
 		List<NoteAudioSource> sources = choices.stream()
-				.map(PatternFactoryChoice::getFactory)
 				// .filter(c -> "Hats".equals(c.getName()))
-				.map(PatternElementFactory::getSources)
+				.map(NoteAudioChoice::getSources)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 
@@ -78,14 +77,13 @@ public class GenerationTest {
 
 	@Test
 	public void trainRemote() throws IOException {
-		List<PatternFactoryChoice> choices =
+		List<NoteAudioChoice> choices =
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 						PatternFactoryChoiceList.class);
 
 		List<NoteAudioSource> sources = choices.stream()
-				.map(PatternFactoryChoice::getFactory)
 				// .filter(c -> "Hats".equals(c.getName()))
-				.map(PatternElementFactory::getSources)
+				.map(NoteAudioChoice::getSources)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 

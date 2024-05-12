@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -39,9 +37,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.PatternFactoryChoice;
-import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -147,7 +143,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
-		PatternLayerManager.enableVolumeAdjustment = false;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
@@ -257,24 +252,24 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		if (enableSourcesJson) {
 			scene.loadPatterns("pattern-factory.json");
 		} else {
-			List<PatternFactoryChoice> choices = new ArrayList<>();
+			List<NoteAudioChoice> choices = new ArrayList<>();
 
-			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", NoteAudioProvider.create("Kit/Kick.wav")));
+			NoteAudioChoice kick = new NoteAudioChoice(new PatternElementFactory("Kicks", NoteAudioProvider.create("Kit/Kick.wav")));
 			kick.setSeed(true);
 			kick.setMinScale(0.25);
 			choices.add(kick);
 
-			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", NoteAudioProvider.create("Kit/Clap.wav")));
+			NoteAudioChoice clap = new NoteAudioChoice(new PatternElementFactory("Clap/Snare", NoteAudioProvider.create("Kit/Clap.wav")));
 			clap.setMaxScale(0.5);
 			choices.add(clap);
 
-			PatternFactoryChoice toms = new PatternFactoryChoice(
+			NoteAudioChoice toms = new NoteAudioChoice(
 					new PatternElementFactory("Toms", NoteAudioProvider.create("Kit/Tom1.wav"),
 							NoteAudioProvider.create("Kit/Tom2.wav")));
 			toms.setMaxScale(0.25);
 			choices.add(toms);
 
-			PatternFactoryChoice hats = new PatternFactoryChoice(new PatternElementFactory("Hats"));
+			NoteAudioChoice hats = new NoteAudioChoice(new PatternElementFactory("Hats"));
 			hats.setMaxScale(0.25);
 			choices.add(hats);
 
