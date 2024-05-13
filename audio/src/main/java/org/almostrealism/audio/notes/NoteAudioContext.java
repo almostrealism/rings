@@ -45,6 +45,10 @@ public class NoteAudioContext {
 		this.audioSelection = audioSelection;
 	}
 
+	public NoteAudioProvider selectAudio(double selection) {
+		return getAudioSelection().apply(selection);
+	}
+
 	public DoubleUnaryOperator getNextNotePosition() {
 		return nextNotePosition;
 	}
