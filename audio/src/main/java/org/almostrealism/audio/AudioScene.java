@@ -262,7 +262,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PatternFactoryChoiceList choices = mapper
-				.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+				.readValue(new File(patternsFile), PatternFactoryChoiceList.class);
 		getPatternManager().getChoices().addAll(choices);
 	}
 
@@ -542,6 +542,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					DEFAULT_LAYERS,
 					DEFAULT_DURATION), libraryProvider, progress);
 		}
+	}
+
+	public AudioScene<T> clone() {
+		AudioScene<T> clone = new AudioScene<>(scene, bpm, channelCount, delayLayerCount, sampleRate);
+		clone.setLibrary(library);
+		clone.setTuning(tuning);
+		clone.setSettings(getSettings());
+		return clone;
 	}
 
 	public static AudioScene<?> load(String settingsFile, String patternsFile, String libraryRoot, double bpm, int sampleRate) throws IOException {
