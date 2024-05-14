@@ -30,7 +30,14 @@ public class SceneAudioNode implements NoteAudioNode {
 	public SceneAudioNode(AudioScene<?> scene) {
 		this.scene = scene;
 		this.children = IntStream.range(0, scene.getChannelCount())
-				.mapToObj(c -> new ChannelAudioNode(scene, c))
+				.mapToObj(i -> {
+					ChannelAudioNode node = new ChannelAudioNode(scene, i);
+					node.setChoices(scene.getPatternManager().getChoices()
+							.stream()
+							.filter(c -> c.getChannels().contains(i))
+							.collect(Collectors.toList()));
+					return node;
+				})
 				.collect(Collectors.toUnmodifiableList());
 	}
 

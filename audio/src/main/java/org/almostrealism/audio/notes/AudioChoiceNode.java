@@ -20,6 +20,7 @@ import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,8 +51,12 @@ public class AudioChoiceNode implements NoteAudioNode {
 	protected void initChildren() {
 		if (children != null) return;
 
-		NoteAudioContext audioContext = new NoteAudioContext(choice.getValidNotes(), null);
+		if (getPatternElements() == null) {
+			children = Collections.emptyList();
+			return;
+		}
 
+		NoteAudioContext audioContext = new NoteAudioContext(choice.getValidNotes(), null);
 		children = getPatternElements()
 				.stream()
 				.map(PatternElement::getNote)

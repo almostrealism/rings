@@ -270,24 +270,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public ParameterGenome getGenome() { return genome.getParameters(); }
 
-	public GenomeBreeder<PackedCollection<?>> getBreeder() {
-		return genome.getBreeder();
-
-//		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
-//				Breeders.of(Breeders.randomChoiceBreeder(),
-//						Breeders.randomChoiceBreeder(),
-//						Breeders.randomChoiceBreeder(),
-//						Breeders.averageBreeder()), 							   // GENERATORS
-//				Breeders.averageBreeder(),										   // PARAMETERS
-//				Breeders.averageBreeder(),  									   // VOLUME
-//				Breeders.averageBreeder(),  									   // MAIN FILTER UP
-//				Breeders.averageBreeder(),  									   // WET IN
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
-//				Breeders.averageBreeder(),  									   // WET OUT
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-//				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
-	}
+	public GenomeBreeder<PackedCollection<?>> getBreeder() { return genome.getBreeder(); }
 
 	public void assignGenome(Genome<PackedCollection<?>> genome) {
 		this.genome.assignTo(genome);
