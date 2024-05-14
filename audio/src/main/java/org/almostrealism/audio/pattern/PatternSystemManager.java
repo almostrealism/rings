@@ -86,10 +86,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		volume.setMem(0, 1.0);
 	}
 
-	private DynamicProducer<PackedCollection<?>> destination() {
-		return new DynamicProducer<>(args -> destination);
-	}
-
 	@Override
 	public List<NoteAudioSource> getSource(String id) {
 		return choices.stream()
@@ -203,7 +199,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				throw new UnsupportedOperationException("Lazy destination not compatible with computing max");
 			}
 
-			// CollectionProducer<PackedCollection<?>> max = c(destination()).traverse(0).max();
 			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
 			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
