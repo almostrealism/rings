@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -31,14 +30,13 @@ import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
-import org.almostrealism.audio.data.PathResource;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -171,11 +169,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
 					  int sampleRate) {
-		this(scene, bpm, channels, delayLayers, sampleRate, new NoOpGenerationProvider());
+		this(scene, bpm, channels, delayLayers, sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
-					  int sampleRate, GenerationProvider generation) {
+					  int sampleRate, List<NoteAudioChoice> choices,
+					  GenerationProvider generation) {
 		this.sampleRate = sampleRate;
 		this.bpm = bpm;
 		this.channelCount = channels;
@@ -195,7 +194,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
 
-		patterns = new PatternSystemManager(genome.getGenome(2));
+		patterns = new PatternSystemManager(choices, genome.getGenome(2));
 		patterns.init();
 
 		this.channelNames = new ArrayList<>();
@@ -545,7 +544,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public AudioScene<T> clone() {
-		AudioScene<T> clone = new AudioScene<>(scene, bpm, channelCount, delayLayerCount, sampleRate);
+		AudioScene<T> clone = new AudioScene<>(scene, bpm,
+				channelCount, delayLayerCount, sampleRate,
+				getPatternManager().getChoices(),
+				getGenerationManager().getGenerationProvider());
 		clone.setLibrary(library);
 		clone.setTuning(tuning);
 		clone.setSettings(getSettings());

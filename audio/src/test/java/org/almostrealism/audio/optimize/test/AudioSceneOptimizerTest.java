@@ -22,7 +22,6 @@ import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.algebra.Scalar;
@@ -45,7 +44,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 	protected AudioScene<?> scene() {
 		// DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 		// return () -> new GeneticTemporalFactoryFromDesirables().from(desirables);
-		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new NoOpGenerationProvider());
+		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
 	protected AudioSceneOptimizer optimizer() {

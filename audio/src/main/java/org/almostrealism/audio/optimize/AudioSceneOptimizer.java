@@ -216,7 +216,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
 
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
-										OutputLine.sampleRate, new NoOpGenerationProvider());
+										OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 		loadChoices(scene);
 
 		scene.setTuning(new DefaultKeyboardTuning());
