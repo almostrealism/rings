@@ -17,9 +17,12 @@
 package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
+import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,6 +42,12 @@ public class SceneAudioNode implements NoteAudioNode {
 					return node;
 				})
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	public void setRange(double start, double end) {
+		Map<NoteAudioChoice, List<PatternElement>> elements =
+				scene.getPatternManager().getPatternElements(start, end);
+		getChildren().forEach(c -> ((ChannelAudioNode) c).setPatternElements(elements));
 	}
 
 	@Override

@@ -18,8 +18,10 @@ package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.pattern.NoteAudioChoice;
+import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ChannelAudioNode implements NoteAudioNode {
@@ -46,6 +48,13 @@ public class ChannelAudioNode implements NoteAudioNode {
 		this.children = choices.stream()
 				.map(AudioChoiceNode::new)
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	public void setPatternElements(Map<NoteAudioChoice, List<PatternElement>> elements) {
+		for (NoteAudioNode node : children) {
+			AudioChoiceNode child = (AudioChoiceNode) node;
+			child.setPatternElements(elements.get(child.getChoice()));
+		}
 	}
 
 	public List<NoteAudioNode> getChildren() {

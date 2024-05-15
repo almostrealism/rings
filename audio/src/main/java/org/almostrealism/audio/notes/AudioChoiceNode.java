@@ -39,6 +39,10 @@ public class AudioChoiceNode implements NoteAudioNode {
 		return choice.getName();
 	}
 
+	public NoteAudioChoice getChoice() {
+		return choice;
+	}
+
 	public List<PatternElement> getPatternElements() {
 		return patternElements;
 	}
@@ -61,7 +65,9 @@ public class AudioChoiceNode implements NoteAudioNode {
 				.stream()
 				.map(PatternElement::getNote)
 				.mapToDouble(PatternNote::getNoteAudioSelection)
+				.distinct()
 				.mapToObj(audioContext::selectAudio)
+				.distinct()
 				.map(AudioProviderNode::new)
 				.collect(Collectors.toUnmodifiableList());
 	}

@@ -35,7 +35,9 @@ import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntUnaryOperator;
@@ -99,6 +101,17 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public List<PatternLayerManager> getPatterns() { return patterns; }
+
+	public Map<NoteAudioChoice, List<PatternElement>> getPatternElements(double start, double end) {
+		Map<NoteAudioChoice, List<PatternElement>> elements = new HashMap<>();
+
+		patterns.forEach(layer -> {
+			layer.getAllElementsByChoice(start, end).forEach((k, v) ->
+					elements.computeIfAbsent(k, key -> new ArrayList<>()).addAll(v));
+		});
+
+		return elements;
+	}
 
 	public void setVolume(double volume) {
 		this.volume.setMem(0, volume);
