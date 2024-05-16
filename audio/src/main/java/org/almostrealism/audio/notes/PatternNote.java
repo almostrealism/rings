@@ -57,10 +57,12 @@ public class PatternNote implements CellFeatures, SamplingFeatures {
 	}
 
 	public double getNoteAudioSelection() {
-		return noteAudioSelection;
+		return delegate == null ? noteAudioSelection : delegate.getNoteAudioSelection();
 	}
 
 	public void setNoteAudioSelection(double noteAudioSelection) {
+		if (delegate != null) return;
+
 		this.noteAudioSelection = noteAudioSelection;
 	}
 

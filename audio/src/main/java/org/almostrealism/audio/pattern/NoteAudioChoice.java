@@ -151,12 +151,6 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		this.granularitySelection = granularitySelection;
 	}
 
-	@Deprecated
-	public double getSeedBias() { return bias; }
-
-	@Deprecated
-	public void setSeedBias(double seedBias) { this.bias = seedBias; }
-
 	public double getBias() { return bias; }
 	public void setBias(double bias) {
 		this.bias = bias;

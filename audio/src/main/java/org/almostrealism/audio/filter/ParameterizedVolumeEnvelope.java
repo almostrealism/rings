@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -75,6 +76,12 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 			PackedCollection<?> out = env.evaluate(audioData, dr, a, d, s, r);
 			return out;
 		});
+	}
+
+	@JsonIgnore
+	@Override
+	public Class getLogClass() {
+		return super.getLogClass();
 	}
 
 	public static ParameterizedVolumeEnvelope random() {

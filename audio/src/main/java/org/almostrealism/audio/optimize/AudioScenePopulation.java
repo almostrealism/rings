@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -131,7 +132,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 	@Override
 	public int size() { return getGenomes().size(); }
 
-	public Runnable generate(int channel, int frames, Supplier<String> destinations, Consumer<String> output) {
+	public Runnable generate(int channel, int frames, Supplier<String> destinations,
+							 BiConsumer<String, Genome<PackedCollection<?>>> output) {
 		return () -> {
 			WaveOutput out = new WaveOutput(() ->
 					Optional.ofNullable(destinations).map(s -> {
@@ -162,7 +164,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					if (cells != null) cells.reset();
 
 					disableGenome();
-					if (outputPath != null) output.accept(outputPath);
+					if (outputPath != null)
+						output.accept(outputPath, getGenomes().get(i));
 				}
 			}
 		};

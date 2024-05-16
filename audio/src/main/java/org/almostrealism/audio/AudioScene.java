@@ -524,7 +524,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void saveSettings(File file) throws IOException {
-		new ObjectMapper().writeValue(file, getSettings());
+		defaultMapper().writeValue(file, getSettings());
 	}
 
 	public void loadSettings(File file) throws IOException {
@@ -533,7 +533,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) throws IOException {
 		if (file != null && file.exists()) {
-			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
+			setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
 			setSettings(Settings.defaultSettings(getChannelCount(),
 					DEFAULT_PATTERNS_PER_CHANNEL,
@@ -565,6 +565,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		audioScene.loadSettings(settingsFile == null ? null : new File(settingsFile));
 		if (libraryRoot != null) audioScene.setLibraryRoot(new FileWaveDataProviderNode(new File(libraryRoot)));
 		return audioScene;
+	}
+
+	public static ObjectMapper defaultMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return mapper;
 	}
 
 	public static class Settings {
