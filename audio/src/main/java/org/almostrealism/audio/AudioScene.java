@@ -61,12 +61,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -82,6 +84,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static final IntUnaryOperator DEFAULT_LAYERS;
 	public static final IntUnaryOperator DEFAULT_DURATION;
 	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
+
+	public static double variationRate = 0.1;
+	public static double variationIntensity = 0.01;
 
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
@@ -571,6 +576,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper;
+	}
+
+	public static UnaryOperator<ParameterGenome> defaultVariation() {
+		return genome -> {
+			Random rand = new Random();
+			return genome.variation(0, 1, variationRate,
+					() -> variationIntensity * rand.nextGaussian());
+		};
 	}
 
 	public static class Settings {
