@@ -19,7 +19,6 @@ package org.almostrealism.audioml;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.ProcessFeatures;
 

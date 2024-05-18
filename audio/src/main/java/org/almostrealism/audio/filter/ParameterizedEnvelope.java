@@ -18,7 +18,9 @@ package org.almostrealism.audio.filter;
 
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 
 public abstract class ParameterizedEnvelope implements EnvelopeFeatures {
 	private ParameterFunction attackSelection;
@@ -52,5 +54,13 @@ public abstract class ParameterizedEnvelope implements EnvelopeFeatures {
 	public ParameterFunction getReleaseSelection() { return releaseSelection; }
 	public void setReleaseSelection(ParameterFunction releaseSelection) { this.releaseSelection = releaseSelection; }
 
-	public abstract PatternNote apply(ParameterSet params, PatternNote note);
+	public PatternNoteLayer apply(ParameterSet params, PatternNoteLayer note) {
+		return PatternNoteLayer.create(note, createFilter(params));
+	}
+
+	public PatternNote apply(ParameterSet params, PatternNote note) {
+		return new PatternNote(note, createFilter(params));
+	}
+
+	public abstract NoteAudioFilter createFilter(ParameterSet params);
 }

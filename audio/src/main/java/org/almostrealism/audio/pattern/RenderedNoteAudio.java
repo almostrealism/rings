@@ -19,15 +19,15 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
-public class PatternNoteAudio {
+public class RenderedNoteAudio {
 	private Producer<PackedCollection<?>> producer;
 	private int offset;
 
-	public PatternNoteAudio() {
+	public RenderedNoteAudio() {
 		this(null, 0);
 	}
 
-	public PatternNoteAudio(Producer<PackedCollection<?>> producer, int offset) {
+	public RenderedNoteAudio(Producer<PackedCollection<?>> producer, int offset) {
 		this.producer = producer;
 		this.offset = offset;
 	}

@@ -25,8 +25,8 @@ import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.notes.NoteAudioSource;
-import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableVolumeEnvelope = true;
@@ -42,6 +43,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableScaleNoteLength = true;
 	public static boolean enableRegularizedNoteLength = false;
 
+	public static int MAX_LAYERS = 10;
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
 	public static double noteLengthFactor = 0.5;
 
@@ -53,16 +55,17 @@ public class PatternElementFactory implements ConsoleFeatures {
 	private String name;
 	@Deprecated
 	private List<NoteAudioSource> sources;
-	@Deprecated
-	private boolean melodic;
+
+	private PatternNoteFactory noteFactory;
 
 	private ParameterizedPositionFunction noteSelection;
+	private List<ParameterizedPositionFunction> noteLayerSelections;
 	private ParameterFunction noteLengthSelection;
+	private int noteLayerCount;
+
 	private ParameterizedVolumeEnvelope volumeEnvelope;
 	private ParameterizedFilterEnvelope filterEnvelope;
-
 	private ChordPositionFunction chordNoteSelection;
-
 	private ParameterizedPositionFunction repeatSelection;
 
 	public PatternElementFactory() {
@@ -86,14 +89,19 @@ public class PatternElementFactory implements ConsoleFeatures {
 		setName(name);
 		setSources(new ArrayList<>());
 		getSources().addAll(List.of(sources));
+		setNoteFactory(new PatternNoteFactory());
+		setNoteLayerCount(3);
 		initSelectionFunctions();
 	}
 
 	public void initSelectionFunctions() {
 		noteSelection = ParameterizedPositionFunction.random();
+		noteLayerSelections = IntStream.range(0, MAX_LAYERS)
+				.mapToObj(i -> ParameterizedPositionFunction.random())
+				.collect(Collectors.toList());
 		noteLengthSelection = ParameterFunction.random();
-		volumeEnvelope = ParameterizedVolumeEnvelope.random();
-		filterEnvelope = ParameterizedFilterEnvelope.random();
+		volumeEnvelope = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
+		filterEnvelope = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
 	}
@@ -124,12 +132,31 @@ public class PatternElementFactory implements ConsoleFeatures {
 		this.sources = sources;
 	}
 
+	public PatternNoteFactory getNoteFactory() {
+		return noteFactory;
+	}
+
+	public void setNoteFactory(PatternNoteFactory noteFactory) {
+		this.noteFactory = noteFactory;
+	}
+
 	public ParameterizedPositionFunction getNoteSelection() {
 		return noteSelection;
 	}
 	public void setNoteSelection(ParameterizedPositionFunction noteSelection) {
 		this.noteSelection = noteSelection;
 	}
+
+	public List<ParameterizedPositionFunction> getNoteLayerSelections() {
+		return noteLayerSelections;
+	}
+
+	public void setNoteLayerSelections(List<ParameterizedPositionFunction> noteLayerSelections) {
+		this.noteLayerSelections = noteLayerSelections;
+	}
+
+	public int getNoteLayerCount() { return noteLayerCount; }
+	public void setNoteLayerCount(int noteLayerCount) { this.noteLayerCount = noteLayerCount; }
 
 	public ParameterFunction getNoteLengthSelection() { return noteLengthSelection; }
 	public void setNoteLengthSelection(ParameterFunction noteLengthSelection) { this.noteLengthSelection = noteLengthSelection; }
@@ -155,11 +182,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	}
 
 	@Deprecated
-	public boolean isMelodic() { return melodic; }
-	@Deprecated
-	public void setMelodic(boolean melodic) { this.melodic = melodic; }
-
-	@Deprecated
 	public boolean checkResourceUsed(String canonicalPath) {
 		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
 	}
@@ -171,26 +193,43 @@ public class PatternElementFactory implements ConsoleFeatures {
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
-	public Optional<PatternElement> apply(ElementParity parity, double position, double scale, double bias,
+	public Optional<PatternElement> apply(ElementParity parity, double position,
+										  double scale, double bias,
 										  ScaleTraversalStrategy scaleTraversalStrategy,
-										  int depth, boolean repeat, ParameterSet params) {
+										  int depth, boolean repeat, boolean melodic,
+										  ParameterSet params) {
+		double pos;
+
 		if (parity == ElementParity.LEFT) {
-			position -= scale;
+			pos = position - scale;
 		} else if (parity == ElementParity.RIGHT) {
-			position += scale;
+			pos = position + scale;
+		} else {
+			pos = position;
 		}
 
-		double note = noteSelection.apply(params, position, scale) + bias;
+		double note = noteSelection.apply(params, pos, scale) + bias;
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		PatternNote choice = new PatternNote(note);
+		double noteLayers[] =
+				IntStream.range(0, noteLayerCount)
+						.mapToDouble(i -> noteLayerSelections.get(i).apply(params, pos, scale))
+						.map(i -> i + bias)
+						.map(i -> {
+							while (i > 1) i -= 1;
+							while (i < 0) i += 1;
+							return i;
+						})
+						.toArray();
+
+		PatternNote choice = getNoteFactory().apply(params, noteLayers);
 		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
 		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
 
-		PatternElement element = new PatternElement(choice, position);
-		element.setScalePosition(chordNoteSelection.applyAll(params, position, scale, depth));
-		element.setDurationStrategy(isMelodic() ?
+		PatternElement element = new PatternElement(choice, pos);
+		element.setScalePosition(chordNoteSelection.applyAll(params, pos, scale, depth));
+		element.setDurationStrategy(melodic ?
 				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
@@ -207,7 +246,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
 		}
 
-		double r = repeatSelection.apply(params, position, scale);
+		double r = repeatSelection.apply(params, pos, scale);
 
 		if (!repeat || r <= 0) {
 			element.setRepeatCount(1);

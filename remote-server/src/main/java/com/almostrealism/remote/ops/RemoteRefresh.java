@@ -24,7 +24,6 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.collect.PackedCollection;
 

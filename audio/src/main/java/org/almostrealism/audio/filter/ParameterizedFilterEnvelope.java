@@ -18,16 +18,12 @@ package org.almostrealism.audio.filter;
 
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.NoteAudioFilter;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.collect.PackedCollection;
 
 public class ParameterizedFilterEnvelope extends ParameterizedEnvelope {
 	public static final int MAX_SECONDS = 90;
-
-	public static double maxAttack = 0.1;
-	public static double maxDecay = 0.05;
-	public static double maxSustain = 0.2;
-	public static double maxRelease = 5.0;
 
 	private static FilterEnvelopeProcessor processor;
 
@@ -35,36 +31,88 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelope {
 		processor = new FilterEnvelopeProcessor(44100, MAX_SECONDS);
 	}
 
+	private Mode mode;
+
 	public ParameterizedFilterEnvelope() {
 		super();
+		mode = Mode.STANDARD_NOTE;
 	}
 
-	public ParameterizedFilterEnvelope(ParameterFunction attackSelection, ParameterFunction decaySelection,
+	public ParameterizedFilterEnvelope(Mode mode, ParameterFunction attackSelection, ParameterFunction decaySelection,
 									   ParameterFunction sustainSelection, ParameterFunction releaseSelection) {
 		super(attackSelection, decaySelection, sustainSelection, releaseSelection);
+		this.mode = mode;
 	}
 
+	public Mode getMode() { return mode; }
+
+	public void setMode(Mode mode) { this.mode = mode; }
+
 	@Override
-	public PatternNote apply(ParameterSet params, PatternNote note) {
-		return PatternNote.create(note, (audio, duration) -> () -> args -> {
+	public NoteAudioFilter createFilter(ParameterSet params) {
+		return (audio, duration) -> () -> args -> {
 			PackedCollection<?> audioData = audio.get().evaluate();
 			PackedCollection<?> result = new PackedCollection<>(shape(audioData));
 			PackedCollection<?> dr = duration.get().evaluate();
 
 			processor.setDuration(dr.toDouble(0));
-			processor.setAttack(maxAttack * getAttackSelection().positive().apply(params));
-			processor.setDecay(maxDecay * getDecaySelection().positive().apply(params));
-			processor.setSustain(maxSustain * getSustainSelection().positive().apply(params));
-			processor.setRelease(maxRelease * getReleaseSelection().positive().apply(params));
+			processor.setAttack(mode.getMaxAttack() * getAttackSelection().positive().apply(params));
+			processor.setDecay(mode.getMaxDecay() * getDecaySelection().positive().apply(params));
+			processor.setSustain(mode.getMaxSustain() * getSustainSelection().positive().apply(params));
+			processor.setRelease(mode.getMaxRelease() * getReleaseSelection().positive().apply(params));
 
 			processor.process(audioData, result);
 			return result;
-		});
+		};
 	}
 
-	public static ParameterizedFilterEnvelope random() {
-		return new ParameterizedFilterEnvelope(
+	public static ParameterizedFilterEnvelope random(Mode mode) {
+		return new ParameterizedFilterEnvelope(mode,
 				ParameterFunction.random(), ParameterFunction.random(),
 				ParameterFunction.random(), ParameterFunction.random());
+	}
+
+	public enum Mode {
+		STANDARD_NOTE, NOTE_LAYER;
+
+		public double getMaxAttack() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 0.5;
+				case STANDARD_NOTE:
+				default:
+					return 0.1;
+			}
+		}
+
+		public double getMaxDecay() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 0.5;
+				case STANDARD_NOTE:
+				default:
+					return 0.05;
+			}
+		}
+
+		public double getMaxSustain() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 1.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.2;
+			}
+		}
+
+		public double getMaxRelease() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 6.0;
+				case STANDARD_NOTE:
+				default:
+					return 5.0;
+			}
+		}
 	}
 }

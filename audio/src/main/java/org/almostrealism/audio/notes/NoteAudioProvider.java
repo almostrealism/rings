@@ -40,7 +40,7 @@ public class NoteAudioProvider implements SamplingFeatures {
 						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
 				if (enableVerbose && size > 1024)
-					AudioScene.console.features(PatternNote.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
+					AudioScene.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 

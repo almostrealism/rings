@@ -24,16 +24,15 @@ import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.DoubleUnaryOperator;
 
 public enum ScaleTraversalStrategy {
 	CHORD, SEQUENCE;
 
-	public List<PatternNoteAudio> getNoteDestinations(PatternElement element,
-													  boolean melodic, double offset,
-													  AudioSceneContext context,
-													  NoteAudioContext audioContext) {
-		List<PatternNoteAudio> destinations = new ArrayList<>();
+	public List<RenderedNoteAudio> getNoteDestinations(PatternElement element,
+													   boolean melodic, double offset,
+													   AudioSceneContext context,
+													   NoteAudioContext audioContext) {
+		List<RenderedNoteAudio> destinations = new ArrayList<>();
 
 		for (int i = 0; i < element.getRepeatCount(); i++) {
 			double relativePosition = element.getPosition() + i * element.getRepeatDuration();
@@ -53,7 +52,7 @@ public enum ScaleTraversalStrategy {
 								audioContext.nextNotePosition(relativePosition),
 								audioContext.getAudioSelection(),
 								context.getTimeForDuration());
-					destinations.add(new PatternNoteAudio(note,
+					destinations.add(new RenderedNoteAudio(note,
 							context.frameForPosition(actualPosition)));
 
 					keys.remove(keyIndex);
@@ -68,7 +67,7 @@ public enum ScaleTraversalStrategy {
 							audioContext.nextNotePosition(relativePosition),
 							audioContext.getAudioSelection(),
 							context.getTimeForDuration());
-				destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
+				destinations.add(new RenderedNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 			} else {
 				throw new UnsupportedOperationException("Unknown ScaleTraversalStrategy (" + this + ")");
 			}

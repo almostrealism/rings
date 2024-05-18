@@ -40,7 +40,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	private String id;
 	private String name;
 	private List<NoteAudioSource> sources;
-	private Boolean melodic;
+	private boolean melodic;
 
 	private double weight;
 	private double minScale;
@@ -118,13 +118,11 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	public boolean isMelodic() {
-		if (melodic != null) return melodic;
-		return factory.isMelodic();
+		return melodic;
 	}
 
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
-		this.factory.setMelodic(melodic);
 	}
 
 	// TODO Use this value to determine the likelihood of selection
@@ -202,11 +200,11 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		layer.setChoice(this);
 
 		factory.apply(ElementParity.LEFT, element.getPosition(), scale, getBias(),
-					scaleTraversalStrategy, depth, true, params)
+					scaleTraversalStrategy, depth, true, isMelodic(), params)
 				.ifPresent(layer.getElements()::add);
 
 		factory.apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(),
-					scaleTraversalStrategy, depth, true, params)
+					scaleTraversalStrategy, depth, true, isMelodic(), params)
 				.ifPresent(layer.getElements()::add);
 
 		return layer;

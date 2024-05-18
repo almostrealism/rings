@@ -23,6 +23,7 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -130,9 +131,9 @@ public class PatternElement implements CodeFeatures {
 				.collect(Collectors.toList());
 	}
 
-	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
-													AudioSceneContext context,
-													NoteAudioContext audioContext) {
+	public List<RenderedNoteAudio> getNoteDestinations(boolean melodic, double offset,
+													   AudioSceneContext context,
+													   NoteAudioContext audioContext) {
 		return getScaleTraversalStrategy()
 				.getNoteDestinations(this, melodic, offset,
 									context, audioContext);

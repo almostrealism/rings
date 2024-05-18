@@ -23,7 +23,6 @@ import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.List;

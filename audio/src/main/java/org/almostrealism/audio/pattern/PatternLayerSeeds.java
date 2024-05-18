@@ -81,7 +81,7 @@ public class PatternLayerSeeds {
 				.mapToObj(i ->
 						factory.apply(null, position + offset + i * g, g,
 								this.bias, scaleTraversalStrategy, scaleTraversalDepth,
-								false, params).orElse(null))
+								false, choice.isMelodic(), params).orElse(null))
 				.filter(Objects::nonNull)
 				.map(List::of)
 				.map(elements -> new PatternLayer(choice, elements))

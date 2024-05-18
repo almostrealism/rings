@@ -24,7 +24,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 
-// TODO  It would be better to use this in PatternLayerManager
+@Deprecated
 public class PatternAudio implements CellFeatures {
 	private static ContextSpecific<Evaluable<PackedCollection<?>>> add;
 
@@ -76,7 +76,7 @@ public class PatternAudio implements CellFeatures {
 
 	public void push(PatternElement e) {
 		for (int i = 0; i < e.getRepeatCount(); i++) {
-			write(e.getNote().getAudio(), e.getPosition() + e.getRepeatDuration() * i);
+			write(e.getNote().getAudio(null, null).evaluate(), e.getPosition() + e.getRepeatDuration() * i);
 		}
 	}
 

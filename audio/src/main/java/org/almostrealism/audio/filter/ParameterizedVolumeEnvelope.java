@@ -21,17 +21,13 @@ import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.NoteAudioFilter;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 	public static final int MAX_SECONDS = 180;
-
-	public static double maxAttack = 0.5;
-	public static double maxDecay = 2.0;
-	public static double maxSustain = 0.8;
-	public static double maxRelease = 0.5;
 
 	private static Evaluable<PackedCollection<?>> env;
 
@@ -46,36 +42,48 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 				() -> factor.getResultant(o.v(1, 0))).get();
 	}
 
+	private Mode mode;
+
 	public ParameterizedVolumeEnvelope() {
 		super();
+		mode = Mode.STANDARD_NOTE;
 	}
 
-	public ParameterizedVolumeEnvelope(ParameterFunction attackSelection, ParameterFunction decaySelection,
+	public ParameterizedVolumeEnvelope(Mode mode, ParameterFunction attackSelection, ParameterFunction decaySelection,
 									   ParameterFunction sustainSelection, ParameterFunction releaseSelection) {
 		super(attackSelection, decaySelection, sustainSelection, releaseSelection);
+		this.mode = mode;
+	}
+
+	public Mode getMode() {
+		return mode;
+	}
+
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 	@Override
-	public PatternNote apply(ParameterSet params, PatternNote note) {
+	public NoteAudioFilter createFilter(ParameterSet params) {
 		PackedCollection<?> a = new PackedCollection<>(1);
-		a.set(0, maxAttack * getAttackSelection().positive().apply(params));
+		a.set(0, mode.getMaxAttack() * getAttackSelection().positive().apply(params));
 
 		PackedCollection<?> d = new PackedCollection<>(1);
-		d.set(0, maxDecay * getDecaySelection().positive().apply(params));
+		d.set(0, mode.getMaxDecay() * getDecaySelection().positive().apply(params));
 
 		PackedCollection<?> s = new PackedCollection<>(1);
-		s.set(0, maxSustain * getSustainSelection().positive().apply(params));
+		s.set(0, mode.getMaxSustain() * getSustainSelection().positive().apply(params));
 
 		PackedCollection<?> r = new PackedCollection<>(1);
-		r.set(0, maxRelease * getReleaseSelection().positive().apply(params));
+		r.set(0, mode.getMaxRelease() * getReleaseSelection().positive().apply(params));
 
-		return PatternNote.create(note, (audio, duration) -> () -> args -> {
+		return (audio, duration) -> () -> args -> {
 			PackedCollection<?> audioData = audio.get().evaluate();
 			PackedCollection<?> dr = duration.get().evaluate();
 
 			PackedCollection<?> out = env.evaluate(audioData, dr, a, d, s, r);
 			return out;
-		});
+		};
 	}
 
 	@JsonIgnore
@@ -84,9 +92,53 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 		return super.getLogClass();
 	}
 
-	public static ParameterizedVolumeEnvelope random() {
-		return new ParameterizedVolumeEnvelope(
+	public static ParameterizedVolumeEnvelope random(Mode mode) {
+		return new ParameterizedVolumeEnvelope(mode,
 				ParameterFunction.random(), ParameterFunction.random(),
 				ParameterFunction.random(), ParameterFunction.random());
+	}
+
+	public enum Mode {
+		STANDARD_NOTE, NOTE_LAYER;
+
+		public double getMaxAttack() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.5;
+			}
+		}
+
+		public double getMaxDecay() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 3.0;
+				case STANDARD_NOTE:
+				default:
+					return 2.0;
+			}
+		}
+
+		public double getMaxSustain() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.8;
+			}
+		}
+
+		public double getMaxRelease() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.5;
+			}
+		}
 	}
 }
