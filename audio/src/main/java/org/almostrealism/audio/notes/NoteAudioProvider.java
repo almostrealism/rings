@@ -85,6 +85,8 @@ public class NoteAudioProvider implements SamplingFeatures {
 
 	@JsonIgnore
 	public double getDuration(KeyPosition<?> target) {
+		if (target == null) return provider.getDuration();
+
 		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
 		return provider.getDuration(r);
 	}
