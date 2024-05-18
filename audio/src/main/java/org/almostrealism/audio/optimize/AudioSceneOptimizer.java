@@ -55,6 +55,8 @@ import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
@@ -81,6 +83,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		arg = System.getProperty("AR_RINGS_STEMS");
 		if (arg != null) STEMS = arg;
+
+		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 	}
 
 	private AudioScenePopulation population;
