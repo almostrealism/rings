@@ -28,15 +28,15 @@ public abstract class PatternNoteAudioAdapter implements
 		PatternNoteAudio, CellFeatures, SamplingFeatures {
 
 	@Override
-	public int getSampleRate(DoubleFunction<NoteAudioProvider> audioSelection) {
-		if (getDelegate() != null) return getDelegate().getSampleRate(audioSelection);
-		return getProvider(audioSelection).getSampleRate();
+	public int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (getDelegate() != null) return getDelegate().getSampleRate(target, audioSelection);
+		return getProvider(target, audioSelection).getSampleRate();
 	}
 
 	@Override
 	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return getDelegate().getDuration(target, audioSelection);
-		return getProvider(audioSelection).getDuration(target);
+		return getProvider(target, audioSelection).getDuration(target);
 	}
 
 	@Override
@@ -54,15 +54,15 @@ public abstract class PatternNoteAudioAdapter implements
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return getDelegate().getAudio(target, audioSelection);
-		return getProvider(audioSelection).getAudio(target);
+		return getProvider(target, audioSelection).getAudio(target);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() == null) {
-			return getProvider(audioSelection).computeAudio(target);
+			return getProvider(target, audioSelection).computeAudio(target);
 		} else if (noteDuration > 0) {
-			return sampling(getSampleRate(audioSelection), getDuration(target, audioSelection),
+			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
 					() -> getFilter().apply(getDelegate().getAudio(target, audioSelection), c(noteDuration)));
 		} else {
 			throw new UnsupportedOperationException();
@@ -73,5 +73,5 @@ public abstract class PatternNoteAudioAdapter implements
 
 	protected abstract NoteAudioFilter getFilter();
 
-	protected abstract NoteAudioProvider getProvider(DoubleFunction<NoteAudioProvider> audioSelection);
+	protected abstract NoteAudioProvider getProvider(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
 }

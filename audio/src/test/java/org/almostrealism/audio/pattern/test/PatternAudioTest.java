@@ -58,7 +58,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		PatternNoteLayer note = PatternNoteLayer.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
 		note.setTuning(new DefaultKeyboardTuning());
 		new WaveData(note.getAudio(WesternChromatic.G2, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(WesternChromatic.G2, null))
 				.save(new File("results/pattern-note-audio.wav"));
 	}
 
@@ -69,7 +69,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(WesternChromatic.G2, null))
 				.save(new File("results/pattern-note-envelope.wav"));
 	}
 
@@ -95,7 +95,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(WesternChromatic.C1, null))
 				.save(new File("results/pattern-note-conditional-envelope.wav"));
 	}
 
@@ -118,7 +118,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(null, null))
 				.save(new File("results/pattern-note-envelope-passthrough.wav"));
 	}
 
@@ -132,7 +132,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(WesternChromatic.C1, null))
 				.save(new File("results/pattern-note-envelope-sections.wav"));
 	}
 
@@ -145,7 +145,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null).get().evaluate(),
-					note.getSampleRate(null))
+					note.getSampleRate(WesternChromatic.C1, null))
 				.save(new File("results/pattern-note-param-envelope.wav"));
 	}
 }

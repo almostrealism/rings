@@ -81,7 +81,13 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 			PackedCollection<?> audioData = audio.get().evaluate();
 			PackedCollection<?> dr = duration.get().evaluate();
 
-			PackedCollection<?> out = env.evaluate(audioData, dr, a, d, s, r);
+			PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
+
+			if (out.getShape().getTotalSize() == 1) {
+				warn("Envelope produced a value with shape " +
+						out.getShape().toStringDetail());
+			}
+
 			return out;
 		};
 	}

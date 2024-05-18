@@ -83,7 +83,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 	protected NoteAudioFilter getFilter() { return filter; }
 
 	@Override
-	protected NoteAudioProvider getProvider(DoubleFunction<NoteAudioProvider> audioSelection) {
+	protected NoteAudioProvider getProvider(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		return (provider == null ? audioSelection.apply(noteAudioSelection) : provider);
 	}
 

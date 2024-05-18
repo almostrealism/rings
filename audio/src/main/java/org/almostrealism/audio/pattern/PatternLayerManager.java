@@ -24,6 +24,7 @@ import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteAudioContext;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.hardware.mem.Heap;
@@ -48,8 +49,6 @@ public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
 	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
-
-	private static final AudioSumProvider sum = new AudioSumProvider();
 
 	private int channel;
 	private double duration;
@@ -401,10 +400,11 @@ public class PatternLayerManager implements CodeFeatures {
 								sizes.addEntry(frames);
 
 								TraversalPolicy shape = shape(frames);
-								return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
 							};
 
-							Heap.stage(() -> process.apply(traverse(1, note.getProducer()).get().evaluate()));
+							Heap.stage(() ->
+									process.apply(traverse(1, note.getProducer()).get().evaluate()));
 						});
 			});
 		});

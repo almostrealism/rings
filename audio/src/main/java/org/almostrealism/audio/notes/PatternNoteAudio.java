@@ -17,13 +17,16 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.DoubleFunction;
 
 public interface PatternNoteAudio {
-	int getSampleRate(DoubleFunction<NoteAudioProvider> audioSelection);
+	AudioSumProvider sum = new AudioSumProvider();
+
+	int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
 
 	double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
 
