@@ -17,54 +17,40 @@
 package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.pattern.NoteAudioChoice;
-import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AudioChoiceNode implements NoteAudioNode {
+public class PatternNoteNode implements NoteAudioNode {
 	private NoteAudioChoice choice;
+	private PatternNote note;
 
-	private List<PatternElement> patternElements;
 	private List<NoteAudioNode> children;
 
-	public AudioChoiceNode(NoteAudioChoice choice) {
+	public PatternNoteNode(NoteAudioChoice choice, PatternNote note) {
 		this.choice = choice;
+		this.note = note;
 	}
 
-	@Override
 	public String getName() {
-		return choice.getName();
-	}
-
-	public NoteAudioChoice getChoice() {
-		return choice;
-	}
-
-	public List<PatternElement> getPatternElements() {
-		return patternElements;
-	}
-
-	public void setPatternElements(List<PatternElement> patternElements) {
-		this.patternElements = patternElements;
-		children = null;
+		return choice.getName() + " Note";
 	}
 
 	protected void initChildren() {
 		if (children != null) return;
 
-		if (getPatternElements() == null) {
+		if (note == null) {
 			children = Collections.emptyList();
 			return;
 		}
 
-		children = getPatternElements()
+		NoteAudioContext audioContext = new NoteAudioContext(choice.getValidNotes(), null);
+		children = note.getProviders(null, audioContext::selectAudio)
 				.stream()
-				.map(PatternElement::getNote)
 				.distinct()
-				.map(note -> new PatternNoteNode(choice, note))
+				.map(AudioProviderNode::new)
 				.collect(Collectors.toUnmodifiableList());
 	}
 

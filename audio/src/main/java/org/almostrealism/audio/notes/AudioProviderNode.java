@@ -31,6 +31,10 @@ public class AudioProviderNode implements NoteAudioNode {
 		return provider.getProvider().getKey();
 	}
 
+	public NoteAudioProvider getProvider() {
+		return provider;
+	}
+
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
 		return Collections.emptyList();

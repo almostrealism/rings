@@ -18,6 +18,7 @@ package org.almostrealism.audio.filter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -25,6 +26,8 @@ import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
+
+import java.util.List;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 	public static final int MAX_SECONDS = 180;
@@ -65,31 +68,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 
 	@Override
 	public NoteAudioFilter createFilter(ParameterSet params) {
-		PackedCollection<?> a = new PackedCollection<>(1);
-		a.set(0, mode.getMaxAttack() * getAttackSelection().positive().apply(params));
-
-		PackedCollection<?> d = new PackedCollection<>(1);
-		d.set(0, mode.getMaxDecay() * getDecaySelection().positive().apply(params));
-
-		PackedCollection<?> s = new PackedCollection<>(1);
-		s.set(0, mode.getMaxSustain() * getSustainSelection().positive().apply(params));
-
-		PackedCollection<?> r = new PackedCollection<>(1);
-		r.set(0, mode.getMaxRelease() * getReleaseSelection().positive().apply(params));
-
-		return (audio, duration) -> () -> args -> {
-			PackedCollection<?> audioData = audio.get().evaluate();
-			PackedCollection<?> dr = duration.get().evaluate();
-
-			PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
-
-			if (out.getShape().getTotalSize() == 1) {
-				warn("Envelope produced a value with shape " +
-						out.getShape().toStringDetail());
-			}
-
-			return out;
-		};
+		return new Filter(params);
 	}
 
 	@JsonIgnore
@@ -98,10 +77,76 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 		return super.getLogClass();
 	}
 
-	public static ParameterizedVolumeEnvelope random(Mode mode) {
-		return new ParameterizedVolumeEnvelope(mode,
-				ParameterFunction.random(), ParameterFunction.random(),
-				ParameterFunction.random(), ParameterFunction.random());
+	public class Filter implements NoteAudioFilter {
+		private ParameterSet params;
+
+		public Filter(ParameterSet params) {
+			this.params = params;
+		}
+
+		public double getAttack() {
+			return mode.getMaxAttack() * getAttackSelection().positive().apply(params);
+		}
+
+		public double getDecay() {
+			return mode.getMaxDecay() * getDecaySelection().positive().apply(params);
+		}
+
+		public double getSustain() {
+			return mode.getMaxSustain() * getSustainSelection().positive().apply(params);
+		}
+
+		public double getRelease() {
+			return mode.getMaxRelease() * getReleaseSelection().positive().apply(params);
+		}
+
+		@Override
+		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
+												   Producer<PackedCollection<?>> duration) {
+			PackedCollection<?> a = new PackedCollection<>(1);
+			a.set(0, getAttack());
+
+			PackedCollection<?> d = new PackedCollection<>(1);
+			d.set(0, getDecay());
+
+			PackedCollection<?> s = new PackedCollection<>(1);
+			s.set(0, getSustain());
+
+			PackedCollection<?> r = new PackedCollection<>(1);
+			r.set(0, getRelease());
+
+			return () -> args -> {
+				PackedCollection<?> audioData = audio.get().evaluate();
+				PackedCollection<?> dr = duration.get().evaluate();
+
+				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
+
+				if (out.getShape().getTotalSize() == 1) {
+					warn("Envelope produced a value with shape " +
+							out.getShape().toStringDetail());
+				}
+
+				return out;
+			};
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null || getClass() != obj.getClass()) return false;
+			Filter filter = (Filter) obj;
+
+			if (filter.getAttack() != getAttack()) return false;
+			if (filter.getDecay() != getDecay()) return false;
+			if (filter.getSustain() != getSustain()) return false;
+			if (filter.getRelease() != getRelease()) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			return List.of(getAttack(), getDecay(), getSustain(), getRelease()).hashCode();
+		}
 	}
 
 	public enum Mode {
@@ -146,5 +191,11 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 					return 0.5;
 			}
 		}
+	}
+
+	public static ParameterizedVolumeEnvelope random(Mode mode) {
+		return new ParameterizedVolumeEnvelope(mode,
+				ParameterFunction.random(), ParameterFunction.random(),
+				ParameterFunction.random(), ParameterFunction.random());
 	}
 }

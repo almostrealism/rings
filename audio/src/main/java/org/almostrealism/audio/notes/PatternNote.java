@@ -24,7 +24,9 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -60,6 +62,13 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	public List<PatternNoteLayer> getLayers() {
 		return layers;
+	}
+
+	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getProviders(target, audioSelection);
+		return layers.stream()
+				.map(l -> l.getProvider(target, audioSelection))
+				.collect(Collectors.toList());
 	}
 
 	public void setTuning(KeyboardTuning tuning) {
@@ -139,5 +148,31 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	protected NoteAudioProvider getProvider(KeyPosition<?> target,
 											DoubleFunction<NoteAudioProvider> audioSelection) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PatternNote)) return false;
+
+		PatternNote n = (PatternNote) obj;
+
+		boolean eq;
+
+		if (filter != null) {
+			eq = filter.equals(n.filter) && delegate.equals(n.delegate);
+		} else {
+			eq = layers.equals(n.layers);
+		}
+
+		return eq;
+	}
+
+	@Override
+	public int hashCode() {
+		if (filter != null) {
+			return filter.hashCode();
+		} else {
+			return layers.hashCode();
+		}
 	}
 }

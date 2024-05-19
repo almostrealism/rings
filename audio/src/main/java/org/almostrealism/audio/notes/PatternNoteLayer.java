@@ -30,6 +30,8 @@ import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 public class PatternNoteLayer extends PatternNoteAudioAdapter {
+	public static final long selectionComparisonGranularity = (long) 1e10;
+
 	private double noteAudioSelection;
 	private NoteAudioProvider provider;
 
@@ -84,6 +86,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 
 	@Override
 	protected NoteAudioProvider getProvider(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getProvider(target, audioSelection);
 		return (provider == null ? audioSelection.apply(noteAudioSelection) : provider);
 	}
 
@@ -106,6 +109,28 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 
 		valid = provider.isValid();
 		return valid;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PatternNoteLayer) {
+			PatternNoteLayer other = (PatternNoteLayer) obj;
+
+			if (provider != null) {
+				return provider.equals(other.getProvider());
+			} else {
+				long compA = (long) (other.getNoteAudioSelection() * selectionComparisonGranularity);
+				long compB = (long) (getNoteAudioSelection() * selectionComparisonGranularity);
+				return compA == compB;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Double.valueOf(getNoteAudioSelection()).hashCode();
 	}
 
 	public static PatternNoteLayer create(String source) {
