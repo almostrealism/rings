@@ -102,10 +102,6 @@ public class AudioSceneContext {
 		this.destination = destination;
 	}
 
-	public Supplier<PackedCollection<?>> getIntermediateDestination() {
-		return () -> new PackedCollection<>(frames);
-	}
-
 	public List<ChannelSection> getSections() {
 		return sections;
 	}
