@@ -19,6 +19,7 @@ package org.almostrealism.audio.optimize;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
@@ -160,10 +162,22 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					recordGenerationTime(frames, System.currentTimeMillis() - start);
 
 					out.write().get().run();
+
+					if (outputPath != null) {
+						try {
+							File fftFile = HealthComputationAdapter.getAuxFile(new File(outputPath),
+									HealthComputationAdapter.FFT_SUFFIX);
+							out.getWaveData().fft().store(fftFile);
+						} catch (IOException e) {
+							warn("Could not store FFT", e);
+						}
+					}
+
 					out.reset();
 					if (cells != null) cells.reset();
 
 					disableGenome();
+
 					if (outputPath != null)
 						output.accept(outputPath, getGenomes().get(i));
 				}
