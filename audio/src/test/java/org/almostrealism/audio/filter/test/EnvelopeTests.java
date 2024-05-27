@@ -28,17 +28,38 @@ import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
+import org.almostrealism.hardware.jni.NativeCompiler;
+import org.almostrealism.hardware.metal.MetalProgram;
+import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
+//	static {
+//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
+//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
+//	}
+
 	@Test
-	public void attack() throws IOException {
+	public void attackSample() throws IOException {
 		WaveData.load(new File("Library/organ.wav"))
 				.sample(attack(c(1.0)))
-				.save(new File("results/attack.wav"));
+				.save(new File("results/attack-sample.wav"));
+	}
+
+	@Test
+	public void attack() {
+		double attack = 0.5;
+
+		EnvelopeSection env = envelope(attack(c(attack)));
+
+		PackedCollection<?> data = new PackedCollection<>(4 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/attack.wav"));
 	}
 
 	@Test
@@ -60,6 +81,29 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		new WaveData(data, 44100)
 				.sample(env).save(new File("results/adsr.wav"));
+	}
+
+	@Test
+	public void asr() {
+		double d0 = 0.5;
+		double d1 = 3.0;
+		double d2 = 7.0;
+
+		double v0 = 0.2;
+		double v1 = 0.8;
+		double v2 = 0.5;
+		double v3 = 0.95;
+
+		EnvelopeSection env = envelope(linear(c(0.0), c(d0), c(v0), c(v1)))
+				.andThenRelease(c(d0), c(v1), c(d1).subtract(c(d0)), c(v2))
+				.andThenRelease(c(d1), c(v2), c(d2).subtract(c(d1)), c(v3));
+
+
+		PackedCollection<?> data = new PackedCollection<>(7 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/asr.wav"));
 	}
 
 	@Test

@@ -24,9 +24,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -104,7 +102,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, audioSelection);
-		return combineLayers(target, audioSelection);
+		return combineLayers(target, -1, audioSelection);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
@@ -113,15 +111,20 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			return super.computeAudio(target, noteDuration, audioSelection);
 		}
 
-		return combineLayers(target, audioSelection);
+		return combineLayers(target, noteDuration, audioSelection);
 	}
 
 	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target,
+														  double noteDuration,
 														  DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (noteDuration < 0) {
+			throw new UnsupportedOperationException();
+		}
+
 		return () -> {
 			List<Evaluable<PackedCollection<?>>> layerAudio =
 					layers.stream()
-							.map(l -> l.getAudio(target, audioSelection).get())
+							.map(l -> l.getAudio(target, noteDuration, audioSelection).get())
 							.collect(Collectors.toList());
 			int frames[] = IntStream.range(0, layerAudio.size())
 					.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *

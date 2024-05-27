@@ -20,12 +20,11 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
-import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.List;
 
-public class ParameterizedFilterEnvelope extends ParameterizedEnvelope {
+public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	public static final int MAX_SECONDS = 90;
 
 	private static FilterEnvelopeProcessor processor;

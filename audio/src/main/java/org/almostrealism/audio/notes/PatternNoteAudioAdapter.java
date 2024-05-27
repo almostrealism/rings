@@ -42,28 +42,27 @@ public abstract class PatternNoteAudioAdapter implements
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		if (getDelegate() == null) {
-			System.out.println("WARN: No AudioNoteFilter for PatternNoteAudio, note duration will be ignored");
-			return getAudio(target, audioSelection);
-		} else {
-			return computeAudio(target, noteDuration, audioSelection);
-		}
+		return computeAudio(target, noteDuration, audioSelection);
 	}
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		if (getDelegate() != null) return getDelegate().getAudio(target, audioSelection);
+		if (getDelegate() != null) {
+			warn("Loading audio from delegate without note duration, filter will be skipped");
+			return getDelegate().getAudio(target, audioSelection);
+		}
+
 		return getProvider(target, audioSelection).getAudio(target);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() == null) {
-			return getProvider(target, audioSelection).computeAudio(target);
+			return getProvider(target, audioSelection).getAudio(target);
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
-					() -> getFilter().apply(getDelegate().getAudio(target, audioSelection), c(noteDuration)));
+					() -> getFilter().apply(getDelegate().getAudio(target, noteDuration, audioSelection), c(noteDuration)));
 		} else {
 			throw new UnsupportedOperationException();
 		}

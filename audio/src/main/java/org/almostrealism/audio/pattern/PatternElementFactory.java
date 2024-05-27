@@ -61,7 +61,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	private ParameterizedPositionFunction noteSelection;
 	private List<ParameterizedPositionFunction> noteLayerSelections;
 	private ParameterFunction noteLengthSelection;
-	private int noteLayerCount;
 
 	private ParameterizedVolumeEnvelope volumeEnvelope;
 	private ParameterizedFilterEnvelope filterEnvelope;
@@ -90,7 +89,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 		setSources(new ArrayList<>());
 		getSources().addAll(List.of(sources));
 		setNoteFactory(new PatternNoteFactory());
-		setNoteLayerCount(3);
 		initSelectionFunctions();
 	}
 
@@ -155,9 +153,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 		this.noteLayerSelections = noteLayerSelections;
 	}
 
-	public int getNoteLayerCount() { return noteLayerCount; }
-	public void setNoteLayerCount(int noteLayerCount) { this.noteLayerCount = noteLayerCount; }
-
 	public ParameterFunction getNoteLengthSelection() { return noteLengthSelection; }
 	public void setNoteLengthSelection(ParameterFunction noteLengthSelection) { this.noteLengthSelection = noteLengthSelection; }
 
@@ -213,7 +208,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 		if (note < 0.0) return Optional.empty();
 
 		double noteLayers[] =
-				IntStream.range(0, noteLayerCount)
+				IntStream.range(0, getNoteFactory().getLayerCount())
 						.mapToDouble(i -> noteLayerSelections.get(i).apply(params, pos, scale))
 						.map(i -> i + bias)
 						.map(i -> {

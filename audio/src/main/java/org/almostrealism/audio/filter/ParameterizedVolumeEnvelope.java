@@ -23,13 +23,12 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
-import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
 
 import java.util.List;
 
-public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
+public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	public static final int MAX_SECONDS = 180;
 
 	private static Evaluable<PackedCollection<?>> env;

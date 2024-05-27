@@ -16,51 +16,20 @@
 
 package org.almostrealism.audio.filter;
 
-import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 
-public abstract class ParameterizedEnvelope implements EnvelopeFeatures {
-	private ParameterFunction attackSelection;
-	private ParameterFunction decaySelection;
-	private ParameterFunction sustainSelection;
-	private ParameterFunction releaseSelection;
+public interface ParameterizedEnvelope extends EnvelopeFeatures {
 
-	public ParameterizedEnvelope() {
-	}
-
-	public ParameterizedEnvelope(ParameterFunction attackSelection,
-								 ParameterFunction decaySelection,
-								 ParameterFunction sustainSelection,
-								 ParameterFunction releaseSelection) {
-		this.attackSelection = attackSelection;
-		this.decaySelection = decaySelection;
-		this.sustainSelection = sustainSelection;
-		this.releaseSelection = releaseSelection;
-	}
-
-
-	public ParameterFunction getAttackSelection() { return attackSelection; }
-	public void setAttackSelection(ParameterFunction attackSelection) { this.attackSelection = attackSelection; }
-
-	public ParameterFunction getDecaySelection() { return decaySelection; }
-	public void setDecaySelection(ParameterFunction decaySelection) { this.decaySelection = decaySelection; }
-
-	public ParameterFunction getSustainSelection() { return sustainSelection; }
-	public void setSustainSelection(ParameterFunction sustainSelection) { this.sustainSelection = sustainSelection; }
-
-	public ParameterFunction getReleaseSelection() { return releaseSelection; }
-	public void setReleaseSelection(ParameterFunction releaseSelection) { this.releaseSelection = releaseSelection; }
-
-	public PatternNoteLayer apply(ParameterSet params, PatternNoteLayer note) {
+	default PatternNoteLayer apply(ParameterSet params, PatternNoteLayer note) {
 		return PatternNoteLayer.create(note, createFilter(params));
 	}
 
-	public PatternNote apply(ParameterSet params, PatternNote note) {
+	default PatternNote apply(ParameterSet params, PatternNote note) {
 		return new PatternNote(note, createFilter(params));
 	}
 
-	public abstract NoteAudioFilter createFilter(ParameterSet params);
+	NoteAudioFilter createFilter(ParameterSet params);
 }

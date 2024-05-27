@@ -145,10 +145,11 @@ public class PatternElement implements CodeFeatures {
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = melodic ? target : null;
 
+		double originalDuration = getNote().getDuration(target, audioSelection);
+
 		if (getDurationStrategy() == NoteDurationStrategy.NONE) {
-			return getNote().getAudio(k, audioSelection);
+			return getNote().getAudio(k, originalDuration, audioSelection);
 		} else {
-			double originalDuration = getNote().getDuration(target, audioSelection);
 			return getNote().getAudio(k,
 					getNoteDuration(timeForDuration, position,
 						nextNotePosition, originalDuration),

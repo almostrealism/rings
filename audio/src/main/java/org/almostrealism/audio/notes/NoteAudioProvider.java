@@ -110,7 +110,8 @@ public class NoteAudioProvider implements SamplingFeatures {
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target) {
 		return () -> args -> {
-			double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
+			double r = target == null ? 1.0 :
+					(tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz());
 			return provider.get(r).getCollection();
 		};
 	}

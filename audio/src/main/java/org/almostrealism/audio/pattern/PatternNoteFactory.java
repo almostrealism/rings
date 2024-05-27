@@ -1,16 +1,19 @@
 package org.almostrealism.audio.pattern;
 
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.filter.ParameterizedEnvelopeLayers;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PatternNoteFactory {
+	public static final int LAYER_COUNT = 3;
 
+	private ParameterizedEnvelopeLayers layerEnvelopes;
 	private ParameterizedVolumeEnvelope volumeEnvelope;
 	private ParameterizedFilterEnvelope filterEnvelope;
 
@@ -19,8 +22,17 @@ public class PatternNoteFactory {
 	}
 
 	public void initSelectionFunctions() {
-		volumeEnvelope = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.NOTE_LAYER);
-		filterEnvelope = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.NOTE_LAYER);
+		layerEnvelopes = ParameterizedEnvelopeLayers.random(LAYER_COUNT);
+	}
+
+	public int getLayerCount() { return LAYER_COUNT; }
+
+	public ParameterizedEnvelopeLayers getLayerEnvelopes() {
+		return layerEnvelopes;
+	}
+
+	public void setLayerEnvelopes(ParameterizedEnvelopeLayers layerEnvelopes) {
+		this.layerEnvelopes = layerEnvelopes;
 	}
 
 	public ParameterizedVolumeEnvelope getVolumeEnvelope() {
@@ -40,10 +52,16 @@ public class PatternNoteFactory {
 	}
 
 	public PatternNote apply(ParameterSet params, double... choices) {
-		return new PatternNote(DoubleStream.of(choices)
-				.mapToObj(PatternNoteLayer::new)
-				.map(note -> volumeEnvelope.apply(params, note))
-				.map(note -> filterEnvelope.apply(params, note))
-				.collect(Collectors.toList()));
+		List<PatternNoteLayer> layers = new ArrayList<>();
+
+		for (int i = 0; i < getLayerCount(); i++) {
+			PatternNoteLayer l = new PatternNoteLayer(choices[i]);
+//			l = volumeEnvelope.apply(params, l);
+//			l = filterEnvelope.apply(params, l);
+			l = layerEnvelopes.getEnvelope(i).apply(params, l);
+			layers.add(l);
+		}
+
+		return new PatternNote(layers);
 	}
 }
