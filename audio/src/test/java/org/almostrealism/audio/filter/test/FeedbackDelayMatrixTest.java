@@ -18,30 +18,38 @@ package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.filter.DelayNetwork;
+import org.almostrealism.hardware.jni.NativeCompiler;
+import org.almostrealism.hardware.metal.MetalProgram;
+import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
 public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
+//	static {
+//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
+//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
+//	}
+
 	@Test
 	public void parallelVerb() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
 		DelayNetwork verb = new DelayNetwork(0.001, 512, 1.5, (int) f.getSampleRate(), true);
-		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
+		runFilter("parallel-reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 
 	@Test
 	public void singleFrameVerb() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
 		DelayNetwork verb = new DelayNetwork(0.5, 2, 1.0 / 44100.0, (int) f.getSampleRate(), false);
-		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
+		runFilter("single-frame-reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 
 	@Test
 	public void reverb() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
-		DelayNetwork verb = new DelayNetwork(0.5, 64, 1.5, (int) f.getSampleRate(), false);
+		DelayNetwork verb = new DelayNetwork((int) f.getSampleRate(), false);
 		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));
 	}
 }

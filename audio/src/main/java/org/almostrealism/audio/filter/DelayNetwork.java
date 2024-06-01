@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.CodeFeatures;
@@ -26,6 +27,8 @@ import org.almostrealism.heredity.TemporalFactor;
 import java.util.function.Supplier;
 
 public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+	public static boolean enableIsolation = false;
+
 	private double gain;
 	private int size;
 	private int maxDelayFrames;
@@ -47,7 +50,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	}
 
 	public DelayNetwork(int size, int sampleRate, boolean parallel) {
-		this(0.5 / size, size, 1.5, sampleRate, parallel);
+		this(0.1, size, 1.5, sampleRate, parallel);
 	}
 
 	public DelayNetwork(double gain, int size, double duration, int sampleRate, boolean parallel) {
@@ -121,20 +124,29 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 			tick.add(a(p(output), sum(p(delayIn))));
 		}
 
-//		OperationList op = new OperationList("Tick debug");
-//		op.add(tick.isolate());
+		OperationList op = new OperationList("DelayNetwork");
+
+		if (enableIsolation) {
+			for (Supplier<Runnable> p : tick) {
+				op.add(Process.isolated(p));
+			}
+		}
+//
 //		op.add(() -> () -> {
-//			System.out.println("tick: " +
+//			String info = "tick: " +
 //					input.getClass() + " " +
 //					delayIn.getCount() + " " +
 //					delayOut.getCount() + " " +
 //					bufferIndices.getCount() + " " +
 //					bufferLengths.getCount() + " " +
 //					delayBuffer.getCount() + " " +
-//					output.getCount());
+//					output.getCount();
+//			if (delayIn.doubleStream().filter(d -> d != 0.0).count() > 5) {
+//				System.out.println(info);
+//			}
 //		});
 
-		return tick;
+		return enableIsolation ? op : tick;
 	}
 
 	@Override
@@ -150,7 +162,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	}
 
 	public double[][] householderMatrix(Producer<PackedCollection<?>> v, double scale) {
-		return householderMatrix(((PackedCollection) _normalize(traverseEach(v)).evaluate()).toArray(), scale);
+		return householderMatrix((_normalize(v).evaluate()).toArray(), scale);
 	}
 
 	public double[][] householderMatrix(double[] v, double scale) {

@@ -17,13 +17,8 @@
 package org.almostrealism.audio.grains;
 
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 
 @Deprecated
