@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import io.almostrealism.code.OperationProfile;
+import io.almostrealism.code.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -129,9 +130,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
-		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
-
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
@@ -152,7 +150,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioPopulationOptimizer.enableStemOutput = true;
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = 45;
+		PopulationOptimizer.popSize = 4; // 45;
 
 		// Verbosity level 0
 		PopulationOptimizer.enableBreeding = false; // verbosity < 1;
@@ -184,34 +182,44 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
-		Heap heap = new Heap(DEFAULT_HEAP_SIZE);
+		// MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
+		OperationProfileNode profile = new OperationProfileNode("AudioSceneOptimizer");
+		Hardware.getLocalHardware().assignProfile(profile);
+		StableDurationHealthComputation.profile = profile;
 
-		heap.use(() -> {
-			try {
-				AudioScene<?> scene = createScene();
-				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
-				opt.init();
-				opt.run();
+		try {
+			Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 
-				HardwareOperator.profile.print();
+			heap.use(() -> {
+				try {
+					AudioScene<?> scene = createScene();
+					AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
+					opt.init();
+					opt.run();
 
-				if (WavCellChromosome.timing.getTotal() > 60)
-					WavCellChromosome.timing.print();
+					HardwareOperator.profile.print();
 
-				if (enableVerbose)
-					PatternLayerManager.sizes.print();
+					if (WavCellChromosome.timing.getTotal() > 60)
+						WavCellChromosome.timing.print();
 
-				if (AudioSumProvider.timing.getTotal() > 120)
-					AudioSumProvider.timing.print();
+					if (enableVerbose)
+						PatternLayerManager.sizes.print();
 
-				if (MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
-					MemoryDataArgumentMap.profile.print();
+					if (AudioSumProvider.timing.getTotal() > 120)
+						AudioSumProvider.timing.print();
 
-				AcceleratedOperation.printTimes();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		});
+					if (MemoryDataArgumentMap.profile != null &&
+							MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
+						MemoryDataArgumentMap.profile.print();
+
+					AcceleratedOperation.printTimes();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		} finally {
+			profile.save("results/logs/optimizer.xml");
+		}
 	}
 
 	public static AudioScene<?> createScene() throws IOException {
