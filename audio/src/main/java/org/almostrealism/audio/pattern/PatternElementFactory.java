@@ -218,7 +218,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 						})
 						.toArray();
 
-		PatternNote choice = getNoteFactory().apply(params, noteLayers);
+		PatternNote choice = getNoteFactory().apply(params, melodic, noteLayers);
 		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
 		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
 

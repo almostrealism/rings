@@ -51,14 +51,19 @@ public class PatternNoteFactory {
 		this.filterEnvelope = filterEnvelope;
 	}
 
-	public PatternNote apply(ParameterSet params, double... choices) {
+	public PatternNote apply(ParameterSet params, boolean blend, double... choices) {
 		List<PatternNoteLayer> layers = new ArrayList<>();
 
 		for (int i = 0; i < getLayerCount(); i++) {
 			PatternNoteLayer l = new PatternNoteLayer(choices[i]);
-//			l = volumeEnvelope.apply(params, l);
-//			l = filterEnvelope.apply(params, l);
-			l = layerEnvelopes.getEnvelope(i).apply(params, l);
+
+			if (blend) {
+				l = layerEnvelopes.getEnvelope(i).apply(params, l);
+			} else {
+//				l = volumeEnvelope.apply(params, l);
+//				l = filterEnvelope.apply(params, l);
+			}
+
 			layers.add(l);
 		}
 
