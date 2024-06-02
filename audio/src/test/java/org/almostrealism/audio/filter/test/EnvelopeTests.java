@@ -169,27 +169,24 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
 		int sampleRate = audio.getSampleRate();
+		int maxFrames = (int) (duration * sampleRate);
 		int frames = audio.getCollection().getShape().getTotalSize();
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
-
-		PackedCollection<?> data = new PackedCollection<>(frames);
-		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
-		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
+		Producer<PackedCollection<?>> env =
+				sampling(sampleRate, duration, () -> envelope.get().getResultant(c(1000)));
 
 		PackedCollection<?> coeff = new PackedCollection<>(shape(frames, filterOrder + 1));
-		lowPassCoefficients(v(shape(1), 0), audio.getSampleRate(), filterOrder)
-						.get().into(coeff.traverse(1)).evaluate(data.traverse(0));
+		lowPassCoefficients(env, audio.getSampleRate(), filterOrder)
+				.get().into(coeff.traverse(1)).evaluate();
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
 
-//		MultiOrderFilter filter =
-//				lowPass(p(audio.getCollection()), v(shape(1), 0), audio.getSampleRate(), filterOrder);
-//		filter.get().into(result).evaluate(data.traverse(0));
-
-		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()),
-				v(shape(1, filterOrder + 1).traverse(1), 0));
-		filter.get().into(result).evaluate(coeff.traverse(1));
+//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()),
+//				v(shape(1, filterOrder + 1).traverse(1), 1));
+		MultiOrderFilter filter = MultiOrderFilter.create(v(shape(maxFrames), 0),
+				v(shape(1, filterOrder + 1).traverse(1), 1));
+		filter.get().into(result).evaluate(audio.getCollection().traverse(1), coeff.traverse(1));
 
 		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter-args.wav"));

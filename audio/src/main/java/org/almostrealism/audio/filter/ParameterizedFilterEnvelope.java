@@ -27,10 +27,16 @@ import java.util.List;
 public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	public static final int MAX_SECONDS = 90;
 
-	private static FilterEnvelopeProcessor processor;
+	public static boolean enableMultiOrderFilter = true;
+
+	private static EnvelopeProcessor processor;
 
 	static {
-		processor = new FilterEnvelopeProcessor(44100, MAX_SECONDS);
+		if (enableMultiOrderFilter) {
+			processor = new MultiOrderFilterEnvelopeProcessor(44100, MAX_SECONDS);
+		} else {
+			processor = new FilterEnvelopeProcessor(44100, MAX_SECONDS);
+		}
 	}
 
 	private Mode mode;

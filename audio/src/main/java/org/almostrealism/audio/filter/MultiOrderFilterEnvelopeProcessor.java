@@ -16,23 +16,22 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
+import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.io.File;
 
 // TODO  This should implement AudioProcessor
-public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
+public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
 	public static double filterPeak = 20000;
-
-	private TimeCell clock;
-
-	private PackedCollection<?> input;
-	private PackedCollection<PackedCollection<?>> output;
+	public static int filterOrder = 40;
 
 	private PackedCollection<?> duration;
 	private PackedCollection<?> attack;
@@ -40,27 +39,26 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 	private PackedCollection<?> sustain;
 	private PackedCollection<?> release;
 
-	private Runnable process;
+	private Evaluable<PackedCollection<?>> lowPassCoefficients;
+	private Evaluable<PackedCollection<?>> multiOrderFilter;
 
-	public FilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
-		input = new PackedCollection<>((int) (sampleRate * maxSeconds));
-		output = new PackedCollection<>((int) (sampleRate * maxSeconds));
+	public MultiOrderFilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
 		duration = new PackedCollection<>(1);
 		attack = new PackedCollection<>(1);
 		decay = new PackedCollection<>(1);
 		sustain = new PackedCollection<>(1);
 		release = new PackedCollection<>(1);
 
-		EnvelopeSection env = envelope(cp(duration), cp(attack), cp(decay), cp(sustain), cp(release));
+		EnvelopeSection envelope = envelope(cp(duration), cp(attack), cp(decay), cp(sustain), cp(release));
+		Producer<PackedCollection<?>> env =
+				sampling(sampleRate, () -> envelope.get().getResultant(c(filterPeak)));
 
-		clock = new TimeCell();
-		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
+		lowPassCoefficients = lowPassCoefficients(env, sampleRate, filterOrder).get();
 
-		WaveData audio = new WaveData(input.traverse(1), sampleRate);
-		process = cells(1, i -> audio.toCell(clock.frameScalar()))
-				.addRequirement(clock)
-				.f(i -> lp(freq, c(0.1)))
-				.export(output).get();
+		multiOrderFilter = MultiOrderFilter.create(
+					v(shape((int) (maxSeconds * sampleRate)), 0),
+					v(shape(1, filterOrder + 1).traverse(1), 1))
+				.get();
 	}
 
 	public void setDuration(double duration) {
@@ -85,11 +83,12 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 
 	@Override
 	public void process(PackedCollection<?> input, PackedCollection<?> output) {
-		// TODO  This can be done without the copy to input
-		// TODO  by just using a Provider that can be made to
-		// TODO  refer to the provided data collection directly.
-		new MemoryDataCopy("FilterEnvelopeProcessor input", input, this.input).get().run();
-		process.run();
-		new MemoryDataCopy("FilterEnvelopeProcessor output", this.output.range(shape(output.getMemLength())), output).get().run();
+		int frames = input.getShape().getTotalSize();
+
+		TraversalPolicy coeffShape = shape(frames, filterOrder + 1);
+		PackedCollection<?> coeff = PackedCollection.factory().apply(coeffShape.getTotalSize()).reshape(coeffShape);
+		lowPassCoefficients.into(coeff.traverse(1)).evaluate();
+
+		multiOrderFilter.into(output.traverse(1)).evaluate(input.traverse(1), coeff.traverse(1));
 	}
 }
