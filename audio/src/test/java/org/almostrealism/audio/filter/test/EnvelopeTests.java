@@ -138,15 +138,13 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		double release = 1.5;
 
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		int sampleRate = audio.getSampleRate();
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
-		Producer<PackedCollection<?>> env =
-				sampling(audio.getSampleRate(), duration,
-					() -> envelope.get().getResultant(c(1000)));
 
-		PackedCollection<?> data = new PackedCollection<>((int) (duration * 44100));
+		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
-		data = new WaveData(data, 44100).sample(envelope).getCollection();
+		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
 
 //		PackedCollection<?> coeff =
 //				lowPassCoefficients(cp(data.traverse(0)), audio.getSampleRate(), 40).get().evaluate();
@@ -156,7 +154,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), 40);
 
 		PackedCollection<?> result = filter.get().evaluate();
-		new WaveData(result, audio.getSampleRate())
+		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter.wav"));
 	}
 
