@@ -30,6 +30,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.hardware.metal.MetalProgram;
+import org.almostrealism.time.computations.MultiOrderFilter;
 import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
@@ -126,6 +127,37 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.o(i -> new File("results/adsr-filter.wav"))
 				.sec(4)
 				.get().run();
+	}
+
+	@Test
+	public void adsrMultiOrderFilter() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+
+		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+		Producer<PackedCollection<?>> env =
+				sampling(audio.getSampleRate(), duration,
+					() -> envelope.get().getResultant(c(1000)));
+
+		PackedCollection<?> data = new PackedCollection<>((int) (duration * 44100));
+		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
+		data = new WaveData(data, 44100).sample(envelope).getCollection();
+
+//		PackedCollection<?> coeff =
+//				lowPassCoefficients(cp(data.traverse(0)), audio.getSampleRate(), 40).get().evaluate();
+//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()), p(coeff));
+
+		MultiOrderFilter filter =
+				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), 40);
+
+		PackedCollection<?> result = filter.get().evaluate();
+		new WaveData(result, audio.getSampleRate())
+				.save(new File("results/adsr-multi-order-filter.wav"));
 	}
 
 	@Test
