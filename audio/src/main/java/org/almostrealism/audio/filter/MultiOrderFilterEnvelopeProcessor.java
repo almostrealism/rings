@@ -33,6 +33,7 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Cel
 	public static double filterPeak = 20000;
 	public static int filterOrder = 40;
 
+	private PackedCollection<?> coefficients;
 	private PackedCollection<?> duration;
 	private PackedCollection<?> attack;
 	private PackedCollection<?> decay;
@@ -43,6 +44,9 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Cel
 	private Evaluable<PackedCollection<?>> multiOrderFilter;
 
 	public MultiOrderFilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
+		int maxFrames = (int) (maxSeconds * sampleRate);
+
+		coefficients = new PackedCollection(maxFrames, filterOrder + 1);
 		duration = new PackedCollection<>(1);
 		attack = new PackedCollection<>(1);
 		decay = new PackedCollection<>(1);
@@ -56,7 +60,7 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Cel
 		lowPassCoefficients = lowPassCoefficients(env, sampleRate, filterOrder).get();
 
 		multiOrderFilter = MultiOrderFilter.create(
-					v(shape((int) (maxSeconds * sampleRate)), 0),
+					v(shape(maxFrames), 0),
 					v(shape(1, filterOrder + 1).traverse(1), 1))
 				.get();
 	}
@@ -85,10 +89,9 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Cel
 	public void process(PackedCollection<?> input, PackedCollection<?> output) {
 		int frames = input.getShape().getTotalSize();
 
-		TraversalPolicy coeffShape = shape(frames, filterOrder + 1);
-		PackedCollection<?> coeff = PackedCollection.factory().apply(coeffShape.getTotalSize()).reshape(coeffShape);
+		PackedCollection<?> coeff = coefficients.range(shape(frames, filterOrder + 1));
 		lowPassCoefficients.into(coeff.traverse(1)).evaluate();
-
-		multiOrderFilter.into(output.traverse(1)).evaluate(input.traverse(1), coeff.traverse(1));
+		multiOrderFilter.into(output.traverse(1))
+				.evaluate(input.traverse(1), coeff.traverse(1));
 	}
 }

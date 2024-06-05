@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -89,7 +90,10 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 												   Producer<PackedCollection<?>> duration) {
 			return () -> args -> {
 				PackedCollection<?> audioData = audio.get().evaluate();
-				PackedCollection<?> result = new PackedCollection<>(shape(audioData));
+
+				TraversalPolicy shape = audioData.getShape();
+				PackedCollection<?> result = PackedCollection.factory()
+						.apply(shape.getTotalSize()).reshape(shape);
 				PackedCollection<?> dr = duration.get().evaluate();
 
 				processor.setDuration(dr.toDouble(0));

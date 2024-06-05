@@ -150,10 +150,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioPopulationOptimizer.enableStemOutput = true;
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = 45;
+		PopulationOptimizer.popSize = 60;
 
 		// Verbosity level 0
-		PopulationOptimizer.enableBreeding = false; // verbosity < 1;
+		PopulationOptimizer.enableBreeding = verbosity < 1;
 
 		// Verbosity level 1;
 		NoteAudioProvider.enableVerbose = verbosity > 0;
