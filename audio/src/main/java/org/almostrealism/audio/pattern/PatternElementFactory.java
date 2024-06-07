@@ -220,7 +220,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 		PatternNote choice = getNoteFactory().apply(params, melodic, noteLayers);
 		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
-		if (enableVolumeEnvelope) choice = volumeEnvelope.apply(params, choice);
+		if (enableVolumeEnvelope && melodic) choice = volumeEnvelope.apply(params, choice);
 
 		PatternElement element = new PatternElement(choice, pos);
 		element.setScalePosition(chordNoteSelection.applyAll(params, pos, scale, depth));
