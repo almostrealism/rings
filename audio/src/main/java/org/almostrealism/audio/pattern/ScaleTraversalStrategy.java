@@ -17,15 +17,18 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public enum ScaleTraversalStrategy {
+public enum ScaleTraversalStrategy implements ConsoleFeatures {
 	CHORD, SEQUENCE;
 
 	public List<RenderedNoteAudio> getNoteDestinations(PatternElement element,
@@ -41,7 +44,20 @@ public enum ScaleTraversalStrategy {
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
-			if (this == CHORD) {
+			if (!melodic) {
+				if (element.getScalePositions().size() > 1) {
+					warn("Multiple scale position for non-melodic material");
+				}
+
+				Producer<PackedCollection<?>> note =
+						element.getNoteAudio(melodic,
+								keys.get(0), relativePosition,
+								audioContext.nextNotePosition(relativePosition),
+								audioContext.getAudioSelection(),
+								context.getTimeForDuration());
+				destinations.add(new RenderedNoteAudio(note,
+						context.frameForPosition(actualPosition)));
+			} else if (this == CHORD) {
 				p: for (double p : element.getScalePositions()) {
 					if (keys.isEmpty()) break p;
 					int keyIndex = (int) (p * keys.size());
@@ -74,5 +90,11 @@ public enum ScaleTraversalStrategy {
 		}
 
 		return destinations;
+	}
+
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 }

@@ -64,22 +64,32 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return chromosome;
 	}
 
-	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate, Chromosome<PackedCollection<?>> chromosome, int i) {
+	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate,
+													   Chromosome<PackedCollection<?>> chromosome, int i) {
+		return toAdjustmentGene(clock, sampleRate, null, chromosome, i);
+	}
+
+	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate, Producer<PackedCollection<?>> scale,
+													   Chromosome<PackedCollection<?>> chromosome, int i) {
 		return new Gene<>() {
 			@Override
 			public int length() { return 1; }
 
 			@Override
 			public Factor<PackedCollection<?>> valueAt(int pos) {
-				return in ->
-						multiply(adjustment(
-								chromosome.valueAt(i, 0).getResultant(c(1.0)),
-								chromosome.valueAt(i, 1).getResultant(c(1.0)),
-								chromosome.valueAt(i, 2).getResultant(c(1.0)),
-								chromosome.valueAt(i, 3).getResultant(c(1.0)),
-								chromosome.valueAt(i, 4).getResultant(c(1.0)),
-								chromosome.valueAt(i, 5).getResultant(c(1.0)),
-								clock.time(sampleRate), 0.0, 1.0, false), in);
+				return in -> {
+					Producer<PackedCollection<?>> s = chromosome.valueAt(i, 4).getResultant(c(1.0));
+					if (scale != null) s = multiply(s, scale);
+
+					return multiply(adjustment(
+							chromosome.valueAt(i, 0).getResultant(c(1.0)),
+							chromosome.valueAt(i, 1).getResultant(c(1.0)),
+							chromosome.valueAt(i, 2).getResultant(c(1.0)),
+							chromosome.valueAt(i, 3).getResultant(c(1.0)),
+							s,
+							chromosome.valueAt(i, 5).getResultant(c(1.0)),
+							clock.time(sampleRate), 0.0, 1.0, false), in);
+				};
 			}
 		};
 	}

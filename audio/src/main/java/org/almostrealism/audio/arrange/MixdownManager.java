@@ -56,6 +56,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private TimeCell clock;
 	private int sampleRate;
 
+	private PackedCollection<?> volumeAdjustmentScale;
+
 	private SimpleChromosome volumeSimple;
 	private SimpleChromosome mainFilterUpSimple;
 	private SimpleChromosome wetInSimple;
@@ -77,6 +79,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 						  TimeCell clock, int sampleRate) {
 		this.clock = clock;
 		this.sampleRate = sampleRate;
+
+		this.volumeAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 
 		this.volumeSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
 		this.mainFilterUpSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
@@ -113,6 +117,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		initRanges(new Configuration(channels), delayLayers);
 
 		this.reverbChannels = new ArrayList<>();
+	}
+
+	public void setVolumeAdjustmentScale(double scale) {
+		volumeAdjustmentScale.set(0, scale);
 	}
 
 	public List<Integer> getReverbChannels() {
@@ -258,7 +266,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
-		IntFunction<Factor<PackedCollection<?>>> v = i -> factor(toAdjustmentGene(clock, sampleRate, volumeSimple, channelIndex.applyAsInt(i)).valueAt(0));
+		IntFunction<Factor<PackedCollection<?>>> v = i -> factor(toAdjustmentGene(clock, sampleRate, p(volumeAdjustmentScale), volumeSimple, channelIndex.applyAsInt(i)).valueAt(0));
 
 		if (AudioScene.enableSourcesOnly) {
 			return cells
@@ -308,7 +316,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 					.collect(CellList.collector());
 
 			IntFunction<Gene<PackedCollection<?>>> tg =
-					i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, wetInSimple, channelIndex.applyAsInt(i)));
+					i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
 
 			// Route each line to each delay layer
 			efx = efx.m(fi(), delays, tg)
@@ -343,7 +351,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				if (AudioScene.enableMasterFilterDown) {
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
-						Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate, mainFilterDownSimple, channelIndex.applyAsInt(i)).valueAt(0);
+						Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate, null, mainFilterDownSimple, channelIndex.applyAsInt(i)).valueAt(0);
 						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 					}));
 				}
