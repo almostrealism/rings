@@ -30,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
@@ -44,6 +45,8 @@ import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
 public class AudioScenePopulation implements Population<PackedCollection<?>, PackedCollection<?>, TemporalCellular>, CodeFeatures {
+	public static boolean enableFlatten = true;
+
 	private static long totalGeneratedFrames, totalGenerationTime;
 
 	private AudioScene<?> scene;
@@ -93,7 +96,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 				OperationList setup = new OperationList("AudioScenePopulation Cellular Setup");
 				setup.addAll((List) scene.setup());
 				setup.addAll((List) cells.setup());
-				return setup;
+				return enableFlatten ? setup.flatten() : setup;
 			}
 
 			@Override
@@ -146,6 +149,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 
 			init(getGenomes().get(0), out, List.of(channel));
 
+			OperationProfile profile = new OperationProfile("AudioScenePopulation");
+
 			Runnable gen = null;
 
 			for (int i = 0; i < getGenomes().size(); i++) {
@@ -156,7 +161,16 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					outputPath = null;
 					cells = enableGenome(i);
 
-					if (gen == null) gen = cells.iter(frames, false).get();
+					if (gen == null) {
+						Supplier<Runnable> op = cells.iter(frames, false);
+
+						if (op instanceof OperationList) {
+							gen = ((OperationList) op).get(profile);
+						} else {
+							gen = op.get();
+						}
+					}
+
 					gen.run();
 				} finally {
 					recordGenerationTime(frames, System.currentTimeMillis() - start);
@@ -182,6 +196,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 						output.accept(outputPath, getGenomes().get(i));
 				}
 			}
+
+			// profile.print();
 		};
 	}
 

@@ -22,7 +22,6 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
@@ -359,8 +358,6 @@ public class PatternLayerManager implements CodeFeatures {
 				warn("No pattern elements (channel " + channel + ")");
 			return;
 		}
-
-		// destination.clear();
 
 		AudioSceneContext ctx = context.get();
 

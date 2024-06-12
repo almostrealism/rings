@@ -553,9 +553,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				channelCount, delayLayerCount, sampleRate,
 				getPatternManager().getChoices(),
 				getGenerationManager().getGenerationProvider());
-		clone.setLibrary(library);
-		clone.setTuning(tuning);
-		clone.setSettings(getSettings());
+
+		// Directly assign the library (processing is redundant)
+		clone.library = library;
+
+		// Retrieve the settings, but avoid repeating library processing
+		Settings settings = getSettings();
+		settings.setLibraryRoot(null);
+
+		// Avoid redundant tuning assignment during assignment of settings
+		clone.tuning = null;
+		clone.setSettings(settings);
+		clone.tuning = tuning;
+
 		return clone;
 	}
 
