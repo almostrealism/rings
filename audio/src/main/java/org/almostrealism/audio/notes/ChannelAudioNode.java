@@ -26,35 +26,52 @@ import java.util.stream.Collectors;
 
 public class ChannelAudioNode implements NoteAudioNode {
 	private AudioScene<?> scene;
+	private String name;
 	private int channel;
 
 	private List<NoteAudioNode> children;
+
+	public ChannelAudioNode() { }
 
 	public ChannelAudioNode(AudioScene<?> scene, int channel) {
 		this.scene = scene;
     	this.channel = channel;
 	}
 
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
+
 	public int getChannel() {
 		return channel;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String getName() {
+		if (name != null) return name;
+		if (scene == null) return null;
 		return scene.getChannelNames().get(getChannel());
 	}
 
 	public void setChoices(List<NoteAudioChoice> choices) {
 		this.children = choices.stream()
 				.map(AudioChoiceNode::new)
-				.collect(Collectors.toUnmodifiableList());
+				.collect(Collectors.toList());
 	}
 
 	public void setPatternElements(Map<NoteAudioChoice, List<PatternElement>> elements) {
 		for (NoteAudioNode node : children) {
 			AudioChoiceNode child = (AudioChoiceNode) node;
-			child.setPatternElements(elements.get(child.getChoice()));
+			child.setPatternElements(elements);
 		}
+	}
+
+	public void setChildren(List<NoteAudioNode> children) {
+		this.children = children;
 	}
 
 	public List<NoteAudioNode> getChildren() {

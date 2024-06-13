@@ -19,58 +19,70 @@ package org.almostrealism.audio.notes;
 import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternElement;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AudioChoiceNode implements NoteAudioNode {
 	private NoteAudioChoice choice;
+	private String name;
 
 	private List<PatternElement> patternElements;
 	private List<NoteAudioNode> children;
+
+	public AudioChoiceNode() { }
 
 	public AudioChoiceNode(NoteAudioChoice choice) {
 		this.choice = choice;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String getName() {
+		if (name != null) return name;
+		if (choice == null) return null;
 		return choice.getName();
 	}
 
-	public NoteAudioChoice getChoice() {
-		return choice;
-	}
-
-	public List<PatternElement> getPatternElements() {
-		return patternElements;
+	public void setPatternElements(Map<NoteAudioChoice, List<PatternElement>> elements) {
+		if (choice != null) {
+			setPatternElements(elements.get(choice));
+		}
 	}
 
 	public void setPatternElements(List<PatternElement> patternElements) {
 		this.patternElements = patternElements;
 		children = null;
+		initChildren();
 	}
 
 	protected void initChildren() {
 		if (children != null) return;
 
-		if (getPatternElements() == null) {
-			children = Collections.emptyList();
+		if (patternElements == null) {
+			children = new ArrayList<>();
 			return;
 		}
 
-		children = getPatternElements()
+		children = patternElements
 				.stream()
 				.map(PatternElement::getNote)
 				.distinct()
 				.map(note -> new PatternNoteNode(choice, note))
-				.collect(Collectors.toUnmodifiableList());
+				.collect(Collectors.toList());
+	}
+
+	public void setChildren(List<NoteAudioNode> children) {
+		this.children = children;
 	}
 
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
-		initChildren();
 		return children;
 	}
 }

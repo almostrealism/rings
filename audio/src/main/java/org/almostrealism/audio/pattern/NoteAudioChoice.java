@@ -99,6 +99,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	public String getName() {
 		if (name != null) return name;
+		if (factory == null) return null;
 		return factory.getName();
 	}
 
@@ -168,7 +169,10 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	@JsonIgnore
 	public List<NoteAudioProvider> getValidNotes() {
-		return getAllNotes().stream().filter(NoteAudioProvider::isValid).collect(Collectors.toList());
+		return getAllNotes().stream()
+				.filter(NoteAudioProvider::isValid)
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {

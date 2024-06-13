@@ -35,8 +35,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public abstract class WaveDataProviderAdapter implements WaveDataProvider, CodeFeatures {
+public abstract class WaveDataProviderAdapter implements WaveDataProvider,
+								Comparable<WaveDataProvider>, CodeFeatures {
 	private static Map<String, ContextSpecific<WaveData>> loaded;
 	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;
 

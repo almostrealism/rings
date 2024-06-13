@@ -16,27 +16,32 @@
 
 package org.almostrealism.audio.notes;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class AudioProviderNode implements NoteAudioNode {
 	private NoteAudioProvider provider;
+	private String name;
+
+	public AudioProviderNode() { }
 
 	public AudioProviderNode(NoteAudioProvider provider) {
 		this.provider = provider;
 	}
 
-	@Override
-	public String getName() {
-		return provider.getProvider().getKey();
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public NoteAudioProvider getProvider() {
-		return provider;
+	@Override
+	public String getName() {
+		if (name != null) return name;
+		if (provider == null) return null;
+		return provider.getProvider().getKey();
 	}
 
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
-		return Collections.emptyList();
+		return new ArrayList<>();
 	}
 }

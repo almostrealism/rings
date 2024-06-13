@@ -16,8 +16,10 @@
 
 package org.almostrealism.audio.notes;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.uml.Named;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface NoteAudioNode extends Tree<NoteAudioNode>, Named {
 }

@@ -22,10 +22,11 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Countable;
 import org.almostrealism.hardware.OperationList;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup {
+public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup, Comparable<WaveDataProvider> {
 
 	@JsonIgnore
 	String getKey();
@@ -42,4 +43,10 @@ public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup {
 	default Supplier<Runnable> setup() { return new OperationList(); }
 
 	WaveData get(double playbackRate);
+
+	@Override
+	default int compareTo(WaveDataProvider o) {
+		return Optional.ofNullable(getIdentifier()).orElse("").compareTo(
+				Optional.ofNullable(o.getIdentifier()).orElse(""));
+	}
 }

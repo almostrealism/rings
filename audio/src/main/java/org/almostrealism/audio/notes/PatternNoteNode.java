@@ -18,8 +18,8 @@ package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.pattern.NoteAudioChoice;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +27,24 @@ public class PatternNoteNode implements NoteAudioNode {
 	private NoteAudioChoice choice;
 	private PatternNote note;
 
+	private String name;
 	private List<NoteAudioNode> children;
+
+	public PatternNoteNode() { }
 
 	public PatternNoteNode(NoteAudioChoice choice, PatternNote note) {
 		this.choice = choice;
 		this.note = note;
+		initChildren();
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getName() {
+		if (name != null) return name;
+		if (choice == null) return null;
 		return choice.getName() + " Note";
 	}
 
@@ -42,7 +52,7 @@ public class PatternNoteNode implements NoteAudioNode {
 		if (children != null) return;
 
 		if (note == null) {
-			children = Collections.emptyList();
+			children = new ArrayList<>();
 			return;
 		}
 
@@ -51,12 +61,15 @@ public class PatternNoteNode implements NoteAudioNode {
 				.stream()
 				.distinct()
 				.map(AudioProviderNode::new)
-				.collect(Collectors.toUnmodifiableList());
+				.collect(Collectors.toList());
+	}
+
+	public void setChildren(List<NoteAudioNode> children) {
+		this.children = children;
 	}
 
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
-		initChildren();
 		return children;
 	}
 }

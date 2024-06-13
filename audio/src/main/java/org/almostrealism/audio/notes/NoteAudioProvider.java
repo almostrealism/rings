@@ -20,11 +20,12 @@ import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.RAM;
 import org.almostrealism.util.KeyUtils;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class NoteAudioProvider implements SamplingFeatures {
+public class NoteAudioProvider implements Comparable<NoteAudioProvider>, SamplingFeatures {
 	public static boolean enableVerbose = false;
 
 	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
@@ -147,6 +148,11 @@ public class NoteAudioProvider implements SamplingFeatures {
 		}
 
 		return valid;
+	}
+
+	@Override
+	public int compareTo(NoteAudioProvider o) {
+		return getProvider().compareTo(o.getProvider());
 	}
 
 	public static NoteAudioProvider create(String source) {

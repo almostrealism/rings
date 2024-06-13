@@ -30,6 +30,8 @@ public class SceneAudioNode implements NoteAudioNode {
 	private AudioScene<?> scene;
 	private List<NoteAudioNode> children;
 
+	public SceneAudioNode() { }
+
 	public SceneAudioNode(AudioScene<?> scene, List<Integer> channels) {
 		this.scene = scene;
 		this.children = IntStream.range(0, scene.getChannelCount())
@@ -42,7 +44,7 @@ public class SceneAudioNode implements NoteAudioNode {
 							.collect(Collectors.toList()));
 					return node;
 				})
-				.collect(Collectors.toUnmodifiableList());
+				.collect(Collectors.toList());
 	}
 
 	public void setRange(double start, double end) {
@@ -53,6 +55,10 @@ public class SceneAudioNode implements NoteAudioNode {
 
 	@Override
 	public String getName() { return "Scene"; }
+
+	public void setChildren(List<NoteAudioNode> children) {
+		this.children = children;
+	}
 
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
