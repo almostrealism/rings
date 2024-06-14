@@ -109,8 +109,8 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 									AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
 		if (!settings.exists()) scene.saveSettings(settings);
 
-		if (new File("Population.xml").exists()) {
-			log("Population.xml already exists");
+		if (new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
+			log(AudioSceneOptimizer.POPULATION_FILE + " already exists");
 			return;
 		}
 
@@ -118,7 +118,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				IntStream.range(0, count)
 						.mapToObj(i -> scene.getGenome().random())
 						.collect(Collectors.toList()));
-		pop.store(new FileOutputStream("Population.xml"));
+		pop.store(new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		DefaultChannelSectionFactory.enableFilter = false;
 		// EfxManager.enableEfx = false;
 
-		if (!new File("Population.xml").exists()) {
+		if (!new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
 			createGenomes();
 		}
 
@@ -175,7 +175,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	}
 
 	protected AudioScenePopulation loadPopulation(AudioScene<?> scene) throws FileNotFoundException {
-		File file = new File("Population.xml");
+		File file = new File(AudioSceneOptimizer.POPULATION_FILE);
 
 		if (file.exists()) {
 			List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
@@ -183,6 +183,6 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			return new AudioScenePopulation(scene, genomes);
 		}
 
-		throw new FileNotFoundException("Population.xml not found");
+		throw new FileNotFoundException(AudioSceneOptimizer.POPULATION_FILE + " not found");
 	}
 }

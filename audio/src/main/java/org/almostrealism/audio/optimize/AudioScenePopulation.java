@@ -44,7 +44,7 @@ import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
-public class AudioScenePopulation implements Population<PackedCollection<?>, PackedCollection<?>, TemporalCellular>, CodeFeatures {
+public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, CodeFeatures {
 	public static boolean enableFlatten = true;
 
 	private static long totalGeneratedFrames, totalGenerationTime;
@@ -106,6 +106,10 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 		};
 
 		disableGenome();
+	}
+
+	public AudioScene<?> getScene() {
+		return scene;
 	}
 
 	@Override

@@ -56,12 +56,15 @@ import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
-public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
+public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
+	public static final String POPULATION_FILE = "population.xml";
+
 	public static final int verbosity = 0;
 	public static boolean enableVerbose = false;
 
@@ -84,8 +87,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		arg = System.getProperty("AR_RINGS_STEMS");
 		if (arg != null) STEMS = arg;
-
-		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 	}
 
 	private AudioScenePopulation population;
@@ -94,7 +95,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
 							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 							   int totalCycles) {
-		super(scene.getChannelCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
+		super(scene.getChannelCount() + 1, null, breeder, generator, POPULATION_FILE, totalCycles);
 		setChildrenFunction(
 				children -> {
 					if (children.isEmpty()) throw new IllegalArgumentException();
@@ -130,6 +131,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
+		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
+
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;

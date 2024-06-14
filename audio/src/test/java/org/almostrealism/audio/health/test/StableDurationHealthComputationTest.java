@@ -21,6 +21,7 @@ import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.audio.optimize.test.AudioScenePopulationTest;
 import org.almostrealism.algebra.Scalar;
@@ -153,7 +154,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		genomes.add(scene.getGenome().random());
 		genomes.add(scene.getGenome().random());
 
-		AudioScenePopulation.store(genomes, new FileOutputStream("Population.xml"));
+		AudioScenePopulation.store(genomes, new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 
 		IntStream.range(0, 3).forEach(j ->
 			dc(() -> {
@@ -164,7 +165,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 				System.out.println("Creating AudioScenePopulation...");
 				AudioScenePopulation pop =
-						new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream("Population.xml")));
+						new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream(AudioSceneOptimizer.POPULATION_FILE)));
 				pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 				IntStream.range(0, 2).forEach(i -> {

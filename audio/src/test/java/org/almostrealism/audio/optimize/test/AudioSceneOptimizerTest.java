@@ -92,7 +92,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 		genomes.add(genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 
-		AudioScenePopulation.store(genomes, new FileOutputStream("Population.xml"));
+		AudioScenePopulation.store(genomes, new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 
 		IntStream.range(0, 3).forEach(j ->
 				dc(() -> {
@@ -103,7 +103,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 
 					System.out.println("Creating LayeredOrganPopulation...");
 					AudioScenePopulation pop =
-							new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream("Population.xml")));
+							new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream(AudioSceneOptimizer.POPULATION_FILE)));
 					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {
