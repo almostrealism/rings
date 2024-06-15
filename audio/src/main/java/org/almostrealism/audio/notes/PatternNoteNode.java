@@ -21,6 +21,7 @@ import org.almostrealism.audio.pattern.NoteAudioChoice;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PatternNoteNode implements NoteAudioNode {
@@ -59,6 +60,7 @@ public class PatternNoteNode implements NoteAudioNode {
 		NoteAudioContext audioContext = new NoteAudioContext(choice.getValidNotes(), null);
 		children = note.getProviders(null, audioContext::selectAudio)
 				.stream()
+				.filter(Objects::nonNull)
 				.distinct()
 				.map(AudioProviderNode::new)
 				.collect(Collectors.toList());

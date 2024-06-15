@@ -28,7 +28,7 @@ public class NoteAudioContext {
 
 	public NoteAudioContext(List<NoteAudioProvider> audioChoices,
 							DoubleUnaryOperator nextNotePosition) {
-		this(c -> audioChoices.get((int) (c * audioChoices.size())), nextNotePosition);
+		this(c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())), nextNotePosition);
 	}
 
 	public NoteAudioContext(DoubleFunction<NoteAudioProvider> audioSelection,
