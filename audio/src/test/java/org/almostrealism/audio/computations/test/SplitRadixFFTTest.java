@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.computations.test;
 
-import io.almostrealism.code.OperationProfile;
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.computations.SplitRadixFFT;
