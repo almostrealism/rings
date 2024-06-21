@@ -87,12 +87,14 @@ public class DelayCellTest implements CellFeatures {
 						t -> loop(t.tick(), 6 * OutputLine.sampleRate), true);
 
 		OperationProfile profiles = new OperationProfile("Native Loop");
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		OperationProfile hardwareProfile = new OperationProfile("HardwareOperator");
+		HardwareOperator.timingListener = hardwareProfile.getTimingListener();
+
 		System.out.println("Running native loop...");
 		((OperationList) r).get(profiles).run();
 		profiles.print();
 		System.out.println();
-		HardwareOperator.profile.print();
+		hardwareProfile.print();
 		System.out.println("\n-----\n");
 
 		r =
@@ -103,12 +105,14 @@ public class DelayCellTest implements CellFeatures {
 						t -> loop(Process.isolated(t.tick()), 6 * OutputLine.sampleRate), true);
 
 		profiles = new OperationProfile("Java Loop");
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		hardwareProfile = new OperationProfile("HardwareOperator");
+		HardwareOperator.timingListener = hardwareProfile.getTimingListener();
+
 		System.out.println("Running Java loop...");
 		((OperationList) r).get(profiles).run();
 		profiles.print();
 		System.out.println();
-		HardwareOperator.profile.print();
+		hardwareProfile.print();
 		System.out.println();
 
 		AcceleratedOperation.printTimes();

@@ -108,12 +108,14 @@ public class SplitRadixFFTTest implements TestFeatures {
 	}
 
 	@Test
-	public void fft() throws InterruptedException {
+	public void fft() {
+		OperationProfile profile = new OperationProfile("default");
+
 		try {
-			HardwareOperator.profile = new OperationProfile("default");
+			HardwareOperator.timingListener = profile.getTimingListener();
 			compute(-1).run();
 		} finally {
-			HardwareOperator.profile.print();
+			profile.print();
 			AcceleratedComputationOperation.printTimes();
 
 			if (totalComputations > 0) {

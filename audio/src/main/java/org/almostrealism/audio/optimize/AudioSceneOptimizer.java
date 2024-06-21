@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -198,7 +199,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					opt.init();
 					opt.run();
 
-					HardwareOperator.profile.print();
+					profile.print();
 
 					if (WavCellChromosome.timing.getTotal() > 60)
 						WavCellChromosome.timing.print();
