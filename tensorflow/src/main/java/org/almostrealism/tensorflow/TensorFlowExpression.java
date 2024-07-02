@@ -7,6 +7,7 @@ import org.tensorflow.types.TFloat64;
 public abstract class TensorFlowExpression extends Expression<Double> {
 	public TensorFlowExpression() {
 		super(Double.class);
+		init();
 	}
 
 	public abstract Operand<TFloat64> toOperand(TensorFlowManager tf);
