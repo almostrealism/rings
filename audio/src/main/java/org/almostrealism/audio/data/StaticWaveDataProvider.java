@@ -28,8 +28,8 @@ public class StaticWaveDataProvider extends WaveDataProviderAdapter {
 	}
 
 	@Override
-	public int getCount() {
-		return data.getCollection().getCount();
+	public long getCountLong() {
+		return data.getCollection().getCountLong();
 	}
 
 	@Override

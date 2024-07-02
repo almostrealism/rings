@@ -17,12 +17,9 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.code.ScopeInputManager;
-import io.almostrealism.expression.Expression;
-import io.almostrealism.expression.Sum;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
-
-import java.util.Collections;
 
 public class SineWaveTick extends SineWaveComputation {
 	public SineWaveTick(SineWaveCellData data, Producer<Scalar> envelope) {
@@ -30,8 +27,8 @@ public class SineWaveTick extends SineWaveComputation {
 	}
 
 	@Override
-	public void prepareScope(ScopeInputManager manager) {
-		super.prepareScope(manager);
+	public void prepareScope(ScopeInputManager manager, KernelStructureContext context) {
+		super.prepareScope(manager, context);
 		purgeVariables();
 		addVariable(wavePosition().assign(wavePosition().add(waveLength())));
 		addVariable(notePosition().assign(notePosition().add(noteLength().reciprocal())));

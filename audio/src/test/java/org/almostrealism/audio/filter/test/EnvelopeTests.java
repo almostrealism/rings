@@ -24,21 +24,43 @@ import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
+import org.almostrealism.hardware.jni.NativeCompiler;
+import org.almostrealism.hardware.metal.MetalProgram;
+import org.almostrealism.time.computations.MultiOrderFilter;
+import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
+//	static {
+//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
+//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
+//	}
+
 	@Test
-	public void attack() throws IOException {
+	public void attackSample() throws IOException {
 		WaveData.load(new File("Library/organ.wav"))
 				.sample(attack(c(1.0)))
-				.save(new File("results/attack.wav"));
+				.save(new File("results/attack-sample.wav"));
+	}
+
+	@Test
+	public void attack() {
+		double attack = 0.5;
+
+		EnvelopeSection env = envelope(attack(c(attack)));
+
+		PackedCollection<?> data = new PackedCollection<>(4 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/attack.wav"));
 	}
 
 	@Test
@@ -60,6 +82,29 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		new WaveData(data, 44100)
 				.sample(env).save(new File("results/adsr.wav"));
+	}
+
+	@Test
+	public void asr() {
+		double d0 = 0.5;
+		double d1 = 3.0;
+		double d2 = 7.0;
+
+		double v0 = 0.2;
+		double v1 = 0.8;
+		double v2 = 0.5;
+		double v3 = 0.95;
+
+		EnvelopeSection env = envelope(linear(c(0.0), c(d0), c(v0), c(v1)))
+				.andThenRelease(c(d0), c(v1), c(d1).subtract(c(d0)), c(v2))
+				.andThenRelease(c(d1), c(v2), c(d2).subtract(c(d1)), c(v3));
+
+
+		PackedCollection<?> data = new PackedCollection<>(7 * 44100);
+		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
+
+		new WaveData(data, 44100)
+				.sample(env).save(new File("results/asr.wav"));
 	}
 
 	@Test
@@ -85,22 +130,85 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	}
 
 	@Test
+	public void adsrMultiOrderFilter() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		int sampleRate = audio.getSampleRate();
+
+		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+
+		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
+		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
+
+//		PackedCollection<?> coeff =
+//				lowPassCoefficients(cp(data.traverse(0)), audio.getSampleRate(), 40).get().evaluate();
+//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()), p(coeff));
+
+		MultiOrderFilter filter =
+				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), 40);
+
+		PackedCollection<?> result = filter.get().evaluate();
+		new WaveData(result, sampleRate)
+				.save(new File("results/adsr-multi-order-filter.wav"));
+	}
+
+	@Test
+	public void adsrMultiOrderFilterArguments() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
+		int filterOrder = 40;
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		int sampleRate = audio.getSampleRate();
+		int maxFrames = (int) (duration * sampleRate);
+		int frames = audio.getCollection().getShape().getTotalSize();
+
+		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+		Producer<PackedCollection<?>> env =
+				sampling(sampleRate, duration, () -> envelope.get().getResultant(c(1000)));
+
+		PackedCollection<?> coeff = new PackedCollection<>(shape(frames, filterOrder + 1));
+		lowPassCoefficients(env, audio.getSampleRate(), filterOrder)
+				.get().into(coeff.traverse(1)).evaluate();
+
+		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+
+//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()),
+//				v(shape(1, filterOrder + 1).traverse(1), 1));
+		MultiOrderFilter filter = MultiOrderFilter.create(v(shape(maxFrames), 0),
+				v(shape(1, filterOrder + 1).traverse(1), 1));
+		filter.get().into(result).evaluate(audio.getCollection().traverse(1), coeff.traverse(1));
+
+		new WaveData(result, sampleRate)
+				.save(new File("results/adsr-multi-order-filter-args.wav"));
+	}
+
+	@Test
 	public void parameterizedVolumeEnvelope() {
-		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope.random();
-		PatternNote result = penv.apply(ParameterSet.random(),
-				PatternNote.create("Library/organ.wav"));
+		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
+		PatternNoteLayer result = penv.apply(ParameterSet.random(),
+				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(result.getRoot(), 4.0).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
 	@Test
 	public void parameterizedFilterEnvelope() {
-		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope.random();
-		PatternNote result = penv.apply(ParameterSet.random(),
-				PatternNote.create("Library/organ.wav"));
+		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
+		PatternNoteLayer result = penv.apply(ParameterSet.random(),
+				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(result.getRoot(), 4.0).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 

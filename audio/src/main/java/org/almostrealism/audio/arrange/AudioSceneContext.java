@@ -71,6 +71,10 @@ public class AudioSceneContext {
 		this.frameForPosition = frameForPosition;
 	}
 
+	public int frameForPosition(double pos) {
+		return frameForPosition.applyAsInt(pos);
+	}
+
 	public DoubleUnaryOperator getTimeForDuration() {
 		return timeForDuration;
 	}
@@ -96,10 +100,6 @@ public class AudioSceneContext {
 
 	public void setDestination(PackedCollection<?> destination) {
 		this.destination = destination;
-	}
-
-	public Supplier<PackedCollection<?>> getIntermediateDestination() {
-		return () -> new PackedCollection<>(frames);
 	}
 
 	public List<ChannelSection> getSections() {

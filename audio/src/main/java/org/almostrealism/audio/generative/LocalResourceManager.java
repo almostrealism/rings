@@ -18,7 +18,7 @@ package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.FileNoteSource;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.ProcessFeatures;
 
 import java.io.File;
@@ -63,14 +63,14 @@ public class LocalResourceManager implements GenerationResourceManager, ProcessF
 	}
 
 	@Override
-	public PatternNoteSource storeAudio(String id, WaveData waveData) {
+	public NoteAudioSource storeAudio(String id, WaveData waveData) {
 		System.out.println("LocalResourceManager: Storing audio " + id);
 		waveData.save(new File(audio.getAbsolutePath() + "/" + id));
 		return new FileNoteSource(audio.getAbsolutePath() + "/" + id);
 	}
 
 	@Override
-	public PatternNoteSource getAudio(String id) {
+	public NoteAudioSource getAudio(String id) {
 		File file = new File(audio.getAbsolutePath() + "/" + id);
 
 		if (file.exists()) {

@@ -26,20 +26,19 @@ import org.almostrealism.collect.PackedCollection;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SplitNoteSource implements PatternNoteSource, CellFeatures {
+public class SplitNoteSource implements NoteAudioSource, CellFeatures {
 	public static final double defaultBpm = 120.0;
 
 	private String source;
 	private double duration;
 	private double bpm;
-	private List<PatternNote> notes;
+	private List<NoteAudioProvider> notes;
 
 	private KeyboardTuning tuning;
 	private FileWaveDataProvider provider;
@@ -62,7 +61,7 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 		this.tuning = tuning;
 
 		if (notes != null) {
-			for (PatternNote note : notes) {
+			for (NoteAudioProvider note : notes) {
 				note.setTuning(tuning);
 			}
 		}
@@ -105,7 +104,7 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 		return audio;
 	}
 
-	public List<PatternNote> getNotes() {
+	public List<NoteAudioProvider> getNotes() {
 		if (notes == null) {
 			PackedCollection<?> audio = getAudio();
 			if (audio == null) return Collections.emptyList();
@@ -117,7 +116,7 @@ public class SplitNoteSource implements PatternNoteSource, CellFeatures {
 			notes = IntStream.range(0, total)
 					.mapToObj(i -> (Supplier<PackedCollection<?>>) () ->
 							new PackedCollection<>(shape(frames), 1, audio, i * frames))
-					.map(PatternNote::create)
+					.map(NoteAudioProvider::create)
 					.map(note -> {
 						note.setTuning(tuning);
 						return note;

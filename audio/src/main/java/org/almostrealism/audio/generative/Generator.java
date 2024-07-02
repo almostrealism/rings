@@ -18,7 +18,7 @@ package org.almostrealism.audio.generative;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.notes.NoteSourceProvider;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Generator {
 	private State state;
 
 	private List<String> sources;
-	private List<PatternNoteSource> results;
+	private List<NoteAudioSource> results;
 
 	private NoteSourceProvider sourceProvider;
 	private GenerationProvider generationProvider;
@@ -60,8 +60,8 @@ public class Generator {
 	public List<String> getSources() { return sources; }
 	public void setSources(List<String> sources) { this.sources = sources; }
 
-	public List<PatternNoteSource> getResults() { return results; }
-	public void setResults(List<PatternNoteSource> results) { this.results = results; }
+	public List<NoteAudioSource> getResults() { return results; }
+	public void setResults(List<NoteAudioSource> results) { this.results = results; }
 
 	@JsonIgnore
 	public NoteSourceProvider getSourceProvider() { return sourceProvider; }
@@ -80,7 +80,7 @@ public class Generator {
 			throw new IllegalStateException("Generator is busy");
 		}
 
-		List<PatternNoteSource> sources =
+		List<NoteAudioSource> sources =
 				getSources().stream()
 						.map(sourceProvider::getSource)
 						.flatMap(List::stream)
@@ -100,7 +100,7 @@ public class Generator {
 		}
 
 		state = State.GENERATING;
-		List<PatternNoteSource> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
+		List<NoteAudioSource> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
 		if (results != null) {
 			getResults().addAll(results);
 			state = State.READY;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.notes;
+package org.almostrealism.audio.filter;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.collect.PackedCollection;
 
-import java.util.List;
+// TODO  Should use AudioProcessor instead
+@Deprecated
+public interface EnvelopeProcessor {
+	void setDuration(double duration);
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface PatternNoteSource {
-	@JsonIgnore
-	String getOrigin();
+	void setAttack(double attack);
 
-	@JsonIgnore
-	void setTuning(KeyboardTuning tuning);
+	void setDecay(double decay);
 
-	@JsonIgnore
-	List<PatternNote> getNotes();
+	void setSustain(double sustain);
 
-	boolean checkResourceUsed(String canonicalPath);
+	void setRelease(double release);
+
+	void process(PackedCollection<?> input, PackedCollection<?> output);
 }

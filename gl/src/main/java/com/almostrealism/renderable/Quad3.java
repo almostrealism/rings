@@ -42,7 +42,7 @@ package com.almostrealism.renderable;
 import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
-import io.almostrealism.code.CodePrintWriter;
+import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.algebra.Vector;
 
 import java.nio.FloatBuffer;

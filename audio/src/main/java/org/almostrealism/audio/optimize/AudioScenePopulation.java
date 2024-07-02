@@ -19,19 +19,23 @@ package org.almostrealism.audio.optimize;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import io.almostrealism.code.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
@@ -40,7 +44,9 @@ import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
-public class AudioScenePopulation implements Population<PackedCollection<?>, PackedCollection<?>, TemporalCellular>, CodeFeatures {
+public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, CodeFeatures {
+	public static boolean enableFlatten = true;
+
 	private static long totalGeneratedFrames, totalGenerationTime;
 
 	private AudioScene<?> scene;
@@ -90,7 +96,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 				OperationList setup = new OperationList("AudioScenePopulation Cellular Setup");
 				setup.addAll((List) scene.setup());
 				setup.addAll((List) cells.setup());
-				return setup;
+				return enableFlatten ? setup.flatten() : setup;
 			}
 
 			@Override
@@ -100,6 +106,10 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 		};
 
 		disableGenome();
+	}
+
+	public AudioScene<?> getScene() {
+		return scene;
 	}
 
 	@Override
@@ -131,7 +141,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 	@Override
 	public int size() { return getGenomes().size(); }
 
-	public Runnable generate(int channel, int frames, Supplier<String> destinations, Consumer<String> output) {
+	public Runnable generate(int channel, int frames, Supplier<String> destinations,
+							 BiConsumer<String, Genome<PackedCollection<?>>> output) {
 		return () -> {
 			WaveOutput out = new WaveOutput(() ->
 					Optional.ofNullable(destinations).map(s -> {
@@ -141,6 +152,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					}).orElse(null), 24);
 
 			init(getGenomes().get(0), out, List.of(channel));
+
+			OperationProfile profile = new OperationProfile("AudioScenePopulation");
 
 			Runnable gen = null;
 
@@ -152,19 +165,43 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Pac
 					outputPath = null;
 					cells = enableGenome(i);
 
-					if (gen == null) gen = cells.iter(frames, false).get();
+					if (gen == null) {
+						Supplier<Runnable> op = cells.iter(frames, false);
+
+						if (op instanceof OperationList) {
+							gen = ((OperationList) op).get(profile);
+						} else {
+							gen = op.get();
+						}
+					}
+
 					gen.run();
 				} finally {
 					recordGenerationTime(frames, System.currentTimeMillis() - start);
 
 					out.write().get().run();
+
+					if (outputPath != null) {
+						try {
+							File fftFile = HealthComputationAdapter.getAuxFile(new File(outputPath),
+									HealthComputationAdapter.FFT_SUFFIX);
+							out.getWaveData().fft().store(fftFile);
+						} catch (IOException e) {
+							warn("Could not store FFT", e);
+						}
+					}
+
 					out.reset();
 					if (cells != null) cells.reset();
 
 					disableGenome();
-					if (outputPath != null) output.accept(outputPath);
+
+					if (outputPath != null)
+						output.accept(outputPath, getGenomes().get(i));
 				}
 			}
+
+			// profile.print();
 		};
 	}
 

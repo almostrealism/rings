@@ -17,7 +17,7 @@
 package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.io.File;
 
@@ -30,9 +30,9 @@ public interface GenerationResourceManager {
 
 	boolean isModelVersionAvailable(String vers);
 
-	PatternNoteSource storeAudio(String id, File file);
+	NoteAudioSource storeAudio(String id, File file);
 
-	PatternNoteSource storeAudio(String id, WaveData waveData);
+	NoteAudioSource storeAudio(String id, WaveData waveData);
 
-	PatternNoteSource getAudio(String id);
+	NoteAudioSource getAudio(String id);
 }

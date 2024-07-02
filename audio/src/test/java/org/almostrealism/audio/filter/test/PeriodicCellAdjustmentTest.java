@@ -34,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PeriodicCellAdjustmentTest implements TestFeatures {
@@ -53,7 +54,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 //		DefaultDesirablesProvider<WesternChromatic> provider = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 //		provider.getSamples().add(new File("src/main/resources/health-test-in.wav"));
 //		return new GeneticTemporalFactoryFromDesirables().from(provider);
-		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new NoOpGenerationProvider());
+		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
 	protected Cells organ(boolean adjust, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {

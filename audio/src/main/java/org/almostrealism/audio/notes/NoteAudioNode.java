@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.pattern;
+package org.almostrealism.audio.notes;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.collect.PackedCollection;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.almostrealism.relation.Tree;
+import io.almostrealism.uml.Named;
 
-public interface NoteAudioFilter {
-	Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
-										Producer<PackedCollection<?>> noteDuration);
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+public interface NoteAudioNode extends Tree<NoteAudioNode>, Named {
 }

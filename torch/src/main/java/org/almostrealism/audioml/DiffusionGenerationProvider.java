@@ -19,7 +19,7 @@ package org.almostrealism.audioml;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources) {
+	public boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources) {
 		try {
 			if (resources.isModelVersionAvailable(requestId)) {
 				// If the model was already refreshed, just return true
@@ -65,13 +65,13 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public List<PatternNoteSource> generate(String requestId, String generatorId, int count) {
-		List<PatternNoteSource> existing = new ArrayList<>();
+	public List<NoteAudioSource> generate(String requestId, String generatorId, int count) {
+		List<NoteAudioSource> existing = new ArrayList<>();
 
 		boolean available = true;
 
 		i: for (int i = 0; i < count; i++) {
-			PatternNoteSource out = resources.getAudio(requestId + ":" + i);
+			NoteAudioSource out = resources.getAudio(requestId + ":" + i);
 			if (out == null) {
 				available = false;
 				break i;

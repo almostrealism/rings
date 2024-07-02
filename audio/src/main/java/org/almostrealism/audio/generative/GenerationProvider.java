@@ -16,16 +16,16 @@
 
 package org.almostrealism.audio.generative;
 
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.List;
 
 public interface GenerationProvider {
-	boolean refresh(String requestId, String generatorId, List<PatternNoteSource> sources);
+	boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources);
 
 	GeneratorStatus getStatus(String id);
 
-	List<PatternNoteSource> generate(String requestId, String generatorId, int count);
+	List<NoteAudioSource> generate(String requestId, String generatorId, int count);
 
 	int getSampleRate();
 }

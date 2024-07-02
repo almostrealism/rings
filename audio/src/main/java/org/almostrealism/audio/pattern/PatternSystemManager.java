@@ -16,7 +16,8 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.relation.DynamicProducer;
+import io.almostrealism.code.OperationMetadata;
+import io.almostrealism.code.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -25,7 +26,7 @@ import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.notes.NoteSourceProvider;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
@@ -35,7 +36,9 @@ import org.almostrealism.heredity.ConfigurableGenome;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntUnaryOperator;
@@ -56,7 +59,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private static AudioSumProvider sum = new AudioSumProvider();
 
-	private List<PatternFactoryChoice> choices;
+	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
 	private ConfigurableGenome genome;
 
@@ -67,7 +70,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this(new ArrayList<>());
 	}
 
-	public PatternSystemManager(List<PatternFactoryChoice> choices) {
+	public PatternSystemManager(List<NoteAudioChoice> choices) {
 		this(choices, new ConfigurableGenome());
 	}
 
@@ -75,35 +78,41 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		this(new ArrayList<>(), genome);
 	}
 
-	public PatternSystemManager(List<PatternFactoryChoice> choices, ConfigurableGenome genome) {
+	public PatternSystemManager(List<NoteAudioChoice> choices, ConfigurableGenome genome) {
 		this.choices = choices;
 		this.patterns = new ArrayList<>();
 		this.genome = genome;
 	}
 
 	public void init() {
-		volume = new PackedCollection(1);
+		volume = new PackedCollection<>(1);
 		volume.setMem(0, 1.0);
 	}
 
-	private DynamicProducer<PackedCollection<?>> destination() {
-		return new DynamicProducer<>(args -> destination);
-	}
-
 	@Override
-	public List<PatternNoteSource> getSource(String id) {
+	public List<NoteAudioSource> getSource(String id) {
 		return choices.stream()
-				.map(PatternFactoryChoice::getFactory)
 				.filter(f -> Objects.equals(id, f.getId()))
-				.map(PatternElementFactory::getSources)
+				.map(NoteAudioChoice::getSources)
 				.findFirst().orElse(null);
 	}
 
-	public List<PatternFactoryChoice> getChoices() {
+	public List<NoteAudioChoice> getChoices() {
 		return choices;
 	}
 
 	public List<PatternLayerManager> getPatterns() { return patterns; }
+
+	public Map<NoteAudioChoice, List<PatternElement>> getPatternElements(double start, double end) {
+		Map<NoteAudioChoice, List<PatternElement>> elements = new HashMap<>();
+
+		patterns.forEach(layer -> {
+			layer.getAllElementsByChoice(start, end).forEach((k, v) ->
+					elements.computeIfAbsent(k, key -> new ArrayList<>()).addAll(v));
+		});
+
+		return elements;
+	}
 
 	public void setVolume(double volume) {
 		this.volume.setMem(0, volume);
@@ -125,7 +134,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTuning(KeyboardTuning tuning) {
-		getChoices().forEach(c -> c.setTuning(tuning));
+		choices.forEach(c -> c.setTuning(tuning));
 	}
 
 	public void setTree(FileWaveDataProviderTree<?> root) {
@@ -133,16 +142,16 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
-		List<PatternNoteSource> sources = getChoices()
+		List<NoteAudioSource> sources = getChoices()
 				.stream()
-				.flatMap(c -> c.getFactory().getSources().stream())
+				.flatMap(c -> c.getSources().stream())
 				.collect(Collectors.toList());
 
 		if (progress != null && !sources.isEmpty())
 			progress.accept(0.0);
 
 		IntStream.range(0, sources.size()).forEach(i -> {
-			PatternNoteSource s = sources.get(i);
+			NoteAudioSource s = sources.get(i);
 
 			if (s instanceof TreeNoteSource)
 				((TreeNoteSource) s).setTree(root);
@@ -179,32 +188,33 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			updateDestinations.get().run();
 		}
 
-		op.add(() -> () -> {
-			AudioSceneContext ctx = context.get();
+		op.add(OperationWithInfo.of(new OperationMetadata("PatternSystemManager.patternsSum", "PatternSystemManager.patternsSum"),
+				() -> () -> {
+					AudioSceneContext ctx = context.get();
 
-			List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
-					.filter(i -> ctx.getChannels() == null || ctx.getChannels().contains(patterns.get(i).getChannel()))
-					.boxed().collect(Collectors.toList());
+					List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
+							.filter(i -> ctx.getChannels() == null || ctx.getChannels().contains(patterns.get(i).getChannel()))
+							.boxed().collect(Collectors.toList());
 
-			if (patternsForChannel.isEmpty()) {
-				if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
-				return;
-			}
+					if (patternsForChannel.isEmpty()) {
+						if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
+						return;
+					}
 
-			patternsForChannel.stream().forEach(i -> {
-				patterns.get(i).sum(context);
-			});
+					patternsForChannel.stream().forEach(i -> {
+						patterns.get(i).sum(context);
+					});
 
-			if (enableVerbose)
-				log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
-		});
+					if (enableVerbose)
+						log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
+				}
+		));
 
 		if (enableAutoVolume) {
 			if (enableLazyDestination) {
 				throw new UnsupportedOperationException("Lazy destination not compatible with computing max");
 			}
 
-			// CollectionProducer<PackedCollection<?>> max = c(destination()).traverse(0).max();
 			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
 			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));

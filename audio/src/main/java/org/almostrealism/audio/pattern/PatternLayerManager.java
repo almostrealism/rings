@@ -22,10 +22,11 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.filter.AudioSumProvider;
+import org.almostrealism.audio.notes.NoteAudioContext;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.AcceleratedOperation;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -33,7 +34,10 @@ import org.almostrealism.io.DistributionMetric;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -42,41 +46,37 @@ import java.util.stream.Stream;
 public class PatternLayerManager implements CodeFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
-	public static boolean enableVolumeAdjustment = false;
 
 	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
-
-	private static final AudioSumProvider sum = new AudioSumProvider();
 
 	private int channel;
 	private double duration;
 	private double scale;
-	private double seedBias;
 
 	private boolean melodic;
 	private int scaleTraversalDepth;
 	private ScaleTraversalStrategy scaleTraversalStrategy;
 
-	private Supplier<List<PatternFactoryChoice>> percChoices;
-	private Supplier<List<PatternFactoryChoice>> melodicChoices;
+	private Supplier<List<NoteAudioChoice>> percChoices;
+	private Supplier<List<NoteAudioChoice>> melodicChoices;
 	private SimpleChromosome chromosome;
-	private ParameterFunction factorySelection;
+
+	private ParameterFunction factorySelection; // TODO  rename
 	private ParameterizedPositionFunction activeSelection;
+	private PatternElementFactory elementFactory;
 
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
 
-	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
-	private Runnable adjustVolume;
 
-	public PatternLayerManager(List<PatternFactoryChoice> choices, SimpleChromosome chromosome, int channel, double measures,
+	public PatternLayerManager(List<NoteAudioChoice> choices, SimpleChromosome chromosome, int channel, double measures,
 							   boolean melodic) {
-		this(PatternFactoryChoice.choices(choices, false), PatternFactoryChoice.choices(choices, true),
+		this(NoteAudioChoice.choices(choices, false), NoteAudioChoice.choices(choices, true),
 				chromosome, channel, measures, melodic);
 	}
 
-	public PatternLayerManager(Supplier<List<PatternFactoryChoice>> percChoices, Supplier<List<PatternFactoryChoice>> melodicChoices,
+	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices, Supplier<List<NoteAudioChoice>> melodicChoices,
 							   SimpleChromosome chromosome, int channel, double measures, boolean melodic) {
 		this.channel = channel;
 		this.duration = measures;
@@ -96,9 +96,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public void init() {
 		factorySelection = ParameterFunction.random();
 		activeSelection = ParameterizedPositionFunction.random();
-
-		volume = new PackedCollection(1);
-		volume.setMem(0, 0.1);
+		elementFactory = new PatternElementFactory();
 	}
 
 	public PackedCollection<?> getDestination() { return destination; }
@@ -109,11 +107,11 @@ public class PatternLayerManager implements CodeFeatures {
 		}
 	}
 
-	public List<PatternFactoryChoice> getChoices() {
+	public List<NoteAudioChoice> getChoices() {
 		return melodic ? melodicChoices.get() : percChoices.get();
 	}
 
-	public Stream<PatternFactoryChoice> choices() {
+	public Stream<NoteAudioChoice> choices() {
 		return getChoices().stream()
 				.filter(c -> c.getChannels() == null || c.getChannels().contains(channel))
 				.filter(c -> scaleTraversalDepth <= c.getMaxScaleTraversalDepth());
@@ -142,12 +140,17 @@ public class PatternLayerManager implements CodeFeatures {
 		this.scaleTraversalStrategy = scaleTraversalStrategy;
 	}
 
-	public double getSeedBias() { return seedBias; }
-	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
+	public PatternElementFactory getElementFactory() {
+		return elementFactory;
+	}
+
+	public void setElementFactory(PatternElementFactory elementFactory) {
+		this.elementFactory = elementFactory;
+	}
 
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
 		List<PatternLayerSeeds> options = choices()
-				.filter(PatternFactoryChoice::isSeed)
+				.filter(NoteAudioChoice::isSeed)
 				.map(choice -> choice.seeds(params))
 				.collect(Collectors.toList());
 
@@ -166,6 +169,12 @@ public class PatternLayerManager implements CodeFeatures {
 				.collect(Collectors.toList());
 	}
 
+	public Map<NoteAudioChoice, List<PatternElement>> getAllElementsByChoice(double start, double end) {
+		Map<NoteAudioChoice, List<PatternElement>> result = new HashMap<>();
+		roots.forEach(l -> l.putAllElementsByChoice(result, start, end));
+		return result;
+	}
+
 	public List<PatternElement> getAllElements(double start, double end) {
 		return roots.stream()
 				.map(l -> l.getAllElements(start, end))
@@ -182,6 +191,7 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.setActiveSelection(activeSelection);
+		settings.setElementFactory(elementFactory);
 		settings.getLayers().addAll(layerParams);
 		return settings;
 	}
@@ -198,6 +208,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		if (settings.getActiveSelection() != null)
 			activeSelection = settings.getActiveSelection();
+
+		if (settings.getElementFactory() != null)
+			elementFactory = settings.getElementFactory();
 
 		clear(true);
 		settings.getLayers().forEach(this::addLayer);
@@ -251,8 +264,12 @@ public class PatternLayerManager implements CodeFeatures {
 	protected void layer(ParameterSet params) {
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
+
 			if (seeds != null) {
-				seeds.generator(0, duration, seedBias, scaleTraversalStrategy, scaleTraversalDepth).forEach(roots::add);
+				seeds.generator(getElementFactory(), 0, duration,
+							scaleTraversalStrategy, scaleTraversalDepth)
+						.forEach(roots::add);
+
 				scale = seeds.getScale(duration);
 			}
 
@@ -267,11 +284,12 @@ public class PatternLayerManager implements CodeFeatures {
 			}
 
 			roots.forEach(layer -> {
-				PatternFactoryChoice choice = choose(scale, params);
+				NoteAudioChoice choice = choose(scale, params);
 				PatternLayer next;
 
 				if (choice != null) {
-					next = choice.apply(layer.getAllElements(0, 2 * duration), scale, scaleTraversalStrategy, scaleTraversalDepth, params);
+					next = choice.apply(getElementFactory(), layer.getAllElements(0, 2 * duration), scale,
+								scaleTraversalStrategy, scaleTraversalDepth, params);
 					next.trim(2 * duration);
 				} else {
 					next = new PatternLayer();
@@ -320,8 +338,8 @@ public class PatternLayerManager implements CodeFeatures {
 		IntStream.range(0, chromosome.length()).forEach(i -> layer(chromosome.valueAt(i)));
 	}
 
-	public PatternFactoryChoice choose(double scale, ParameterSet params) {
-		List<PatternFactoryChoice> options = choices()
+	public NoteAudioChoice choose(double scale, ParameterSet params) {
+		List<NoteAudioChoice> options = choices()
 				.filter(c -> scale >= c.getMinScale())
 				.filter(c -> scale <= c.getMaxScale())
 				.collect(Collectors.toList());
@@ -334,14 +352,12 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void sum(Supplier<AudioSceneContext> context) {
-		List<PatternElement> elements = getAllElements(0.0, duration);
+		Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
-				System.out.println("PatternLayerManager: No pattern elements (channel " + channel + ")");
+				warn("No pattern elements (channel " + channel + ")");
 			return;
 		}
-
-		// destination.clear();
 
 		AudioSceneContext ctx = context.get();
 
@@ -349,7 +365,7 @@ public class PatternLayerManager implements CodeFeatures {
 		// TODO  This results in count being 0, and nothing being output
 		int count = (int) (ctx.getMeasures() / duration);
 		if (ctx.getMeasures() / duration - count > 0.0001) {
-			System.out.println("PatternLayerManager: Pattern duration does not divide measures; there will be gaps");
+			warn("Pattern duration does not divide measures; there will be gaps");
 		}
 
 		IntStream.range(0, count).forEach(i -> {
@@ -363,25 +379,32 @@ public class PatternLayerManager implements CodeFeatures {
 			}
 
 			double offset = i * duration;
-			elements.stream()
-					.map(e -> e.getNoteDestinations(melodic, offset, ctx, this::nextNotePosition))
-					.flatMap(List::stream)
-					.forEach(note -> {
-						if (note.getOffset() >= destination.getShape().length(0)) return;
+			elements.keySet().forEach(choice -> {
+				NoteAudioContext audioContext =
+						new NoteAudioContext(
+							choice.getValidNotes(),
+							this::nextNotePosition);
 
-						AcceleratedOperation.apply(traverse(1, note.getProducer()).get()::evaluate,
-								audio -> {
-									int frames = Math.min(audio.getShape().getCount(),
-											destination.getShape().length(0) - note.getOffset());
-									sizes.addEntry(frames);
+				elements.get(choice).stream()
+						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
+						.flatMap(List::stream)
+						.forEach(note -> {
+							if (note.getOffset() >= destination.getShape().length(0)) return;
 
-									TraversalPolicy shape = shape(frames);
-									return sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-								});
-					});
+							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+								int frames = Math.min(audio.getShape().getCount(),
+										destination.getShape().length(0) - note.getOffset());
+								sizes.addEntry(frames);
+
+								TraversalPolicy shape = shape(frames);
+								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+							};
+
+							Heap.stage(() ->
+									process.apply(traverse(1, note.getProducer()).get().evaluate()));
+						});
+			});
 		});
-
-		if (enableVolumeAdjustment && adjustVolume != null) adjustVolume.run();
 	}
 
 	public double nextNotePosition(double position) {
@@ -430,7 +453,7 @@ public class PatternLayerManager implements CodeFeatures {
 			if (i % divide == 0) buf.append("|");
 			for (PatternElement e : elements) {
 				if (e.isPresent(i * scale, (i + 1) * scale)) {
-					String s = e.getNote().getSource();
+					String s = e.getNote().toString();
 					if (s.contains("/")) s = s.substring(s.lastIndexOf("/") + 1, s.lastIndexOf("/") + 2);
 					buf.append(s);
 					continue i;
@@ -449,8 +472,11 @@ public class PatternLayerManager implements CodeFeatures {
 		private ScaleTraversalStrategy scaleTraversalStrategy;
 		private int scaleTraversalDepth;
 		private boolean melodic;
+
 		private ParameterFunction factorySelection;
 		private ParameterizedPositionFunction activeSelection;
+		private PatternElementFactory elementFactory;
+
 		private List<ParameterSet> layers = new ArrayList<>();
 
 		public int getChannel() { return channel; }
@@ -473,6 +499,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public ParameterizedPositionFunction getActiveSelection() { return activeSelection; }
 		public void setActiveSelection(ParameterizedPositionFunction activeSelection) { this.activeSelection = activeSelection; }
+
+		public PatternElementFactory getElementFactory() { return elementFactory; }
+		public void setElementFactory(PatternElementFactory elementFactory) { this.elementFactory = elementFactory; }
 
 		public List<ParameterSet> getLayers() { return layers; }
 		public void setLayers(List<ParameterSet> layers) { this.layers = layers; }

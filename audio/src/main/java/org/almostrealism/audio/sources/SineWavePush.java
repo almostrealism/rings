@@ -19,6 +19,7 @@ package org.almostrealism.audio.sources;
 import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.expression.Expression;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
@@ -29,8 +30,8 @@ public class SineWavePush extends SineWaveComputation implements ExpressionFeatu
 	}
 
 	@Override
-	public void prepareScope(ScopeInputManager manager) {
-		super.prepareScope(manager);
+	public void prepareScope(ScopeInputManager manager, KernelStructureContext context) {
+		super.prepareScope(manager, context);
 		purgeVariables();
 
 		Expression<Double> wp = wavePosition().add(phase()).multiply(e(TWO_PI));

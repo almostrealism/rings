@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Tree;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -31,14 +30,13 @@ import org.almostrealism.audio.arrange.SceneSectionManager;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
-import org.almostrealism.audio.data.PathResource;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -63,12 +61,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -84,6 +84,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static final IntUnaryOperator DEFAULT_LAYERS;
 	public static final IntUnaryOperator DEFAULT_DURATION;
 	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
+
+	public static double variationRate = 0.1;
+	public static double variationIntensity = 0.01;
 
 	static {
 		DEFAULT_ACTIVE_PATTERNS = c ->
@@ -171,11 +174,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
 					  int sampleRate) {
-		this(scene, bpm, channels, delayLayers, sampleRate, new NoOpGenerationProvider());
+		this(scene, bpm, channels, delayLayers, sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
-					  int sampleRate, GenerationProvider generation) {
+					  int sampleRate, List<NoteAudioChoice> choices,
+					  GenerationProvider generation) {
 		this.sampleRate = sampleRate;
 		this.bpm = bpm;
 		this.channelCount = channels;
@@ -195,7 +199,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
 
-		patterns = new PatternSystemManager(genome.getGenome(2));
+		patterns = new PatternSystemManager(choices, genome.getGenome(2));
 		patterns.init();
 
 		this.channelNames = new ArrayList<>();
@@ -262,7 +266,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PatternFactoryChoiceList choices = mapper
-				.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+				.readValue(new File(patternsFile), PatternFactoryChoiceList.class);
 		getPatternManager().getChoices().addAll(choices);
 	}
 
@@ -270,24 +274,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public ParameterGenome getGenome() { return genome.getParameters(); }
 
-	public GenomeBreeder<PackedCollection<?>> getBreeder() {
-		return genome.getBreeder();
-
-//		GenomeBreeder<PackedCollection<?>> legacyBreeder = new DefaultGenomeBreeder(
-//				Breeders.of(Breeders.randomChoiceBreeder(),
-//						Breeders.randomChoiceBreeder(),
-//						Breeders.randomChoiceBreeder(),
-//						Breeders.averageBreeder()), 							   // GENERATORS
-//				Breeders.averageBreeder(),										   // PARAMETERS
-//				Breeders.averageBreeder(),  									   // VOLUME
-//				Breeders.averageBreeder(),  									   // MAIN FILTER UP
-//				Breeders.averageBreeder(),  									   // WET IN
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // DELAY
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // ROUTING
-//				Breeders.averageBreeder(),  									   // WET OUT
-//				Breeders.perturbationBreeder(0.0005, ScaleFactor::new),  // FILTERS
-//				Breeders.averageBreeder());  									   // MASTER FILTER DOWN
-	}
+	public GenomeBreeder<PackedCollection<?>> getBreeder() { return genome.getBreeder(); }
 
 	public void assignGenome(Genome<PackedCollection<?>> genome) {
 		this.genome.assignTo(genome);
@@ -415,6 +402,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 
 		generation.setSettings(settings.getGeneration());
+
+		if (tuning != null) {
+			setTuning(tuning);
+		}
 	}
 
 	protected void triggerDurationChange() {
@@ -422,7 +413,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public boolean checkResourceUsed(String canonicalPath) {
-		return getPatternManager().getChoices().stream().anyMatch(p -> p.getFactory().checkResourceUsed(canonicalPath));
+		return getPatternManager().getChoices().stream().anyMatch(p -> p.checkResourceUsed(canonicalPath));
 	}
 
 	@Override
@@ -538,7 +529,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void saveSettings(File file) throws IOException {
-		new ObjectMapper().writeValue(file, getSettings());
+		defaultMapper().writeValue(file, getSettings());
 	}
 
 	public void loadSettings(File file) throws IOException {
@@ -547,7 +538,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) throws IOException {
 		if (file != null && file.exists()) {
-			setSettings(new ObjectMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
+			setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
 		} else {
 			setSettings(Settings.defaultSettings(getChannelCount(),
 					DEFAULT_PATTERNS_PER_CHANNEL,
@@ -555,6 +546,27 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					DEFAULT_LAYERS,
 					DEFAULT_DURATION), libraryProvider, progress);
 		}
+	}
+
+	public AudioScene<T> clone() {
+		AudioScene<T> clone = new AudioScene<>(scene, bpm,
+				channelCount, delayLayerCount, sampleRate,
+				getPatternManager().getChoices(),
+				getGenerationManager().getGenerationProvider());
+
+		// Directly assign the library (processing is redundant)
+		clone.library = library;
+
+		// Retrieve the settings, but avoid repeating library processing
+		Settings settings = getSettings();
+		settings.setLibraryRoot(null);
+
+		// Avoid redundant tuning assignment during assignment of settings
+		clone.tuning = null;
+		clone.setSettings(settings);
+		clone.tuning = tuning;
+
+		return clone;
 	}
 
 	public static AudioScene<?> load(String settingsFile, String patternsFile, String libraryRoot, double bpm, int sampleRate) throws IOException {
@@ -568,6 +580,20 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		audioScene.loadSettings(settingsFile == null ? null : new File(settingsFile));
 		if (libraryRoot != null) audioScene.setLibraryRoot(new FileWaveDataProviderNode(new File(libraryRoot)));
 		return audioScene;
+	}
+
+	public static ObjectMapper defaultMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return mapper;
+	}
+
+	public static UnaryOperator<ParameterGenome> defaultVariation() {
+		return genome -> {
+			Random rand = new Random();
+			return genome.variation(0, 1, variationRate,
+					() -> variationIntensity * rand.nextGaussian());
+		};
 	}
 
 	public static class Settings {

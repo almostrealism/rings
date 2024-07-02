@@ -19,5 +19,5 @@ package org.almostrealism.audio.notes;
 import java.util.List;
 
 public interface NoteSourceProvider {
-	List<PatternNoteSource> getSource(String id);
+	List<NoteAudioSource> getSource(String id);
 }

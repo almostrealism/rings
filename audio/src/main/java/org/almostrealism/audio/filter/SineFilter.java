@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.graph.ByteFunction;
 
@@ -40,7 +41,7 @@ public class SineFilter implements ByteFunction<byte[]> {
 	}
 
 	@Override
-	public Scope<byte[]> getScope() { throw new RuntimeException("Not implemented"); }
+	public Scope<byte[]> getScope(KernelStructureContext context) { throw new RuntimeException("Not implemented"); }
 	
 	public void setSampleLength(int len) { this.len = len; }
 	public void setScale(double scale) { this.scale = scale; }

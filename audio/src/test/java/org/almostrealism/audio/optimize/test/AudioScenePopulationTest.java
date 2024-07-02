@@ -18,11 +18,10 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
-import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.PatternFactoryChoice;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.time.TemporalRunner;
@@ -110,8 +109,8 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 									AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
 		if (!settings.exists()) scene.saveSettings(settings);
 
-		if (new File("Population.xml").exists()) {
-			log("Population.xml already exists");
+		if (new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
+			log(AudioSceneOptimizer.POPULATION_FILE + " already exists");
 			return;
 		}
 
@@ -119,7 +118,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				IntStream.range(0, count)
 						.mapToObj(i -> scene.getGenome().random())
 						.collect(Collectors.toList()));
-		pop.store(new FileOutputStream("Population.xml"));
+		pop.store(new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 	}
 
 	@Test
@@ -128,7 +127,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		DefaultChannelSectionFactory.enableFilter = false;
 		// EfxManager.enableEfx = false;
 
-		if (!new File("Population.xml").exists()) {
+		if (!new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
 			createGenomes();
 		}
 
@@ -153,16 +152,16 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				AudioScenePopulation pop = loadPopulation(scene);
 				return pop.generate(channel, frames,
 						() -> "generated/" + KeyUtils.generateKey() + ".wav",
-						result -> log("Generated " + result));
+						(result, genome) -> log("Generated " + result));
 			}).call().run();
 		} finally {
 			scene.setPatternActivityBias(0.0);
 			heap.destroy();
 
-			if (PatternFactoryChoice.GRANULARITY_DIST != null) {
+			if (NoteAudioChoice.GRANULARITY_DIST != null) {
 				log("Granularity distribution:");
-				for (int i = 0; i < PatternFactoryChoice.GRANULARITY_DIST.length; i++) {
-					log("\t" + i + ": " + PatternFactoryChoice.GRANULARITY_DIST[i]);
+				for (int i = 0; i < NoteAudioChoice.GRANULARITY_DIST.length; i++) {
+					log("\t" + i + ": " + NoteAudioChoice.GRANULARITY_DIST[i]);
 				}
 			}
 
@@ -176,7 +175,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	}
 
 	protected AudioScenePopulation loadPopulation(AudioScene<?> scene) throws FileNotFoundException {
-		File file = new File("Population.xml");
+		File file = new File(AudioSceneOptimizer.POPULATION_FILE);
 
 		if (file.exists()) {
 			List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
@@ -184,6 +183,6 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			return new AudioScenePopulation(scene, genomes);
 		}
 
-		throw new FileNotFoundException("Population.xml not found");
+		throw new FileNotFoundException(AudioSceneOptimizer.POPULATION_FILE + " not found");
 	}
 }

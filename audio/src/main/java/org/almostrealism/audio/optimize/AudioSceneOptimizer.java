@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.code.OperationProfile;
+import io.almostrealism.code.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -37,10 +36,9 @@ import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.PatternFactoryChoice;
-import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -58,10 +56,15 @@ import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
-public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
+public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
+	public static final String POPULATION_FILE = "population.xml";
+
 	public static final int verbosity = 0;
 	public static boolean enableVerbose = false;
 
@@ -92,7 +95,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
 							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 							   int totalCycles) {
-		super(scene.getChannelCount() + 1, null, breeder, generator, "Population.xml", totalCycles);
+		super(scene.getChannelCount() + 1, null, breeder, generator, POPULATION_FILE, totalCycles);
 		setChildrenFunction(
 				children -> {
 					if (children.isEmpty()) throw new IllegalArgumentException();
@@ -128,8 +131,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
-		MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
+		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 
 		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
@@ -146,19 +148,18 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		AudioScene.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
-		PatternLayerManager.enableVolumeAdjustment = false;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = 45;
+		PopulationOptimizer.popSize = 60;
 
 		// Verbosity level 0
 		PopulationOptimizer.enableBreeding = verbosity < 1;
 
 		// Verbosity level 1;
-		PatternNote.enableVerbose = verbosity > 0;
+		NoteAudioProvider.enableVerbose = verbosity > 0;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalProgram.enableLargeProgramMonitoring = verbosity > 0;
@@ -184,34 +185,44 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
-		Heap heap = new Heap(DEFAULT_HEAP_SIZE);
+		// MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
+		OperationProfileNode profile = new OperationProfileNode("AudioSceneOptimizer");
+		Hardware.getLocalHardware().assignProfile(profile);
+		StableDurationHealthComputation.profile = profile;
 
-		heap.use(() -> {
-			try {
-				AudioScene<?> scene = createScene();
-				AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
-				opt.init();
-				opt.run();
+		try {
+			Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 
-				HardwareOperator.profile.print();
+			heap.use(() -> {
+				try {
+					AudioScene<?> scene = createScene();
+					AudioSceneOptimizer opt = build(scene, PopulationOptimizer.enableBreeding ? 10 : 1);
+					opt.init();
+					opt.run();
 
-				if (WavCellChromosome.timing.getTotal() > 60)
-					WavCellChromosome.timing.print();
+					HardwareOperator.profile.print();
 
-				if (enableVerbose)
-					PatternLayerManager.sizes.print();
+					if (WavCellChromosome.timing.getTotal() > 60)
+						WavCellChromosome.timing.print();
 
-				if (AudioSumProvider.timing.getTotal() > 120)
-					AudioSumProvider.timing.print();
+					if (enableVerbose)
+						PatternLayerManager.sizes.print();
 
-				if (MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
-					MemoryDataArgumentMap.profile.print();
+					if (AudioSumProvider.timing.getTotal() > 120)
+						AudioSumProvider.timing.print();
 
-				AcceleratedOperation.printTimes();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		});
+					if (MemoryDataArgumentMap.profile != null &&
+							MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
+						MemoryDataArgumentMap.profile.print();
+
+					AcceleratedOperation.printTimes();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		} finally {
+			profile.save("results/logs/optimizer.xml");
+		}
 	}
 
 	public static AudioScene<?> createScene() throws IOException {
@@ -220,7 +231,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
 
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
-										OutputLine.sampleRate, new NoOpGenerationProvider());
+										OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 		loadChoices(scene);
 
 		scene.setTuning(new DefaultKeyboardTuning());
@@ -256,24 +267,24 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<Cells> {
 		if (enableSourcesJson) {
 			scene.loadPatterns("pattern-factory.json");
 		} else {
-			List<PatternFactoryChoice> choices = new ArrayList<>();
+			List<NoteAudioChoice> choices = new ArrayList<>();
 
-			PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
+			NoteAudioChoice kick = new NoteAudioChoice(new PatternElementFactory("Kicks", NoteAudioProvider.create("Kit/Kick.wav")));
 			kick.setSeed(true);
 			kick.setMinScale(0.25);
 			choices.add(kick);
 
-			PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
+			NoteAudioChoice clap = new NoteAudioChoice(new PatternElementFactory("Clap/Snare", NoteAudioProvider.create("Kit/Clap.wav")));
 			clap.setMaxScale(0.5);
 			choices.add(clap);
 
-			PatternFactoryChoice toms = new PatternFactoryChoice(
-					new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
-							PatternNote.create("Kit/Tom2.wav")));
+			NoteAudioChoice toms = new NoteAudioChoice(
+					new PatternElementFactory("Toms", NoteAudioProvider.create("Kit/Tom1.wav"),
+							NoteAudioProvider.create("Kit/Tom2.wav")));
 			toms.setMaxScale(0.25);
 			choices.add(toms);
 
-			PatternFactoryChoice hats = new PatternFactoryChoice(new PatternElementFactory("Hats"));
+			NoteAudioChoice hats = new NoteAudioChoice(new PatternElementFactory("Hats"));
 			hats.setMaxScale(0.25);
 			choices.add(hats);
 

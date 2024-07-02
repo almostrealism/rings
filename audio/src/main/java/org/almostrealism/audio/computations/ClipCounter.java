@@ -17,6 +17,7 @@
 
 package org.almostrealism.audio.computations;
 
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.ParallelProcess;
 import io.almostrealism.relation.Process;
@@ -27,7 +28,6 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
-import io.almostrealism.relation.Producer;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,7 +49,7 @@ public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>
 	}
 
 	@Override
-	public Scope<Void> getScope() {
+	public Scope<Void> getScope(KernelStructureContext context) {
 		HybridScope<Void> scope = new HybridScope<>(this);
 		scope.setMetadata(new OperationMetadata(getFunctionName(), "ClipCounter"));
 

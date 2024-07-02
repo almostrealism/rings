@@ -17,9 +17,9 @@
 package org.almostrealism.audio.filter;
 
 import io.almostrealism.expression.Expression;
-import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.expression.Max;
 import io.almostrealism.expression.Min;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.ParallelProcess;
 import io.almostrealism.relation.Process;
 import io.almostrealism.scope.ArrayVariable;
@@ -104,8 +104,8 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	protected Expression<Double> input() { return getInput().valueAt(0); }
 
 	@Override
-	public void prepareScope(ScopeInputManager manager) {
-		super.prepareScope(manager);
+	public void prepareScope(ScopeInputManager manager, KernelStructureContext context) {
+		super.prepareScope(manager, context);
 
 		purgeVariables();
 

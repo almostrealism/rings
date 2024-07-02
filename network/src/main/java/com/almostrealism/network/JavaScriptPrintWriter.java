@@ -19,6 +19,8 @@ package com.almostrealism.network;
 import io.almostrealism.code.*;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.InstanceReference;
+import io.almostrealism.lang.CodePrintWriter;
+import io.almostrealism.lang.CodePrintWriterAdapter;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.resource.Resource;
 import io.almostrealism.resource.ResourceTranscoder;

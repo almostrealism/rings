@@ -25,7 +25,8 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 
 import java.io.File;
 
-public class FilterEnvelopeProcessor implements CellFeatures, EnvelopeFeatures {
+// TODO  This should implement AudioProcessor
+public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
 	public static double filterPeak = 20000;
 
 	private TimeCell clock;
@@ -82,6 +83,7 @@ public class FilterEnvelopeProcessor implements CellFeatures, EnvelopeFeatures {
 		this.release.set(0, release);
 	}
 
+	@Override
 	public void process(PackedCollection<?> input, PackedCollection<?> output) {
 		// TODO  This can be done without the copy to input
 		// TODO  by just using a Provider that can be made to

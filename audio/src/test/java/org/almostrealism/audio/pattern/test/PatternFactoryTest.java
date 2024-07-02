@@ -25,14 +25,14 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.PatternFactoryChoice;
+import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
-import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.time.Frequency;
@@ -63,19 +63,19 @@ public class PatternFactoryTest implements CellFeatures {
 
 	@Test
 	public void fixChoices() throws IOException {
-		List<PatternFactoryChoice> choices = readChoices();
+		List<NoteAudioChoice> choices = readChoices();
 		new ObjectMapper().writeValue(new File("pattern-factory-new.json"), choices);
 	}
 
 	// @Test
 	public void consolidateChoices() throws IOException {
-		List<PatternFactoryChoice> choices = readChoices();
+		List<NoteAudioChoice> choices = readChoices();
 
 		Map<String, List<File>> dirs = new HashMap<>();
 
 		choices.forEach(c -> {
-			dirs.put(c.getFactory().getName().replaceAll(" ", "_"),
-					c.getFactory().getSources().stream().map(PatternNoteSource::getOrigin).map(File::new).collect(Collectors.toList()));
+			dirs.put(c.getName().replaceAll(" ", "_"),
+					c.getSources().stream().map(NoteAudioSource::getOrigin).map(File::new).collect(Collectors.toList()));
 		});
 
 		dirs.forEach((name, files) -> {
@@ -95,25 +95,25 @@ public class PatternFactoryTest implements CellFeatures {
 		});
 	}
 
-	public static List<PatternFactoryChoice> createChoices() {
-		List<PatternFactoryChoice> choices = new ArrayList<>();
+	public static List<NoteAudioChoice> createChoices() {
+		List<NoteAudioChoice> choices = new ArrayList<>();
 
-		PatternFactoryChoice kick = new PatternFactoryChoice(new PatternElementFactory("Kicks", PatternNote.create("Kit/Kick.wav")));
+		NoteAudioChoice kick = new NoteAudioChoice(new PatternElementFactory("Kicks", NoteAudioProvider.create("Kit/Kick.wav")));
 		kick.setSeed(true);
 		kick.setMinScale(0.25);
 		choices.add(kick);
 
-		PatternFactoryChoice clap = new PatternFactoryChoice(new PatternElementFactory("Clap/Snare", PatternNote.create("Kit/Clap.wav")));
+		NoteAudioChoice clap = new NoteAudioChoice(new PatternElementFactory("Clap/Snare", NoteAudioProvider.create("Kit/Clap.wav")));
 		clap.setMaxScale(0.5);
 		choices.add(clap);
 
-		PatternFactoryChoice toms = new PatternFactoryChoice(
-				new PatternElementFactory("Toms", PatternNote.create("Kit/Tom1.wav"),
-						PatternNote.create("Kit/Tom2.wav")));
+		NoteAudioChoice toms = new NoteAudioChoice(
+				new PatternElementFactory("Toms", NoteAudioProvider.create("Kit/Tom1.wav"),
+						NoteAudioProvider.create("Kit/Tom2.wav")));
 		toms.setMaxScale(0.25);
 		choices.add(toms);
 
-		PatternFactoryChoice hats = new PatternFactoryChoice(new PatternElementFactory("Hats"));
+		NoteAudioChoice hats = new NoteAudioChoice(new PatternElementFactory("Hats"));
 		hats.setMaxScale(0.25);
 		choices.add(hats);
 
@@ -154,17 +154,19 @@ public class PatternFactoryTest implements CellFeatures {
 
 		FileWaveDataProviderNode library = new FileWaveDataProviderNode(new File(LIBRARY));
 
-		List<PatternFactoryChoice> choices = readChoices(false);
+		List<NoteAudioChoice> choices = readChoices(false);
 		choices.stream()
-				.flatMap(c -> c.getFactory().getSources().stream())
+				.flatMap(c -> c.getSources().stream())
 				.map(c -> c instanceof TreeNoteSource ? (TreeNoteSource) c : null)
 				.filter(Objects::nonNull)
 				.forEach(c -> c.setTree(library));
 
 		DefaultKeyboardTuning tuning = new DefaultKeyboardTuning();
-		choices.forEach(c -> c.setTuning(tuning));
 
-		choices.forEach(c -> c.setSeedBias(1.0));
+		choices.forEach(c -> {
+			c.setTuning(tuning);
+			c.setBias(1.0);
+		});
 
 		ChordProgressionManager chordProgression = new ChordProgressionManager();
 		chordProgression.setSettings(settings.getChordProgression());

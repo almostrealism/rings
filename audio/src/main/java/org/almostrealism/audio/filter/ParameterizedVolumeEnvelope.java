@@ -16,21 +16,20 @@
 
 package org.almostrealism.audio.filter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
 
-public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
-	public static final int MAX_SECONDS = 180;
+import java.util.List;
 
-	public static double maxAttack = 0.5;
-	public static double maxDecay = 2.0;
-	public static double maxSustain = 0.8;
-	public static double maxRelease = 0.5;
+public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
+	public static final int MAX_SECONDS = 180;
 
 	private static Evaluable<PackedCollection<?>> env;
 
@@ -45,40 +44,156 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelope {
 				() -> factor.getResultant(o.v(1, 0))).get();
 	}
 
+	private Mode mode;
+
 	public ParameterizedVolumeEnvelope() {
 		super();
+		mode = Mode.STANDARD_NOTE;
 	}
 
-	public ParameterizedVolumeEnvelope(ParameterFunction attackSelection, ParameterFunction decaySelection,
+	public ParameterizedVolumeEnvelope(Mode mode, ParameterFunction attackSelection, ParameterFunction decaySelection,
 									   ParameterFunction sustainSelection, ParameterFunction releaseSelection) {
 		super(attackSelection, decaySelection, sustainSelection, releaseSelection);
+		this.mode = mode;
+	}
+
+	public Mode getMode() {
+		return mode;
+	}
+
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 	@Override
-	public PatternNote apply(ParameterSet params, PatternNote note) {
-		PackedCollection<?> a = new PackedCollection<>(1);
-		a.set(0, maxAttack * getAttackSelection().positive().apply(params));
-
-		PackedCollection<?> d = new PackedCollection<>(1);
-		d.set(0, maxDecay * getDecaySelection().positive().apply(params));
-
-		PackedCollection<?> s = new PackedCollection<>(1);
-		s.set(0, maxSustain * getSustainSelection().positive().apply(params));
-
-		PackedCollection<?> r = new PackedCollection<>(1);
-		r.set(0, maxRelease * getReleaseSelection().positive().apply(params));
-
-		return PatternNote.create(note, (audio, duration) -> () -> args -> {
-			PackedCollection<?> audioData = audio.get().evaluate();
-			PackedCollection<?> dr = duration.get().evaluate();
-
-			PackedCollection<?> out = env.evaluate(audioData, dr, a, d, s, r);
-			return out;
-		});
+	public NoteAudioFilter createFilter(ParameterSet params) {
+		return new Filter(params);
 	}
 
-	public static ParameterizedVolumeEnvelope random() {
-		return new ParameterizedVolumeEnvelope(
+	@JsonIgnore
+	@Override
+	public Class getLogClass() {
+		return super.getLogClass();
+	}
+
+	public class Filter implements NoteAudioFilter {
+		private ParameterSet params;
+
+		public Filter(ParameterSet params) {
+			this.params = params;
+		}
+
+		public double getAttack() {
+			return mode.getMaxAttack() * getAttackSelection().positive().apply(params);
+		}
+
+		public double getDecay() {
+			return mode.getMaxDecay() * getDecaySelection().positive().apply(params);
+		}
+
+		public double getSustain() {
+			return mode.getMaxSustain() * getSustainSelection().positive().apply(params);
+		}
+
+		public double getRelease() {
+			return mode.getMaxRelease() * getReleaseSelection().positive().apply(params);
+		}
+
+		@Override
+		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
+												   Producer<PackedCollection<?>> duration) {
+			PackedCollection<?> a = new PackedCollection<>(1);
+			a.set(0, getAttack());
+
+			PackedCollection<?> d = new PackedCollection<>(1);
+			d.set(0, getDecay());
+
+			PackedCollection<?> s = new PackedCollection<>(1);
+			s.set(0, getSustain());
+
+			PackedCollection<?> r = new PackedCollection<>(1);
+			r.set(0, getRelease());
+
+			return () -> args -> {
+				PackedCollection<?> audioData = audio.get().evaluate();
+				PackedCollection<?> dr = duration.get().evaluate();
+
+				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
+
+				if (out.getShape().getTotalSize() == 1) {
+					warn("Envelope produced a value with shape " +
+							out.getShape().toStringDetail());
+				}
+
+				return out;
+			};
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null || getClass() != obj.getClass()) return false;
+			Filter filter = (Filter) obj;
+
+			if (filter.getAttack() != getAttack()) return false;
+			if (filter.getDecay() != getDecay()) return false;
+			if (filter.getSustain() != getSustain()) return false;
+			if (filter.getRelease() != getRelease()) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			return List.of(getAttack(), getDecay(), getSustain(), getRelease()).hashCode();
+		}
+	}
+
+	public enum Mode {
+		STANDARD_NOTE, NOTE_LAYER;
+
+		public double getMaxAttack() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.5;
+			}
+		}
+
+		public double getMaxDecay() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 3.0;
+				case STANDARD_NOTE:
+				default:
+					return 2.0;
+			}
+		}
+
+		public double getMaxSustain() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.8;
+			}
+		}
+
+		public double getMaxRelease() {
+			switch (this) {
+				case NOTE_LAYER:
+					return 2.0;
+				case STANDARD_NOTE:
+				default:
+					return 0.5;
+			}
+		}
+	}
+
+	public static ParameterizedVolumeEnvelope random(Mode mode) {
+		return new ParameterizedVolumeEnvelope(mode,
 				ParameterFunction.random(), ParameterFunction.random(),
 				ParameterFunction.random(), ParameterFunction.random());
 	}

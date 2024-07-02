@@ -20,12 +20,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.notes.NoteAudioContext;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.List;
+import java.util.function.DoubleFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -127,22 +131,29 @@ public class PatternElement implements CodeFeatures {
 				.collect(Collectors.toList());
 	}
 
-	public List<PatternNoteAudio> getNoteDestinations(boolean melodic, double offset,
-													AudioSceneContext context,
-													DoubleUnaryOperator nextNotePosition) {
-		return getScaleTraversalStrategy().getNoteDestinations(this, melodic, offset, context, nextNotePosition);
+	public List<RenderedNoteAudio> getNoteDestinations(boolean melodic, double offset,
+													   AudioSceneContext context,
+													   NoteAudioContext audioContext) {
+		return getScaleTraversalStrategy()
+				.getNoteDestinations(this, melodic, offset,
+									context, audioContext);
 	}
 
 	public Producer<PackedCollection<?>> getNoteAudio(boolean melodic, KeyPosition<?> target,
-												   double position, double nextNotePosition,
-												   DoubleUnaryOperator timeForDuration) {
-		KeyPosition<?> k = melodic ? target : getNote().getRoot();
+													  double position, double nextNotePosition,
+													  DoubleFunction<NoteAudioProvider> audioSelection,
+													  DoubleUnaryOperator timeForDuration) {
+		KeyPosition<?> k = melodic ? target : null;
+
+		double originalDuration = getNote().getDuration(target, audioSelection);
 
 		if (getDurationStrategy() == NoteDurationStrategy.NONE) {
-			return getNote().getAudio(k);
+			return getNote().getAudio(k, originalDuration, audioSelection);
 		} else {
-			double originalDuration = getNote().getDuration(target);
-			return getNote().getAudio(k, getNoteDuration(timeForDuration, position, nextNotePosition, originalDuration));
+			return getNote().getAudio(k,
+					getNoteDuration(timeForDuration, position,
+						nextNotePosition, originalDuration),
+					audioSelection);
 		}
 	}
 

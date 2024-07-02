@@ -22,7 +22,6 @@ import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.optimize.AudioPopulationOptimizer;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.algebra.Scalar;
@@ -45,7 +44,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 	protected AudioScene<?> scene() {
 		// DesirablesProvider desirables = new DefaultDesirablesProvider<>(120, WesternScales.major(WesternChromatic.G3, 1));
 		// return () -> new GeneticTemporalFactoryFromDesirables().from(desirables);
-		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new NoOpGenerationProvider());
+		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
 	protected AudioSceneOptimizer optimizer() {
@@ -93,7 +92,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 		genomes.add(genome(0.0, 0.0, 0.0, 0.0, false));
 		genomes.add(genome(0.0, 0.0, false));
 
-		AudioScenePopulation.store(genomes, new FileOutputStream("Population.xml"));
+		AudioScenePopulation.store(genomes, new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 
 		IntStream.range(0, 3).forEach(j ->
 				dc(() -> {
@@ -104,7 +103,7 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 
 					System.out.println("Creating LayeredOrganPopulation...");
 					AudioScenePopulation pop =
-							new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream("Population.xml")));
+							new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream(AudioSceneOptimizer.POPULATION_FILE)));
 					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {

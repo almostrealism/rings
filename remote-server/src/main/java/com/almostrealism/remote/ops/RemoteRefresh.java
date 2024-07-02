@@ -23,8 +23,8 @@ import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.ListNoteSource;
-import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 		private String requestId;
 		private String generatorId;
 
-		private List<PatternNoteSource> sources;
+		private List<NoteAudioSource> sources;
 		private PackedCollection<?> currentSource;
 		private int currentIndex;
 
@@ -111,7 +111,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 
 		public String getGeneratorId() { return generatorId; }
 
-		public List<PatternNoteSource> getSources() { return sources; }
+		public List<NoteAudioSource> getSources() { return sources; }
 
 		public void append(Generation.RefreshRequest request) {
 			if (!Objects.equals(request.getRequestId(), requestId))
@@ -133,7 +133,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 
 			if (request.getSource().getSegment().getIsFinal()) {
 				System.out.println("RefreshOperation: Adding source (" + currentSource.getMemLength() + " samples)");
-				sources.add(new ListNoteSource(PatternNote.create(() -> currentSource)));
+				sources.add(new ListNoteSource(NoteAudioProvider.create(() -> currentSource)));
 				currentSource = null;
 				currentIndex = 0;
 			}

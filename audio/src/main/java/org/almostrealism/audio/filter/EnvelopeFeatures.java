@@ -79,7 +79,6 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 											  Producer<PackedCollection<?>> startVolume,
 											  Producer<PackedCollection<?>> release,
 											  Producer<PackedCollection<?>> endVolume) {
-
 		return linear(offset, release, startVolume, endVolume);
 	}
 	

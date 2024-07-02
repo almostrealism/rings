@@ -17,22 +17,25 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.DoubleUnaryOperator;
 
-public enum ScaleTraversalStrategy {
+public enum ScaleTraversalStrategy implements ConsoleFeatures {
 	CHORD, SEQUENCE;
 
-	public List<PatternNoteAudio> getNoteDestinations(PatternElement element,
-													  boolean melodic, double offset,
-													  AudioSceneContext context,
-													  DoubleUnaryOperator nextNotePosition) {
-		List<PatternNoteAudio> destinations = new ArrayList<>();
+	public List<RenderedNoteAudio> getNoteDestinations(PatternElement element,
+													   boolean melodic, double offset,
+													   AudioSceneContext context,
+													   NoteAudioContext audioContext) {
+		List<RenderedNoteAudio> destinations = new ArrayList<>();
 
 		for (int i = 0; i < element.getRepeatCount(); i++) {
 			double relativePosition = element.getPosition() + i * element.getRepeatDuration();
@@ -41,15 +44,32 @@ public enum ScaleTraversalStrategy {
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
-			if (this == CHORD) {
+			if (!melodic) {
+				if (element.getScalePositions().size() > 1) {
+					warn("Multiple scale position for non-melodic material");
+				}
+
+				Producer<PackedCollection<?>> note =
+						element.getNoteAudio(melodic,
+								keys.get(0), relativePosition,
+								audioContext.nextNotePosition(relativePosition),
+								audioContext.getAudioSelection(),
+								context.getTimeForDuration());
+				destinations.add(new RenderedNoteAudio(note,
+						context.frameForPosition(actualPosition)));
+			} else if (this == CHORD) {
 				p: for (double p : element.getScalePositions()) {
 					if (keys.isEmpty()) break p;
 					int keyIndex = (int) (p * keys.size());
 
-					Producer<PackedCollection<?>> note = element.getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
-							nextNotePosition.applyAsDouble(relativePosition),
-							context.getTimeForDuration());
-					destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
+					Producer<PackedCollection<?>> note =
+							element.getNoteAudio(melodic,
+								keys.get(keyIndex), relativePosition,
+								audioContext.nextNotePosition(relativePosition),
+								audioContext.getAudioSelection(),
+								context.getTimeForDuration());
+					destinations.add(new RenderedNoteAudio(note,
+							context.frameForPosition(actualPosition)));
 
 					keys.remove(keyIndex);
 				}
@@ -58,15 +78,23 @@ public enum ScaleTraversalStrategy {
 				if (keys.isEmpty()) break;
 
 				int keyIndex = (int) (p * keys.size());
-				Producer<PackedCollection<?>> note = element.getNoteAudio(melodic, keys.get(keyIndex), relativePosition,
-							nextNotePosition.applyAsDouble(relativePosition),
+				Producer<PackedCollection<?>> note = element.getNoteAudio(
+							melodic, keys.get(keyIndex), relativePosition,
+							audioContext.nextNotePosition(relativePosition),
+							audioContext.getAudioSelection(),
 							context.getTimeForDuration());
-				destinations.add(new PatternNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
+				destinations.add(new RenderedNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 			} else {
 				throw new UnsupportedOperationException("Unknown ScaleTraversalStrategy (" + this + ")");
 			}
 		}
 
 		return destinations;
+	}
+
+
+	@Override
+	public Console console() {
+		return AudioScene.console;
 	}
 }

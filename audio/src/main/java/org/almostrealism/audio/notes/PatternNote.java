@@ -16,255 +16,166 @@
 
 package org.almostrealism.audio.notes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.code.CacheManager;
-import io.almostrealism.code.CachedValue;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.SamplingFeatures;
-import org.almostrealism.audio.data.FileWaveDataProvider;
-import org.almostrealism.audio.data.StaticWaveDataProvider;
-import org.almostrealism.audio.data.SupplierWaveDataProvider;
-import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.data.WaveDataProvider;
-import org.almostrealism.audio.pattern.NoteAudioFilter;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
-import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.RAM;
-import io.almostrealism.relation.Factor;
-import org.almostrealism.util.KeyUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.DoubleFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class PatternNote implements CellFeatures, SamplingFeatures {
-	public static boolean enableVerbose = false;
-
-	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
-
-	static {
-		OperationList accessListener = new OperationList();
-		accessListener.add(() -> CacheManager.maxCachedEntries(audioCache, 200));
-		accessListener.add(() -> () -> {
-			if (Math.random() < 0.005) {
-				long size = audioCache.getCachedOrdered().stream()
-						.map(CachedValue::evaluate)
-						.map(PackedCollection::getMem)
-						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
-						.sum();
-				if (enableVerbose && size > 1024)
-					AudioScene.console.features(PatternNote.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
-			}
-		});
-
-		audioCache.setAccessListener(accessListener.get());
-		audioCache.setClear(PackedCollection::destroy);
-	}
-
-	private WaveDataProvider provider;
-	private PackedCollection<?> audio;
-
+public class PatternNote extends PatternNoteAudioAdapter {
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
-	private Boolean valid;
-	private KeyPosition<?> root;
+	private List<PatternNoteLayer> layers;
 
-	private KeyboardTuning tuning;
-	private Map<KeyPosition, Producer<PackedCollection<?>>> notes;
+	public PatternNote() { }
 
-	public PatternNote() { this(null, WesternChromatic.C1); }
-
-	public PatternNote(WaveDataProvider provider, KeyPosition root) {
-		this.provider = provider;
-		setRoot(root);
-		notes = new HashMap<>();
+	public PatternNote(List<PatternNoteLayer> layers) {
+		this.layers = layers;
 	}
 
-	protected PatternNote(PatternNote delegate, NoteAudioFilter filter) {
+	public PatternNote(double... noteAudioSelections) {
+		this(new ArrayList<>());
+
+		for (double noteAudioSelection : noteAudioSelections) {
+			addLayer(noteAudioSelection);
+		}
+	}
+
+	public PatternNote(PatternNote delegate, NoteAudioFilter filter) {
 		this.delegate = delegate;
 		this.filter = filter;
-		setRoot(delegate.getRoot());
 	}
 
-	@Deprecated
-	public String getSource() {
-		if (provider instanceof FileWaveDataProvider) {
-			return ((FileWaveDataProvider) provider).getResourcePath();
-		}
-
-		return null;
+	public void addLayer(double noteAudioSelection) {
+		layers.add(new PatternNoteLayer(noteAudioSelection));
 	}
 
-	@Deprecated
-	public void setSource(String source) {
-		this.valid = null;
-
-		if (source == null) return;
-		if (provider == null) provider = new FileWaveDataProvider(source);
-
-		try {
-			WaveData data = provider.get();
-
-			if (data.getSampleRate() == OutputLine.sampleRate) {
-				audio = data.getCollection();
-			} else {
-				System.out.println("WARN: Sample rate of " + data.getSampleRate() +
-						" does not match required sample rate of " + OutputLine.sampleRate);
-				valid = false;
-			}
-		} catch (RuntimeException e) {
-			valid = false;
-		}
+	public List<PatternNoteLayer> getLayers() {
+		return layers;
 	}
 
-	public WaveDataProvider getProvider() { return provider; }
+	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getProviders(target, audioSelection);
+		return layers.stream()
+				.map(l -> l.getProvider(target, audioSelection))
+				.collect(Collectors.toList());
+	}
 
-	public void setProvider(WaveDataProvider provider) { this.provider = provider; }
-
-	public KeyPosition<?> getRoot() { return root; }
-
-	public void setRoot(KeyPosition<?> root) { this.root = root; }
-
-	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
-		if (delegate != null) {
+		if (delegate == null) {
+			layers.forEach(l -> l.setTuning(tuning));
+		} else {
 			delegate.setTuning(tuning);
-		} else if (tuning != this.tuning) {
-			this.tuning = tuning;
-			notes.clear();
 		}
 	}
 
-	@JsonIgnore
-	public int getSampleRate() {
-		if (delegate != null) return delegate.getSampleRate();
-		return provider.getSampleRate();
+	@Override
+	protected PatternNoteAudio getDelegate() {
+		return delegate;
 	}
 
-	@JsonIgnore
-	public double getDuration(KeyPosition<?> target) {
-		if (delegate != null) return delegate.getDuration(target);
-
-		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
-		return provider.getDuration(r);
+	@Override
+	protected NoteAudioFilter getFilter() {
+		return filter;
 	}
 
-	public TraversalPolicy getShape(KeyPosition<?> target) {
-		if (delegate != null) return delegate.getShape(target);
-
-		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
-		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
+	@Override
+	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (delegate != null) return delegate.getDuration(target, audioSelection);
+		return layers.stream().mapToDouble(l -> l.getDuration(target, audioSelection)).max().orElse(0.0);
 	}
 
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration) {
-		if (delegate == null) {
-			System.out.println("WARN: No AudioNoteFilter for PatternNote, note duration will be ignored");
-			return getAudio(target);
-		} else {
-			// System.out.println("PatternNote: duration = " + noteDuration);
-			return computeAudio(target, noteDuration);
-		}
+	@Override
+	public int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		return OutputLine.sampleRate;
 	}
 
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
-		if (delegate != null) {
-			return delegate.getAudio(target);
-		} else if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target, -1.0).get())));
+	@Override
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+												  DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (getDelegate() != null) return super.getAudio(target, audioSelection);
+		return combineLayers(target, -1, audioSelection);
+	}
+
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (getDelegate() != null) {
+			return super.computeAudio(target, noteDuration, audioSelection);
 		}
 
-		return notes.get(target);
+		return combineLayers(target, noteDuration, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration) {
-		if (delegate == null) {
-			return () -> args -> {
-				double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
-				return provider.get(r).getCollection();
-			};
-		} else if (noteDuration > 0) {
-			return sampling(getSampleRate(), getDuration(target),
-					() -> filter.apply(delegate.getAudio(target), c(noteDuration)));
-		} else {
+	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target,
+														  double noteDuration,
+														  DoubleFunction<NoteAudioProvider> audioSelection) {
+		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
 		}
+
+		return () -> {
+			List<Evaluable<PackedCollection<?>>> layerAudio =
+					layers.stream()
+							.map(l -> l.getAudio(target, noteDuration, audioSelection).get())
+							.collect(Collectors.toList());
+			int frames[] = IntStream.range(0, layerAudio.size())
+					.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
+							layers.get(i).getSampleRate(target, audioSelection)))
+					.toArray();
+
+			return args -> {
+				int totalFrames = (int) (getDuration(target, audioSelection) * getSampleRate(target, audioSelection));
+
+				PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+				for (int i = 0; i < layerAudio.size(); i++) {
+					PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+					int f = Math.min(frames[i], totalFrames);
+
+					PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
+				}
+
+				return dest;
+			};
+		};
 	}
 
-	@JsonIgnore
-	public PackedCollection<?> getAudio() {
-		if (delegate != null) {
-			warn("Attempting to get audio from a delegated PatternNote");
-			// return getAudio(getRoot()).get().evaluate();
-		} else if (audio == null && provider != null) {
-			WaveData data = provider.get();
-			if (data.getSampleRate() == OutputLine.sampleRate) {
-				audio = provider.get().getCollection();
-			} else {
-				System.out.println("WARN: Sample rate of " + data.getSampleRate() +
-						" does not match required sample rate of " + OutputLine.sampleRate);
-			}
+	@Override
+	protected NoteAudioProvider getProvider(KeyPosition<?> target,
+											DoubleFunction<NoteAudioProvider> audioSelection) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PatternNote)) return false;
+
+		PatternNote n = (PatternNote) obj;
+
+		boolean eq;
+
+		if (filter != null) {
+			eq = filter.equals(n.filter) && delegate.equals(n.delegate);
+		} else {
+			eq = layers.equals(n.layers);
 		}
 
-		return audio;
+		return eq;
 	}
 
-	public boolean isValid() {
-		if (delegate != null) return delegate.isValid();
-		if (audio != null) return true;
-		if (valid != null) return valid;
-
-		try {
-			valid = provider.getSampleRate() == OutputLine.sampleRate;
-		} catch (Exception e) {
-			if (provider instanceof FileWaveDataProvider) {
-				System.out.println("WARN: " + e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");
-			} else {
-				System.out.println("WARN: " + e.getMessage());
-			}
-
-			valid = false;
+	@Override
+	public int hashCode() {
+		if (filter != null) {
+			return filter.hashCode();
+		} else {
+			return layers.hashCode();
 		}
-
-		return valid;
-	}
-
-	public static PatternNote create(String source) {
-		return create(source, WesternChromatic.C1);
-	}
-
-	public static PatternNote create(String source, KeyPosition root) {
-		return new PatternNote(new FileWaveDataProvider(source), root);
-	}
-
-	public static PatternNote create(WaveData source) {
-		return create(source, WesternChromatic.C1);
-	}
-
-	public static PatternNote create(WaveData source, KeyPosition root) {
-		return new PatternNote(new StaticWaveDataProvider(source), root);
-	}
-
-	public static PatternNote create(PatternNote delegate, NoteAudioFilter filter) {
-		return new PatternNote(delegate, filter);
-	}
-
-	public static PatternNote create(PatternNote delegate, Factor<PackedCollection<?>> factor) {
-		return new PatternNote(delegate, (audio, duration) -> factor.getResultant(audio));
-	}
-
-	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier) {
-		return create(audioSupplier, WesternChromatic.C1);
-	}
-
-	public static PatternNote create(Supplier<PackedCollection<?>> audioSupplier, KeyPosition root) {
-		return new PatternNote(new SupplierWaveDataProvider(KeyUtils.generateKey(), audioSupplier, OutputLine.sampleRate), root);
 	}
 }

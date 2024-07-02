@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.health;
 
+import io.almostrealism.code.OperationProfile;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
@@ -48,6 +49,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public static boolean enableOutput = true;
 	public static boolean enableFft = true;
 	public static boolean enableTimeout = false;
+	public static OperationProfile profile;
+
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
 
@@ -80,6 +83,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			super.setTarget(target);
 			this.abortFlag = new Scalar(0.0);
 			this.runner = new TemporalRunner(target, iter);
+			this.runner.setProfile(profile);
 		} else if (getTarget() != target) {
 			throw new IllegalArgumentException("Health computation cannot be reused");
 		}

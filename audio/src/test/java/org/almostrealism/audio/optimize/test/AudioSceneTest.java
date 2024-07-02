@@ -38,6 +38,7 @@ import org.almostrealism.heredity.ArrayListGene;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -71,7 +72,7 @@ public class AudioSceneTest implements CellFeatures {
 	}
 
 	protected AudioScene<?> pattern(int sources, int delayLayers, boolean sections) {
-		AudioScene<?> scene = new AudioScene<>(null, 120, sources, delayLayers, OutputLine.sampleRate, new NoOpGenerationProvider());
+		AudioScene<?> scene = new AudioScene<>(null, 120, sources, delayLayers, OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 		scene.setTotalMeasures(16);
 		scene.getPatternManager().getChoices().addAll(PatternFactoryTest.createChoices());
 		scene.setTuning(new DefaultKeyboardTuning());

@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sequence;
 
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
@@ -60,7 +61,7 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	}
 
 	@Override
-	public Scope getScope() { return scope; }
+	public Scope getScope(KernelStructureContext context) { return scope; }
 
 	private static Supplier[] inputArgs(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
 		Supplier args[] = new Supplier[4 + choices.length];

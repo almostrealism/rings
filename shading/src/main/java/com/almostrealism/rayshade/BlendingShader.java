@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
 package com.almostrealism.rayshade;
 
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.color.LightingContext;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
-import org.almostrealism.color.computations.*;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -31,7 +34,7 @@ import java.util.function.Supplier;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
- * different {@link ColorEvaluable} instances based on lighting. This is best
+ * different {@link RGB} {@link Producer} instances based on lighting. This is best
  * for cool to warm shading or cartoon shading.
  * 
  * @author  Michael Murray

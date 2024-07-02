@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.PatternNoteSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
@@ -30,10 +31,17 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class PatternFactoryChoice implements ConsoleFeatures {
+public class NoteAudioChoice implements ConsoleFeatures {
 	public static int[] GRANULARITY_DIST;
 
+	@Deprecated
 	private PatternElementFactory factory;
+
+	private String id;
+	private String name;
+	private List<NoteAudioSource> sources;
+	private boolean melodic;
+
 	private double weight;
 	private double minScale;
 	private double maxScale;
@@ -41,28 +49,28 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 	private List<Integer> channels;
 
 	private boolean seed;
-	private double seedBias;
+	private double bias;
 
 	private ParameterFunction granularitySelection;
 
-	public PatternFactoryChoice() { this(null); }
+	public NoteAudioChoice() { this(null); }
 
-	public PatternFactoryChoice(PatternElementFactory factory) {
+	public NoteAudioChoice(PatternElementFactory factory) {
 		this(factory, 1.0);
 	}
 
-	public PatternFactoryChoice(PatternElementFactory factory, double weight) {
+	public NoteAudioChoice(PatternElementFactory factory, double weight) {
 		this(factory, weight, 0.0625, 16.0);
 	}
 
-	public PatternFactoryChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
+	public NoteAudioChoice(PatternElementFactory factory, double weight, double minScale, double maxScale) {
 		setFactory(factory);
 		setWeight(weight);
 		setMinScale(minScale);
 		setMaxScale(maxScale);
 		setMaxScaleTraversalDepth(1);
 		setSeed(true);
-		setSeedBias(-0.5);
+		setBias(-0.5);
 		setChannels(new ArrayList<>());
 		initSelectionFunctions();
 	}
@@ -74,6 +82,49 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 	public PatternElementFactory getFactory() { return factory; }
 
 	public void setFactory(PatternElementFactory factory) { this.factory = factory; }
+
+	public void setTuning(KeyboardTuning tuning) {
+		getSources().forEach(n -> n.setTuning(tuning));
+	}
+
+	public String getId() {
+		if (id != null) return id;
+		return factory.getId();
+	}
+
+	public void setId(String id) {
+		this.id = id;
+		this.factory.setId(id);
+	}
+
+	public String getName() {
+		if (name != null) return name;
+		if (factory == null) return null;
+		return factory.getName();
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		this.factory.setName(name);
+	}
+
+	public List<NoteAudioSource> getSources() {
+		if (sources != null) return sources;
+		return factory.getSources();
+	}
+
+	public void setSources(List<NoteAudioSource> sources) {
+		this.sources = sources;
+		this.factory.setSources(sources);
+	}
+
+	public boolean isMelodic() {
+		return melodic;
+	}
+
+	public void setMelodic(boolean melodic) {
+		this.melodic = melodic;
+	}
 
 	// TODO Use this value to determine the likelihood of selection
 	public double getWeight() { return weight; }
@@ -99,15 +150,29 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 		this.granularitySelection = granularitySelection;
 	}
 
-	// TODO  Rename to just bias
-	public double getSeedBias() { return seedBias; }
-	public void setSeedBias(double seedBias) { this.seedBias = seedBias; }
+	public double getBias() { return bias; }
+	public void setBias(double bias) {
+		this.bias = bias;
+	}
+
+	public boolean checkResourceUsed(String canonicalPath) {
+		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
+	}
 
 	@JsonIgnore
-	public double getBias() { return seedBias; }
+	public List<NoteAudioProvider> getAllNotes() {
+		return getSources().stream()
+				.map(NoteAudioSource::getNotes)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+	}
 
-	public void setTuning(KeyboardTuning tuning) {
-		getFactory().setTuning(tuning);
+	@JsonIgnore
+	public List<NoteAudioProvider> getValidNotes() {
+		return getAllNotes().stream()
+				.filter(NoteAudioProvider::isValid)
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	public PatternLayerSeeds seeds(ParameterSet params) {
@@ -123,22 +188,29 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 			GRANULARITY_DIST[i]++;
 		}
 
-		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), seedBias, factory, params);
+		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), bias, this, params);
 	}
 
-	public PatternLayer apply(List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
+	public PatternLayer apply(PatternElementFactory factory, List<PatternElement> elements, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
-		elements.forEach(e -> layer.getElements().addAll(apply(e, scale, scaleTraversalStrategy, depth, params).getElements()));
+
+		elements.forEach(e -> layer.getElements().addAll(apply(factory, e, scale, scaleTraversalStrategy, depth, params).getElements()));
 		return layer;
 	}
 
-	public PatternLayer apply(PatternElement element, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
+	public PatternLayer apply(PatternElementFactory factory, PatternElement element, double scale, ScaleTraversalStrategy scaleTraversalStrategy, int depth, ParameterSet params) {
 		PatternLayer layer = new PatternLayer();
 		layer.setChoice(this);
 
-		getFactory().apply(ElementParity.LEFT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
-		getFactory().apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(), scaleTraversalStrategy, depth, true, params).ifPresent(layer.getElements()::add);
+		factory.apply(ElementParity.LEFT, element.getPosition(), scale, getBias(),
+					scaleTraversalStrategy, depth, true, isMelodic(), params)
+				.ifPresent(layer.getElements()::add);
+
+		factory.apply(ElementParity.RIGHT, element.getPosition(), scale, getBias(),
+					scaleTraversalStrategy, depth, true, isMelodic(), params)
+				.ifPresent(layer.getElements()::add);
+
 		return layer;
 	}
 
@@ -147,21 +219,22 @@ public class PatternFactoryChoice implements ConsoleFeatures {
 		return AudioScene.console;
 	}
 
-	public static PatternFactoryChoice fromSource(String name, PatternNoteSource source,
-												  int channel, int maxScaleTraversalDepth,
-												  boolean melodic) {
-		PatternElementFactory f = new PatternElementFactory(name, source);
-		f.setMelodic(melodic);
-
-		PatternFactoryChoice c = new PatternFactoryChoice(f);
+	public static NoteAudioChoice fromSource(String name, NoteAudioSource source,
+											 int channel, int maxScaleTraversalDepth,
+											 boolean melodic) {
+		NoteAudioChoice c = new NoteAudioChoice();
+		c.setName(name);
+		c.setSources(new ArrayList<>());
+		c.getSources().add(source);
+		c.setMelodic(melodic);
 		c.setMaxScaleTraversalDepth(maxScaleTraversalDepth);
 		c.getChannels().add(channel);
 		return c;
 	}
 
-	public static Supplier<List<PatternFactoryChoice>> choices(List<PatternFactoryChoice> choices, boolean melodic) {
+	public static Supplier<List<NoteAudioChoice>> choices(List<NoteAudioChoice> choices, boolean melodic) {
 		return () -> choices.stream()
-				.filter(c -> c.getFactory().isMelodic() || !melodic)
+				.filter(c -> c.isMelodic() || !melodic)
 				.collect(Collectors.toList());
 	}
 }
