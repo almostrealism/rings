@@ -161,14 +161,12 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		NoteAudioProvider.enableVerbose = verbosity > 0;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
-		MetalProgram.enableLargeProgramMonitoring = verbosity > 0;
-		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
+		HardwareOperator.enableLargeInstructionSetMonitoring = verbosity > 0;
 
 		// Verbosity level 2
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 		PopulationOptimizer.enableVerbose = verbosity > 1;
-		MetalProgram.enableProgramMonitoring = verbosity > 1;
-		NativeCompiler.enableInstructionSetMonitoring = verbosity > 1;
+		HardwareOperator.enableInstructionSetMonitoring = verbosity > 1;
 
 		// Verbosity level 3
 		WaveOutput.enableVerbose = verbosity > 2;
