@@ -44,15 +44,6 @@ transform = transforms.Compose([
 # Load the full dataset
 full_dataset = ShapeDataset(csv_file, transform=transform)
 
-# Split the dataset into training and test sets
-train_size = int(0.8 * len(full_dataset))
-test_size = len(full_dataset) - train_size
-train_dataset, test_dataset = random_split(full_dataset, [train_size, test_size])
-
-# Create data loaders
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
-
 class SimpleCNN(nn.Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
@@ -118,10 +109,38 @@ def test(model, device, test_loader):
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
-    print(f'\nTest - avg loss: {test_loss:.4f}, accuracy = {correct}/{len(test_loader.dataset)} ({100. * correct / len(test_loader.dataset):.0f}%)\n')
+    accuracy = correct / len(test_loader.dataset)
+    print(f'\nTest - avg loss: {test_loss:.4f}, accuracy = {correct}/{len(test_loader.dataset)} ({100. * accuracy:.0f}%)\n')
+    return accuracy
 
-# Train and test the model
+# Train and test the model for multiple runs
 num_epochs = 10
-for epoch in range(1, num_epochs + 1):
-    train(model, device, train_loader, optimizer, epoch)
-    test(model, device, test_loader)
+num_runs = 10
+accuracy_matrix = []
+
+for run in range(1, num_runs + 1):
+    # Split the dataset into training and test sets
+    train_size = int(0.8 * len(full_dataset))
+    test_size = len(full_dataset) - train_size
+    train_dataset, test_dataset = random_split(full_dataset, [train_size, test_size])
+
+    # Create data loaders
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+    model = SimpleCNN().to(device)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    accuracies = []
+    for epoch in range(1, num_epochs + 1):
+        train(model, device, train_loader, optimizer, epoch)
+        accuracies.append(test(model, device, test_loader))
+    accuracy_matrix.append(accuracies)
+
+# Save accuracies to CSV
+with open('accuracy_results.csv', mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow([f'Epoch {epoch+1}' for epoch in range(num_epochs)])
+    for run_accuracies in accuracy_matrix:
+        writer.writerow(run_accuracies)
+
+print("Accuracy results saved to accuracy_results.csv")
