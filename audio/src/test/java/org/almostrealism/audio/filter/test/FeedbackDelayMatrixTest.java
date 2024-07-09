@@ -27,10 +27,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
-//	static {
-//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
-//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
-//	}
 
 	@Test
 	public void parallelVerb() throws IOException {

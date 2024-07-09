@@ -38,10 +38,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
-//	static {
-//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
-//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
-//	}
 
 	@Test
 	public void attackSample() throws IOException {
