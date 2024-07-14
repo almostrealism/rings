@@ -31,12 +31,13 @@ import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.time.TemporalRunner;
+import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-public class DelayCellTest implements CellFeatures {
+public class DelayCellTest implements CellFeatures, TestFeatures {
 	@Test
 	public void delay() {
 		CellList c = w("Library/Snare Perc DD.wav")
@@ -131,7 +132,7 @@ public class DelayCellTest implements CellFeatures {
 						.o(i -> new File("results/reverb-delay-cell-test.wav")),
 						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
 
-		HardwareOperator.verboseLog(() -> {
+		verboseLog(() -> {
 			r.get().run();
 		});
 	}
