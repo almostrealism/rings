@@ -16,22 +16,42 @@
 
 package org.almostrealism.rml.unet.test;
 
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.ml.DiffusionFeatures;
 import org.almostrealism.model.Block;
+import org.almostrealism.model.Model;
+import org.almostrealism.model.SequentialBlock;
 import org.junit.Test;
 
 public class UNetTest implements DiffusionFeatures {
-	int blockOutChannels[] = { 128, 128, 256, 256, 512, 512 };
+	int dimFactors[] = { 1, 2, 4, 8 };
+
+	protected Block block(int dim, int dimOut, int groups) {
+		SequentialBlock block = new SequentialBlock(shape(dim, dimOut));
+		block.add(convolution2d(dim, dimOut));
+		block.add(norm(shape(dimOut), groups));
+		block.add(silu(shape(dimOut)));
+		return block;
+
+	}
+
+	protected Block resNetAttentionBlock(int dimIn, int dimOut) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Test
 	public void unet() {
-		int width = 256, height = 256;
-		int timeInputDim = blockOutChannels[0];
-		int timeEmbedDim = blockOutChannels[0] * 4;
+		int dim = 28;
+		int initDim = dim;
 
-		TraversalPolicy inputShape = new TraversalPolicy(height, width);
+		int width = dim, height = dim;
+		int timeInputDim = dim;
+		int timeEmbedDim = dim * 4;
 
 		Block timeEmbedding = timestepEmbeddings(timeInputDim, timeEmbedDim);
+
+		Model unet = new Model(shape(height, width));
+		unet.addLayer(convolution2d(1, dim));
+
+		// for (int i = 0; i <)
 	}
 }
