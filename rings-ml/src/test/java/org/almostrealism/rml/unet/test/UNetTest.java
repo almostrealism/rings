@@ -27,7 +27,7 @@ public class UNetTest implements DiffusionFeatures {
 
 	protected Block block(int dim, int dimOut, int groups) {
 		SequentialBlock block = new SequentialBlock(shape(dim, dimOut));
-		block.add(convolution2d(dim, dimOut));
+		block.add(convolution2d(dimOut, dim));
 		block.add(norm(shape(dimOut), groups));
 		block.add(silu(shape(dimOut)));
 		return block;
@@ -50,7 +50,7 @@ public class UNetTest implements DiffusionFeatures {
 		Block timeEmbedding = timestepEmbeddings(timeInputDim, timeEmbedDim);
 
 		Model unet = new Model(shape(height, width));
-		unet.addLayer(convolution2d(1, dim));
+		unet.addLayer(convolution2d(dim, 1));
 
 		// for (int i = 0; i <)
 	}
