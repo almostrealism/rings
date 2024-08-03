@@ -91,6 +91,8 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 
 	@Test
 	public void healthTestNoAdjustment() {
+		if (testDepth < 1) return;
+
 		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-noadjust.wav");
@@ -103,6 +105,8 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 
 	@Test
 	public void healthTestWithAdjustment() {
+		if (testDepth < 1) return;
+
 		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-adjust.wav");

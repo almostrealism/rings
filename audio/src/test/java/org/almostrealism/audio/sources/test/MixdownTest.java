@@ -13,8 +13,6 @@ import java.io.File;
 public class MixdownTest implements CellFeatures {
 	@Test
 	public void samples() {
-		AcceleratedTimeSeries.defaultCacheLevel = MemoryBankAdapter.CacheLevel.ALL;
-
 		int count = 32;
 
 		CellList cells =

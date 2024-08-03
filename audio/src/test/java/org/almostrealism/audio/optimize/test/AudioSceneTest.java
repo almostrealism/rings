@@ -130,7 +130,7 @@ public class AudioSceneTest implements CellFeatures {
 
 	@Test
 	public void many() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/organ-factory-many-test.wav")).get(0);
 		Cells organ = cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 
 		Runnable run = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();

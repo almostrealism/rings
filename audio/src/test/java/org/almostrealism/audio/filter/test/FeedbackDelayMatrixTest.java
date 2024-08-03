@@ -44,6 +44,8 @@ public class FeedbackDelayMatrixTest extends AudioPassFilterTest {
 
 	@Test
 	public void reverb() throws IOException {
+		if (testDepth < 1) return;
+
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Gold 1.wav"));
 		DelayNetwork verb = new DelayNetwork((int) f.getSampleRate(), false);
 		runFilter("reverb", f, verb, true, (int) (f.getSampleRate() * 6));

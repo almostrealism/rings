@@ -57,7 +57,9 @@ public class AnnotatedAudioRendererTest {
 			}
 		};
 
-		AnnotatedAudioRenderer renderer = new AnnotatedAudioRenderer(new File("results/mix-test.wav"), annotation, types, 1.0, 5.0);
+		AnnotatedAudioRenderer renderer = new AnnotatedAudioRenderer(
+				new File("results/mix-test.wav"),
+				annotation, types, 1.0, 5.0);
 		ImageCanvas.encodeImageFile(renderer.render(1000, 100).get().evaluate(),
 				new File("results/image-test.jpg"), ImageCanvas.JPEGEncoding);
 	}
