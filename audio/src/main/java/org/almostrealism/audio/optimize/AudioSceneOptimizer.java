@@ -137,14 +137,14 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		TemporalRunner.enableIsolation = false;
 
 		StableDurationHealthComputation.enableTimeout = false;
-		MixdownManager.enableReverb = true;
+		MixdownManager.enableReverb = false; // true;
 		AudioScene.enableMainFilterUp = true;
 		AudioScene.enableEfxFilters = true;
 		AudioScene.enableEfx = true;
 		AudioScene.enableWetInAdjustment = true;
-		AudioScene.enableMasterFilterDown = true;
-		AudioScene.disableClean = false;
-		AudioScene.enableSourcesOnly = false;
+		AudioScene.enableMasterFilterDown = false; // true;
+		MixdownManager.disableClean = false;
+		MixdownManager.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
@@ -228,7 +228,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
 
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
-										OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
+											OutputLine.sampleRate, new ArrayList<>(),
+											new NoOpGenerationProvider());
 		loadChoices(scene);
 
 		scene.setTuning(new DefaultKeyboardTuning());

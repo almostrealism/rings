@@ -53,6 +53,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public static boolean enableReverb = true;
 	public static boolean enableDelayChromosome = false;
 
+	public static boolean enableMixdown = false;
+	public static boolean enableSourcesOnly = false;
+	public static boolean disableClean = false;
+
 	private TimeCell clock;
 	private int sampleRate;
 
@@ -107,7 +111,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.delayDynamics = new DelayChromosome(d, sampleRate);
 		this.delayDynamics.setGlobalTime(clock);
 
-		this.delayDynamicsSimple = initializePolycyclic(channels, genome.addSimpleChromosome(POLYCYCLIC_CHROMOSOME_SIZE));
+		this.delayDynamicsSimple = initializePolycyclic(delayLayers, genome.addSimpleChromosome(POLYCYCLIC_CHROMOSOME_SIZE));
 
 		this.reverb = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> reverb.addGene());
@@ -254,8 +258,14 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("Mixdown Manager Setup");
-		if (enableDelayChromosome && !AudioScene.enableSourcesOnly) setup.add(delayDynamics.expand());
+		if (enableDelayChromosome && !enableSourcesOnly) setup.add(delayDynamics.expand());
 		return setup;
+	}
+
+	public CellList cells(CellList sources,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output) {
+		return cells(sources, List.of(), stems, output, i -> i);
 	}
 
 	public CellList cells(CellList sources,
@@ -276,7 +286,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		}
 
 		TemporalList temporals = new TemporalList();
-		if (enableDelayChromosome && !AudioScene.enableSourcesOnly) temporals.addAll(delayDynamics.getTemporals());
+		if (enableDelayChromosome && !enableSourcesOnly) temporals.addAll(delayDynamics.getTemporals());
 
 		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
@@ -284,13 +294,13 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 														p(volumeAdjustmentScale), volumeSimple,
 														channelIndex.applyAsInt(i)).valueAt(0));
 
-		if (AudioScene.enableSourcesOnly) {
+		if (enableSourcesOnly) {
 			return cells
 					.map(fc(v))
 					.sum().map(fc(i -> sf(0.8))).map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
 
-		if (AudioScene.enableMixdown)
+		if (enableMixdown)
 			cells = cells.mixdown(AudioScene.mixdownDuration);
 
 		// Volume adjustment
@@ -348,7 +358,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				efx = cells(efx, reverb).sum();
 			}
 
-			if (AudioScene.disableClean) {
+			if (disableClean) {
 				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
 				return efx;
 			} else {

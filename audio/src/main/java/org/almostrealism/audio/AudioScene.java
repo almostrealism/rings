@@ -131,10 +131,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
 
-	public static boolean enableMixdown = false;
-	public static boolean enableSourcesOnly = false;
-	public static boolean disableClean = false;
-
 	private int sampleRate;
 	private double bpm;
 	private int channelCount;
