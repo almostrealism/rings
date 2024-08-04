@@ -28,16 +28,15 @@ import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
-import org.almostrealism.hardware.jni.NativeCompiler;
-import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.time.computations.MultiOrderFilter;
-import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
+
+	int filterOrder = 40;
 
 	@Test
 	public void attackSample() throws IOException {
@@ -143,7 +142,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
 
 		MultiOrderFilter filter =
-				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), 40);
+				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), filterOrder);
 
 		PackedCollection<?> result = filter.get().evaluate();
 		new WaveData(result, sampleRate)
@@ -170,7 +169,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
 
 		MultiOrderFilter filter =
-				lowPass(p(audio.getCollection()), cv(shape(maxFrames), 0), audio.getSampleRate(), 40);
+				lowPass(p(audio.getCollection()), cv(shape(maxFrames), 0), audio.getSampleRate(), filterOrder);
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
 		filter.get().into(result).evaluate(data);
@@ -197,13 +196,15 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
 		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
 
+		int inputAxis = 0;
+
 		MultiOrderFilter filter =
-				lowPass(cv(shape(maxFrames).traverse(1), 0),
-						cv(shape(maxFrames), 0),
-						audio.getSampleRate(), 40);
+				lowPass(cv(shape(maxFrames).traverse(inputAxis), 0),
+						cv(shape(maxFrames), 1),
+						audio.getSampleRate(), filterOrder);
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
-		filter.get().into(result).evaluate(audio.getCollection().traverse(1), data);
+		filter.get().into(result).evaluate(audio.getCollection().traverse(inputAxis), data);
 		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter-args2.wav"));
 	}
@@ -215,7 +216,6 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		double decay = 0.16;
 		double sustain = 0.04;
 		double release = 1.5;
-		int filterOrder = 40;
 
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
 		int sampleRate = audio.getSampleRate();
