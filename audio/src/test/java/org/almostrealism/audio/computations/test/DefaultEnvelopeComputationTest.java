@@ -16,11 +16,9 @@
 
 package org.almostrealism.audio.computations.test;
 
-import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 

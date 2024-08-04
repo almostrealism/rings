@@ -128,7 +128,7 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
-		Expression<Double> input = new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
+		Expression<Double> input = new Max(Min.of(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
 		addVariable(getOutput().ref(0).assign(
 				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
