@@ -17,6 +17,7 @@
 package org.almostrealism.audio.health.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
@@ -110,8 +111,8 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 	@Test
 	public void cellsPatternSmall() {
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		AudioScene.enableMainFilterUp = false;
-		AudioScene.enableEfxFilters = false;
+		MixdownManager.enableMainFilterUp = false;
+		MixdownManager.enableEfxFilters = false;
 
 		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
 		HealthComputationAdapter.setStandardDuration(150);

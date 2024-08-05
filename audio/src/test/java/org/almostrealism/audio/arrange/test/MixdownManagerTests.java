@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MixdownManagerTests implements CellFeatures {
@@ -42,35 +43,48 @@ public class MixdownManagerTests implements CellFeatures {
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		WaveOutput stemOut = new WaveOutput(new File("results/" + name + "-stem.wav"));
-		WaveOutput efxOut = new WaveOutput(new File("results/" + name + "-efx.wav"));
+		List<WaveOutput> stemsOut = new ArrayList<>();
+		for (int i = 0; i < cells.size(); i++)
+			stemsOut.add(new WaveOutput(new File("results/" + name + "-stem" + i + ".wav")));
+
+		stemsOut.add(new WaveOutput(new File("results/" + name + "-efx.wav")));
+
 		WaveOutput mixOut = new WaveOutput(new File("results/" + name + "-mix.wav"));
 
-		cells = mixdown.cells(cells, List.of(stemOut, efxOut), mixOut);
+		cells = mixdown.cells(cells, stemsOut, mixOut);
 		cells.addRequirement(time::tick);
 
 		TemporalRunner runner = new TemporalRunner(cells, (int) (duration * sampleRate));
 		runner.get().run();
-		stemOut.write().get().run();
-		efxOut.write().get().run();
+		stemsOut.forEach(s -> s.write().get().run());
 		mixOut.write().get().run();
 	}
 
 	@Test
 	public void mixdown1() throws IOException {
+		MixdownManager.enableReverb = false; // true;
+		MixdownManager.enableMainFilterUp = false; // true;
+		MixdownManager.enableEfxFilters = true;
+		MixdownManager.enableEfx = true;
+		MixdownManager.enableWetInAdjustment = true;
+		MixdownManager.enableMasterFilterDown = false; // true;
+		MixdownManager.disableClean = false;
+		MixdownManager.enableSourcesOnly = false;
+
 		double measureDuration = Frequency.forBPM(120).l(4);
 
 		GlobalTimeManager time = new GlobalTimeManager(
 				measure -> (int) (measure * measureDuration * sampleRate));
 
 		ConfigurableGenome genome = new ConfigurableGenome();
-		MixdownManager mixdown = new MixdownManager(genome, 1, 3,
+		MixdownManager mixdown = new MixdownManager(genome, 2, 3,
 										time.getClock(), sampleRate);
 
 		genome.assignTo(genome.getParameters().random());
 
 		CellList cells = w(c(0.0), c(1.0),
-				WaveData.load(new File("Library/Snare Gold 1.wav")));
+				WaveData.load(new File("Library/Snare Gold 1.wav")),
+				WaveData.load(new File("Library/SN_Forever_Future.wav")));
 		run("mixdown1", time, mixdown, cells);
 	}
 }

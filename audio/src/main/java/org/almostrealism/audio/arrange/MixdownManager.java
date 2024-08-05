@@ -50,12 +50,21 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
+	public static final int mixdownDuration = 140;
+
 	public static boolean enableReverb = true;
 	public static boolean enableDelayChromosome = false;
 
 	public static boolean enableMixdown = false;
 	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
+
+	public static boolean enableMainFilterUp = true;
+	public static boolean enableEfxFilters = true;
+	public static boolean enableEfx = true;
+	public static boolean enableWetInAdjustment = true;
+	public static boolean enableMasterFilterDown = true;
+
 
 	private TimeCell clock;
 	private int sampleRate;
@@ -275,7 +284,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 						  IntUnaryOperator channelIndex) {
 		CellList cells = sources;
 
-		if (AudioScene.enableMainFilterUp) {
+		if (enableMainFilterUp) {
 			// Apply dynamic high pass filters
 			cells = cells.map(fc(i -> {
 				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
@@ -301,12 +310,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		}
 
 		if (enableMixdown)
-			cells = cells.mixdown(AudioScene.mixdownDuration);
+			cells = cells.mixdown(mixdownDuration);
 
 		// Volume adjustment
 		CellList branch[] = cells.branch(
 				fc(v),
-				AudioScene.enableEfxFilters ?
+				enableEfxFilters ?
 						fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
 						fc(v),
 				fc(i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
@@ -324,7 +333,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		// Sum the main layer
 		main = main.sum();
 
-		if (AudioScene.enableEfx) {
+		if (enableEfx) {
 			int delayLayers = delay.length();
 
 			IntFunction<Factor<PackedCollection<?>>> df;
@@ -374,7 +383,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 //					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
 //				}
 
-				if (AudioScene.enableMasterFilterDown) {
+				if (enableMasterFilterDown) {
 					// Apply dynamic low pass filter
 					main = main.map(fc(i -> {
 						Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
@@ -421,7 +430,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
 		ArrayListGene<PackedCollection<?>> gene = new ArrayListGene<>();
 
-		if (AudioScene.enableWetInAdjustment) {
+		if (enableWetInAdjustment) {
 			gene.add(factor(wet.valueAt(0)));
 		} else {
 			gene.add(p -> c(0.2).multiply(p));

@@ -123,14 +123,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				};
 	}
 
-	public static final int mixdownDuration = 140;
-
-	public static boolean enableMainFilterUp = true;
-	public static boolean enableEfxFilters = true;
-	public static boolean enableEfx = true;
-	public static boolean enableWetInAdjustment = true;
-	public static boolean enableMasterFilterDown = true;
-
 	private int sampleRate;
 	private double bpm;
 	private int channelCount;
