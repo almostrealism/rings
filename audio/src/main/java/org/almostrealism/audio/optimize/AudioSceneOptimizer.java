@@ -137,12 +137,12 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		TemporalRunner.enableIsolation = false;
 
 		StableDurationHealthComputation.enableTimeout = false;
-		MixdownManager.enableReverb = false; // true;
-		MixdownManager.enableMainFilterUp = false; // true;
+		MixdownManager.enableReverb = true;
+		MixdownManager.enableMainFilterUp = true;
 		MixdownManager.enableEfxFilters = true;
 		MixdownManager.enableEfx = true;
 		MixdownManager.enableWetInAdjustment = true;
-		MixdownManager.enableMasterFilterDown = false; // true;
+		MixdownManager.enableMasterFilterDown = true;
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;

@@ -52,16 +52,17 @@ import java.util.stream.IntStream;
 public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
 	public static final int mixdownDuration = 140;
 
-	public static boolean enableReverb = true;
-	public static boolean enableDelayChromosome = false;
-
 	public static boolean enableMixdown = false;
 	public static boolean enableSourcesOnly = false;
 	public static boolean disableClean = false;
 
 	public static boolean enableMainFilterUp = true;
+
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
+	public static boolean enableReverb = true;
+	public static boolean enableTransmission = true;
+
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
 
@@ -266,9 +267,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	@Override
 	public Supplier<Runnable> setup() {
-		OperationList setup = new OperationList("Mixdown Manager Setup");
-		if (enableDelayChromosome && !enableSourcesOnly) setup.add(delayDynamics.expand());
-		return setup;
+		return new OperationList("Mixdown Manager Setup");
 	}
 
 	public CellList cells(CellList sources,
@@ -293,11 +292,6 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 			}));
 		}
-
-		TemporalList temporals = new TemporalList();
-		if (enableDelayChromosome && !enableSourcesOnly) temporals.addAll(delayDynamics.getTemporals());
-
-		cells = cells.addRequirements(temporals.toArray(TemporalFactor[]::new));
 
 		IntFunction<Factor<PackedCollection<?>>> v = i -> factor(toAdjustmentGene(clock, sampleRate,
 														p(volumeAdjustmentScale), volumeSimple,
@@ -334,30 +328,29 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		main = main.sum();
 
 		if (enableEfx) {
-			int delayLayers = delay.length();
+			if (enableTransmission) {
+				int delayLayers = delay.length();
 
-			IntFunction<Factor<PackedCollection<?>>> df;
+				IntFunction<Factor<PackedCollection<?>>> df =
+						i -> toPolycyclicGene(clock, sampleRate, delayDynamicsSimple, i).valueAt(0);
 
-			if (enableDelayChromosome) {
-				df = i -> delayDynamics.valueAt(i, 0);
+				CellList delays = IntStream.range(0, delayLayers)
+						.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
+								toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
+								toScalar(df.apply(i).getResultant(c(1.0)))))
+						.collect(CellList.collector());
+
+				IntFunction<Gene<PackedCollection<?>>> tg =
+						i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
+
+				// Route each line to each delay layer
+				efx = efx.m(fi(), delays, tg)
+						// Feedback grid
+						.mself(fi(), transmission, fc(wetOut.valueAt(0)))
+						.sum();
 			} else {
-				df = i -> toPolycyclicGene(clock, sampleRate, delayDynamicsSimple, i).valueAt(0);
+				efx = efx.sum();
 			}
-
-			CellList delays = IntStream.range(0, delayLayers)
-					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
-							toScalar(df.apply(i).getResultant(c(1.0)))))
-					.collect(CellList.collector());
-
-			IntFunction<Gene<PackedCollection<?>>> tg =
-					i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
-
-			// Route each line to each delay layer
-			efx = efx.m(fi(), delays, tg)
-					// Feedback grid
-					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
-					.sum();
 
 			if (enableReverb) {
 				// Combine inputs and apply reverb
@@ -368,7 +361,11 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			}
 
 			if (disableClean) {
-				efx.get(0).setReceptor(Receptor.to(output, measures.get(0), measures.get(1)));
+				Receptor r[] = new Receptor[measures.size() + 1];
+				r[0] = output;
+				for (int i = 0; i < measures.size(); i++) r[i + 1] = measures.get(i);
+
+				efx.get(0).setReceptor(Receptor.to(r));
 				return efx;
 			} else {
 				List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
@@ -395,7 +392,9 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 				// Deliver main to the output and measure #1
 				if (measures.isEmpty()) {
-					return main.map(i -> new ReceptorCell<>(output));
+					// TODO  Returning here works, including efx does not
+					// return main.map(i -> new ReceptorCell<>(output));
+					main = main.map(i -> new ReceptorCell<>(output));
 				} else {
 					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
 				}

@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MixdownManagerTests implements CellFeatures {
-	private double duration = 180;
+	private double duration = 60;
 	private int sampleRate = OutputLine.sampleRate;
 
 	protected void run(String name, GlobalTimeManager time, MixdownManager mixdown, CellList cells) {
@@ -62,12 +62,13 @@ public class MixdownManagerTests implements CellFeatures {
 
 	@Test
 	public void mixdown1() throws IOException {
-		MixdownManager.enableReverb = false; // true;
-		MixdownManager.enableMainFilterUp = false; // true;
-		MixdownManager.enableEfxFilters = true;
+		MixdownManager.enableMainFilterUp = true;
+		MixdownManager.enableEfxFilters = false; // true;
 		MixdownManager.enableEfx = true;
+		MixdownManager.enableReverb = true;
+		MixdownManager.enableTransmission = true;
 		MixdownManager.enableWetInAdjustment = true;
-		MixdownManager.enableMasterFilterDown = false; // true;
+		MixdownManager.enableMasterFilterDown = true;
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = false;
 
