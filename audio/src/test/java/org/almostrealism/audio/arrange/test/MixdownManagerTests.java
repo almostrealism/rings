@@ -20,6 +20,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.WaveData;
@@ -35,11 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MixdownManagerTests implements CellFeatures {
-	private double duration = 60;
+	private double duration = 180;
 	private int sampleRate = OutputLine.sampleRate;
 
 	protected void run(String name, GlobalTimeManager time, MixdownManager mixdown, CellList cells) {
-		OperationList setup = new OperationList("AudioScene Setup");
+		OperationList setup = new OperationList("MixdownManagerTests Setup");
+		setup.add(mixdown.getAutomationManager().setup());
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
@@ -63,7 +65,7 @@ public class MixdownManagerTests implements CellFeatures {
 	@Test
 	public void mixdown1() throws IOException {
 		MixdownManager.enableMainFilterUp = true;
-		MixdownManager.enableEfxFilters = false; // true;
+		MixdownManager.enableEfxFilters = true;
 		MixdownManager.enableEfx = true;
 		MixdownManager.enableReverb = true;
 		MixdownManager.enableTransmission = true;
@@ -78,7 +80,11 @@ public class MixdownManagerTests implements CellFeatures {
 				measure -> (int) (measure * measureDuration * sampleRate));
 
 		ConfigurableGenome genome = new ConfigurableGenome();
+		AutomationManager automation = new AutomationManager(
+				genome, time.getClock(),
+				() -> measureDuration, sampleRate);
 		MixdownManager mixdown = new MixdownManager(genome, 2, 3,
+										automation,
 										time.getClock(), sampleRate);
 
 		genome.assignTo(genome.getParameters().random());

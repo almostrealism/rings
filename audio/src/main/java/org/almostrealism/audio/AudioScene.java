@@ -22,6 +22,7 @@ import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -143,6 +144,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private double patternActivityBias;
 
 	private SceneSectionManager sections;
+	private AutomationManager automation;
 	private EfxManager efx;
 	private RiseManager riser;
 	private MixdownManager mixdown;
@@ -179,7 +181,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(5);
+		this.genome = new CombinedGenome(6);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
@@ -199,9 +201,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			}
 		});
 
-		this.mixdown = new MixdownManager(genome.getGenome(3), channels, delayLayers,
-										time.getClock(), getSampleRate());
-		this.efx = new EfxManager(genome.getGenome(4), channels, this::getBeatDuration, getSampleRate());
+		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
+											this::getMeasureDuration, getSampleRate());
+		this.efx = new EfxManager(genome.getGenome(4), channels,
+											this::getBeatDuration, getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(5),
+											channels, delayLayers,
+											automation,
+											time.getClock(), getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -279,6 +286,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public SceneSectionManager getSectionManager() { return sections; }
 	public ChordProgressionManager getChordProgression() { return progression; }
 	public PatternSystemManager getPatternManager() { return patterns; }
+	public AutomationManager getAutomationManager() { return automation; }
 	public EfxManager getEfxManager() { return efx; }
 	public MixdownManager getMixdownManager() { return mixdown; }
 	public GenerationManager getGenerationManager() { return generation; }
@@ -428,6 +436,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
+		setup.add(automation.setup());
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 

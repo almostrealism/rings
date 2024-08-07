@@ -57,6 +57,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public static boolean disableClean = false;
 
 	public static boolean enableMainFilterUp = true;
+	public static boolean enableAutomationManager = true;
 
 	public static boolean enableEfxFilters = true;
 	public static boolean enableEfx = true;
@@ -67,6 +68,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public static boolean enableMasterFilterDown = true;
 
 
+	private AutomationManager automation;
 	private TimeCell clock;
 	private int sampleRate;
 
@@ -91,8 +93,11 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	private List<Integer> reverbChannels;
 
-	public MixdownManager(ConfigurableGenome genome, int channels, int delayLayers,
+	public MixdownManager(ConfigurableGenome genome,
+						  int channels, int delayLayers,
+						  AutomationManager automation,
 						  TimeCell clock, int sampleRate) {
+		this.automation = automation;
 		this.clock = clock;
 		this.sampleRate = sampleRate;
 
@@ -135,6 +140,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		initRanges(new Configuration(channels), delayLayers);
 
 		this.reverbChannels = new ArrayList<>();
+	}
+
+	public AutomationManager getAutomationManager() {
+		return automation;
 	}
 
 	public void setVolumeAdjustmentScale(double scale) {
@@ -285,12 +294,17 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		if (enableMainFilterUp) {
 			// Apply dynamic high pass filters
-			cells = cells.map(fc(i -> {
-				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
-											p(mainFilterUpAdjustmentScale), mainFilterUpSimple,
-											channelIndex.applyAsInt(i)).valueAt(0);
-				return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
-			}));
+			if (enableAutomationManager) {
+				cells = cells.map(fc(i ->
+						hp(scalar(20000).multiply(automation.getAggregatedValue()), scalar(FixedFilterChromosome.defaultResonance))));
+			} else {
+				cells = cells.map(fc(i -> {
+					Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
+							p(mainFilterUpAdjustmentScale), mainFilterUpSimple,
+							channelIndex.applyAsInt(i)).valueAt(0);
+					return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
+				}));
+			}
 		}
 
 		IntFunction<Factor<PackedCollection<?>>> v = i -> factor(toAdjustmentGene(clock, sampleRate,
