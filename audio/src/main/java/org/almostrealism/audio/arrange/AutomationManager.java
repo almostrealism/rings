@@ -23,18 +23,22 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.Gene;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AutomationManager implements Setup, CellFeatures {
+	public static final int GENE_LENGTH = 6;
+
 	private ConfigurableGenome genome;
 	private TimeCell clock;
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
 
 	private PackedCollection<?> scale;
-	private double r = 4.0;
+	private double r = 1.0;
+	private double p = 0.5;
 
 	public AutomationManager(ConfigurableGenome genome, TimeCell clock,
 							 DoubleSupplier measureDuration, int sampleRate) {
@@ -45,31 +49,59 @@ public class AutomationManager implements Setup, CellFeatures {
 		this.scale = PackedCollection.factory().apply(1);
 	}
 
-	protected Producer<PackedCollection<?>> time() {
-		return divide(clock.frame(), cp(scale));
+	protected Producer<PackedCollection<?>> time(Producer<PackedCollection<?>> phase) {
+		phase = c(2.0).multiply(phase).subtract(c(1.0)).multiply(c(p));
+		return divide(clock.time(sampleRate), cp(scale)).add(phase);
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValue() {
-		return multiply(getMainValue(), multiply(getShortPeriodValue(), getLongPeriodValue()));
+	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene) {
+		return getAggregatedValue(
+				gene.valueAt(0).getResultant(c(1.0)),
+				gene.valueAt(1).getResultant(c(1.0)),
+				gene.valueAt(2).getResultant(c(1.0)),
+				gene.valueAt(3).getResultant(c(1.0)),
+				gene.valueAt(4).getResultant(c(1.0)),
+				gene.valueAt(5).getResultant(c(1.0)));
 	}
 
-	public Producer<PackedCollection<?>> getMainValue() {
-		return c(0.03 * r).multiply(time()).pow(c(3.8)).multiply(c(0.1));
+	public Producer<PackedCollection<?>> getAggregatedValue(
+			Producer<PackedCollection<?>> shortPeriodPhase,
+			Producer<PackedCollection<?>> longPeriodPhase,
+			Producer<PackedCollection<?>> mainPhase,
+			Producer<PackedCollection<?>> shortPeriodMagnitude,
+			Producer<PackedCollection<?>> longPeriodMagnitude,
+			Producer<PackedCollection<?>> mainMagnitude) {
+		Producer<PackedCollection<?>> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValue(shortPeriodPhase));
+		Producer<PackedCollection<?>> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValue(longPeriodPhase));
+		Producer<PackedCollection<?>> main = multiply(mainMagnitude, getMainValue(mainPhase));
+
+		return multiply(main, multiply(shortPeriod, longPeriod));
 	}
 
-	public Producer<PackedCollection<?>> getLongPeriodValue() {
-		return c(0.7).add(sin(multiply(time(), c(r)))).multiply(c(0.3));
+	protected Producer<PackedCollection<?>> applyMagnitude(Producer<PackedCollection<?>> magnitude,
+														   Producer<PackedCollection<?>> value) {
+		return multiply(value, magnitude).add(c(1.0).subtract(magnitude));
 	}
 
-	public Producer<PackedCollection<?>> getShortPeriodValue() {
-		return c(1.0).add(sin(multiply(time(), c(4.0 * r))).multiply(c(-0.08)));
+	public Producer<PackedCollection<?>> getMainValue(Producer<PackedCollection<?>> phase) {
+		Producer<PackedCollection<?>> v = c(0.1 * r).multiply(time(phase)).pow(c(3.0));
+		v = rectify(add(v, c(-20.0)));
+		return multiply(v, c(0.01));
+	}
+
+	public Producer<PackedCollection<?>> getLongPeriodValue(Producer<PackedCollection<?>> phase) {
+		return c(0.95).add(sin(multiply(time(phase), c(2.0 * r)))).multiply(c(0.05));
+	}
+
+	public Producer<PackedCollection<?>> getShortPeriodValue(Producer<PackedCollection<?>> phase) {
+		return c(1.0).add(sin(multiply(time(phase), c(16.0 * r))).multiply(c(-0.04)));
 	}
 
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList setup = new OperationList("AutomationManager Setup");
 		setup.add(() -> () -> {
-			scale.set(0, measureDuration.getAsDouble() * sampleRate);
+			scale.set(0, measureDuration.getAsDouble());
 		});
 		return setup;
 	}
