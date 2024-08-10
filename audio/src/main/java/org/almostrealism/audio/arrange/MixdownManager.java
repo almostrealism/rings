@@ -388,8 +388,13 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				// Combine inputs and apply reverb
 				reverb = reverb.sum().map(fc(i -> new DelayNetwork(sampleRate, false)));
 
-				// Combine reverb with efx
-				efx = cells(efx, reverb).sum();
+				if (enableTransmission) {
+					// Combine reverb with efx
+					efx = cells(efx, reverb).sum();
+				} else {
+					// There are no other fx
+					efx = reverb;
+				}
 			}
 
 			if (disableClean) {

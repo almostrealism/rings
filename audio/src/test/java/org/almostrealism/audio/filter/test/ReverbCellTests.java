@@ -16,11 +16,11 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.relation.Process;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.filter.DelayNetwork;
+import org.almostrealism.graph.TimeCell;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -35,6 +35,19 @@ public class ReverbCellTests implements CellFeatures, TestFeatures {
 		CellList c = w("Library/Snare Perc DD.wav")
 				.map(fc(i -> new DelayNetwork(sampleRate, false)))
 				.o(i -> new File("results/reverb1.wav"));
+		Supplier<Runnable> r = c.sec(12);
+		r.get().run();
+	}
+
+	@Test
+	public void reverbAutomation() {
+		TimeCell clock = new TimeCell();
+
+		CellList c = w(c(0.35), "Library/organ.wav")
+				.map(fc(i -> in -> multiply(in, c(1.0).add(sin(clock.time(sampleRate))))))
+				.map(fc(i -> new DelayNetwork(sampleRate, false)))
+				.addRequirement(clock)
+				.o(i -> new File("results/reverb-auto.wav"));
 		Supplier<Runnable> r = c.sec(12);
 		r.get().run();
 	}

@@ -56,6 +56,7 @@ public class MixdownManagerTests implements CellFeatures {
 		cells = mixdown.cells(cells, stemsOut, mixOut);
 		cells.addRequirement(time::tick);
 
+		setup.get().run();
 		TemporalRunner runner = new TemporalRunner(cells, (int) (duration * sampleRate));
 		runner.get().run();
 		stemsOut.forEach(s -> s.write().get().run());
@@ -84,8 +85,8 @@ public class MixdownManagerTests implements CellFeatures {
 				genome, time.getClock(),
 				() -> measureDuration, sampleRate);
 		MixdownManager mixdown = new MixdownManager(genome, 2, 3,
-										automation,
-										time.getClock(), sampleRate);
+										automation, time.getClock(), sampleRate);
+		mixdown.setReverbChannels(List.of(0, 1));
 
 		genome.assignTo(genome.getParameters().random());
 
