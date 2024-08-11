@@ -54,14 +54,15 @@ public class AutomationManager implements Setup, CellFeatures {
 		return divide(clock.time(sampleRate), cp(scale)).add(phase);
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene) {
+	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene, double offset) {
 		return getAggregatedValue(
 				gene.valueAt(0).getResultant(c(1.0)),
 				gene.valueAt(1).getResultant(c(1.0)),
 				gene.valueAt(2).getResultant(c(1.0)),
 				gene.valueAt(3).getResultant(c(1.0)),
 				gene.valueAt(4).getResultant(c(1.0)),
-				gene.valueAt(5).getResultant(c(1.0)));
+				gene.valueAt(5).getResultant(c(1.0)),
+				c(offset));
 	}
 
 	public Producer<PackedCollection<?>> getAggregatedValue(
@@ -70,10 +71,11 @@ public class AutomationManager implements Setup, CellFeatures {
 			Producer<PackedCollection<?>> mainPhase,
 			Producer<PackedCollection<?>> shortPeriodMagnitude,
 			Producer<PackedCollection<?>> longPeriodMagnitude,
-			Producer<PackedCollection<?>> mainMagnitude) {
+			Producer<PackedCollection<?>> mainMagnitude,
+			Producer<PackedCollection<?>> offset) {
 		Producer<PackedCollection<?>> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValue(shortPeriodPhase));
 		Producer<PackedCollection<?>> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValue(longPeriodPhase));
-		Producer<PackedCollection<?>> main = multiply(mainMagnitude, getMainValue(mainPhase));
+		Producer<PackedCollection<?>> main = multiply(mainMagnitude, getMainValue(mainPhase, offset));
 
 		return multiply(main, multiply(shortPeriod, longPeriod));
 	}
@@ -83,9 +85,9 @@ public class AutomationManager implements Setup, CellFeatures {
 		return multiply(value, magnitude).add(c(1.0).subtract(magnitude));
 	}
 
-	public Producer<PackedCollection<?>> getMainValue(Producer<PackedCollection<?>> phase) {
+	public Producer<PackedCollection<?>> getMainValue(Producer<PackedCollection<?>> phase, Producer<PackedCollection<?>> offset) {
 		Producer<PackedCollection<?>> v = c(0.1 * r).multiply(time(phase)).pow(c(3.0));
-		v = rectify(add(v, c(-20.0)));
+		v = rectify(add(v, offset));
 		return multiply(v, c(0.01));
 	}
 

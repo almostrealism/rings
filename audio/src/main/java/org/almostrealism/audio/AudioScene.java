@@ -204,11 +204,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
 											this::getMeasureDuration, getSampleRate());
 		this.efx = new EfxManager(genome.getGenome(4), channels,
-											this::getBeatDuration, getSampleRate());
+								automation, this::getBeatDuration, getSampleRate());
 		this.mixdown = new MixdownManager(genome.getGenome(5),
-											channels, delayLayers,
-											automation,
-											time.getClock(), getSampleRate());
+										channels, delayLayers,
+										automation, time.getClock(), getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}

@@ -66,7 +66,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
 
-	protected static double reverbLevel = 1.0;
+	protected static double reverbLevel = 2.0;
 
 	private AutomationManager automation;
 	private TimeCell clock;
@@ -301,7 +301,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			if (enableAutomationManager) {
 				cells = cells.map(fc(i -> {
 					Producer<PackedCollection<?>> v =
-							automation.getAggregatedValue(mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)));
+							automation.getAggregatedValue(mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)), -40.0);
 					return hp(scalar(20000).multiply(v), scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			} else {
@@ -331,7 +331,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		if (enableAutomationManager) {
 			reverbFactor = i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
-					in -> multiply(in, automation.getAggregatedValue(reverbAutomation.valueAt(channelIndex.applyAsInt(i)))).multiply(c(reverbLevel)) :
+					in -> multiply(in, automation.getAggregatedValue(reverbAutomation.valueAt(channelIndex.applyAsInt(i)), 0.0)).multiply(c(reverbLevel)) :
 						sf(0.0);
 		} else {
 			reverbFactor = i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?

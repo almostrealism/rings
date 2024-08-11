@@ -21,6 +21,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
+import org.almostrealism.graph.Cell;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -28,27 +29,36 @@ import org.almostrealism.heredity.SimpleGene;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
 	public static boolean enableEfx = true;
+	public static boolean enableAutomation = true;
 	public static double maxWet = 0.5;
 	public static double maxFeedback = 0.5;
+
+	private AutomationManager automation;
 
 	private ConfigurableGenome genome;
 	private SimpleChromosome delayTimes;
 	private SimpleChromosome delayLevels;
+	private SimpleChromosome delayAutomation;
 	private int channels;
 	private List<Integer> wetChannels;
 
 	private DoubleSupplier beatDuration;
 	private int sampleRate;
 
-	public EfxManager(ConfigurableGenome genome, int channels, DoubleSupplier beatDuration, int sampleRate) {
+	public EfxManager(ConfigurableGenome genome, int channels,
+					  AutomationManager automation,
+					  DoubleSupplier beatDuration, int sampleRate) {
 		this.genome = genome;
 		this.channels = channels;
 		this.wetChannels = new ArrayList<>();
 		IntStream.range(0, channels).forEach(this.wetChannels::add);
+
+		this.automation = automation;
 
 		this.beatDuration = beatDuration;
 		this.sampleRate = sampleRate;
@@ -76,6 +86,9 @@ public class EfxManager implements CellFeatures {
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
 			if (maxFeedback != 1.0) g.setTransform(1, p -> multiply(p, c(maxFeedback)));
 		});
+
+		delayAutomation = genome.addSimpleChromosome(AutomationManager.GENE_LENGTH);
+		IntStream.range(0, channels).forEach(i -> delayAutomation.addGene());
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }
@@ -103,11 +116,20 @@ public class EfxManager implements CellFeatures {
 		CellList wet = branch[0];
 		CellList dry = branch[1];
 
-		wet = wet.m(fi(), delays)
+		IntFunction<Cell<PackedCollection<?>>> auto =
+				enableAutomation ?
+						fc(i -> in -> {
+							Producer<PackedCollection<?>> value = automation.getAggregatedValue(delayAutomation.valueAt(channel), 0.0);
+							value = c(0.5).multiply(c(1.0).add(value));
+							return multiply(in, value);
+						}) :
+						fi();
+
+		wet = wet.m(auto, delays)
 				.mself(fi(), i -> g(delayLevels.valueAt(channel, 1)))
 				.sum();
-		cells = cells(wet, dry).sum();
 
+		cells = cells(wet, dry).sum();
 		return cells;
 	}
 }
