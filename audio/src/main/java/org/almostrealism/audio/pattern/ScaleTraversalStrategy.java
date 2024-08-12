@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.notes.NoteAudioContext;
@@ -28,7 +29,7 @@ import org.almostrealism.io.ConsoleFeatures;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum ScaleTraversalStrategy implements ConsoleFeatures {
+public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 	CHORD, SEQUENCE;
 
 	public List<RenderedNoteAudio> getNoteDestinations(PatternElement element,
@@ -44,6 +45,9 @@ public enum ScaleTraversalStrategy implements ConsoleFeatures {
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
+			Producer<PackedCollection<?>> automationLevel =
+					context.getAutomationLevel().apply(element.getAutomationParameters()).getResultant(c(actualPosition));
+
 			if (!melodic) {
 				if (element.getScalePositions().size() > 1) {
 					warn("Multiple scale position for non-melodic material");
@@ -53,7 +57,7 @@ public enum ScaleTraversalStrategy implements ConsoleFeatures {
 						element.getNoteAudio(melodic,
 								keys.get(0), relativePosition,
 								audioContext.nextNotePosition(relativePosition),
-								audioContext.getAudioSelection(),
+								automationLevel, audioContext.getAudioSelection(),
 								context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note,
 						context.frameForPosition(actualPosition)));
@@ -66,7 +70,7 @@ public enum ScaleTraversalStrategy implements ConsoleFeatures {
 							element.getNoteAudio(melodic,
 								keys.get(keyIndex), relativePosition,
 								audioContext.nextNotePosition(relativePosition),
-								audioContext.getAudioSelection(),
+									automationLevel, audioContext.getAudioSelection(),
 								context.getTimeForDuration());
 					destinations.add(new RenderedNoteAudio(note,
 							context.frameForPosition(actualPosition)));
@@ -81,7 +85,7 @@ public enum ScaleTraversalStrategy implements ConsoleFeatures {
 				Producer<PackedCollection<?>> note = element.getNoteAudio(
 							melodic, keys.get(keyIndex), relativePosition,
 							audioContext.nextNotePosition(relativePosition),
-							audioContext.getAudioSelection(),
+						automationLevel, audioContext.getAudioSelection(),
 							context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 			} else {

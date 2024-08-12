@@ -19,6 +19,7 @@ package org.almostrealism.audio;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -48,6 +49,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CombinedGenome;
+import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
@@ -154,6 +156,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private CombinedGenome genome;
 	
 	private OperationList setup;
+	private Evaluable<PackedCollection<?>> automationLevel;
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
@@ -327,6 +330,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			throw new IllegalArgumentException();
 		}
 
+		if (automationLevel == null) {
+			automationLevel = automation.getAggregatedValueAt(
+						x(),
+						c(y(6), 0),
+						c(y(6), 1),
+						c(y(6), 2),
+						c(y(6), 3),
+						c(y(6), 4),
+						c(y(6), 5),
+						c(0.0))
+					.get();
+		}
+
 		AudioSceneContext context = new AudioSceneContext();
 		context.setChannels(channels);
 		context.setMeasures(getTotalMeasures());
@@ -334,6 +350,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
+		context.setAutomationLevel(gene -> position -> () -> {
+			return args -> automationLevel.evaluate(position.evaluate(args), gene);
+		});
 		if (patternDestinations != null) context.setDestination(patternDestinations.get(channels.get(0)));
 		return context;
 	}

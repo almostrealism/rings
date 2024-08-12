@@ -21,5 +21,6 @@ import org.almostrealism.collect.PackedCollection;
 
 public interface NoteAudioFilter {
 	Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
-										Producer<PackedCollection<?>> noteDuration);
+										Producer<PackedCollection<?>> noteDuration,
+										Producer<PackedCollection<?>> automationLevel);
 }

@@ -102,7 +102,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 
 		@Override
 		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration) {
+												   Producer<PackedCollection<?>> duration, Producer<PackedCollection<?>> automationLevel) {
 			PackedCollection<?> d0 = new PackedCollection<>(1);
 			d0.set(0, getAttack());
 

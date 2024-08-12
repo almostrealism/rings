@@ -246,7 +246,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result = penv.apply(ParameterSet.random(),
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
@@ -256,7 +256,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result = penv.apply(ParameterSet.random(),
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 

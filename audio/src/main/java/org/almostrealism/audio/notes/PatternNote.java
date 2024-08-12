@@ -102,20 +102,21 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, audioSelection);
-		return combineLayers(target, -1, audioSelection);
+		return combineLayers(target, -1, null, audioSelection);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 Producer<PackedCollection<?>> automationLevel,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) {
-			return super.computeAudio(target, noteDuration, audioSelection);
+			return super.computeAudio(target, noteDuration, automationLevel, audioSelection);
 		}
 
-		return combineLayers(target, noteDuration, audioSelection);
+		return combineLayers(target, noteDuration, automationLevel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target,
-														  double noteDuration,
+	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, double noteDuration,
+														  Producer<PackedCollection<?>> automationLevel,
 														  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
@@ -124,7 +125,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		return () -> {
 			List<Evaluable<PackedCollection<?>>> layerAudio =
 					layers.stream()
-							.map(l -> l.getAudio(target, noteDuration, audioSelection).get())
+							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection).get())
 							.collect(Collectors.toList());
 			int frames[] = IntStream.range(0, layerAudio.size())
 					.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *

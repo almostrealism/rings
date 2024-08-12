@@ -19,6 +19,7 @@ package org.almostrealism.audio.pattern;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -59,7 +60,8 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private SimpleChromosome chromosome;
+	private SimpleChromosome layerChoiceChromosome;
+	private SimpleChromosome envelopeAutomationChromosome;
 
 	private ParameterFunction factorySelection; // TODO  rename
 	private ParameterizedPositionFunction activeSelection;
@@ -70,14 +72,19 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private PackedCollection<?> destination;
 
-	public PatternLayerManager(List<NoteAudioChoice> choices, SimpleChromosome chromosome, int channel, double measures,
-							   boolean melodic) {
+	public PatternLayerManager(List<NoteAudioChoice> choices,
+							   SimpleChromosome layerChoiceChromosome,
+							   SimpleChromosome envelopeAutomationChromosome,
+							   int channel, double measures, boolean melodic) {
 		this(NoteAudioChoice.choices(choices, false), NoteAudioChoice.choices(choices, true),
-				chromosome, channel, measures, melodic);
+				layerChoiceChromosome, envelopeAutomationChromosome, channel, measures, melodic);
 	}
 
-	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices, Supplier<List<NoteAudioChoice>> melodicChoices,
-							   SimpleChromosome chromosome, int channel, double measures, boolean melodic) {
+	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices,
+							   Supplier<List<NoteAudioChoice>> melodicChoices,
+							   SimpleChromosome layerChoiceChromosome,
+							   SimpleChromosome envelopeAutomationChromosome,
+							   int channel, double measures, boolean melodic) {
 		this.channel = channel;
 		this.duration = measures;
 		this.scale = 1.0;
@@ -87,7 +94,8 @@ public class PatternLayerManager implements CodeFeatures {
 
 		this.percChoices = percChoices;
 		this.melodicChoices = melodicChoices;
-		this.chromosome = chromosome;
+		this.layerChoiceChromosome = layerChoiceChromosome;
+		this.envelopeAutomationChromosome = envelopeAutomationChromosome;
 		this.roots = new ArrayList<>();
 		this.layerParams = new ArrayList<>();
 		init();
@@ -231,7 +239,7 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public int getLayerCount() {
-		return chromosome.length();
+		return layerChoiceChromosome.length();
 	}
 
 	public void setLayerCount(int count) {
@@ -246,7 +254,9 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void addLayer(ParameterSet params) {
-		SimpleGene g = chromosome.addGene();
+		envelopeAutomationChromosome.addGene();
+
+		SimpleGene g = layerChoiceChromosome.addGene();
 		g.set(0, params.getX());
 		g.set(1, params.getY());
 		g.set(2, params.getZ());
@@ -262,6 +272,11 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	protected void layer(ParameterSet params) {
+		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
+		PackedCollection<?> automationParams =
+				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH)
+								.fill(pos -> automationGene.valueAt(pos[0]).getResultant(c(1.0)).evaluate().toDouble());
+
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
 
@@ -276,10 +291,12 @@ public class PatternLayerManager implements CodeFeatures {
 			if (rootCount() <= 0) {
 				roots.add(new PatternLayer());
 			}
+
+			roots.forEach(layer -> layer.setAutomationParameters(automationParams));
 		} else {
 			if (enableLogging) {
 				System.out.println();
-				System.out.println("PatternLayerManager: " + roots.size() +
+				log(roots.size() +
 						" roots (scale = " + scale + ", duration = " + duration + ")");
 			}
 
@@ -295,8 +312,10 @@ public class PatternLayerManager implements CodeFeatures {
 					next = new PatternLayer();
 				}
 
+				next.setAutomationParameters(automationParams);
+
 				if (enableLogging) {
-					System.out.println("PatternLayerManager: " + layer.getAllElements(0, duration).size() +
+					log(layer.getAllElements(0, duration).size() +
 										" elements --> " + next.getElements().size() + " elements");
 				}
 
@@ -309,7 +328,11 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void removeLayer(boolean removeGene) {
-		if (removeGene) chromosome.removeGene(chromosome.length() - 1);
+		if (removeGene) {
+			envelopeAutomationChromosome.removeGene(envelopeAutomationChromosome.length() - 1);
+			layerChoiceChromosome.removeGene(layerChoiceChromosome.length() - 1);
+		}
+
 		layerParams.remove(layerParams.size() - 1);
 		decrement();
 
@@ -333,9 +356,9 @@ public class PatternLayerManager implements CodeFeatures {
 	public void refresh() {
 		clear(false);
 		if (layerParams.size() != depth())
-			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() + " != " + chromosome.length() + ")");
+			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() + " != " + layerChoiceChromosome.length() + ")");
 
-		IntStream.range(0, chromosome.length()).forEach(i -> layer(chromosome.valueAt(i)));
+		IntStream.range(0, layerChoiceChromosome.length()).forEach(i -> layer(layerChoiceChromosome.valueAt(i)));
 	}
 
 	public NoteAudioChoice choose(double scale, ParameterSet params) {
@@ -372,7 +395,7 @@ public class PatternLayerManager implements CodeFeatures {
 			ChannelSection section = ctx.getSection(i * duration);
 
 			if (section == null) {
-				System.out.println("WARN: No ChannelSection at measure " + i);
+				warn("No ChannelSection at measure " + i);
 			} else {
 				double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
 				if (active < 0) return;

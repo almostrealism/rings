@@ -23,7 +23,6 @@ import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -47,6 +46,8 @@ public class PatternElement implements CodeFeatures {
 	private PatternDirection direction;
 	private int repeatCount;
 	private double repeatDuration;
+
+	private PackedCollection<?> automationParameters;
 
 	public PatternElement() {
 		this(null, 0.0);
@@ -87,7 +88,8 @@ public class PatternElement implements CodeFeatures {
 		this.scaleTraversalStrategy = scaleTraversalStrategy;
 	}
 
-	public double getNoteDuration(DoubleUnaryOperator timeForDuration, double position, double nextPosition,
+	public double getNoteDuration(DoubleUnaryOperator timeForDuration,
+								  double position, double nextPosition,
 								  double originalDurationSeconds) {
 		return durationStrategy.getLength(timeForDuration, position, nextPosition,
 							originalDurationSeconds, getNoteDurationSelection());
@@ -120,6 +122,14 @@ public class PatternElement implements CodeFeatures {
 		this.repeatDuration = repeatDuration;
 	}
 
+	public PackedCollection<?> getAutomationParameters() {
+		return automationParameters;
+	}
+
+	public void setAutomationParameters(PackedCollection<?> automationParameters) {
+		this.automationParameters = automationParameters;
+	}
+
 	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
 		this.note.setTuning(tuning);
@@ -141,6 +151,7 @@ public class PatternElement implements CodeFeatures {
 
 	public Producer<PackedCollection<?>> getNoteAudio(boolean melodic, KeyPosition<?> target,
 													  double position, double nextNotePosition,
+													  Producer<PackedCollection<?>> automationLevel,
 													  DoubleFunction<NoteAudioProvider> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = melodic ? target : null;
@@ -148,12 +159,12 @@ public class PatternElement implements CodeFeatures {
 		double originalDuration = getNote().getDuration(target, audioSelection);
 
 		if (getDurationStrategy() == NoteDurationStrategy.NONE) {
-			return getNote().getAudio(k, originalDuration, audioSelection);
+			return getNote().getAudio(k, originalDuration, automationLevel, audioSelection);
 		} else {
 			return getNote().getAudio(k,
 					getNoteDuration(timeForDuration, position,
 						nextNotePosition, originalDuration),
-					audioSelection);
+					automationLevel, audioSelection);
 		}
 	}
 

@@ -101,7 +101,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 
 		@Override
 		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration) {
+												   Producer<PackedCollection<?>> duration, Producer<PackedCollection<?>> automationLevel) {
 			PackedCollection<?> a = new PackedCollection<>(1);
 			a.set(0, getAttack());
 

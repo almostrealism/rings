@@ -41,8 +41,9 @@ public abstract class PatternNoteAudioAdapter implements
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+												  Producer<PackedCollection<?>> automationLevel,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return computeAudio(target, noteDuration, audioSelection);
+		return computeAudio(target, noteDuration, automationLevel, audioSelection);
 	}
 
 	@Override
@@ -57,12 +58,15 @@ public abstract class PatternNoteAudioAdapter implements
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 Producer<PackedCollection<?>> automationLevel,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() == null) {
 			return getProvider(target, audioSelection).getAudio(target);
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
-					() -> getFilter().apply(getDelegate().getAudio(target, noteDuration, audioSelection), c(noteDuration)));
+					() -> getFilter().apply(getDelegate()
+									.getAudio(target, noteDuration, automationLevel, audioSelection),
+												c(noteDuration), automationLevel));
 		} else {
 			throw new UnsupportedOperationException();
 		}

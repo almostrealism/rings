@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.relation.Factor;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class AudioSceneContext {
 	private int measures;
@@ -34,6 +35,8 @@ public class AudioSceneContext {
 	private DoubleUnaryOperator timeForDuration;
 	private DoubleFunction<Scale<?>> scaleForPosition;
 	private double activityBias;
+
+	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
 
 	private PackedCollection<?> destination;
 
@@ -93,6 +96,14 @@ public class AudioSceneContext {
 
 	public double getActivityBias() { return activityBias; }
 	public void setActivityBias(double activityBias) { this.activityBias = activityBias; }
+
+	public Function<PackedCollection<?>, Factor<PackedCollection<?>>> getAutomationLevel() {
+		return automationLevel;
+	}
+
+	public void setAutomationLevel(Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel) {
+		this.automationLevel = automationLevel;
+	}
 
 	public PackedCollection<?> getDestination() {
 		return destination;

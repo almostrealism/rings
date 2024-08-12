@@ -154,7 +154,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 	}
 
 	public static PatternNoteLayer create(PatternNoteLayer delegate, Factor<PackedCollection<?>> factor) {
-		return new PatternNoteLayer(delegate, (audio, duration) -> factor.getResultant(audio));
+		return new PatternNoteLayer(delegate, (audio, duration, automationLevel) -> factor.getResultant(audio));
 	}
 
 	public static PatternNoteLayer create(Supplier<PackedCollection<?>> audioSupplier) {

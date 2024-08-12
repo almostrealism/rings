@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.collect.PackedCollection;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -75,6 +77,10 @@ public class PatternLayer {
 		if (child != null)
 			result.addAll(child.getAllElements(start, end));
 		return result;
+	}
+
+	public void setAutomationParameters(PackedCollection<?> parameters) {
+		getElements().forEach(e -> e.setAutomationParameters(parameters));
 	}
 
 	public PatternLayer getChild() { return child; }
