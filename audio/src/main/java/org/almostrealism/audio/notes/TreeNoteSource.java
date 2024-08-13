@@ -18,6 +18,7 @@ package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.uml.Named;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -25,13 +26,15 @@ import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TreeNoteSource implements NoteAudioSource, Named {
+public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public static boolean alwaysComputeNotes = false;
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
@@ -39,6 +42,8 @@ public class TreeNoteSource implements NoteAudioSource, Named {
 
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
+	private Double bpm;
+	private Double splitDurationBeats;
 
 	private List<Filter> filters;
 
@@ -56,6 +61,14 @@ public class TreeNoteSource implements NoteAudioSource, Named {
 
 	public KeyPosition<?> getRoot() { return root; }
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
+
+	public Double getBpm() { return bpm; }
+	public void setBpm(Double bpm) { this.bpm = bpm; }
+
+	public Double getSplitDurationBeats() { return splitDurationBeats; }
+	public void setSplitDurationBeats(Double splitDurationBeats) {
+		this.splitDurationBeats = splitDurationBeats;
+	}
 
 	@JsonIgnore
 	public FileWaveDataProviderTree<?> getTree() { return tree; }
@@ -123,9 +136,17 @@ public class TreeNoteSource implements NoteAudioSource, Named {
 						.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
 						.reduce((a, b) -> a & b)
 						.orElse(true);
-				if (match) notes.add(new NoteAudioProvider(p, getRoot()));
+				if (match) {
+					NoteAudioProvider note = new NoteAudioProvider(p, getRoot(), getBpm());
+
+					if (getSplitDurationBeats() == null || getBpm() == null) {
+						notes.add(note);
+					} else {
+						notes.addAll(note.split(getSplitDurationBeats()));
+					}
+				}
 			} catch (Exception e) {
-				System.out.println("WARN: " + e.getMessage() + "(" + p.getResourcePath() + ")");
+				warn(e.getMessage() + "(" + p.getResourcePath() + ")");
 			}
 		});
 		notes.forEach(n -> n.setTuning(tuning));
@@ -144,6 +165,11 @@ public class TreeNoteSource implements NoteAudioSource, Named {
 		});
 
 		return match;
+	}
+
+	@Override
+	public Console console() {
+		return CellFeatures.console;
 	}
 
 	public static TreeNoteSource fromFile(File root, Filter filter) {
