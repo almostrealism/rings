@@ -29,6 +29,10 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 		this.length = length;
 	}
 
+	public WaveDataProvider getDelegate() {
+		return delegate;
+	}
+
 	@Override
 	public long getCountLong() { return length; }
 

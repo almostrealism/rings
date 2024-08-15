@@ -32,12 +32,15 @@ import org.almostrealism.io.ConsoleFeatures;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public static boolean alwaysComputeNotes = false;
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
+	private List<NoteAudioProvider> providers;
 	private List<NoteAudioProvider> notes;
 
 	private KeyboardTuning tuning;
@@ -63,11 +66,24 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
 	public Double getBpm() { return bpm; }
-	public void setBpm(Double bpm) { this.bpm = bpm; }
+	public void setBpm(Double bpm) {
+		if (!Objects.equals(this.bpm, bpm)) {
+			this.bpm = bpm;
+
+			if (providers != null) {
+				providers.forEach(n -> n.setBpm(bpm));
+			}
+
+			computeNotes();
+		}
+	}
 
 	public Double getSplitDurationBeats() { return splitDurationBeats; }
 	public void setSplitDurationBeats(Double splitDurationBeats) {
-		this.splitDurationBeats = splitDurationBeats;
+		if (!Objects.equals(this.splitDurationBeats, splitDurationBeats)) {
+			this.splitDurationBeats = splitDurationBeats;
+			computeNotes();
+		}
 	}
 
 	@JsonIgnore
@@ -76,7 +92,7 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	@JsonIgnore
 	public void setTree(FileWaveDataProviderTree tree) {
 		this.tree = tree;
-		if (!alwaysComputeNotes) computeNotes();
+		if (!alwaysComputeNotes) computeProviders();
 	}
 
 	public List<Filter> getFilters() { return filters; }
@@ -104,58 +120,72 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 
 	@JsonIgnore
 	public List<NoteAudioProvider> getNotes() {
-		if (alwaysComputeNotes) computeNotes();
+		if (alwaysComputeNotes) computeProviders();
 		return notes == null ? new ArrayList<>() : notes;
 	}
 
 	public void refresh() {
 		if (alwaysComputeNotes) {
-			notes = null;
+			providers = null;
 		} else {
-			computeNotes();
+			computeProviders();
 		}
 	}
 
-	private void computeNotes() {
-		notes = new ArrayList<>();
-		if (tree == null) return;
-		
-		tree.children().forEach(f -> {
-			FileWaveDataProvider p = f.get();
+	private void computeProviders() {
+		providers = new ArrayList<>();
 
-			try {
-				if (p == null) {
-					return;
-				}
+		if (tree != null) {
+			tree.children().forEach(f -> {
+				FileWaveDataProvider p = f.get();
 
-				if (p.getSampleRate() != OutputLine.sampleRate) {
-					return;
-				}
-
-				boolean match = filters.stream()
-						.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
-						.reduce((a, b) -> a & b)
-						.orElse(true);
-				if (match) {
-					NoteAudioProvider note = new NoteAudioProvider(p, getRoot(), getBpm());
-
-					if (getSplitDurationBeats() == null || getBpm() == null) {
-						notes.add(note);
-					} else {
-						notes.addAll(note.split(getSplitDurationBeats()));
+				try {
+					if (p == null) {
+						return;
 					}
+
+					if (p.getSampleRate() != OutputLine.sampleRate) {
+						return;
+					}
+
+					boolean match = filters.stream()
+							.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
+							.reduce((a, b) -> a & b)
+							.orElse(true);
+
+					if (match) {
+						providers.add(new NoteAudioProvider(p, getRoot(), getBpm()));
+					}
+				} catch (Exception e) {
+					warn(e.getMessage() + "(" + p.getResourcePath() + ")");
 				}
-			} catch (Exception e) {
-				warn(e.getMessage() + "(" + p.getResourcePath() + ")");
-			}
-		});
-		notes.forEach(n -> n.setTuning(tuning));
+			});
+		}
+
+		computeNotes();
+	}
+
+	private void computeNotes() {
+		if (providers == null) {
+			notes = null;
+			return;
+		}
+
+		if (getSplitDurationBeats() == null || getBpm() == null) {
+			providers.forEach(n -> n.setTuning(tuning));
+			notes = providers;
+		} else {
+			notes = providers.stream().flatMap(n -> {
+				n.setTuning(tuning);
+				return n.split(getSplitDurationBeats()).stream();
+			}).collect(Collectors.toList());
+		}
 	}
 
 	public boolean checkResourceUsed(String canonicalPath) {
-		if (notes == null) computeNotes();
+		if (providers == null) computeProviders();
 
-		boolean match = notes.stream().anyMatch(note -> {
+		boolean match = providers.stream().anyMatch(note -> {
 			if (note.getProvider() instanceof FileWaveDataProvider) {
 				return ((FileWaveDataProvider) note.getProvider())
 						.getResourcePath().equals(canonicalPath);
