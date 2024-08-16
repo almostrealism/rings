@@ -153,6 +153,11 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 	public PackedCollection<?> getAudio() {
 		if (provider != null) {
 			WaveData data = provider.get();
+
+			if (data == null) {
+				throw new UnsupportedOperationException();
+			}
+
 			if (data.getSampleRate() == OutputLine.sampleRate) {
 				return provider.get().getCollection();
 			} else {

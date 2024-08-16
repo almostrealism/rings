@@ -33,6 +33,10 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 		return delegate;
 	}
 
+	public int getDelegateOffset() {
+		return delegateOffset;
+	}
+
 	@Override
 	public long getCountLong() { return length; }
 
@@ -53,7 +57,7 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 
 	@Override
 	public String getIdentifier() {
-		throw new UnsupportedOperationException();
+		return delegate.getIdentifier() + "_" + delegateOffset + ":" + length;
 	}
 
 	@Override

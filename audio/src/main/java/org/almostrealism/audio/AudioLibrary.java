@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
@@ -107,7 +108,8 @@ public class AudioLibrary implements ConsoleFeatures {
 						d.getSimilarities().put(details.getIdentifier(), similarity);
 					});
 		} catch (Exception e) {
-			log("Failed to load similarities for " + details.getIdentifier() + " (" + e.getMessage() + ")");
+			log("Failed to load similarities for " + details.getIdentifier() +
+					" (" + Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
 		}
 
 		return details;
