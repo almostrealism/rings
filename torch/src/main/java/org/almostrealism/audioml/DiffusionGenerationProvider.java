@@ -16,6 +16,7 @@
 
 package org.almostrealism.audioml;
 
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DiffusionGenerationProvider implements GenerationProvider {
-	public static final int SAMPLE_RATE = 44100;
+	public static final int SAMPLE_RATE = OutputLine.sampleRate;
 
 	private TorchDiffusion model;
 	private GenerationResourceManager resources;

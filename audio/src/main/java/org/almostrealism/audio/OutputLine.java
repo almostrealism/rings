@@ -17,9 +17,10 @@
 package org.almostrealism.audio;
 
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.SystemUtils;
 
 public interface OutputLine {
-	int sampleRate = 44100;
+	int sampleRate = SystemUtils.getInt("AR_AUDIO_SAMPLE_RATE").orElse(44100);
 
 	/**
 	 * Write the specified bytes. Using this method, the caller must

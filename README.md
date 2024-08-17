@@ -31,7 +31,7 @@ Add ar-audio dependency:
         <dependency>
             <groupId>org.almostrealism</groupId>
             <artifactId>ar-audio</artifactId>
-            <version>0.33</version>
+            <version>0.35</version>
         </dependency>
 
 ### Tutorial

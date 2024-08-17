@@ -18,6 +18,7 @@ package org.almostrealism.audio.filter;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
@@ -34,9 +35,9 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 
 	static {
 		if (enableMultiOrderFilter) {
-			processor = new MultiOrderFilterEnvelopeProcessor(44100, MAX_SECONDS);
+			processor = new MultiOrderFilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
 		} else {
-			processor = new FilterEnvelopeProcessor(44100, MAX_SECONDS);
+			processor = new FilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
 		}
 	}
 

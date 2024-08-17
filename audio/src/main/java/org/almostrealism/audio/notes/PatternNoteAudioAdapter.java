@@ -36,6 +36,13 @@ public abstract class PatternNoteAudioAdapter implements
 	@Override
 	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return getDelegate().getDuration(target, audioSelection);
+
+		NoteAudioProvider provider = getProvider(target, audioSelection);
+		if (provider == null) {
+			warn("No provider for " + target);
+			return 0.0;
+		}
+
 		return getProvider(target, audioSelection).getDuration(target);
 	}
 
