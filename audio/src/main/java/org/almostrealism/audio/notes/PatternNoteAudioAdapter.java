@@ -68,7 +68,12 @@ public abstract class PatternNoteAudioAdapter implements
 														 Producer<PackedCollection<?>> automationLevel,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() == null) {
-			return getProvider(target, audioSelection).getAudio(target);
+			NoteAudioProvider p = getProvider(target, audioSelection);
+			if (p == null) {
+				throw new UnsupportedOperationException();
+			}
+
+			return p.getAudio(target);
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
 					() -> getFilter().apply(getDelegate()
