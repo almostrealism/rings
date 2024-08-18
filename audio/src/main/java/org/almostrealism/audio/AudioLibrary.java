@@ -68,8 +68,14 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public WaveDetails getDetails(WaveDataProvider provider) {
-		String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
-		return info.computeIfAbsent(id, k -> computeDetails(provider));
+		try {
+			String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
+			return info.computeIfAbsent(id, k -> computeDetails(provider));
+		} catch (Exception e) {
+			AudioScene.console.warn("Failed to create WaveDetails for " +
+					provider.getKey() + " (" + e.getMessage() + ")");
+			return null;
+		}
 	}
 
 	public Map<String, Double> getSimilarities(String key) {
@@ -133,9 +139,6 @@ public class AudioLibrary implements ConsoleFeatures {
 			try {
 				if (provider == null) return;
 				getDetails(provider);
-			} catch (Exception e) {
-				AudioScene.console.warn("Failed to create WaveDetails for " +
-						provider.getKey() + " (" + e.getMessage() + ")");
 			} finally {
 				if (count > 0) {
 					progress.accept(total.addAndGet(1) / count);
