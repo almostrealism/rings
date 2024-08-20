@@ -239,6 +239,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				AudioScene.DEFAULT_PATTERNS_PER_CHANNEL,
 				AudioScene.DEFAULT_ACTIVE_PATTERNS,
 				AudioScene.DEFAULT_LAYERS,
+				AudioScene.DEFAULT_LAYER_SCALE,
 				AudioScene.DEFAULT_DURATION);
 
 		if (singleChannel >= 0) {

@@ -56,6 +56,7 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private boolean melodic;
 	private int scaleTraversalDepth;
+	private double minLayerScale;
 	private ScaleTraversalStrategy scaleTraversalStrategy;
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
@@ -90,6 +91,7 @@ public class PatternLayerManager implements CodeFeatures {
 		this.scale = 1.0;
 		this.scaleTraversalStrategy = ScaleTraversalStrategy.CHORD;
 		this.scaleTraversalDepth = 1;
+		this.minLayerScale = 0.0625;
 		setMelodic(melodic);
 
 		this.percChoices = percChoices;
@@ -133,6 +135,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 	public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 	public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
+
+	public double getMinLayerScale() { return minLayerScale; }
+	public void setMinLayerScale(double minLayerScale) { this.minLayerScale = minLayerScale; }
 
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
@@ -196,6 +201,7 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setDuration(duration);
 		settings.setScaleTraversalStrategy(scaleTraversalStrategy);
 		settings.setScaleTraversalDepth(scaleTraversalDepth);
+		settings.setMinLayerScale(minLayerScale);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.setActiveSelection(activeSelection);
@@ -209,6 +215,7 @@ public class PatternLayerManager implements CodeFeatures {
 		duration = settings.getDuration();
 		scaleTraversalStrategy = settings.getScaleTraversalStrategy();
 		scaleTraversalDepth = settings.getScaleTraversalDepth();
+		minLayerScale = settings.getMinLayerScale();
 		melodic = settings.isMelodic();
 
 		if (settings.getFactorySelection() != null)
@@ -282,10 +289,10 @@ public class PatternLayerManager implements CodeFeatures {
 
 			if (seeds != null) {
 				seeds.generator(getElementFactory(), 0, duration,
-							scaleTraversalStrategy, scaleTraversalDepth)
+							scaleTraversalStrategy, scaleTraversalDepth, minLayerScale)
 						.forEach(roots::add);
 
-				scale = seeds.getScale(duration);
+				scale = seeds.getScale(duration, minLayerScale);
 			}
 
 			if (rootCount() <= 0) {
@@ -301,7 +308,7 @@ public class PatternLayerManager implements CodeFeatures {
 			}
 
 			roots.forEach(layer -> {
-				NoteAudioChoice choice = choose(scale, params);
+				NoteAudioChoice choice = scale >= minLayerScale ? choose(scale, params) : null;
 				PatternLayer next;
 
 				if (choice != null) {
@@ -494,6 +501,7 @@ public class PatternLayerManager implements CodeFeatures {
 		private double duration;
 		private ScaleTraversalStrategy scaleTraversalStrategy;
 		private int scaleTraversalDepth;
+		private double minLayerScale;
 		private boolean melodic;
 
 		private ParameterFunction factorySelection;
@@ -513,6 +521,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 		public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
+
+		public double getMinLayerScale() { return minLayerScale; }
+		public void setMinLayerScale(double minLayerScale) { this.minLayerScale = minLayerScale; }
 
 		public boolean isMelodic() { return melodic; }
 		public void setMelodic(boolean melodic) { this.melodic = melodic; }

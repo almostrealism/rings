@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -238,6 +239,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		public static Settings defaultSettings(int channels, int patternsPerChannel,
 											   IntUnaryOperator activePatterns,
 											   IntUnaryOperator layersPerPattern,
+											   IntToDoubleFunction minLayerScale,
 											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
 			IntStream.range(0, channels).forEach(c -> IntStream.range(0, patternsPerChannel).forEach(p -> {
@@ -249,6 +251,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 						ScaleTraversalStrategy.SEQUENCE :
 						ScaleTraversalStrategy.CHORD);
 				pattern.setScaleTraversalDepth(pattern.isMelodic() ? 5 : 1);
+				pattern.setMinLayerScale(minLayerScale.applyAsDouble(c));
 				pattern.setFactorySelection(ParameterFunction.random());
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 
