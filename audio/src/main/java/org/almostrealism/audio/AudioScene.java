@@ -53,16 +53,19 @@ import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
 import org.almostrealism.time.Frequency;
+import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -178,6 +181,11 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public AudioScene(Animation<T> scene, double bpm, int sampleRate) {
 		this(scene, bpm, DEFAULT_SOURCE_COUNT, DEFAULT_DELAY_LAYERS, sampleRate);
+	}
+
+	public AudioScene(double bpm, int channels, int delayLayers,
+					  int sampleRate) {
+		this(null, bpm, channels, delayLayers, sampleRate);
 	}
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
@@ -545,6 +553,42 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		op.add(() -> () -> refreshPatternDestination(channel, true));
 		op.add(patterns.sum(ctx));
 		return op;
+	}
+
+	public TemporalCellular runner(Receptor<PackedCollection<?>> output) {
+		return runner(output, null);
+	}
+
+	public TemporalCellular runner(Receptor<PackedCollection<?>> output, List<Integer> channels) {
+		return runner(Collections.emptyList(), Collections.emptyList(), output, channels);
+	}
+
+	public TemporalCellular runner(List<? extends Receptor<PackedCollection<?>>> measures,
+								 List<? extends Receptor<PackedCollection<?>>> stems,
+								 Receptor<PackedCollection<?>> output,
+								 List<Integer> channels) {
+		Cells cells = channels == null ? getCells(measures, stems, output) :
+				getCells(measures, stems, output, channels);
+
+		return new TemporalCellular() {
+			@Override
+			public Supplier<Runnable> setup() {
+				OperationList setup = new OperationList("AudioScene Runner Setup");
+				setup.addAll((List) AudioScene.this.setup());
+				setup.addAll((List) cells.setup());
+				return setup.flatten();
+			}
+
+			@Override
+			public Supplier<Runnable> tick() {
+				return cells.tick();
+			}
+
+			@Override
+			public void reset() {
+				cells.reset();
+			}
+		};
 	}
 
 	private void refreshPatternDestination(int channel, boolean clear) {

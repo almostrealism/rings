@@ -25,7 +25,6 @@ import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
@@ -41,40 +40,71 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 	int sampleRate = OutputLine.sampleRate;
 
 	@Test
-	public void sine() {
+	public void sineAndSnare() {
+		// Define the shared parameters, including how notes should be
+		// tuned and a root for the scale and the synth
 		double duration = 8.0;
 		KeyboardTuning tuning = new DefaultKeyboardTuning();
-		KeyPosition<WesternChromatic> c = WesternChromatic.C3;
+		WesternChromatic root = WesternChromatic.C3;
 
+		// Settings for the synth note
 		double amp = 0.25;
 		int frames = (int) (2.0 * sampleRate);
 
+		// Source for the synth note
 		StatelessSource sine = (params, frequency) -> sampling(sampleRate, () -> {
 			CollectionProducer<PackedCollection<?>> f =
-					multiply(c(tuning.getTone(c).asHertz()), frequency);
+					multiply(c(tuning.getTone(root).asHertz()), frequency);
 			CollectionProducer<PackedCollection<?>> t =
 					integers(0, frames).divide(sampleRate);
 			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
 		});
 
-		StatelessSourceNoteAudio audio = new StatelessSourceNoteAudio(sine, c, 2.0);
-		PatternNote note = new PatternNote(List.of(audio));
-		note.setTuning(tuning);
+		// Define the synth note
+		StatelessSourceNoteAudio audio = new StatelessSourceNoteAudio(sine, root, 2.0);
+		PatternNote sineNote = new PatternNote(List.of(audio));
+		sineNote.setTuning(tuning);
 
+		// Define a sampler note that will use the parameter 0.5
+		// to choose which source to voice
+		PatternNote choiceNote = new PatternNote(0.5);
+		choiceNote.setTuning(tuning);
+
+		// Setup context for rendering the audio, including the scale,
+		// the way to translate positions into audio frames, and the
+		// destination for the audio
 		AudioSceneContext sceneContext = new AudioSceneContext();
 		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
-		sceneContext.setScaleForPosition(pos -> WesternScales.major(WesternChromatic.C3, 1));
+		sceneContext.setScaleForPosition(pos -> WesternScales.major(root, 1));
 		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
 
+		// Setup context for voicing the notes, including the library
+		// of samples to use (choiceNote will select from those)
 		NoteAudioContext audioContext = new NoteAudioContext();
 		audioContext.setNextNotePosition(pos -> duration);
+		audioContext.setAudioSelection((choice) ->
+				NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning));
 
+		// Create the elements of the composition, leveraging
+		// the notes that have been defined in multiple places
+		// to create a pattern of 4 elements
 		List<PatternElement> elements = new ArrayList<>();
-		elements.add(new PatternElement(note, 0.0));
-		elements.add(new PatternElement(note, 4.0));
-		elements.get(1).setScalePosition(List.of(0.3));
+		elements.add(new PatternElement(sineNote, 0.0));
+		elements.add(new PatternElement(choiceNote, 2.5));
+		elements.add(new PatternElement(sineNote, 4.0));
+		elements.add(new PatternElement(choiceNote, 6.5));
 
+		// Adjust the position on the major scale for each of the
+		// elements in the composition
+		elements.get(0).setScalePosition(List.of(0.0));
+		elements.get(1).setScalePosition(List.of(0.3));
+		elements.get(2).setScalePosition(List.of(0.5));
+		elements.get(3).setScalePosition(List.of(0.5));
+
+		// Render the composition
 		render(sceneContext, audioContext, elements, true, 0.0);
+
+		// Save the composition to a file
 		new WaveData(sceneContext.getDestination(), sampleRate)
 				.save(new File("results/sine-notes.wav"));
 	}

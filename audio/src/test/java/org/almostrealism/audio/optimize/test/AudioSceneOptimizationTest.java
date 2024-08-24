@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class AudioSceneTest implements CellFeatures {
+public class AudioSceneOptimizationTest implements CellFeatures {
 	public static final boolean enableDelay = true;
 	public static final boolean enableFilter = true;
 

@@ -75,7 +75,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 	public void setTuning(KeyboardTuning tuning) {
 		if (delegate != null) {
 			delegate.setTuning(tuning);
-		} else {
+		} else if (provider != null) {
 			provider.setTuning(tuning);
 		}
 	}

@@ -218,6 +218,10 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 		return new NoteAudioProvider(new FileWaveDataProvider(source), root);
 	}
 
+	public static NoteAudioProvider create(String source, KeyPosition root, KeyboardTuning tuning) {
+		return new NoteAudioProvider(new FileWaveDataProvider(source), root, null, tuning);
+	}
+
 	public static NoteAudioProvider create(Supplier<PackedCollection<?>> audioSupplier) {
 		return create(audioSupplier, WesternChromatic.C1);
 	}

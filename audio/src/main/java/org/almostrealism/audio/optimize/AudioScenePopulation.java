@@ -89,6 +89,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 		this.cells = channels == null ? scene.getCells(measures, stems, output) :
 									scene.getCells(measures, stems, output, channels);
 
+		// TODO  Replace with scene.runner()
 		this.temporal = new TemporalCellular() {
 			@Override
 			public Supplier<Runnable> setup() {
