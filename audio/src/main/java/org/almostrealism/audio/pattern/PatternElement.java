@@ -58,6 +58,7 @@ public class PatternElement implements CodeFeatures {
 		setPosition(position);
 		setDurationStrategy(NoteDurationStrategy.NONE);
 		setScaleTraversalStrategy(ScaleTraversalStrategy.CHORD);
+		setScalePosition(List.of(0.0));
 		setDirection(PatternDirection.FORWARD);
 		setRepeatCount(1);
 		setRepeatDuration(1);

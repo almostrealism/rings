@@ -14,26 +14,8 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.notes;
+package org.almostrealism.audio.tone;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.almostrealism.audio.tone.KeyboardTuned;
-import org.almostrealism.audio.tone.KeyboardTuning;
-
-import java.util.List;
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface NoteAudioSource extends KeyboardTuned {
-	@JsonIgnore
-	String getOrigin();
-
-	@JsonIgnore
-	@Override
+public interface KeyboardTuned {
 	void setTuning(KeyboardTuning tuning);
-
-	@JsonIgnore
-	List<NoteAudioProvider> getNotes();
-
-	boolean checkResourceUsed(String canonicalPath);
 }

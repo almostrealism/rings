@@ -37,4 +37,9 @@ public interface KeyboardTuning {
 	}
 
 	Frequency getTone(int key, KeyNumbering numbering);
+
+	default Frequency getRelativeFrequency(KeyPosition<?> root, KeyPosition<?> target) {
+		return new Frequency(target == null ? 1.0 :
+				(getTone(target).asHertz() / getTone(root).asHertz()));
+	}
 }

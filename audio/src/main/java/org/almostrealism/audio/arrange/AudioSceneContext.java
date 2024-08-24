@@ -19,6 +19,7 @@ package org.almostrealism.audio.arrange;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.IdentityFactor;
 
 import java.util.List;
 import java.util.function.DoubleFunction;
@@ -41,6 +42,10 @@ public class AudioSceneContext {
 	private PackedCollection<?> destination;
 
 	private List<ChannelSection> sections;
+
+	public AudioSceneContext() {
+		automationLevel = c -> new IdentityFactor<>();
+	}
 
 	public int getMeasures() {
 		return measures;

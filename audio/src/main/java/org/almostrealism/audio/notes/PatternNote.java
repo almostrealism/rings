@@ -20,6 +20,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
@@ -33,11 +34,11 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
-	private List<PatternNoteLayer> layers;
+	private List<PatternNoteAudio> layers;
 
 	public PatternNote() { }
 
-	public PatternNote(List<PatternNoteLayer> layers) {
+	public PatternNote(List<PatternNoteAudio> layers) {
 		this.layers = layers;
 	}
 
@@ -58,20 +59,23 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		layers.add(new PatternNoteLayer(noteAudioSelection));
 	}
 
-	public List<PatternNoteLayer> getLayers() {
+	public List<PatternNoteAudio> getLayers() {
 		return layers;
 	}
 
 	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (delegate != null) return delegate.getProviders(target, audioSelection);
 		return layers.stream()
-				.map(l -> l.getProvider(target, audioSelection))
+				.filter(l -> l instanceof PatternNoteLayer)
+				.map(l -> ((PatternNoteLayer) l).getProvider(target, audioSelection))
 				.collect(Collectors.toList());
 	}
 
 	public void setTuning(KeyboardTuning tuning) {
 		if (delegate == null) {
-			layers.forEach(l -> l.setTuning(tuning));
+			layers.forEach(l -> {
+				if (l instanceof KeyboardTuned tuned) tuned.setTuning(tuning);
+			});
 		} else {
 			delegate.setTuning(tuning);
 		}
