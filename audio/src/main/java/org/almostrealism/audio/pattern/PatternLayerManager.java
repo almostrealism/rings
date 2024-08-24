@@ -164,6 +164,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
 		List<PatternLayerSeeds> options = choices()
 				.filter(NoteAudioChoice::isSeed)
+				.filter(NoteAudioChoice::hasValidNotes)
 				.map(choice -> choice.seeds(params))
 				.collect(Collectors.toList());
 
@@ -372,6 +373,7 @@ public class PatternLayerManager implements CodeFeatures {
 		List<NoteAudioChoice> options = choices()
 				.filter(c -> scale >= c.getMinScale())
 				.filter(c -> scale <= c.getMaxScale())
+				.filter(NoteAudioChoice::hasValidNotes)
 				.collect(Collectors.toList());
 
 		if (options.isEmpty()) return null;

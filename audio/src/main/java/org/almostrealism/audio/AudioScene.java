@@ -566,17 +566,22 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		loadSettings(file, this::createLibrary, null);
 	}
 
-	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) throws IOException {
+	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) {
 		if (file != null && file.exists()) {
-			setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
-		} else {
-			setSettings(Settings.defaultSettings(getChannelCount(),
-					DEFAULT_PATTERNS_PER_CHANNEL,
-					DEFAULT_ACTIVE_PATTERNS,
-					DEFAULT_LAYERS,
-					DEFAULT_LAYER_SCALE,
-					DEFAULT_DURATION), libraryProvider, progress);
+			try {
+				setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
+		setSettings(Settings.defaultSettings(getChannelCount(),
+				DEFAULT_PATTERNS_PER_CHANNEL,
+				DEFAULT_ACTIVE_PATTERNS,
+				DEFAULT_LAYERS,
+				DEFAULT_LAYER_SCALE,
+				DEFAULT_DURATION), libraryProvider, progress);
 	}
 
 	public AudioScene<T> clone() {

@@ -26,6 +26,7 @@ import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +74,12 @@ public class AudioLibrary implements ConsoleFeatures {
 			return info.computeIfAbsent(id, k -> computeDetails(provider));
 		} catch (Exception e) {
 			AudioScene.console.warn("Failed to create WaveDetails for " +
-					provider.getKey() + " (" + e.getMessage() + ")");
+					provider.getKey() + " (" +
+					Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
+			if (!(e.getCause() instanceof IOException)) {
+				e.printStackTrace();
+			}
+
 			return null;
 		}
 	}

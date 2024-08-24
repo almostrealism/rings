@@ -22,6 +22,7 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
@@ -172,7 +173,10 @@ public class PatternFactoryTest implements CellFeatures {
 		chordProgression.setSettings(settings.getChordProgression());
 		chordProgression.refreshParameters();
 
-		PatternLayerManager manager = new PatternLayerManager(choices, new SimpleChromosome(3), 3, 16.0, true);
+		PatternLayerManager manager = new PatternLayerManager(choices,
+				new SimpleChromosome(3),
+				new SimpleChromosome(AutomationManager.GENE_LENGTH),
+				3, 16.0, true);
 		manager.setScaleTraversalDepth(3);
 
 		double a = Math.random(); // 0.2;

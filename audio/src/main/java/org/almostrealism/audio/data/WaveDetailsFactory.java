@@ -23,6 +23,7 @@ import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
+	public static boolean enableFeatures = false;
 
 	private int sampleRate;
 	private double fftSampleRate;
@@ -90,13 +91,27 @@ public class WaveDetailsFactory implements CodeFeatures {
 		details.setFreqFrameCount(fft.getShape().length(0));
 		details.setFreqData(fft);
 
+		if (enableFeatures) {
+			PackedCollection<?> features = processFeatures(data.features());
+			if (features.getShape().length(0) < 1) {
+				throw new UnsupportedOperationException();
+			}
+
+			// TODO  This is not the most accurate way to determine the sample rate
+			details.setFeatureSampleRate(features.getShape().length(0) / data.getDuration());
+			details.setFeatureChannelCount(1);
+			details.setFeatureBinCount(features.getShape().length(1));
+			details.setFeatureFrameCount(features.getShape().length(0));
+			details.setFeatureData(features);
+		}
+
 		return details;
 	}
 
 	public double similarity(WaveDetails a, WaveDetails b) {
 		int n = Math.min(a.getFreqFrameCount(), b.getFreqFrameCount());
 
-		TraversalPolicy overlap = shape(n, freqBins, 1);
+		TraversalPolicy overlap = new TraversalPolicy(true, n, freqBins, 1);
 
 		double d = 0.0;
 
@@ -160,5 +175,13 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		return output;
+	}
+
+	protected PackedCollection<?> processFeatures(PackedCollection<?> features) {
+		if (features.getShape().length(0) < 1) {
+			throw new IllegalArgumentException();
+		}
+
+		return features;
 	}
 }

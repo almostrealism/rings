@@ -35,6 +35,12 @@ public class WaveDetails {
 	private int freqFrameCount;
 	private PackedCollection<?> freqData;
 
+	private double featureSampleRate;
+	private int featureChannelCount;
+	private int featureBinCount;
+	private int featureFrameCount;
+	private PackedCollection<?> featureData;
+
 	private Map<String, Double> similarities;
 
 	public WaveDetails(String identifier) {
@@ -121,6 +127,46 @@ public class WaveDetails {
 
 	public void setFreqData(PackedCollection<?> freqData) {
 		this.freqData = freqData;
+	}
+
+	public double getFeatureSampleRate() {
+		return featureSampleRate;
+	}
+
+	public void setFeatureSampleRate(double featureSampleRate) {
+		this.featureSampleRate = featureSampleRate;
+	}
+
+	public int getFeatureChannelCount() {
+		return featureChannelCount;
+	}
+
+	public void setFeatureChannelCount(int featureChannelCount) {
+		this.featureChannelCount = featureChannelCount;
+	}
+
+	public int getFeatureBinCount() {
+		return featureBinCount;
+	}
+
+	public void setFeatureBinCount(int featureBinCount) {
+		this.featureBinCount = featureBinCount;
+	}
+
+	public int getFeatureFrameCount() {
+		return featureFrameCount;
+	}
+
+	public void setFeatureFrameCount(int featureFrameCount) {
+		this.featureFrameCount = featureFrameCount;
+	}
+
+	public PackedCollection<?> getFeatureData() {
+		return featureData;
+	}
+
+	public void setFeatureData(PackedCollection<?> featureData) {
+		this.featureData = featureData;
 	}
 
 	public Map<String, Double> getSimilarities() {

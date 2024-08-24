@@ -145,6 +145,9 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	public boolean isSeed() { return seed; }
 	public void setSeed(boolean seed) { this.seed = seed; }
 
+	public boolean hasSources() { return getSources() != null && !getSources().isEmpty(); }
+	public boolean hasValidNotes() { return hasSources() && !getValidNotes().isEmpty(); }
+
 	public ParameterFunction getGranularitySelection() { return granularitySelection; }
 	public void setGranularitySelection(ParameterFunction granularitySelection) {
 		this.granularitySelection = granularitySelection;
