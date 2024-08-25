@@ -75,6 +75,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private PackedCollection<?> volumeAdjustmentScale;
 	private PackedCollection<?> mainFilterUpAdjustmentScale;
 	private PackedCollection<?> mainFilterDownAdjustmentScale;
+	private PackedCollection<?> reverbAdjustmentScale;
 
 	private SimpleChromosome volumeSimple;
 	private SimpleChromosome mainFilterUpSimple;
@@ -105,6 +106,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		this.volumeAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 		this.mainFilterUpAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 		this.mainFilterDownAdjustmentScale = new PackedCollection<>(1).fill(1.0);
+		this.reverbAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 
 		this.volumeSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
 		this.mainFilterUpSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
@@ -158,6 +160,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 	public void setMainFilterDownAdjustmentScale(double scale) {
 		mainFilterDownAdjustmentScale.set(0, scale);
+	}
+
+	public void setReverbAdjustmentScale(double scale) {
+		reverbAdjustmentScale.set(0, scale);
 	}
 
 	public List<Integer> getReverbChannels() {
@@ -301,7 +307,9 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 			if (enableAutomationManager) {
 				cells = cells.map(fc(i -> {
 					Producer<PackedCollection<?>> v =
-							automation.getAggregatedValue(mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)), -40.0);
+							automation.getAggregatedValue(
+									mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)),
+									p(mainFilterUpAdjustmentScale), -40.0);
 					return hp(scalar(20000).multiply(v), scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			} else {
@@ -331,7 +339,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		if (enableAutomationManager) {
 			reverbFactor = i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
-					in -> multiply(in, automation.getAggregatedValue(reverbAutomation.valueAt(channelIndex.applyAsInt(i)), 0.0)).multiply(c(reverbLevel)) :
+					in -> multiply(in, automation.getAggregatedValue(
+								reverbAutomation.valueAt(channelIndex.applyAsInt(i)),
+								p(reverbAdjustmentScale), 0.0))
+							.multiply(c(reverbLevel)) :
 						sf(0.0);
 		} else {
 			reverbFactor = i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?

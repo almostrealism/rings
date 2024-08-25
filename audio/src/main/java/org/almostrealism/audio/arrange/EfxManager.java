@@ -119,7 +119,7 @@ public class EfxManager implements CellFeatures {
 		IntFunction<Cell<PackedCollection<?>>> auto =
 				enableAutomation ?
 						fc(i -> in -> {
-							Producer<PackedCollection<?>> value = automation.getAggregatedValue(delayAutomation.valueAt(channel), 0.0);
+							Producer<PackedCollection<?>> value = automation.getAggregatedValue(delayAutomation.valueAt(channel), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
 						}) :

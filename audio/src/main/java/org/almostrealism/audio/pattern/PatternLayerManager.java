@@ -44,11 +44,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class PatternLayerManager implements CodeFeatures {
+public class PatternLayerManager implements PatternFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
-
-	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
 
 	private int channel;
 	private double duration;
@@ -417,24 +415,30 @@ public class PatternLayerManager implements CodeFeatures {
 							choice.getValidNotes(),
 							this::nextNotePosition);
 
-				elements.get(choice).stream()
-						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
-						.flatMap(List::stream)
-						.forEach(note -> {
-							if (note.getOffset() >= destination.getShape().length(0)) return;
+				if (destination != ctx.getDestination()) {
+					throw new IllegalArgumentException();
+				}
 
-							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
-								int frames = Math.min(audio.getShape().getCount(),
-										destination.getShape().length(0) - note.getOffset());
-								sizes.addEntry(frames);
+				render(ctx, audioContext, elements.get(choice), melodic, offset);
 
-								TraversalPolicy shape = shape(frames);
-								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-							};
-
-							Heap.stage(() ->
-									process.apply(traverse(1, note.getProducer()).get().evaluate()));
-						});
+//				elements.get(choice).stream()
+//						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
+//						.flatMap(List::stream)
+//						.forEach(note -> {
+//							if (note.getOffset() >= destination.getShape().length(0)) return;
+//
+//							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+//								int frames = Math.min(audio.getShape().getCount(),
+//										destination.getShape().length(0) - note.getOffset());
+//								sizes.addEntry(frames);
+//
+//								TraversalPolicy shape = shape(frames);
+//								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+//							};
+//
+//							Heap.stage(() ->
+//									process.apply(traverse(1, note.getProducer()).get().evaluate()));
+//						});
 			});
 		});
 	}

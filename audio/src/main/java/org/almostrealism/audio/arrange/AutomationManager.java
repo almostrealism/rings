@@ -58,14 +58,16 @@ public class AutomationManager implements Setup, CellFeatures {
 		return time(divide(clock.time(sampleRate), cp(scale)), phase);
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene, double offset) {
+	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene,
+															Producer<PackedCollection<?>> scale,
+															double offset) {
 		return getAggregatedValue(
 				gene.valueAt(0).getResultant(c(1.0)),
 				gene.valueAt(1).getResultant(c(1.0)),
 				gene.valueAt(2).getResultant(c(1.0)),
-				gene.valueAt(3).getResultant(c(1.0)),
-				gene.valueAt(4).getResultant(c(1.0)),
-				gene.valueAt(5).getResultant(c(1.0)),
+				applyScale(gene.valueAt(3).getResultant(c(1.0)), scale),
+				applyScale(gene.valueAt(4).getResultant(c(1.0)), scale),
+				applyScale(gene.valueAt(5).getResultant(c(1.0)), scale),
 				c(offset));
 	}
 
@@ -116,6 +118,10 @@ public class AutomationManager implements Setup, CellFeatures {
 	protected Producer<PackedCollection<?>> applyMagnitude(Producer<PackedCollection<?>> magnitude,
 														   Producer<PackedCollection<?>> value) {
 		return multiply(value, magnitude).add(c(1.0).subtract(magnitude));
+	}
+
+	protected Producer<PackedCollection<?>> applyScale(Producer<PackedCollection<?>> value, Producer<PackedCollection<?>> scale) {
+		return scale == null ? value : multiply(value, scale);
 	}
 
 	public Producer<PackedCollection<?>> getMainValue(Producer<PackedCollection<?>> phase, Producer<PackedCollection<?>> offset) {
