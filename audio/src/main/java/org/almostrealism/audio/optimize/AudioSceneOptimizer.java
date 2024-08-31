@@ -72,7 +72,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
-	public static String STEMS = "Stems";
 
 	static {
 		String env = System.getenv("AR_RINGS_LIBRARY");
@@ -80,12 +79,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		String arg = System.getProperty("AR_RINGS_LIBRARY");
 		if (arg != null) LIBRARY = arg;
-		
-		env = System.getenv("AR_RINGS_STEMS");
-		if (env != null) STEMS = env;
-
-		arg = System.getProperty("AR_RINGS_STEMS");
-		if (arg != null) STEMS = arg;
 	}
 
 	private AudioScenePopulation population;
@@ -218,7 +211,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				}
 			});
 		} finally {
-			profile.save("results/logs/optimizer.xml");
+			profile.save("results/optimizer.xml");
 		}
 	}
 

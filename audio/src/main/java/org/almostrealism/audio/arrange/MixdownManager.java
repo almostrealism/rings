@@ -335,9 +335,16 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		if (enableMixdown)
 			cells = cells.mixdown(mixdownDuration);
 
+		boolean reverbActive = enableReverb && !getReverbChannels().isEmpty() &&
+			IntStream.range(0, sources.size())
+					.map(i -> channelIndex.applyAsInt(i))
+					.anyMatch(getReverbChannels()::contains);
+
 		IntFunction<Factor<PackedCollection<?>>> reverbFactor;
 
-		if (enableAutomationManager) {
+		if (!reverbActive) {
+			reverbFactor = i -> sf(0.0);
+		} else if (enableAutomationManager) {
 			reverbFactor = i -> getReverbChannels().contains(channelIndex.applyAsInt(i)) ?
 					in -> multiply(in, automation.getAggregatedValue(
 								reverbAutomation.valueAt(channelIndex.applyAsInt(i)),
@@ -395,7 +402,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 				efx = efx.sum();
 			}
 
-			if (enableReverb) {
+			if (reverbActive) {
 				// Combine inputs and apply reverb
 				reverb = reverb.sum().map(fc(i -> new DelayNetwork(sampleRate, false)));
 

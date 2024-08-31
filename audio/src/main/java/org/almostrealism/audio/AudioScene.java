@@ -123,12 +123,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		DEFAULT_LAYER_SCALE = c ->
 				switch (c) {
-					case 0 -> 0.0625;
+					case 0 -> 0.25;
 					case 1 -> 0.0625;
 					case 2 -> 0.0625;
 					case 3 -> 0.0625;
 					case 4 -> 0.0625;
-					case 5 -> 0.0625;
+					case 5 -> 0.125;
 					default -> 0.0625;
 				};
 
