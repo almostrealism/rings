@@ -16,7 +16,7 @@
 	</properties>
 
 	<groupId>com.almostrealism</groupId>
-	<artifactId>Rings</artifactId>
+	<artifactId>rings</artifactId>
 	<version>0.36</version>
 
 	<modules>

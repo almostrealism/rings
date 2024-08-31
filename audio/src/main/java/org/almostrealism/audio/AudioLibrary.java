@@ -76,7 +76,7 @@ public class AudioLibrary implements ConsoleFeatures {
 			AudioScene.console.warn("Failed to create WaveDetails for " +
 					provider.getKey() + " (" +
 					Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
-			if (!(e.getCause() instanceof IOException)) {
+			if (!(e.getCause() instanceof IOException) || !(provider instanceof FileWaveDataProvider)) {
 				e.printStackTrace();
 			}
 
