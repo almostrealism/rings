@@ -61,6 +61,10 @@ public class PatternLayerSeeds {
 		return Math.min(maxScale, Math.max(minScale, duration * granularity));
 	}
 
+	public double getScale(double duration, double min) {
+		return Math.max(min, getScale(duration));
+	}
+
 	public double getGranularity() {
 		return granularity;
 	}
@@ -73,8 +77,8 @@ public class PatternLayerSeeds {
 
 	public Stream<PatternLayer> generator(PatternElementFactory factory, double offset, double duration,
 										  ScaleTraversalStrategy scaleTraversalStrategy,
-										  int scaleTraversalDepth) {
-		double g = getScale(duration);
+										  int scaleTraversalDepth, double minScale) {
+		double g = getScale(duration, minScale);
 		double count = Math.max(1.0, duration / g) + 1;
 
 		List<PatternLayer> layers = IntStream.range(0, (int) count)

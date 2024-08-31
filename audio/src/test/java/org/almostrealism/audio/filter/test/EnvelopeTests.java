@@ -28,20 +28,15 @@ import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
-import org.almostrealism.hardware.jni.NativeCompiler;
-import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.time.computations.MultiOrderFilter;
-import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
-//	static {
-//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
-//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
-//	}
+
+	int filterOrder = 40;
 
 	@Test
 	public void attackSample() throws IOException {
@@ -146,12 +141,8 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
 		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
 
-//		PackedCollection<?> coeff =
-//				lowPassCoefficients(cp(data.traverse(0)), audio.getSampleRate(), 40).get().evaluate();
-//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()), p(coeff));
-
 		MultiOrderFilter filter =
-				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), 40);
+				lowPass(p(audio.getCollection()), cp(data.traverse(0)), audio.getSampleRate(), filterOrder);
 
 		PackedCollection<?> result = filter.get().evaluate();
 		new WaveData(result, sampleRate)
@@ -159,13 +150,72 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	}
 
 	@Test
-	public void adsrMultiOrderFilterArguments() throws IOException {
+	public void adsrMultiOrderFilterArguments1() throws IOException {
 		double duration = 4.0;
 		double attack = 0.1;
 		double decay = 0.16;
 		double sustain = 0.04;
 		double release = 1.5;
-		int filterOrder = 40;
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		int sampleRate = audio.getSampleRate();
+		int maxFrames = (int) (duration * sampleRate);
+		int frames = audio.getCollection().getShape().getTotalSize();
+
+		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+
+		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
+		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
+
+		MultiOrderFilter filter =
+				lowPass(p(audio.getCollection()), cv(shape(maxFrames), 0), audio.getSampleRate(), filterOrder);
+
+		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+		filter.get().into(result).evaluate(data);
+		new WaveData(result, sampleRate)
+				.save(new File("results/adsr-multi-order-filter-args1.wav"));
+	}
+
+	@Test
+	public void adsrMultiOrderFilterArguments2() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
+
+		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		int sampleRate = audio.getSampleRate();
+		int maxFrames = (int) (duration * sampleRate);
+		int frames = audio.getCollection().getShape().getTotalSize();
+
+		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
+
+		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
+		data = new WaveData(data, sampleRate).sample(envelope).getCollection();
+
+		int inputAxis = 0;
+
+		MultiOrderFilter filter =
+				lowPass(cv(shape(maxFrames).traverse(inputAxis), 0),
+						cv(shape(maxFrames), 1),
+						audio.getSampleRate(), filterOrder);
+
+		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+		filter.get().into(result).evaluate(audio.getCollection().traverse(inputAxis), data);
+		new WaveData(result, sampleRate)
+				.save(new File("results/adsr-multi-order-filter-args2.wav"));
+	}
+
+	@Test
+	public void adsrMultiOrderFilterCoefficientArguments() throws IOException {
+		double duration = 4.0;
+		double attack = 0.1;
+		double decay = 0.16;
+		double sustain = 0.04;
+		double release = 1.5;
 
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
 		int sampleRate = audio.getSampleRate();
@@ -182,14 +232,12 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
 
-//		MultiOrderFilter filter = MultiOrderFilter.create(p(audio.getCollection()),
-//				v(shape(1, filterOrder + 1).traverse(1), 1));
 		MultiOrderFilter filter = MultiOrderFilter.create(v(shape(maxFrames), 0),
 				v(shape(1, filterOrder + 1).traverse(1), 1));
 		filter.get().into(result).evaluate(audio.getCollection().traverse(1), coeff.traverse(1));
 
 		new WaveData(result, sampleRate)
-				.save(new File("results/adsr-multi-order-filter-args.wav"));
+				.save(new File("results/adsr-multi-order-filter-coeff.wav"));
 	}
 
 	@Test
@@ -198,7 +246,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result = penv.apply(ParameterSet.random(),
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
@@ -208,7 +256,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result = penv.apply(ParameterSet.random(),
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 

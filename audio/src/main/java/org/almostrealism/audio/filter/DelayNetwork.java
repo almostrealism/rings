@@ -127,9 +127,11 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 		OperationList op = new OperationList("DelayNetwork");
 
 		if (enableIsolation) {
-			for (Supplier<Runnable> p : tick) {
-				op.add(Process.isolated(p));
-			}
+//			for (Supplier<Runnable> p : tick) {
+//				op.add(Process.isolated(p));
+//			}
+
+			op.add(Process.isolated(tick));
 		}
 //
 //		op.add(() -> () -> {

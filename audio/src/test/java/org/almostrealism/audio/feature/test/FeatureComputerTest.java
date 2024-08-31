@@ -25,7 +25,7 @@ public class FeatureComputerTest {
 	public boolean call() throws IOException {
 		computeFeatures(WavFile.openWavFile(
 				new File("/Users/michael/CLionProjects/kaldi/test-16khz.wav")),
-				FeatureExtractor::print);
+				PackedCollection::print);
 		return true;
 	}
 
@@ -44,7 +44,8 @@ public class FeatureComputerTest {
 		// TODO  check that all futures completed
 	}
 
-	public static void computeFeatures(WavFile file, Consumer<Tensor<Scalar>> output) throws IOException {
+	public static void computeFeatures(WavFile file,
+									   Consumer<PackedCollection<Scalar>> output) throws IOException {
 		FeatureComputer mfcc = computers.get();
 
 		if (mfcc == null) {
@@ -69,10 +70,11 @@ public class FeatureComputerTest {
 		int channel = 0;
 
 		PackedCollection<Scalar> waveform = WavFile.channelScalar(wave, channel);
-		Tensor<Scalar> features = new Tensor<>();
+		PackedCollection<Scalar> destination =
+				new PackedCollection<>(mfcc.getFeatureShape(waveform, file.getSampleRate()));
 		double vtlnWarp = 1.0;
-		mfcc.computeFeatures(waveform, new Scalar(file.getSampleRate()), vtlnWarp, features);
-		output.accept(features);
+		mfcc.computeFeatures(waveform, new Scalar(file.getSampleRate()), vtlnWarp, destination);
+		output.accept(destination);
 
 		System.out.println("Processed features");
 	}

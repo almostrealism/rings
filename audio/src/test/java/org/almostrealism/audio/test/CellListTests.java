@@ -38,7 +38,7 @@ public class CellListTests implements CellFeatures {
 		process.add(new MemoryDataCopy("CellListTest Export Output", () -> output, () -> destination.get().evaluate(), samples));
 
 		process.get().run();
-		System.out.println("Exported " + result.getMemLength() + " frames");
+		log("Exported " + result.getMemLength() + " frames");
 		Assert.assertFalse(result.toDouble(30) == 0.0);
 	}
 

@@ -87,9 +87,9 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	public ArrayVariable<Double> getInput() { return getArgument(15, 1); }
 
 	protected Expression<Double> output() { return getOutput().valueAt(0); }
-	protected Expression<Double> frequency() { return getFrequency().valueAt(0); }
-	protected Expression<Double> resonance() { return getResonance().valueAt(0); }
-	protected Expression<Double> sampleRate() { return getSampleRate().valueAt(0); }
+	protected Expression<Double> frequency() { return getFrequency().getValueRelative(0); }
+	protected Expression<Double> resonance() { return getResonance().getValueRelative(0); }
+	protected Expression<Double> sampleRate() { return getSampleRate().getValueRelative(0); }
 	protected Expression<Double> c() { return getC().valueAt(0); }
 	protected Expression<Double> a1() { return getA1().valueAt(0); }
 	protected Expression<Double> a2() { return getA2().valueAt(0); }
@@ -128,12 +128,11 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
-		Expression<Double> input = new Max(new Min(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
+		Expression<Double> input = Max.of(Min.of(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
 		addVariable(getOutput().ref(0).assign(
 				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
 						b1().multiply(outputHistory0())).subtract(b2().multiply(outputHistory1()))));
-
 		addVariable(getInputHistory1().ref(0).assign(getInputHistory0().valueAt(0)));
 		addVariable(getInputHistory0().ref(0).assign(input));
 		addVariable(getOutputHistory2().ref(0).assign(getOutputHistory1().valueAt(0)));

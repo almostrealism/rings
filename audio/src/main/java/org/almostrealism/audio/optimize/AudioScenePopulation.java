@@ -27,10 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import io.almostrealism.code.OperationProfile;
+import io.almostrealism.profile.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
@@ -90,6 +89,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 		this.cells = channels == null ? scene.getCells(measures, stems, output) :
 									scene.getCells(measures, stems, output, channels);
 
+		// TODO  Replace with scene.runner()
 		this.temporal = new TemporalCellular() {
 			@Override
 			public Supplier<Runnable> setup() {

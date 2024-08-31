@@ -101,22 +101,22 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 
 		@Override
 		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration) {
+												   Producer<PackedCollection<?>> duration,
+												   Producer<PackedCollection<?>> automationLevel) {
 			PackedCollection<?> a = new PackedCollection<>(1);
-			a.set(0, getAttack());
-
 			PackedCollection<?> d = new PackedCollection<>(1);
-			d.set(0, getDecay());
-
 			PackedCollection<?> s = new PackedCollection<>(1);
-			s.set(0, getSustain());
-
 			PackedCollection<?> r = new PackedCollection<>(1);
-			r.set(0, getRelease());
 
 			return () -> args -> {
 				PackedCollection<?> audioData = audio.get().evaluate();
 				PackedCollection<?> dr = duration.get().evaluate();
+				PackedCollection<?> al = automationLevel.get().evaluate();
+
+				a.set(0, getAttack());
+				d.set(0, getDecay());
+				s.set(0, getSustain() * al.toDouble(0));
+				r.set(0, getRelease() * al.toDouble(0));
 
 				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
 

@@ -19,9 +19,11 @@ package org.almostrealism.audio;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
@@ -47,25 +49,30 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CombinedGenome;
+import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
 import org.almostrealism.time.Frequency;
+import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -82,6 +89,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
+	public static final IntToDoubleFunction DEFAULT_LAYER_SCALE;
 	public static final IntUnaryOperator DEFAULT_DURATION;
 	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
 
@@ -100,15 +108,28 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					default -> throw new IllegalArgumentException("Unexpected value: " + c);
 				};
 
-		DEFAULT_LAYERS = c ->
+//		DEFAULT_LAYERS = c ->
+//				switch (c) {
+//					case 0 -> 4; // 5;
+//					case 1 -> 3; // 5;
+//					case 2 -> 3; // 6;
+//					case 3 -> 3; // 6;
+//					case 4 -> 4; // 5;
+//					case 5 -> 1;
+//					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+//				};
+
+		DEFAULT_LAYERS = c -> 6;
+
+		DEFAULT_LAYER_SCALE = c ->
 				switch (c) {
-					case 0 -> 4; // 5;
-					case 1 -> 3; // 5;
-					case 2 -> 3; // 6;
-					case 3 -> 3; // 6;
-					case 4 -> 4; // 5;
-					case 5 -> 1;
-					default -> throw new IllegalArgumentException("Unexpected value: " + c);
+					case 0 -> 0.25;
+					case 1 -> 0.0625;
+					case 2 -> 0.0625;
+					case 3 -> 0.0625;
+					case 4 -> 0.0625;
+					case 5 -> 0.125;
+					default -> 0.0625;
 				};
 
 		DEFAULT_DURATION = c ->
@@ -122,18 +143,6 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					default -> (int) Math.pow(2.0, c - 1);
 				};
 	}
-
-	public static final int mixdownDuration = 140;
-
-	public static boolean enableMainFilterUp = true;
-	public static boolean enableEfxFilters = true;
-	public static boolean enableEfx = true;
-	public static boolean enableWetInAdjustment = true;
-	public static boolean enableMasterFilterDown = true;
-
-	public static boolean enableMixdown = false;
-	public static boolean enableSourcesOnly = false;
-	public static boolean disableClean = false;
 
 	private int sampleRate;
 	private double bpm;
@@ -155,6 +164,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private double patternActivityBias;
 
 	private SceneSectionManager sections;
+	private AutomationManager automation;
 	private EfxManager efx;
 	private RiseManager riser;
 	private MixdownManager mixdown;
@@ -164,12 +174,18 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	private CombinedGenome genome;
 	
 	private OperationList setup;
+	private Evaluable<PackedCollection<?>> automationLevel;
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
 
 	public AudioScene(Animation<T> scene, double bpm, int sampleRate) {
 		this(scene, bpm, DEFAULT_SOURCE_COUNT, DEFAULT_DELAY_LAYERS, sampleRate);
+	}
+
+	public AudioScene(double bpm, int channels, int delayLayers,
+					  int sampleRate) {
+		this(null, bpm, channels, delayLayers, sampleRate);
 	}
 
 	public AudioScene(Animation<T> scene, double bpm, int channels, int delayLayers,
@@ -191,7 +207,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(5);
+		this.genome = new CombinedGenome(6);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
@@ -211,9 +227,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			}
 		});
 
-		this.mixdown = new MixdownManager(genome.getGenome(3), channels, delayLayers,
-										time.getClock(), getSampleRate());
-		this.efx = new EfxManager(genome.getGenome(4), channels, this::getBeatDuration, getSampleRate());
+		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
+											this::getMeasureDuration, getSampleRate());
+		this.efx = new EfxManager(genome.getGenome(4), channels,
+								automation, this::getBeatDuration, getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(5),
+										channels, delayLayers,
+										automation, time.getClock(), getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -291,6 +311,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	public SceneSectionManager getSectionManager() { return sections; }
 	public ChordProgressionManager getChordProgression() { return progression; }
 	public PatternSystemManager getPatternManager() { return patterns; }
+	public AutomationManager getAutomationManager() { return automation; }
 	public EfxManager getEfxManager() { return efx; }
 	public MixdownManager getMixdownManager() { return mixdown; }
 	public GenerationManager getGenerationManager() { return generation; }
@@ -332,6 +353,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			throw new IllegalArgumentException();
 		}
 
+		if (automationLevel == null) {
+			automationLevel = automation.getAggregatedValueAt(
+						x(),
+						c(y(6), 0),
+						c(y(6), 1),
+						c(y(6), 2),
+						c(y(6), 3),
+						c(y(6), 4),
+						c(y(6), 5),
+						c(0.0))
+					.get();
+		}
+
 		AudioSceneContext context = new AudioSceneContext();
 		context.setChannels(channels);
 		context.setMeasures(getTotalMeasures());
@@ -339,6 +373,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
+		context.setAutomationLevel(gene -> position -> () -> {
+			return args -> automationLevel.evaluate(position.evaluate(args), gene);
+		});
 		if (patternDestinations != null) context.setDestination(patternDestinations.get(channels.get(0)));
 		return context;
 	}
@@ -440,6 +477,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
+		setup.add(automation.setup());
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
@@ -517,6 +555,42 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		return op;
 	}
 
+	public TemporalCellular runner(Receptor<PackedCollection<?>> output) {
+		return runner(output, null);
+	}
+
+	public TemporalCellular runner(Receptor<PackedCollection<?>> output, List<Integer> channels) {
+		return runner(Collections.emptyList(), Collections.emptyList(), output, channels);
+	}
+
+	public TemporalCellular runner(List<? extends Receptor<PackedCollection<?>>> measures,
+								 List<? extends Receptor<PackedCollection<?>>> stems,
+								 Receptor<PackedCollection<?>> output,
+								 List<Integer> channels) {
+		Cells cells = channels == null ? getCells(measures, stems, output) :
+				getCells(measures, stems, output, channels);
+
+		return new TemporalCellular() {
+			@Override
+			public Supplier<Runnable> setup() {
+				OperationList setup = new OperationList("AudioScene Runner Setup");
+				setup.addAll((List) AudioScene.this.setup());
+				setup.addAll((List) cells.setup());
+				return setup.flatten();
+			}
+
+			@Override
+			public Supplier<Runnable> tick() {
+				return cells.tick();
+			}
+
+			@Override
+			public void reset() {
+				cells.reset();
+			}
+		};
+	}
+
 	private void refreshPatternDestination(int channel, boolean clear) {
 		if (patternDestinations == null) {
 			patternDestinations = new ArrayList<>();
@@ -536,16 +610,22 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		loadSettings(file, this::createLibrary, null);
 	}
 
-	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) throws IOException {
+	public void loadSettings(File file, Function<String, AudioLibrary> libraryProvider, DoubleConsumer progress) {
 		if (file != null && file.exists()) {
-			setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
-		} else {
-			setSettings(Settings.defaultSettings(getChannelCount(),
-					DEFAULT_PATTERNS_PER_CHANNEL,
-					DEFAULT_ACTIVE_PATTERNS,
-					DEFAULT_LAYERS,
-					DEFAULT_DURATION), libraryProvider, progress);
+			try {
+				setSettings(defaultMapper().readValue(file, AudioScene.Settings.class), libraryProvider, progress);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
+		setSettings(Settings.defaultSettings(getChannelCount(),
+				DEFAULT_PATTERNS_PER_CHANNEL,
+				DEFAULT_ACTIVE_PATTERNS,
+				DEFAULT_LAYERS,
+				DEFAULT_LAYER_SCALE,
+				DEFAULT_DURATION), libraryProvider, progress);
 	}
 
 	public AudioScene<T> clone() {
@@ -673,6 +753,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		public static Settings defaultSettings(int channels, int patternsPerChannel,
 											   IntUnaryOperator activePatterns,
 											   IntUnaryOperator layersPerPattern,
+											   IntToDoubleFunction minLayerScale,
 											   IntUnaryOperator duration) {
 			Settings settings = new Settings();
 			settings.getSections().add(new Section(0, 16));
@@ -687,7 +768,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 			settings.setTotalMeasures(144);
 			settings.setChordProgression(ChordProgressionManager.Settings.defaultSettings());
 			settings.setPatternSystem(PatternSystemManager.Settings
-					.defaultSettings(channels, patternsPerChannel, activePatterns, layersPerPattern, duration));
+					.defaultSettings(channels, patternsPerChannel, activePatterns,
+									layersPerPattern, minLayerScale, duration));
 			settings.setChannelNames(List.of("Kick", "Drums", "Bass", "Harmony", "Lead", "Atmosphere"));
 			settings.setWetChannels(List.of(2, 3, 4, 5));
 			settings.setReverbChannels(List.of(1, 2, 3, 4, 5));

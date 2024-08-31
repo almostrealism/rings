@@ -31,6 +31,7 @@ public interface PatternNoteAudio {
 	double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+										   Producer<PackedCollection<?>> automationLevel,
 										   DoubleFunction<NoteAudioProvider> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,

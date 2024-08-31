@@ -27,7 +27,7 @@ public class SceneTest implements TestFeatures {
 	public void lightingEngine() throws IOException {
 		TestScene scene = new TestScene();
 
-		CLOperator.verboseLog(() -> {
+		verboseLog(() -> {
 			ShaderContext context = new ShaderContext(scene.getSurfaces()[0], scene.getLights().get(0));
 			IntersectionalLightingEngine engine = new IntersectionalLightingEngine(ray(0, 0, 10, 0, 0, -1),
 					scene.getSurfaces()[0], Collections.emptyList(), scene.getLights().get(0), Collections.emptyList(), context);

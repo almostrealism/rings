@@ -118,6 +118,11 @@ public class AudioLibraryPersistence {
 				.setFreqChannelCount(details.getFreqChannelCount())
 				.setFreqFrameCount(details.getFreqFrameCount())
 				.setFreqData(CollectionEncoder.encode(details.getFreqData()))
+				.setFeatureSampleRate(details.getFeatureSampleRate())
+				.setFeatureBinCount(details.getFeatureBinCount())
+				.setFeatureChannelCount(details.getFeatureChannelCount())
+				.setFeatureFrameCount(details.getFeatureFrameCount())
+				.setFeatureData(CollectionEncoder.encode(details.getFeatureData()))
 				.putAllSimilarities(details.getSimilarities());
 		if (includeAudio) data.setData(CollectionEncoder.encode(details.getData()));
 		return data.build();
@@ -133,6 +138,11 @@ public class AudioLibraryPersistence {
 		details.setFreqChannelCount(data.getFreqChannelCount());
 		details.setFreqFrameCount(data.getFreqFrameCount());
 		details.setFreqData(CollectionEncoder.decode(data.getFreqData()));
+		details.setFeatureSampleRate(data.getFeatureSampleRate());
+		details.setFeatureBinCount(data.getFeatureBinCount());
+		details.setFeatureChannelCount(data.getFeatureChannelCount());
+		details.setFeatureFrameCount(data.getFeatureFrameCount());
+		if (data.hasFeatureData()) details.setFeatureData(CollectionEncoder.decode(data.getFeatureData()));
 		details.getSimilarities().putAll(data.getSimilaritiesMap());
 		if (data.hasData()) details.setData(CollectionEncoder.decode(data.getData()));
 		return details;

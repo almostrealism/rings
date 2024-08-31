@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Deprecated
 public class SplitNoteSource implements NoteAudioSource, CellFeatures {
 	public static final double defaultBpm = 120.0;
 

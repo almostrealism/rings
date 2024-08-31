@@ -16,7 +16,11 @@ public class FeatureSettings {
 	// sqrt(2) on C0 to be the same as HTK.
 
 	public FeatureSettings() {
-		this.frameExtractionSettings = new FrameExtractionSettings();
+		this(16000.0);
+	}
+
+	public FeatureSettings(double sampleRate) {
+		this.frameExtractionSettings = new FrameExtractionSettings(sampleRate);
 		this.melBanksSettings = new MelBanksSettings(23);
 		// defaults the #mel-banks to 23 for the MFCC computations.
 		// this seems to be common for 16khz-sampled data,

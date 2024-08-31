@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.cl.CLOperator;
 import org.almostrealism.time.Frequency;
+import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
@@ -42,7 +43,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class GrainTest implements CellFeatures, EnvelopeFeatures {
+public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 
 	@Test
 	public void grainsTimeSeries() {
@@ -71,7 +72,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures {
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
-		CLOperator.verboseLog(() -> {
+		verboseLog(() -> {
 //			source.getData().valueAt(cursor).get().into(result).evaluate();
 			c((Producer) p(source.getData()), cursor).get().into(result).evaluate();
 		});

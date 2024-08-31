@@ -21,6 +21,7 @@ import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.StaticWaveDataProvider;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
@@ -29,7 +30,7 @@ import io.almostrealism.relation.Factor;
 import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
-public class PatternNoteLayer extends PatternNoteAudioAdapter {
+public class PatternNoteLayer extends PatternNoteAudioAdapter implements KeyboardTuned {
 	public static final long selectionComparisonGranularity = (long) 1e10;
 
 	private double noteAudioSelection;
@@ -70,10 +71,11 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 	public void setProvider(NoteAudioProvider provider) { this.provider = provider; }
 
 	@JsonIgnore
+	@Override
 	public void setTuning(KeyboardTuning tuning) {
 		if (delegate != null) {
 			delegate.setTuning(tuning);
-		} else {
+		} else if (provider != null) {
 			provider.setTuning(tuning);
 		}
 	}
@@ -154,7 +156,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter {
 	}
 
 	public static PatternNoteLayer create(PatternNoteLayer delegate, Factor<PackedCollection<?>> factor) {
-		return new PatternNoteLayer(delegate, (audio, duration) -> factor.getResultant(audio));
+		return new PatternNoteLayer(delegate, (audio, duration, automationLevel) -> factor.getResultant(audio));
 	}
 
 	public static PatternNoteLayer create(Supplier<PackedCollection<?>> audioSupplier) {

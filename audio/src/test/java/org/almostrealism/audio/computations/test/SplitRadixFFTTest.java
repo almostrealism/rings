@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.computations.test;
 
-import io.almostrealism.code.OperationProfile;
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.computations.SplitRadixFFT;
@@ -108,12 +108,14 @@ public class SplitRadixFFTTest implements TestFeatures {
 	}
 
 	@Test
-	public void fft() throws InterruptedException {
+	public void fft() {
+		OperationProfile profile = new OperationProfile("default");
+
 		try {
-			HardwareOperator.profile = new OperationProfile("default");
+			HardwareOperator.timingListener = profile.getTimingListener();
 			compute(-1).run();
 		} finally {
-			HardwareOperator.profile.print();
+			profile.print();
 			AcceleratedComputationOperation.printTimes();
 
 			if (totalComputations > 0) {

@@ -16,25 +16,18 @@
 
 package org.almostrealism.audio.optimize.test;
 
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.heredity.ArrayListChromosome;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.ArrayListGenome;
-import org.almostrealism.heredity.Genome;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.IntStream;
 
-public class AdjustmentLayerOrganSystemFactoryTest extends AudioSceneTest {
+public class AdjustmentLayerOrganSystemFactoryTest extends AudioSceneOptimizationTest {
 
 	@Test
 	public void compare() {

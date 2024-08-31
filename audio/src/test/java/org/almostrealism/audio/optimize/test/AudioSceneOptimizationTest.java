@@ -17,6 +17,7 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.pattern.PatternLayerManager;
@@ -43,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class AudioSceneTest implements CellFeatures {
+public class AudioSceneOptimizationTest implements CellFeatures {
 	public static final boolean enableDelay = true;
 	public static final boolean enableFilter = true;
 
@@ -118,9 +119,9 @@ public class AudioSceneTest implements CellFeatures {
 
 	@Test
 	public void withOutput() {
-		AudioScene.enableMainFilterUp = false;
-		AudioScene.enableEfxFilters = false;
-		AudioScene.enableEfx = false;
+		MixdownManager.enableMainFilterUp = false;
+		MixdownManager.enableEfxFilters = false;
+		MixdownManager.enableEfx = false;
 
 		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/genetic-factory-test.wav")).get(0);
 		Cells organ = cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out, false);
@@ -130,7 +131,7 @@ public class AudioSceneTest implements CellFeatures {
 
 	@Test
 	public void many() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("organ-factory-many-test.wav")).get(0);
+		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/organ-factory-many-test.wav")).get(0);
 		Cells organ = cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), out);
 
 		Runnable run = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();

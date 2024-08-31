@@ -75,7 +75,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 	@Override
 	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
 		if (input != null && input != value) {
-			throw new UnsupportedOperationException("WARN: AudioPassFilter cannot be reused");
+			throw new UnsupportedOperationException("AudioPassFilter cannot be reused");
 		}
 
 		input = value;

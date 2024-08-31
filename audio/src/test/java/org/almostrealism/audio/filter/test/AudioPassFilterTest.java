@@ -76,7 +76,7 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		};
 
 		if (enableVerbose) {
-			HardwareOperator.verboseLog(r);
+			verboseLog(r);
 		} else {
 			r.run();
 		}

@@ -20,6 +20,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
@@ -33,11 +34,11 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
-	private List<PatternNoteLayer> layers;
+	private List<PatternNoteAudio> layers;
 
 	public PatternNote() { }
 
-	public PatternNote(List<PatternNoteLayer> layers) {
+	public PatternNote(List<PatternNoteAudio> layers) {
 		this.layers = layers;
 	}
 
@@ -58,20 +59,23 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		layers.add(new PatternNoteLayer(noteAudioSelection));
 	}
 
-	public List<PatternNoteLayer> getLayers() {
+	public List<PatternNoteAudio> getLayers() {
 		return layers;
 	}
 
 	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (delegate != null) return delegate.getProviders(target, audioSelection);
 		return layers.stream()
-				.map(l -> l.getProvider(target, audioSelection))
+				.filter(l -> l instanceof PatternNoteLayer)
+				.map(l -> ((PatternNoteLayer) l).getProvider(target, audioSelection))
 				.collect(Collectors.toList());
 	}
 
 	public void setTuning(KeyboardTuning tuning) {
 		if (delegate == null) {
-			layers.forEach(l -> l.setTuning(tuning));
+			layers.forEach(l -> {
+				if (l instanceof KeyboardTuned tuned) tuned.setTuning(tuning);
+			});
 		} else {
 			delegate.setTuning(tuning);
 		}
@@ -102,20 +106,21 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, audioSelection);
-		return combineLayers(target, -1, audioSelection);
+		return combineLayers(target, -1, null, audioSelection);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 Producer<PackedCollection<?>> automationLevel,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) {
-			return super.computeAudio(target, noteDuration, audioSelection);
+			return super.computeAudio(target, noteDuration, automationLevel, audioSelection);
 		}
 
-		return combineLayers(target, noteDuration, audioSelection);
+		return combineLayers(target, noteDuration, automationLevel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target,
-														  double noteDuration,
+	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, double noteDuration,
+														  Producer<PackedCollection<?>> automationLevel,
 														  DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
@@ -124,7 +129,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		return () -> {
 			List<Evaluable<PackedCollection<?>>> layerAudio =
 					layers.stream()
-							.map(l -> l.getAudio(target, noteDuration, audioSelection).get())
+							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection).get())
 							.collect(Collectors.toList());
 			int frames[] = IntStream.range(0, layerAudio.size())
 					.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *

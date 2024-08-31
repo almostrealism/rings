@@ -34,7 +34,7 @@ public class SineWavePush extends SineWaveComputation implements ExpressionFeatu
 		super.prepareScope(manager, context);
 		purgeVariables();
 
-		Expression<Double> wp = wavePosition().add(phase()).multiply(e(TWO_PI));
+		Expression<?> wp = wavePosition().add(phase()).multiply(e(TWO_PI));
 		addVariable(output().assign(envelope().multiply(amplitude()).multiply(wp.sin().multiply(depth()))));
 	}
 }

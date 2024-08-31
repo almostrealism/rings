@@ -50,7 +50,7 @@ public interface SamplingFeatures extends CodeFeatures {
 		return f;
 	}
 
-	default Producer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
+	default CollectionProducer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
 
 	default <T> T sampleRate(int sr, Supplier<T> r) {
 		Integer lastSr = sampleRate.get();

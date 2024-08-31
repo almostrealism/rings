@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import io.almostrealism.code.OperationProfile;
-import io.almostrealism.code.OperationProfileNode;
+import io.almostrealism.profile.OperationProfile;
+import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -33,7 +33,6 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
@@ -73,7 +72,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
-	public static String STEMS = "Stems";
 
 	static {
 		String env = System.getenv("AR_RINGS_LIBRARY");
@@ -81,12 +79,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		String arg = System.getProperty("AR_RINGS_LIBRARY");
 		if (arg != null) LIBRARY = arg;
-		
-		env = System.getenv("AR_RINGS_STEMS");
-		if (env != null) STEMS = env;
-
-		arg = System.getProperty("AR_RINGS_STEMS");
-		if (arg != null) STEMS = arg;
 	}
 
 	private AudioScenePopulation population;
@@ -139,13 +131,13 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		StableDurationHealthComputation.enableTimeout = false;
 		MixdownManager.enableReverb = true;
-		AudioScene.enableMainFilterUp = true;
-		AudioScene.enableEfxFilters = true;
-		AudioScene.enableEfx = true;
-		AudioScene.enableWetInAdjustment = true;
-		AudioScene.enableMasterFilterDown = true;
-		AudioScene.disableClean = false;
-		AudioScene.enableSourcesOnly = false;
+		MixdownManager.enableMainFilterUp = true;
+		MixdownManager.enableEfxFilters = true;
+		MixdownManager.enableEfx = true;
+		MixdownManager.enableWetInAdjustment = true;
+		MixdownManager.enableMasterFilterDown = true;
+		MixdownManager.disableClean = false;
+		MixdownManager.enableSourcesOnly = false;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
@@ -162,14 +154,12 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		NoteAudioProvider.enableVerbose = verbosity > 0;
 		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
 		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
-		MetalProgram.enableLargeProgramMonitoring = verbosity > 0;
-		NativeCompiler.enableLargeInstructionSetMonitoring = verbosity > 0;
+		HardwareOperator.enableLargeInstructionSetMonitoring = verbosity > 0;
 
 		// Verbosity level 2
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 		PopulationOptimizer.enableVerbose = verbosity > 1;
-		MetalProgram.enableProgramMonitoring = verbosity > 1;
-		NativeCompiler.enableInstructionSetMonitoring = verbosity > 1;
+		HardwareOperator.enableInstructionSetMonitoring = verbosity > 1;
 
 		// Verbosity level 3
 		WaveOutput.enableVerbose = verbosity > 2;
@@ -200,7 +190,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					opt.init();
 					opt.run();
 
-					HardwareOperator.profile.print();
+					profile.print();
 
 					if (WavCellChromosome.timing.getTotal() > 60)
 						WavCellChromosome.timing.print();
@@ -221,7 +211,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				}
 			});
 		} finally {
-			profile.save("results/logs/optimizer.xml");
+			profile.save("results/optimizer.xml");
 		}
 	}
 
@@ -231,7 +221,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
 
 		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
-										OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
+											OutputLine.sampleRate, new ArrayList<>(),
+											new NoOpGenerationProvider());
 		loadChoices(scene);
 
 		scene.setTuning(new DefaultKeyboardTuning());
@@ -241,6 +232,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				AudioScene.DEFAULT_PATTERNS_PER_CHANNEL,
 				AudioScene.DEFAULT_ACTIVE_PATTERNS,
 				AudioScene.DEFAULT_LAYERS,
+				AudioScene.DEFAULT_LAYER_SCALE,
 				AudioScene.DEFAULT_DURATION);
 
 		if (singleChannel >= 0) {

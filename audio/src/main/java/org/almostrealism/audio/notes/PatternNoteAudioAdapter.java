@@ -36,13 +36,21 @@ public abstract class PatternNoteAudioAdapter implements
 	@Override
 	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() != null) return getDelegate().getDuration(target, audioSelection);
+
+		NoteAudioProvider provider = getProvider(target, audioSelection);
+		if (provider == null) {
+			warn("No provider for " + target);
+			return 0.0;
+		}
+
 		return getProvider(target, audioSelection).getDuration(target);
 	}
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+												  Producer<PackedCollection<?>> automationLevel,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return computeAudio(target, noteDuration, audioSelection);
+		return computeAudio(target, noteDuration, automationLevel, audioSelection);
 	}
 
 	@Override
@@ -57,12 +65,20 @@ public abstract class PatternNoteAudioAdapter implements
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+														 Producer<PackedCollection<?>> automationLevel,
 														 DoubleFunction<NoteAudioProvider> audioSelection) {
 		if (getDelegate() == null) {
-			return getProvider(target, audioSelection).getAudio(target);
+			NoteAudioProvider p = getProvider(target, audioSelection);
+			if (p == null) {
+				throw new UnsupportedOperationException();
+			}
+
+			return p.getAudio(target);
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
-					() -> getFilter().apply(getDelegate().getAudio(target, noteDuration, audioSelection), c(noteDuration)));
+					() -> getFilter().apply(getDelegate()
+									.getAudio(target, noteDuration, automationLevel, audioSelection),
+												c(noteDuration), automationLevel));
 		} else {
 			throw new UnsupportedOperationException();
 		}

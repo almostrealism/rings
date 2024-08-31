@@ -5,6 +5,7 @@ import org.almostrealism.audio.filter.ParameterizedEnvelopeLayers;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class PatternNoteFactory {
 	}
 
 	public PatternNote apply(ParameterSet params, boolean blend, double... choices) {
-		List<PatternNoteLayer> layers = new ArrayList<>();
+		List<PatternNoteAudio> layers = new ArrayList<>();
 
 		for (int i = 0; i < getLayerCount(); i++) {
 			PatternNoteLayer l = new PatternNoteLayer(choices[i]);

@@ -18,6 +18,7 @@ package org.almostrealism.audio.filter;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
@@ -34,9 +35,9 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 
 	static {
 		if (enableMultiOrderFilter) {
-			processor = new MultiOrderFilterEnvelopeProcessor(44100, MAX_SECONDS);
+			processor = new MultiOrderFilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
 		} else {
-			processor = new FilterEnvelopeProcessor(44100, MAX_SECONDS);
+			processor = new FilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
 		}
 	}
 
@@ -87,7 +88,8 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 
 		@Override
 		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration) {
+												   Producer<PackedCollection<?>> duration,
+												   Producer<PackedCollection<?>> automationLevel) {
 			return () -> args -> {
 				PackedCollection<?> audioData = audio.get().evaluate();
 
@@ -95,12 +97,13 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 				PackedCollection<?> result = PackedCollection.factory()
 						.apply(shape.getTotalSize()).reshape(shape);
 				PackedCollection<?> dr = duration.get().evaluate();
+				PackedCollection<?> al = automationLevel.get().evaluate();
 
 				processor.setDuration(dr.toDouble(0));
 				processor.setAttack(getAttack());
 				processor.setDecay(getDecay());
-				processor.setSustain(getSustain());
-				processor.setRelease(getRelease());
+				processor.setSustain(getSustain() * al.toDouble(0));
+				processor.setRelease(getRelease() * al.toDouble(0));
 				processor.process(audioData, result);
 				return result;
 			};

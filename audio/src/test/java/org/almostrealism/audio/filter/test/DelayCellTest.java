@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.code.OperationProfile;
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
@@ -31,12 +31,13 @@ import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CellularTemporalFactor;
 import org.almostrealism.time.TemporalRunner;
+import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-public class DelayCellTest implements CellFeatures {
+public class DelayCellTest implements CellFeatures, TestFeatures {
 	@Test
 	public void delay() {
 		CellList c = w("Library/Snare Perc DD.wav")
@@ -87,12 +88,14 @@ public class DelayCellTest implements CellFeatures {
 						t -> loop(t.tick(), 6 * OutputLine.sampleRate), true);
 
 		OperationProfile profiles = new OperationProfile("Native Loop");
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		OperationProfile hardwareProfile = new OperationProfile("HardwareOperator");
+		HardwareOperator.timingListener = hardwareProfile.getTimingListener();
+
 		System.out.println("Running native loop...");
 		((OperationList) r).get(profiles).run();
 		profiles.print();
 		System.out.println();
-		HardwareOperator.profile.print();
+		hardwareProfile.print();
 		System.out.println("\n-----\n");
 
 		r =
@@ -103,12 +106,14 @@ public class DelayCellTest implements CellFeatures {
 						t -> loop(Process.isolated(t.tick()), 6 * OutputLine.sampleRate), true);
 
 		profiles = new OperationProfile("Java Loop");
-		HardwareOperator.profile = new OperationProfile("HardwareOperator");
+		hardwareProfile = new OperationProfile("HardwareOperator");
+		HardwareOperator.timingListener = hardwareProfile.getTimingListener();
+
 		System.out.println("Running Java loop...");
 		((OperationList) r).get(profiles).run();
 		profiles.print();
 		System.out.println();
-		HardwareOperator.profile.print();
+		hardwareProfile.print();
 		System.out.println();
 
 		AcceleratedOperation.printTimes();
@@ -127,7 +132,7 @@ public class DelayCellTest implements CellFeatures {
 						.o(i -> new File("results/reverb-delay-cell-test.wav")),
 						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
 
-		HardwareOperator.verboseLog(() -> {
+		verboseLog(() -> {
 			r.get().run();
 		});
 	}

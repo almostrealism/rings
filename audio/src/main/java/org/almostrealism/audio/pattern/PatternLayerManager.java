@@ -19,6 +19,7 @@ package org.almostrealism.audio.pattern;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -43,11 +44,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class PatternLayerManager implements CodeFeatures {
+public class PatternLayerManager implements PatternFeatures {
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
-
-	public static DistributionMetric sizes = AudioScene.console.distribution("patternSizes");
 
 	private int channel;
 	private double duration;
@@ -55,11 +54,13 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private boolean melodic;
 	private int scaleTraversalDepth;
+	private double minLayerScale;
 	private ScaleTraversalStrategy scaleTraversalStrategy;
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private SimpleChromosome chromosome;
+	private SimpleChromosome layerChoiceChromosome;
+	private SimpleChromosome envelopeAutomationChromosome;
 
 	private ParameterFunction factorySelection; // TODO  rename
 	private ParameterizedPositionFunction activeSelection;
@@ -70,24 +71,31 @@ public class PatternLayerManager implements CodeFeatures {
 
 	private PackedCollection<?> destination;
 
-	public PatternLayerManager(List<NoteAudioChoice> choices, SimpleChromosome chromosome, int channel, double measures,
-							   boolean melodic) {
+	public PatternLayerManager(List<NoteAudioChoice> choices,
+							   SimpleChromosome layerChoiceChromosome,
+							   SimpleChromosome envelopeAutomationChromosome,
+							   int channel, double measures, boolean melodic) {
 		this(NoteAudioChoice.choices(choices, false), NoteAudioChoice.choices(choices, true),
-				chromosome, channel, measures, melodic);
+				layerChoiceChromosome, envelopeAutomationChromosome, channel, measures, melodic);
 	}
 
-	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices, Supplier<List<NoteAudioChoice>> melodicChoices,
-							   SimpleChromosome chromosome, int channel, double measures, boolean melodic) {
+	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices,
+							   Supplier<List<NoteAudioChoice>> melodicChoices,
+							   SimpleChromosome layerChoiceChromosome,
+							   SimpleChromosome envelopeAutomationChromosome,
+							   int channel, double measures, boolean melodic) {
 		this.channel = channel;
 		this.duration = measures;
 		this.scale = 1.0;
 		this.scaleTraversalStrategy = ScaleTraversalStrategy.CHORD;
 		this.scaleTraversalDepth = 1;
+		this.minLayerScale = 0.0625;
 		setMelodic(melodic);
 
 		this.percChoices = percChoices;
 		this.melodicChoices = melodicChoices;
-		this.chromosome = chromosome;
+		this.layerChoiceChromosome = layerChoiceChromosome;
+		this.envelopeAutomationChromosome = envelopeAutomationChromosome;
 		this.roots = new ArrayList<>();
 		this.layerParams = new ArrayList<>();
 		init();
@@ -126,6 +134,9 @@ public class PatternLayerManager implements CodeFeatures {
 	public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 	public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
 
+	public double getMinLayerScale() { return minLayerScale; }
+	public void setMinLayerScale(double minLayerScale) { this.minLayerScale = minLayerScale; }
+
 	public void setMelodic(boolean melodic) {
 		this.melodic = melodic;
 	}
@@ -151,6 +162,7 @@ public class PatternLayerManager implements CodeFeatures {
 	public PatternLayerSeeds getSeeds(ParameterSet params) {
 		List<PatternLayerSeeds> options = choices()
 				.filter(NoteAudioChoice::isSeed)
+				.filter(NoteAudioChoice::hasValidNotes)
 				.map(choice -> choice.seeds(params))
 				.collect(Collectors.toList());
 
@@ -188,6 +200,7 @@ public class PatternLayerManager implements CodeFeatures {
 		settings.setDuration(duration);
 		settings.setScaleTraversalStrategy(scaleTraversalStrategy);
 		settings.setScaleTraversalDepth(scaleTraversalDepth);
+		settings.setMinLayerScale(minLayerScale);
 		settings.setMelodic(melodic);
 		settings.setFactorySelection(factorySelection);
 		settings.setActiveSelection(activeSelection);
@@ -201,6 +214,7 @@ public class PatternLayerManager implements CodeFeatures {
 		duration = settings.getDuration();
 		scaleTraversalStrategy = settings.getScaleTraversalStrategy();
 		scaleTraversalDepth = settings.getScaleTraversalDepth();
+		minLayerScale = settings.getMinLayerScale();
 		melodic = settings.isMelodic();
 
 		if (settings.getFactorySelection() != null)
@@ -231,7 +245,7 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public int getLayerCount() {
-		return chromosome.length();
+		return layerChoiceChromosome.length();
 	}
 
 	public void setLayerCount(int count) {
@@ -246,7 +260,9 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void addLayer(ParameterSet params) {
-		SimpleGene g = chromosome.addGene();
+		envelopeAutomationChromosome.addGene();
+
+		SimpleGene g = layerChoiceChromosome.addGene();
 		g.set(0, params.getX());
 		g.set(1, params.getY());
 		g.set(2, params.getZ());
@@ -262,29 +278,36 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	protected void layer(ParameterSet params) {
+		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
+		PackedCollection<?> automationParams =
+				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH)
+								.fill(pos -> automationGene.valueAt(pos[0]).getResultant(c(1.0)).evaluate().toDouble());
+
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
 
 			if (seeds != null) {
 				seeds.generator(getElementFactory(), 0, duration,
-							scaleTraversalStrategy, scaleTraversalDepth)
+							scaleTraversalStrategy, scaleTraversalDepth, minLayerScale)
 						.forEach(roots::add);
 
-				scale = seeds.getScale(duration);
+				scale = seeds.getScale(duration, minLayerScale);
 			}
 
 			if (rootCount() <= 0) {
 				roots.add(new PatternLayer());
 			}
+
+			roots.forEach(layer -> layer.setAutomationParameters(automationParams));
 		} else {
 			if (enableLogging) {
 				System.out.println();
-				System.out.println("PatternLayerManager: " + roots.size() +
+				log(roots.size() +
 						" roots (scale = " + scale + ", duration = " + duration + ")");
 			}
 
 			roots.forEach(layer -> {
-				NoteAudioChoice choice = choose(scale, params);
+				NoteAudioChoice choice = scale >= minLayerScale ? choose(scale, params) : null;
 				PatternLayer next;
 
 				if (choice != null) {
@@ -295,8 +318,10 @@ public class PatternLayerManager implements CodeFeatures {
 					next = new PatternLayer();
 				}
 
+				next.setAutomationParameters(automationParams);
+
 				if (enableLogging) {
-					System.out.println("PatternLayerManager: " + layer.getAllElements(0, duration).size() +
+					log(layer.getAllElements(0, duration).size() +
 										" elements --> " + next.getElements().size() + " elements");
 				}
 
@@ -309,7 +334,11 @@ public class PatternLayerManager implements CodeFeatures {
 	}
 
 	public void removeLayer(boolean removeGene) {
-		if (removeGene) chromosome.removeGene(chromosome.length() - 1);
+		if (removeGene) {
+			envelopeAutomationChromosome.removeGene(envelopeAutomationChromosome.length() - 1);
+			layerChoiceChromosome.removeGene(layerChoiceChromosome.length() - 1);
+		}
+
 		layerParams.remove(layerParams.size() - 1);
 		decrement();
 
@@ -333,15 +362,16 @@ public class PatternLayerManager implements CodeFeatures {
 	public void refresh() {
 		clear(false);
 		if (layerParams.size() != depth())
-			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() + " != " + chromosome.length() + ")");
+			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() + " != " + layerChoiceChromosome.length() + ")");
 
-		IntStream.range(0, chromosome.length()).forEach(i -> layer(chromosome.valueAt(i)));
+		IntStream.range(0, layerChoiceChromosome.length()).forEach(i -> layer(layerChoiceChromosome.valueAt(i)));
 	}
 
 	public NoteAudioChoice choose(double scale, ParameterSet params) {
 		List<NoteAudioChoice> options = choices()
 				.filter(c -> scale >= c.getMinScale())
 				.filter(c -> scale <= c.getMaxScale())
+				.filter(NoteAudioChoice::hasValidNotes)
 				.collect(Collectors.toList());
 
 		if (options.isEmpty()) return null;
@@ -372,7 +402,7 @@ public class PatternLayerManager implements CodeFeatures {
 			ChannelSection section = ctx.getSection(i * duration);
 
 			if (section == null) {
-				System.out.println("WARN: No ChannelSection at measure " + i);
+				warn("No ChannelSection at measure " + i);
 			} else {
 				double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
 				if (active < 0) return;
@@ -385,24 +415,30 @@ public class PatternLayerManager implements CodeFeatures {
 							choice.getValidNotes(),
 							this::nextNotePosition);
 
-				elements.get(choice).stream()
-						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
-						.flatMap(List::stream)
-						.forEach(note -> {
-							if (note.getOffset() >= destination.getShape().length(0)) return;
+				if (destination != ctx.getDestination()) {
+					throw new IllegalArgumentException();
+				}
 
-							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
-								int frames = Math.min(audio.getShape().getCount(),
-										destination.getShape().length(0) - note.getOffset());
-								sizes.addEntry(frames);
+				render(ctx, audioContext, elements.get(choice), melodic, offset);
 
-								TraversalPolicy shape = shape(frames);
-								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-							};
-
-							Heap.stage(() ->
-									process.apply(traverse(1, note.getProducer()).get().evaluate()));
-						});
+//				elements.get(choice).stream()
+//						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
+//						.flatMap(List::stream)
+//						.forEach(note -> {
+//							if (note.getOffset() >= destination.getShape().length(0)) return;
+//
+//							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+//								int frames = Math.min(audio.getShape().getCount(),
+//										destination.getShape().length(0) - note.getOffset());
+//								sizes.addEntry(frames);
+//
+//								TraversalPolicy shape = shape(frames);
+//								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+//							};
+//
+//							Heap.stage(() ->
+//									process.apply(traverse(1, note.getProducer()).get().evaluate()));
+//						});
 			});
 		});
 	}
@@ -471,6 +507,7 @@ public class PatternLayerManager implements CodeFeatures {
 		private double duration;
 		private ScaleTraversalStrategy scaleTraversalStrategy;
 		private int scaleTraversalDepth;
+		private double minLayerScale;
 		private boolean melodic;
 
 		private ParameterFunction factorySelection;
@@ -490,6 +527,9 @@ public class PatternLayerManager implements CodeFeatures {
 
 		public int getScaleTraversalDepth() { return scaleTraversalDepth; }
 		public void setScaleTraversalDepth(int scaleTraversalDepth) { this.scaleTraversalDepth = scaleTraversalDepth; }
+
+		public double getMinLayerScale() { return minLayerScale; }
+		public void setMinLayerScale(double minLayerScale) { this.minLayerScale = minLayerScale; }
 
 		public boolean isMelodic() { return melodic; }
 		public void setMelodic(boolean melodic) { this.melodic = melodic; }

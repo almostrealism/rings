@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,8 +22,10 @@ import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
+import org.almostrealism.audio.data.DelegateWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.SupplierWaveDataProvider;
 import org.almostrealism.audio.data.WaveData;
@@ -18,12 +36,15 @@ import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.RAM;
+import org.almostrealism.io.Console;
 import org.almostrealism.util.KeyUtils;
 
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class NoteAudioProvider implements Comparable<NoteAudioProvider>, SamplingFeatures {
 	public static boolean enableVerbose = false;
@@ -53,23 +74,34 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
+	private Double bpm;
 
 	private Map<KeyPosition, Producer<PackedCollection<?>>> notes;
 
 	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root) {
+		this(provider, root, null);
+	}
+
+	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root, Double bpm) {
+		this(provider, root, bpm, null);
+	}
+
+	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root, Double bpm, KeyboardTuning tuning) {
 		this.provider = provider;
+		this.tuning = tuning;
 		setRoot(root);
+		setBpm(bpm);
 		notes = new HashMap<>();
 	}
 
-
 	public WaveDataProvider getProvider() { return provider; }
-
 	public void setProvider(WaveDataProvider provider) { this.provider = provider; }
 
 	public KeyPosition<?> getRoot() { return root; }
-
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
+
+	public Double getBpm() { return bpm; }
+	public void setBpm(Double bpm) { this.bpm = bpm; }
 
 	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
@@ -121,10 +153,15 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 	public PackedCollection<?> getAudio() {
 		if (provider != null) {
 			WaveData data = provider.get();
+
+			if (data == null) {
+				throw new UnsupportedOperationException();
+			}
+
 			if (data.getSampleRate() == OutputLine.sampleRate) {
 				return provider.get().getCollection();
 			} else {
-				System.out.println("WARN: Sample rate of " + data.getSampleRate() +
+				warn("Sample rate of " + data.getSampleRate() +
 						" does not match required sample rate of " + OutputLine.sampleRate);
 			}
 		}
@@ -139,9 +176,9 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 			valid = provider.getSampleRate() == OutputLine.sampleRate;
 		} catch (Exception e) {
 			if (provider instanceof FileWaveDataProvider) {
-				System.out.println("WARN: " + e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");
+				warn(e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");
 			} else {
-				System.out.println("WARN: " + e.getMessage());
+				warn(e.getMessage());
 			}
 
 			valid = false;
@@ -150,9 +187,27 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 		return valid;
 	}
 
+	public List<NoteAudioProvider> split(double durationBeats) {
+		if (getBpm() == null)
+			throw new IllegalArgumentException();
+
+		double duration = durationBeats * 60.0 / getBpm();
+		int frames = (int) (duration * OutputLine.sampleRate);
+		int total = (int) (getProvider().getCount() / (duration * OutputLine.sampleRate));
+		return IntStream.range(0, total)
+				.mapToObj(i -> new DelegateWaveDataProvider(getProvider(), i * frames, frames))
+				.map(p -> new NoteAudioProvider(p, getRoot(), getBpm(), tuning))
+				.collect(Collectors.toList());
+	}
+
 	@Override
 	public int compareTo(NoteAudioProvider o) {
 		return getProvider().compareTo(o.getProvider());
+	}
+
+	@Override
+	public Console console() {
+		return CellFeatures.console;
 	}
 
 	public static NoteAudioProvider create(String source) {
@@ -161,6 +216,10 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 
 	public static NoteAudioProvider create(String source, KeyPosition root) {
 		return new NoteAudioProvider(new FileWaveDataProvider(source), root);
+	}
+
+	public static NoteAudioProvider create(String source, KeyPosition root, KeyboardTuning tuning) {
+		return new NoteAudioProvider(new FileWaveDataProvider(source), root, null, tuning);
 	}
 
 	public static NoteAudioProvider create(Supplier<PackedCollection<?>> audioSupplier) {

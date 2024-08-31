@@ -26,10 +26,12 @@ import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
@@ -67,8 +69,19 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public WaveDetails getDetails(WaveDataProvider provider) {
-		String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
-		return info.computeIfAbsent(id, k -> computeDetails(provider));
+		try {
+			String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
+			return info.computeIfAbsent(id, k -> computeDetails(provider));
+		} catch (Exception e) {
+			AudioScene.console.warn("Failed to create WaveDetails for " +
+					provider.getKey() + " (" +
+					Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
+			if (!(e.getCause() instanceof IOException) || !(provider instanceof FileWaveDataProvider)) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
 	}
 
 	public Map<String, Double> getSimilarities(String key) {
@@ -107,7 +120,8 @@ public class AudioLibrary implements ConsoleFeatures {
 						d.getSimilarities().put(details.getIdentifier(), similarity);
 					});
 		} catch (Exception e) {
-			log("Failed to load similarities for " + details.getIdentifier() + " (" + e.getMessage() + ")");
+			log("Failed to load similarities for " + details.getIdentifier() +
+					" (" + Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
 		}
 
 		return details;
@@ -131,9 +145,6 @@ public class AudioLibrary implements ConsoleFeatures {
 			try {
 				if (provider == null) return;
 				getDetails(provider);
-			} catch (Exception e) {
-				AudioScene.console.warn("Failed to create WaveDetails for " +
-						provider.getKey() + " (" + e.getMessage() + ")");
 			} finally {
 				if (count > 0) {
 					progress.accept(total.addAndGet(1) / count);

@@ -18,7 +18,11 @@ public class FrameExtractionSettings {
 	private int maxFeatureVectors;
 
 	public FrameExtractionSettings() {
-		this.sampFreq = new Scalar(16000);
+		this(16000.0);
+	}
+
+	public FrameExtractionSettings(double sampleRate) {
+		this.sampFreq = new Scalar(sampleRate);
 		this.frameShiftMs = new Scalar(10.0);
 		this.frameLengthMs = new Scalar(25.0);
 		this.dither = new Scalar(1.0);

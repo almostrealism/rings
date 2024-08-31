@@ -62,6 +62,8 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void endless() {
+		if (skipLongTests || testDepth < 1) return;
+
 		AtomicInteger total = new AtomicInteger();
 
 		IntStream.range(0, 100).forEach(x -> {

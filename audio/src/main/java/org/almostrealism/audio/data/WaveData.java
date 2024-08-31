@@ -21,8 +21,11 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.feature.FeatureComputer;
+import org.almostrealism.audio.feature.FeatureSettings;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
@@ -48,6 +51,8 @@ public class WaveData implements SamplingFeatures {
 	private static Evaluable<PackedCollection<?>> fft;
 	private static Evaluable<PackedCollection<?>> pool2d;
 
+	private static FeatureComputer mfcc;
+
 	static {
 		fft = Ops.op(o ->
 				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0),
@@ -64,6 +69,7 @@ public class WaveData implements SamplingFeatures {
 						.traverse(3)
 						.max()
 						.reshape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1)).get();
+		mfcc = new FeatureComputer(new FeatureSettings(OutputLine.sampleRate));
 	}
 
 	private PackedCollection collection;
@@ -190,6 +196,16 @@ public class WaveData implements SamplingFeatures {
 			outRoot.destroy();
 			out.destroy();
 		}
+	}
+
+	public PackedCollection<?> features() {
+		TraversalPolicy inputShape = shape(getCollection().getCount(), 2);
+		PackedCollection input = PackedCollection.factory()
+				.apply(inputShape.getTotalSize()).reshape(inputShape).traverse(1)
+				.fill((int pos[]) -> pos[1] == 0 ? getCollection().toDouble(pos[0]) : 1.0);
+		return mfcc.computeFeatures(
+				Scalar.scalarBank(input.getCount(), input),
+				getSampleRate(), PackedCollection::new);
 	}
 
 	public void save(File file) {

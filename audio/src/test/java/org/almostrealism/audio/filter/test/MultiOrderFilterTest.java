@@ -30,10 +30,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class MultiOrderFilterTest implements TestFeatures {
-//	static {
-//		NativeCompiler.enableInstructionSetMonitoring = !TestSettings.skipLongTests;
-//		MetalProgram.enableProgramMonitoring = !TestSettings.skipLongTests;
-//	}
 
 	@Test
 	public void lowPass() throws IOException {

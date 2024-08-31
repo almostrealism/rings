@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.feature;
 
+import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.ScalarTable;
@@ -29,14 +31,17 @@ import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
+import org.almostrealism.time.computations.FourierTransform;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public class FeatureComputer implements CodeFeatures {
 	public static boolean enableVerbose = false;
+	public static boolean enableGpuFft = false;
 
 	private static final double epsilon = 0.00000001;
 
@@ -45,7 +50,7 @@ public class FeatureComputer implements CodeFeatures {
 
 	private final WaveMath math;
 
-	private final Evaluable<? extends PackedCollection<Pair<?>>> fft;
+	private final Evaluable<? extends PackedCollection<?>> fft;
 
 	private final Evaluable<? extends PackedCollection<Scalar>> processWindow;
 	private Evaluable<? extends PackedCollection<Scalar>> preemphasizeAndWindowFunctionAndPad;
@@ -78,7 +83,7 @@ public class FeatureComputer implements CodeFeatures {
 		this.melEnergies = Scalar.scalarBank(binCount);
 
 		if (this.settings.getNumCeps() > binCount)
-			System.err.println("num-ceps cannot be larger than num-mel-bins."
+			throw new IllegalArgumentException("num-ceps cannot be larger than num-mel-bins."
 					+ " It should be smaller or equal. You provided num-ceps: "
 					+ settings.getNumCeps() + "  and num-mel-bins: "
 					+ binCount);
@@ -107,7 +112,9 @@ public class FeatureComputer implements CodeFeatures {
 
 		PackedCollection<Pair<?>> fftOutput = Pair.bank(paddedWindowSize);
 
-		fft = new ComplexFFT(Hardware.getLocalHardware().getComputeContext(), paddedWindowSize, true, v(2 * paddedWindowSize, 0));
+		// fft = new ComplexFFT(Hardware.getLocalHardware().getComputeContext(), paddedWindowSize, true, v(2 * paddedWindowSize, 0));
+		fft = fft(paddedWindowSize, v(shape(paddedWindowSize, 2), 0),
+				enableGpuFft ? ComputeRequirement.GPU : ComputeRequirement.CPU).get();
 
 		int count = settings.getFrameExtractionSettings().getWindowSize();
 		Producer<PackedCollection<Scalar>> processWindow = null;
@@ -167,32 +174,53 @@ public class FeatureComputer implements CodeFeatures {
 			coeffs.set(i, 1.0 + 0.5 * Q * Math.sin(Math.PI * i / Q));
 	}
 
+	public TraversalPolicy getFeatureShape(PackedCollection<Scalar> wave, double sampleFreq) {
+		if (sampleFreq != settings.getFrameExtractionSettings().getSampFreq().getValue()) {
+			throw new IllegalArgumentException();
+		}
+
+		int rowsOut = numFrames(wave.getCount(), settings.getFrameExtractionSettings(), false);
+		if (rowsOut == 0) {
+			throw new IllegalArgumentException();
+		}
+
+		return shape(rowsOut, settings.getNumCeps(), 2);
+	}
+
+	public PackedCollection<Scalar> computeFeatures(PackedCollection<Scalar> wave, double sampleFreq,
+								IntFunction<PackedCollection<?>> outputFactory) {
+		TraversalPolicy shape = getFeatureShape(wave, sampleFreq);
+		PackedCollection dest = outputFactory.apply(shape.getTotalSize()).reshape(shape);
+		computeFeatures(wave, new Scalar(sampleFreq), dest);
+		return dest;
+	}
+
 	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
-								Tensor<Scalar> output) {
-		computeFeatures(wave, sampleFreq, 1.0, output);
+								PackedCollection<Scalar> destination) {
+		computeFeatures(wave, sampleFreq, 1.0, destination);
 	}
 
 	public void computeFeatures(PackedCollection<Scalar> wave,
 								Scalar sampleFreq,
 								double vtlnWarp,
-								Tensor<Scalar> output) {
+								PackedCollection<Scalar> destination) {
 		Scalar newSampleFreq = settings.getFrameExtractionSettings().getSampFreq();
 		if (sampleFreq.getValue() == newSampleFreq.getValue()) {
-			compute(wave, vtlnWarp, output);
+			compute(wave, vtlnWarp, destination);
 		} else {
 			if (newSampleFreq.getValue() < sampleFreq.getValue() &&
 					!settings.getFrameExtractionSettings().isAllowDownsample())
 				throw new IllegalArgumentException("Waveform and config sample Frequency mismatch: "
-						+ sampleFreq + " .vs " + newSampleFreq);
+						+ sampleFreq + " vs " + newSampleFreq);
 			else if (newSampleFreq.getValue() > sampleFreq.getValue() &&
 					!settings.getFrameExtractionSettings().isAllowUpsample())
 				throw new IllegalArgumentException("Waveform and config sample Frequency mismatch: "
-						+ sampleFreq + " .vs " + newSampleFreq);
+						+ sampleFreq + " vs " + newSampleFreq);
 
 			// Resample the waveform
 			PackedCollection<Scalar> resampledWave = Resampler.resampleWaveform(sampleFreq, wave, newSampleFreq);
-			compute(resampledWave, vtlnWarp, output);
+			compute(resampledWave, vtlnWarp, destination);
 		}
 	}
 
@@ -207,6 +235,7 @@ public class FeatureComputer implements CodeFeatures {
 								double vtlnWarp,
 								BiConsumer<Integer, PackedCollection<Scalar>> output) {
 		Scalar newSampleFreq = settings.getFrameExtractionSettings().getSampFreq();
+
 		if (sampleFreq.getValue() == newSampleFreq.getValue()) {
 			compute(wave, vtlnWarp, output);
 		} else {
@@ -232,7 +261,15 @@ public class FeatureComputer implements CodeFeatures {
 								new TensorRow<>(output, r).set(i, new Scalar(featureEnergies.get(i).getValue()))));
 	}
 
-	public void compute(PackedCollection<Scalar> wave, double vtlnWarp, BiConsumer<Integer, PackedCollection<Scalar>> output) {
+	protected void compute(PackedCollection<Scalar> wave, double vtlnWarp, PackedCollection<Scalar> destination) {
+		compute(wave, vtlnWarp,
+				(r, v) ->
+						destination.range(featureEnergies.getShape(),
+								r * featureEnergies.getShape().getTotalSize()).setMem(0, featureEnergies));
+	}
+
+	public void compute(PackedCollection<Scalar> wave, double vtlnWarp,
+						BiConsumer<Integer, PackedCollection<Scalar>> output) {
 		int rowsOut = numFrames(wave.getCount(), settings.getFrameExtractionSettings(), false);
 
 		if (rowsOut == 0) {
@@ -257,7 +294,7 @@ public class FeatureComputer implements CodeFeatures {
 	private double dot(PackedCollection<Scalar> x, PackedCollection<Scalar> y) {
 		return Math.max(
 				IntStream.range(0, x.getCount()).mapToDouble(i ->
-						x.get(i).x() * y.get(i).x()).sum(), epsilon);
+						x.valueAt(i, 0) * y.valueAt(i, 0)).sum(), epsilon);
 	}
 
 	private double logDot(PackedCollection<Scalar> x, PackedCollection<Scalar> y) {
@@ -328,7 +365,7 @@ public class FeatureComputer implements CodeFeatures {
 
 		long start = System.currentTimeMillis();
 
-		PackedCollection<Pair<?>> signalFrame;
+		PackedCollection<?> signalFrame;
 
 		if (fft != null) {
 			signalFrame = fft.evaluate(toPairBank(realSignalFrame, complexSignalFrame));
@@ -542,7 +579,7 @@ public class FeatureComputer implements CodeFeatures {
 			}
 		}
 
-		window = preemphasizeAndWindowFunctionAndPad.evaluate(window);
+		window = preemphasizeAndWindowFunctionAndPad.evaluate(window.traverse(0));
 
 		if (enableVerbose) System.out.println("--> processWindow: " + (System.currentTimeMillis() - start));
 

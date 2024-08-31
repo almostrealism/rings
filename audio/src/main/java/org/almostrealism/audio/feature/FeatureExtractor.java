@@ -20,7 +20,7 @@ public class FeatureExtractor {
 	public static void main(String args[]) throws InterruptedException, ExecutionException, IOException {
 		main(List.of(WavFile.openWavFile(
 						new File("Library/Snare Perc DD.wav"))),
-				FeatureExtractor::print);
+				PackedCollection::print);
 
 		/*
 		ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -62,7 +62,7 @@ public class FeatureExtractor {
 		 */
 	}
 
-	public static int main(List<WavFile> files, Consumer<Tensor<Scalar>> output) throws IOException {
+	public static int main(List<WavFile> files, Consumer<PackedCollection<Scalar>> output) throws IOException {
 		FeatureComputer mfcc = computers.get();
 
 		if (mfcc == null) {
@@ -95,7 +95,7 @@ public class FeatureExtractor {
 			int channel = 0;
 
 			PackedCollection<Scalar> waveform = WavFile.channelScalar(wave, channel);
-			Tensor<Scalar> features = new Tensor<>();
+			PackedCollection<Scalar> features = new PackedCollection<>(mfcc.getFeatureShape(waveform, f.getSampleRate()));
 
 			try {
 				mfcc.computeFeatures(waveform, new Scalar(f.getSampleRate()), vtlnWarp, features);

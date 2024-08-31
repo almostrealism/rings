@@ -16,11 +16,15 @@
 
 package org.almostrealism.audio.notes;
 
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
+
 import java.util.List;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleUnaryOperator;
 
-public class NoteAudioContext {
+public class NoteAudioContext implements ConsoleFeatures {
 	private DoubleFunction<NoteAudioProvider> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
@@ -33,6 +37,10 @@ public class NoteAudioContext {
 
 	public NoteAudioContext(DoubleFunction<NoteAudioProvider> audioSelection,
 							DoubleUnaryOperator nextNotePosition) {
+		if (audioSelection == null) {
+			warn("No audio selection provided");
+		}
+
 		this.audioSelection = audioSelection;
 		this.nextNotePosition = nextNotePosition;
 	}
@@ -60,4 +68,7 @@ public class NoteAudioContext {
 	public double nextNotePosition(double pos) {
 		return nextNotePosition.applyAsDouble(pos);
 	}
+
+	@Override
+	public Console console() { return CellFeatures.console; }
 }
