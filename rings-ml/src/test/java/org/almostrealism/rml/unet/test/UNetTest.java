@@ -16,10 +16,13 @@
 
 package org.almostrealism.rml.unet.test;
 
+import io.almostrealism.collect.TraversalPolicy;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.layers.CellularLayer;
 import org.almostrealism.ml.DiffusionFeatures;
 import org.almostrealism.model.Block;
+import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
 import org.junit.Test;
@@ -39,14 +42,27 @@ public class UNetTest implements DiffusionFeatures {
 	}
 
 	protected Block block(int dim, int dimOut, int groups, int rows, int cols, Block scaleShift) {
-		if (scaleShift != null)
-			throw new UnsupportedOperationException();
-
 		SequentialBlock block = new SequentialBlock(shape(batchSize, dim, rows, cols));
 		block.add(convolution2d(dimOut, 3, 1));
 		block.add(norm(groups));
-		// TODO
-		// block.add("scaleShift", in -> multiply(in, subset(scaleShift).add(1)).add(subset(scaleShift)));
+
+		if (scaleShift != null) {
+			if (scaleShift.getOutputShape().getDimensions() != 5 ||
+					scaleShift.getOutputShape().length(1) != batchSize) {
+				throw new IllegalArgumentException();
+			}
+
+			block.add(compose("scaleShift", scaleShift,
+					(in, ss) -> {
+						TraversalPolicy shape = scaleShift.getOutputShape().traverse(1).item();
+						CollectionProducer<PackedCollection<?>> scale =
+								subset(shape.prependDimension(1), ss, 0, 0, 0, 0, 0);
+						CollectionProducer<PackedCollection<?>> shift =
+								subset(shape.prependDimension(1), ss, 1, 0, 0, 0, 0);
+						return multiply(in, scale.add(1.0)).add(shift);
+					}));
+		}
+
 		block.add(silu());
 		return block;
 	}
@@ -115,11 +131,15 @@ public class UNetTest implements DiffusionFeatures {
 
 		Block timeEmbedding = timestepEmbeddings(timeInputDim, timeEmbedDim);
 
-		Model resNet = new Model(shape(batchSize, channels, rows, cols));
-		resNet.addBlock(resNetBlock(batchSize, channels, timeEmbedDim, timeEmbedding, rows, cols));
+		CompiledModel resNet =
+				new Model(shape(batchSize, channels, rows, cols))
+					.addInput(timeEmbedding)
+					.add(resNetBlock(batchSize, channels, timeEmbedDim, timeEmbedding, rows, cols))
+					.compile();
 
-		resNet.compile().forward(
-				new PackedCollection<>(batchSize, channels, rows, cols).randnFill());
+		resNet.forward(
+				new PackedCollection<>(batchSize, channels, rows, cols).randnFill(),
+				new PackedCollection<>(batchSize, timeInputDim).randnFill());
 	}
 
 	@Test
@@ -134,7 +154,7 @@ public class UNetTest implements DiffusionFeatures {
 		Block timeEmbedding = timestepEmbeddings(timeInputDim, timeEmbedDim);
 
 		Model unet = new Model(shape(height, width));
-		unet.addLayer(convolution2d(dim, 1));
+		unet.add(convolution2d(dim, 1));
 
 		// for (int i = 0; i <)
 	}
