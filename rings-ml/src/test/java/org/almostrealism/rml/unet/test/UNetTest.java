@@ -27,6 +27,9 @@ import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.function.Function;
+
 public class UNetTest implements DiffusionFeatures {
 	int batchSize = 1;
 	int channels = 1;
@@ -90,8 +93,8 @@ public class UNetTest implements DiffusionFeatures {
 
 		if (timeEmbedDim > 0) {
 			Block mlp = time.andThen(mlp(timeEmbedDim, dimOut * 2));
-			mlp = mlp.reshape(batchSize, 2, dimOut);
 			scaleShift = mlp
+					.reshape(batchSize, 2, dimOut)
 					.enumerate(shape(batchSize, 1, dimOut))
 					.reshape(2, batchSize, dimOut, 1, 1);
 		}
@@ -106,17 +109,87 @@ public class UNetTest implements DiffusionFeatures {
 		return resNet;
 	}
 
-	public Block attention(int dim) {
+	protected Function<TraversalPolicy, CellularLayer> similarity(
+			Block k, int heads, int dimHead, int size) {
+		if (k.getOutputShape().getDimensions() != 4 ||
+				k.getOutputShape().length(1) != heads ||
+				k.getOutputShape().length(2) != dimHead ||
+				k.getOutputShape().length(3) != size) {
+			throw new IllegalArgumentException();
+		}
+
+		return compose("similarity", k, shape(batchSize, heads, size, size), (a, b) -> {
+			 CollectionProducer<PackedCollection<?>> pa = c(a)
+							.traverse(1)
+							.enumerate(2, 1)
+							.traverse(2)
+							.repeat(size);
+					CollectionProducer<PackedCollection<?>> pb = c(b)
+							.traverse(1)
+							.enumerate(2, 1)
+							.repeat(size);
+					return multiply(pa, pb).sum(3);
+		});
+	}
+
+	protected Function<TraversalPolicy, CellularLayer> weightedSum(
+			Block v, int heads, int dimHead, int size) {
+		if (v.getOutputShape().getDimensions() != 4 ||
+				v.getOutputShape().length(1) != heads ||
+				v.getOutputShape().length(2) != dimHead ||
+				v.getOutputShape().length(3) != size) {
+			throw new IllegalArgumentException();
+		}
+
+		return compose("weightedSum", v, (a, b) -> {
+			CollectionProducer<PackedCollection<?>> pa = c(a)
+					.traverse(4)
+					.repeat(dimHead);
+			CollectionProducer<PackedCollection<?>> pb = c(b)
+					.traverse(2)
+					.enumerate(3, 1)
+					.traverse(2)
+					.repeat(size);
+			return multiply(pa, pb)
+					.reshape(batchSize, heads, size, size, dimHead)
+					.traverse(3)
+					.enumerate(4, 1)
+					.sum(4);
+		});
+	}
+
+	public Block attention(int dim, int rows, int cols) {
 		return attention(dim, 4, 32);
 	}
 
-	public Block attention(int dim, int heads, int dimHead) {
+	public Block attention(int dim, int heads, int dimHead, int rows, int cols) {
 		double scale = 1.0 / Math.sqrt(dimHead);
 		int hiddenDim = dimHead * heads;
+		int size = rows * cols;
 
-		// TODO
-		SequentialBlock attention = new SequentialBlock(shape(batchSize, dim));
-		CellularLayer qkv = attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
+		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
+
+		SequentialBlock attention = new SequentialBlock(shape(batchSize, channels, rows, cols));
+		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
+		attention
+				.reshape(batchSize, 3, hiddenDim * size)
+				.enumerate(shape(batchSize, 1, hiddenDim * size))
+				.reshape(3, batchSize, heads, dimHead, size);
+		List<Block> qkv = attention.split(componentShape);
+
+		Block q = qkv.get(0)
+				.scale(scale);
+		Block k = qkv.get(1);
+		Block v = qkv.get(2);
+
+		SequentialBlock attn = new SequentialBlock(componentShape);
+		attn.add(q);
+		attn.add(similarity(k, heads, dimHead, size));
+		attn.add(softmax(true));
+		attn.add(weightedSum(v, heads, dimHead, size));
+		attn.reshape(batchSize, size, hiddenDim)
+				.enumerate(1, 2, 1)
+				.reshape(batchSize, hiddenDim, rows, cols);
 
 		return attention;
 	}
