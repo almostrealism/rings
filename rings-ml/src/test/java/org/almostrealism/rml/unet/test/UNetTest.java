@@ -175,22 +175,18 @@ public class UNetTest implements DiffusionFeatures {
 				.reshape(batchSize, 3, hiddenDim * size)
 				.enumerate(shape(batchSize, 1, hiddenDim * size))
 				.reshape(3, batchSize, heads, dimHead, size);
-		List<Block> qkv = attention.split(componentShape);
 
-		Block q = qkv.get(0)
-				.scale(scale);
+		List<Block> qkv = attention.split(componentShape, 0);
 		Block k = qkv.get(1);
 		Block v = qkv.get(2);
 
-		SequentialBlock attn = new SequentialBlock(componentShape);
-		attn.add(q);
-		attn.add(similarity(k, heads, dimHead, size));
-		attn.add(softmax(true));
-		attn.add(weightedSum(v, heads, dimHead, size));
-		attn.reshape(batchSize, size, hiddenDim)
+		attention.add(scale(scale));
+		attention.add(similarity(k, heads, dimHead, size));
+		attention.add(softmax(true));
+		attention.add(weightedSum(v, heads, dimHead, size));
+		attention.reshape(batchSize, size, hiddenDim)
 				.enumerate(1, 2, 1)
 				.reshape(batchSize, hiddenDim, rows, cols);
-
 		return attention;
 	}
 
