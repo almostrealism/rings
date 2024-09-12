@@ -158,6 +158,25 @@ public class UNetTest implements DiffusionFeatures {
 		});
 	}
 
+	protected Function<TraversalPolicy, CellularLayer> context(Block v, int heads, int dimHead, int size) {
+		if (v.getOutputShape().getDimensions() != 4 ||
+				v.getOutputShape().length(1) != heads ||
+				v.getOutputShape().length(2) != dimHead ||
+				v.getOutputShape().length(3) != size) {
+			throw new IllegalArgumentException();
+		}
+
+		return compose("context", v, shape(batchSize, heads, dimHead, dimHead), (a, b) -> {
+			CollectionProducer<PackedCollection<?>> pa = c(a)
+					.traverse(3)
+					.repeat(dimHead);
+			CollectionProducer<PackedCollection<?>> pb = c(b)
+					.traverse(2)
+					.repeat(dimHead);
+			return multiply(pa, pb).sum(4);
+		});
+	}
+
 	public Block attention(int dim, int rows, int cols) {
 		return attention(dim, 4, 32);
 	}
@@ -188,6 +207,45 @@ public class UNetTest implements DiffusionFeatures {
 				.enumerate(1, 2, 1)
 				.reshape(batchSize, hiddenDim, rows, cols);
 		return attention;
+	}
+
+	public Block linearAttention(int dim, int heads, int dimHead, int rows, int cols) {
+		double scale = 1.0 / Math.sqrt(dimHead);
+		int hiddenDim = dimHead * heads;
+		int size = rows * cols;
+
+		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
+
+		SequentialBlock attention = new SequentialBlock(shape(batchSize, channels, rows, cols));
+		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
+
+		attention
+				.reshape(batchSize, 3, hiddenDim * size)
+				.enumerate(shape(batchSize, 1, hiddenDim * size))
+				.reshape(3, batchSize, heads, dimHead, size);
+
+		List<Block> qkv = attention.split(componentShape, 1);
+		Block q = qkv.get(0)
+				.andThen(scale(scale))
+				.reshape(batchSize, heads, dimHead * size)
+				.andThen(softmax(false))
+				.reshape(batchSize, heads, dimHead, size);
+		Block v = qkv.get(2);
+
+		attention.add(softmax(false));
+		attention.add(context(v, heads, dimHead, size));
+		attention.add(similarity(q, heads, dimHead, size));
+		attention.reshape(batchSize, hiddenDim, rows, cols);
+		attention.add(convolution2d(hiddenDim, dim, 1));
+		attention.add(norm());
+		return attention;
+	}
+
+	protected Block preNorm(Block block) {
+		SequentialBlock out = new SequentialBlock(block.getInputShape());
+		out.add(norm());
+		out.add(block);
+		return block;
 	}
 
 	@Test
