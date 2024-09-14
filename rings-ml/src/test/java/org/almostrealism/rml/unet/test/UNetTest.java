@@ -129,7 +129,7 @@ public class UNetTest implements DiffusionFeatures {
 			throw new IllegalArgumentException();
 		}
 
-		return compose("similarity", k, shape(batchSize, heads, size, size), (a, b) -> {
+		return compose("similarity", k, shape(batchSize, heads, dimHead, size), (a, b) -> {
 			 CollectionProducer<PackedCollection<?>> pa = c(a)
 							.traverse(1)
 							.enumerate(2, 1)
@@ -226,24 +226,27 @@ public class UNetTest implements DiffusionFeatures {
 
 	public Function<TraversalPolicy, Block> linearAttention(int dim) {
 		return shape -> {
+			int inputChannels = shape.length(1);
 			int rows = shape.length(2);
 			int cols = shape.length(3);
-			return linearAttention(dim, rows, cols);
+			return linearAttention(dim, inputChannels, rows, cols);
 		};
 	}
 
-	public Block linearAttention(int dim, int rows, int cols) {
-		return linearAttention(dim, 4, 32, rows, cols);
+	public Block linearAttention(int dim, int inputChannels, int rows, int cols) {
+		return linearAttention(dim, 4, 32, inputChannels, rows, cols);
 	}
 
-	public Block linearAttention(int dim, int heads, int dimHead, int rows, int cols) {
+	public Block linearAttention(int dim, int heads, int dimHead,
+								 int inputChannels, int rows, int cols) {
 		double scale = 1.0 / Math.sqrt(dimHead);
 		int hiddenDim = dimHead * heads;
 		int size = rows * cols;
 
+		TraversalPolicy shape = shape(batchSize, inputChannels, rows, cols);
 		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
 
-		SequentialBlock attention = new SequentialBlock(shape(batchSize, channels, rows, cols));
+		SequentialBlock attention = new SequentialBlock(shape);
 		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
 
 		attention
@@ -263,8 +266,13 @@ public class UNetTest implements DiffusionFeatures {
 		attention.add(context(v, heads, dimHead, size));
 		attention.add(similarity(q, heads, dimHead, size));
 		attention.reshape(batchSize, hiddenDim, rows, cols);
-		attention.add(convolution2d(hiddenDim, dim, 1));
+		attention.add(convolution2d(hiddenDim, dim, 1, 0));
 		attention.add(norm());
+
+		if (!attention.getOutputShape().equalsIgnoreAxis(shape)) {
+			throw new IllegalArgumentException();
+		}
+
 		return attention;
 	}
 
@@ -333,6 +341,9 @@ public class UNetTest implements DiffusionFeatures {
 	}
 
 	protected Block residual(Block block) {
+		if (block.getInputShape().getTotalSize() != block.getOutputShape().getTotalSize())
+			throw new IllegalArgumentException();
+
 		SequentialBlock residual = new SequentialBlock(block.getInputShape());
 		residual.accum(block);
 		return residual;
@@ -356,24 +367,28 @@ public class UNetTest implements DiffusionFeatures {
 		return upsample;
 	}
 
-	protected Block downsample(int dim) {
+	protected Function<TraversalPolicy, Block> downsample(int dim) {
 		return downsample(dim, dim);
 	}
 
-	protected Block downsample(int dim, int dimOut) {
-		SequentialBlock downsample = new SequentialBlock(shape(batchSize, channels, dim, dim));
-		downsample.add(layer("enumerate",
-				shape(batchSize, channels, dim, dim),
-				shape(batchSize, channels * 4, dim / 2, dim / 2),
-				in -> c(in).traverse(2)
-						.enumerate(3, 2)
-						.enumerate(3, 2)
-						.reshape(batchSize, channels, dim * dim, 4)
-						.traverse(2)
-						.enumerate(3, 1)
-						.reshape(batchSize, channels * 4, dim, dim)));
-		downsample.add(convolution2d(dim * 4, dimOut, 1, 0));
-		return downsample;
+	protected Function<TraversalPolicy, Block> downsample(int dim, int dimOut) {
+		return shape -> {
+			int inputChannels = shape.length(1);
+
+			SequentialBlock downsample = new SequentialBlock(shape(batchSize, inputChannels, dim, dim));
+			downsample.add(layer("enumerate",
+					shape(batchSize, inputChannels, dim, dim),
+					shape(batchSize, inputChannels * 4, dim / 2, dim / 2),
+					in -> c(in).traverse(2)
+							.enumerate(3, 2)
+							.enumerate(3, 2)
+							.reshape(batchSize, inputChannels, dim * dim, 4)
+							.traverse(2)
+							.enumerate(3, 1)
+							.reshape(batchSize, inputChannels * 4, dim, dim)));
+			downsample.add(convolution2d(dim * 4, dimOut, 1, 0));
+			return downsample;
+		};
 	}
 
 	protected Model unet(int dim) {
