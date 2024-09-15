@@ -116,30 +116,30 @@ public class UNetTest implements DiffusionFeatures {
 
 		resNet.add(block(dim, dimOut, groups, rows, cols, scaleShift));
 		resNet.add(block(dimOut, dimOut, groups, rows, cols));
-		if (resConv != null) resNet.accum(resConv);
+		if (resConv != null) resNet.accum(resConv, false);
+		log("ResNet[" + dim + "," + dimOut + "]: " + resNet.getOutputShape());
 		return resNet;
 	}
 
 	protected Function<TraversalPolicy, CellularLayer> similarity(
-			Block k, int heads, int dimHead, int size) {
+			Block k, int c, int s1, int s2) {
 		if (k.getOutputShape().getDimensions() != 4 ||
-				k.getOutputShape().length(1) != heads ||
-				k.getOutputShape().length(2) != dimHead ||
-				k.getOutputShape().length(3) != size) {
+				k.getOutputShape().length(1) != c ||
+				k.getOutputShape().length(3) != s2) {
 			throw new IllegalArgumentException();
 		}
 
-		return compose("similarity", k, shape(batchSize, heads, dimHead, size), (a, b) -> {
-			 CollectionProducer<PackedCollection<?>> pa = c(a)
-							.traverse(1)
-							.enumerate(2, 1)
-							.traverse(2)
-							.repeat(size);
-					CollectionProducer<PackedCollection<?>> pb = c(b)
-							.traverse(1)
-							.enumerate(2, 1)
-							.repeat(size);
-					return multiply(pa, pb).sum(3);
+		return compose("similarity", k, shape(batchSize, c, s1, s2), (a, b) -> {
+			CollectionProducer<PackedCollection<?>> pa = c(a)
+					.traverse(2)
+					.enumerate(3, 1)
+					.traverse(3)
+					.repeat(s2);
+			CollectionProducer<PackedCollection<?>> pb = c(b)
+					.traverse(2)
+					.enumerate(3, 1)
+					.repeat(s1);
+			return multiply(pa, pb).sum(4);
 		});
 	}
 
@@ -152,20 +152,21 @@ public class UNetTest implements DiffusionFeatures {
 			throw new IllegalArgumentException();
 		}
 
-		return compose("weightedSum", v, (a, b) -> {
-			CollectionProducer<PackedCollection<?>> pa = c(a)
-					.traverse(4)
-					.repeat(dimHead);
-			CollectionProducer<PackedCollection<?>> pb = c(b)
-					.traverse(2)
-					.enumerate(3, 1)
-					.traverse(2)
-					.repeat(size);
-			return multiply(pa, pb)
-					.reshape(batchSize, heads, size, size, dimHead)
-					.traverse(3)
-					.enumerate(4, 1)
-					.sum(4);
+		return compose("weightedSum", v, shape(batchSize, heads, size, dimHead),
+				(a, b) -> {
+					CollectionProducer<PackedCollection<?>> pa = c(a)
+							.traverse(4)
+							.repeat(dimHead);
+					CollectionProducer<PackedCollection<?>> pb = c(b)
+							.traverse(2)
+							.enumerate(3, 1)
+							.traverse(2)
+							.repeat(size);
+					return multiply(pa, pb)
+							.reshape(batchSize, heads, size, size, dimHead)
+							.traverse(3)
+							.enumerate(4, 1)
+							.sum(4);
 		});
 	}
 
@@ -189,21 +190,22 @@ public class UNetTest implements DiffusionFeatures {
 	}
 
 	public Function<TraversalPolicy, Block> attention(int dim) {
-		return shape -> attention(dim, shape.length(2), shape.length(3));
+		return shape -> attention(dim, shape.length(1), shape.length(2), shape.length(3));
 	}
 
-	public Block attention(int dim, int rows, int cols) {
-		return attention(dim, 4, 32);
+	public Block attention(int dim, int inputChannels, int rows, int cols) {
+		return attention(dim, 4, 32, inputChannels, rows, cols);
 	}
 
-	public Block attention(int dim, int heads, int dimHead, int rows, int cols) {
+	public Block attention(int dim, int heads, int dimHead,
+						   int inputChannels, int rows, int cols) {
 		double scale = 1.0 / Math.sqrt(dimHead);
 		int hiddenDim = dimHead * heads;
 		int size = rows * cols;
 
 		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
 
-		SequentialBlock attention = new SequentialBlock(shape(batchSize, channels, rows, cols));
+		SequentialBlock attention = new SequentialBlock(shape(batchSize, inputChannels, rows, cols));
 		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
 		attention
 				.reshape(batchSize, 3, hiddenDim * size)
@@ -215,12 +217,13 @@ public class UNetTest implements DiffusionFeatures {
 		Block v = qkv.get(2);
 
 		attention.add(scale(scale));
-		attention.add(similarity(k, heads, dimHead, size));
+		attention.add(similarity(k, heads, size, size));
 		attention.add(softmax(true));
 		attention.add(weightedSum(v, heads, dimHead, size));
 		attention.reshape(batchSize, size, hiddenDim)
 				.enumerate(1, 2, 1)
 				.reshape(batchSize, hiddenDim, rows, cols);
+		attention.add(convolution2d(hiddenDim, dim, 1, 0));
 		return attention;
 	}
 
@@ -374,18 +377,20 @@ public class UNetTest implements DiffusionFeatures {
 	protected Function<TraversalPolicy, Block> downsample(int dim, int dimOut) {
 		return shape -> {
 			int inputChannels = shape.length(1);
+			int h = shape.length(2);
+			int w = shape.length(3);
 
-			SequentialBlock downsample = new SequentialBlock(shape(batchSize, inputChannels, dim, dim));
+			SequentialBlock downsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
 			downsample.add(layer("enumerate",
-					shape(batchSize, inputChannels, dim, dim),
-					shape(batchSize, inputChannels * 4, dim / 2, dim / 2),
+					shape(batchSize, inputChannels, h, w),
+					shape(batchSize, inputChannels * 4, h / 2, w / 2),
 					in -> c(in).traverse(2)
 							.enumerate(3, 2)
 							.enumerate(3, 2)
-							.reshape(batchSize, inputChannels, dim * dim, 4)
+							.reshape(batchSize, inputChannels, (h * w) / 4, 4)
 							.traverse(2)
 							.enumerate(3, 1)
-							.reshape(batchSize, inputChannels * 4, dim, dim)));
+							.reshape(batchSize, inputChannels * 4, h / 2, w / 2)));
 			downsample.add(convolution2d(dim * 4, dimOut, 1, 0));
 			return downsample;
 		};
@@ -445,7 +450,7 @@ public class UNetTest implements DiffusionFeatures {
 
 		for (int i = dims.length - 2; i >= 0; i--) {
 			boolean isLast = i == 0;
-			SequentialBlock upBlock = new SequentialBlock(shape(batchSize, dims[i + 1] + dims[i]));
+			SequentialBlock upBlock = new SequentialBlock(main.getOutputShape());
 
 			upBlock.add(concat(1, featureMaps.pop()));
 			upBlock.add(resNetBlock(dims[i + 1] + dims[i], dims[i], timeDim, timeMlp.branch(), resnetBlockGroups));
