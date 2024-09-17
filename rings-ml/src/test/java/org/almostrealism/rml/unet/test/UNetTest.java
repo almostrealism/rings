@@ -117,7 +117,7 @@ public class UNetTest implements DiffusionFeatures {
 		resNet.add(block(dim, dimOut, groups, rows, cols, scaleShift));
 		resNet.add(block(dimOut, dimOut, groups, rows, cols));
 		if (resConv != null) resNet.accum(resConv, false);
-		log("ResNet[" + dim + "," + dimOut + "]: " + resNet.getOutputShape());
+		log("\tResNet[" + dim + "," + dimOut + "]: " + resNet.getOutputShape());
 		return resNet;
 	}
 
@@ -352,22 +352,28 @@ public class UNetTest implements DiffusionFeatures {
 		return residual;
 	}
 
-	protected Block upsample(int dim) {
+	protected Function<TraversalPolicy, Block> upsample(int dim) {
 		return upsample(dim, dim);
 	}
 
-	protected Block upsample(int dim, int dimOut) {
-		SequentialBlock upsample = new SequentialBlock(shape(batchSize, channels, dim, dim));
-		upsample.add(layer("repeat2d",
-				shape(batchSize, channels, dim, dim),
-				shape(batchSize, channels, dim * 2, dim * 2),
-				(in) ->
-						c(in)
-								.repeat(4, 2)
-								.repeat(3, 2)
-								.reshape(batchSize, channels, dim * 2, dim * 2)));
-		upsample.add(convolution2d(dim, dimOut, 3, 1));
-		return upsample;
+	protected Function<TraversalPolicy, Block> upsample(int dim, int dimOut) {
+		return shape -> {
+			int inputChannels = shape.length(1);
+			int h = shape.length(2);
+			int w = shape.length(3);
+
+			SequentialBlock upsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
+			upsample.add(layer("repeat2d",
+					shape(batchSize, inputChannels, h, w),
+					shape(batchSize, inputChannels, h * 2, w * 2),
+					(in) ->
+							c(in)
+									.repeat(4, 2)
+									.repeat(3, 2)
+									.reshape(batchSize, inputChannels, h * 2, w * 2)));
+			upsample.add(convolution2d(dim, dimOut, 3, 1));
+			return upsample;
+		};
 	}
 
 	protected Function<TraversalPolicy, Block> downsample(int dim) {
@@ -422,18 +428,23 @@ public class UNetTest implements DiffusionFeatures {
 		unet.addInput(timeMlp);
 
 		SequentialBlock main = unet.sequential();
+		Block residual = main.branch();
+
 		Stack<Block> featureMaps = new Stack<>();
 
 		for (int i = 0; i < dims.length - 1; i++) {
 			boolean isLast = i >= dims.length - 2;
 			SequentialBlock downBlock = new SequentialBlock(main.getOutputShape());
+			log("DownBlock[" + i + "]: " + dims[i] + " -> " + dims[i + 1]);
 
 			downBlock.add(resNetBlock(dims[i], dims[i], timeDim, timeMlp.branch(), resnetBlockGroups));
 			featureMaps.push(downBlock.branch());
+			log("\t\tAdded feature map " + featureMaps.peek().getOutputShape());
 
 			downBlock.add(resNetBlock(dims[i], dims[i], timeDim, timeMlp.branch(), resnetBlockGroups));
 			downBlock.add(residual(preNorm(linearAttention(dims[i]))));
 			featureMaps.push(downBlock.branch());
+			log("\t\tAdded feature map " + featureMaps.peek().getOutputShape());
 
 			if (!isLast) {
 				downBlock.add(downsample(dims[i], dims[i + 1]));
@@ -448,27 +459,36 @@ public class UNetTest implements DiffusionFeatures {
 		main.add(residual(preNorm(attention(dims[dims.length - 1]))));
 		main.add(resNetBlock(dims[dims.length - 1], dims[dims.length - 1], timeDim, timeMlp.branch(), resnetBlockGroups));
 
-		for (int i = dims.length - 2; i >= 0; i--) {
-			boolean isLast = i == 0;
+		for (int i = dims.length - 1; i > 0; i--) {
+			boolean isLast = i == 1;
 			SequentialBlock upBlock = new SequentialBlock(main.getOutputShape());
 
-			upBlock.add(concat(1, featureMaps.pop()));
-			upBlock.add(resNetBlock(dims[i + 1] + dims[i], dims[i], timeDim, timeMlp.branch(), resnetBlockGroups));
+			int dimIn = dims[i - 1];
+			int dimOut = dims[i];
+			int totalDim = dimIn + dimOut;
+			log("UpBlock[" + i + "]: (" + dimIn + "+" + dimOut + ") " + totalDim + " -> " + dimOut);
 
+			log(upBlock.getOutputShape());
+			log("\t\tConnecting feature map " + featureMaps.peek().getOutputShape());
 			upBlock.add(concat(1, featureMaps.pop()));
-			upBlock.add(resNetBlock(dims[i + 1] + dims[i], dims[i], timeDim, timeMlp.branch(), resnetBlockGroups));
-			upBlock.add(residual(preNorm(linearAttention(dims[i]))));
+			upBlock.add(resNetBlock(totalDim, dimOut, timeDim, timeMlp.branch(), resnetBlockGroups));
+
+			log(upBlock.getOutputShape());
+			log("\t\tConnecting feature map " + featureMaps.peek().getOutputShape());
+			upBlock.add(concat(1, featureMaps.pop()));
+			upBlock.add(resNetBlock(totalDim, dimOut, timeDim, timeMlp.branch(), resnetBlockGroups));
+			upBlock.add(residual(preNorm(linearAttention(dimOut))));
 
 			if (!isLast) {
-				upBlock.add(upsample(dims[i], dims[i]));
+				upBlock.add(upsample(dimOut, dimIn));
 			} else {
-				upBlock.add(convolution2d(dims[i], dims[i], 3, 1));
+				upBlock.add(convolution2d(dimOut, dimIn, 3, 1));
 			}
 
 			main.add(upBlock);
 		}
 
-		main.add(concat(1, featureMaps.pop()));
+		main.add(concat(1, residual));
 		main.add(resNetBlock(dim * 2, dim, timeDim, timeMlp.branch(), resnetBlockGroups));
 		main.add(convolution2d(dim, outDimValue, 1, 0));
 		return unet;
