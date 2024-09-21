@@ -29,6 +29,7 @@ import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
+import org.almostrealism.util.SignalWireDeliveryProvider;
 import org.almostrealism.util.TestUtils;
 import org.junit.Test;
 
@@ -45,6 +46,8 @@ public class UNetTest implements DiffusionFeatures {
 			MetalMemoryProvider.enableLargeAllocationLogging = true;
 
 			Console.root().addListener(OutputFeatures.fileOutput("results/logs/train.out"));
+
+			SignalWireDeliveryProvider.attachDefault();
 		}
 	}
 
@@ -511,6 +514,8 @@ public class UNetTest implements DiffusionFeatures {
 
 	@Test
 	public void unet() {
+		console().alert("UNet test is starting");
+
 		int dim = 28;
 
 		CompiledModel unet = unet(dim).compile();
