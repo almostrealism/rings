@@ -19,12 +19,17 @@ package org.almostrealism.rml.unet.test;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.HardwareOperator;
+import org.almostrealism.hardware.metal.MetalMemoryProvider;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.layers.CellularLayer;
 import org.almostrealism.ml.DiffusionFeatures;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
+import org.almostrealism.util.TestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,6 +38,16 @@ import java.util.Stack;
 import java.util.function.Function;
 
 public class UNetTest implements DiffusionFeatures {
+
+	static {
+		if (TestUtils.getTrainTests()) {
+			HardwareOperator.enableLargeInstructionSetMonitoring = true;
+			MetalMemoryProvider.enableLargeAllocationLogging = true;
+
+			Console.root().addListener(OutputFeatures.fileOutput("results/logs/train.out"));
+		}
+	}
+
 	int batchSize = 1;
 	int channels = 1;
 	int dimFactors[] = { 1, 2, 4 };
