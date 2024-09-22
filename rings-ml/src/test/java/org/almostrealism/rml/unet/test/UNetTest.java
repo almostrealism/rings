@@ -17,6 +17,7 @@
 package org.almostrealism.rml.unet.test;
 
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareOperator;
@@ -30,15 +31,16 @@ import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.util.SignalWireDeliveryProvider;
+import org.almostrealism.util.TestFeatures;
 import org.almostrealism.util.TestUtils;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class UNetTest implements DiffusionFeatures {
+public class UNetTest implements DiffusionFeatures, TestFeatures {
 
 	static {
 		if (TestUtils.getTrainTests()) {
@@ -513,17 +515,34 @@ public class UNetTest implements DiffusionFeatures {
 	}
 
 	@Test
-	public void unet() {
-		console().alert("UNet test is starting");
-
+	public void unet() throws IOException {
 		int dim = 28;
 
-		CompiledModel unet = unet(dim).compile();
+		OperationProfileNode profile = new OperationProfileNode("unet");
+		boolean failed = false;
 
-		PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
-		PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
+		try {
+			profile(profile, () -> {
+				CompiledModel unet = unet(dim).compile(profile);
+				alert("UNet test is starting");
 
-		unet.forward(image, time);
-		unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
+				PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
+				PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
+
+				unet.forward(image, time);
+				alert("UNet test completed forward pass");
+
+				unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
+				alert("UNet test completed backward pass");
+			});
+		} catch (Exception e) {
+			alert("UNet test failed", e);
+			failed = true;
+		} finally {
+			if (!failed)
+				alert("UNet test completed");
+
+			profile.save("results/unet.xml");
+		}
 	}
 }
