@@ -271,8 +271,8 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 //					.relativeMultiply(c(1.0).relativeSubtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 //					.relativeMultiply(c(1.0).relativeAdd(pow(polySpeedUpWaveLength, c(-1.0))
 //							.relativeMultiply(time).pow(polySpeedUpExp)));
-		return c(1.0).add(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-				.multiply(c(1.0).subtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+		return c(1.0).add(relativeSinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+				.multiply(c(1.0).subtract(relativeSinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
 						.multiply(time).pow(polySpeedUpExp)));
 	}
