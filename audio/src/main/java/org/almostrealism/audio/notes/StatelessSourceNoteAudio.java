@@ -20,6 +20,7 @@ import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
@@ -75,14 +76,16 @@ public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
 												  Producer<PackedCollection<?>> automationLevel,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return source.generate(getParameters().getResultant(automationLevel),
+		return source.generate(getBufferDetails(target, audioSelection),
+				getParameters().getResultant(automationLevel),
 				c(tuning.getRelativeFrequency(root, target).asHertz()));
 	}
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return source.generate(getParameters().getResultant(c(1.0)),
+		return source.generate(getBufferDetails(target, audioSelection),
+				getParameters().getResultant(c(1.0)),
 				c(tuning.getRelativeFrequency(root, target).asHertz()));
 	}
 }

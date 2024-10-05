@@ -52,7 +52,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		int frames = (int) (2.0 * sampleRate);
 
 		// Source for the synth note
-		StatelessSource sine = (params, frequency) -> sampling(sampleRate, () -> {
+		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
 			CollectionProducer<PackedCollection<?>> f =
 					multiply(c(tuning.getTone(root).asHertz()), frequency);
 			CollectionProducer<PackedCollection<?>> t =
@@ -105,7 +105,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		render(sceneContext, audioContext, elements, true, 0.0);
 
 		// Save the composition to a file
-		new WaveData(sceneContext.getDestination(), sampleRate)
+		new WaveData(sceneContext.getDestination().traverse(1), sampleRate)
 				.save(new File("results/sine-notes.wav"));
 	}
 }

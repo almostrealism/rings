@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,25 @@
 
 package org.almostrealism.audio.sources;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.collect.PackedCollection;
+public class BufferDetails {
+	private final int sampleRate;
+	private final int frames;
 
-public interface StatelessSource {
-	Producer<PackedCollection<?>> generate(BufferDetails buffer,
-										   Producer<PackedCollection<?>> params,
-										   Producer<PackedCollection<?>> frequency);
+	public BufferDetails(int sampleRate, int frames) {
+		this.sampleRate = sampleRate;
+		this.frames = frames;
+	}
+
+	public BufferDetails(int sampleRate, double duration) {
+		this.sampleRate = sampleRate;
+		this.frames = (int) (duration * sampleRate);
+	}
+
+	public int getSampleRate() {
+		return sampleRate;
+	}
+
+	public int getFrames() {
+		return frames;
+	}
 }
