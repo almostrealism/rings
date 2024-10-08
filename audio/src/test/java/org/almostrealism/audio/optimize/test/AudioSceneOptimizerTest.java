@@ -75,7 +75,6 @@ public class AudioSceneOptimizerTest extends AssignableGenomeTest {
 
 	@Test
 	public void optimize() {
-		Hardware.enableVerbose = true;
 		PopulationOptimizer.enableVerbose = true;
 		optimizer().run();
 	}
