@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.sources.test;
 
+import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
@@ -62,7 +63,7 @@ public class RescalingAggregationTests implements TestFeatures {
 				cp(input.getCollection()),
 				cp(filter.getCollection()));
 
-		WaveData out = new WaveData(aggregated.get().evaluate(), sampleRate);
+		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
 		out.save(new File("results/rescaling-aggregator.wav"));
 	}
 }
