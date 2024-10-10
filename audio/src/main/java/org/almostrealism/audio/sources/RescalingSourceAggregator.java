@@ -17,6 +17,7 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveData;
@@ -27,11 +28,21 @@ import org.almostrealism.time.computations.FourierTransform;
 public class RescalingSourceAggregator implements SourceAggregator, CellFeatures {
 	private int fftBins = WaveData.FFT_BINS;
 
-	protected FourierTransform fft(Producer<PackedCollection<?>> input) {
+	protected FourierTransform fft(CollectionProducer<PackedCollection<?>> input) {
+		int frames = shape(input).getTotalSize();
+		int slices = frames / fftBins;
+
+		if (frames % fftBins != 0) {
+			slices = slices + 1;
+			input = pad(shape(slices * fftBins), input, 0);
+		}
+
+		TraversalPolicy shape = shape(slices, 2, fftBins);
+		input = pad(shape, position(0, 0, 0), input.reshape(slices, 1, fftBins));
 		return fft(fftBins, input, ComputeRequirement.CPU);
 	}
 
-	protected FourierTransform ifft(Producer<PackedCollection<?>> input) {
+	protected FourierTransform ifft(CollectionProducer<PackedCollection<?>> input) {
 		return ifft(fftBins, input, ComputeRequirement.CPU);
 	}
 
@@ -43,13 +54,22 @@ public class RescalingSourceAggregator implements SourceAggregator, CellFeatures
 		CollectionProducer<PackedCollection<?>> input = c(sources[0]);
 		CollectionProducer<PackedCollection<?>> filter = c(sources[1]);
 
-		filter = fft(filter).reshape(2, fftBins);
-		filter = complexFromParts(
-					subset(shape(1, fftBins), filter, 0, 0),
-					subset(shape(1, fftBins), filter, 1, 0)).magnitude();
-		filter = filter.reshape(fftBins).repeat(2);
+		filter = fft(filter);
+		filter = filter.transpose(2).magnitude(2);
 
-		input = fft(input).reshape(2, fftBins);
-		return ifft(input.multiply(filter));
+		int slices = filter.getShape().length(0);
+		filter = filter.reshape(-1, fftBins)
+					.transpose().sum(1)
+					.divide(c(slices));
+
+		input = fft(input);
+
+		int inputSlices = input.getShape().length(0);
+		filter = filter.traverse(0).repeat(2 * inputSlices)
+				.reshape(inputSlices, 2, fftBins);
+
+		CollectionProducer<PackedCollection<?>> result = ifft(input.multiply(filter));
+		result = subset(shape(inputSlices, 1, fftBins), result, 0, 0, 0);
+		return result.flatten();
 	}
 }
