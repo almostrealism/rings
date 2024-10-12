@@ -39,7 +39,7 @@ import com.almostrealism.projection.PinholeCamera;
 /**
  * @author  Michael Murray
  */
-public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Volume<Ray>, HardwareFeatures {
+public class PinholeCameraAbsorber extends PinholeCamera implements Absorber, Volume<Ray> {
 	private Clock clock;
 	
 	private Pinhole pinhole;

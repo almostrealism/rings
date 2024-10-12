@@ -89,7 +89,7 @@ public class DistanceEstimationLightingEngine extends LightingEngine {
 	}
 
 	public static class Locus extends ArrayList<Producer<Ray>>
-			implements ContinuousField, Callable<Producer<RGB>>, Shadable, HardwareFeatures, CodeFeatures {
+			implements ContinuousField, Callable<Producer<RGB>>, Shadable, CodeFeatures {
 		private ShaderSet shaders;
 		private ShaderContext params;
 

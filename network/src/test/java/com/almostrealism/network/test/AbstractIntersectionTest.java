@@ -24,7 +24,7 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.hardware.HardwareFeatures;
 
-public class AbstractIntersectionTest implements HardwareFeatures, ProjectionFeatures {
+public class AbstractIntersectionTest implements ProjectionFeatures {
 	protected final int width = 400, height = 400;
 
 	protected Producer<Scalar> combined() {

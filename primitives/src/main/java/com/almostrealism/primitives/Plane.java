@@ -24,7 +24,7 @@ import org.almostrealism.space.Volume;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 
-public class Plane implements Volume<RGB>, HardwareFeatures, CodeFeatures {
+public class Plane implements Volume<RGB>, CodeFeatures {
 	public static double d = 0.0;
 	
 	protected double w, h;
