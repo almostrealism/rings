@@ -38,7 +38,7 @@ public class RescalingSourceAggregator implements SourceAggregator, CellFeatures
 		}
 
 		TraversalPolicy shape = shape(slices, 2, fftBins);
-		input = pad(shape, position(0, 0, 0), input.reshape(slices, 1, fftBins));
+		input = pad(shape, input.reshape(slices, 1, fftBins), 0, 0, 0);
 		return fft(fftBins, input, ComputeRequirement.CPU);
 	}
 
