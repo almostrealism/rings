@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.notes;
 
-import org.almostrealism.audio.pattern.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.ArrayList;

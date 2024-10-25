@@ -16,29 +16,23 @@
 
 package org.almostrealism.audio.pattern;
 
-import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteAudioContext;
-import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
-import org.almostrealism.io.DistributionMetric;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

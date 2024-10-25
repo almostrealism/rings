@@ -19,9 +19,19 @@ package org.almostrealism.audio.sources.test;
 import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.notes.NoteAudioContext;
+import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.pattern.PatternElement;
+import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.RescalingSourceAggregator;
+import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.audio.tone.WesternChromatic;
+import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Assert;
@@ -29,8 +39,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RescalingAggregationTests implements TestFeatures {
+public class RescalingAggregationTests implements PatternFeatures, TestFeatures {
 	private int sampleRate = OutputLine.sampleRate;
 
 	@Test
@@ -65,5 +77,54 @@ public class RescalingAggregationTests implements TestFeatures {
 
 		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
 		out.save(new File("results/rescaling-aggregator.wav"));
+	}
+
+	@Test
+	public void aggregatedPattern() {
+		// Define the shared parameters, including how notes should be
+		// tuned and a root for the scale and the synth
+		double duration = 8.0;
+		KeyboardTuning tuning = new DefaultKeyboardTuning();
+		WesternChromatic root = WesternChromatic.C3;
+
+		PatternNote choiceNote = new PatternNote(0.1, 0.9);
+		choiceNote.setTuning(tuning);
+		choiceNote.setAggregationChoice(0.9);
+
+		// Setup context for rendering the audio, including the scale,
+		// the way to translate positions into audio frames, and the
+		// destination for the audio
+		AudioSceneContext sceneContext = new AudioSceneContext();
+		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
+		sceneContext.setScaleForPosition(pos -> WesternScales.major(root, 1));
+		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+
+		// Setup context for voicing the notes, including the library
+		// of samples to use (choiceNote will select from those)
+		NoteAudioContext audioContext = new NoteAudioContext();
+		audioContext.setNextNotePosition(pos -> duration);
+		audioContext.setAudioSelection((choice) ->
+				choice < 0.5 ?
+					NoteAudioProvider.create("Library/organ.wav", WesternChromatic.D3, tuning) :
+					NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning));
+
+		// Create the elements of the composition, leveraging
+		// the notes that have been defined in multiple places
+		// to create a pattern of 4 elements
+		List<PatternElement> elements = new ArrayList<>();
+		elements.add(new PatternElement(choiceNote, 2.5));
+		elements.add(new PatternElement(choiceNote, 6.5));
+
+		// Adjust the position on the major scale for each of the
+		// elements in the composition
+		elements.get(0).setScalePosition(List.of(0.0));
+		elements.get(1).setScalePosition(List.of(0.5));
+
+		// Render the composition
+		render(sceneContext, audioContext, elements, true, 0.0);
+
+		// Save the composition to a file
+		new WaveData(sceneContext.getDestination().traverse(1), sampleRate)
+				.save(new File("results/aggregated-pattern.wav"));
 	}
 }

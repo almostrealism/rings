@@ -17,6 +17,7 @@
 package org.almostrealism.audio.pattern;
 
 import org.almostrealism.audio.data.ParameterSet;
+import org.almostrealism.audio.notes.NoteAudioChoice;
 
 import java.util.List;
 import java.util.Objects;

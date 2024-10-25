@@ -21,7 +21,7 @@ import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.filter.test.AssignableGenomeTest;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.NoteAudioChoice;
+import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.time.TemporalRunner;

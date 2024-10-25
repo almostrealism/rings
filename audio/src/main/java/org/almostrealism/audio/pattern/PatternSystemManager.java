@@ -26,6 +26,7 @@ import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioSumProvider;
+import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;

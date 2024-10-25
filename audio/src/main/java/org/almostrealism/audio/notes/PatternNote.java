@@ -36,14 +36,15 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
-	private SourceAggregator layerAggregator;
+	private NoteAudioSourceAggregator layerAggregator;
 	private List<PatternNoteAudio> layers;
+	private double aggregationChoice;
 
 	public PatternNote() { }
 
 	public PatternNote(List<PatternNoteAudio> layers) {
 		this.layers = layers;
-		this.layerAggregator = new SummingSourceAggregator();
+		this.layerAggregator = new NoteAudioSourceAggregator();
 	}
 
 	public PatternNote(double... noteAudioSelections) {
@@ -65,6 +66,14 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	public List<PatternNoteAudio> getLayers() {
 		return layers;
+	}
+
+	public double getAggregationChoice() {
+		return aggregationChoice;
+	}
+
+	public void setAggregationChoice(double aggregationChoice) {
+		this.aggregationChoice = aggregationChoice;
 	}
 
 	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
@@ -158,7 +167,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 				};
 			};
 		} else {
-			return layerAggregator.aggregate(getBufferDetails(target, audioSelection),
+			return layerAggregator.getAggregator(c(aggregationChoice)).aggregate(getBufferDetails(target, audioSelection),
 					null, null,
 					layers.stream()
 							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection))

@@ -31,7 +31,7 @@ import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.PatternElementFactory;
-import org.almostrealism.audio.pattern.NoteAudioChoice;
+import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;

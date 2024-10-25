@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.pattern;
+package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.pattern.ElementParity;
+import org.almostrealism.audio.pattern.PatternElement;
+import org.almostrealism.audio.pattern.PatternElementFactory;
+import org.almostrealism.audio.pattern.PatternLayer;
+import org.almostrealism.audio.pattern.PatternLayerSeeds;
+import org.almostrealism.audio.pattern.ScaleTraversalStrategy;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
