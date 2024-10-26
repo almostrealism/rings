@@ -25,7 +25,7 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.computations.FourierTransform;
 
-public class RescalingSourceAggregator implements SourceAggregator, CellFeatures {
+public class FrequencyRescalingSourceAggregator implements SourceAggregator, CellFeatures {
 	private int fftBins = WaveData.FFT_BINS;
 
 	protected FourierTransform fft(CollectionProducer<PackedCollection<?>> input) {

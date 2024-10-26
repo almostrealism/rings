@@ -22,6 +22,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -32,29 +33,31 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 												   Producer<PackedCollection<?>> params,
 												   Producer<PackedCollection<?>> frequency,
 												   Producer<PackedCollection<?>>... sources) {
-		return () -> {
-			List<Evaluable<PackedCollection<?>>> layerAudio =
-					Stream.of(sources).map(Producer::get).toList();
-			int frames[] = Stream.of(sources)
-					.map(this::shape)
-					.map(shape -> shape.getCount() == 1 ? shape.traverse() : shape)
-					.mapToInt(TraversalPolicy::getCount)
-					.toArray();
+		return new DynamicCollectionProducer<>(shape(buffer.getFrames()), null) {
+			public Evaluable<PackedCollection<?>> get() {
+				List<Evaluable<PackedCollection<?>>> layerAudio =
+						Stream.of(sources).map(Producer::get).toList();
+				int frames[] = Stream.of(sources)
+						.map(this::shape)
+						.map(shape -> shape.getCount() == 1 ? shape.traverse() : shape)
+						.mapToInt(TraversalPolicy::getCount)
+						.toArray();
 
-			return args -> {
-				int totalFrames = buffer.getFrames();
+				return args -> {
+					int totalFrames = buffer.getFrames();
 
-				PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+					PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
 
-				for (int i = 0; i < layerAudio.size(); i++) {
-					PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
-					int f = Math.min(frames[i], totalFrames);
+					for (int i = 0; i < layerAudio.size(); i++) {
+						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+						int f = Math.min(frames[i], totalFrames);
 
-					PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
-				}
+						PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
+					}
 
-				return dest;
-			};
+					return dest;
+				};
+			}
 		};
 	}
 }

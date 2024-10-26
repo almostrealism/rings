@@ -20,7 +20,8 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.sources.RescalingSourceAggregator;
+import org.almostrealism.audio.sources.FrequencyRescalingSourceAggregator;
+import org.almostrealism.audio.sources.ModularSourceAggregator;
 import org.almostrealism.audio.sources.SourceAggregator;
 import org.almostrealism.audio.sources.SummingSourceAggregator;
 import org.almostrealism.collect.PackedCollection;
@@ -35,8 +36,22 @@ public class NoteAudioSourceAggregator implements CodeFeatures {
 
 	public NoteAudioSourceAggregator() {
 		aggregators = new ArrayList<>();
-		aggregators.add(new AggregatorChoice(new SummingSourceAggregator(), 1.0));
-		aggregators.add(new AggregatorChoice(new RescalingSourceAggregator(), 1.0));
+		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.SOURCE), 1.0));
+		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.FREQUENCY), 1.0));
+		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.FREQUENCY,
+				ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
 	}
 
 	protected double getTotalWeight() {

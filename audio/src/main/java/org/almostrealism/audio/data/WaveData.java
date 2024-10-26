@@ -26,6 +26,7 @@ import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.feature.FeatureComputer;
 import org.almostrealism.audio.feature.FeatureSettings;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
@@ -90,7 +91,7 @@ public class WaveData implements SamplingFeatures {
 		this.sampleRate = sampleRate;
 	}
 
-	public PackedCollection getCollection() {
+	public PackedCollection<?> getCollection() {
 		return collection;
 	}
 
@@ -104,6 +105,10 @@ public class WaveData implements SamplingFeatures {
 
 	public double getDuration() {
 		return getCollection().getMemLength() / (double) sampleRate;
+	}
+
+	public BufferDetails getBufferDetails() {
+		return new BufferDetails(getSampleRate(), getDuration());
 	}
 
 	public WaveData range(double start, double length) {

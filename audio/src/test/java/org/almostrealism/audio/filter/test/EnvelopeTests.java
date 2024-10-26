@@ -24,6 +24,7 @@ import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
+import org.almostrealism.audio.filter.VolumeEnvelopeExtraction;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -275,5 +276,16 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		new WaveData(data, 44100)
 				.sample(env).save(new File("results/envelope.wav"));
+	}
+
+	@Test
+	public void extractEnvelope() throws IOException {
+		VolumeEnvelopeExtraction extraction = new VolumeEnvelopeExtraction();
+
+		WaveData audio = WaveData.load(new File("Library/Snare Gold 1.wav"));
+		PackedCollection<?> envelope = extraction
+				.filter(audio.getBufferDetails(), null, cp(audio.getCollection())).evaluate();
+		new WaveData(envelope, audio.getSampleRate())
+				.save(new File("results/extract-envelope.wav"));
 	}
 }

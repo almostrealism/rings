@@ -27,7 +27,9 @@ import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.BufferDetails;
-import org.almostrealism.audio.sources.RescalingSourceAggregator;
+import org.almostrealism.audio.sources.FrequencyRescalingSourceAggregator;
+import org.almostrealism.audio.sources.ModularSourceAggregator;
+import org.almostrealism.audio.sources.VolumeRescalingSourceAggregator;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -63,8 +65,26 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 	}
 
 	@Test
-	public void rescale() throws IOException {
-		RescalingSourceAggregator aggregator = new RescalingSourceAggregator();
+	public void rescaleVolume() throws IOException {
+		VolumeRescalingSourceAggregator aggregator = new VolumeRescalingSourceAggregator();
+
+		WaveData input = WaveData.load(new File("Library/organ.wav"));
+		WaveData filter = WaveData.load(new File("Library/Snare Gold 1.wav"));
+
+		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
+				new BufferDetails(sampleRate, input.getDuration()),
+				null, null,
+				cp(input.getCollection()),
+				cp(filter.getCollection()));
+
+		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
+		out.save(new File("results/rescaling-volume.wav"));
+	}
+
+
+	@Test
+	public void rescaleFrequency() throws IOException {
+		FrequencyRescalingSourceAggregator aggregator = new FrequencyRescalingSourceAggregator();
 
 		WaveData input = WaveData.load(new File("Library/SN_Forever_Future.wav"));
 		WaveData filter = WaveData.load(new File("Library/organ.wav"));
@@ -76,7 +96,41 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 				cp(filter.getCollection()));
 
 		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
-		out.save(new File("results/rescaling-aggregator.wav"));
+		out.save(new File("results/rescaling-frequency.wav"));
+	}
+
+	@Test
+	public void rescaleModular1() throws IOException {
+		modularRescale("rescaling-modular-1",
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.FREQUENCY,
+				ModularSourceAggregator.InputType.VOLUME_ENVELOPE);
+	}
+
+	@Test
+	public void rescaleModular2() throws IOException {
+		modularRescale("rescaling-modular-2",
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.SOURCE,
+				ModularSourceAggregator.InputType.VOLUME_ENVELOPE);
+	}
+
+	public void modularRescale(String name, ModularSourceAggregator.InputType... inputs) throws IOException {
+		ModularSourceAggregator aggregator = new ModularSourceAggregator(inputs);
+
+		WaveData input = WaveData.load(new File("Library/organ.wav"));
+		WaveData filter = WaveData.load(new File("Library/SN_Forever_Future.wav"));
+		WaveData env = WaveData.load(new File("Library/Snare Gold 1.wav"));
+
+		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
+				new BufferDetails(sampleRate, input.getDuration()),
+				null, null,
+				cp(input.getCollection()),
+				cp(filter.getCollection()),
+				cp(env.getCollection()));
+
+		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
+		out.save(new File("results/" + name + ".wav"));
 	}
 
 	@Test
@@ -87,9 +141,9 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		KeyboardTuning tuning = new DefaultKeyboardTuning();
 		WesternChromatic root = WesternChromatic.C3;
 
-		PatternNote choiceNote = new PatternNote(0.1, 0.9);
+		PatternNote choiceNote = new PatternNote(0.25, 0.65, 0.9);
 		choiceNote.setTuning(tuning);
-		choiceNote.setAggregationChoice(0.9);
+		choiceNote.setAggregationChoice(0.4);
 
 		// Setup context for rendering the audio, including the scale,
 		// the way to translate positions into audio frames, and the
@@ -103,10 +157,15 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		// of samples to use (choiceNote will select from those)
 		NoteAudioContext audioContext = new NoteAudioContext();
 		audioContext.setNextNotePosition(pos -> duration);
-		audioContext.setAudioSelection((choice) ->
-				choice < 0.5 ?
-					NoteAudioProvider.create("Library/organ.wav", WesternChromatic.D3, tuning) :
-					NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning));
+		audioContext.setAudioSelection((choice) -> {
+					if (choice < 0.5) {
+						return NoteAudioProvider.create("Library/organ.wav", WesternChromatic.D3, tuning);
+					} else if (choice < 0.7) {
+						return NoteAudioProvider.create("Library/SN_Forever_Future.wav", WesternChromatic.D3, tuning);
+					} else {
+						return NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning);
+					}
+				});
 
 		// Create the elements of the composition, leveraging
 		// the notes that have been defined in multiple places
