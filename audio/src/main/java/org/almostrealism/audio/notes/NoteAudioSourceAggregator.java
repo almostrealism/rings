@@ -32,6 +32,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class NoteAudioSourceAggregator implements CodeFeatures {
+	public static boolean enableAdvancedAggregation = true;
+
 	private List<AggregatorChoice> aggregators;
 
 	public NoteAudioSourceAggregator() {
@@ -40,18 +42,21 @@ public class NoteAudioSourceAggregator implements CodeFeatures {
 				ModularSourceAggregator.InputType.SOURCE,
 				ModularSourceAggregator.InputType.SOURCE,
 				ModularSourceAggregator.InputType.SOURCE), 1.0));
-		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
-				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
-		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
-				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.FREQUENCY), 1.0));
-		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
-				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.FREQUENCY,
-				ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+
+		if (enableAdvancedAggregation) {
+			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+					ModularSourceAggregator.InputType.SOURCE,
+					ModularSourceAggregator.InputType.SOURCE,
+					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+					ModularSourceAggregator.InputType.SOURCE,
+					ModularSourceAggregator.InputType.SOURCE,
+					ModularSourceAggregator.InputType.FREQUENCY), 1.0));
+			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
+					ModularSourceAggregator.InputType.SOURCE,
+					ModularSourceAggregator.InputType.FREQUENCY,
+					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+		}
 	}
 
 	protected double getTotalWeight() {

@@ -17,22 +17,29 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.Console;
 
 import java.util.stream.IntStream;
 
-public class ModularSourceAggregator implements SourceAggregator {
+public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
+	private static long count = 0;
+
 	private InputType[] inputs;
 
 	private SummingSourceAggregator sum;
 	private FrequencyRescalingSourceAggregator eqAdjust;
 	private VolumeRescalingSourceAggregator volumeAdjust;
+	private long index;
 
 	public ModularSourceAggregator(InputType... inputs) {
 		this.inputs = inputs;
 		this.sum = new SummingSourceAggregator();
 		this.eqAdjust = new FrequencyRescalingSourceAggregator();
 		this.volumeAdjust = new VolumeRescalingSourceAggregator();
+		this.index = count++;
 	}
 
 	@Override
@@ -40,20 +47,33 @@ public class ModularSourceAggregator implements SourceAggregator {
 												   Producer<PackedCollection<?>> params,
 												   Producer<PackedCollection<?>> frequency,
 												   Producer<PackedCollection<?>>... sources) {
-		Producer<PackedCollection<?>>[] eq = extractInputs(InputType.FREQUENCY, sources);
-		Producer<PackedCollection<?>>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, sources);
-		sources = extractInputs(InputType.SOURCE, sources);
+		Producer[] producers = new Producer[sources.length + 1];
+		producers[0] = frequency;
+		for (int i = 0; i < sources.length; i++) {
+			producers[i + 1] = sources[i];
+		}
 
-		Producer<PackedCollection<?>> input = sum.aggregate(buffer, null, frequency, sources);
-		Producer<PackedCollection<?>> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, frequency, eq) : null;
-		Producer<PackedCollection<?>> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, frequency, volume) : null;
+		return instruct("ModularSourceAggregator.aggregate_" + index, p -> {
+			Producer<PackedCollection<?>>[] src = new Producer[sources.length];
+			for (int i = 0; i < sources.length; i++) {
+				src[i] = p[i + 1];
+			}
 
-		Producer<PackedCollection<?>> out = input;
-		out = eqInput == null ? out :
-				eqAdjust.aggregate(buffer, null, frequency, input, eqInput);
-		out = volumeInput == null ? out :
-				volumeAdjust.aggregate(buffer, null, frequency, out, volumeInput);
-		return out;
+			Producer<PackedCollection<?>>[] eq = extractInputs(InputType.FREQUENCY, src);
+			Producer<PackedCollection<?>>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);
+			src = extractInputs(InputType.SOURCE, src);
+
+			Producer<PackedCollection<?>> input = sum.aggregate(buffer, null, p[0], src);
+			Producer<PackedCollection<?>> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, p[0], eq) : null;
+			Producer<PackedCollection<?>> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, p[0], volume) : null;
+
+			Producer<PackedCollection<?>> out = input;
+			out = eqInput == null ? out :
+					eqAdjust.aggregate(buffer, null, p[0], input, eqInput);
+			out = volumeInput == null ? out :
+					volumeAdjust.aggregate(buffer, null, p[0], out, volumeInput);
+			return out;
+		}, producers);
 	}
 
 	protected Producer<PackedCollection<?>>[] extractInputs(InputType type, Producer<PackedCollection<?>>... sources) {
@@ -70,6 +90,9 @@ public class ModularSourceAggregator implements SourceAggregator {
 
 		return result;
 	}
+
+	@Override
+	public Console console() { return CellFeatures.console; }
 
 	public enum InputType {
 		SOURCE, FREQUENCY, FREQUENCY_ENVELOPE, VOLUME_ENVELOPE

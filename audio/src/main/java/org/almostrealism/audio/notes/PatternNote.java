@@ -33,10 +33,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PatternNote extends PatternNoteAudioAdapter {
+	private static NoteAudioSourceAggregator layerAggregator;
+
+	static {
+		layerAggregator = new NoteAudioSourceAggregator();
+	}
+
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
-	private NoteAudioSourceAggregator layerAggregator;
 	private List<PatternNoteAudio> layers;
 	private double aggregationChoice;
 
@@ -44,7 +49,6 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	public PatternNote(List<PatternNoteAudio> layers) {
 		this.layers = layers;
-		this.layerAggregator = new NoteAudioSourceAggregator();
 	}
 
 	public PatternNote(double... noteAudioSelections) {

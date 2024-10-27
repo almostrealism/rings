@@ -35,6 +35,7 @@ import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.NoteAudioSourceAggregator;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.pattern.PatternLayerManager;
@@ -61,7 +62,7 @@ import org.almostrealism.time.TemporalRunner;
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
 	public static final String POPULATION_FILE = "population.xml";
 
-	public static final int verbosity = 0;
+	public static final int verbosity = 1;
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
@@ -141,8 +142,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		AudioPopulationOptimizer.enableIsolatedContext = false;
 		AudioPopulationOptimizer.enableStemOutput = true;
 
+		NoteAudioSourceAggregator.enableAdvancedAggregation = false; // true;
+
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = 60;
+		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 4;
 
 		// Verbosity level 0
 		PopulationOptimizer.enableBreeding = verbosity < 1;
