@@ -104,7 +104,9 @@ public class EfxManager implements CellFeatures {
 			return createCells(audio, totalDuration);
 		}
 
-		CellList cells = createCells(applyFilter(channel, audio), totalDuration);
+		CellList wet = createCells(applyFilter(channel, audio), totalDuration)
+						.map(fc(i -> delayLevels.valueAt(channel, 0)));
+		CellList dry = createCells(audio, totalDuration);
 
 		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
 
@@ -113,11 +115,6 @@ public class EfxManager implements CellFeatures {
 						scalar(shape(1), multiply(c(beatDuration.getAsDouble()), delay), 0),
 						scalar(1.0)))
 				.collect(CellList.collector());
-
-		CellList branch[] = cells.branch(fc(i -> delayLevels.valueAt(channel, 0)),
-										fc(i -> sf(1.0)));
-		CellList wet = branch[0];
-		CellList dry = branch[1];
 
 		IntFunction<Cell<PackedCollection<?>>> auto =
 				enableAutomation ?
@@ -132,7 +129,7 @@ public class EfxManager implements CellFeatures {
 				.mself(fi(), i -> g(delayLevels.valueAt(channel, 1)))
 				.sum();
 
-		cells = cells(wet, dry).sum();
+		CellList cells = cells(wet, dry).sum();
 		return cells;
 	}
 
