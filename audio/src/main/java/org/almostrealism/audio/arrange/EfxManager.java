@@ -17,14 +17,18 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class EfxManager implements CellFeatures {
 	public static boolean enableAutomation = true;
 	public static double maxWet = 0.5;
 	public static double maxFeedback = 0.5;
+	public static int filterOrder = 40;
 
 	private AutomationManager automation;
 
@@ -80,7 +85,7 @@ public class EfxManager implements CellFeatures {
 		delayTimes = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
 
-		delayLevels = genome.addSimpleChromosome(2);
+		delayLevels = genome.addSimpleChromosome(4);
 		IntStream.range(0, channels).forEach(i -> {
 			SimpleGene g = delayLevels.addGene();
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
@@ -94,14 +99,12 @@ public class EfxManager implements CellFeatures {
 	public List<Integer> getWetChannels() { return wetChannels; }
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
-	public CellList apply(int channel, CellList cells) {
+	public CellList apply(int channel, Producer<PackedCollection<?>> audio, double totalDuration) {
 		if (!enableEfx || !wetChannels.contains(channel)) {
-			return cells;
+			return createCells(audio, totalDuration);
 		}
 
-		if (cells.size() != 1) {
-			warn("CellList size is " + cells.size());
-		}
+		CellList cells = createCells(applyFilter(channel, audio), totalDuration);
 
 		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
 
@@ -131,5 +134,30 @@ public class EfxManager implements CellFeatures {
 
 		cells = cells(wet, dry).sum();
 		return cells;
+	}
+
+	protected CellList createCells(Producer<PackedCollection<?>> audio, double totalDuration) {
+		return w(PolymorphicAudioData.supply(PackedCollection.factory()),
+				sampleRate, shape(audio).getTotalSize(),
+				null, c(totalDuration), audio);
+	}
+
+	protected Producer<PackedCollection<?>> applyFilter(int channel, Producer<PackedCollection<?>> audio) {
+		Producer<PackedCollection<?>> decision =
+				delayLevels.valueAt(channel, 2).getResultant(c(1.0));
+		Producer<PackedCollection<?>> cutoff = c(20000)
+				.multiply(delayLevels.valueAt(channel, 3).getResultant(c(1.0)));
+
+		CollectionProducer<PackedCollection<?>> lpCoefficients =
+				lowPassCoefficients(cutoff, sampleRate, filterOrder)
+						.reshape(1, filterOrder + 1);
+		CollectionProducer<PackedCollection<?>> hpCoefficients =
+				highPassCoefficients(cutoff, sampleRate, filterOrder)
+						.reshape(1, filterOrder + 1);
+
+		Producer<PackedCollection<?>> coefficients = choice(2,
+				shape(filterOrder + 1), decision,
+				concat(shape(2, filterOrder + 1), hpCoefficients, lpCoefficients));
+		return MultiOrderFilter.create(audio, coefficients);
 	}
 }

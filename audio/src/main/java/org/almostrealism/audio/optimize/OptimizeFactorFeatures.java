@@ -299,10 +299,10 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 
 		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
 
-		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
+		CollectionProducerComputation direction = c(scalarChoice(2, toScalar(d), p(directionChoices)), 0);
 
 		CollectionProducer magnitude = multiply(scale, m);
-		CollectionProducer start = c(choice(2, toScalar(d), originChoices), 0);
+		CollectionProducer start = c(scalarChoice(2, toScalar(d), originChoices), 0);
 		CollectionProducer end = multiply(direction, magnitude).add(start);
 
 		CollectionProducer pos = pow(divide(time, duration), e);

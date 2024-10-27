@@ -497,7 +497,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 
 		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
-		CellList cells = all(channelIndex.length, i -> efx.apply(channelIndex[i], getPatternChannel(channelIndex[i], totalSamples, setup)));
+		CellList cells = all(channelIndex.length, i -> getPatternChannel(channelIndex[i], totalSamples, setup));
 		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
 	}
 
@@ -534,8 +534,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		Producer<PackedCollection<?>> result =
 				func(audioShape, args -> patternDestinations.get(channel).range(audioShape), false);
-		return w(PolymorphicAudioData.supply(PackedCollection.factory()), getSampleRate(), audioShape.getTotalSize(),
-				null, c(getTotalDuration()), result);
+		return efx.apply(channel, result, getTotalDuration());
 	}
 
 	public Supplier<Runnable> getPatternSetup(int channel) {
