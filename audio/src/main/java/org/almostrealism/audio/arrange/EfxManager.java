@@ -136,7 +136,7 @@ public class EfxManager implements CellFeatures {
 	protected CellList createCells(Producer<PackedCollection<?>> audio, double totalDuration) {
 		return w(PolymorphicAudioData.supply(PackedCollection.factory()),
 				sampleRate, shape(audio).getTotalSize(),
-				null, c(totalDuration), audio);
+				null, c(totalDuration), traverse(0, audio));
 	}
 
 	protected Producer<PackedCollection<?>> applyFilter(int channel, Producer<PackedCollection<?>> audio) {

@@ -27,6 +27,7 @@ import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
@@ -180,6 +181,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		Hardware.getLocalHardware().assignProfile(profile);
 		StableDurationHealthComputation.profile = profile;
 
+		WaveData.init();
+
 		try {
 			Heap heap = new Heap(DEFAULT_HEAP_SIZE);
 
@@ -211,6 +214,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				}
 			});
 		} finally {
+			File results = new File("results");
+			if (!results.exists()) results.mkdir();
+
 			profile.save("results/optimizer.xml");
 		}
 	}

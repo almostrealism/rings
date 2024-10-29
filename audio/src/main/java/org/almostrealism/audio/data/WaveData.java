@@ -297,6 +297,8 @@ public class WaveData implements SamplingFeatures {
 				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(getCollection().getMemLength()));
 	}
 
+	public static void init() { }
+
 	public static WaveData load(File f) throws IOException {
 		try (WavFile w = WavFile.openWavFile(f)) {
 			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
