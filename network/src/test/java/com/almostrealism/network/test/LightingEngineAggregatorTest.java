@@ -21,13 +21,13 @@ import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.swing.displays.ImageDisplay;
@@ -132,8 +132,8 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 
 			if (a.getArguments().get(i).getProducer() instanceof ProducerArgumentReference) {
 				continue i;
-			} else if (a.getArguments().get(i).getProducer() instanceof KernelizedEvaluable) {
-				KernelizedEvaluable kp = (KernelizedEvaluable)  a.getArguments().get(i).getProducer();
+			} else {
+				Evaluable kp = a.getArguments().get(i).getProducer().get();
 				MemoryBank output = (MemoryBank) kp.createDestination(input.getCount());
 				kp.into(output).evaluate(input, dim);
 
@@ -142,9 +142,6 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 					Object value = kp.evaluate(input.get(j), dim.get(j));
 					Assert.assertEquals(value, output.get(j));
 				}
-			} else {
-				throw new IllegalArgumentException(a.getArguments().get(i).getProducer().getClass().getSimpleName() +
-						" is not a ProducerArgumentReference nor does it provide a KernelizedEvaluable");
 			}
 		}
 	}

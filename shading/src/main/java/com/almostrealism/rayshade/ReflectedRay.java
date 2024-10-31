@@ -22,7 +22,6 @@ import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.GeometryFeatures;
 import org.almostrealism.geometry.Ray;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Evaluable;
@@ -41,11 +40,11 @@ public class ReflectedRay implements ProducerComputation<Ray>, GeometryFeatures 
 	}
 
 	@Override
-	public KernelizedEvaluable<Ray> get() {
+	public Evaluable<Ray> get() {
 		Evaluable<Vector> nor = normal.get();
 		Evaluable<Vector> refl = reflected.get();
 
-		return new KernelizedEvaluable<>() {
+		return new Evaluable<>() {
 			@Override
 			public MemoryBank<Ray> createDestination(int size) { return Ray.bank(size); }
 

@@ -16,6 +16,7 @@
 
 package com.almostrealism.raytrace;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.Intersectable;
@@ -27,7 +28,6 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.CollectionUtils;
@@ -105,7 +105,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
 			this.ranks.add(Scalar.scalarBank(input.getCount()));
-			((KernelizedEvaluable) get(i).getRank().get()).into(ranks.get(i)).evaluate(input);
+			((Evaluable) get(i).getRank().get()).into(ranks.get(i)).evaluate(input);
 		}
 
 		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
