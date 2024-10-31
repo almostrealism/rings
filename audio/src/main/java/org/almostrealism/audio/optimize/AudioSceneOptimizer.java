@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
@@ -137,6 +138,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		MixdownManager.enableMasterFilterDown = true;
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = false;
+		EfxManager.enableEfx = true;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;

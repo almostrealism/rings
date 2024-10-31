@@ -24,11 +24,12 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
 import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
-	public static boolean enableReusableProducer = true;
+	public static boolean enableReusableProducer = false;
 
 	public static final int MAX_SECONDS = 180;
 
@@ -146,7 +147,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 							() -> factor.getResultant(p[0]));
 				}, audio, duration, p(d0), p(d1), p(d2), p(v0), p(v1), p(v2), p(v3));
 			} else {
-				return () -> args -> {
+				return new DynamicCollectionProducer<>(shape(audio), args -> {
 					PackedCollection<?> audioData = audio.get().evaluate();
 					PackedCollection<?> dr = duration.get().evaluate();
 
@@ -158,7 +159,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 					}
 
 					return out;
-				};
+				}, false);
 			}
 		}
 

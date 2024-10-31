@@ -50,7 +50,8 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 
 					for (int i = 0; i < layerAudio.size(); i++) {
 						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
-						int f = Math.min(frames[i], totalFrames);
+						int f = frames[i] > 1 ? frames[i] : audio.getShape().getTotalSize();
+						f = Math.min(f, totalFrames);
 
 						PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
 					}
