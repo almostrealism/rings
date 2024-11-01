@@ -534,7 +534,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		Producer<PackedCollection<?>> result =
 				func(audioShape, args -> patternDestinations.get(channel).range(audioShape), false);
-		return efx.apply(channel, result, getTotalDuration());
+		return efx.apply(channel, result, getTotalDuration(), setup);
 	}
 
 	public Supplier<Runnable> getPatternSetup(int channel) {

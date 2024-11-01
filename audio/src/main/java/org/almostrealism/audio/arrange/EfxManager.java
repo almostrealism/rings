@@ -25,6 +25,7 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
+import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
@@ -99,12 +100,12 @@ public class EfxManager implements CellFeatures {
 	public List<Integer> getWetChannels() { return wetChannels; }
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
-	public CellList apply(int channel, Producer<PackedCollection<?>> audio, double totalDuration) {
+	public CellList apply(int channel, Producer<PackedCollection<?>> audio, double totalDuration, OperationList setup) {
 		if (!enableEfx || !wetChannels.contains(channel)) {
 			return createCells(audio, totalDuration);
 		}
 
-		CellList wet = createCells(applyFilter(channel, audio), totalDuration)
+		CellList wet = createCells(applyFilter(channel, audio, setup), totalDuration)
 						.map(fc(i -> delayLevels.valueAt(channel, 0)));
 		CellList dry = createCells(audio, totalDuration);
 
@@ -139,7 +140,9 @@ public class EfxManager implements CellFeatures {
 				null, c(totalDuration), traverse(0, audio));
 	}
 
-	protected Producer<PackedCollection<?>> applyFilter(int channel, Producer<PackedCollection<?>> audio) {
+	protected Producer<PackedCollection<?>> applyFilter(int channel, Producer<PackedCollection<?>> audio, OperationList setup) {
+		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
+
 		Producer<PackedCollection<?>> decision =
 				delayLevels.valueAt(channel, 2).getResultant(c(1.0));
 		Producer<PackedCollection<?>> cutoff = c(20000)
@@ -155,6 +158,9 @@ public class EfxManager implements CellFeatures {
 		Producer<PackedCollection<?>> coefficients = choice(2,
 				shape(filterOrder + 1), decision,
 				concat(shape(2, filterOrder + 1), hpCoefficients, lpCoefficients));
-		return MultiOrderFilter.create(audio, coefficients);
+
+		setup.add(a("efxFilter", cp(destination.each()),
+					MultiOrderFilter.create(audio, coefficients)));
+		return cp(destination);
 	}
 }
