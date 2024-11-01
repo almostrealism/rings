@@ -517,7 +517,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 					int len = section.getLength() * getMeasureSamples();
 
 					if (audioShape.getTotalSize() < pos + len) {
-						System.out.println("WARN: Section at position " + pos +
+						warn("Section at position " + pos +
 								" extends beyond the end of the pattern destination (" +
 								audioShape.getTotalSize() + " frames)");
 						return new OperationList("Section Processing (Invalid Size)");
