@@ -18,6 +18,7 @@ package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.time.Frequency;
@@ -62,7 +63,7 @@ public class SceneSectionManager implements Setup {
 
 	public List<SceneSection> getSections() { return Collections.unmodifiableList(sections); }
 
-	public List<ChannelSection> getChannelSections(int channel) {
+	public List<ChannelSection> getChannelSections(ChannelInfo channel) {
 		return sections.stream().map(s -> s.getChannelSection(channel)).collect(Collectors.toList());
 	}
 

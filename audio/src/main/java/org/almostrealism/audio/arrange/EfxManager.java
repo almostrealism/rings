@@ -17,9 +17,9 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
@@ -100,16 +100,16 @@ public class EfxManager implements CellFeatures {
 	public List<Integer> getWetChannels() { return wetChannels; }
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
-	public CellList apply(int channel, Producer<PackedCollection<?>> audio, double totalDuration, OperationList setup) {
+	public CellList apply(ChannelInfo channel, Producer<PackedCollection<?>> audio, double totalDuration, OperationList setup) {
 		if (!enableEfx || !wetChannels.contains(channel)) {
 			return createCells(audio, totalDuration);
 		}
 
 		CellList wet = createCells(applyFilter(channel, audio, setup), totalDuration)
-						.map(fc(i -> delayLevels.valueAt(channel, 0)));
+						.map(fc(i -> delayLevels.valueAt(channel.getChannel(), 0)));
 		CellList dry = createCells(audio, totalDuration);
 
-		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
+		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getChannel(), 0).getResultant(c(1.0));
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
@@ -120,14 +120,15 @@ public class EfxManager implements CellFeatures {
 		IntFunction<Cell<PackedCollection<?>>> auto =
 				enableAutomation ?
 						fc(i -> in -> {
-							Producer<PackedCollection<?>> value = automation.getAggregatedValue(delayAutomation.valueAt(channel), null, 0.0);
+							Producer<PackedCollection<?>> value = automation
+									.getAggregatedValue(delayAutomation.valueAt(channel.getChannel()), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
 						}) :
 						fi();
 
 		wet = wet.m(auto, delays)
-				.mself(fi(), i -> g(delayLevels.valueAt(channel, 1)))
+				.mself(fi(), i -> g(delayLevels.valueAt(channel.getChannel(), 1)))
 				.sum();
 
 		CellList cells = cells(wet, dry).sum();
@@ -140,13 +141,13 @@ public class EfxManager implements CellFeatures {
 				null, c(totalDuration), traverse(0, audio));
 	}
 
-	protected Producer<PackedCollection<?>> applyFilter(int channel, Producer<PackedCollection<?>> audio, OperationList setup) {
+	protected Producer<PackedCollection<?>> applyFilter(ChannelInfo channel, Producer<PackedCollection<?>> audio, OperationList setup) {
 		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
 
 		Producer<PackedCollection<?>> decision =
-				delayLevels.valueAt(channel, 2).getResultant(c(1.0));
+				delayLevels.valueAt(channel.getChannel(), 2).getResultant(c(1.0));
 		Producer<PackedCollection<?>> cutoff = c(20000)
-				.multiply(delayLevels.valueAt(channel, 3).getResultant(c(1.0)));
+				.multiply(delayLevels.valueAt(channel.getChannel(), 3).getResultant(c(1.0)));
 
 		CollectionProducer<PackedCollection<?>> lpCoefficients =
 				lowPassCoefficients(cutoff, sampleRate, filterOrder)

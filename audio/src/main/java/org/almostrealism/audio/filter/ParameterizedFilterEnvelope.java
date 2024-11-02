@@ -19,6 +19,7 @@ package org.almostrealism.audio.filter;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
@@ -59,31 +60,37 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	public void setMode(Mode mode) { this.mode = mode; }
 
 	@Override
-	public NoteAudioFilter createFilter(ParameterSet params) {
-		return new Filter(params);
+	public NoteAudioFilter createFilter(ParameterSet params, ChannelInfo.Voicing voicing) {
+		return new Filter(params, voicing);
 	}
 
 	public class Filter implements NoteAudioFilter {
 		private ParameterSet params;
+		private ChannelInfo.Voicing voicing;
 
-		public Filter(ParameterSet params) {
+		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
+			this.voicing = voicing;
+		}
+
+		public ChannelInfo.Voicing getVoicing() {
+			return voicing;
 		}
 
 		public double getAttack() {
-			return mode.getMaxAttack() * getAttackSelection().positive().apply(params);
+			return mode.getMaxAttack(getVoicing()) * getAttackSelection().positive().apply(params);
 		}
 
 		public double getDecay() {
-			return mode.getMaxDecay() * getDecaySelection().positive().apply(params);
+			return mode.getMaxDecay(getVoicing()) * getDecaySelection().positive().apply(params);
 		}
 
 		public double getSustain() {
-			return mode.getMaxSustain() * getSustainSelection().positive().apply(params);
+			return mode.getMaxSustain(getVoicing()) * getSustainSelection().positive().apply(params);
 		}
 
 		public double getRelease() {
-			return mode.getMaxRelease() * getReleaseSelection().positive().apply(params);
+			return mode.getMaxRelease(getVoicing()) * getReleaseSelection().positive().apply(params);
 		}
 
 		@Override
@@ -131,17 +138,17 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	public enum Mode {
 		STANDARD_NOTE, NOTE_LAYER;
 
-		public double getMaxAttack() {
+		public double getMaxAttack(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 0.5;
 				case STANDARD_NOTE:
 				default:
-					return 0.1;
+					return voicing == ChannelInfo.Voicing.WET ? 0.3 : 0.1;
 			}
 		}
 
-		public double getMaxDecay() {
+		public double getMaxDecay(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 0.5;
@@ -151,23 +158,23 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 			}
 		}
 
-		public double getMaxSustain() {
+		public double getMaxSustain(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 1.0;
 				case STANDARD_NOTE:
 				default:
-					return 0.2;
+					return voicing == ChannelInfo.Voicing.WET ? 0.3 : 0.2;
 			}
 		}
 
-		public double getMaxRelease() {
+		public double getMaxRelease(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 6.0;
 				case STANDARD_NOTE:
 				default:
-					return 5.0;
+					return voicing == ChannelInfo.Voicing.WET ? 8.0 : 5.0;
 			}
 		}
 	}

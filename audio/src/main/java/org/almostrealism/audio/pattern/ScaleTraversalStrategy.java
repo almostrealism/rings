@@ -53,11 +53,13 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 					warn("Multiple scale position for non-melodic material");
 				}
 
+				ElementVoicingDetails details =
+						audioContext.createVoicingDetails(melodic,
+								keys.get(0), relativePosition);
 				Producer<PackedCollection<?>> note =
-						element.getNoteAudio(melodic,
-								keys.get(0), relativePosition,
-								audioContext.nextNotePosition(relativePosition),
-								automationLevel, audioContext.getAudioSelection(),
+						element.getNoteAudio(
+								details, automationLevel,
+								audioContext.getAudioSelection(),
 								context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note,
 						context.frameForPosition(actualPosition)));
@@ -66,12 +68,14 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 					if (keys.isEmpty()) break p;
 					int keyIndex = (int) (p * keys.size());
 
+					ElementVoicingDetails details =
+							audioContext.createVoicingDetails(melodic,
+								keys.get(keyIndex), relativePosition);
 					Producer<PackedCollection<?>> note =
-							element.getNoteAudio(melodic,
-								keys.get(keyIndex), relativePosition,
-								audioContext.nextNotePosition(relativePosition),
-									automationLevel, audioContext.getAudioSelection(),
-								context.getTimeForDuration());
+							element.getNoteAudio(
+									details, automationLevel,
+									audioContext.getAudioSelection(),
+									context.getTimeForDuration());
 					destinations.add(new RenderedNoteAudio(note,
 							context.frameForPosition(actualPosition)));
 
@@ -82,10 +86,12 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 				if (keys.isEmpty()) break;
 
 				int keyIndex = (int) (p * keys.size());
+				ElementVoicingDetails details =
+						audioContext.createVoicingDetails(melodic,
+								keys.get(keyIndex), relativePosition);
 				Producer<PackedCollection<?>> note = element.getNoteAudio(
-							melodic, keys.get(keyIndex), relativePosition,
-							audioContext.nextNotePosition(relativePosition),
-						automationLevel, audioContext.getAudioSelection(),
+							details, automationLevel,
+							audioContext.getAudioSelection(),
 							context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));
 			} else {

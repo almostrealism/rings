@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.pattern.PatternElement;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class AudioChoiceNode implements NoteAudioNode {
 
 		children = patternElements
 				.stream()
-				.map(PatternElement::getNote)
+				.map(e -> e.getNote(ChannelInfo.Voicing.MAIN))
 				.distinct()
 				.map(note -> new PatternNoteNode(choice, note))
 				.collect(Collectors.toList());

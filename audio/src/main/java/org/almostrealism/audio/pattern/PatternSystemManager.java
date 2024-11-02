@@ -22,6 +22,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.AutomationManager;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -177,7 +178,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		patterns.clear();
 	}
 
-	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context) {
+	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
 		OperationList updateDestinations = new OperationList("PatternSystemManager Update Destinations");
 		updateDestinations.add(() -> () -> this.destination = context.get().getDestination());
 		updateDestinations.add(() -> () ->
@@ -197,16 +198,16 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 					AudioSceneContext ctx = context.get();
 
 					List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
-							.filter(i -> ctx.getChannels() == null || ctx.getChannels().contains(patterns.get(i).getChannel()))
-							.boxed().collect(Collectors.toList());
+							.filter(i -> ctx.includesChannel(patterns.get(i).getChannel()))
+							.boxed().toList();
 
 					if (patternsForChannel.isEmpty()) {
-						if (enableWarnings) System.out.println("PatternSystemManager: No patterns");
+						if (enableWarnings) warn("No patterns");
 						return;
 					}
 
 					patternsForChannel.stream().forEach(i -> {
-						patterns.get(i).sum(context);
+						patterns.get(i).sum(context, voicing);
 					});
 
 					if (enableVerbose)

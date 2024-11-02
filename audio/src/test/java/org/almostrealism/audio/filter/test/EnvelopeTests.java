@@ -18,6 +18,7 @@ package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
@@ -244,7 +245,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	@Test
 	public void parameterizedVolumeEnvelope() {
 		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
-		PatternNoteLayer result = penv.apply(ParameterSet.random(),
+		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN,
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
 		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
@@ -254,7 +255,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	@Test
 	public void parameterizedFilterEnvelope() {
 		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
-		PatternNoteLayer result = penv.apply(ParameterSet.random(),
+		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN,
 				PatternNoteLayer.create("Library/organ.wav"));
 		result.setTuning(new DefaultKeyboardTuning());
 		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)

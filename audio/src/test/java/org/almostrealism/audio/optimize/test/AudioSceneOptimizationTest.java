@@ -18,6 +18,7 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.pattern.PatternLayerManager;
@@ -98,7 +99,7 @@ public class AudioSceneOptimizationTest implements CellFeatures {
 		OperationList setup = new OperationList();
 		setup.add(pattern.getTimeManager().setup());
 
-		CellList cells = pattern.getPatternChannel(0, pattern.getTotalSamples(), setup);
+		CellList cells = pattern.getPatternChannel(new ChannelInfo(0, ChannelInfo.Voicing.MAIN), pattern.getTotalSamples(), setup);
 		cells.addSetup(() -> setup);
 		cells.o(i -> new File("results/pattern-test.wav")).sec(20).get().run();
 	}

@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.arrange;
 
+import org.almostrealism.audio.data.ChannelInfo;
+
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class SceneSection {
 	public int getPosition() { return position; }
 	public int getLength() { return length; }
 
-	public ChannelSection getChannelSection(int channel) { return channels.get(channel); }
+	public ChannelSection getChannelSection(ChannelInfo channel) { return channels.get(channel.getChannel()); }
 
 	public static SceneSection createSection(int position, int length, int channels, Supplier<ChannelSection> supply) {
 		return new SceneSection(position, length, IntStream.range(0, channels).mapToObj(i -> supply.get()).collect(Collectors.toList()));

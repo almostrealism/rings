@@ -20,6 +20,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
@@ -64,15 +65,17 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 	}
 
 	@Override
-	public NoteAudioFilter createFilter(ParameterSet params) {
-		return new Filter(params);
+	public NoteAudioFilter createFilter(ParameterSet params, ChannelInfo.Voicing voicing) {
+		return new Filter(params, voicing);
 	}
 
 	public class Filter implements NoteAudioFilter {
 		private ParameterSet params;
+		private ChannelInfo.Voicing voicing;
 
-		public Filter(ParameterSet params) {
+		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
+			this.voicing = voicing;
 		}
 
 		public double getAttack() {

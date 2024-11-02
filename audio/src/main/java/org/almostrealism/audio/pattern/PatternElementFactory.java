@@ -18,6 +18,7 @@ package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
@@ -25,7 +26,6 @@ import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
@@ -218,11 +218,17 @@ public class PatternElementFactory implements ConsoleFeatures {
 						})
 						.toArray();
 
-		PatternNote choice = getNoteFactory().apply(params, melodic, noteLayers);
-		if (enableFilterEnvelope && melodic) choice = filterEnvelope.apply(params, choice);
-		if (enableVolumeEnvelope && melodic) choice = volumeEnvelope.apply(params, choice);
+		PatternNote choice = getNoteFactory().apply(params, null, melodic, noteLayers);
 
-		PatternElement element = new PatternElement(choice, pos);
+		PatternNote main = choice;
+		if (enableFilterEnvelope && melodic) main = filterEnvelope.apply(params, ChannelInfo.Voicing.MAIN, main);
+		if (enableVolumeEnvelope && melodic) main = volumeEnvelope.apply(params, ChannelInfo.Voicing.MAIN, main);
+
+		PatternNote wet = choice;
+		if (enableFilterEnvelope && melodic) wet = filterEnvelope.apply(params, ChannelInfo.Voicing.WET, wet);
+		if (enableVolumeEnvelope) wet = volumeEnvelope.apply(params, ChannelInfo.Voicing.WET, wet);
+
+		PatternElement element = new PatternElement(main, wet, pos);
 		element.setScalePosition(chordNoteSelection.applyAll(params, pos, scale, depth));
 		element.setDurationStrategy(melodic ?
 				(scaleTraversalStrategy == ScaleTraversalStrategy.CHORD ?

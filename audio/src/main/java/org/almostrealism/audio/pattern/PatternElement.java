@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
@@ -27,14 +28,16 @@ import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PatternElement implements CodeFeatures {
-	private PatternNote note;
+	private Map<ChannelInfo.Voicing, PatternNote> notes;
 	private double position;
 
 	private NoteDurationStrategy durationStrategy;
@@ -50,11 +53,31 @@ public class PatternElement implements CodeFeatures {
 	private PackedCollection<?> automationParameters;
 
 	public PatternElement() {
-		this(null, 0.0);
+		this((PatternNote) null, 0.0);
 	}
 
 	public PatternElement(PatternNote note, double position) {
-		setNote(note);
+		this(new HashMap<>(), position);
+
+		if (note != null) {
+			setNote(ChannelInfo.Voicing.MAIN, note);
+		}
+	}
+
+	public PatternElement(PatternNote mainNote, PatternNote wetNote, double position) {
+		this(new HashMap<>(), position);
+
+		if (mainNote != null) {
+			setNote(ChannelInfo.Voicing.MAIN, mainNote);
+		}
+
+		if (wetNote != null) {
+			setNote(ChannelInfo.Voicing.WET, wetNote);
+		}
+	}
+
+	public PatternElement(Map<ChannelInfo.Voicing, PatternNote> notes, double position) {
+		setNotes(notes);
 		setPosition(position);
 		setDurationStrategy(NoteDurationStrategy.NONE);
 		setScaleTraversalStrategy(ScaleTraversalStrategy.CHORD);
@@ -64,9 +87,12 @@ public class PatternElement implements CodeFeatures {
 		setRepeatDuration(1);
 	}
 
-	public PatternNote getNote() { return note; }
-	public void setNote(PatternNote note) {
-		this.note = note;
+	public Map<ChannelInfo.Voicing, PatternNote> getNotes() { return notes; }
+	public void setNotes(Map<ChannelInfo.Voicing, PatternNote> notes) { this.notes = notes; }
+
+	public PatternNote getNote(ChannelInfo.Voicing voicing) { return notes.get(voicing); }
+	public void setNote(ChannelInfo.Voicing voicing, PatternNote note) {
+		this.notes.put(voicing, note);
 	}
 
 	public double getPosition() {
@@ -133,7 +159,7 @@ public class PatternElement implements CodeFeatures {
 
 	@JsonIgnore
 	public void setTuning(KeyboardTuning tuning) {
-		this.note.setTuning(tuning);
+		this.notes.values().forEach(n -> n.setTuning(tuning));
 	}
 
 	public List<Double> getPositions() {
@@ -150,21 +176,20 @@ public class PatternElement implements CodeFeatures {
 									context, audioContext);
 	}
 
-	public Producer<PackedCollection<?>> getNoteAudio(boolean melodic, KeyPosition<?> target,
-													  double position, double nextNotePosition,
+	public Producer<PackedCollection<?>> getNoteAudio(ElementVoicingDetails details,
 													  Producer<PackedCollection<?>> automationLevel,
 													  DoubleFunction<NoteAudioProvider> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
-		KeyPosition<?> k = melodic ? target : null;
+		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;
 
-		double originalDuration = getNote().getDuration(target, audioSelection);
+		double originalDuration = getNote(details.getVoicing()).getDuration(details.getTarget(), audioSelection);
 
 		if (getDurationStrategy() == NoteDurationStrategy.NONE) {
-			return getNote().getAudio(k, originalDuration, automationLevel, audioSelection);
+			return getNote(details.getVoicing()).getAudio(k, originalDuration, automationLevel, audioSelection);
 		} else {
-			return getNote().getAudio(k,
-					getNoteDuration(timeForDuration, position,
-						nextNotePosition, originalDuration),
+			return getNote(details.getVoicing()).getAudio(k,
+					getNoteDuration(timeForDuration, details.getPosition(),
+						details.getNextNotePosition(), originalDuration),
 					automationLevel, audioSelection);
 		}
 	}

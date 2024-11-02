@@ -1,5 +1,6 @@
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedEnvelopeLayers;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
@@ -52,14 +53,14 @@ public class PatternNoteFactory {
 		this.filterEnvelope = filterEnvelope;
 	}
 
-	public PatternNote apply(ParameterSet params, boolean blend, double... choices) {
+	public PatternNote apply(ParameterSet params, ChannelInfo.Voicing voicing, boolean blend, double... choices) {
 		List<PatternNoteAudio> layers = new ArrayList<>();
 
 		for (int i = 0; i < getLayerCount(); i++) {
 			PatternNoteLayer l = new PatternNoteLayer(choices[i]);
 
 			if (blend) {
-				l = layerEnvelopes.getEnvelope(i).apply(params, l);
+				l = layerEnvelopes.getEnvelope(i).apply(params, voicing, l);
 			} else {
 //				l = volumeEnvelope.apply(params, l);
 //				l = filterEnvelope.apply(params, l);

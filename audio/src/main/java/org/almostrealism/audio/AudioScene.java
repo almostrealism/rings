@@ -29,10 +29,10 @@ import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.arrange.RiseManager;
 import org.almostrealism.audio.arrange.SceneSectionManager;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
-import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
@@ -64,7 +64,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -157,7 +159,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	private AudioLibrary library;
 	private PatternSystemManager patterns;
-	private List<PackedCollection<?>> patternDestinations;
+	private Map<ChannelInfo, PackedCollection<?>> patternDestinations;
 	private List<String> channelNames;
 	private double patternActivityBias;
 
@@ -220,7 +222,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		addDurationListener(duration -> {
 			if (patternDestinations != null) {
-				patternDestinations.forEach(PackedCollection::destroy);
+				patternDestinations.values().forEach(PackedCollection::destroy);
 				patternDestinations = null;
 			}
 		});
@@ -346,7 +348,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 	public int getSampleRate() { return sampleRate; }
 
-	public AudioSceneContext getContext(List<Integer> channels) {
+	public AudioSceneContext getContext(List<ChannelInfo> channels) {
 		if (channels.size() != 1) {
 			throw new IllegalArgumentException();
 		}
@@ -497,11 +499,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 
 		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
-		CellList cells = all(channelIndex.length, i -> getPatternChannel(channelIndex[i], totalSamples, setup));
-		return mixdown.cells(cells, measures, stems, output, i -> channelIndex[i]);
+		CellList main = all(channelIndex.length, i ->
+				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.MAIN), totalSamples, setup));
+		CellList wet = all(channelIndex.length, i ->
+				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.WET), totalSamples, setup));
+		return mixdown.cells(main, wet, measures, stems, output, i -> channelIndex[i]);
 	}
 
-	public CellList getPatternChannel(int channel, int frames, OperationList setup) {
+	public CellList getPatternChannel(ChannelInfo channel, int frames, OperationList setup) {
 		OperationList patternSetup = new OperationList("PatternChannel Setup");
 		patternSetup.add(() -> () -> patterns.setTuning(tuning));
 		patternSetup.add(sections.setup());
@@ -537,7 +542,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		return efx.apply(channel, result, getTotalDuration(), setup);
 	}
 
-	public Supplier<Runnable> getPatternSetup(int channel) {
+	public Supplier<Runnable> getPatternSetup(ChannelInfo channel) {
 		Supplier<AudioSceneContext> ctx = () -> {
 			refreshPatternDestination(channel, false);
 			AudioSceneContext context = getContext(List.of(channel));
@@ -548,7 +553,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
 		op.add(() -> () -> refreshPatternDestination(channel, true));
-		op.add(patterns.sum(ctx));
+		op.add(patterns.sum(ctx, channel.getVoicing()));
 		return op;
 	}
 
@@ -588,11 +593,14 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		};
 	}
 
-	private void refreshPatternDestination(int channel, boolean clear) {
+	private void refreshPatternDestination(ChannelInfo channel, boolean clear) {
 		if (patternDestinations == null) {
-			patternDestinations = new ArrayList<>();
+			patternDestinations = new HashMap<>();
 			for (int i = 0; i < getChannelCount(); i++) {
-				patternDestinations.add(new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN),
+						new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET),
+						new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
 			}
 		} else if (clear) {
 			patternDestinations.get(channel).clear();

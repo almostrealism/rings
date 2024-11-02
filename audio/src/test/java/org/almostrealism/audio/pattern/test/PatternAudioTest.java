@@ -19,14 +19,12 @@ package org.almostrealism.audio.pattern.test;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
-import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.pattern.PatternAudio;
-import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -38,20 +36,6 @@ import java.io.File;
 import java.util.List;
 
 public class PatternAudioTest implements EnvelopeFeatures {
-	@Test
-	public void push() {
-		PackedCollection in = new PackedCollection(5);
-		Scalar s = new Scalar(in, 0);
-		s.setLeft(4);
-		s.setRight(6);
-
-		PatternElement e = new PatternElement(new PatternNote(List.of(PatternNoteLayer.create(() -> in))), 0.5);
-		PatternAudio audio = new PatternAudio(60, 1.0, 1.0, 10);
-		audio.push(e);
-
-		Scalar out = new Scalar(audio.getData(), 5);
-		System.out.println(out);
-	}
 
 	@Test
 	public void noteAudio() {
@@ -141,7 +125,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		ParameterizedVolumeEnvelope envelope = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
 
 		PatternNoteLayer note = PatternNoteLayer.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
-		note = envelope.apply(new ParameterSet(), note);
+		note = envelope.apply(new ParameterSet(), ChannelInfo.Voicing.MAIN, note);
 		note.setTuning(new DefaultKeyboardTuning());
 
 		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, null).get().evaluate(),

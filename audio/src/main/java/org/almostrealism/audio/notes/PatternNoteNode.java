@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.notes;
 
+import org.almostrealism.audio.data.ChannelInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +57,7 @@ public class PatternNoteNode implements NoteAudioNode {
 			return;
 		}
 
-		NoteAudioContext audioContext = new NoteAudioContext(choice.getValidNotes(), null);
+		NoteAudioContext audioContext = new NoteAudioContext(ChannelInfo.Voicing.MAIN, choice.getValidNotes(), null);
 		children = note.getProviders(null, audioContext::selectAudio)
 				.stream()
 				.filter(Objects::nonNull)

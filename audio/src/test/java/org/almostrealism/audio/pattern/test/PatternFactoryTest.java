@@ -23,6 +23,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.AutomationManager;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
@@ -195,9 +196,9 @@ public class PatternFactoryTest implements CellFeatures {
 		context.setScaleForPosition(chordProgression::forPosition);
 
 		manager.updateDestination(context);
-		manager.sum(() -> context);
+		manager.sum(() -> context, ChannelInfo.Voicing.MAIN);
 
-		WaveData out = new WaveData(manager.getDestination(), OutputLine.sampleRate);
+		WaveData out = new WaveData(manager.getDestination().get(ChannelInfo.Voicing.MAIN), OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));
 	}
 }

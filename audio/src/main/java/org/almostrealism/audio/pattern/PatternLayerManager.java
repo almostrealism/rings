@@ -19,6 +19,7 @@ package org.almostrealism.audio.pattern;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioChoice;
@@ -63,7 +64,7 @@ public class PatternLayerManager implements PatternFeatures {
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
 
-	private PackedCollection<?> destination;
+	private Map<ChannelInfo.Voicing, PackedCollection<?>> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
 							   SimpleChromosome layerChoiceChromosome,
@@ -101,12 +102,20 @@ public class PatternLayerManager implements PatternFeatures {
 		elementFactory = new PatternElementFactory();
 	}
 
-	public PackedCollection<?> getDestination() { return destination; }
+	public Map<ChannelInfo.Voicing, PackedCollection<?>> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
-		if (context.getChannels().contains(channel)) {
-			destination = context.getDestination();
+		if (context.getChannels() == null) return;
+
+		if (destination == null) {
+			destination = new HashMap<>();
 		}
+
+		context.getChannels().forEach(c -> {
+			if (c.getChannel() == channel) {
+				destination.put(c.getVoicing(), context.getDestination());
+			}
+		});
 	}
 
 	public List<NoteAudioChoice> getChoices() {
@@ -375,7 +384,7 @@ public class PatternLayerManager implements PatternFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(Supplier<AudioSceneContext> context) {
+	public void sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
 		Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -405,34 +414,15 @@ public class PatternLayerManager implements PatternFeatures {
 			double offset = i * duration;
 			elements.keySet().forEach(choice -> {
 				NoteAudioContext audioContext =
-						new NoteAudioContext(
+						new NoteAudioContext(voicing,
 							choice.getValidNotes(),
 							this::nextNotePosition);
 
-				if (destination != ctx.getDestination()) {
+				if (destination.get(voicing) != ctx.getDestination()) {
 					throw new IllegalArgumentException();
 				}
 
 				render(ctx, audioContext, elements.get(choice), melodic, offset);
-
-//				elements.get(choice).stream()
-//						.map(e -> e.getNoteDestinations(melodic, offset, ctx, audioContext))
-//						.flatMap(List::stream)
-//						.forEach(note -> {
-//							if (note.getOffset() >= destination.getShape().length(0)) return;
-//
-//							Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
-//								int frames = Math.min(audio.getShape().getCount(),
-//										destination.getShape().length(0) - note.getOffset());
-//								sizes.addEntry(frames);
-//
-//								TraversalPolicy shape = shape(frames);
-//								return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
-//							};
-//
-//							Heap.stage(() ->
-//									process.apply(traverse(1, note.getProducer()).get().evaluate()));
-//						});
 			});
 		});
 	}
@@ -483,7 +473,7 @@ public class PatternLayerManager implements PatternFeatures {
 			if (i % divide == 0) buf.append("|");
 			for (PatternElement e : elements) {
 				if (e.isPresent(i * scale, (i + 1) * scale)) {
-					String s = e.getNote().toString();
+					String s = e.getNote(ChannelInfo.Voicing.MAIN).toString();
 					if (s.contains("/")) s = s.substring(s.lastIndexOf("/") + 1, s.lastIndexOf("/") + 2);
 					buf.append(s);
 					continue i;

@@ -62,9 +62,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public static boolean enableEfx = true;
 	public static boolean enableReverb = true;
 	public static boolean enableTransmission = true;
-
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
+
+	public static boolean enableWetSources = true;
 
 	protected static double reverbLevel = 2.0;
 
@@ -292,10 +293,10 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	public CellList cells(CellList sources,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output) {
-		return cells(sources, List.of(), stems, output, i -> i);
+		return cells(sources, null, List.of(), stems, output, i -> i);
 	}
 
-	public CellList cells(CellList sources,
+	public CellList cells(CellList sources, CellList wetSources,
 						  List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output,
@@ -357,17 +358,36 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 						sf(0.0);
 		}
 
-		// Volume adjustment
-		CellList branch[] = cells.branch(
-				fc(v),
-				enableEfxFilters ?
-						fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
-						fc(v),
-				fc(reverbFactor));
+		CellList main;
+		CellList efx;
+		CellList reverb;
 
-		CellList main = branch[0];
-		CellList efx = branch[1];
-		CellList reverb = branch[2];
+		if (enableWetSources) {
+			// Apply volume to main
+			main = cells.map(fc(v));
+
+			// Branch from wet sources for efx and reverb
+			CellList branch[] = wetSources.branch(
+					enableEfxFilters ?
+							fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
+							fc(v),
+					fc(reverbFactor));
+
+			efx = branch[0];
+			reverb = branch[1];
+		} else {
+			// Branch from main
+			CellList branch[] = cells.branch(
+					fc(v),
+					enableEfxFilters ?
+							fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
+							fc(v),
+					fc(reverbFactor));
+
+			main = branch[0];
+			efx = branch[1];
+			reverb = branch[2];
+		}
 
 		if (stems != null && !stems.isEmpty()) {
 			main = main.branch(i -> new ReceptorCell<>(stems.get(i)),

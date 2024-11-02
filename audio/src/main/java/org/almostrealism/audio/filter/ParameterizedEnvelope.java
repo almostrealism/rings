@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.audio.notes.PatternNote;
@@ -23,13 +24,13 @@ import org.almostrealism.audio.notes.PatternNoteLayer;
 
 public interface ParameterizedEnvelope extends EnvelopeFeatures {
 
-	default PatternNoteLayer apply(ParameterSet params, PatternNoteLayer note) {
-		return PatternNoteLayer.create(note, createFilter(params));
+	default PatternNoteLayer apply(ParameterSet params, ChannelInfo.Voicing voicing, PatternNoteLayer note) {
+		return PatternNoteLayer.create(note, createFilter(params, voicing));
 	}
 
-	default PatternNote apply(ParameterSet params, PatternNote note) {
-		return new PatternNote(note, createFilter(params));
+	default PatternNote apply(ParameterSet params, ChannelInfo.Voicing voicing, PatternNote note) {
+		return new PatternNote(note, createFilter(params, voicing));
 	}
 
-	NoteAudioFilter createFilter(ParameterSet params);
+	NoteAudioFilter createFilter(ParameterSet params, ChannelInfo.Voicing voicing);
 }
