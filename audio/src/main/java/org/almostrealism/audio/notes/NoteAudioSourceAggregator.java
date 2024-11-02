@@ -41,13 +41,13 @@ public class NoteAudioSourceAggregator implements CodeFeatures {
 		aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
 				ModularSourceAggregator.InputType.SOURCE,
 				ModularSourceAggregator.InputType.SOURCE,
-				ModularSourceAggregator.InputType.SOURCE), 1.0));
+				ModularSourceAggregator.InputType.SOURCE), 6.0));
 
 		if (enableAdvancedAggregation) {
 			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
 					ModularSourceAggregator.InputType.SOURCE,
 					ModularSourceAggregator.InputType.SOURCE,
-					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 3.0));
 			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
 					ModularSourceAggregator.InputType.SOURCE,
 					ModularSourceAggregator.InputType.SOURCE,
@@ -55,7 +55,7 @@ public class NoteAudioSourceAggregator implements CodeFeatures {
 			aggregators.add(new AggregatorChoice(new ModularSourceAggregator(
 					ModularSourceAggregator.InputType.SOURCE,
 					ModularSourceAggregator.InputType.FREQUENCY,
-					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 1.0));
+					ModularSourceAggregator.InputType.VOLUME_ENVELOPE), 2.0));
 		}
 	}
 

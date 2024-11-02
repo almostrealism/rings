@@ -26,6 +26,9 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.time.computations.FourierTransform;
 
 public class FrequencyRescalingSourceAggregator implements SourceAggregator, CellFeatures {
+	public static boolean enableFilter = true;
+	public static boolean enableNormalization = false;
+
 	private int fftBins = WaveData.FFT_BINS;
 
 	protected FourierTransform fft(CollectionProducer<PackedCollection<?>> input) {
@@ -54,22 +57,32 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 		CollectionProducer<PackedCollection<?>> input = c(sources[0]);
 		CollectionProducer<PackedCollection<?>> filter = c(sources[1]);
 
-		filter = fft(filter);
-		filter = filter.transpose(2).magnitude(2);
-
-		int slices = filter.getShape().length(0);
-		filter = filter.reshape(-1, fftBins)
-					.transpose().sum(1)
-					.divide(c(slices));
+		filter = extractFilter(filter);
 
 		input = fft(input);
+
+		if (enableNormalization) {
+			// filter = filter.multiply(extractFilter(input).mean(0).divide(filter.mean(0)));
+			// filter = filter.multiply(0.01);
+			filter = filter.divide(filter.mean(0));
+		}
 
 		int inputSlices = input.getShape().length(0);
 		filter = filter.traverse(0).repeat(2 * inputSlices)
 				.reshape(inputSlices, 2, fftBins);
 
-		CollectionProducer<PackedCollection<?>> result = ifft(input.multiply(filter));
+		CollectionProducer<PackedCollection<?>> result = ifft(enableFilter ? input.multiply(filter) : input);
 		result = subset(shape(inputSlices, 1, fftBins), result, 0, 0, 0);
 		return result.flatten();
+	}
+
+	protected CollectionProducer<PackedCollection<?>> extractFilter(CollectionProducer<PackedCollection<?>> input) {
+		CollectionProducer<PackedCollection<?>> filter = fft(input);
+		filter = filter.transpose(2).magnitude(2);
+
+		int slices = filter.getShape().length(0);
+		return filter.reshape(-1, fftBins)
+				.transpose().sum(1)
+				.divide(c(slices));
 	}
 }
