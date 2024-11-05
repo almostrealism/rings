@@ -22,6 +22,11 @@ public class ChannelInfo {
 	private int channel;
 	private Voicing voicing;
 
+
+	public ChannelInfo(int channel) {
+		this(channel, null);
+	}
+
 	public ChannelInfo(int channel, Voicing voicing) {
 		this.channel = channel;
 		this.voicing = voicing;
