@@ -80,25 +80,28 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 	protected static String toString(Variable v) {
 		if (v instanceof ResourceVariable) {
 			return toJson((ResourceVariable) v);
-		} else if (v.getExpression() instanceof Method) {
-			Method m = (Method) v.getExpression();
-			
-			StringBuffer b = new StringBuffer();
-			if (m.getMember() != null)
-				b.append(m.getMember() + ".");
-			
-			b.append(m.getName());
-			b.append("(");
-			b.append(toString(m.getArguments()));
-			b.append(")");
-			
-			return b.toString();
 		} else {
 			return v.getProducer().toString();
 		}
 	}
 
-	protected String toString(Expression e) {
+	protected String toString(List<Expression<?>> arguments) {
+		StringBuilder buf = new StringBuilder();
+
+		for (int i = 0; i < arguments.size(); i++) {
+			Expression<?> v = arguments.get(i);
+
+			buf.append(toString(v));
+
+			if (i < arguments.size() - 1) {
+				buf.append(", ");
+			}
+		}
+
+		return buf.toString();
+	}
+
+	protected String toString(Expression<?> e) {
 		if (e instanceof Method) {
 			Method m = (Method) e;
 
@@ -167,29 +170,5 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 		} else {
 			throw new IllegalArgumentException("Unable to encode type " + o.getClass().getName());
 		}
-	}
-
-	protected static String toString(List<Variable> arguments) {
-		StringBuilder buf = new StringBuilder();
-
-		for (int i = 0; i < arguments.size(); i++) {
-			Variable<?, ?> v = arguments.get(i);
-
-			if (v instanceof ResourceVariable) {
-				buf.append(toJson(v));
-			} else if (v.getExpression() instanceof Method) {
-				buf.append(toString(v));
-			} else if (v.getExpression() instanceof InstanceReference) {
-				buf.append(v.getProducer().get().evaluate()); // TODO  This cant be right...
-			} else {
-				buf.append(toJson(v.getProducer()));
-			}
-
-			if (i < arguments.size() - 1) {
-				buf.append(", ");
-			}
-		}
-
-		return buf.toString();
 	}
 }
