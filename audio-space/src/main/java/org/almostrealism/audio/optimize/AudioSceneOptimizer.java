@@ -142,10 +142,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		enableIsolatedContext = false;
 		enableStemOutput = true;
 
-		NoteAudioSourceAggregator.enableAdvancedAggregation = false; // true;
+		NoteAudioSourceAggregator.enableAdvancedAggregation = true;
 
-		THREADS = 1;
-		popSize = verbosity < 1 ? 60 : 4;
+		PopulationOptimizer.THREADS = 1;
+		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 16;
 
 		// Verbosity level 0
 		enableBreeding = verbosity < 1;
