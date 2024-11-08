@@ -19,7 +19,7 @@
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-engine</artifactId>
+			<artifactId>ar-visual</artifactId>
 			<version>0.36</version>
 		</dependency>
 	</dependencies>

@@ -25,7 +25,7 @@
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-network</artifactId>
+			<artifactId>ar-raytracer</artifactId>
 			<version>0.36</version>
 		</dependency>
 	</dependencies>

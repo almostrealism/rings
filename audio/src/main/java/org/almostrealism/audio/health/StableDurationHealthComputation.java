@@ -21,7 +21,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
@@ -47,7 +46,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public static boolean enableOutput = true;
 	public static boolean enableFft = true;
 	public static boolean enableTimeout = false;
+
 	public static OperationProfile profile;
+	private static long totalGeneratedFrames, totalGenerationTime;
 
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
@@ -252,7 +253,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			}
 
 			if (l > 0) {
-				AudioScenePopulation.recordGenerationTime(l, System.currentTimeMillis() - startTime);
+				recordGenerationTime(l, System.currentTimeMillis() - startTime);
 			}
 
 			getWaveOut().reset();
@@ -267,6 +268,18 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	@Override
 	public Console console() { return console; }
+
+	public static void recordGenerationTime(long generatedFrames, long generationTime) {
+		totalGeneratedFrames += generatedFrames;
+		totalGenerationTime += generationTime;
+	}
+
+	public static double getGenerationTimePerSecond() {
+		double seconds = totalGeneratedFrames / (double) OutputLine.sampleRate;
+		double generationTime = totalGenerationTime / 1000.0;
+		return seconds == 0 ? 0 : (generationTime / seconds);
+	}
+
 
 	private class AverageAmplitude implements Consumer<Scalar> {
 		private List<Scalar> values = new ArrayList<>();

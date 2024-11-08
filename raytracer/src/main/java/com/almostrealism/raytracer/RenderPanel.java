@@ -40,7 +40,6 @@ import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.GraphicsConverter;
 
 import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.primitives.SurfaceUI;
 import io.almostrealism.relation.Evaluable;
 
 /**

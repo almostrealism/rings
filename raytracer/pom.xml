@@ -17,5 +17,21 @@
 			<artifactId>ar-gl</artifactId>
 			<version>0.36</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.flowtree</groupId>
+			<artifactId>ar-graphpersist</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.flowtree</groupId>
+			<artifactId>ar-flowtreeapi</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

@@ -47,7 +47,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-audio</artifactId>
+			<artifactId>ar-audio-space</artifactId>
 			<version>0.36</version>
 		</dependency>
 

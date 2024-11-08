@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.primitives.SurfaceUI;
+import org.almostrealism.io.Console;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.ShadableSurface;
 
 import org.almostrealism.primitives.Sphere;
+import org.almostrealism.space.ShadableSurfaceWrapper;
 import org.almostrealism.space.SurfaceGroup;
 
 public class RenderableSurfaceFactory {
 	public static Renderable createRenderableSurface(ShadableSurface s) {
 		if (s instanceof Renderable) {
 			return (Renderable) s;
-		} else if (s instanceof SurfaceUI) {
-			return createRenderableSurface(((SurfaceUI) s).getSurface());
+		} else if (s instanceof ShadableSurfaceWrapper) {
+			return createRenderableSurface(((ShadableSurfaceWrapper) s).getSurface());
 		} else if (s instanceof Sphere) {
 			return new RenderableSphere((Sphere) s);
 		} else if (s instanceof Mesh) {
@@ -42,7 +43,8 @@ public class RenderableSurfaceFactory {
 
 			return l;
 		} else {
-			System.err.println("RenderableSurfaceFactory: Returning null for " + s);
+			Console.root().features(RenderableSurfaceFactory.class)
+					.warn("Returning null for " + s);
 		}
 		
 		return null;
