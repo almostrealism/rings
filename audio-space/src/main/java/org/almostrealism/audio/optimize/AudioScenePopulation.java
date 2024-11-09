@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import io.almostrealism.profile.OperationProfile;
@@ -140,7 +140,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	public int size() { return getGenomes().size(); }
 
 	public Runnable generate(int channel, int frames, Supplier<String> destinations,
-							 BiConsumer<String, Genome<PackedCollection<?>>> output) {
+							 Consumer<GenerationResult> output) {
 		return () -> {
 			WaveOutput out = new WaveOutput(() ->
 					Optional.ofNullable(destinations).map(s -> {
@@ -175,7 +175,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 
 					gen.run();
 				} finally {
-					StableDurationHealthComputation.recordGenerationTime(frames, System.currentTimeMillis() - start);
+					long generationTime = System.currentTimeMillis() - start;
+					StableDurationHealthComputation.recordGenerationTime(frames, generationTime);
 
 					out.write().get().run();
 
@@ -195,7 +196,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 					disableGenome();
 
 					if (outputPath != null)
-						output.accept(outputPath, getGenomes().get(i));
+						output.accept(new GenerationResult(outputPath, getGenomes().get(i), generationTime));
 				}
 			}
 
@@ -206,6 +207,30 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 
 	public void store(OutputStream s) {
 		store(getGenomes(), s);
+	}
+
+	public static class GenerationResult {
+		private String outputPath;
+		private Genome<PackedCollection<?>> genome;
+		private long generationTime;
+
+		public GenerationResult(String outputPath, Genome<PackedCollection<?>> genome, long generationTime) {
+			this.outputPath = outputPath;
+			this.genome = genome;
+			this.generationTime = generationTime;
+		}
+
+		public String getOutputPath() {
+			return outputPath;
+		}
+
+		public Genome<PackedCollection<?>> getGenome() {
+			return genome;
+		}
+
+		public long getGenerationTime() {
+			return generationTime;
+		}
 	}
 
 	public static <G> void store(List<Genome<G>> genomes, OutputStream s) {

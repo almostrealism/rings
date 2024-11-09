@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +154,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	@Override
 	public AudioHealthScore computeHealth() {
 		if (WaveOutput.defaultTimelineFrames < standardDuration) {
-			throw new IllegalArgumentException("WaveOutput timeline is too short (" + WaveOutput.defaultTimelineFrames + " < " + standardDuration + ")");
+			throw new IllegalArgumentException("WaveOutput timeline is too short (" +
+					WaveOutput.defaultTimelineFrames + " < " + standardDuration + ")");
 		}
 
 		encounteredSilence = false;
@@ -170,6 +171,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		Runnable iterate;
 
 		long l = 0;
+		long generationTime = 0;
 
 		try {
 			start = runner.get();
@@ -253,7 +255,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			}
 
 			if (l > 0) {
-				recordGenerationTime(l, System.currentTimeMillis() - startTime);
+				generationTime = System.currentTimeMillis() - startTime;
+				recordGenerationTime(l, generationTime);
 			}
 
 			getWaveOut().reset();
@@ -261,9 +264,12 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
  			reset();
 		}
 
-		return new AudioHealthScore(l, score,
+		AudioHealthScore result = new AudioHealthScore(l, score,
 				Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null),
-				Optional.ofNullable(getStemFiles()).map(s -> s.stream().map(File::getPath).sorted().collect(Collectors.toList())).orElse(null));
+				Optional.ofNullable(getStemFiles()).map(s -> s.stream().map(File::getPath)
+						.sorted().collect(Collectors.toList())).orElse(null));
+		result.setGenerationTime(generationTime);
+		return result;
 	}
 
 	@Override

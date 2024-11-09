@@ -152,7 +152,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				AudioScenePopulation pop = loadPopulation(scene);
 				return pop.generate(channel, frames,
 						() -> "generated/" + KeyUtils.generateKey() + ".wav",
-						(result, genome) -> log("Generated " + result));
+						(result) -> log("Generated " + result.getOutputPath()));
 			}).call().run();
 		} finally {
 			scene.setPatternActivityBias(0.0);
