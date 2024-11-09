@@ -16,28 +16,26 @@
 
 package com.almostrealism.remote.event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.io.ConsoleFeatures;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class EventDeliveryQueue<T extends AbstractEvent> implements ConsoleFeatures {
-	private ConcurrentLinkedQueue<T> events;
-	private ScheduledExecutorService executor;
-	private ObjectMapper mapper;
-	private String deliveryUri;
+	private final ConcurrentLinkedQueue<T> events;
+	private final ScheduledExecutorService executor;
+	private final EventDelivery<T> delivery;
 
 	public EventDeliveryQueue(String deliveryUri) {
+		this(new DefaultHttpEventDelivery<>(deliveryUri));
+	}
+
+	public EventDeliveryQueue(EventDelivery<T> delivery) {
 		this.events = new ConcurrentLinkedQueue<>();
 		this.executor = Executors.newScheduledThreadPool(1);
-		this.mapper = new ObjectMapper();
-		this.deliveryUri = deliveryUri;
+		this.delivery = Objects.requireNonNull(delivery);
 	}
 
 	public void start() {
@@ -50,28 +48,6 @@ public class EventDeliveryQueue<T extends AbstractEvent> implements ConsoleFeatu
 	}
 
 	protected void deliverAll() {
-		while (deliver(events.poll()));
-	}
-
-	protected boolean deliver(T event) {
-		if (event == null) {
-			return false;
-		}
-
-		try {
-			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(deliveryUri))
-					.header("Content-Type", "application/json")
-					.POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(event)))
-					.build();
-			HttpResponse<String> response = HttpClient.newHttpClient()
-					.send(request, HttpResponse.BodyHandlers.ofString());
-
-			log("Sent " + event.getName() + " event (" + response.statusCode() + ")");
-		} catch (Exception e) {
-			warn(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-		}
-
-		return true;
+		delivery.deliverAll(events::poll);
 	}
 }

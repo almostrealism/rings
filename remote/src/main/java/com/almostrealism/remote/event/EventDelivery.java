@@ -16,21 +16,14 @@
 
 package com.almostrealism.remote.event;
 
-public class DefaultEvent extends AbstractEvent {
-	private long time;
-	private long duration;
+import java.util.function.Supplier;
 
-	public DefaultEvent() { }
-
-	public DefaultEvent(String name, long duration) {
-		super(name);
-		setDuration(duration);
-		setTime(System.currentTimeMillis());
+public interface EventDelivery<T> {
+	default int deliverAll(Supplier<T> events) {
+		int total = 0;
+		for (; deliver(events.get()); total++);
+		return total;
 	}
 
-	public long getTime() { return time; }
-	public void setTime(long time) { this.time = time; }
-
-	public long getDuration() { return duration; }
-	public void setDuration(long duration) { this.duration = duration; }
+	boolean deliver(T event);
 }
