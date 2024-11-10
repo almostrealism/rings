@@ -34,8 +34,6 @@ import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.hardware.KernelizedEvaluable;
-import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -76,8 +74,8 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		Producer pr = new Producer<RGB>() {
 			@Override
-			public KernelizedEvaluable<RGB> get() {
-				return new KernelizedEvaluable<>() {
+			public Evaluable<RGB> get() {
+				return new Evaluable<>() {
 					@Override
 					public Multiple<RGB> createDestination(int size) {
 						return RGB.bank(size);
@@ -413,7 +411,7 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 	 * Returns the values of the properties of this ReflectionShader object as an Object array.
 	 */
 	public Object[] getPropertyValues() {
-		return new Object[] {new Double(this.indexOfRefraction), new Double(this.ra), new Double(this.ga), new Double(this.ba)};
+		return new Object[] {Double.valueOf(this.indexOfRefraction), Double.valueOf(this.ra), Double.valueOf(this.ga), Double.valueOf(this.ba)};
 	}
 	
 	/**

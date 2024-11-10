@@ -30,6 +30,9 @@ public class WaveMath implements CodeFeatures {
 	private final Map<Integer, Evaluable<? extends Scalar>> dotEvals = new HashMap<>();
 
 	public WaveMath() {
+	}
+
+	protected void init() {
 		IntStream.range(0, 64).forEach(i -> getDot(i + 1));
 		getDot(160);
 		getDot(320);
@@ -61,15 +64,19 @@ public class WaveMath implements CodeFeatures {
 	}
 
 	public Scalar dot(PackedCollection<Scalar> a, PackedCollection<Scalar> b) {
-		assert a.getCount() == b.getCount();
+		if (a.getCount() != b.getCount()) {
+			throw new IllegalArgumentException();
+		}
+
 		return getDot(a.getCount()).evaluate(a, b);
 	}
 
 	public synchronized Evaluable<? extends Scalar> getDot(int count) {
-		if (!dotEvals.containsKey(count)) {
-			Scalar output = new Scalar();
-			PackedCollection<Scalar> temp = Scalar.scalarBank(count);
+		if (dotEvals.isEmpty()) {
+			init();
+		}
 
+		if (!dotEvals.containsKey(count)) {
 			Producer<PackedCollection<?>> a = subset(shape(count, 1), v(shape(count, 2), 0), 0);
 			Producer<PackedCollection<?>> b = subset(shape(count, 1), v(shape(count, 2), 1), 0);
 			dotEvals.put(count, scalar(multiply(a, b).sum()).get());

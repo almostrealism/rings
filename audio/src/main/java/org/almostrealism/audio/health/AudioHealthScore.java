@@ -28,6 +28,8 @@ public class AudioHealthScore implements HealthScore {
 	private String output;
 	private List<String> stems;
 
+	private long generationTime;
+
 	public AudioHealthScore() { this(0, 0.0, null, null); }
 
 	public AudioHealthScore(long frames, double score) {
@@ -64,5 +66,13 @@ public class AudioHealthScore implements HealthScore {
 
 	public void setStems(List<String> stems) {
 		this.stems = stems;
+	}
+
+	public long getGenerationTime() {
+		return generationTime;
+	}
+
+	public void setGenerationTime(long generationTime) {
+		this.generationTime = generationTime;
 	}
 }

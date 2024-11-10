@@ -19,6 +19,8 @@ package org.almostrealism.audio.notes;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.sources.SourceAggregator;
+import org.almostrealism.audio.sources.SummingSourceAggregator;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -31,10 +33,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PatternNote extends PatternNoteAudioAdapter {
+	private static NoteAudioSourceAggregator layerAggregator;
+
+	static {
+		layerAggregator = new NoteAudioSourceAggregator();
+	}
+
 	private PatternNote delegate;
 	private NoteAudioFilter filter;
 
 	private List<PatternNoteAudio> layers;
+	private double aggregationChoice;
 
 	public PatternNote() { }
 
@@ -61,6 +70,14 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	public List<PatternNoteAudio> getLayers() {
 		return layers;
+	}
+
+	public double getAggregationChoice() {
+		return aggregationChoice;
+	}
+
+	public void setAggregationChoice(double aggregationChoice) {
+		this.aggregationChoice = aggregationChoice;
 	}
 
 	public List<NoteAudioProvider> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
@@ -126,30 +143,40 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			throw new UnsupportedOperationException();
 		}
 
-		return () -> {
-			List<Evaluable<PackedCollection<?>>> layerAudio =
-					layers.stream()
-							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection).get())
-							.collect(Collectors.toList());
-			int frames[] = IntStream.range(0, layerAudio.size())
-					.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
-							layers.get(i).getSampleRate(target, audioSelection)))
-					.toArray();
+		if (layerAggregator == null) {
+			warn("Using PatternNote without SourceAggregation");
 
-			return args -> {
-				int totalFrames = (int) (getDuration(target, audioSelection) * getSampleRate(target, audioSelection));
+			return () -> {
+				List<Evaluable<PackedCollection<?>>> layerAudio =
+						layers.stream()
+								.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection).get())
+								.collect(Collectors.toList());
+				int frames[] = IntStream.range(0, layerAudio.size())
+						.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
+								layers.get(i).getSampleRate(target, audioSelection)))
+						.toArray();
 
-				PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
-				for (int i = 0; i < layerAudio.size(); i++) {
-					PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
-					int f = Math.min(frames[i], totalFrames);
+				return args -> {
+					int totalFrames = (int) (getDuration(target, audioSelection) * getSampleRate(target, audioSelection));
 
-					PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
-				}
+					PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+					for (int i = 0; i < layerAudio.size(); i++) {
+						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+						int f = Math.min(frames[i], totalFrames);
 
-				return dest;
+						PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
+					}
+
+					return dest;
+				};
 			};
-		};
+		} else {
+			return layerAggregator.getAggregator(c(aggregationChoice)).aggregate(getBufferDetails(target, audioSelection),
+					null, null,
+					layers.stream()
+							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection))
+							.toArray(Producer[]::new));
+		}
 	}
 
 	@Override

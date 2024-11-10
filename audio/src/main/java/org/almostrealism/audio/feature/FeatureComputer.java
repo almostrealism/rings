@@ -16,12 +16,11 @@
 
 package org.almostrealism.audio.feature;
 
-import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.compute.ComputeRequirement;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.ScalarTable;
-import org.almostrealism.audio.computations.ComplexFFT;
 import org.almostrealism.audio.computations.WindowPreprocess;
 import org.almostrealism.audio.util.TensorRow;
 import io.almostrealism.relation.Evaluable;
@@ -30,8 +29,6 @@ import org.almostrealism.algebra.Tensor;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.Hardware;
-import org.almostrealism.time.computations.FourierTransform;
 
 import java.util.HashMap;
 import java.util.Map;

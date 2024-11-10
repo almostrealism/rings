@@ -20,7 +20,6 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.graph.PathElement;
-import org.almostrealism.hardware.KernelizedEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
@@ -46,7 +45,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 				ev[i][j] = samples[i][j].get();
 			}));
 
-		return new KernelizedEvaluable<>() {
+		return new Evaluable<>() {
 
 			@Override
 			public MemoryBank<RGB> createDestination(int size) {
@@ -77,7 +76,7 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 			}
 
 			@Override
-			public Evaluable withDestination(MemoryBank destination) {
+			public Evaluable into(Object destination) {
 				return args -> {
 					int w = ev.length;
 					int h = ev[0].length;
@@ -104,10 +103,11 @@ public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 					}
 
 					System.out.println("SuperSampler: Combining samples...");
-					for (int k = 0; k < destination.getCount(); k++) {
+					for (int k = 0; k < ((MemoryBank) destination).getCount(); k++) {
 						for (int i = 0; i < ev.length; i++) {
-							j: for (int j = 0; j < ev[i].length; j++) {
-								((RGB) destination.get(k)).addTo(out[i][j].get(k).multiply(scale));
+							j:
+							for (int j = 0; j < ev[i].length; j++) {
+								((RGB) ((MemoryBank) destination).get(k)).addTo(out[i][j].get(k).multiply(scale));
 							}
 						}
 					}

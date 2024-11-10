@@ -19,12 +19,17 @@ package org.almostrealism.audio.arrange;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
+import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.SimpleChromosome;
 import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +42,7 @@ public class EfxManager implements CellFeatures {
 	public static boolean enableAutomation = true;
 	public static double maxWet = 0.5;
 	public static double maxFeedback = 0.5;
+	public static int filterOrder = 40;
 
 	private AutomationManager automation;
 
@@ -80,7 +86,7 @@ public class EfxManager implements CellFeatures {
 		delayTimes = genome.addSimpleChromosome(1);
 		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
 
-		delayLevels = genome.addSimpleChromosome(2);
+		delayLevels = genome.addSimpleChromosome(4);
 		IntStream.range(0, channels).forEach(i -> {
 			SimpleGene g = delayLevels.addGene();
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
@@ -94,16 +100,16 @@ public class EfxManager implements CellFeatures {
 	public List<Integer> getWetChannels() { return wetChannels; }
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
-	public CellList apply(int channel, CellList cells) {
+	public CellList apply(ChannelInfo channel, Producer<PackedCollection<?>> audio, double totalDuration, OperationList setup) {
 		if (!enableEfx || !wetChannels.contains(channel)) {
-			return cells;
+			return createCells(audio, totalDuration);
 		}
 
-		if (cells.size() != 1) {
-			warn("CellList size is " + cells.size());
-		}
+		CellList wet = createCells(applyFilter(channel, audio, setup), totalDuration)
+						.map(fc(i -> delayLevels.valueAt(channel.getChannel(), 0)));
+		CellList dry = createCells(audio, totalDuration);
 
-		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel, 0).getResultant(c(1.0));
+		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getChannel(), 0).getResultant(c(1.0));
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
@@ -111,25 +117,51 @@ public class EfxManager implements CellFeatures {
 						scalar(1.0)))
 				.collect(CellList.collector());
 
-		CellList branch[] = cells.branch(fc(i -> delayLevels.valueAt(channel, 0)),
-										fc(i -> sf(1.0)));
-		CellList wet = branch[0];
-		CellList dry = branch[1];
-
 		IntFunction<Cell<PackedCollection<?>>> auto =
 				enableAutomation ?
 						fc(i -> in -> {
-							Producer<PackedCollection<?>> value = automation.getAggregatedValue(delayAutomation.valueAt(channel), null, 0.0);
+							Producer<PackedCollection<?>> value = automation
+									.getAggregatedValue(delayAutomation.valueAt(channel.getChannel()), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
 						}) :
 						fi();
 
 		wet = wet.m(auto, delays)
-				.mself(fi(), i -> g(delayLevels.valueAt(channel, 1)))
+				.mself(fi(), i -> g(delayLevels.valueAt(channel.getChannel(), 1)))
 				.sum();
 
-		cells = cells(wet, dry).sum();
+		CellList cells = cells(wet, dry).sum();
 		return cells;
+	}
+
+	protected CellList createCells(Producer<PackedCollection<?>> audio, double totalDuration) {
+		return w(PolymorphicAudioData.supply(PackedCollection.factory()),
+				sampleRate, shape(audio).getTotalSize(),
+				null, c(totalDuration), traverse(0, audio));
+	}
+
+	protected Producer<PackedCollection<?>> applyFilter(ChannelInfo channel, Producer<PackedCollection<?>> audio, OperationList setup) {
+		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
+
+		Producer<PackedCollection<?>> decision =
+				delayLevels.valueAt(channel.getChannel(), 2).getResultant(c(1.0));
+		Producer<PackedCollection<?>> cutoff = c(20000)
+				.multiply(delayLevels.valueAt(channel.getChannel(), 3).getResultant(c(1.0)));
+
+		CollectionProducer<PackedCollection<?>> lpCoefficients =
+				lowPassCoefficients(cutoff, sampleRate, filterOrder)
+						.reshape(1, filterOrder + 1);
+		CollectionProducer<PackedCollection<?>> hpCoefficients =
+				highPassCoefficients(cutoff, sampleRate, filterOrder)
+						.reshape(1, filterOrder + 1);
+
+		Producer<PackedCollection<?>> coefficients = choice(2,
+				shape(filterOrder + 1), decision,
+				concat(shape(2, filterOrder + 1), hpCoefficients, lpCoefficients));
+
+		setup.add(a("efxFilter", cp(destination.each()),
+					MultiOrderFilter.create(audio, coefficients)));
+		return cp(destination);
 	}
 }

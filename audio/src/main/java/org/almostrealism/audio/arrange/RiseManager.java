@@ -19,6 +19,7 @@ package org.almostrealism.audio.arrange;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
@@ -28,6 +29,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class RiseManager implements Setup, CellFeatures {
+	public static final double riseDuration = 100;
+
 	private OperationList setup;
 	private StatelessSource generator;
 	private ConfigurableGenome genome;
@@ -36,7 +39,8 @@ public class RiseManager implements Setup, CellFeatures {
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
 
-	public RiseManager(ConfigurableGenome genome, Supplier<Frequency> tempo, DoubleSupplier measureDuration, int sampleRate) {
+	public RiseManager(ConfigurableGenome genome, Supplier<Frequency> tempo,
+					   DoubleSupplier measureDuration, int sampleRate) {
 		this.setup = new OperationList("RiseManager Setup");
 		this.genome = genome;
 		this.tempo = tempo;
@@ -53,7 +57,8 @@ public class RiseManager implements Setup, CellFeatures {
 
 	public CellList getRise() {
 		// TODO
-		this.generator.generate(c(0.0, 0.0, 0.0), c(1.0));
+		this.generator.generate(new BufferDetails(sampleRate, riseDuration),
+								c(0.0, 0.0, 0.0), c(1.0));
 		throw new UnsupportedOperationException();
 	}
 }

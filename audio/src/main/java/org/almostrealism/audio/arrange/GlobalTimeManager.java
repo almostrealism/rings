@@ -17,7 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.io.Console;
@@ -71,5 +71,5 @@ public class GlobalTimeManager implements Setup, Temporal, ConsoleFeatures {
 	}
 
 	@Override
-	public Console console() { return AudioScene.console; }
+	public Console console() { return CellFeatures.console; }
 }

@@ -51,13 +51,13 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 	public ArrayVariable<Double> getDepth() { return getArgument(7, 2); }
 	public ArrayVariable<Double> getEnvelope() { return getArgument(8, 2); }
 
-	public InstanceReference<Double> output() { return (InstanceReference<Double>) getOutput().valueAt(0); }
-	public InstanceReference<Double> wavePosition() { return (InstanceReference<Double>) getWavePosition().valueAt(0); }
-	public InstanceReference<Double> waveLength() { return (InstanceReference<Double>) getWaveLength().valueAt(0); }
-	public InstanceReference<Double> notePosition() { return (InstanceReference<Double>) getNotePosition().valueAt(0); }
-	public InstanceReference<Double> noteLength() { return (InstanceReference<Double>) getNoteLength().valueAt(0); }
-	public InstanceReference<Double> phase() { return (InstanceReference<Double>) getPhase().valueAt(0); }
-	public InstanceReference<Double> amplitude() { return (InstanceReference<Double>) getAmplitude().valueAt(0); }
-	public InstanceReference<Double> depth() { return (InstanceReference<Double>) getDepth().valueAt(0); }
-	public InstanceReference<Double> envelope() { return (InstanceReference<Double>) getEnvelope().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> output() { return (InstanceReference<ArrayVariable<Double>, Double>) getOutput().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> wavePosition() { return (InstanceReference<ArrayVariable<Double>, Double>) getWavePosition().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> waveLength() { return (InstanceReference<ArrayVariable<Double>, Double>) getWaveLength().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> notePosition() { return (InstanceReference<ArrayVariable<Double>, Double>) getNotePosition().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> noteLength() { return (InstanceReference<ArrayVariable<Double>, Double>) getNoteLength().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> phase() { return (InstanceReference<ArrayVariable<Double>, Double>) getPhase().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> amplitude() { return (InstanceReference<ArrayVariable<Double>, Double>) getAmplitude().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> depth() { return (InstanceReference<ArrayVariable<Double>, Double>) getDepth().valueAt(0); }
+	public InstanceReference<ArrayVariable<Double>, Double> envelope() { return (InstanceReference<ArrayVariable<Double>, Double>) getEnvelope().valueAt(0); }
 }

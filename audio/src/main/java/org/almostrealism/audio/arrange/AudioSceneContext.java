@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.relation.Factor;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.IdentityFactor;
@@ -30,7 +31,7 @@ import java.util.function.Function;
 public class AudioSceneContext {
 	private int measures;
 	private int frames;
-	private List<Integer> channels;
+	private List<ChannelInfo> channels;
 
 	private DoubleToIntFunction frameForPosition;
 	private DoubleUnaryOperator timeForDuration;
@@ -63,12 +64,16 @@ public class AudioSceneContext {
 		this.frames = frames;
 	}
 
-	public List<Integer> getChannels() {
+	public List<ChannelInfo> getChannels() {
 		return channels;
 	}
 
-	public void setChannels(List<Integer> channels) {
+	public void setChannels(List<ChannelInfo> channels) {
 		this.channels = channels;
+	}
+
+	public boolean includesChannel(int channel) {
+		return getChannels() != null && getChannels().stream().anyMatch(c -> c.getChannel() == channel);
 	}
 
 	public DoubleToIntFunction getFrameForPosition() {

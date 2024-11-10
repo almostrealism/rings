@@ -41,7 +41,7 @@ public abstract class Settings extends Defaults {
   public static final String writtenByInfo = "Written by Michael Murray";
   
   /** String containing "michael@almostrealism.com". */
-  private static final String adminEmail = "michael@almostrealism.com";
+  public static final String adminEmail = "michael@almostrealism.com";
   
   /** String containing "http://almostrealism.org/". */
   public static final String websiteUrl = "http://almostrealism.org/";

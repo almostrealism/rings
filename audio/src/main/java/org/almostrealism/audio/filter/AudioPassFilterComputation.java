@@ -113,30 +113,30 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 		Expression<Double> pi = e(Math.PI);
 
 		if (high) {
-			addVariable(getC().ref(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
-			addVariable(getA1().ref(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().ref(0).assign(e(-2.0).multiply(a1())));
-			addVariable(getA3().ref(0).assign(a1()));
-			addVariable(getB1().ref(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
-			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().referenceRelative(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
+			addVariable(getA1().referenceRelative(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().referenceRelative(0).assign(e(-2.0).multiply(a1())));
+			addVariable(getA3().referenceRelative(0).assign(a1()));
+			addVariable(getB1().referenceRelative(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
+			addVariable(getB2().referenceRelative(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		} else {
-			addVariable(getC().ref(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
-			addVariable(getA1().ref(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().ref(0).assign(e(2.0).multiply(a1())));
-			addVariable(getA3().ref(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().ref(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
-			addVariable(getB2().ref(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().referenceRelative(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
+			addVariable(getA1().referenceRelative(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().referenceRelative(0).assign(e(2.0).multiply(a1())));
+			addVariable(getA3().referenceRelative(0).assign(getA1().valueAt(0)));
+			addVariable(getB1().referenceRelative(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
+			addVariable(getB2().referenceRelative(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
 		Expression<Double> input = Max.of(Min.of(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
-		addVariable(getOutput().ref(0).assign(
+		addVariable(getOutput().referenceRelative(0).assign(
 				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
 						b1().multiply(outputHistory0())).subtract(b2().multiply(outputHistory1()))));
-		addVariable(getInputHistory1().ref(0).assign(getInputHistory0().valueAt(0)));
-		addVariable(getInputHistory0().ref(0).assign(input));
-		addVariable(getOutputHistory2().ref(0).assign(getOutputHistory1().valueAt(0)));
-		addVariable(getOutputHistory1().ref(0).assign(getOutputHistory0().valueAt(0)));
-		addVariable(getOutputHistory0().ref(0).assign(getOutput().valueAt(0)));
+		addVariable(getInputHistory1().referenceRelative(0).assign(getInputHistory0().valueAt(0)));
+		addVariable(getInputHistory0().referenceRelative(0).assign(input));
+		addVariable(getOutputHistory2().referenceRelative(0).assign(getOutputHistory1().valueAt(0)));
+		addVariable(getOutputHistory1().referenceRelative(0).assign(getOutputHistory0().valueAt(0)));
+		addVariable(getOutputHistory0().referenceRelative(0).assign(getOutput().valueAt(0)));
 	}
 }

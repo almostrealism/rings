@@ -35,7 +35,7 @@ import org.almostrealism.audio.sequence.ValueSequenceTick;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.DynamicAcceleratedOperation;
+import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.TemporalRunner;
@@ -56,7 +56,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		ValueSequencePush push = new ValueSequencePush(data, c(4), out, c(1.0), c(2.0));
 		data.setWavePosition(3);
 
-		DynamicAcceleratedOperation op = (DynamicAcceleratedOperation) push.get();
+		AcceleratedOperation op = (AcceleratedOperation) push.get();
 		op.run();
 		assertEquals(2.0, out);
 	}
@@ -67,7 +67,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		ValueSequenceTick tick = new ValueSequenceTick(data, c(4), c(1.0), c(2.0));
 		data.setWaveLength(1.0);
 
-		DynamicAcceleratedOperation op = (DynamicAcceleratedOperation) tick.get();
+		AcceleratedOperation op = (AcceleratedOperation) tick.get();
 		op.run();
 		assertEquals(1.0, data.wavePosition());
 	}

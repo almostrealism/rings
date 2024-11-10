@@ -21,7 +21,6 @@ import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -62,7 +61,7 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
 				if (enableVerbose && size > 1024)
-					AudioScene.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
+					CellFeatures.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 

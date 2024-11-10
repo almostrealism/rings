@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.35</version>
+		<version>0.36</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -15,19 +15,12 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-physics</artifactId>
-			<version>${common.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-engine</artifactId>
-			<version>0.35</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-primitives</artifactId>
-			<version>0.35</version>
+			<artifactId>ar-visual-space</artifactId>
+			<version>0.36</version>
 		</dependency>
 	</dependencies>
 </project>

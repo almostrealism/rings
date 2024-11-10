@@ -20,14 +20,18 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
 import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
+	public static boolean enableReusableProducer = false;
+
 	public static final int MAX_SECONDS = 180;
 
 	private static Evaluable<PackedCollection<?>> env;
@@ -61,15 +65,17 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 	}
 
 	@Override
-	public NoteAudioFilter createFilter(ParameterSet params) {
-		return new Filter(params);
+	public NoteAudioFilter createFilter(ParameterSet params, ChannelInfo.Voicing voicing) {
+		return new Filter(params, voicing);
 	}
 
 	public class Filter implements NoteAudioFilter {
 		private ParameterSet params;
+		private ChannelInfo.Voicing voicing;
 
-		public Filter(ParameterSet params) {
+		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
+			this.voicing = voicing;
 		}
 
 		public double getAttack() {
@@ -102,7 +108,8 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 
 		@Override
 		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration, Producer<PackedCollection<?>> automationLevel) {
+												   Producer<PackedCollection<?>> duration,
+												   Producer<PackedCollection<?>> automationLevel) {
 			PackedCollection<?> d0 = new PackedCollection<>(1);
 			d0.set(0, getAttack());
 
@@ -124,19 +131,39 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 			PackedCollection<?> v3 = new PackedCollection<>(1);
 			v3.set(0, getVolume3());
 
-			return () -> args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
-				PackedCollection<?> dr = duration.get().evaluate();
+			if (enableReusableProducer) {
+				return instruct("ParameterizedLayerEnvelope.filter", p -> {
+					CollectionProducer<PackedCollection<?>> mainDuration = c(p[1]);
+					CollectionProducer<PackedCollection<?>> duration0 = mainDuration.multiply(c(p[2]));
+					CollectionProducer<PackedCollection<?>> duration1 = mainDuration.multiply(c(p[3]));
+					CollectionProducer<PackedCollection<?>> duration2 = mainDuration.multiply(c(p[4]));
+					CollectionProducer<PackedCollection<?>> volume0 = c(p[5]);
+					CollectionProducer<PackedCollection<?>> volume1 = c(p[6]);
+					CollectionProducer<PackedCollection<?>> volume2 = c(p[7]);
+					CollectionProducer<PackedCollection<?>> volume3 = c(p[8]);
 
-				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
+					Factor<PackedCollection<?>> factor =
+							envelope(linear(c(0.0), duration0, volume0, volume1))
+									.andThenRelease(duration0, volume1, duration1.subtract(duration0), volume2)
+									.andThenRelease(duration1, volume2, duration2.subtract(duration1), volume3).get();
+					return sampling(OutputLine.sampleRate, MAX_SECONDS,
+							() -> factor.getResultant(p[0]));
+				}, audio, duration, p(d0), p(d1), p(d2), p(v0), p(v1), p(v2), p(v3));
+			} else {
+				return new DynamicCollectionProducer<>(shape(audio), args -> {
+					PackedCollection<?> audioData = audio.get().evaluate();
+					PackedCollection<?> dr = duration.get().evaluate();
 
-				if (out.getShape().getTotalSize() == 1) {
-					warn("Envelope produced a value with shape " +
-							out.getShape().toStringDetail());
-				}
+					PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
 
-				return out;
-			};
+					if (out.getShape().getTotalSize() == 1) {
+						warn("Envelope produced a value with shape " +
+								out.getShape().toStringDetail());
+					}
+
+					return out;
+				}, false);
+			}
 		}
 
 		@Override

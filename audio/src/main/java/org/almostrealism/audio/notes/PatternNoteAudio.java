@@ -18,6 +18,7 @@ package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.filter.AudioSumProvider;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
 
@@ -25,6 +26,12 @@ import java.util.function.DoubleFunction;
 
 public interface PatternNoteAudio {
 	AudioSumProvider sum = new AudioSumProvider();
+
+	default BufferDetails getBufferDetails(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+		return new BufferDetails(
+				getSampleRate(target, audioSelection),
+				getDuration(target, audioSelection));
+	}
 
 	int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
 
