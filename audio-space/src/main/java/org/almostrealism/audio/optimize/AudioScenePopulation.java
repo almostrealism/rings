@@ -40,6 +40,8 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.TemporalCellular;
+import org.almostrealism.io.Console;
+import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
@@ -173,6 +175,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 						}
 					}
 
+					log("Starting generation for genome " + i + " of " + getGenomes().size());
 					gen.run();
 				} finally {
 					long generationTime = System.currentTimeMillis() - start;
@@ -199,8 +202,6 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 						output.accept(new GenerationResult(outputPath, getGenomes().get(i), generationTime));
 				}
 			}
-
-			// profile.print();
 		};
 	}
 
@@ -208,6 +209,9 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	public void store(OutputStream s) {
 		store(getGenomes(), s);
 	}
+
+	@Override
+	public Console console() { return HealthCallable.console; }
 
 	public static class GenerationResult {
 		private String outputPath;
