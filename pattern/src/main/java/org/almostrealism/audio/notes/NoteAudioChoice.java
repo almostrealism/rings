@@ -91,12 +91,13 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	public String getId() {
 		if (id != null) return id;
+		if (factory != null) return factory.getId();
 		return factory.getId();
 	}
 
 	public void setId(String id) {
 		this.id = id;
-		this.factory.setId(id);
+		if (this.factory != null) this.factory.setId(id);
 	}
 
 	public String getName() {

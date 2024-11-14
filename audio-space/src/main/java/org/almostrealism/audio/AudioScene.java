@@ -281,9 +281,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 	}
 
 	public void loadPatterns(String patternsFile) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		PatternFactoryChoiceList choices = mapper
+		PatternFactoryChoiceList choices = defaultMapper()
 				.readValue(new File(patternsFile), PatternFactoryChoiceList.class);
 		getPatternManager().getChoices().addAll(choices);
 	}
