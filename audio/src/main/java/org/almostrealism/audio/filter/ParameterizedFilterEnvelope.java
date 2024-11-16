@@ -24,6 +24,7 @@ import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	private static EnvelopeProcessor processor;
 
 	static {
+		if (Heap.getDefault() != null) {
+			throw new RuntimeException();
+		}
+
 		if (enableMultiOrderFilter) {
 			processor = new MultiOrderFilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
 		} else {

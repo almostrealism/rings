@@ -26,6 +26,7 @@ import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
+import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 
@@ -38,6 +39,10 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 
 	static {
 		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
+		
+		if (Heap.getDefault() != null) {
+			throw new RuntimeException();
+		}
 
 		CollectionProducer<PackedCollection<?>> mainDuration = o.cv(o.shape(1), 1);
 		CollectionProducer<PackedCollection<?>> duration0 = mainDuration.multiply(o.cv(o.shape(1), 2));
