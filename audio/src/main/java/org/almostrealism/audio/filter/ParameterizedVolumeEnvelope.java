@@ -26,6 +26,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	private static Evaluable<PackedCollection<?>> env;
 
 	static {
+		if (Heap.getDefault() != null) {
+			throw new RuntimeException();
+		}
+
 		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
 
 		Factor<PackedCollection<?>> factor =

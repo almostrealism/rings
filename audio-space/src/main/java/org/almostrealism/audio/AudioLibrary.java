@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 
@@ -43,6 +44,7 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	private int sampleRate;
 	private WaveDetailsFactory factory;
+	private Consumer<Exception> errorListener;
 
 	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
 		this.root = root;
@@ -58,6 +60,14 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public int getSampleRate() {
 		return sampleRate;
+	}
+
+	public Consumer<Exception> getErrorListener() {
+		return errorListener;
+	}
+
+	public void setErrorListener(Consumer<Exception> errorListener) {
+		this.errorListener = errorListener;
 	}
 
 	public Collection<WaveDetails> getDetails() {
@@ -77,7 +87,11 @@ public class AudioLibrary implements ConsoleFeatures {
 					provider.getKey() + " (" +
 					Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
 			if (!(e.getCause() instanceof IOException) || !(provider instanceof FileWaveDataProvider)) {
-				e.printStackTrace();
+				if (getErrorListener() == null) {
+					e.printStackTrace();
+				} else {
+					getErrorListener().accept(e);
+				}
 			}
 
 			return null;

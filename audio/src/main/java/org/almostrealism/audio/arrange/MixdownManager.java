@@ -86,7 +86,6 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private SimpleChromosome wetOut;
 	private SimpleChromosome delay;
 
-	private DelayChromosome delayDynamics;
 	private SimpleChromosome delayDynamicsSimple;
 
 	private SimpleChromosome reverb;
@@ -127,8 +126,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		SimpleChromosome d = genome.addSimpleChromosome(DelayChromosome.SIZE);
 		IntStream.range(0, delayLayers).forEach(i -> d.addGene());
-		this.delayDynamics = new DelayChromosome(d, sampleRate);
-		this.delayDynamics.setGlobalTime(clock);
+//		this.delayDynamics = new DelayChromosome(d, sampleRate);
+//		this.delayDynamics.setGlobalTime(clock);
 
 		this.delayDynamicsSimple = initializePolycyclic(delayLayers, genome.addSimpleChromosome(POLYCYCLIC_CHROMOSOME_SIZE));
 
@@ -235,13 +234,13 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 
 		delay.setParameterRange(0, factorForDelay(config.minDelay), factorForDelay(config.maxDelay));
 
-		delayDynamics.setDelayRange(0.0, 0.0); // Not used
-		delayDynamics.setPeriodicSpeedUpDurationRange(config.periodicSpeedUpDurationMin, config.periodicSpeedUpDurationMax);
-		delayDynamics.setPeriodicSpeedUpPercentageRange(config.periodicSpeedUpPercentageMin, config.periodicSpeedUpPercentageMax);
-		delayDynamics.setPeriodicSlowDownDurationRange(config.periodicSlowDownDurationMin, config.periodicSlowDownDurationMax);
-		delayDynamics.setPeriodicSlowDownPercentageRange(config.periodicSlowDownPercentageMin, config.periodicSlowDownPercentageMax);
-		delayDynamics.setOverallSpeedUpDurationRange(config.overallSpeedUpDurationMin, config.overallSpeedUpDurationMax);
-		delayDynamics.setOverallSpeedUpExponentRange(config.overallSpeedUpExponentMin, config.overallSpeedUpExponentMax);
+//		delayDynamics.setDelayRange(0.0, 0.0); // Not used
+//		delayDynamics.setPeriodicSpeedUpDurationRange(config.periodicSpeedUpDurationMin, config.periodicSpeedUpDurationMax);
+//		delayDynamics.setPeriodicSpeedUpPercentageRange(config.periodicSpeedUpPercentageMin, config.periodicSpeedUpPercentageMax);
+//		delayDynamics.setPeriodicSlowDownDurationRange(config.periodicSlowDownDurationMin, config.periodicSlowDownDurationMax);
+//		delayDynamics.setPeriodicSlowDownPercentageRange(config.periodicSlowDownPercentageMin, config.periodicSlowDownPercentageMax);
+//		delayDynamics.setOverallSpeedUpDurationRange(config.overallSpeedUpDurationMin, config.overallSpeedUpDurationMax);
+//		delayDynamics.setOverallSpeedUpExponentRange(config.overallSpeedUpExponentMin, config.overallSpeedUpExponentMax);
 
 		delayDynamicsSimple.setParameterRange(0,
 				factorForSpeedUpDuration(config.periodicSpeedUpDurationMin),
