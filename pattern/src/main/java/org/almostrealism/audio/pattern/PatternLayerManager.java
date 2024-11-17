@@ -52,6 +52,8 @@ public class PatternLayerManager implements PatternFeatures {
 	private double minLayerScale;
 	private ScaleTraversalStrategy scaleTraversalStrategy;
 
+	private double seedBiasAdjustment;
+
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
 	private SimpleChromosome layerChoiceChromosome;
@@ -85,6 +87,7 @@ public class PatternLayerManager implements PatternFeatures {
 		this.scaleTraversalStrategy = ScaleTraversalStrategy.CHORD;
 		this.scaleTraversalDepth = 1;
 		this.minLayerScale = 0.0625;
+		this.seedBiasAdjustment = 1.0;
 		setMelodic(melodic);
 
 		this.percChoices = percChoices;
@@ -154,6 +157,14 @@ public class PatternLayerManager implements PatternFeatures {
 		this.scaleTraversalStrategy = scaleTraversalStrategy;
 	}
 
+	public double getSeedBiasAdjustment() {
+		return seedBiasAdjustment;
+	}
+
+	public void setSeedBiasAdjustment(double seedBiasAdjustment) {
+		this.seedBiasAdjustment = seedBiasAdjustment;
+	}
+
 	public PatternElementFactory getElementFactory() {
 		return elementFactory;
 	}
@@ -166,8 +177,8 @@ public class PatternLayerManager implements PatternFeatures {
 		List<PatternLayerSeeds> options = choices()
 				.filter(NoteAudioChoice::isSeed)
 				.filter(NoteAudioChoice::hasValidNotes)
-				.map(choice -> choice.seeds(params))
-				.collect(Collectors.toList());
+				.map(choice -> choice.seeds(params, seedBiasAdjustment))
+				.toList();
 
 		if (options.isEmpty()) return null;
 

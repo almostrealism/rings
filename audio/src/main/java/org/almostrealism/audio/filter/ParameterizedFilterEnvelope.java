@@ -29,23 +29,6 @@ import org.almostrealism.hardware.mem.Heap;
 import java.util.List;
 
 public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
-	public static final int MAX_SECONDS = 90;
-
-	public static boolean enableMultiOrderFilter = true;
-
-	private static EnvelopeProcessor processor;
-
-	static {
-		if (Heap.getDefault() != null) {
-			throw new RuntimeException();
-		}
-
-		if (enableMultiOrderFilter) {
-			processor = new MultiOrderFilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
-		} else {
-			processor = new FilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS);
-		}
-	}
 
 	private Mode mode;
 
@@ -111,6 +94,7 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 				PackedCollection<?> dr = duration.get().evaluate();
 				PackedCollection<?> al = automationLevel.get().evaluate();
 
+				EnvelopeProcessor processor = AudioProcessingUtils.getFilterEnv();
 				processor.setDuration(dr.toDouble(0));
 				processor.setAttack(getAttack());
 				processor.setDecay(getDecay());

@@ -16,8 +16,11 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioChoice;
+import org.almostrealism.io.Console;
+import org.almostrealism.io.ConsoleFeatures;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class PatternLayerSeeds {
+public class PatternLayerSeeds implements ConsoleFeatures {
 
 	private double position;
 	private double granularity;
@@ -93,9 +96,12 @@ public class PatternLayerSeeds {
 				.collect(Collectors.toList());
 
 		if (layers.size() <= 0 && (this.bias) >= 1.0) {
-			System.out.println("PatternLayerSeeds: No seeds generated, despite bias >= 1.0");
+			warn("No seeds generated, despite bias >= 1.0");
 		}
 
 		return layers.stream();
 	}
+
+	@Override
+	public Console console() { return CellFeatures.console; }
 }

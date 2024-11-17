@@ -17,38 +17,16 @@
 package org.almostrealism.audio.filter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
-import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
-	public static final int MAX_SECONDS = 180;
-
-	private static Evaluable<PackedCollection<?>> env;
-
-	static {
-		if (Heap.getDefault() != null) {
-			throw new RuntimeException();
-		}
-
-		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
-
-		Factor<PackedCollection<?>> factor =
-				o.envelope(o.v(1, 1),
-						o.v(1, 2), o.v(1, 3),
-						o.v(1, 4), o.v(1, 5)).get();
-		env = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> factor.getResultant(o.v(1, 0))).get();
-	}
 
 	private Mode mode;
 
@@ -130,7 +108,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				s.set(0, getSustain() * al.toDouble(0));
 				r.set(0, getRelease() * al.toDouble(0));
 
-				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
+				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
+						.evaluate(audioData.traverse(1), dr, a, d, s, r);
 
 				if (out.getShape().getTotalSize() == 1) {
 					warn("Envelope produced a value with shape " +
