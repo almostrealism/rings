@@ -28,6 +28,7 @@ import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
@@ -66,7 +67,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
-	public static final int singleChannel = -1;
+	public static final int singleChannel = 3;
 
 	public static String LIBRARY = "Library";
 
@@ -180,6 +181,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		Hardware.getLocalHardware().assignProfile(profile);
 		StableDurationHealthComputation.profile = profile;
 
+		AudioProcessingUtils.init();
 		WaveData.init();
 
 		try {
@@ -193,9 +195,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					opt.run();
 
 					profile.print();
-
-					if (WavCellChromosome.timing.getTotal() > 60)
-						WavCellChromosome.timing.print();
 
 					if (enableVerbose)
 						PatternLayerManager.sizes.print();

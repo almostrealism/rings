@@ -26,7 +26,7 @@ import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
-import org.almostrealism.audio.filter.AudioSumProvider;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
@@ -60,8 +60,6 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static final boolean enableLazyDestination = false;
 	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
-
-	private static AudioSumProvider sum = new AudioSumProvider();
 
 	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
@@ -134,6 +132,14 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void refreshParameters() {
+		patterns.stream().collect(Collectors.groupingBy(PatternLayerManager::getChannel))
+				.forEach((c, channelPatterns) -> {
+			long activeLayers = channelPatterns.stream()
+					.filter(p -> p.getLayerCount() > 0)
+					.count();
+			double adj = Math.exp(-0.25 * (activeLayers - 4));
+			channelPatterns.forEach(p -> p.setSeedBiasAdjustment(adj));
+		});
 		patterns.forEach(PatternLayerManager::refresh);
 	}
 
@@ -226,7 +232,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		}
 
 		op.add(() -> () -> {
-			sum.adjustVolume(context.get().getDestination(), volume);
+			AudioProcessingUtils.getSum().adjustVolume(context.get().getDestination(), volume);
 		});
 
 		return op;

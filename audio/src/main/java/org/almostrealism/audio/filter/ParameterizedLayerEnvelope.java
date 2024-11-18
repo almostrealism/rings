@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.filter;
 
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
@@ -26,40 +25,11 @@ import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
-import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 	public static boolean enableReusableProducer = false;
-
-	public static final int MAX_SECONDS = 180;
-
-	private static Evaluable<PackedCollection<?>> env;
-
-	static {
-		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
-		
-		if (Heap.getDefault() != null) {
-			throw new RuntimeException();
-		}
-
-		CollectionProducer<PackedCollection<?>> mainDuration = o.cv(o.shape(1), 1);
-		CollectionProducer<PackedCollection<?>> duration0 = mainDuration.multiply(o.cv(o.shape(1), 2));
-		CollectionProducer<PackedCollection<?>> duration1 = mainDuration.multiply(o.cv(o.shape(1), 3));
-		CollectionProducer<PackedCollection<?>> duration2 = mainDuration.multiply(o.cv(o.shape(1), 4));
-		CollectionProducer<PackedCollection<?>> volume0 = o.cv(o.shape(1), 5);
-		CollectionProducer<PackedCollection<?>> volume1 = o.cv(o.shape(1), 6);
-		CollectionProducer<PackedCollection<?>> volume2 = o.cv(o.shape(1), 7);
-		CollectionProducer<PackedCollection<?>> volume3 = o.cv(o.shape(1), 8);
-
-		Factor<PackedCollection<?>> factor =
-				o.envelope(o.linear(o.c(0.0), duration0, volume0, volume1))
-						.andThenRelease(duration0, volume1, duration1.subtract(duration0), volume2)
-						.andThenRelease(duration1, volume2, duration2.subtract(duration1), volume3).get();
-		env = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> factor.getResultant(o.v(1, 0))).get();
-	}
 
 	private ParameterizedEnvelopeLayers parent;
 	private int layer;
@@ -151,7 +121,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 							envelope(linear(c(0.0), duration0, volume0, volume1))
 									.andThenRelease(duration0, volume1, duration1.subtract(duration0), volume2)
 									.andThenRelease(duration1, volume2, duration2.subtract(duration1), volume3).get();
-					return sampling(OutputLine.sampleRate, MAX_SECONDS,
+					return sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
 							() -> factor.getResultant(p[0]));
 				}, audio, duration, p(d0), p(d1), p(d2), p(v0), p(v1), p(v2), p(v3));
 			} else {
@@ -159,7 +129,8 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 					PackedCollection<?> audioData = audio.get().evaluate();
 					PackedCollection<?> dr = duration.get().evaluate();
 
-					PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
+					PackedCollection<?> out = AudioProcessingUtils.getLayerEnv()
+							.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
 
 					if (out.getShape().getTotalSize() == 1) {
 						warn("Envelope produced a value with shape " +

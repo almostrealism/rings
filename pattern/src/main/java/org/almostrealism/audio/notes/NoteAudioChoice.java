@@ -181,7 +181,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 				.collect(Collectors.toList());
 	}
 
-	public PatternLayerSeeds seeds(ParameterSet params) {
+	public PatternLayerSeeds seeds(ParameterSet params, double biasAdjustment) {
 		double granularity = granularitySelection.power(2, 3, -3).apply(params);
 
 		if (GRANULARITY_DIST != null) {
@@ -194,6 +194,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 			GRANULARITY_DIST[i]++;
 		}
 
+		double bias = (getBias() + 1.0) * biasAdjustment - 1.0;
 		return new PatternLayerSeeds(0, granularity, getMinScale(), getMaxScale(), bias, this, params);
 	}
 
