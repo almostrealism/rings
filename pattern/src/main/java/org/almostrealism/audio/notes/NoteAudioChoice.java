@@ -29,6 +29,7 @@ import org.almostrealism.audio.pattern.ScaleTraversalStrategy;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	public NoteAudioChoice(String name, double weight, double minScale, double maxScale) {
+		setId(KeyUtils.generateKey());
 		setName(name);
 		setWeight(weight);
 		setMinScale(minScale);
@@ -74,6 +76,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		setSeed(true);
 		setBias(-0.5);
 		setChannels(new ArrayList<>());
+		setSources(new ArrayList<>());
 		initSelectionFunctions();
 	}
 
@@ -92,7 +95,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	public String getId() {
 		if (id != null) return id;
 		if (factory != null) return factory.getId();
-		return factory.getId();
+		return null;
 	}
 
 	public void setId(String id) {
@@ -102,8 +105,8 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	public String getName() {
 		if (name != null) return name;
-		if (factory == null) return null;
-		return factory.getName();
+		if (factory != null) return factory.getName();
+		return null;
 	}
 
 	public void setName(String name) {
