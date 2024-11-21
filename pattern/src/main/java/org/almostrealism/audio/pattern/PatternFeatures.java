@@ -4,6 +4,7 @@ import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
@@ -32,7 +33,7 @@ public interface PatternFeatures extends CodeFeatures {
 						sizes.addEntry(frames);
 
 						TraversalPolicy shape = shape(frames);
-						return PatternNoteAudio.sum.sum(destination.range(shape, note.getOffset()), audio.range(shape));
+						return AudioProcessingUtils.getSum().sum(destination.range(shape, note.getOffset()), audio.range(shape));
 					};
 
 					Heap.stage(() ->

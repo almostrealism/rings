@@ -123,6 +123,13 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		out.reset();
 	}
 
+	@Override
+	public void destroy() {
+		AudioHealthComputation.super.destroy();
+		if (out != null) out.destroy();
+		if (stems != null) stems.forEach(WaveOutput::destroy);
+	}
+
 	public static void setStandardDuration(int sec) {
 		standardDuration = (int) (sec * OutputLine.sampleRate);
 	}

@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
@@ -30,7 +31,7 @@ import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class SceneSectionManager implements Setup {
+public class SceneSectionManager implements Setup, Destroyable {
 	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
 
 	private List<SceneSection> sections;
@@ -45,7 +46,8 @@ public class SceneSectionManager implements Setup {
 
 	private List<Integer> wetChannels;
 
-	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo, DoubleSupplier measureDuration, int sampleRate) {
+	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo,
+							   DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
 		this.genome = genome;
@@ -81,11 +83,18 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public void removeSection(int index) {
-		sections.remove(index);
+		sections.remove(index).destroy();
 		setup.remove(index);
 		genome.removeChromosome(index);
 	}
 
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		sections.forEach(SceneSection::destroy);
+		sections.clear();
+	}
 }

@@ -22,6 +22,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.CollectionProducerComputationBase;
+import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.io.TimingMetric;
 
 public class AudioSumProvider implements CellFeatures {
@@ -36,6 +37,10 @@ public class AudioSumProvider implements CellFeatures {
 	}
 
 	public AudioSumProvider(boolean parallel) {
+		if (Heap.getDefault() != null) {
+			throw new RuntimeException();
+		}
+
 		this.parallel = parallel;
 
 		CollectionProducer sum = add(v(shape(1), 0), v(shape(1), 1));

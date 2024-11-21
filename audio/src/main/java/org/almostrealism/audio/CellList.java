@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio;
 
-import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.CollectionProducer;
@@ -46,12 +46,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Cells {
+public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Cells, Destroyable {
 	private List<CellList> parents;
 	private List<Receptor<PackedCollection<?>>> roots;
 	private List<Setup> setups;
 	private TemporalList requirements;
 	private List<Runnable> finals;
+
+	private List<PackedCollection<?>> data;
 
 	public CellList(CellList... parents) {
 		this(Arrays.asList(parents));
@@ -79,6 +81,12 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 
 	public <T extends Temporal> CellList addRequirements(T... t) {
 		requirements.addAll(Arrays.asList(t));
+		return this;
+	}
+
+	public <T extends Temporal> CellList addData(PackedCollection<?>... t) {
+		if (data == null) data = new ArrayList<>();
+		data.addAll(Arrays.asList(t));
 		return this;
 	}
 
@@ -255,6 +263,21 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		parents.forEach(CellList::reset);
 		forEach(Cell::reset);
 		requirements.reset();
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+
+		if (data != null) {
+			data.forEach(PackedCollection::destroy);
+			data.clear();
+		}
+
+		parents.forEach(CellList::destroy);
+		forEach(c -> {
+			if (c instanceof Destroyable) ((Destroyable) c).destroy();
+		});
 	}
 
 	public static Collector<Cell<PackedCollection<?>>, ?, CellList> collector() {

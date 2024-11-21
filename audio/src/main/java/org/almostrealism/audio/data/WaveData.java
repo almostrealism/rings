@@ -250,7 +250,7 @@ public class WaveData implements SamplingFeatures {
 		} finally {
 			inRoot.destroy();
 			outRoot.destroy();
-			if (pooling) out.destroy();
+			if (pooling || sum) out.destroy();
 		}
 	}
 
