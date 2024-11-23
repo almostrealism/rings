@@ -54,9 +54,6 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	private ParameterFunction granularitySelection;
 
-	@Deprecated
-	private PatternElementFactory factory;
-
 	public NoteAudioChoice() { this(null); }
 
 	public NoteAudioChoice(String name) { this(name, 1.0); }
@@ -67,6 +64,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 
 	public NoteAudioChoice(String name, double weight, double minScale, double maxScale) {
 		setName(name);
+		setSources(new ArrayList<>());
 		setWeight(weight);
 		setMinScale(minScale);
 		setMaxScale(maxScale);
@@ -81,44 +79,32 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		granularitySelection = ParameterFunction.random();
 	}
 
-	public PatternElementFactory getFactory() { return factory; }
-
-	public void setFactory(PatternElementFactory factory) { this.factory = factory; }
-
 	public void setTuning(KeyboardTuning tuning) {
 		getSources().forEach(n -> n.setTuning(tuning));
 	}
 
 	public String getId() {
-		if (id != null) return id;
-		if (factory != null) return factory.getId();
-		return factory.getId();
+		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
-		if (this.factory != null) this.factory.setId(id);
 	}
 
 	public String getName() {
-		if (name != null) return name;
-		if (factory == null) return null;
-		return factory.getName();
+		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-		if (factory != null) this.factory.setName(name);
 	}
 
 	public List<NoteAudioSource> getSources() {
-		if (sources != null) return sources;
-		return factory == null ? null : factory.getSources();
+		return sources;
 	}
 
 	public void setSources(List<NoteAudioSource> sources) {
 		this.sources = sources;
-		if (factory != null) this.factory.setSources(sources);
 	}
 
 	public boolean isMelodic() {

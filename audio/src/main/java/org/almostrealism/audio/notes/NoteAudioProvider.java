@@ -66,7 +66,15 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 		});
 
 		audioCache.setAccessListener(accessListener.get());
-		audioCache.setClear(PackedCollection::destroy);
+		audioCache.setValid(c -> !c.isDestroyed());
+		audioCache.setClear(c -> {
+			// If the cached value is a subset of another value,
+			// it does not make sense to destroy it just because
+			// it is no longer being stored in the cache
+			if (c.getRootDelegate().getMemLength() == c.getMemLength()) {
+				c.destroy();
+			}
+		});
 	}
 
 	private WaveDataProvider provider;

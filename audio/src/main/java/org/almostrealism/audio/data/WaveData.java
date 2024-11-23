@@ -17,6 +17,7 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.compute.ComputeRequirement;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
@@ -38,7 +39,7 @@ import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WaveData implements SamplingFeatures {
+public class WaveData implements Destroyable, SamplingFeatures {
 	public static final boolean enableGpu = false;
 
 	public static final int FFT_BINS = enableGpu ? 256 : 1024;
@@ -290,6 +291,13 @@ public class WaveData implements SamplingFeatures {
 
 	public WaveCell toCell(Producer<Scalar> frame) {
 		return new WaveCell(getCollection(), getSampleRate(), frame);
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		if (collection != null) collection.destroy();
+		collection = null;
 	}
 
 	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
