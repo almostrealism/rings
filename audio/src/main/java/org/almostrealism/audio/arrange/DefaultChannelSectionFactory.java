@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -34,13 +35,16 @@ import org.almostrealism.heredity.SimpleGene;
 import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class DefaultChannelSectionFactory implements Setup, CellFeatures, EnvelopeFeatures, OptimizeFactorFeatures {
+public class DefaultChannelSectionFactory implements Setup, Destroyable,
+						CellFeatures, EnvelopeFeatures, OptimizeFactorFeatures {
 	public static boolean enableVolumeRiseFall = true;
 	public static boolean enableFilter = true;
 
@@ -67,8 +71,10 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels, IntPredicate wetChannels, IntPredicate repeatChannels,
-										Supplier<Frequency> tempo, DoubleSupplier measureDuration, int length, int sampleRate) {
+	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels,
+										IntPredicate wetChannels, IntPredicate repeatChannels,
+										Supplier<Frequency> tempo, DoubleSupplier measureDuration,
+										int length, int sampleRate) {
 		this.clock = new TimeCell();
 		this.duration = new PackedCollection<>(1);
 
@@ -129,7 +135,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 	}
 
 	public Section createSection(int position) {
-		if (channel >= channels) throw new IllegalArgumentException();
+		if (channel >= channels)
+			throw new IllegalArgumentException();
 		return new Section(position, length, channel++,
 				(int) (sampleRate * length * measureDuration.getAsDouble()));
 	}
@@ -142,12 +149,23 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 	}
 
 	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+
+		if (clock != null) clock.destroy();
+		if (duration != null) duration.destroy();
+		clock = null;
+		duration = null;
+	}
+
+	@Override
 	public Console console() { return CellFeatures.console; }
 
 	public class Section implements ChannelSection {
 		private int position, length;
 		private int channel;
 		private int samples;
+		private List<Destroyable> dependencies;
 
 		public Section() { }
 
@@ -157,6 +175,7 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 			this.length = length;
 			this.channel = channel;
 			this.samples = samples;
+			this.dependencies = new ArrayList<>();
 		}
 
 		@Override
@@ -169,6 +188,8 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 		public Supplier<Runnable> process(Producer<PackedCollection<?>> destination, Producer<PackedCollection<?>> source) {
 			PackedCollection<?> input = new PackedCollection<>(samples);
 			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
+			dependencies.add(input);
+			dependencies.add(output);
 
 			int repeatGene = channel; // 0;
 			Producer<PackedCollection<?>> r = simpleDuration.valueAt(repeatGene, 0)
@@ -206,11 +227,20 @@ public class DefaultChannelSectionFactory implements Setup, CellFeatures, Envelo
 				cells = cells.map(fc(i -> lp(lp, scalar(FixedFilterChromosome.defaultResonance))));
 			}
 
+			dependencies.add(cells);
+
 			OperationList process = new OperationList();
 			process.add(new MemoryDataCopy("DefaultChannelSection Input", () -> source.get().evaluate(), () -> input, samples));
 			process.add(cells.export(output));
 			process.add(new MemoryDataCopy("DefaultChannelSection Output", () -> output, () -> destination.get().evaluate(), samples));
 			return process;
+		}
+
+		@Override
+		public void destroy() {
+			ChannelSection.super.destroy();
+			dependencies.forEach(Destroyable::destroy);
+			dependencies.clear();
 		}
 	}
 }

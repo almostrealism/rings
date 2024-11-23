@@ -25,7 +25,6 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.function.DoubleFunction;
 
 public interface PatternNoteAudio {
-	AudioSumProvider sum = new AudioSumProvider();
 
 	default BufferDetails getBufferDetails(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
 		return new BufferDetails(

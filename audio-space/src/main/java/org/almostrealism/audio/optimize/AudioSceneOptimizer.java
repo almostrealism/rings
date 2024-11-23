@@ -105,6 +105,13 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 				});
 	}
 
+	@Override
+	public void destroy() {
+		super.destroy();
+		if (population != null) population.destroy();
+		population = null;
+	}
+
 	public static AudioSceneOptimizer build(AudioScene<?> scene, int cycles) {
 		return build(() -> scene.getGenome()::random, scene, cycles);
 	}

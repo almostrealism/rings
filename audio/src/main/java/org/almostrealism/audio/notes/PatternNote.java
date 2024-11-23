@@ -19,8 +19,7 @@ package org.almostrealism.audio.notes;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.sources.SourceAggregator;
-import org.almostrealism.audio.sources.SummingSourceAggregator;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -164,7 +163,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
 						int f = Math.min(frames[i], totalFrames);
 
-						PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
+						AudioProcessingUtils.getSum().sum(dest.range(shape(f)), audio.range(shape(f)));
 					}
 
 					return dest;

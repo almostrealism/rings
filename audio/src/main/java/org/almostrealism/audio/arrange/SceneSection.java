@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.data.ChannelInfo;
 
 import java.util.List;
@@ -23,11 +24,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SceneSection {
+public class SceneSection implements Destroyable {
 	private int position, length;
 	private List<ChannelSection> channels;
 
-	protected SceneSection(int position, int length, List<ChannelSection> channels) {
+	protected SceneSection(int position, int length,
+						   List<ChannelSection> channels) {
 		this.position = position;
 		this.length = length;
 		this.channels = channels;
@@ -39,6 +41,14 @@ public class SceneSection {
 	public ChannelSection getChannelSection(ChannelInfo channel) { return channels.get(channel.getChannel()); }
 
 	public static SceneSection createSection(int position, int length, int channels, Supplier<ChannelSection> supply) {
-		return new SceneSection(position, length, IntStream.range(0, channels).mapToObj(i -> supply.get()).collect(Collectors.toList()));
+		return new SceneSection(position, length, IntStream.range(0, channels)
+				.mapToObj(i -> supply.get()).collect(Collectors.toList()));
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		if (channels != null) channels.forEach(Destroyable::destroy);
+		channels = null;
 	}
 }

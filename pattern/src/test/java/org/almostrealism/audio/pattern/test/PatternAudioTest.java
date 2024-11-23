@@ -21,6 +21,7 @@ import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
@@ -63,7 +64,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 						attack(c(0.5)).getResultant(in));
 
 		Evaluable<PackedCollection<?>> env =
-				sampling(OutputLine.sampleRate, ParameterizedVolumeEnvelope.MAX_SECONDS,
+				sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
 						() -> factor.getResultant(v(1, 0))).get();
 
 		PatternNoteLayer note = PatternNoteLayer.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
@@ -86,7 +87,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		Factor<PackedCollection<?>> factor = envelope(attack(c(0.5)))
 				.andThenDecay(c(0.5), c(1.0), c(0.0)).get();
 		Evaluable<PackedCollection<?>> env =
-				sampling(OutputLine.sampleRate, ParameterizedVolumeEnvelope.MAX_SECONDS,
+				sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
 					() -> factor.getResultant(v(1, 0))).get();
 
 		PatternNoteLayer note = PatternNoteLayer.create("Library/Snare Perc DD.wav", WesternChromatic.C1);

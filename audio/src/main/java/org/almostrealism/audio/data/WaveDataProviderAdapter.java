@@ -97,7 +97,10 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 	@Override
 	public WaveData get() {
 		if (loaded.get(getKey()) == null) {
-			loaded.put(getKey(), new DefaultContextSpecific<>(this::load));
+			DefaultContextSpecific<WaveData> specific = new DefaultContextSpecific<>(this::load);
+			specific.setValid(w -> w.getCollection() != null && !w.getCollection().isDestroyed());
+
+			loaded.put(getKey(), specific);
 			loaded.get(getKey()).init();
 		}
 

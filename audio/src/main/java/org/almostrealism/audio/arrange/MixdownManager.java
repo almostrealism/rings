@@ -17,6 +17,7 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -47,7 +48,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatures {
+public class MixdownManager implements Setup, Destroyable, CellFeatures, OptimizeFactorFeatures {
 	public static final int mixdownDuration = 140;
 
 	public static boolean enableMixdown = false;
@@ -93,6 +94,8 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	private SimpleChromosome mainFilterDownSimple;
 
 	private List<Integer> reverbChannels;
+
+	private List<Destroyable> dependencies;
 
 	public MixdownManager(ConfigurableGenome genome,
 						  int channels, int delayLayers,
@@ -142,6 +145,7 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		initRanges(new Configuration(channels), delayLayers);
 
 		this.reverbChannels = new ArrayList<>();
+		this.dependencies = new ArrayList<>();
 	}
 
 	public AutomationManager getAutomationManager() { return automation; }
@@ -265,6 +269,16 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 	}
 
 	public CellList cells(CellList sources, CellList wetSources,
+							 List<? extends Receptor<PackedCollection<?>>> measures,
+							 List<? extends Receptor<PackedCollection<?>>> stems,
+							 Receptor<PackedCollection<?>> output,
+							 IntUnaryOperator channelIndex) {
+		CellList cells = createCells(sources, wetSources, measures, stems, output, channelIndex);
+		dependencies.add(cells);
+		return cells;
+	}
+
+	protected CellList createCells(CellList sources, CellList wetSources,
 						  List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output,
@@ -452,6 +466,12 @@ public class MixdownManager implements Setup, CellFeatures, OptimizeFactorFeatur
 		}
 	}
 
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		dependencies.forEach(Destroyable::destroy);
+		dependencies.clear();
+	}
 
 	/**
 	 * This method wraps the specified {@link Factor} to prevent it from
