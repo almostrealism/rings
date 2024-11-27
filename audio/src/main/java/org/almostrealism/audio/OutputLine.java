@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,17 @@
 
 package org.almostrealism.audio;
 
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.SystemUtils;
 
+import java.util.function.Supplier;
+
 public interface OutputLine {
 	int sampleRate = SystemUtils.getInt("AR_AUDIO_SAMPLE_RATE").orElse(44100);
+
+	default int getSampleRate() { return sampleRate; }
 
 	/**
 	 * Write the specified bytes. Using this method, the caller must
@@ -39,4 +45,11 @@ public interface OutputLine {
 	 * necessary to get one sample worth of bytes.
 	 */
 	void write(PackedCollection<?> sample);
+
+	default Supplier<Runnable> write(Producer<PackedCollection<?>> frames) {
+		return () -> {
+			Evaluable<PackedCollection<?>> sample = frames.get();
+			return () -> write(sample.evaluate());
+		};
+	}
 }

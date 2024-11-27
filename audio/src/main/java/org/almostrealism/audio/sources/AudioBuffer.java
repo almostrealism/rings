@@ -16,29 +16,25 @@
 
 package org.almostrealism.audio.sources;
 
-public class BufferDetails {
-	private final int sampleRate;
-	private final int frames;
+import org.almostrealism.collect.PackedCollection;
 
-	public BufferDetails(int sampleRate, int frames) {
-		this.sampleRate = sampleRate;
-		this.frames = frames;
+public class AudioBuffer {
+	private BufferDetails details;
+	private PackedCollection<?> buffer;
+
+	public AudioBuffer(BufferDetails details, PackedCollection<?> buffer) {
+		this.details = details;
+		this.buffer = buffer;
+
+		if (details.getFrames() != buffer.getMemLength()) {
+			throw new IllegalArgumentException();
+		}
 	}
 
-	public BufferDetails(int sampleRate, double duration) {
-		this.sampleRate = sampleRate;
-		this.frames = (int) (duration * sampleRate);
-	}
+	public BufferDetails getDetails() { return details; }
+	public PackedCollection<?> getBuffer() { return buffer; }
 
-	public int getSampleRate() {
-		return sampleRate;
-	}
-
-	public int getFrames() {
-		return frames;
-	}
-
-	public double getDuration() {
-		return (double) frames / sampleRate;
+	public static AudioBuffer create(int sampleRate, int frames) {
+		return new AudioBuffer(new BufferDetails(sampleRate, frames), new PackedCollection<>(frames));
 	}
 }
