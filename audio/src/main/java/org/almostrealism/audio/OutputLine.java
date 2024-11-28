@@ -28,6 +28,8 @@ public interface OutputLine {
 
 	default int getSampleRate() { return sampleRate; }
 
+	default int getBufferSize() { return 1024; }
+
 	/**
 	 * Write the specified bytes. Using this method, the caller must
 	 * be aware of the number of bytes in a sample to write a valid

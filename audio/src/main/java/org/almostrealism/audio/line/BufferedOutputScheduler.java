@@ -31,8 +31,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BufferedOutputScheduler implements CellFeatures {
-	public static int defaultBufferFrames = 2048;
-	public static long timingPad = 5;
+	public static final int batches = 2;
+	public static final long timingPad = -3;
+
+	public static int defaultBufferFrames = 8 * 1024;
+	public static double defaultBufferingRate = 2.0;
 
 	private Consumer<Runnable> executor;
 	private Temporal process;
@@ -41,8 +44,17 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 	private TimingRegularizer regularizer;
 	private Runnable next;
+
+	private long start;
 	private boolean stopped;
-	private long start, count;
+	private long count;
+
+	private double rate;
+	private int batchSize;
+	private long batchStart;
+
+	private boolean paused;
+	private long lastPause, totalPaused;
 
 	protected BufferedOutputScheduler(
 			Consumer<Runnable> executor, Temporal process,
@@ -51,6 +63,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 		this.process = process;
 		this.line = line;
 		this.buffer = buffer;
+		this.rate = defaultBufferingRate;
+		this.batchSize = line.getBufferSize() / batches;
 	}
 
 	public void start() {
@@ -67,32 +81,90 @@ public class BufferedOutputScheduler implements CellFeatures {
 		executor.accept(this::run);
 	}
 
+	public void pause() {
+		if (paused) {
+			throw new UnsupportedOperationException();
+		}
+
+		synchronized (this) {
+			double avg = regularizer.getAverageDuration() / 10e9;
+			double tot = (System.currentTimeMillis() - batchStart) / 1000.0;
+			double dur = batchSize / (double) line.getSampleRate();
+			log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ")");
+			lastPause = System.currentTimeMillis();
+			paused = true;
+			notifyAll();
+		}
+	}
+
+	public void resume() throws InterruptedException {
+		if (!paused) {
+			wait();
+		}
+
+		if (lastPause > 0)
+			totalPaused = totalPaused + (System.currentTimeMillis() - lastPause);
+
+		log("Resumed at " + getRenderedCount() +
+				" | rendering gap = " + getRenderingGap() + ")");
+
+		lastPause = 0;
+		batchStart = System.currentTimeMillis();
+		paused = false;
+	}
+
 	public void stop() { stopped = true; }
 
-	public long getRealTime() { return System.currentTimeMillis() - start; }
-	public long getRenderedTime() { return count * buffer.getDetails().getFrames() * 1000 / line.getSampleRate(); }
+	public AudioBuffer getBuffer() { return buffer; }
+	public OutputLine getOutputLine() { return line; }
+
+	protected long toRealTime(double t) { return (long) (t * rate); }
+	protected long fromRealTime(double t) { return (long) (t / rate); }
+
+	public long getRenderedCount() { return count; }
+	public long getRenderedFrames() { return count * buffer.getDetails().getFrames(); }
+	public long getRealTime() { return toRealTime(System.currentTimeMillis() - start - totalPaused); }
+	public long getRenderedTime() { return getRenderedFrames() * 1000 / line.getSampleRate(); }
 	public long getRenderingGap() { return getRenderedTime() - getRealTime(); }
+
+	protected long getTarget() {
+		long target = fromRealTime(regularizer.getTimingDifference() / 10e6);
+
+		if (paused) {
+			target = target / 4;
+		} else {
+			long gap = Math.max(0, getRenderingGap()) / 2;
+			target = target + gap + timingPad;
+		}
+
+		return target;
+	}
 
 	protected void run() {
 		start = System.currentTimeMillis();
 		long lastDuration = 0;
 
 		while (!stopped) {
-			long s = System.nanoTime();
-			regularizer.addMeasuredDuration(lastDuration);
-			next.run();
-			count++;
+			long target;
 
-			if (count % 100 == 0) {
-				System.out.println("BufferedOutputScheduler: rendering gap = " + getRenderingGap());
+			if (!paused) {
+				long s = System.nanoTime();
+				regularizer.addMeasuredDuration(lastDuration);
+				next.run();
+				count++;
+
+				if (getRenderedFrames() % batchSize == 0) {
+					pause();
+				}
+
+				target = getTarget();
+				lastDuration = System.nanoTime() - s;
+			} else {
+				target = getTarget();
 			}
 
-			lastDuration = System.nanoTime() - s;
-
 			try {
-				long target = (regularizer.getTimingDifference() / (long) 10e6) - timingPad;
-				long gap = Math.max(0, getRenderingGap());
-				Thread.sleep(target + gap / 2);
+				Thread.sleep(target);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}

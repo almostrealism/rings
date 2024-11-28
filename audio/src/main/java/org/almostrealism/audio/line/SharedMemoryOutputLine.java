@@ -28,6 +28,9 @@ public class SharedMemoryOutputLine implements OutputLine {
 	}
 
 	@Override
+	public int getBufferSize() { return destination.getMemLength(); }
+
+	@Override
 	public void write(byte[] b) {
 		throw new UnsupportedOperationException();
 	}

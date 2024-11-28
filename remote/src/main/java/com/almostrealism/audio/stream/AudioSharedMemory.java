@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audio.util;
+package com.almostrealism.audio.stream;
 
 import io.almostrealism.code.ComputeContext;
 import io.almostrealism.relation.Evaluable;
@@ -26,21 +26,36 @@ import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.RAM;
 import org.almostrealism.time.Temporal;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AudioSharedMemory {
-	static boolean useOutputLine = true;
 	static long pos = 0;
 	static int bufferFrames = BufferedOutputScheduler.defaultBufferFrames;
 	static int sampleRate = 44100;
 	static double currentFrequency = 220;
 
-	public static void main(String args[]) throws InterruptedException {
-		if (useOutputLine) {
-			outputLine();
-		} else {
-			direct();
+	public static void main(String args[]) throws InterruptedException, IOException {
+		int size = bufferFrames * 16;
+
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		SharedMemoryOutputLine line = new SharedMemoryOutputLine(createDestination(size));
+		BufferedOutputScheduler scheduler = BufferedOutputScheduler.create(executor, line,
+				bufferFrames, AudioSharedMemory::renderingProcess);
+
+		AudioServer server = new AudioServer(7799);
+		server.addStream("next", new BufferedOutputControl(scheduler));
+
+		server.start();
+		System.out.println("Server started");
+
+		scheduler.start();
+		System.out.println("Scheduler started");
+
+		while (true) {
+			Thread.sleep(2000);
+			currentFrequency = currentFrequency == 220 ? 440 : 220;
 		}
 	}
 
@@ -76,61 +91,5 @@ public class AudioSharedMemory {
 				out.evaluate().setMem(data);
 			};
 		};
-	}
-
-	protected static void outputLine() throws InterruptedException {
-		int size = bufferFrames * 32;
-
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		SharedMemoryOutputLine line = new SharedMemoryOutputLine(createDestination(size));
-		BufferedOutputScheduler scheduler = BufferedOutputScheduler.create(executor, line,
-										bufferFrames, AudioSharedMemory::renderingProcess);
-		scheduler.start();
-
-		while (true) {
-			Thread.sleep(200);
-			currentFrequency = currentFrequency == 220 ? 440 : 220;
-		}
-	}
-
-	protected static void direct() throws InterruptedException {
-		double duration = 4.0;
-		int numSamples = (int) (sampleRate * duration);
-
-		double frequencyA = 220.0;
-		double frequencyB = 440.0;
-		float[] sineWaveDataA = new float[numSamples];
-		float[] sineWaveDataB = new float[numSamples];
-		for (int i = 0; i < numSamples; i++) {
-			double time = i / (double) sampleRate;
-			sineWaveDataA[i] = (float) Math.sin(2 * Math.PI * frequencyA * time);
-			sineWaveDataB[i] = (float) Math.sin(2 * Math.PI * frequencyB * time);
-		}
-
-		PackedCollection<?> dest = createDestination(numSamples);
-
-		boolean test = false;
-		boolean updates = true;
-
-		int count = 0;
-
-		while (true) {
-			Thread.sleep(3000);
-			boolean alt = count++ % 2 == 0;
-			float data[] = alt ? sineWaveDataA : sineWaveDataB;
-
-			if (test) {
-				dest.fill(0.001);
-			} else if (updates) {
-				dest.setMem(data);
-				System.out.println("Assigned buffer contents: " + alt);
-
-				if (Math.abs(dest.toDouble(100) - data[100]) > 0.0001) {
-					System.out.println("Error: " + dest.toDouble(100) + " != " + sineWaveDataA[100]);
-				}
-			}
-
-			System.out.println(dest.toArrayString(0, 10));
-		}
 	}
 }

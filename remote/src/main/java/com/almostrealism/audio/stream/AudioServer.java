@@ -19,6 +19,7 @@ package com.almostrealism.audio.stream;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.util.FrequencyCache;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
@@ -33,17 +34,23 @@ import java.net.InetSocketAddress;
 public class AudioServer implements HttpHandler, CodeFeatures {
 	private HttpServer server;
 
-	private FrequencyCache<String, AudioStreamHandler> handlers;
+	private FrequencyCache<String, HttpHandler> handlers;
 
 	public AudioServer(int port) throws IOException {
 		server = HttpServer.create(new InetSocketAddress(port), 20);
 		handlers = new FrequencyCache<>(100, 0.6f);
-		handlers.setEvictionListener((key, value) -> value.destroy());
+		handlers.setEvictionListener((key, value) -> {
+			if (value instanceof Destroyable v) v.destroy();
+		});
 	}
 
 	public void start() throws IOException {
 		server.createContext("/", this);
 		server.start();
+	}
+
+	public void addStream(String channel, BufferedOutputControl source) {
+		handlers.put(channel, source);
 	}
 
 	public void addStream(String channel, AudioProcessor source, int totalFrames, int sampleRate) {
@@ -58,7 +65,7 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	public void handle(HttpExchange exchange) throws IOException {
 		String path = exchange.getRequestURI().getPath();
 		String channel = path.substring(1);
-		AudioStreamHandler handler = handlers.get(channel);
+		HttpHandler handler = handlers.get(channel);
 		if (handler == null) {
 			exchange.sendResponseHeaders(404, 0);
 			exchange.getResponseBody().close();
