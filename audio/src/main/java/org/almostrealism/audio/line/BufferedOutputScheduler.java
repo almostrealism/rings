@@ -18,15 +18,17 @@ package org.almostrealism.audio.line;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.sources.AudioBuffer;
 import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.time.Temporal;
+import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.time.TimingRegularizer;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -34,11 +36,11 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public static final int batches = 2;
 	public static final long timingPad = -3;
 
-	public static int defaultBufferFrames = 8 * 1024;
+	public static int defaultBatchCount = 16;
 	public static double defaultBufferingRate = 2.0;
 
 	private Consumer<Runnable> executor;
-	private Temporal process;
+	private TemporalRunner process;
 	private OutputLine line;
 	private AudioBuffer buffer;
 
@@ -57,7 +59,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 	private long lastPause, totalPaused;
 
 	protected BufferedOutputScheduler(
-			Consumer<Runnable> executor, Temporal process,
+			Consumer<Runnable> executor, TemporalRunner process,
 			OutputLine line, AudioBuffer buffer) {
 		this.executor = executor;
 		this.process = process;
@@ -71,6 +73,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 		if (next != null) {
 			throw new UnsupportedOperationException();
 		}
+
+		process.setup().get().run();
 
 		OperationList operations = new OperationList("BufferedOutputScheduler");
 		operations.add(process.tick());
@@ -172,17 +176,31 @@ public class BufferedOutputScheduler implements CellFeatures {
 	}
 
 	public static BufferedOutputScheduler create(ExecutorService executor, OutputLine line,
-										  Function<Producer<PackedCollection<?>>, Temporal> source) {
-		return create(executor, line, defaultBufferFrames, source);
+										  Function<Producer<PackedCollection<?>>, TemporalRunner> source) {
+		return create(executor, line, line.getBufferSize() / defaultBatchCount, source);
+	}
+
+	public static BufferedOutputScheduler create(OutputLine line, CellList source) {
+		return create(line, line.getBufferSize() / defaultBatchCount, source::buffer);
+	}
+
+	public static BufferedOutputScheduler create(OutputLine line, int frames,
+												 CellList source) {
+		return create(Executors.newSingleThreadExecutor(), line, frames, source::buffer);
+	}
+
+	public static BufferedOutputScheduler create(OutputLine line, int frames,
+												 Function<Producer<PackedCollection<?>>, TemporalRunner> source) {
+		return create(Executors.newSingleThreadExecutor(), line, frames, source);
 	}
 
 	public static BufferedOutputScheduler create(ExecutorService executor, OutputLine line, int frames,
-										  Function<Producer<PackedCollection<?>>, Temporal> source) {
+										  Function<Producer<PackedCollection<?>>, TemporalRunner> source) {
 		return create(executor, line, AudioBuffer.create(line.getSampleRate(), frames), source);
 	}
 
 	public static BufferedOutputScheduler create(ExecutorService executor, OutputLine line, AudioBuffer buffer,
-										  Function<Producer<PackedCollection<?>>, Temporal> source) {
+										  Function<Producer<PackedCollection<?>>, TemporalRunner> source) {
 		return new BufferedOutputScheduler(executor::execute,
 				source.apply(CollectionFeatures.getInstance().p(buffer.getBuffer())),
 				line, buffer);

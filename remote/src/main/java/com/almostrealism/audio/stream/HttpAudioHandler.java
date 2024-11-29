@@ -16,26 +16,9 @@
 
 package com.almostrealism.audio.stream;
 
-import org.almostrealism.audio.BufferedAudioPlayer;
-import org.almostrealism.audio.CellFeatures;
+import com.sun.net.httpserver.HttpHandler;
+import io.almostrealism.lifecycle.Destroyable;
 
-import java.io.IOException;
+public interface HttpAudioHandler extends HttpHandler, Destroyable {
 
-public class AudioSharedMemory implements CellFeatures {
-	public static void main(String args[]) throws InterruptedException, IOException {
-		new AudioSharedMemory().run();
-	}
-
-	public void run() throws IOException, InterruptedException {
-		AudioServer server = new AudioServer(7799);
-		BufferedAudioPlayer player = server.addLiveStream("next");
-		player.load("Library/RAW_IU_ARCHE_B.wav");
-
-		server.start();
-		System.out.println("Server started");
-
-		while (true) {
-			Thread.sleep(2000);
-		}
-	}
 }

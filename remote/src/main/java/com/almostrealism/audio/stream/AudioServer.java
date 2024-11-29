@@ -23,25 +23,42 @@ import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.util.FrequencyCache;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.BufferedAudioPlayer;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AudioProcessor;
+import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AudioServer implements HttpHandler, CodeFeatures {
+	public static double defaultLiveDuration = 180.0;
+
 	private HttpServer server;
 
-	private FrequencyCache<String, HttpHandler> handlers;
+	private FrequencyCache<String, HttpAudioHandler> handlers;
+	private Map<String, SharedMemoryOutputLine> lines;
 
 	public AudioServer(int port) throws IOException {
 		server = HttpServer.create(new InetSocketAddress(port), 20);
 		handlers = new FrequencyCache<>(100, 0.6f);
 		handlers.setEvictionListener((key, value) -> {
-			if (value instanceof Destroyable v) v.destroy();
+			value.destroy();
+			if (lines.containsKey(key)) {
+				lines.remove(key);
+			}
 		});
+
+		lines = new HashMap<>();
 	}
 
 	public void start() throws IOException {
@@ -49,12 +66,52 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		server.start();
 	}
 
-	public void addStream(String channel, BufferedOutputControl source) {
-		handlers.put(channel, source);
+	public BufferedAudioPlayer addLiveStream(String channel) {
+		return addLiveStream(channel, Collections.emptyList());
 	}
 
-	public void addStream(String channel, AudioProcessor source, int totalFrames, int sampleRate) {
-		handlers.put(channel, new AudioStreamHandler(source, totalFrames, sampleRate));
+	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames) {
+		return addLiveStream(channel, channelNames, new SharedMemoryOutputLine());
+	}
+
+	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames,
+											 OutputLine out) {
+		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
+
+		// Ensure that the player buffer size is a multiple
+		// of the size of the OutputLine buffer
+		maxFrames = maxFrames / out.getBufferSize();
+		maxFrames *= out.getBufferSize();
+
+		return addLiveStream(channel, channelNames, maxFrames, out);
+	}
+
+	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames,
+											int maxFrames, OutputLine out) {
+		if (maxFrames % out.getBufferSize() != 0) {
+			throw new IllegalArgumentException();
+		}
+
+		BufferedAudioPlayer player = new BufferedAudioPlayer(channelNames,
+										out.getSampleRate(), maxFrames);
+		addLiveStream(channel, player, out);
+		return player;
+	}
+
+	public void addLiveStream(String channel, BufferedAudioPlayer player, OutputLine out) {
+		BufferedOutputScheduler scheduler = player.deliver(out);
+		scheduler.start();
+
+		addStream(channel, new BufferedOutputControl(scheduler));
+	}
+
+	public void addStream(String channel, AudioProcessor source,
+						  	int totalFrames, int sampleRate) {
+		addStream(channel, new AudioStreamHandler(source, totalFrames, sampleRate));
+	}
+
+	public void addStream(String channel, HttpAudioHandler handler) {
+		handlers.put(channel, handler);
 	}
 
 	public boolean containsStream(String channel) {

@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
-public class AudioStreamHandler implements HttpHandler, Destroyable, CodeFeatures {
+public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 	public static double bufferDuration = 1.0;
 
 	private PackedCollection<?> buffer;
@@ -81,7 +81,7 @@ public class AudioStreamHandler implements HttpHandler, Destroyable, CodeFeature
 
 	@Override
 	public void destroy() {
-		Destroyable.super.destroy();
+		HttpAudioHandler.super.destroy();
 		buffer.destroy();
 		if (processor instanceof Destroyable)
 			((Destroyable) processor).destroy();

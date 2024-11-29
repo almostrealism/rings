@@ -16,12 +16,24 @@
 
 package org.almostrealism.audio.line;
 
+import io.almostrealism.code.ComputeContext;
+import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
+import org.almostrealism.hardware.RAM;
 
-public class SharedMemoryOutputLine implements OutputLine {
+public class SharedMemoryOutputLine implements OutputLine, Destroyable {
+	public static int defaultBatchSize = 8 * 1024;
+	public static int defaultBufferFrames =
+			BufferedOutputScheduler.defaultBatchCount * defaultBatchSize;
+
 	private int cursor;
 	private PackedCollection<?> destination;
+
+	public SharedMemoryOutputLine() {
+		this(createDestination());
+	}
 
 	public SharedMemoryOutputLine(PackedCollection<?> destination) {
 		this.destination = destination;
@@ -48,5 +60,23 @@ public class SharedMemoryOutputLine implements OutputLine {
 
 		destination.setMem(cursor, sample);
 		cursor = (cursor + sample.getMemLength()) % destination.getMemLength();
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		destination.destroy();
+		destination = null;
+	}
+
+	private static PackedCollection<?> createDestination() {
+		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_shm";
+
+		ComputeContext<?> ctx = Hardware.getLocalHardware().getComputeContext();
+		PackedCollection<?> dest = ctx.getDataContext().sharedMemory(len -> shared, () -> new PackedCollection<>(defaultBufferFrames));
+
+		System.out.println("SharedMemoryOutputLine: buffer ptr - " +
+				((RAM) dest.getMem()).getContentPointer());
+		return dest;
 	}
 }

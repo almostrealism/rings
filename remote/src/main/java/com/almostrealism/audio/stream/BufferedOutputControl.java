@@ -17,7 +17,6 @@
 package com.almostrealism.audio.stream;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.io.Console;
@@ -28,7 +27,7 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BufferedOutputControl implements HttpHandler, ConsoleFeatures {
+public class BufferedOutputControl implements HttpAudioHandler, ConsoleFeatures {
 	private ExecutorService executor;
 	private BufferedOutputScheduler scheduler;
 	private int sampleRate;
