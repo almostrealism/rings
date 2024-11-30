@@ -27,6 +27,8 @@ public class AudioSharedMemory implements CellFeatures {
 	}
 
 	public void run() throws IOException, InterruptedException {
+		boolean alt = false;
+
 		AudioServer server = new AudioServer(7799);
 		BufferedAudioPlayer player = server.addLiveStream("next");
 		player.load("Library/RAW_IU_ARCHE_B.wav");
@@ -35,7 +37,9 @@ public class AudioSharedMemory implements CellFeatures {
 		System.out.println("Server started");
 
 		while (true) {
-			Thread.sleep(2000);
+			Thread.sleep(10000);
+			alt = !alt;
+			player.load(alt ? "Library/RAW_IU_TOP_15.wav" : "Library/RAW_IU_ARCHE_B.wav");
 		}
 	}
 }

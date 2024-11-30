@@ -75,6 +75,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			double duration = frames / (double) data.sampleRate();
 			data.getCollection().setMem(0, result[0], 0, frames);
 			loopDuration.setMem(duration);
+			log("Loaded " + frames + " frames and set duration to " + duration);
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}

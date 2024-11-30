@@ -111,6 +111,10 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	}
 
 	public void addStream(String channel, HttpAudioHandler handler) {
+		if (containsStream(channel)) {
+			throw new IllegalArgumentException("Stream already exists");
+		}
+
 		handlers.put(channel, handler);
 	}
 

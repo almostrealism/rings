@@ -94,7 +94,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 			double avg = regularizer.getAverageDuration() / 10e9;
 			double tot = (System.currentTimeMillis() - batchStart) / 1000.0;
 			double dur = batchSize / (double) line.getSampleRate();
-			log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ")");
+			if (count % 1024 == 0)
+				log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ")");
 			lastPause = System.currentTimeMillis();
 			paused = true;
 			notifyAll();
@@ -109,8 +110,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 		if (lastPause > 0)
 			totalPaused = totalPaused + (System.currentTimeMillis() - lastPause);
 
-		log("Resumed at " + getRenderedCount() +
-				" | rendering gap = " + getRenderingGap() + ")");
+//		log("Resumed at " + getRenderedCount() +
+//				" | rendering gap = " + getRenderingGap() + ")");
 
 		lastPause = 0;
 		batchStart = System.currentTimeMillis();

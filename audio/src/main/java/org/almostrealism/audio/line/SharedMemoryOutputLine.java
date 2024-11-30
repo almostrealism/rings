@@ -73,7 +73,8 @@ public class SharedMemoryOutputLine implements OutputLine, Destroyable {
 		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_shm";
 
 		ComputeContext<?> ctx = Hardware.getLocalHardware().getComputeContext();
-		PackedCollection<?> dest = ctx.getDataContext().sharedMemory(len -> shared, () -> new PackedCollection<>(defaultBufferFrames));
+		PackedCollection<?> dest = ctx.getDataContext().sharedMemory(len -> shared, () ->
+				new PackedCollection<>(defaultBufferFrames));
 
 		System.out.println("SharedMemoryOutputLine: buffer ptr - " +
 				((RAM) dest.getMem()).getContentPointer());
