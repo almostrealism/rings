@@ -21,7 +21,6 @@ import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -62,12 +61,20 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
 				if (enableVerbose && size > 1024)
-					AudioScene.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
+					CellFeatures.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 
 		audioCache.setAccessListener(accessListener.get());
-		audioCache.setClear(PackedCollection::destroy);
+		audioCache.setValid(c -> !c.isDestroyed());
+		audioCache.setClear(c -> {
+			// If the cached value is a subset of another value,
+			// it does not make sense to destroy it just because
+			// it is no longer being stored in the cache
+			if (c.getRootDelegate().getMemLength() == c.getMemLength()) {
+				c.destroy();
+			}
+		});
 	}
 
 	private WaveDataProvider provider;

@@ -17,32 +17,16 @@
 package org.almostrealism.audio.filter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 
 import java.util.List;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
-	public static final int MAX_SECONDS = 180;
-
-	private static Evaluable<PackedCollection<?>> env;
-
-	static {
-		EnvelopeFeatures o = EnvelopeFeatures.getInstance();
-
-		Factor<PackedCollection<?>> factor =
-				o.envelope(o.v(1, 1),
-						o.v(1, 2), o.v(1, 3),
-						o.v(1, 4), o.v(1, 5)).get();
-		env = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> factor.getResultant(o.v(1, 0))).get();
-	}
 
 	private Mode mode;
 
@@ -66,8 +50,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	}
 
 	@Override
-	public NoteAudioFilter createFilter(ParameterSet params) {
-		return new Filter(params);
+	public NoteAudioFilter createFilter(ParameterSet params, ChannelInfo.Voicing voicing) {
+		return new Filter(params, voicing);
 	}
 
 	@JsonIgnore
@@ -78,25 +62,31 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 
 	public class Filter implements NoteAudioFilter {
 		private ParameterSet params;
+		private ChannelInfo.Voicing voicing;
 
-		public Filter(ParameterSet params) {
+		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
+			this.voicing = voicing;
+		}
+
+		public ChannelInfo.Voicing getVoicing() {
+			return voicing;
 		}
 
 		public double getAttack() {
-			return mode.getMaxAttack() * getAttackSelection().positive().apply(params);
+			return mode.getMaxAttack(getVoicing()) * getAttackSelection().positive().apply(params);
 		}
 
 		public double getDecay() {
-			return mode.getMaxDecay() * getDecaySelection().positive().apply(params);
+			return mode.getMaxDecay(getVoicing()) * getDecaySelection().positive().apply(params);
 		}
 
 		public double getSustain() {
-			return mode.getMaxSustain() * getSustainSelection().positive().apply(params);
+			return mode.getMaxSustain(getVoicing()) * getSustainSelection().positive().apply(params);
 		}
 
 		public double getRelease() {
-			return mode.getMaxRelease() * getReleaseSelection().positive().apply(params);
+			return mode.getMaxRelease(getVoicing()) * getReleaseSelection().positive().apply(params);
 		}
 
 		@Override
@@ -118,7 +108,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				s.set(0, getSustain() * al.toDouble(0));
 				r.set(0, getRelease() * al.toDouble(0));
 
-				PackedCollection<?> out = env.evaluate(audioData.traverse(1), dr, a, d, s, r);
+				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
+						.evaluate(audioData.traverse(1), dr, a, d, s, r);
 
 				if (out.getShape().getTotalSize() == 1) {
 					warn("Envelope produced a value with shape " +
@@ -151,17 +142,14 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	public enum Mode {
 		STANDARD_NOTE, NOTE_LAYER;
 
-		public double getMaxAttack() {
-			switch (this) {
-				case NOTE_LAYER:
-					return 2.0;
-				case STANDARD_NOTE:
-				default:
-					return 0.5;
-			}
+		public double getMaxAttack(ChannelInfo.Voicing voicing) {
+			return switch (this) {
+				case NOTE_LAYER -> 2.0;
+				default -> voicing == ChannelInfo.Voicing.WET ? 1.5 : 0.5;
+			};
 		}
 
-		public double getMaxDecay() {
+		public double getMaxDecay(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 3.0;
@@ -171,23 +159,23 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			}
 		}
 
-		public double getMaxSustain() {
+		public double getMaxSustain(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 2.0;
 				case STANDARD_NOTE:
 				default:
-					return 0.8;
+					return voicing == ChannelInfo.Voicing.WET ? 1.0 : 0.8;
 			}
 		}
 
-		public double getMaxRelease() {
+		public double getMaxRelease(ChannelInfo.Voicing voicing) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 2.0;
 				case STANDARD_NOTE:
 				default:
-					return 0.5;
+					return voicing == ChannelInfo.Voicing.WET ? 1.2 : 0.5;
 			}
 		}
 	}

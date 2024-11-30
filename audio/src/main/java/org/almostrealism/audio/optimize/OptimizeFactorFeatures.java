@@ -271,8 +271,8 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 //					.relativeMultiply(c(1.0).relativeSubtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 //					.relativeMultiply(c(1.0).relativeAdd(pow(polySpeedUpWaveLength, c(-1.0))
 //							.relativeMultiply(time).pow(polySpeedUpExp)));
-		return c(1.0).add(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-				.multiply(c(1.0).subtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
+		return c(1.0).add(relativeSinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
+				.multiply(c(1.0).subtract(relativeSinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
 						.multiply(time).pow(polySpeedUpExp)));
 	}
@@ -299,10 +299,10 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 
 		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
 
-		CollectionProducerComputation direction = c(choice(2, toScalar(d), p(directionChoices)), 0);
+		CollectionProducerComputation direction = c(scalarChoice(2, toScalar(d), p(directionChoices)), 0);
 
 		CollectionProducer magnitude = multiply(scale, m);
-		CollectionProducer start = c(choice(2, toScalar(d), originChoices), 0);
+		CollectionProducer start = c(scalarChoice(2, toScalar(d), originChoices), 0);
 		CollectionProducer end = multiply(direction, magnitude).add(start);
 
 		CollectionProducer pos = pow(divide(time, duration), e);

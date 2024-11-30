@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.function.Supplier;
 
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.data.WaveData;
@@ -37,7 +38,7 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.io.Console;
 import org.almostrealism.CodeFeatures;
 
-public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Destroyable, CodeFeatures {
 	public static boolean enableVerbose = false;
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 230);
@@ -72,7 +73,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	private PackedCollection<?> cursor;
 	private PackedCollection<?> data;
 
-	public WaveOutput() { this(null); }
+	public WaveOutput() { this((File) null); }
 
 	public WaveOutput(int maxFrames) {
 		this(null, 24, maxFrames);
@@ -95,11 +96,19 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public WaveOutput(Supplier<File> f, int bits, long sampleRate, int maxFrames) {
+		this(f, bits, sampleRate, new PackedCollection<>(maxFrames <= 0 ? defaultTimelineFrames : maxFrames));
+	}
+
+	public WaveOutput(PackedCollection<?> data) {
+		this(null, 24, OutputLine.sampleRate, data);
+	}
+
+	public WaveOutput(Supplier<File> f, int bits, long sampleRate, PackedCollection<?> data) {
 		this.file = f;
 		this.bits = bits;
 		this.sampleRate = sampleRate;
 		this.cursor = new PackedCollection<>(1);
-		this.data = new PackedCollection<>(maxFrames <= 0 ? defaultTimelineFrames : maxFrames).traverseEach();
+		this.data = data.traverseEach();
 	}
 
 	public PackedCollection<?> getCursor() { return cursor; }
@@ -201,9 +210,16 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public void reset() {
 		Lifecycle.super.reset();
 		cursor.setMem(0.0);
+
 		// TODO  The data should be cleared, but this can cause problems for
 		// TODO  systems that are resetting the WaveOutput prior to writing
 		// collection.clear();
+	}
+
+	@Override
+	public void destroy() {
+		if (cursor != null) cursor.destroy();
+		if (data != null) data.destroy();
 	}
 
 	@Override

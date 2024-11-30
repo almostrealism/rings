@@ -48,11 +48,7 @@ public class TensorFlowManager {
 	}
 
 	public void addVariable(ExpressionAssignment<?> v) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void addVariable(Variable<?, ?> v) {
-		String name = v.getRootDelegate().getName();
+		String name = v.getDestination().getExpression(null);
 		Operand dest = getVariable(name).getOutputOperand();
 		Operand src = ((TensorFlowConstant) v.getExpression()).toOperand(this);
 		System.out.println("Assigning " + dest + " to " + src);

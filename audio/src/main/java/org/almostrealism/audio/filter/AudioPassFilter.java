@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,10 @@ import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.TemporalFactor;
-import org.almostrealism.CodeFeatures;
 
 import java.util.function.Supplier;
 
-public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lifecycle {
 	public static final double MIN_FREQUENCY = 10.0;
 
 	private AudioFilterData data;

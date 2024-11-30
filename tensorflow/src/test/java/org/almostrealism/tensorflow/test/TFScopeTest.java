@@ -31,6 +31,8 @@ import org.almostrealism.tensorflow.TensorFlowInstructionSet;
 import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
+import java.util.function.Supplier;
+
 public class TFScopeTest implements CodeFeatures {
 	private int counter = 0;
 
@@ -38,7 +40,8 @@ public class TFScopeTest implements CodeFeatures {
 	public void scope() {
 		LanguageOperations lang = new CLanguageOperations(Precision.FP64, false, false);
 		DefaultNameProvider nameProvider = new DefaultNameProvider("test");
-		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang, (p, input) -> new TensorFlowArgument<>(lang, p, p.getArgumentName(counter++), input));
+		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang,
+				(p, input) -> new TensorFlowArgument<>(lang, p, p.getArgumentName(counter++), (Supplier) input));
 
 		Scalar s = new Scalar();
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));

@@ -34,12 +34,12 @@ Add Maven Repository:
                 </repository>
         </repositories>
 
-Add ar-audio dependency:
+Add ar-rings dependency:
 
         <dependency>
             <groupId>org.almostrealism</groupId>
-            <artifactId>ar-audio</artifactId>
-            <version>0.35</version>
+            <artifactId>ar-rings</artifactId>
+            <version>0.36</version>
         </dependency>
 
 ## Using Rings

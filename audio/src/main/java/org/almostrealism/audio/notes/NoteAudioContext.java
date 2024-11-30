@@ -17,6 +17,9 @@
 package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.pattern.ElementVoicingDetails;
+import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 
@@ -25,24 +28,38 @@ import java.util.function.DoubleFunction;
 import java.util.function.DoubleUnaryOperator;
 
 public class NoteAudioContext implements ConsoleFeatures {
+	private ChannelInfo.Voicing voicing;
 	private DoubleFunction<NoteAudioProvider> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
 	public NoteAudioContext() { }
 
-	public NoteAudioContext(List<NoteAudioProvider> audioChoices,
+	public NoteAudioContext(ChannelInfo.Voicing voicing,
+							List<NoteAudioProvider> audioChoices,
 							DoubleUnaryOperator nextNotePosition) {
-		this(c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())), nextNotePosition);
+		this(voicing,
+				c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())),
+				nextNotePosition);
 	}
 
-	public NoteAudioContext(DoubleFunction<NoteAudioProvider> audioSelection,
+	public NoteAudioContext(ChannelInfo.Voicing voicing,
+							DoubleFunction<NoteAudioProvider> audioSelection,
 							DoubleUnaryOperator nextNotePosition) {
 		if (audioSelection == null) {
 			warn("No audio selection provided");
 		}
 
+		this.voicing = voicing;
 		this.audioSelection = audioSelection;
 		this.nextNotePosition = nextNotePosition;
+	}
+
+	public ChannelInfo.Voicing getVoicing() {
+		return voicing;
+	}
+
+	public void setVoicing(ChannelInfo.Voicing voicing) {
+		this.voicing = voicing;
 	}
 
 	public DoubleFunction<NoteAudioProvider> getAudioSelection() {
@@ -67,6 +84,12 @@ public class NoteAudioContext implements ConsoleFeatures {
 
 	public double nextNotePosition(double pos) {
 		return nextNotePosition.applyAsDouble(pos);
+	}
+
+	public ElementVoicingDetails createVoicingDetails(boolean melodic, KeyPosition<?> target, double position) {
+		return new ElementVoicingDetails(
+				voicing, melodic, target,
+				position, nextNotePosition(position));
 	}
 
 	@Override

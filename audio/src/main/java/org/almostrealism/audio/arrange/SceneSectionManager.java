@@ -17,7 +17,8 @@
 package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
-import org.almostrealism.audio.AudioScene;
+import io.almostrealism.lifecycle.Destroyable;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.time.Frequency;
@@ -26,10 +27,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class SceneSectionManager implements Setup {
+public class SceneSectionManager implements Setup, Destroyable {
+	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
+
 	private List<SceneSection> sections;
 	private OperationList setup;
 
@@ -42,7 +46,8 @@ public class SceneSectionManager implements Setup {
 
 	private List<Integer> wetChannels;
 
-	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo, DoubleSupplier measureDuration, int sampleRate) {
+	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo,
+							   DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
 		this.genome = genome;
@@ -62,14 +67,14 @@ public class SceneSectionManager implements Setup {
 
 	public List<SceneSection> getSections() { return Collections.unmodifiableList(sections); }
 
-	public List<ChannelSection> getChannelSections(int channel) {
+	public List<ChannelSection> getChannelSections(ChannelInfo channel) {
 		return sections.stream().map(s -> s.getChannelSection(channel)).collect(Collectors.toList());
 	}
 
 	public SceneSection addSection(int position, int length) {
 		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels,
 																		c -> getWetChannels().contains(c),
-																		AudioScene.DEFAULT_REPEAT_CHANNELS,
+																		DEFAULT_REPEAT_CHANNELS,
 																		tempo, measureDuration, length, sampleRate);
 		SceneSection s = SceneSection.createSection(position, length, channels, () -> channelFactory.createSection(position));
 		sections.add(s);
@@ -78,11 +83,18 @@ public class SceneSectionManager implements Setup {
 	}
 
 	public void removeSection(int index) {
-		sections.remove(index);
+		sections.remove(index).destroy();
 		setup.remove(index);
 		genome.removeChromosome(index);
 	}
 
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		sections.forEach(SceneSection::destroy);
+		sections.clear();
+	}
 }

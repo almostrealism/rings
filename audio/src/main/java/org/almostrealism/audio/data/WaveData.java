@@ -16,7 +16,8 @@
 
 package org.almostrealism.audio.data;
 
-import io.almostrealism.code.ComputeRequirement;
+import io.almostrealism.compute.ComputeRequirement;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
@@ -26,6 +27,7 @@ import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.feature.FeatureComputer;
 import org.almostrealism.audio.feature.FeatureSettings;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
@@ -37,8 +39,8 @@ import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WaveData implements SamplingFeatures {
-	public static boolean enableGpu = false;
+public class WaveData implements Destroyable, SamplingFeatures {
+	public static final boolean enableGpu = false;
 
 	public static final int FFT_BINS = enableGpu ? 256 : 1024;
 	public static final int FFT_POOL = 4;
@@ -50,6 +52,7 @@ public class WaveData implements SamplingFeatures {
 	private static Evaluable<PackedCollection<?>> magnitude;
 	private static Evaluable<PackedCollection<?>> fft;
 	private static Evaluable<PackedCollection<?>> pool2d;
+	private static Evaluable<PackedCollection<?>> scaledAdd;
 
 	private static FeatureComputer mfcc;
 
@@ -69,6 +72,9 @@ public class WaveData implements SamplingFeatures {
 						.traverse(3)
 						.max()
 						.reshape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1)).get();
+		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
+					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
+				.get();
 		mfcc = new FeatureComputer(new FeatureSettings(OutputLine.sampleRate));
 	}
 
@@ -86,7 +92,7 @@ public class WaveData implements SamplingFeatures {
 		this.sampleRate = sampleRate;
 	}
 
-	public PackedCollection getCollection() {
+	public PackedCollection<?> getCollection() {
 		return collection;
 	}
 
@@ -100,6 +106,10 @@ public class WaveData implements SamplingFeatures {
 
 	public double getDuration() {
 		return getCollection().getMemLength() / (double) sampleRate;
+	}
+
+	public BufferDetails getBufferDetails() {
+		return new BufferDetails(getSampleRate(), getDuration());
 	}
 
 	public WaveData range(double start, double length) {
@@ -122,13 +132,38 @@ public class WaveData implements SamplingFeatures {
 		return new WaveData(result, getSampleRate());
 	}
 
+	/**
+	 * Return the fourier transform of this {@link WaveData}.
+	 *
+	 * @return  The fourier transform of this {@link WaveData} over time in the
+	 *          {@link TraversalPolicy shape} (time slices, pooled bins, 1).
+	 */
 	public PackedCollection<?> fft() {
+		return fft(true, false, false);
+	}
+
+	/**
+	 * Return the aggregated fourier transform of this {@link WaveData}.
+	 *
+	 * @param includeAll  If true, all {@value WaveData#FFT_BINS} bins of transform data
+	 *                    will be included in the result.  If false, only the first half
+	 *                    of the bins will be included.
+	 * @return  The aggregated fourier transform of this {@link WaveData} in the
+	 *          {@link TraversalPolicy shape} (bins, 1).
+	 */
+	public PackedCollection<?> aggregatedFft(boolean includeAll) {
+		return fft(false, true, includeAll);
+	}
+
+	public PackedCollection<?> fft(boolean pooling, boolean sum, boolean includeAll) {
 		PackedCollection<?> inRoot = new PackedCollection<>(FFT_BINS * FFT_BINS);
 		PackedCollection<?> outRoot = new PackedCollection<>(POOL_BATCH_OUT * POOL_BATCH_OUT);
 
 		int count = getCollection().getMemLength() > FFT_BINS ? getCollection().getMemLength() / FFT_BINS : 1;
-		int finalBins = FFT_BINS / 2;
-		PackedCollection<?> out = new PackedCollection<>(count * finalBins).reshape(count, finalBins, 1);
+		int finalBins = includeAll ? FFT_BINS : (FFT_BINS / 2);
+		PackedCollection<?> out =
+				new PackedCollection<>(count * finalBins)
+				.reshape(count, finalBins, 1);
 
 		try {
 			if (enableGpu && count > 1) {
@@ -154,6 +189,8 @@ public class WaveData implements SamplingFeatures {
 					frameIn.setMem(0, getCollection(), i * FFT_BINS,
 							Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
 					fft.into(frameOut).evaluate(frameIn);
+
+					// TODO This may not work correctly when finalBins != FFT_BINS / 2
 					magnitude
 							.into(out.range(shape(finalBins, 1), i * finalBins).traverseEach())
 							.evaluate(
@@ -162,39 +199,59 @@ public class WaveData implements SamplingFeatures {
 				}
 			}
 
-			int resultSize = count / FFT_POOL;
-			if (count % FFT_POOL != 0) resultSize++;
+			if (pooling) {
+				if (sum) {
+					// TODO  This should also be supported
+					throw new UnsupportedOperationException();
+				}
 
-			PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
-					.reshape(resultSize, FFT_POOL_BINS, 1);
+				int resultSize = count / FFT_POOL;
+				if (count % FFT_POOL != 0) resultSize++;
 
-			int window = POOL_BATCH_IN * POOL_BATCH_IN;
-			int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;
-			int pcount = resultSize / POOL_BATCH_OUT;
-			if (resultSize % POOL_BATCH_OUT != 0) pcount++;
+				PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+						.reshape(resultSize, FFT_POOL_BINS, 1);
 
-			PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
-			PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
+				int window = POOL_BATCH_IN * POOL_BATCH_IN;
+				int poolWindow = POOL_BATCH_OUT * POOL_BATCH_OUT;
+				int pcount = resultSize / POOL_BATCH_OUT;
+				if (resultSize % POOL_BATCH_OUT != 0) pcount++;
 
-			if (pcount < 1) {
-				throw new IllegalArgumentException();
+				PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
+				PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
+
+				if (pcount < 1) {
+					throw new IllegalArgumentException();
+				}
+
+				for (int i = 0; i < pcount; i++) {
+					int remaining = out.getMemLength() - i * window;
+					poolIn.setMem(0, out, i * window, Math.min(window, remaining));
+
+					pool2d.into(poolOut.traverseEach()).evaluate(poolIn.traverseEach());
+
+					remaining = pool.getMemLength() - i * poolWindow;
+					pool.setMem(i * poolWindow, poolOut, 0, Math.min(poolWindow, remaining));
+				}
+
+				return pool.range(shape(resultSize, FFT_POOL_BINS, 1));
+			} else if (sum) {
+				PackedCollection<?> sumOut = new PackedCollection<>(finalBins, 1);
+
+				for (int i = 0; i < count; i++) {
+					scaledAdd.into(sumOut.each()).evaluate(
+							sumOut.each(),
+							out.range(shape(finalBins, 1), i * finalBins).each(),
+							pack(1.0 / count));
+				}
+
+				return sumOut;
+			} else {
+				return out;
 			}
-
-			for (int i = 0; i < pcount; i++) {
-				int remaining = out.getMemLength() - i * window;
-				poolIn.setMem(0, out, i * window, Math.min(window, remaining));
-
-				pool2d.into(poolOut.traverseEach()).evaluate(poolIn.traverseEach());
-
-				remaining = pool.getMemLength() - i * poolWindow;
-				pool.setMem(i * poolWindow, poolOut, 0, Math.min(poolWindow, remaining));
-			}
-
-			return pool.range(shape(resultSize, FFT_POOL_BINS, 1));
 		} finally {
 			inRoot.destroy();
 			outRoot.destroy();
-			out.destroy();
+			if (pooling || sum) out.destroy();
 		}
 	}
 
@@ -236,10 +293,19 @@ public class WaveData implements SamplingFeatures {
 		return new WaveCell(getCollection(), getSampleRate(), frame);
 	}
 
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		if (collection != null) collection.destroy();
+		collection = null;
+	}
+
 	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
 		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
 				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(getCollection().getMemLength()));
 	}
+
+	public static void init() { }
 
 	public static WaveData load(File f) throws IOException {
 		try (WavFile w = WavFile.openWavFile(f)) {

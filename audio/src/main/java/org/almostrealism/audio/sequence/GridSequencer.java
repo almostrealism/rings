@@ -30,6 +30,7 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProviderList;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.ReceptorCell;
@@ -87,7 +88,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 	public double getDuration() { return bpm.l(getTotalBeats()); }
 
 	@Override
-	public Producer<PackedCollection<?>> generate(Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection<?>> generate(BufferDetails buffer, Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency) {
 		// TODO
 		throw new UnsupportedOperationException();
 	}
