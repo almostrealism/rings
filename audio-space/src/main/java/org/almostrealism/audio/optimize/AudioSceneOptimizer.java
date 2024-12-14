@@ -67,7 +67,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
-	public static final int singleChannel = 3;
+	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
 
@@ -183,7 +183,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
-		// MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 		OperationProfileNode profile = new OperationProfileNode("AudioSceneOptimizer");
 		Hardware.getLocalHardware().assignProfile(profile);
 		StableDurationHealthComputation.profile = profile;

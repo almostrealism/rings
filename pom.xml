@@ -13,6 +13,9 @@
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
 		<protoc.version>3.21.7</protoc.version>
+
+		<javafx.version>21</javafx.version>
+		<javafx.classifier>mac-aarch64</javafx.classifier>
 	</properties>
 
 	<groupId>com.almostrealism</groupId>
@@ -25,6 +28,8 @@
 		<module>audio-space</module>
 		<module>visual</module>
 		<module>shading</module>
+		<module>treeview</module>
+		<module>swing</module>
 		<module>visual-space</module>
 		<module>absorption</module>
 		<module>gl</module>
@@ -45,6 +50,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.almostrealism</groupId>
+				<artifactId>ar-treeview</artifactId>
+				<version>0.37</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-algebra</artifactId>
@@ -90,12 +101,6 @@
 			<dependency>
 				<groupId>io.flowtree</groupId>
 				<artifactId>ar-flowtreeapi</artifactId>
-				<version>${flowtree.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>io.flowtree</groupId>
-				<artifactId>ar-treeview</artifactId>
 				<version>${flowtree.version}</version>
 			</dependency>
 

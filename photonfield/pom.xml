@@ -19,6 +19,12 @@
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-treeview</artifactId>
+			<version>0.37</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-absorption</artifactId>
 			<version>0.37</version>
 		</dependency>

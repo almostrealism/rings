@@ -9,30 +9,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ar-visual-space</artifactId>
+	<artifactId>ar-swing</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-visual</artifactId>
-			<version>0.37</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-swing</artifactId>
-			<version>0.37</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-utils</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<artifactId>ar-color</artifactId>
+			<version>0.66</version>
 		</dependency>
 	</dependencies>
 </project>
