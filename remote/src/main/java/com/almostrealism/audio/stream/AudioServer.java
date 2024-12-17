@@ -19,7 +19,6 @@ package com.almostrealism.audio.stream;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.util.FrequencyCache;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
@@ -34,7 +33,6 @@ import org.almostrealism.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +66,10 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 
 	public BufferedAudioPlayer addLiveStream(String channel) {
 		return addLiveStream(channel, Collections.emptyList());
+	}
+
+	public BufferedAudioPlayer addLiveStream(String channel, OutputLine out) {
+		return addLiveStream(channel, Collections.emptyList(), out);
 	}
 
 	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames) {

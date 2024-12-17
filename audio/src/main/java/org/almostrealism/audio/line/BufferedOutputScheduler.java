@@ -36,7 +36,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public static final int batches = 2;
 	public static final long timingPad = -3;
 
-	public static int defaultBatchCount = 16;
+	public static boolean enableVerbose = false;
+	public static int defaultBatchCount = 2;
 	public static double defaultBufferingRate = 2.0;
 
 	private Consumer<Runnable> executor;
@@ -52,8 +53,9 @@ public class BufferedOutputScheduler implements CellFeatures {
 	private long count;
 
 	private double rate;
-	private int batchSize;
-	private long batchStart;
+	private int groupSize;
+	private int currentGroup;
+	private long groupStart;
 
 	private boolean paused;
 	private long lastPause, totalPaused;
@@ -66,7 +68,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 		this.line = line;
 		this.buffer = buffer;
 		this.rate = defaultBufferingRate;
-		this.batchSize = line.getBufferSize() / batches;
+		this.groupSize = line.getBufferSize() / batches;
 	}
 
 	public void start() {
@@ -92,10 +94,14 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 		synchronized (this) {
 			double avg = regularizer.getAverageDuration() / 10e9;
-			double tot = (System.currentTimeMillis() - batchStart) / 1000.0;
-			double dur = batchSize / (double) line.getSampleRate();
-			if (count % 1024 == 0)
-				log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ")");
+			double tot = (System.currentTimeMillis() - groupStart) / 1000.0;
+			double dur = groupSize / (double) line.getSampleRate();
+			currentGroup = calculateCurrentGroup();
+
+			if (count % (enableVerbose ? 16 : 1024) == 0) {
+				log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ") | group " + currentGroup);
+			}
+
 			lastPause = System.currentTimeMillis();
 			paused = true;
 			notifyAll();
@@ -110,12 +116,26 @@ public class BufferedOutputScheduler implements CellFeatures {
 		if (lastPause > 0)
 			totalPaused = totalPaused + (System.currentTimeMillis() - lastPause);
 
-//		log("Resumed at " + getRenderedCount() +
-//				" | rendering gap = " + getRenderingGap() + ")");
-
 		lastPause = 0;
-		batchStart = System.currentTimeMillis();
+		groupStart = System.currentTimeMillis();
 		paused = false;
+	}
+
+	protected int calculateCurrentGroup() {
+		int pos = line.getReadPosition();
+		return pos / groupSize;
+	}
+
+	protected void attemptAutoResume() {
+		if (!paused) return;
+
+		if (currentGroup != calculateCurrentGroup()) {
+			try {
+				resume();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	public void stop() { stopped = true; }
@@ -142,7 +162,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 			target = target + gap + timingPad;
 		}
 
-		return target;
+		return target < 1 ? 1 : target;
 	}
 
 	protected void run() {
@@ -152,13 +172,15 @@ public class BufferedOutputScheduler implements CellFeatures {
 		while (!stopped) {
 			long target;
 
+			attemptAutoResume();
+
 			if (!paused) {
 				long s = System.nanoTime();
 				regularizer.addMeasuredDuration(lastDuration);
 				next.run();
 				count++;
 
-				if (getRenderedFrames() % batchSize == 0) {
+				if (getRenderedFrames() % groupSize == 0) {
 					pause();
 				}
 
@@ -174,6 +196,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 				throw new RuntimeException(e);
 			}
 		}
+
+		log("Stopped");
 	}
 
 	public static BufferedOutputScheduler create(ExecutorService executor, OutputLine line,

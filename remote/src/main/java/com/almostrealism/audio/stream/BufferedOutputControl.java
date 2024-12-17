@@ -43,7 +43,7 @@ public class BufferedOutputControl implements HttpAudioHandler, ConsoleFeatures 
 		this.executor.submit(() -> {
 			try {
 				this.scheduler.resume();
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});

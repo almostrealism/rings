@@ -132,9 +132,7 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 						.o(i -> new File("results/reverb-delay-cell-test.wav")),
 						t -> new TemporalRunner(t, 6 * OutputLine.sampleRate), true);
 
-		verboseLog(() -> {
-			r.get().run();
-		});
+		r.get().run();
 	}
 
 	@Test
@@ -159,7 +157,7 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 		Supplier<Runnable> r = cells.sec(7.5);
 		r.get().run();
 
-		System.out.println(v);
+		log(v);
 	}
 
 	@Test

@@ -45,6 +45,10 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private Thread monitor;
 	private boolean stopped;
 
+	public BufferedAudioPlayer(int sampleRate, int bufferFrames) {
+		this(null, sampleRate, bufferFrames);
+	}
+
 	public BufferedAudioPlayer(List<String> channelNames,
 							   int sampleRate, int bufferFrames) {
 		super(channelNames);
@@ -181,7 +185,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	@Override
 	public double getCurrentTime() {
-		if (cells == null) {
+		if (cells == null || !playing) {
 			return 0;
 		}
 

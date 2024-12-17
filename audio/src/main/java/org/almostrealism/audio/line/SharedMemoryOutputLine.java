@@ -21,22 +21,32 @@ import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
-import org.almostrealism.hardware.RAM;
+import org.almostrealism.io.ConsoleFeatures;
 
-public class SharedMemoryOutputLine implements OutputLine, Destroyable {
+public class SharedMemoryOutputLine implements OutputLine, Destroyable, ConsoleFeatures {
+	public static final int controlSize = 8;
 	public static int defaultBatchSize = 8 * 1024;
 	public static int defaultBufferFrames =
 			BufferedOutputScheduler.defaultBatchCount * defaultBatchSize;
 
 	private int cursor;
+	private PackedCollection<?> controls;
 	private PackedCollection<?> destination;
 
 	public SharedMemoryOutputLine() {
-		this(createDestination());
+		this(createControls(), createDestination());
 	}
 
-	public SharedMemoryOutputLine(PackedCollection<?> destination) {
+	public SharedMemoryOutputLine(PackedCollection<?> controls, PackedCollection<?> destination) {
+		this.controls = controls;
 		this.destination = destination;
+	}
+
+	public int getWritePosition() { return cursor; }
+
+	@Override
+	public int getReadPosition() {
+		return Math.toIntExact((long) controls.toDouble(0));
 	}
 
 	@Override
@@ -69,15 +79,19 @@ public class SharedMemoryOutputLine implements OutputLine, Destroyable {
 		destination = null;
 	}
 
+	private static PackedCollection<?> createControls() {
+		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_ctl";
+		return createCollection(shared, controlSize);
+	}
+
 	private static PackedCollection<?> createDestination() {
 		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_shm";
+		return createCollection(shared, defaultBufferFrames);
+	}
 
+	private static PackedCollection<?> createCollection(String file, int size) {
 		ComputeContext<?> ctx = Hardware.getLocalHardware().getComputeContext();
-		PackedCollection<?> dest = ctx.getDataContext().sharedMemory(len -> shared, () ->
-				new PackedCollection<>(defaultBufferFrames));
-
-		System.out.println("SharedMemoryOutputLine: buffer ptr - " +
-				((RAM) dest.getMem()).getContentPointer());
-		return dest;
+		return ctx.getDataContext().sharedMemory(len -> file,
+				() -> new PackedCollection<>(size));
 	}
 }

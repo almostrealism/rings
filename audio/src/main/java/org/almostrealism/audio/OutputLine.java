@@ -31,16 +31,27 @@ public interface OutputLine {
 	default int getBufferSize() { return 1024; }
 
 	/**
+	 * The position in the buffer of the last frame that was sent to the device.
+	 */
+	default int getReadPosition() {
+		return 0;
+	}
+
+	/**
 	 * Write the specified bytes. Using this method, the caller must
 	 * be aware of the number of bytes in a sample to write a valid
 	 * set of samples.
 	 */
-	void write(byte b[]);
+	default void write(byte b[]) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Write the specified frames.
 	 */
-	void write(double d[][]);
+	default void write(double d[][]) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Write one sample, coercing the {@link PackedCollection} value into whatever

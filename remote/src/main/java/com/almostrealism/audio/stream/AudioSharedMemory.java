@@ -18,6 +18,7 @@ package com.almostrealism.audio.stream;
 
 import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.line.SharedMemoryOutputLine;
 
 import java.io.IOException;
 
@@ -29,17 +30,21 @@ public class AudioSharedMemory implements CellFeatures {
 	public void run() throws IOException, InterruptedException {
 		boolean alt = false;
 
+		SharedMemoryOutputLine out = new SharedMemoryOutputLine();
 		AudioServer server = new AudioServer(7799);
-		BufferedAudioPlayer player = server.addLiveStream("next");
+		BufferedAudioPlayer player = server.addLiveStream("live", out);
 		player.load("Library/RAW_IU_ARCHE_B.wav");
 
 		server.start();
+		player.play();
 		System.out.println("Server started");
 
 		while (true) {
-			Thread.sleep(10000);
-			alt = !alt;
-			player.load(alt ? "Library/RAW_IU_TOP_15.wav" : "Library/RAW_IU_ARCHE_B.wav");
+			Thread.sleep(2000);
+//			log("Read position = " + out.getReadPosition());
+//			log("Read position / 256 = " + out.getReadPosition() / 256 + " (" + out.getReadPosition() % 256 + ")");
+//			alt = !alt;
+//			player.load(alt ? "Library/RAW_IU_TOP_15.wav" : "Library/RAW_IU_ARCHE_B.wav");
 		}
 	}
 }
