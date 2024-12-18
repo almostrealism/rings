@@ -53,7 +53,7 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 		return channelNames;
 	}
 
-	protected void setStems(List<String> stems) {
+	public void setStems(List<String> stems) {
 		this.stems = stems;
 	}
 

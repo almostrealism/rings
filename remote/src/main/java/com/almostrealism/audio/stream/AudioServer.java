@@ -30,9 +30,9 @@ import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.Console;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +63,8 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		server.createContext("/", this);
 		server.start();
 	}
+
+	public int getPort() { return server.getAddress().getPort();}
 
 	public BufferedAudioPlayer addLiveStream(String channel) {
 		return addLiveStream(channel, Collections.emptyList());
@@ -107,6 +109,18 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		addStream(channel, new BufferedOutputControl(scheduler));
 	}
 
+	public String addStream(String key, WaveData data) {
+		key = Base64.getEncoder().encodeToString(key.getBytes());
+
+		if (containsStream(key)) {
+			return key;
+		}
+
+		addStream(key, AudioProcessor.fromWave(data),
+				data.getCollection().getMemLength(), data.getSampleRate());
+		return key;
+	}
+
 	public void addStream(String channel, AudioProcessor source,
 						  	int totalFrames, int sampleRate) {
 		addStream(channel, new AudioStreamHandler(source, totalFrames, sampleRate));
@@ -141,14 +155,6 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	@Override
 	public Console console() {
 		return AudioScene.console;
-	}
-
-	public static void main(String[] args) throws IOException {
-		AudioServer server = new AudioServer(7799);
-		server.start();
-		WaveData data = WaveData.load(new File("Library/organ.wav"));
-		server.addStream("test", AudioProcessor.fromWave(data),
-				data.getCollection().getMemLength(), data.getSampleRate());
 	}
 }
 

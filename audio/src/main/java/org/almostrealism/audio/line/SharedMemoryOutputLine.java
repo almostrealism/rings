@@ -25,9 +25,6 @@ import org.almostrealism.io.ConsoleFeatures;
 
 public class SharedMemoryOutputLine implements OutputLine, Destroyable, ConsoleFeatures {
 	public static final int controlSize = 8;
-	public static int defaultBatchSize = 8 * 1024;
-	public static int defaultBufferFrames =
-			BufferedOutputScheduler.defaultBatchCount * defaultBatchSize;
 
 	private int cursor;
 	private PackedCollection<?> controls;
@@ -86,7 +83,7 @@ public class SharedMemoryOutputLine implements OutputLine, Destroyable, ConsoleF
 
 	private static PackedCollection<?> createDestination() {
 		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_shm";
-		return createCollection(shared, defaultBufferFrames);
+		return createCollection(shared, BufferDefaults.defaultBufferSize);
 	}
 
 	private static PackedCollection<?> createCollection(String file, int size) {

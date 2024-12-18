@@ -18,6 +18,7 @@ package com.almostrealism.audio.stream;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
@@ -36,7 +37,7 @@ public class BufferedOutputControl implements HttpAudioHandler, ConsoleFeatures 
 		this.executor = Executors.newSingleThreadExecutor();
 		this.scheduler = scheduler;
 		this.sampleRate = this.scheduler.getBuffer().getDetails().getSampleRate();
-		log("Expected duration of a batch: " + (this.scheduler.getOutputLine().getBufferSize() / (double) sampleRate) + "s");
+		BufferDefaults.logBufferInfo(sampleRate, scheduler.getOutputLine().getBufferSize(), this::log);
 	}
 
 	protected void submitResume() {

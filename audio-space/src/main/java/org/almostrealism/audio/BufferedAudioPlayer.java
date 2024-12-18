@@ -58,10 +58,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		this.volume = 1.0;
 	}
 
-	public synchronized void load(String file) {
-		setFileString(file);
-		update();
-
+	protected void initMonitor() {
 		if (monitor == null) {
 			monitor = new Thread(() -> {
 				while (!stopped) {
@@ -69,7 +66,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 						for (DoubleConsumer listener : timeListeners) {
 							listener.accept(getCurrentTime());
 						}
-						
+
 						Thread.sleep(waitTime);
 					} catch (Exception e) {
 						warn("Error in scheduled job", e);
@@ -78,6 +75,17 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			}, "BufferedAudioPlayer Monitor");
 			monitor.start();
 		}
+	}
+
+	public synchronized void load(String file) {
+		load(file, null);
+	}
+
+	public synchronized void load(String file, WaveData data) {
+		setFileString(file);
+		update(data);
+		updateLevel();
+		initMonitor();
 	}
 
 	public BufferedOutputScheduler deliver(OutputLine out) {
@@ -99,7 +107,18 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		return cells.buffer(out);
 	}
 
-	protected void update() {
+	protected void update(WaveData source) {
+		if (source == null) {
+			updateFromFile();
+		} else {
+			int frames = Math.min(source.getCollection().getMemLength(), data.getCollection().getMemLength());
+			duration = frames / (double) source.sampleRate();
+			data.getCollection().setMem(0, source.getCollection(), 0, frames);
+			log("Loaded " + frames + " frames and set duration to " + duration);
+		}
+	}
+
+	protected void updateFromFile() {
 		try (WavFile in = WavFile.openWavFile(getFile())) {
 			long inRate = in.getSampleRate();
 
@@ -112,11 +131,10 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
-			int frames = Math.min(result[0].length, this.data.getCollection().getMemLength());
+			int frames = Math.min(result[0].length, data.getCollection().getMemLength());
 			duration = frames / (double) data.sampleRate();
 			data.getCollection().setMem(0, result[0], 0, frames);
 			log("Loaded " + frames + " frames and set duration to " + duration);
-			updateLevel();
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}

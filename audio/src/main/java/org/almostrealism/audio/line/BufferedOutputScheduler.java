@@ -33,12 +33,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BufferedOutputScheduler implements CellFeatures {
-	public static final int batches = 2;
 	public static final long timingPad = -3;
 
-	public static boolean enableVerbose = false;
-	public static int defaultBatchCount = 2;
-	public static double defaultBufferingRate = 2.0;
+	public static boolean enableVerbose = true;
 
 	private Consumer<Runnable> executor;
 	private TemporalRunner process;
@@ -67,8 +64,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 		this.process = process;
 		this.line = line;
 		this.buffer = buffer;
-		this.rate = defaultBufferingRate;
-		this.groupSize = line.getBufferSize() / batches;
+		this.rate = BufferDefaults.bufferingRate;
+		this.groupSize = line.getBufferSize() / BufferDefaults.groups;
 	}
 
 	public void start() {
@@ -98,8 +95,9 @@ public class BufferedOutputScheduler implements CellFeatures {
 			double dur = groupSize / (double) line.getSampleRate();
 			currentGroup = calculateCurrentGroup();
 
-			if (count % (enableVerbose ? 16 : 1024) == 0) {
+			if (enableVerbose || count % 1024 == 0) {
 				log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ") | group " + currentGroup);
+				log("Sleep target = " + getTarget());
 			}
 
 			lastPause = System.currentTimeMillis();
@@ -110,6 +108,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 	public void resume() throws InterruptedException {
 		if (!paused) {
+			log("Waiting");
 			wait();
 		}
 
@@ -129,7 +128,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 	protected void attemptAutoResume() {
 		if (!paused) return;
 
-		if (currentGroup != calculateCurrentGroup()) {
+		if (currentGroup == BufferDefaults.getSafeGroup(calculateCurrentGroup())) {
 			try {
 				resume();
 			} catch (InterruptedException e) {
@@ -202,11 +201,11 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 	public static BufferedOutputScheduler create(ExecutorService executor, OutputLine line,
 										  Function<Producer<PackedCollection<?>>, TemporalRunner> source) {
-		return create(executor, line, line.getBufferSize() / defaultBatchCount, source);
+		return create(executor, line, line.getBufferSize() / BufferDefaults.batchCount, source);
 	}
 
 	public static BufferedOutputScheduler create(OutputLine line, CellList source) {
-		return create(line, line.getBufferSize() / defaultBatchCount, source::buffer);
+		return create(line, line.getBufferSize() / BufferDefaults.batchCount, source::buffer);
 	}
 
 	public static BufferedOutputScheduler create(OutputLine line, int frames,
