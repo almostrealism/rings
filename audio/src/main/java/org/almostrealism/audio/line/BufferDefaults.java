@@ -22,19 +22,25 @@ import java.util.function.Consumer;
 
 public class BufferDefaults {
 	public static final int groups = 4;
-	public static final int batchesPerGroup = 4;
+	public static final int batchesPerGroup = 2;
 	public static final int batchCount = groups * batchesPerGroup;
-	public static final int groupGap = Math.max(1, groups / 2);
 
+	public static int readGroupSensitivityPadding = 1024;
 	public static int batchSize = 8 * 1024;
-	public static double bufferingRate = 2.0;
+	public static double bufferingRate = 4.0;
 
 	public static int defaultBufferSize = batchSize * batchCount;
 
-	public static int getSafeGroup(int currentGroup) {
-		int previousGroup = currentGroup - groupGap;
-		if (previousGroup < 0) previousGroup += BufferDefaults.groups;
-		return previousGroup;
+	public static int padReadPosition(int readPosition, int bufferSize) {
+		int rp = readPosition + readGroupSensitivityPadding;
+		if (rp > bufferSize) rp = rp - bufferSize;
+		return rp;
+	}
+
+	public static boolean isSafeGroup(int writePosition, int readPosition, int groupSize, int bufferSize) {
+		int activeGroup = writePosition / groupSize;
+		int sensitiveGroup = padReadPosition(readPosition, bufferSize) / groupSize;
+		return activeGroup != sensitiveGroup;
 	}
 
 	public static double getGroupDuration(int sampleRate, int totalFrames) {
@@ -43,7 +49,8 @@ public class BufferDefaults {
 	}
 
 	public static void logBufferInfo(int sampleRate, int totalFrames, Consumer<String> out) {
-		out.accept("Buffer duration is " + (totalFrames / (double) sampleRate) + "s");
+		out.accept("Buffer duration is " +
+				NumberFormats.formatNumber(totalFrames / (double) sampleRate) + "s");
 		out.accept("Group duration is " +
 				NumberFormats.formatNumber(getGroupDuration(sampleRate, totalFrames)) + "s");
 	}

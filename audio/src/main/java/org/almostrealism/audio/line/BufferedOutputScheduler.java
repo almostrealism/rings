@@ -17,6 +17,7 @@
 package org.almostrealism.audio.line;
 
 import io.almostrealism.relation.Producer;
+import io.almostrealism.util.NumberFormats;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.OutputLine;
@@ -35,7 +36,7 @@ import java.util.function.Function;
 public class BufferedOutputScheduler implements CellFeatures {
 	public static final long timingPad = -3;
 
-	public static boolean enableVerbose = true;
+	public static boolean enableVerbose = false;
 
 	private Consumer<Runnable> executor;
 	private TemporalRunner process;
@@ -51,7 +52,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 	private double rate;
 	private int groupSize;
-	private int currentGroup;
+	private int lastReadPosition;
 	private long groupStart;
 
 	private boolean paused;
@@ -90,14 +91,20 @@ public class BufferedOutputScheduler implements CellFeatures {
 		}
 
 		synchronized (this) {
+			int lastRead = lastReadPosition;
+			lastReadPosition = line.getReadPosition();
+			int diff = lastReadPosition - lastRead;
+			if (diff < 0) diff = diff + line.getBufferSize();
+
 			double avg = regularizer.getAverageDuration() / 10e9;
 			double tot = (System.currentTimeMillis() - groupStart) / 1000.0;
 			double dur = groupSize / (double) line.getSampleRate();
-			currentGroup = calculateCurrentGroup();
 
 			if (enableVerbose || count % 1024 == 0) {
-				log("Pausing at " + count + " - " + tot + "(x" + dur / tot + ") | group " + currentGroup);
-				log("Sleep target = " + getTarget());
+				log("Pausing at " + count + " - " + tot + " (x" +
+						NumberFormats.formatNumber(dur / tot) + ") | group " + getLastGroup());
+				log("Frames = " + diff + " vs " + groupSize);
+				log("Sleep target = " + NumberFormats.formatNumber(getTarget(true) / 1000.0));
 			}
 
 			lastPause = System.currentTimeMillis();
@@ -120,15 +127,22 @@ public class BufferedOutputScheduler implements CellFeatures {
 		paused = false;
 	}
 
-	protected int calculateCurrentGroup() {
-		int pos = line.getReadPosition();
-		return pos / groupSize;
+	public int getWritePosition() {
+		return (int) ((count * buffer.getDetails().getFrames()) % line.getBufferSize());
+	}
+
+	public int getLastGroup() {
+		return lastReadPosition / groupSize;
 	}
 
 	protected void attemptAutoResume() {
 		if (!paused) return;
 
-		if (currentGroup == BufferDefaults.getSafeGroup(calculateCurrentGroup())) {
+		boolean safe = BufferDefaults.isSafeGroup(
+				getWritePosition(), line.getReadPosition(),
+				groupSize, line.getBufferSize());
+
+		if (safe) {
 			try {
 				resume();
 			} catch (InterruptedException e) {
@@ -152,6 +166,10 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public long getRenderingGap() { return getRenderedTime() - getRealTime(); }
 
 	protected long getTarget() {
+		return getTarget(paused);
+	}
+
+	protected long getTarget(boolean paused) {
 		long target = fromRealTime(regularizer.getTimingDifference() / 10e6);
 
 		if (paused) {
