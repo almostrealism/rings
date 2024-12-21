@@ -40,6 +40,8 @@ public class BufferedOutputControl implements HttpAudioHandler, ConsoleFeatures 
 		BufferDefaults.logBufferInfo(sampleRate, scheduler.getOutputLine().getBufferSize(), this::log);
 	}
 
+	public BufferedOutputScheduler getScheduler() { return scheduler; }
+
 	protected void submitResume() {
 		this.executor.submit(() -> {
 			try {

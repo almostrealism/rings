@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,45 +16,35 @@
 
 package org.almostrealism.audio;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.function.Supplier;
-
-import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.graph.CollectionCachedStateCell;
-import org.almostrealism.graph.Source;
 import org.almostrealism.graph.SummationCell;
-import org.almostrealism.time.Temporal;
-import org.almostrealism.hardware.OperationList;
 
-public class Mixer extends ArrayList<Source<PackedCollection<?>>> implements Temporal {
-	private SummationCell sum;
+public class Mixer implements CellFeatures {
+	private SummationCell channels[];
+	private CellList cells;
 
-	private CollectionCachedStateCell channels[] = new CollectionCachedStateCell[24];
-	
-	public Mixer(SummationCell receptor) {
-		this.sum = receptor;
+	public Mixer() { this(24); }
 
-		for (int i = 0; i < channels.length; i++) {
-			channels[i] = new CollectionCachedStateCell();
-		}
+	public Mixer(int channelCount) {
+		this.channels = new SummationCell[channelCount];
+		this.cells = cells(channelCount, i -> {
+			channels[i] = new SummationCell();
+			return channels[i];
+		}).sum();
 	}
+
+	public int getChannelCount() { return channels.length; }
 
 	public CollectionCachedStateCell getChannel(int i) {
 		return channels[i];
 	}
-	
-	@Override
-	public Supplier<Runnable> tick() {
-		OperationList tick = new OperationList("Mixer Tick");
-		stream().map(s -> sum.push(s.next())).forEach(tick::add);
 
-		tick.add(() -> () -> {
-			Iterator<Source<PackedCollection<?>>> itr = iterator();
-			while (itr.hasNext()) if (itr.next().isDone()) itr.remove();
-		});
-		
-		tick.add(sum.tick());
-		return tick;
+	public CellList getCells() { return cells; }
+
+	public SummationCell getOutput() { return (SummationCell) cells.get(0); }
+
+	public BufferedOutputScheduler buffer(OutputLine out) {
+		return getCells().buffer(out);
 	}
 }

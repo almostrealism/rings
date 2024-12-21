@@ -28,12 +28,11 @@ public class AudioSharedMemory implements CellFeatures {
 	}
 
 	public void run() throws IOException, InterruptedException {
-		boolean alt = false;
-
 		SharedMemoryOutputLine out = new SharedMemoryOutputLine();
 		AudioServer server = new AudioServer(7799);
-		BufferedAudioPlayer player = server.addLiveStream("live", out);
-		player.load("Library/RAW_IU_ARCHE_B.wav");
+		BufferedAudioPlayer player = server.addLiveStream("live", 2, out);
+		player.load(0, "Library/RAW_IU_RAW_KICK_03.wav");
+		player.load(1, "Library/RAW_IU_TOP_15.wav");
 
 		server.start();
 		player.play();
@@ -41,10 +40,8 @@ public class AudioSharedMemory implements CellFeatures {
 
 		while (true) {
 			Thread.sleep(2000);
-//			log("Read position = " + out.getReadPosition());
-//			log("Read position / 256 = " + out.getReadPosition() / 256 + " (" + out.getReadPosition() % 256 + ")");
-//			alt = !alt;
-//			player.load(alt ? "Library/RAW_IU_TOP_15.wav" : "Library/RAW_IU_ARCHE_B.wav");
+//			System.out.println("clock frame = " + player.getClock().getFrame() +
+//					" (reset @ " + player.getClock().getReset(0) + ")");
 		}
 	}
 }

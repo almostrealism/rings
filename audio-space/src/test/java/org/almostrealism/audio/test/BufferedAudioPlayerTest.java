@@ -34,8 +34,8 @@ public class BufferedAudioPlayerTest implements TestFeatures {
 		int sampleRate = OutputLine.sampleRate;
 		double duration = 180.0;
 
-		BufferedAudioPlayer player = new BufferedAudioPlayer(sampleRate, (int) (duration * sampleRate));
-		player.load("Library/RAW_IU_ARCHE_B.wav");
+		BufferedAudioPlayer player = new BufferedAudioPlayer(1, sampleRate, (int) (duration * sampleRate));
+		player.load(0, "Library/RAW_IU_ARCHE_B.wav");
 
 		BufferedOutputScheduler scheduler = player.deliver(new OutputLine() {
 			@Override

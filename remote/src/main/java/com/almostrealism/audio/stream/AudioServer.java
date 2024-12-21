@@ -45,18 +45,17 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 
 	private FrequencyCache<String, HttpAudioHandler> handlers;
 	private Map<String, SharedMemoryOutputLine> lines;
+	private Map<String, BufferedAudioPlayer> players;
 
 	public AudioServer(int port) throws IOException {
 		server = HttpServer.create(new InetSocketAddress(port), 20);
 		handlers = new FrequencyCache<>(100, 0.6f);
 		handlers.setEvictionListener((key, value) -> {
 			value.destroy();
-			if (lines.containsKey(key)) {
-				lines.remove(key);
-			}
 		});
 
 		lines = new HashMap<>();
+		players = new HashMap<>();
 	}
 
 	public void start() throws IOException {
@@ -66,19 +65,20 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 
 	public int getPort() { return server.getAddress().getPort();}
 
-	public BufferedAudioPlayer addLiveStream(String channel) {
-		return addLiveStream(channel, Collections.emptyList());
+	public BufferedAudioPlayer addLiveStream(String channel, int playerCount) {
+		return addLiveStream(channel, playerCount, Collections.emptyList());
 	}
 
-	public BufferedAudioPlayer addLiveStream(String channel, OutputLine out) {
-		return addLiveStream(channel, Collections.emptyList(), out);
+	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, OutputLine out) {
+		return addLiveStream(channel, playerCount, Collections.emptyList(), out);
 	}
 
-	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames) {
-		return addLiveStream(channel, channelNames, new SharedMemoryOutputLine());
+	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, List<String> channelNames) {
+		return addLiveStream(channel, playerCount, channelNames, new SharedMemoryOutputLine());
 	}
 
-	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames,
+	public BufferedAudioPlayer addLiveStream(String channel, int playerCount,
+											 List<String> channelNames,
 											 OutputLine out) {
 		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
 
@@ -87,26 +87,31 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		maxFrames = maxFrames / out.getBufferSize();
 		maxFrames *= out.getBufferSize();
 
-		return addLiveStream(channel, channelNames, maxFrames, out);
+		return addLiveStream(channel, playerCount, channelNames, maxFrames, out);
 	}
 
-	public BufferedAudioPlayer addLiveStream(String channel, List<String> channelNames,
-											int maxFrames, OutputLine out) {
+	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, List<String> channelNames,
+											 int maxFrames, OutputLine out) {
 		if (maxFrames % out.getBufferSize() != 0) {
 			throw new IllegalArgumentException();
 		}
 
-		BufferedAudioPlayer player = new BufferedAudioPlayer(channelNames,
-										out.getSampleRate(), maxFrames);
+		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, channelNames,
+													out.getSampleRate(), maxFrames);
 		addLiveStream(channel, player, out);
 		return player;
 	}
 
 	public void addLiveStream(String channel, BufferedAudioPlayer player, OutputLine out) {
-		BufferedOutputScheduler scheduler = player.deliver(out);
+		BufferedOutputScheduler scheduler = addPlayer(channel, player, out);
 		scheduler.start();
 
 		addStream(channel, new BufferedOutputControl(scheduler));
+	}
+
+	public BufferedOutputScheduler addPlayer(String channel, BufferedAudioPlayer player, OutputLine out) {
+		players.put(channel, player);
+		return player.deliver(out);
 	}
 
 	public String addStream(String key, WaveData data) {
@@ -132,6 +137,14 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		}
 
 		handlers.put(channel, handler);
+	}
+
+	public HttpAudioHandler getStream(String channel) {
+		return handlers.get(channel);
+	}
+
+	public BufferedAudioPlayer getPlayer(String channel) {
+		return players.get(channel);
 	}
 
 	public boolean containsStream(String channel) {

@@ -18,6 +18,7 @@ package org.almostrealism.audio;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
@@ -27,35 +28,62 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleConsumer;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures {
-	private WaveData data;
-	private PackedCollection<?> loopDuration;
+	public static boolean enableUnifiedClock = false;
+
+	private int sampleRate;
+	private int bufferFrames;
+
+	private PackedCollection<?> raw;
 	private List<DoubleConsumer> timeListeners;
 
-	private CellList cells;
+	private SampleMixer mixer;
 	private TimeCell clock;
-	private Scalar level;
+	private Scalar level[];
+	private PackedCollection<?> loopDuration[];
 
-	private double volume;
-	private double duration;
+	private double volume[];
+	private double duration[];
 	private boolean playing;
 
 	private long waitTime;
 	private Thread monitor;
 	private boolean stopped;
 
-	public BufferedAudioPlayer(int sampleRate, int bufferFrames) {
-		this(null, sampleRate, bufferFrames);
+	public BufferedAudioPlayer(int playerCount, int sampleRate, int bufferFrames) {
+		this(playerCount, null, sampleRate, bufferFrames);
 	}
 
-	public BufferedAudioPlayer(List<String> channelNames,
+	public BufferedAudioPlayer(int playerCount, List<String> channelNames,
 							   int sampleRate, int bufferFrames) {
 		super(channelNames);
-		this.data = new WaveData(new PackedCollection<>(bufferFrames).traverseEach(), sampleRate);
-		this.loopDuration = new PackedCollection<>(1);
+		this.bufferFrames = bufferFrames;
+		this.sampleRate = sampleRate;
+
+		this.raw = new PackedCollection<>(playerCount, bufferFrames);
 		this.timeListeners = new ArrayList<>();
-		this.volume = 1.0;
+
+		this.loopDuration = IntStream.range(0, playerCount)
+				.mapToObj(c -> new PackedCollection<>(1))
+				.toArray(PackedCollection[]::new);
+		this.volume = new double[playerCount];
+		this.duration = new double[playerCount];
+
+		this.mixer = new SampleMixer(playerCount);
+	}
+
+	protected void initMixer() {
+		level = new Scalar[mixer.getChannelCount()];
+
+		this.mixer.init(c -> {
+			WaveCell cell = enableUnifiedClock ? getData(c).toCell(clock)
+					: (WaveCell) w(p(loopDuration[c]), getData(c)).get(0);
+			level[c] = cell.getData().amplitude();
+			return cell;
+		});
 	}
 
 	protected void initMonitor() {
@@ -77,53 +105,68 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 	}
 
-	public synchronized void load(String file) {
-		load(file, null);
+	public SampleMixer getMixer() { return mixer; }
+
+	public TimeCell getClock() { return clock; }
+
+	public WaveData getData(int player) {
+		return new WaveData(raw.range(shape(bufferFrames), player * bufferFrames).traverseEach(), sampleRate);
 	}
 
-	public synchronized void load(String file, WaveData data) {
+	public synchronized void load(int player, String file) {
+		load(player, file, null);
+	}
+
+	public synchronized void load(int player, String file, WaveData data) {
 		setFileString(file);
-		update(data);
+		update(player, data);
 		updateLevel();
 		initMonitor();
 	}
 
 	public BufferedOutputScheduler deliver(OutputLine out) {
-		if (out.getSampleRate() != data.getSampleRate()) {
+		if (out.getSampleRate() != sampleRate) {
 			throw new UnsupportedOperationException();
 		}
 
-		if (cells == null) {
-			cells = w(p(loopDuration), data);
-			clock = ((WaveCell) cells.get(0)).getClock();
-			level = ((WaveCell) cells.get(0)).getData().amplitude();
+		if (clock == null) {
+			this.clock = new TimeCell();
+			initMixer();
 
-			long bufferDuration = out.getBufferSize() * 1000L / data.getSampleRate();
-			waitTime = bufferDuration / 4;
+			long bufferDuration = out.getBufferSize() * 1000L / sampleRate;
+			int updates = BufferDefaults.groups * 2;
+			waitTime = bufferDuration / updates;
 		} else {
 			warn("Attempting to deliver to an already active player");
+		}
+
+		CellList cells = mixer.toCellList();
+		if (enableUnifiedClock) {
+			cells = cells.addRequirement(clock);
 		}
 
 		return cells.buffer(out);
 	}
 
-	protected void update(WaveData source) {
+	protected void update(int player, WaveData source) {
 		if (source == null) {
-			updateFromFile();
+			updateFromFile(player);
 		} else {
-			int frames = Math.min(source.getCollection().getMemLength(), data.getCollection().getMemLength());
-			duration = frames / (double) source.sampleRate();
-			data.getCollection().setMem(0, source.getCollection(), 0, frames);
-			log("Loaded " + frames + " frames and set duration to " + duration);
+			int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
+			volume[player] = 1.0;
+			duration[player] = frames / (double) source.sampleRate();
+
+			getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
+			log("Loaded " + frames + " frames and set duration to " + duration[player]);
 		}
 	}
 
-	protected void updateFromFile() {
+	protected void updateFromFile(int player) {
 		try (WavFile in = WavFile.openWavFile(getFile())) {
 			long inRate = in.getSampleRate();
 
-			if (inRate != data.getSampleRate()) {
-				warn("Sample rate " + inRate + " != " + data.getSampleRate());
+			if (inRate != sampleRate) {
+				warn("Sample rate " + inRate + " != " + sampleRate);
 				return;
 			}
 
@@ -131,24 +174,35 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
-			int frames = Math.min(result[0].length, data.getCollection().getMemLength());
-			duration = frames / (double) data.sampleRate();
-			data.getCollection().setMem(0, result[0], 0, frames);
-			log("Loaded " + frames + " frames and set duration to " + duration);
+			int frames = Math.min(result[0].length, bufferFrames);
+			volume[player] = 1.0;
+			duration[player] = frames / (double) sampleRate;
+
+			getData(player).getCollection().setMem(0, result[0], 0, frames);
+			log("Loaded " + frames + " frames and set duration to " + duration[player]);
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}
 	}
 
 	protected void updateLevel() {
-		if (cells == null) return;
+		if (clock == null) return;
 
-		if (playing) {
-			level.setMem(volume);
-			loopDuration.setMem(duration);
-		} else {
-			level.setMem(0.0);
-			loopDuration.setMem(0.0);
+		for (int c = 0; c < mixer.getChannelCount(); c++) {
+			setLevel(c, playing ? volume[c] : 0.0);
+			setLoopDuration(c, playing ? this.duration[c] : 0.0);
+		}
+	}
+
+	protected void setLevel(int c, double v) {
+		level[c].setMem(v);
+	}
+
+	protected void setLoopDuration(int c, double duration) {
+		loopDuration[c].setMem(duration);
+
+		if (enableUnifiedClock) {
+			clock.setReset(0, (int) (duration * sampleRate));
 		}
 	}
 
@@ -167,18 +221,17 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	@Override
-	public boolean isPlaying() {
-		return playing;
-	}
+	public boolean isPlaying() { return playing; }
 
 	@Override
-	public boolean isReady() {
-		return cells != null;
-	}
+	public boolean isReady() { return clock != null; }
 
 	@Override
 	public void setVolume(double volume) {
-		this.volume = volume;
+		for (int c = 0; c < mixer.getChannelCount(); c++) {
+			this.volume[c] = volume;
+		}
+
 		updateLevel();
 	}
 
@@ -192,27 +245,27 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	@Override
 	public void seek(double time) {
-		if (cells == null) {
+		if (clock == null) {
 			return;
 		}
 
 		if (time < 0.0) time = 0.0;
 		if (time > getTotalDuration()) time = getTotalDuration();
-		setWavePosition(time * data.getSampleRate());
+		setWavePosition(time * sampleRate);
 	}
 
 	@Override
 	public double getCurrentTime() {
-		if (cells == null || !playing) {
+		if (clock == null || !playing) {
 			return 0;
 		}
 
-		return getWavePosition() / data.getSampleRate();
+		return getWavePosition() / (double) sampleRate;
 	}
 
 	@Override
 	public double getTotalDuration() {
-		return loopDuration.toDouble();
+		return DoubleStream.of(duration).max().orElse(0.0);
 	}
 
 	@Override
@@ -224,7 +277,18 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	public void destroy() {
 		this.stopped = true;
 		this.monitor = null;
-		this.data.destroy();
-		this.loopDuration.destroy();
+
+		if (this.raw != null) {
+			this.raw.destroy();
+			this.loopDuration = null;
+		}
+
+		if (this.loopDuration != null) {
+			for (int c = 0; c < loopDuration.length; c++) {
+				this.loopDuration[c].destroy();
+			}
+
+			this.loopDuration = null;
+		}
 	}
 }

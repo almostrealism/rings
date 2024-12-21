@@ -31,6 +31,7 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
 
@@ -289,8 +290,12 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		}
 	}
 
+	public WaveCell toCell(TimeCell clock) {
+		return toCell(clock.frameScalar());
+	}
+
 	public WaveCell toCell(Producer<Scalar> frame) {
-		return new WaveCell(getCollection(), getSampleRate(), frame);
+		return new WaveCell(getCollection(), frame);
 	}
 
 	@Override

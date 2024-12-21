@@ -90,6 +90,10 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
+	default CellList cells(Cell<PackedCollection<?>>... cells) {
+		return cells(cells.length, i -> cells[i]);
+	}
+
 	default CellList cells(int count, IntFunction<Cell<PackedCollection<?>>> cells) {
 		CellList c = new CellList();
 		IntStream.range(0, count).mapToObj(cells).forEach(c::addRoot);
