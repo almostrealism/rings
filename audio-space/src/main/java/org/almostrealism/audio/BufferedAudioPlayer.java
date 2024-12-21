@@ -24,6 +24,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,55 +115,27 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	public synchronized void load(int player, String file) {
-		load(player, file, null);
+		update(player, file);
+		updateLevel();
+		initMonitor();
 	}
 
-	public synchronized void load(int player, String file, WaveData data) {
-		setFileString(file);
+	public synchronized void load(int player, WaveData data) {
 		update(player, data);
 		updateLevel();
 		initMonitor();
 	}
 
-	public BufferedOutputScheduler deliver(OutputLine out) {
-		if (out.getSampleRate() != sampleRate) {
-			throw new UnsupportedOperationException();
-		}
-
-		if (clock == null) {
-			this.clock = new TimeCell();
-			initMixer();
-
-			long bufferDuration = out.getBufferSize() * 1000L / sampleRate;
-			int updates = BufferDefaults.groups * 2;
-			waitTime = bufferDuration / updates;
-		} else {
-			warn("Attempting to deliver to an already active player");
-		}
-
-		CellList cells = mixer.toCellList();
-		if (enableUnifiedClock) {
-			cells = cells.addRequirement(clock);
-		}
-
-		return cells.buffer(out);
-	}
-
 	protected void update(int player, WaveData source) {
-		if (source == null) {
-			updateFromFile(player);
-		} else {
-			int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
-			volume[player] = 1.0;
-			duration[player] = frames / (double) source.sampleRate();
+		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
+		volume[player] = 1.0;
+		duration[player] = frames / (double) source.sampleRate();
 
-			getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
-			log("Loaded " + frames + " frames and set duration to " + duration[player]);
-		}
+		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
 	}
 
-	protected void updateFromFile(int player) {
-		try (WavFile in = WavFile.openWavFile(getFile())) {
+	protected void update(int player, String file) {
+		try (WavFile in = WavFile.openWavFile(new File(file))) {
 			long inRate = in.getSampleRate();
 
 			if (inRate != sampleRate) {
@@ -204,6 +177,30 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		if (enableUnifiedClock) {
 			clock.setReset(0, (int) (duration * sampleRate));
 		}
+	}
+
+	public BufferedOutputScheduler deliver(OutputLine out) {
+		if (out.getSampleRate() != sampleRate) {
+			throw new UnsupportedOperationException();
+		}
+
+		if (clock == null) {
+			this.clock = new TimeCell();
+			initMixer();
+
+			long bufferDuration = out.getBufferSize() * 1000L / sampleRate;
+			int updates = BufferDefaults.groups * 2;
+			waitTime = bufferDuration / updates;
+		} else {
+			warn("Attempting to deliver to an already active player");
+		}
+
+		CellList cells = mixer.toCellList();
+		if (enableUnifiedClock) {
+			cells = cells.addRequirement(clock);
+		}
+
+		return cells.buffer(out);
 	}
 
 	@Override

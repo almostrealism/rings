@@ -45,7 +45,7 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 		return uri;
 	}
 
-	protected void setUri(String uri) {
+	public void setUri(String uri) {
 		this.uri = uri;
 	}
 
@@ -61,7 +61,7 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 		return stems;
 	}
 
-	protected void setFileString(String file) {
+	public void setFileString(String file) {
 		this.file = file;
 	}
 
