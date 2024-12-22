@@ -127,6 +127,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void update(int player, WaveData source) {
+		if (source == null) {
+			clear(player);
+			return;
+		}
+
 		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
 		volume[player] = 1.0;
 		duration[player] = frames / (double) source.sampleRate();
@@ -135,6 +140,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void update(int player, String file) {
+		if (file == null) {
+			clear(player);
+			return;
+		}
+
 		try (WavFile in = WavFile.openWavFile(new File(file))) {
 			long inRate = in.getSampleRate();
 
@@ -156,6 +166,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}
+	}
+
+	protected void clear(int player) {
+		volume[player] = 0.0;
+		duration[player] = 0.0;
 	}
 
 	protected void updateLevel() {
