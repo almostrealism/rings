@@ -60,14 +60,16 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	private Runnable completionListener;
 
 	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
+									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 									String file, int iterationsPerRun) {
 		this(() -> healthComputation(stemCount), children, breeder, generator, file, iterationsPerRun);
 	}
 
 	public AudioPopulationOptimizer(Supplier<HealthComputation<O, AudioHealthScore>> health,
 									Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
+									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 									String file, int iterationsPerRun) {
 		super(health, children, breeder, generator);
 		this.file = file;
