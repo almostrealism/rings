@@ -38,6 +38,8 @@ public class SampleMixer implements CellFeatures {
 		}
 	}
 
+	public WaveCell getSample(int index) { return samples[index]; }
+
 	public Mixer getChannelMixer() { return mixer; }
 	public int getChannelCount() { return getChannelMixer().getChannelCount(); }
 

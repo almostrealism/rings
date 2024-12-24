@@ -37,6 +37,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public static final long timingPad = -3;
 
 	public static boolean enableVerbose = false;
+	public static int logRate = 16; // 1024;
 
 	private Consumer<Runnable> executor;
 	private TemporalRunner process;
@@ -100,11 +101,11 @@ public class BufferedOutputScheduler implements CellFeatures {
 			double tot = (System.currentTimeMillis() - groupStart) / 1000.0;
 			double dur = groupSize / (double) line.getSampleRate();
 
-			if (enableVerbose || count % 1024 == 0) {
+			if (enableVerbose || count % logRate == 0) {
 				log("Pausing at " + count + " - " + tot + " (x" +
 						NumberFormats.formatNumber(dur / tot) + ") | group " + getLastGroup());
-				log("Frames = " + diff + " vs " + groupSize);
-				log("Sleep target = " + NumberFormats.formatNumber(getTarget(true) / 1000.0));
+				log("Frames [" + diff + "/" + groupSize + "] (sleep " +
+						NumberFormats.formatNumber(getTarget(true) / 1000.0) + ")");
 			}
 
 			lastPause = System.currentTimeMillis();

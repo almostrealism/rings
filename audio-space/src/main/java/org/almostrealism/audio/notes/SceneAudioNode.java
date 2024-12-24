@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.uml.Nameable;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.pattern.PatternElement;
 
@@ -25,13 +26,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SceneAudioNode implements NoteAudioNode {
+public class SceneAudioNode implements NoteAudioNode, Nameable {
+	private String name;
 	private AudioScene<?> scene;
 	private List<NoteAudioNode> children;
 
 	public SceneAudioNode() { }
 
-	public SceneAudioNode(AudioScene<?> scene, List<Integer> channels) {
+	public SceneAudioNode(String name, AudioScene<?> scene, List<Integer> channels) {
+		setName(name);
 		this.scene = scene;
 		this.children = IntStream.range(0, scene.getChannelCount())
 				.filter(i -> channels == null || channels.contains(i))
@@ -53,7 +56,10 @@ public class SceneAudioNode implements NoteAudioNode {
 	}
 
 	@Override
-	public String getName() { return "Scene"; }
+	public void setName(String name) { this.name = name; }
+
+	@Override
+	public String getName() { return name; }
 
 	public void setChildren(List<NoteAudioNode> children) {
 		this.children = children;

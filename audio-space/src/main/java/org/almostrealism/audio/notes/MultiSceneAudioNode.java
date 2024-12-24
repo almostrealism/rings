@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.notes;
 
-import java.util.Collection;
 import java.util.List;
 
 public class MultiSceneAudioNode implements NoteAudioNode {
@@ -35,7 +34,7 @@ public class MultiSceneAudioNode implements NoteAudioNode {
 	}
 
 	@Override
-	public Collection<NoteAudioNode> getChildren() {
+	public List<NoteAudioNode> getChildren() {
 		return List.of(children);
 	}
 

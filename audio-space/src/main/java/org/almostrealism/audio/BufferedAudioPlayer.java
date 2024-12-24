@@ -46,6 +46,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private Scalar level[];
 	private PackedCollection<?> loopDuration[];
 
+	private boolean loaded[];
+	private boolean muted[];
 	private double volume[];
 	private double duration[];
 	private boolean playing;
@@ -70,6 +72,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		this.loopDuration = IntStream.range(0, playerCount)
 				.mapToObj(c -> new PackedCollection<>(1))
 				.toArray(PackedCollection[]::new);
+		this.loaded = new boolean[playerCount];
+		this.muted = new boolean[playerCount];
 		this.volume = new double[playerCount];
 		this.duration = new double[playerCount];
 
@@ -79,12 +83,22 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	protected void initMixer() {
 		level = new Scalar[mixer.getChannelCount()];
 
+		if (enableUnifiedClock) {
+			this.clock = new TimeCell();
+		}
+
 		this.mixer.init(c -> {
 			WaveCell cell = enableUnifiedClock ? getData(c).toCell(clock)
 					: (WaveCell) w(p(loopDuration[c]), getData(c)).get(0);
 			level[c] = cell.getData().amplitude();
 			return cell;
 		});
+
+		setVolume(1.0);
+
+		if (!enableUnifiedClock) {
+			this.clock = mixer.getSample(0).getClock();
+		}
 	}
 
 	protected void initMonitor() {
@@ -133,7 +147,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 
 		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
-		volume[player] = 1.0;
+		loaded[player] = true;
 		duration[player] = frames / (double) source.sampleRate();
 
 		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
@@ -158,7 +172,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			in.readFrames(result, (int) in.getFramesRemaining());
 
 			int frames = Math.min(result[0].length, bufferFrames);
-			volume[player] = 1.0;
+			loaded[player] = true;
 			duration[player] = frames / (double) sampleRate;
 
 			getData(player).getCollection().setMem(0, result[0], 0, frames);
@@ -169,7 +183,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void clear(int player) {
-		volume[player] = 0.0;
+		loaded[player] = false;
 		duration[player] = 0.0;
 	}
 
@@ -177,7 +191,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		if (clock == null) return;
 
 		for (int c = 0; c < mixer.getChannelCount(); c++) {
-			setLevel(c, playing ? volume[c] : 0.0);
+			boolean audible = loaded[c] && !muted[c];
+			setLevel(c, audible ? volume[c] : 0.0);
 			setLoopDuration(c, playing ? this.duration[c] : 0.0);
 		}
 	}
@@ -200,7 +215,6 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 
 		if (clock == null) {
-			this.clock = new TimeCell();
 			initMixer();
 
 			long bufferDuration = out.getBufferSize() * 1000L / sampleRate;
@@ -244,6 +258,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			this.volume[c] = volume;
 		}
 
+		updateLevel();
+	}
+
+	public void setMuted(int player, boolean muted) {
+		this.muted[player] = muted;
 		updateLevel();
 	}
 
