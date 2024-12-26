@@ -16,6 +16,7 @@
 
 package com.almostrealism.audio.stream;
 
+import com.almostrealism.audio.AudioStreamManager;
 import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.SharedMemoryOutputLine;
@@ -29,12 +30,12 @@ public class AudioSharedMemory implements CellFeatures {
 
 	public void run() throws IOException, InterruptedException {
 		SharedMemoryOutputLine out = new SharedMemoryOutputLine();
-		AudioServer server = new AudioServer(7799);
-		BufferedAudioPlayer player = server.addLiveStream("live", 2, out);
+		AudioStreamManager manager = new AudioStreamManager();
+		BufferedAudioPlayer player = manager.addPlayer("live", 2, out);
 		player.load(0, "Library/RAW_IU_RAW_KICK_03.wav");
 		player.load(1, "Library/RAW_IU_TOP_15.wav");
 
-		server.start();
+		manager.start();
 		player.play();
 		System.out.println("Server started");
 

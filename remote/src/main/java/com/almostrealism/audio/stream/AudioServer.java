@@ -22,40 +22,26 @@ import com.sun.net.httpserver.HttpServer;
 import io.almostrealism.util.FrequencyCache;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.BufferedAudioPlayer;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AudioProcessor;
-import org.almostrealism.audio.line.BufferedOutputScheduler;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.Console;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class AudioServer implements HttpHandler, CodeFeatures {
-	public static double defaultLiveDuration = 180.0;
+	private FrequencyCache<String, HttpAudioHandler> handlers;
 
 	private HttpServer server;
 
-	private FrequencyCache<String, HttpAudioHandler> handlers;
-	private Map<String, SharedMemoryOutputLine> lines;
-	private Map<String, BufferedAudioPlayer> players;
-
 	public AudioServer(int port) throws IOException {
-		server = HttpServer.create(new InetSocketAddress(port), 20);
 		handlers = new FrequencyCache<>(100, 0.6f);
 		handlers.setEvictionListener((key, value) -> {
 			value.destroy();
 		});
 
-		lines = new HashMap<>();
-		players = new HashMap<>();
+		server = HttpServer.create(new InetSocketAddress(port), 20);
 	}
 
 	public void start() throws IOException {
@@ -64,55 +50,6 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	}
 
 	public int getPort() { return server.getAddress().getPort();}
-
-	public BufferedAudioPlayer addLiveStream(String channel, int playerCount) {
-		return addLiveStream(channel, playerCount, Collections.emptyList());
-	}
-
-	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, OutputLine out) {
-		return addLiveStream(channel, playerCount, Collections.emptyList(), out);
-	}
-
-	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, List<String> channelNames) {
-		return addLiveStream(channel, playerCount, channelNames, new SharedMemoryOutputLine());
-	}
-
-	public BufferedAudioPlayer addLiveStream(String channel, int playerCount,
-											 List<String> channelNames,
-											 OutputLine out) {
-		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
-
-		// Ensure that the player buffer size is a multiple
-		// of the size of the OutputLine buffer
-		maxFrames = maxFrames / out.getBufferSize();
-		maxFrames *= out.getBufferSize();
-
-		return addLiveStream(channel, playerCount, channelNames, maxFrames, out);
-	}
-
-	public BufferedAudioPlayer addLiveStream(String channel, int playerCount, List<String> channelNames,
-											 int maxFrames, OutputLine out) {
-		if (maxFrames % out.getBufferSize() != 0) {
-			throw new IllegalArgumentException();
-		}
-
-		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, channelNames,
-													out.getSampleRate(), maxFrames);
-		addLiveStream(channel, player, out);
-		return player;
-	}
-
-	public void addLiveStream(String channel, BufferedAudioPlayer player, OutputLine out) {
-		BufferedOutputScheduler scheduler = addPlayer(channel, player, out);
-		scheduler.start();
-
-		addStream(channel, new BufferedOutputControl(scheduler));
-	}
-
-	public BufferedOutputScheduler addPlayer(String channel, BufferedAudioPlayer player, OutputLine out) {
-		players.put(channel, player);
-		return player.deliver(out);
-	}
 
 	public String addStream(String key, WaveData data) {
 		key = Base64.getEncoder().encodeToString(key.getBytes());
@@ -137,14 +74,6 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		}
 
 		handlers.put(channel, handler);
-	}
-
-	public HttpAudioHandler getStream(String channel) {
-		return handlers.get(channel);
-	}
-
-	public BufferedAudioPlayer getPlayer(String channel) {
-		return players.get(channel);
 	}
 
 	public boolean containsStream(String channel) {
