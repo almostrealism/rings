@@ -234,6 +234,12 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	@Override
 	public boolean play() {
+		if (!playing) {
+			// Align all the samples from the start
+			// if play is resuming
+			setFrame(0.0);
+		}
+
 		playing = true;
 		updateLevel();
 		return true;
@@ -266,12 +272,14 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		updateLevel();
 	}
 
-	protected double getWavePosition() {
-		return clock.getFrame();
-	}
+	protected double getFrame() { return clock.getFrame(); }
 
-	protected void setWavePosition(double frames) {
-		clock.setFrame(frames);
+	protected void setFrame(double frame) {
+		if (enableUnifiedClock) {
+			clock.setFrame(frame);
+		} else {
+			mixer.setFrame(frame);
+		}
 	}
 
 	@Override
@@ -282,7 +290,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 		if (time < 0.0) time = 0.0;
 		if (time > getTotalDuration()) time = getTotalDuration();
-		setWavePosition(time * sampleRate);
+		setFrame(time * sampleRate);
 	}
 
 	@Override
@@ -291,7 +299,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			return 0;
 		}
 
-		return getWavePosition() / (double) sampleRate;
+		return getFrame() / (double) sampleRate;
 	}
 
 	@Override
@@ -315,8 +323,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 
 		if (this.loopDuration != null) {
-			for (int c = 0; c < loopDuration.length; c++) {
-				this.loopDuration[c].destroy();
+			for (PackedCollection<?> packedCollection : loopDuration) {
+				packedCollection.destroy();
 			}
 
 			this.loopDuration = null;

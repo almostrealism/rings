@@ -38,6 +38,12 @@ public class SampleMixer implements CellFeatures {
 		}
 	}
 
+	public void setFrame(double frame) {
+		for (WaveCell sample : samples) {
+			sample.getClock().setFrame(frame);
+		}
+	}
+
 	public WaveCell getSample(int index) { return samples[index]; }
 
 	public Mixer getChannelMixer() { return mixer; }
