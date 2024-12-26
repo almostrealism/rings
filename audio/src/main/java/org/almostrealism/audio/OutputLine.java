@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio;
 
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
@@ -23,7 +24,7 @@ import org.almostrealism.io.SystemUtils;
 
 import java.util.function.Supplier;
 
-public interface OutputLine {
+public interface OutputLine extends Destroyable {
 	int sampleRate = SystemUtils.getInt("AR_AUDIO_SAMPLE_RATE").orElse(44100);
 
 	default int getSampleRate() { return sampleRate; }

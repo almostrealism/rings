@@ -18,17 +18,23 @@ package com.almostrealism.audio;
 
 import com.almostrealism.audio.stream.AudioServer;
 import com.almostrealism.audio.stream.HttpAudioHandler;
+import com.almostrealism.audio.stream.OutputLineDelegationHandler;
+import com.almostrealism.audio.stream.SharedPlayerConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.audio.line.DelegatedOutputLine;
 import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
+import org.almostrealism.util.KeyUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,18 +44,21 @@ import java.util.Objects;
 
 public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
 	public static final int PORT = 7799;
+	public static final String CREATE = "create";
+
 	public static double defaultLiveDuration = 180.0;
+	public static int defaultPlayerCount = 9;
 
 	private Map<String, BufferedAudioPlayer> players;
-
 	public AudioServer server;
 
 	public AudioStreamManager() throws IOException {
-		players = new HashMap<>();
-		server = new AudioServer(PORT);
+		this.players = new HashMap<>();
+		this.server = new AudioServer(PORT);
 	}
 
 	public void start() throws IOException {
+		server.addStream(CREATE, this);
 		server.start();
 	}
 
@@ -77,7 +86,9 @@ public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount, List<String> channelNames) {
-		return addPlayer(channel, playerCount, channelNames, new SharedMemoryOutputLine());
+		DelegatedOutputLine line = new DelegatedOutputLine();
+		server.addStream(channel, new OutputLineDelegationHandler(line));
+		return addPlayer(channel, playerCount, channelNames, line);
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
@@ -122,19 +133,27 @@ public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
 			exchange.getResponseHeaders().add("Content-Type", "application/json");
 			exchange.sendResponseHeaders(200, 0);
 
-			try (OutputStream out = exchange.getResponseBody()) {
-				// TODO  Send back success/info
+			try (OutputStream out = exchange.getResponseBody();
+				 	InputStream inputStream = exchange.getRequestBody()) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				SharedPlayerConfig config = objectMapper.readValue(inputStream, SharedPlayerConfig.class);
+
+				String location = config.getLocation();
+				if (config.getStream() == null) {
+					config.setStream(KeyUtils.generateKey());
+				}
+
+				SharedMemoryOutputLine sharedOutput = new SharedMemoryOutputLine(location);
+				addPlayer(config.getStream(), defaultPlayerCount, sharedOutput);
+				objectMapper.writeValue(out, config);
 			} catch (IOException e) {
-				warn(e.getMessage());
+				warn("Could not create player", e);
 			}
 		} else {
-			exchange.getResponseHeaders().add("Content-Type", "application/json");
-			exchange.sendResponseHeaders(200, -1);
+			exchange.sendResponseHeaders(405, 0);
 		}
 	}
 
 	@Override
-	public Console console() {
-		return AudioScene.console;
-	}
+	public Console console() { return AudioScene.console; }
 }

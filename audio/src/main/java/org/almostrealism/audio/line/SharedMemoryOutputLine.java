@@ -17,24 +17,24 @@
 package org.almostrealism.audio.line;
 
 import io.almostrealism.code.ComputeContext;
-import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.io.ConsoleFeatures;
 
-public class SharedMemoryOutputLine implements OutputLine, Destroyable, ConsoleFeatures {
+public class SharedMemoryOutputLine implements OutputLine, ConsoleFeatures {
 	public static final int controlSize = 8;
 
 	private int cursor;
 	private PackedCollection<?> controls;
 	private PackedCollection<?> destination;
 
-	public SharedMemoryOutputLine() {
-		this(createControls(), createDestination());
+	public SharedMemoryOutputLine(String location) {
+		this(createControls(location), createDestination(location));
 	}
 
-	public SharedMemoryOutputLine(PackedCollection<?> controls, PackedCollection<?> destination) {
+	public SharedMemoryOutputLine(PackedCollection<?> controls,
+								  PackedCollection<?> destination) {
 		this.controls = controls;
 		this.destination = destination;
 	}
@@ -71,18 +71,18 @@ public class SharedMemoryOutputLine implements OutputLine, Destroyable, ConsoleF
 
 	@Override
 	public void destroy() {
-		Destroyable.super.destroy();
+		OutputLine.super.destroy();
 		destination.destroy();
 		destination = null;
 	}
 
-	private static PackedCollection<?> createControls() {
-		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_ctl";
+	private static PackedCollection<?> createControls(String location) {
+		String shared = location + "_ctl";
 		return createCollection(shared, controlSize);
 	}
 
-	private static PackedCollection<?> createDestination() {
-		String shared = "/Users/michael/Library/Containers/com.almostrealism.Rings.ringsAUfx/Data/rings_shm";
+	private static PackedCollection<?> createDestination(String location) {
+		String shared = location + "_shm";
 		return createCollection(shared, BufferDefaults.defaultBufferSize);
 	}
 

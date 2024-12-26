@@ -178,8 +178,8 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 
 	public CellList sum() { return sum(this); }
 
-	public BufferedOutputScheduler buffer() {
-		return buffer(new SharedMemoryOutputLine());
+	public BufferedOutputScheduler buffer(String location) {
+		return buffer(new SharedMemoryOutputLine(location));
 	}
 
 	public BufferedOutputScheduler buffer(OutputLine line) {
