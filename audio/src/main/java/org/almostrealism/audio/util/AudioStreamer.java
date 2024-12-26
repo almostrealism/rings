@@ -24,6 +24,8 @@ import java.util.Random;
 
 public class AudioStreamer {
 	public static void main(String[] args) throws Exception {
+		long total = 0;
+
 		while (true) {
 			try {
 				Socket socket = new Socket("localhost", 6780);
@@ -33,7 +35,6 @@ public class AudioStreamer {
 				System.out.println("Established stream...");
 
 				int frames = 100;
-				long total = 0;
 
 				while (true) {
 					int count = din.readInt();
@@ -47,28 +48,11 @@ public class AudioStreamer {
 					dos.flush();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-				Thread.sleep(10000);
+				String message = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+				System.out.println(message + " - total = " + total);
+				total = 0;
+				Thread.sleep(5000);
 			}
-		}
-	}
-
-	public static void server(String[] args) throws Exception {
-		ServerSocket serverSocket = new ServerSocket(6780);
-
-		while (true) {
-			Socket clientSocket = serverSocket.accept();
-			DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
-
-			Random random = new Random();
-			for (int i = 0; i < 1024; i++) {
-				float value = random.nextFloat();
-				dos.writeFloat(value);
-			}
-
-			dos.flush();
-			dos.close();
-			clientSocket.close();
 		}
 	}
 }

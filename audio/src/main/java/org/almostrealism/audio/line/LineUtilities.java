@@ -1,9 +1,8 @@
 package org.almostrealism.audio.line;
 
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.JavaAudioSample;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.OutputLine;
-import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 
 import java.io.BufferedInputStream;
@@ -124,6 +123,12 @@ public class LineUtilities {
 	 * depending on the frame size of the specified {@link AudioFormat}.
 	 */
 	public static byte[] toFrame(PackedCollection<?> frame, AudioFormat format) {
+		if (frame.getMemLength() > 1) {
+			// TODO  This method should actually convert all the frames in the collection
+			CellFeatures.console.features(LineUtilities.class)
+					.warn("Frame has more than one element, using only the first");
+		}
+
 		int frameSize = format.getFrameSize();
 
 		byte frameBytes[] = null;

@@ -16,22 +16,26 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.uml.Nameable;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.pattern.PatternElement;
+import org.almostrealism.io.ConsoleFeatures;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SceneAudioNode implements NoteAudioNode {
+public class SceneAudioNode implements NoteAudioNode, Nameable, ConsoleFeatures {
+	private String key, name;
 	private AudioScene<?> scene;
 	private List<NoteAudioNode> children;
 
 	public SceneAudioNode() { }
 
-	public SceneAudioNode(AudioScene<?> scene, List<Integer> channels) {
+	public SceneAudioNode(String key, String name, AudioScene<?> scene, List<Integer> channels) {
+		setKey(key);
+		setName(name);
 		this.scene = scene;
 		this.children = IntStream.range(0, scene.getChannelCount())
 				.filter(i -> channels == null || channels.contains(i))
@@ -47,20 +51,27 @@ public class SceneAudioNode implements NoteAudioNode {
 	}
 
 	public void setRange(double start, double end) {
+		if (scene == null) {
+			warn("Scene not available for adjusting range");
+			return;
+		}
+
 		Map<NoteAudioChoice, List<PatternElement>> elements =
 				scene.getPatternManager().getPatternElements(start, end);
 		getChildren().forEach(c -> ((ChannelAudioNode) c).setPatternElements(elements));
 	}
 
-	@Override
-	public String getName() { return "Scene"; }
-
-	public void setChildren(List<NoteAudioNode> children) {
-		this.children = children;
-	}
+	public String getKey() { return key; }
+	public void setKey(String key) { this.key = key; }
 
 	@Override
-	public Collection<NoteAudioNode> getChildren() {
-		return children;
-	}
+	public void setName(String name) { this.name = name; }
+
+	@Override
+	public String getName() { return name; }
+
+	public void setChildren(List<NoteAudioNode> children) { this.children = children; }
+
+	@Override
+	public List<NoteAudioNode> getChildren() { return children; }
 }

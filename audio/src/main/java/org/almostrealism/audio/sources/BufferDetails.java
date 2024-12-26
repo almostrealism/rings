@@ -37,4 +37,8 @@ public class BufferDetails {
 	public int getFrames() {
 		return frames;
 	}
+
+	public double getDuration() {
+		return (double) frames / sampleRate;
+	}
 }

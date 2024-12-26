@@ -23,8 +23,8 @@ import java.util.Properties;
 
 import javax.swing.Icon;
 
+import io.almostrealism.util.NumberFormats;
 import org.almostrealism.io.PrintWriter;
-import org.almostrealism.algebra.Defaults;
 
 /**
  * The {@link Settings} class provides access to settings that change the way the RayTracer and
@@ -33,7 +33,7 @@ import org.almostrealism.algebra.Defaults;
  * 
  * @author  Michael Murray
  */
-public abstract class Settings extends Defaults {
+public abstract class Settings extends NumberFormats {
   /** String containing the version number of this software. */
   public static final String version = "0.32";
   
@@ -106,7 +106,25 @@ public abstract class Settings extends Defaults {
   
   /** Icon to use for top level of surface tree. */
   public static Icon sceneIcon;
-  
+
+	/** AWT Color representing the primary 1 color for the default theme. */
+	public static Color themePrimary1 = (new Color(0, 108, 175)).darker();
+
+	/** AWT Color representing the primary 2 color for the default theme. */
+	public static Color themePrimary2 = new Color(0, 108, 175);
+
+	/** AWT Color representing the primary 3 color for the default theme. */
+	public static Color themePrimary3 =  themePrimary2.brighter();
+
+	/** AWT Color representing the secondary 1 color for the default theme. */
+	public static Color themeSecondary1 = new Color(102, 103, 104);
+
+	/** AWT Color representing the secondary 2 color for the default theme. */
+	public static Color themeSecondary2 = new Color(170, 174, 177);
+
+	/** AWT Color representing the secondary 3 color for the default theme. */
+	public static Color themeSecondary3 = new Color(209, 212, 214);
+
   public static void init() {
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		Settings.screenWidth = screenDim.width;

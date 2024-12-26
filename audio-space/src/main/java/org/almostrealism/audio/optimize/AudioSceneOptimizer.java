@@ -19,6 +19,7 @@ package org.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
@@ -67,7 +69,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
-	public static final int singleChannel = 3;
+	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
 
@@ -80,6 +82,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	}
 
 	private AudioScenePopulation population;
+	private Consumer<WaveDetails> detailsProcessor;
 
 	public AudioSceneOptimizer(AudioScene<?> scene,
 							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
@@ -93,16 +96,25 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					if (population == null) {
 						population = new AudioScenePopulation(scene, children);
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
+						hc.setWaveDetailsProcessor(detailsProcessor);
 
 						if (enableVerbose) log("Initializing AudioScenePopulation");
 						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
-						if (enableVerbose) log("AudioScenePopulation initialized (getCells duration = " + AudioScene.console.timing("getCells").getTotal() + ")");
+
+						if (enableVerbose) {
+							log("AudioScenePopulation initialized (getCells duration = " +
+									AudioScene.console.timing("getCells").getTotal() + ")");
+						}
 					} else {
 						population.setGenomes(children);
 					}
 
 					return population;
 				});
+	}
+
+	public void setWaveDetailsProcessor(Consumer<WaveDetails> processor) {
+		this.detailsProcessor = processor;
 	}
 
 	@Override
@@ -116,7 +128,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		return build(() -> scene.getGenome()::random, scene, cycles);
 	}
 
-	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator, AudioScene<?> scene, int cycles) {
+	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+											AudioScene<?> scene, int cycles) {
 		return new AudioSceneOptimizer(scene, scene::getBreeder, generator, cycles);
 	}
 
@@ -183,7 +196,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
 
-		// MemoryDataArgumentMap.profile = new OperationProfile("MemoryDataArgumentMap");
 		OperationProfileNode profile = new OperationProfileNode("AudioSceneOptimizer");
 		Hardware.getLocalHardware().assignProfile(profile);
 		StableDurationHealthComputation.profile = profile;

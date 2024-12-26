@@ -21,6 +21,8 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.WaveDetailsFactory;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
@@ -44,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
-	public static boolean enableFft = true;
+	public static boolean enableFft = false;
 	public static boolean enableTimeout = false;
 
 	public static OperationProfile profile;
@@ -243,6 +245,11 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 					getWaveOut().write().get().run();
 					if (getStems() != null) getStems().forEach(s -> s.write().get().run());
+
+					if (getWaveDetailsProcessor() != null) {
+						getWaveDetailsProcessor().accept(WaveDetailsFactory.getDefault()
+								.forProvider(new FileWaveDataProvider(getOutputFile().getPath())));
+					}
 				}
 
 				if (enableFft) {
