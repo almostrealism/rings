@@ -7,8 +7,8 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.66</common.version>
-		<flowtree.version>0.22</flowtree.version>
+		<common.version>0.67</common.version>
+		<flowtree.version>0.23</flowtree.version>
 
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
@@ -20,7 +20,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>rings</artifactId>
-	<version>0.37</version>
+	<version>0.38</version>
 
 	<modules>
 		<module>audio</module>
@@ -53,7 +53,7 @@
 			<dependency>
 				<groupId>com.almostrealism</groupId>
 				<artifactId>ar-treeview</artifactId>
-				<version>0.37</version>
+				<version>0.38</version>
 			</dependency>
 
 			<dependency>
