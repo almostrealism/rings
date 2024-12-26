@@ -16,9 +16,10 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.filter.AudioProcessor;
 
-public interface ChannelSection extends AudioProcessor {
+public interface ChannelSection extends AudioProcessor, Destroyable {
 	/** Position of the section, in measures. */
 	int getPosition();
 

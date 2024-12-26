@@ -24,9 +24,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.function.Supplier;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.lifecycle.Lifecycle;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import io.almostrealism.relation.Producer;
@@ -37,7 +41,7 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 import org.almostrealism.io.Console;
 import org.almostrealism.CodeFeatures;
 
-public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Destroyable, CodeFeatures {
 	public static boolean enableVerbose = false;
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 230);
@@ -70,9 +74,9 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 
 	private WavFile wav;
 	private PackedCollection<?> cursor;
-	private PackedCollection<?> data;
+	private Producer<PackedCollection<?>> data;
 
-	public WaveOutput() { this(null); }
+	public WaveOutput() { this((File) null); }
 
 	public WaveOutput(int maxFrames) {
 		this(null, 24, maxFrames);
@@ -95,16 +99,32 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public WaveOutput(Supplier<File> f, int bits, long sampleRate, int maxFrames) {
+		this(f, bits, sampleRate, new PackedCollection<>(maxFrames <= 0 ? defaultTimelineFrames : maxFrames));
+	}
+
+	public WaveOutput(PackedCollection<?> data) {
+		this(null, 24, OutputLine.sampleRate, data);
+	}
+
+	public WaveOutput(Producer<PackedCollection<?>> data) {
+		this(null, 24, OutputLine.sampleRate, data);
+	}
+
+	public WaveOutput(Supplier<File> f, int bits, long sampleRate, PackedCollection<?> data) {
+		this(f, bits, sampleRate, CollectionFeatures.getInstance().p(data));
+	}
+
+	public WaveOutput(Supplier<File> f, int bits, long sampleRate, Producer<PackedCollection<?>> data) {
 		this.file = f;
 		this.bits = bits;
 		this.sampleRate = sampleRate;
 		this.cursor = new PackedCollection<>(1);
-		this.data = new PackedCollection<>(maxFrames <= 0 ? defaultTimelineFrames : maxFrames).traverseEach();
+		this.data = c(data).traverseEach();
 	}
 
 	public PackedCollection<?> getCursor() { return cursor; }
 
-	public PackedCollection<?> getData() { return data; }
+	public PackedCollection<?> getData() { return data.get().evaluate(); }
 
 	public WaveData getWaveData() {
 		return new WaveData(getData()
@@ -122,7 +142,7 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 			protein = c(protein, 0);
 		}
 
-		Producer slot = c(shape(1), p(data), p(cursor));
+		Producer slot = c(shape(1), data, p(cursor));
 
 		push.add(a("WaveOutput Insert", slot, (Producer) protein));
 		push.add(a("WaveOutput Cursor Increment", cp(cursor), cp(cursor).add(1)));
@@ -130,70 +150,86 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	}
 
 	public Supplier<Runnable> export(PackedCollection<?> destination) {
-		return new MemoryDataCopy("WaveOutput Export", data, destination);
+		TraversalPolicy shape = shape(data);
+		int len = destination.getMemLength();
+		if (shape.getTotalSize() > 1 && shape.getTotalSize() > len)
+			len = shape.getTotalSize();
+
+		Evaluable<PackedCollection<?>> d = this.data.get();
+		return new MemoryDataCopy("WaveOutput Export", d::evaluate, () -> destination, len);
 	}
 
 	public Supplier<Runnable> write() {
 		// TODO  Write frames in larger batches than 1
-		return () -> () -> {
-			int frames = (int) cursor.toDouble(0) - 1;
+		return () -> {
+			Evaluable<PackedCollection<?>> d = data.get();
 
-			if (frames > 0) {
-				// log("Writing " + frames + " frames");
-			} else {
-				log("No frames to write");
-				return;
-			}
+			return () -> {
+				PackedCollection<?> o = d.evaluate();
+				int frames = (int) cursor.toDouble(0) - 1;
 
-			long start = System.currentTimeMillis();
+				if (frames > 0) {
+					// log("Writing " + frames + " frames");
+				} else {
+					log("No frames to write");
+					return;
+				}
 
-			try {
-				this.wav = WavFile.newWavFile(file.get(), 2, frames, bits, sampleRate);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
-
-			double frameData[] = data.toArray(0, frames);
-
-			for (int i = 0; i < frames; i++) {
-				double value = frameData[i];
+				long start = System.currentTimeMillis();
 
 				try {
-					wav.writeFrames(new double[][]{{value}, {value}}, 1);
+					this.wav = WavFile.newWavFile(file.get(), 2, frames, bits, sampleRate);
 				} catch (IOException e) {
 					e.printStackTrace();
+					return;
 				}
-			}
 
-			try {
-				wav.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
+				double frameData[] = o.toArray(0, frames);
 
-			if (enableVerbose)
-				log(" Wrote " + frames + " frames in " + (System.currentTimeMillis() - start) + " msec");
+				for (int i = 0; i < frames; i++) {
+					double value = frameData[i];
+
+					try {
+						wav.writeFrames(new double[][]{{value}, {value}}, 1);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				try {
+					wav.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
+
+				if (enableVerbose)
+					log(" Wrote " + frames + " frames in " + (System.currentTimeMillis() - start) + " msec");
+			};
 		};
 	}
 
 	public Supplier<Runnable> writeCsv(File file) {
-		return () -> () -> {
-			StringBuffer buf = new StringBuffer();
+		return () -> {
+			Evaluable<PackedCollection<?>> d = data.get();
 
-			int frames = (int) cursor.toDouble(0);
+			return () -> {
+				PackedCollection<?> o = d.evaluate();
+				StringBuffer buf = new StringBuffer();
 
-			for (int i = 0; i < frames; i++) {
-				double value = data.toDouble(i);
-				buf.append(i + "," + value + "\n");
-			}
+				int frames = (int) cursor.toDouble(0);
 
-			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
-				out.println(buf);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+				for (int i = 0; i < frames; i++) {
+					double value = o.toDouble(i);
+					buf.append(i + "," + value + "\n");
+				}
+
+				try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
+					out.println(buf);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			};
 		};
 	}
 
@@ -201,9 +237,16 @@ public class WaveOutput implements Receptor<PackedCollection<?>>, Lifecycle, Cod
 	public void reset() {
 		Lifecycle.super.reset();
 		cursor.setMem(0.0);
+
 		// TODO  The data should be cleared, but this can cause problems for
 		// TODO  systems that are resetting the WaveOutput prior to writing
 		// collection.clear();
+	}
+
+	@Override
+	public void destroy() {
+		if (cursor != null) cursor.destroy();
+		if (data != null) data.destroy();
 	}
 
 	@Override

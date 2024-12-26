@@ -16,17 +16,23 @@
 
 package org.almostrealism.audio.health;
 
+import io.almostrealism.lifecycle.Destroyable;
+import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.HealthComputation;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-public interface AudioHealthComputation<T extends TemporalCellular> extends HealthComputation<T, AudioHealthScore> {
+public interface AudioHealthComputation<T extends TemporalCellular>
+		extends HealthComputation<T, AudioHealthScore>, Destroyable {
 	Receptor<PackedCollection<?>> getOutput();
 
 	List<? extends Receptor<PackedCollection<?>>> getStems();
 
 	List<? extends Receptor<PackedCollection<?>>> getMeasures();
+
+	void setWaveDetailsProcessor(Consumer<WaveDetails> processor);
 }

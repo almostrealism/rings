@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.optimize;
 
+import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.health.AudioHealthScore;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.collect.PackedCollection;
@@ -41,7 +42,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore> implements Runnable {
+public class AudioPopulationOptimizer<O extends Temporal> extends
+		PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore>
+		implements Runnable, Destroyable {
 	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
 
 	public static final boolean enableWavOutput = true;
@@ -57,14 +60,16 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 	private Runnable completionListener;
 
 	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
+									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 									String file, int iterationsPerRun) {
 		this(() -> healthComputation(stemCount), children, breeder, generator, file, iterationsPerRun);
 	}
 
 	public AudioPopulationOptimizer(Supplier<HealthComputation<O, AudioHealthScore>> health,
 									Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder, Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
+									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 									String file, int iterationsPerRun) {
 		super(health, children, breeder, generator);
 		this.file = file;
@@ -164,6 +169,11 @@ public class AudioPopulationOptimizer<O extends Temporal> extends PopulationOpti
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void destroy() {
+		resetHealth();
 	}
 
 	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation(int channels) {

@@ -17,6 +17,7 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.compute.ComputeRequirement;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
@@ -30,6 +31,7 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
 
@@ -38,7 +40,7 @@ import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WaveData implements SamplingFeatures {
+public class WaveData implements Destroyable, SamplingFeatures {
 	public static final boolean enableGpu = false;
 
 	public static final int FFT_BINS = enableGpu ? 256 : 1024;
@@ -250,7 +252,7 @@ public class WaveData implements SamplingFeatures {
 		} finally {
 			inRoot.destroy();
 			outRoot.destroy();
-			if (pooling) out.destroy();
+			if (pooling || sum) out.destroy();
 		}
 	}
 
@@ -288,8 +290,19 @@ public class WaveData implements SamplingFeatures {
 		}
 	}
 
+	public WaveCell toCell(TimeCell clock) {
+		return toCell(clock.frameScalar());
+	}
+
 	public WaveCell toCell(Producer<Scalar> frame) {
-		return new WaveCell(getCollection(), getSampleRate(), frame);
+		return new WaveCell(getCollection(), frame);
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		if (collection != null) collection.destroy();
+		collection = null;
 	}
 
 	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {

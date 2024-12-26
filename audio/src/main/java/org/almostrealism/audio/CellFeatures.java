@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
@@ -49,6 +50,7 @@ import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,6 +88,10 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		CellList cells = new CellList();
 		cells.addRoot(silent());
 		return cells;
+	}
+
+	default CellList cells(Cell<PackedCollection<?>>... cells) {
+		return cells(cells.length, i -> cells[i]);
 	}
 
 	default CellList cells(int count, IntFunction<Cell<PackedCollection<?>>> cells) {
@@ -547,18 +553,31 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return result;
 	}
 
+	default TemporalRunner buffer(CellList cells, Producer<PackedCollection<?>> destination) {
+		TraversalPolicy shape = shape(destination);
+
+		if (cells.size() > 1) {
+			// TODO  This should be supported, but it requires a more complicated
+			// TODO  operation on the destination involving subset
+			throw new UnsupportedOperationException();
+		}
+
+		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(destination)));
+		return cells.buffer(shape.getTotalSize());
+	}
+
 	default Supplier<Runnable> export(CellList cells, PackedCollection<PackedCollection<?>> wavs) {
 		if (wavs.getCount() != cells.size()) throw new IllegalArgumentException("Destination count must match cell count");
 
-		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(wavs.getAtomicMemLength())));
+		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(
+				wavs.range(shape(wavs.getAtomicMemLength()), i * wavs.getAtomicMemLength()))));
 
 		OperationList export = new OperationList("Export " + wavs.getAtomicMemLength() + " frames");
 		export.add(iter(cells, wavs.getAtomicMemLength()));
-		// export.add(new TemporalRunner(cells, wavs.getAtomicMemLength()));
 
-		for (int i = 0; i < cells.size(); i++) {
-			export.add(((WaveOutput) ((ReceptorCell) cells.get(i)).getReceptor()).export(wavs.get(i).traverseEach()));
-		}
+//		for (int i = 0; i < cells.size(); i++) {
+//			export.add(((WaveOutput) ((ReceptorCell) cells.get(i)).getReceptor()).export(wavs.get(i).traverseEach()));
+//		}
 
 		return export;
 	}

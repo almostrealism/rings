@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.profile.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
@@ -45,7 +46,7 @@ import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
-public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, CodeFeatures {
+public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, Destroyable, CodeFeatures {
 	public static boolean enableFlatten = true;
 
 	private AudioScene<?> scene;
@@ -208,6 +209,13 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 
 	public void store(OutputStream s) {
 		store(getGenomes(), s);
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		if (cells instanceof Destroyable) ((Destroyable) cells).destroy();
+		cells = null;
 	}
 
 	@Override
