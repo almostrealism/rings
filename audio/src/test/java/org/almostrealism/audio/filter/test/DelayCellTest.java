@@ -17,7 +17,7 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.profile.OperationProfile;
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
