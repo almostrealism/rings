@@ -24,6 +24,7 @@ import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +41,6 @@ public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFea
 	public void handle(HttpExchange exchange) throws IOException {
 		if (Objects.equals("POST", exchange.getRequestMethod())) {
 			exchange.getResponseHeaders().add("Content-Type", "application/json");
-			exchange.sendResponseHeaders(200, 0);
 
 			try (OutputStream out = exchange.getResponseBody();
 				 InputStream inputStream = exchange.getRequestBody()) {
@@ -55,13 +55,25 @@ public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFea
 				// Set up the new line
 				String location = config.getLocation() + "/" + config.getStream();
 				log("Initializing shared memory @ " + location);
+
+				JOptionPane.showMessageDialog(null, "Initializing shared memory @ " + location);
+
 				line.setDelegate(new SharedMemoryOutputLine(location));
 
 				// Provide the configuration details to the client
-				objectMapper.writeValue(out, config);
+				byte[] responseBytes = objectMapper.writeValueAsBytes(config);
+				exchange.sendResponseHeaders(200, responseBytes.length);
+				out.write(responseBytes);
+
 				if (last != null) last.destroy();
-			} catch (IOException e) {
+			} catch (Exception e) {
+				String errorMessage = "{\"error\": \"Could not update player\"}";
+				exchange.sendResponseHeaders(400, errorMessage.getBytes().length);
+				try (OutputStream out = exchange.getResponseBody()) {
+					out.write(errorMessage.getBytes());
+				}
 				warn("Could not update player", e);
+				JOptionPane.showMessageDialog(null, "Could not update player: " + e.getMessage());
 			}
 		} else {
 			exchange.sendResponseHeaders(405, 0);
