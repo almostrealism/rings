@@ -19,6 +19,7 @@ package com.almostrealism.audio;
 import com.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.io.SystemUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -177,7 +178,11 @@ public class AudioLibraryPersistence {
 		private int index;
 
 		public LibraryDestination(String prefix) {
-			this.prefix = prefix;
+			if (prefix.contains("/")) {
+				this.prefix = prefix;
+			} else {
+				this.prefix = SystemUtils.getLocalDestination(prefix);
+			}
 		}
 
 		protected String nextFile() {
