@@ -24,7 +24,6 @@ import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,8 +55,6 @@ public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFea
 				String location = config.getLocation() + "/" + config.getStream();
 				log("Initializing shared memory @ " + location);
 
-				JOptionPane.showMessageDialog(null, "Initializing shared memory @ " + location);
-
 				line.setDelegate(new SharedMemoryOutputLine(location));
 
 				// Provide the configuration details to the client
@@ -72,8 +69,8 @@ public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFea
 				try (OutputStream out = exchange.getResponseBody()) {
 					out.write(errorMessage.getBytes());
 				}
+
 				warn("Could not update player", e);
-				JOptionPane.showMessageDialog(null, "Could not update player: " + e.getMessage());
 			}
 		} else {
 			exchange.sendResponseHeaders(405, 0);
