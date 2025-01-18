@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,27 +16,54 @@
 
 package org.almostrealism.audio;
 
+import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.SystemUtils;
 
-public interface OutputLine {
+import java.util.function.Supplier;
+
+public interface OutputLine extends Destroyable {
 	int sampleRate = SystemUtils.getInt("AR_AUDIO_SAMPLE_RATE").orElse(44100);
+
+	default int getSampleRate() { return sampleRate; }
+
+	default int getBufferSize() { return 1024; }
+
+	/**
+	 * The position in the buffer of the last frame that was sent to the device.
+	 */
+	default int getReadPosition() {
+		return 0;
+	}
 
 	/**
 	 * Write the specified bytes. Using this method, the caller must
 	 * be aware of the number of bytes in a sample to write a valid
 	 * set of samples.
 	 */
-	void write(byte b[]);
+	default void write(byte b[]) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Write the specified frames.
 	 */
-	void write(double d[][]);
+	default void write(double d[][]) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Write one sample, coercing the {@link PackedCollection} value into whatever
 	 * necessary to get one sample worth of bytes.
 	 */
 	void write(PackedCollection<?> sample);
+
+	default Supplier<Runnable> write(Producer<PackedCollection<?>> frames) {
+		return () -> {
+			Evaluable<PackedCollection<?>> sample = frames.get();
+			return () -> write(sample.evaluate());
+		};
+	}
 }

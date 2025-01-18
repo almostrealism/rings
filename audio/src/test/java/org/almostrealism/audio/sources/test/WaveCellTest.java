@@ -28,7 +28,6 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.jni.NativeCompiler;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.time.TemporalList;
 import org.almostrealism.util.TestFeatures;
@@ -180,7 +179,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		data.setMem(IntStream.range(0, OutputLine.sampleRate).mapToDouble(i -> Math.sin(i * rate)).toArray());
 
 		TimeCell clock = new TimeCell();
-		WaveCell cell = new WaveCell(data, OutputLine.sampleRate, clock.frameScalar());
+		WaveCell cell = new WaveCell(data, clock.frameScalar());
 
 		TemporalList tick = new TemporalList();
 		tick.add(clock);

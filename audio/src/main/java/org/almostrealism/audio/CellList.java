@@ -20,6 +20,8 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
@@ -31,6 +33,7 @@ import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
+import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -174,6 +177,18 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 	}
 
 	public CellList sum() { return sum(this); }
+
+	public BufferedOutputScheduler buffer(String location) {
+		return buffer(new SharedMemoryOutputLine(location));
+	}
+
+	public BufferedOutputScheduler buffer(OutputLine line) {
+		return BufferedOutputScheduler.create(line, this);
+	}
+
+	public TemporalRunner buffer(Producer<PackedCollection<?>> destination) {
+		return buffer(this, destination);
+	}
 
 	public Supplier<Runnable> export(PackedCollection<PackedCollection<?>> destinations) {
 		return export(this, destinations);

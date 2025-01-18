@@ -51,7 +51,7 @@ public class AudioLibrary implements ConsoleFeatures {
 		this.info = new HashMap<>();
 		this.identifiers = new HashMap<>();
 		this.sampleRate = sampleRate;
-		this.factory = new WaveDetailsFactory(16, 0.125, sampleRate);
+		this.factory = new WaveDetailsFactory(sampleRate);
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
@@ -68,6 +68,10 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public void setErrorListener(Consumer<Exception> errorListener) {
 		this.errorListener = errorListener;
+	}
+
+	public WaveDetailsFactory getWaveDetailsFactory() {
+		return factory;
 	}
 
 	public Collection<WaveDetails> getDetails() {

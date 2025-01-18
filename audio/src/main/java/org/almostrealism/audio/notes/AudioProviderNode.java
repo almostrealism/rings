@@ -16,32 +16,67 @@
 
 package org.almostrealism.audio.notes;
 
+import org.almostrealism.audio.data.DelegateWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProvider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class AudioProviderNode implements NoteAudioNode {
-	private NoteAudioProvider provider;
 	private String name;
+	private String identifier;
+	private boolean delegate;
+	private int delegateOffset;
+	private int length;
 
 	public AudioProviderNode() { }
 
-	public AudioProviderNode(NoteAudioProvider provider) {
-		this.provider = provider;
+	protected AudioProviderNode(String name, String identifier) {
+		this.name = name;
+		this.identifier = identifier;
+		this.delegate = false;
 	}
 
-	public void setName(String name) {
+	protected AudioProviderNode(String name, String identifier, int delegateOffset, int length) {
 		this.name = name;
+		this.identifier = identifier;
+		this.delegate = true;
+		this.delegateOffset = delegateOffset;
+		this.length = length;
 	}
+
+	public void setName(String name) { this.name = name; }
 
 	@Override
-	public String getName() {
-		if (name != null) return name;
-		if (provider == null) return null;
-		return provider.getProvider().getKey();
-	}
+	public String getName() { return name; }
+
+	public String getIdentifier() { return identifier; }
+	public void setIdentifier(String identifier) { this.identifier = identifier; }
+
+	public boolean isDelegate() { return delegate; }
+	public void setDelegate(boolean delegate) { this.delegate = delegate; }
+
+	public int getDelegateOffset() { return delegateOffset; }
+	public void setDelegateOffset(int delegateOffset) { this.delegateOffset = delegateOffset; }
+
+	public int getLength() { return length; }
+	public void setLength(int length) { this.length = length; }
 
 	@Override
 	public Collection<NoteAudioNode> getChildren() {
 		return new ArrayList<>();
+	}
+
+	public static AudioProviderNode create(NoteAudioProvider note) {
+		if (note.getProvider() instanceof FileWaveDataProvider provider) {
+			return new AudioProviderNode(provider.getKey(), provider.getIdentifier());
+		} else if (note.getProvider() instanceof DelegateWaveDataProvider &&
+				((DelegateWaveDataProvider) note.getProvider()).getDelegate() instanceof FileWaveDataProvider provider) {
+			return new AudioProviderNode(provider.getKey(), provider.getIdentifier(),
+					((DelegateWaveDataProvider) note.getProvider()).getDelegateOffset(),
+					note.getProvider().getCount());
+		} else {
+			return null;
+		}
 	}
 }

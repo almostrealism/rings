@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.line;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.DualOutputLine;
 import org.almostrealism.audio.OutputLine;
 import io.almostrealism.relation.Evaluable;

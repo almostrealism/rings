@@ -19,6 +19,7 @@ package com.almostrealism.audio;
 import com.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.io.SystemUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,10 +29,34 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AudioLibraryPersistence {
 	public static int batchSize = Integer.MAX_VALUE / 2;
+
+	public static Consumer<WaveDetails> saveWaveDetails(String destination) {
+		return details -> {
+			try {
+				saveWaveDetails(details, destination);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		};
+	}
+
+	public static void saveWaveDetails(WaveDetails details, String destination) throws IOException {
+		File f = new File(destination);
+		if (f.isDirectory()) {
+			f = new File(f, details.getIdentifier() + ".bin");
+		}
+
+		encode(details, true).writeTo(new FileOutputStream(f));
+	}
+
+	public static WaveDetails loadWaveDetails(String source) throws IOException {
+		return decode(Audio.WaveDetailData.newBuilder().mergeFrom(new FileInputStream(source)).build());
+	}
 
 	public static void saveLibrary(AudioLibrary library, String dataPrefix) {
 		try {
@@ -79,9 +104,9 @@ public class AudioLibraryPersistence {
 		}
 	}
 
-	public static AudioLibrary loadLibrary(AudioLibrary library, String dataPrefix) {
+	public static void loadLibrary(AudioLibrary library, String dataPrefix) {
 		try {
-			return loadLibrary(library, new LibraryDestination(dataPrefix).in());
+			loadLibrary(library, new LibraryDestination(dataPrefix).in());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -153,7 +178,11 @@ public class AudioLibraryPersistence {
 		private int index;
 
 		public LibraryDestination(String prefix) {
-			this.prefix = prefix;
+			if (prefix.contains("/")) {
+				this.prefix = prefix;
+			} else {
+				this.prefix = SystemUtils.getLocalDestination(prefix);
+			}
 		}
 
 		protected String nextFile() {

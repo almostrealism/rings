@@ -62,7 +62,7 @@ public class PatternNoteNode implements NoteAudioNode {
 				.stream()
 				.filter(Objects::nonNull)
 				.distinct()
-				.map(AudioProviderNode::new)
+				.map(AudioProviderNode::create)
 				.collect(Collectors.toList());
 	}
 

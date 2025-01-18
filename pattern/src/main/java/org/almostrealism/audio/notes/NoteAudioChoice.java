@@ -29,6 +29,7 @@ import org.almostrealism.audio.pattern.ScaleTraversalStrategy;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
+import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	public NoteAudioChoice(String name, double weight, double minScale, double maxScale) {
+		setId(KeyUtils.generateKey());
 		setName(name);
 		setSources(new ArrayList<>());
 		setWeight(weight);
@@ -72,6 +74,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		setSeed(true);
 		setBias(-0.5);
 		setChannels(new ArrayList<>());
+		setSources(new ArrayList<>());
 		initSelectionFunctions();
 	}
 
@@ -83,21 +86,11 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		getSources().forEach(n -> n.setTuning(tuning));
 	}
 
-	public String getId() {
-		return id;
-	}
+	public String getId() { return id; }
+	public void setId(String id) { this.id = id; }
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
 
 	public List<NoteAudioSource> getSources() {
 		return sources;
