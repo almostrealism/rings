@@ -20,7 +20,7 @@ import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.notes.PatternNoteAudio;
+import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
@@ -53,7 +53,7 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 						int f = frames[i] > 1 ? frames[i] : audio.getShape().getTotalSize();
 						f = Math.min(f, totalFrames);
 
-						PatternNoteAudio.sum.sum(dest.range(shape(f)), audio.range(shape(f)));
+						AudioProcessingUtils.getSum().sum(dest.range(shape(f)), audio.range(shape(f)));
 					}
 
 					return dest;

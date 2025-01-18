@@ -19,6 +19,7 @@ package org.almostrealism.audio;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.cycle.Setup;
@@ -79,7 +80,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @ModelEntity
-public class AudioScene<T extends ShadableSurface> implements Setup, CellFeatures {
+public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable, CellFeatures {
 	public static final Console console = CellFeatures.console.child();
 	private static TimingMetric getCellsTime = console.timing("getCells");
 
@@ -218,12 +219,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 
 		this.channelNames = new ArrayList<>();
 
-		addDurationListener(duration -> {
-			if (patternDestinations != null) {
-				patternDestinations.values().forEach(PackedCollection::destroy);
-				patternDestinations = null;
-			}
-		});
+		addDurationListener(duration -> destroyPatternDestinations());
 
 		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
 											this::getMeasureDuration, getSampleRate());
@@ -603,6 +599,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 		}
 	}
 
+	private void destroyPatternDestinations() {
+		if (patternDestinations != null) {
+			patternDestinations.values().forEach(PackedCollection::destroy);
+			patternDestinations = null;
+		}
+	}
+
 	public void saveSettings(File file) throws IOException {
 		defaultMapper().writeValue(file, getSettings());
 	}
@@ -627,6 +630,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, CellFeature
 				DEFAULT_LAYERS,
 				DEFAULT_LAYER_SCALE,
 				DEFAULT_DURATION), libraryProvider, progress);
+	}
+
+	@Override
+	public void destroy() {
+		Destroyable.super.destroy();
+		destroyPatternDestinations();
+		getSectionManager().destroy();
 	}
 
 	public AudioScene<T> clone() {

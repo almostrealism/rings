@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.almostrealism</groupId>
 		<artifactId>rings</artifactId>
-		<version>0.36</version>
+		<version>0.38</version>
 	</parent>
 
 	<artifactId>ar-rings</artifactId>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-replicate</artifactId>
-			<version>0.36</version>
+			<version>0.38</version>
 		</dependency>
 	</dependencies>
 </project>

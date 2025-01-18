@@ -1,0 +1,333 @@
+/*
+ * Copyright 2024 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.almostrealism.audio;
+
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.BufferDefaults;
+import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.TimeCell;
+import org.almostrealism.graph.temporal.WaveCell;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.DoubleConsumer;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+
+public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures {
+	public static boolean enableUnifiedClock = false;
+
+	private int sampleRate;
+	private int bufferFrames;
+
+	private PackedCollection<?> raw;
+	private List<DoubleConsumer> timeListeners;
+
+	private SampleMixer mixer;
+	private TimeCell clock;
+	private Scalar level[];
+	private PackedCollection<?> loopDuration[];
+
+	private boolean loaded[];
+	private boolean muted[];
+	private double volume[];
+	private double duration[];
+	private boolean playing;
+
+	private long waitTime;
+	private Thread monitor;
+	private boolean stopped;
+
+	public BufferedAudioPlayer(int playerCount, int sampleRate, int bufferFrames) {
+		this(playerCount, null, sampleRate, bufferFrames);
+	}
+
+	public BufferedAudioPlayer(int playerCount, List<String> channelNames,
+							   int sampleRate, int bufferFrames) {
+		super(channelNames);
+		this.bufferFrames = bufferFrames;
+		this.sampleRate = sampleRate;
+
+		this.raw = new PackedCollection<>(playerCount, bufferFrames);
+		this.timeListeners = new ArrayList<>();
+
+		this.loopDuration = IntStream.range(0, playerCount)
+				.mapToObj(c -> new PackedCollection<>(1))
+				.toArray(PackedCollection[]::new);
+		this.loaded = new boolean[playerCount];
+		this.muted = new boolean[playerCount];
+		this.volume = new double[playerCount];
+		this.duration = new double[playerCount];
+
+		this.mixer = new SampleMixer(playerCount);
+	}
+
+	protected void initMixer() {
+		level = new Scalar[mixer.getChannelCount()];
+
+		if (enableUnifiedClock) {
+			this.clock = new TimeCell();
+		}
+
+		this.mixer.init(c -> {
+			WaveCell cell = enableUnifiedClock ? getData(c).toCell(clock)
+					: (WaveCell) w(p(loopDuration[c]), getData(c)).get(0);
+			level[c] = cell.getData().amplitude();
+			return cell;
+		});
+
+		setVolume(1.0);
+
+		if (!enableUnifiedClock) {
+			this.clock = mixer.getSample(0).getClock();
+		}
+	}
+
+	protected void initMonitor() {
+		if (monitor == null) {
+			monitor = new Thread(() -> {
+				while (!stopped) {
+					try {
+						for (DoubleConsumer listener : timeListeners) {
+							listener.accept(getCurrentTime());
+						}
+
+						Thread.sleep(waitTime);
+					} catch (Exception e) {
+						warn("Error in scheduled job", e);
+					}
+				}
+			}, "BufferedAudioPlayer Monitor");
+			monitor.start();
+		}
+	}
+
+	public SampleMixer getMixer() { return mixer; }
+
+	public TimeCell getClock() { return clock; }
+
+	public WaveData getData(int player) {
+		return new WaveData(raw.range(shape(bufferFrames), player * bufferFrames).traverseEach(), sampleRate);
+	}
+
+	public synchronized void load(int player, String file) {
+		update(player, file);
+		updateLevel();
+		initMonitor();
+	}
+
+	public synchronized void load(int player, WaveData data) {
+		update(player, data);
+		updateLevel();
+		initMonitor();
+	}
+
+	protected void update(int player, WaveData source) {
+		if (source == null) {
+			clear(player);
+			return;
+		}
+
+		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
+		loaded[player] = true;
+		duration[player] = frames / (double) source.sampleRate();
+
+		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
+	}
+
+	protected void update(int player, String file) {
+		if (file == null) {
+			clear(player);
+			return;
+		}
+
+		try (WavFile in = WavFile.openWavFile(new File(file))) {
+			long inRate = in.getSampleRate();
+
+			if (inRate != sampleRate) {
+				warn("Sample rate " + inRate + " != " + sampleRate);
+				return;
+			}
+
+			// TODO  Merge channels
+			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			in.readFrames(result, (int) in.getFramesRemaining());
+
+			int frames = Math.min(result[0].length, bufferFrames);
+			loaded[player] = true;
+			duration[player] = frames / (double) sampleRate;
+
+			getData(player).getCollection().setMem(0, result[0], 0, frames);
+			log("Loaded " + frames + " frames and set duration to " + duration[player]);
+		} catch (IOException e) {
+			warn("Could not load " + getFileString() + " to player", e);
+		}
+	}
+
+	protected void clear(int player) {
+		loaded[player] = false;
+		duration[player] = 0.0;
+	}
+
+	protected void updateLevel() {
+		if (clock == null) return;
+
+		for (int c = 0; c < mixer.getChannelCount(); c++) {
+			boolean audible = loaded[c] && !muted[c];
+			setLevel(c, audible ? volume[c] : 0.0);
+			setLoopDuration(c, playing ? this.duration[c] : 0.0);
+		}
+	}
+
+	protected void setLevel(int c, double v) {
+		level[c].setMem(v);
+	}
+
+	protected void setLoopDuration(int c, double duration) {
+		loopDuration[c].setMem(duration);
+
+		if (enableUnifiedClock) {
+			clock.setReset(0, (int) (duration * sampleRate));
+		}
+	}
+
+	public BufferedOutputScheduler deliver(OutputLine out) {
+		if (out.getSampleRate() != sampleRate) {
+			throw new UnsupportedOperationException();
+		}
+
+		if (clock == null) {
+			initMixer();
+
+			long bufferDuration = out.getBufferSize() * 1000L / sampleRate;
+			int updates = BufferDefaults.groups * 2;
+			waitTime = bufferDuration / updates;
+		} else {
+			warn("Attempting to deliver to an already active player");
+		}
+
+		CellList cells = mixer.toCellList();
+		if (enableUnifiedClock) {
+			cells = cells.addRequirement(clock);
+		}
+
+		return cells.buffer(out);
+	}
+
+	@Override
+	public boolean play() {
+		if (!playing) {
+			// Align all the samples from the start
+			// if play is resuming
+			setFrame(0.0);
+		}
+
+		playing = true;
+		updateLevel();
+		return true;
+	}
+
+	@Override
+	public boolean stop() {
+		playing = false;
+		updateLevel();
+		return true;
+	}
+
+	@Override
+	public boolean isPlaying() { return playing; }
+
+	@Override
+	public boolean isReady() { return clock != null; }
+
+	@Override
+	public void setVolume(double volume) {
+		for (int c = 0; c < mixer.getChannelCount(); c++) {
+			this.volume[c] = volume;
+		}
+
+		updateLevel();
+	}
+
+	public void setMuted(int player, boolean muted) {
+		this.muted[player] = muted;
+		updateLevel();
+	}
+
+	protected double getFrame() { return clock.getFrame(); }
+
+	protected void setFrame(double frame) {
+		if (enableUnifiedClock) {
+			clock.setFrame(frame);
+		} else {
+			mixer.setFrame(frame);
+		}
+	}
+
+	@Override
+	public void seek(double time) {
+		if (clock == null) {
+			return;
+		}
+
+		if (time < 0.0) time = 0.0;
+		if (time > getTotalDuration()) time = getTotalDuration();
+		setFrame(time * sampleRate);
+	}
+
+	@Override
+	public double getCurrentTime() {
+		if (clock == null || !playing) {
+			return 0;
+		}
+
+		return getFrame() / (double) sampleRate;
+	}
+
+	@Override
+	public double getTotalDuration() {
+		return DoubleStream.of(duration).max().orElse(0.0);
+	}
+
+	@Override
+	public void addTimeListener(DoubleConsumer listener) {
+		timeListeners.add(listener);
+	}
+
+	@Override
+	public void destroy() {
+		this.stopped = true;
+		this.monitor = null;
+
+		if (this.raw != null) {
+			this.raw.destroy();
+			this.loopDuration = null;
+		}
+
+		if (this.loopDuration != null) {
+			for (PackedCollection<?> packedCollection : loopDuration) {
+				packedCollection.destroy();
+			}
+
+			this.loopDuration = null;
+		}
+	}
+}

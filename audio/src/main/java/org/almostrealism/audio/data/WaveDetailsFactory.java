@@ -19,11 +19,17 @@ package org.almostrealism.audio.data;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
 	public static boolean enableFeatures = false;
+
+	public static int defaultBins = 32; // 16;
+	public static double defaultWindow = 0.25; // 0.125;
+
+	protected static WaveDetailsFactory defaultFactory;
 
 	private int sampleRate;
 	private double fftSampleRate;
@@ -33,6 +39,10 @@ public class WaveDetailsFactory implements CodeFeatures {
 	private PackedCollection<?> buffer;
 	private Evaluable<PackedCollection<?>> sum;
 	private Evaluable<PackedCollection<?>> difference;
+
+	public WaveDetailsFactory(int sampleRate) {
+		this(defaultBins, defaultWindow, sampleRate);
+	}
 
 	public WaveDetailsFactory(int freqBins, double sampleWindow, int sampleRate) {
 		if (WaveData.FFT_POOL_BINS % freqBins != 0) {
@@ -63,6 +73,10 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	public int getSampleRate() {
 		return sampleRate;
+	}
+
+	public WaveDetails forFile(String file) {
+		return forProvider(new FileWaveDataProvider(file));
 	}
 
 	public WaveDetails forProvider(WaveDataProvider provider) {
@@ -183,5 +197,13 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		return features;
+	}
+
+	public static WaveDetailsFactory getDefault() {
+		if (defaultFactory == null) {
+			defaultFactory = new WaveDetailsFactory(OutputLine.sampleRate);
+		}
+
+		return defaultFactory;
 	}
 }

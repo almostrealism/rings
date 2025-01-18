@@ -16,14 +16,11 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.Process;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.jni.NativeCompiler;
-import org.almostrealism.hardware.metal.MetalProgram;
 import org.almostrealism.time.computations.MultiOrderFilter;
 import org.almostrealism.util.TestFeatures;
-import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;

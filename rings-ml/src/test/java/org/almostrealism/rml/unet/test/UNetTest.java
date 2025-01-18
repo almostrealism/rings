@@ -131,7 +131,7 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		}
 
 		SequentialBlock resNet = new SequentialBlock(shape(batchSize, dim, rows, cols));
-		CellularLayer resConv = dim != dimOut ?
+		Block resConv = dim != dimOut ?
 				resNet.branch(convolution2d(dim, dimOut, 1, 0)) : null;
 
 		resNet.add(block(dim, dimOut, groups, rows, cols, scaleShift));

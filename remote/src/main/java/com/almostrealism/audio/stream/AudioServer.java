@@ -26,19 +26,22 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.filter.AudioProcessor;
 import org.almostrealism.io.Console;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Base64;
 
 public class AudioServer implements HttpHandler, CodeFeatures {
+	private FrequencyCache<String, HttpAudioHandler> handlers;
+
 	private HttpServer server;
 
-	private FrequencyCache<String, AudioStreamHandler> handlers;
-
 	public AudioServer(int port) throws IOException {
-		server = HttpServer.create(new InetSocketAddress(port), 20);
 		handlers = new FrequencyCache<>(100, 0.6f);
-		handlers.setEvictionListener((key, value) -> value.destroy());
+		handlers.setEvictionListener((key, value) -> {
+			value.destroy();
+		});
+
+		server = HttpServer.create(new InetSocketAddress(port), 20);
 	}
 
 	public void start() throws IOException {
@@ -46,8 +49,31 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 		server.start();
 	}
 
-	public void addStream(String channel, AudioProcessor source, int totalFrames, int sampleRate) {
-		handlers.put(channel, new AudioStreamHandler(source, totalFrames, sampleRate));
+	public int getPort() { return server.getAddress().getPort();}
+
+	public String addStream(String key, WaveData data) {
+		key = Base64.getEncoder().encodeToString(key.getBytes());
+
+		if (containsStream(key)) {
+			return key;
+		}
+
+		addStream(key, AudioProcessor.fromWave(data),
+				data.getCollection().getMemLength(), data.getSampleRate());
+		return key;
+	}
+
+	public void addStream(String channel, AudioProcessor source,
+						  	int totalFrames, int sampleRate) {
+		addStream(channel, new AudioStreamHandler(source, totalFrames, sampleRate));
+	}
+
+	public void addStream(String channel, HttpAudioHandler handler) {
+		if (containsStream(channel)) {
+			throw new IllegalArgumentException("Stream already exists");
+		}
+
+		handlers.put(channel, handler);
 	}
 
 	public boolean containsStream(String channel) {
@@ -58,7 +84,7 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	public void handle(HttpExchange exchange) throws IOException {
 		String path = exchange.getRequestURI().getPath();
 		String channel = path.substring(1);
-		AudioStreamHandler handler = handlers.get(channel);
+		HttpHandler handler = handlers.get(channel);
 		if (handler == null) {
 			exchange.sendResponseHeaders(404, 0);
 			exchange.getResponseBody().close();
@@ -71,14 +97,6 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	@Override
 	public Console console() {
 		return AudioScene.console;
-	}
-
-	public static void main(String[] args) throws IOException {
-		AudioServer server = new AudioServer(7799);
-		server.start();
-		WaveData data = WaveData.load(new File("Library/organ.wav"));
-		server.addStream("test", AudioProcessor.fromWave(data),
-				data.getCollection().getMemLength(), data.getSampleRate());
 	}
 }
 

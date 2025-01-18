@@ -46,7 +46,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 				._greaterThan(c(5.0), c(1.0), c(0.5))
 				.get().evaluate(WaveOutput.timeline.getValue().range(adjustmentShape).traverse(1));
 
-		WaveCell adjustment = new WaveCell(adjustmentData, sr, clock.frameScalar());
+		WaveCell adjustment = new WaveCell(adjustmentData, clock.frameScalar());
 		Factor<PackedCollection<?>> factor = adjustment.toFactor();
 
 		int count = 32;

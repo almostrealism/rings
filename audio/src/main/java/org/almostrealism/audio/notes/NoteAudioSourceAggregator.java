@@ -17,13 +17,11 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.sources.FrequencyRescalingSourceAggregator;
 import org.almostrealism.audio.sources.ModularSourceAggregator;
 import org.almostrealism.audio.sources.SourceAggregator;
-import org.almostrealism.audio.sources.SummingSourceAggregator;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;

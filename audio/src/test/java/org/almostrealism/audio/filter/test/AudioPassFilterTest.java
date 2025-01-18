@@ -17,13 +17,12 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.Process;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;

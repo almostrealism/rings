@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import java.util.stream.IntStream;
 import org.almostrealism.audio.AudioMeter;
 import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
@@ -47,6 +49,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	private IntFunction<String> stemFileSupplier;
 	private File outputFile;
 	private Map<Integer, File> stemFiles;
+	private Consumer<WaveDetails> detailsProcessor;
 
 	private List<AudioMeter> measures;
 	private List<WaveOutput> stems;
@@ -114,6 +117,13 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	protected Collection<File> getStemFiles() { return stemFiles.values(); }
 
+	public Consumer<WaveDetails> getWaveDetailsProcessor() { return detailsProcessor; }
+
+	@Override
+	public void setWaveDetailsProcessor(Consumer<WaveDetails> detailsProcessor) {
+		this.detailsProcessor = detailsProcessor;
+	}
+
 	@Override
 	public void reset() {
 		AudioHealthComputation.super.reset();
@@ -121,6 +131,13 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		if (stems != null) stems.forEach(WaveOutput::reset);
 		measures.forEach(AudioMeter::reset);
 		out.reset();
+	}
+
+	@Override
+	public void destroy() {
+		AudioHealthComputation.super.destroy();
+		if (out != null) out.destroy();
+		if (stems != null) stems.forEach(WaveOutput::destroy);
 	}
 
 	public static void setStandardDuration(int sec) {
