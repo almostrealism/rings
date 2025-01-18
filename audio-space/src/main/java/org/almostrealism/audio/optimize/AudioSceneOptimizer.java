@@ -59,11 +59,12 @@ import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
+import org.almostrealism.io.SystemUtils;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
-	public static final String POPULATION_FILE = "population.xml";
+	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.xml");
 
 	public static final int verbosity = 1;
 	public static boolean enableVerbose = false;
@@ -279,6 +280,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	}
 
 	private static void loadChoices(AudioScene scene) throws IOException {
-		scene.loadPatterns("pattern-factory.json");
+		scene.loadPatterns(SystemUtils.getLocalDestination("pattern-factory.json"));
 	}
 }

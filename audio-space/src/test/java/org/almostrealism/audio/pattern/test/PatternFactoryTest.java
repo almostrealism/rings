@@ -35,6 +35,7 @@ import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
@@ -119,7 +120,9 @@ public class PatternFactoryTest implements CellFeatures {
 		double measureDuration = bpm.l(beats);
 		double measureFrames = measureDuration * OutputLine.sampleRate;
 
-		AudioScene.Settings settings = new ObjectMapper().readValue(new File("scene-settings.json"), AudioScene.Settings.class);
+		AudioScene.Settings settings = new ObjectMapper().readValue(
+				new File(SystemUtils.getLocalDestination("scene-settings.json")),
+				AudioScene.Settings.class);
 
 		FileWaveDataProviderNode library = new FileWaveDataProviderNode(new File(LIBRARY));
 

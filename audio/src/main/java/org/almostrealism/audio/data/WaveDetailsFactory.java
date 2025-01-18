@@ -123,9 +123,18 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public double similarity(WaveDetails a, WaveDetails b) {
-		int n = Math.min(a.getFreqFrameCount(), b.getFreqFrameCount());
+		int bins = freqBins;
+		int n;
 
-		TraversalPolicy overlap = new TraversalPolicy(true, n, freqBins, 1);
+		if (a.getFreqBinCount() == b.getFreqBinCount()) {
+			n = Math.min(a.getFreqFrameCount(), b.getFreqFrameCount());
+			bins = a.getFreqBinCount();
+		} else {
+			// WaveDetails with different shapes are not easily comparable
+			n = 0;
+		}
+
+		TraversalPolicy overlap = new TraversalPolicy(true, n, bins, 1);
 
 		double d = 0.0;
 
@@ -137,12 +146,12 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		if (a.getFreqFrameCount() > n) {
-			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize())
+			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, a.getFreqBinCount(), 1), overlap.getTotalSize())
 					.doubleStream().map(Math::abs).sum();
 		}
 
 		if (b.getFreqFrameCount() > n) {
-			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, freqBins, 1), overlap.getTotalSize())
+			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, b.getFreqBinCount(), 1), overlap.getTotalSize())
 					.doubleStream().map(Math::abs).sum();
 		}
 

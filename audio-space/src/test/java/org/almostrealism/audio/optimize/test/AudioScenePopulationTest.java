@@ -24,6 +24,7 @@ import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.util.TestUtils;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
@@ -103,9 +104,9 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	public void createGenomes() throws IOException {
 		int count = 12;
 
-		File settings = new File("scene-settings.json");
+		File settings = new File(SystemUtils.getLocalDestination("scene-settings.json"));
 
-		AudioScene scene = AudioScene.load(settings.getCanonicalPath(), "pattern-factory.json",
+		AudioScene scene = AudioScene.load(settings.getCanonicalPath(), SystemUtils.getLocalDestination("pattern-factory.json"),
 									AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
 		if (!settings.exists()) scene.saveSettings(settings);
 
@@ -135,7 +136,8 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		double duration = 16;
 
 		AudioScene scene = AudioScene.load(
-				"scene-settings.json", "pattern-factory.json",
+				SystemUtils.getLocalDestination("scene-settings.json"),
+				SystemUtils.getLocalDestination("pattern-factory.json"),
 				AudioSceneOptimizer.LIBRARY, 120, OutputLine.sampleRate);
 
 		long activeLayers = scene.getPatternManager().getPatterns()

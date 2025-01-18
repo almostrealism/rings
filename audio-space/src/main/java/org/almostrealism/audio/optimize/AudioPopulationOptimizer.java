@@ -45,7 +45,7 @@ import java.util.stream.IntStream;
 public class AudioPopulationOptimizer<O extends Temporal> extends
 		PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore>
 		implements Runnable, Destroyable {
-	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", "health");
+	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", SystemUtils.getLocalDestination("health"));
 
 	public static final boolean enableWavOutput = true;
 	public static boolean enableStemOutput = true;

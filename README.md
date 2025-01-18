@@ -26,6 +26,13 @@ Add Maven Repository:
 
         <repositories>
                 <repository>
+                        <id>flowtree</id>
+                        <name>Almost Realism Flowtree/name>
+                        <url>https://maven.pkg.github.com/almostrealism/flowtree</url>
+                        <releases><enabled>true</enabled></releases>
+                        <snapshots><enabled>true</enabled></snapshots>
+                </repository>
+                <repository>
                         <id>rings</id>
                         <name>Almost Realism Rings/name>
                         <url>https://maven.pkg.github.com/almostrealism/rings</url>
@@ -39,7 +46,7 @@ Add ar-rings dependency:
         <dependency>
             <groupId>org.almostrealism</groupId>
             <artifactId>ar-rings</artifactId>
-            <version>0.36</version>
+            <version>0.37</version>
         </dependency>
 
 ## Using Rings
