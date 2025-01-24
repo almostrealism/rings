@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -141,29 +141,8 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		return resNet;
 	}
 
-	protected Function<TraversalPolicy, CellularLayer> similarity(
-			Block k, int c, int s1, int s2) {
-		if (k.getOutputShape().getDimensions() != 4 ||
-				k.getOutputShape().length(1) != c ||
-				k.getOutputShape().length(3) != s2) {
-			throw new IllegalArgumentException();
-		}
 
-		return compose("similarity", k, shape(batchSize, c, s1, s2), (a, b) -> {
-			CollectionProducer<PackedCollection<?>> pa = c(a)
-					.traverse(2)
-					.enumerate(3, 1)
-					.traverse(3)
-					.repeat(s2);
-			CollectionProducer<PackedCollection<?>> pb = c(b)
-					.traverse(2)
-					.enumerate(3, 1)
-					.repeat(s1);
-			return multiply(pa, pb).sum(4);
-		});
-	}
-
-	protected Function<TraversalPolicy, CellularLayer> weightedSum(
+	public Function<TraversalPolicy, CellularLayer> weightedSum(
 			Block v, int heads, int dimHead, int size) {
 		if (v.getOutputShape().getDimensions() != 4 ||
 				v.getOutputShape().length(1) != heads ||
