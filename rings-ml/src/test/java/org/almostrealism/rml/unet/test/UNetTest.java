@@ -508,11 +508,13 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 				PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
 				PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
 
-				unet.forward(image, time);
-				alert("UNet test completed forward pass");
+				for (int i = 0; i < 200; i++) {
+					unet.forward(image, time);
+					// if (i % 10 == 0) alert("UNet test completed forward pass " + i);
 
-				unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
-				alert("UNet test completed backward pass");
+					unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
+					if (i % 10 == 0) alert("UNet test completed backward pass " + i);
+				}
 			});
 		} catch (Exception e) {
 			alert("UNet test failed", e);
