@@ -43,7 +43,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		TraversalPolicy adjustmentShape = shape(10 * sr, 1).traverse(1);
 
 		PackedCollection<?> adjustmentData = c(value(adjustmentShape, 0))
-				._greaterThan(c(5.0), c(1.0), c(0.5))
+				.greaterThan(c(5.0), c(1.0), c(0.5))
 				.get().evaluate(WaveOutput.timeline.getValue().range(adjustmentShape).traverse(1));
 
 		WaveCell adjustment = new WaveCell(adjustmentData, clock.frameScalar());

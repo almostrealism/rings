@@ -18,8 +18,10 @@ package org.almostrealism.rml.unet.test;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.profile.OperationProfileNode;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.io.Console;
@@ -35,12 +37,13 @@ import org.almostrealism.util.TestFeatures;
 import org.almostrealism.util.TestUtils;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class UNetTest implements DiffusionFeatures, TestFeatures {
+public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 
 	static {
 		if (TestUtils.getTrainTests()) {
@@ -493,6 +496,92 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		return unet;
 	}
 
+	public CollectionProducer<PackedCollection<?>> linearBetaSchedule(int timesteps) {
+		double betaStart = 0.0001;
+		double betaEnd = 0.02;
+		return linear(betaStart, betaEnd, timesteps);
+	}
+
+	public <T extends PackedCollection<?>> CollectionProducer<T> cumulativeProduct(Producer<T> input, boolean pad) {
+		return func(shape(input), inputs -> args -> {
+			PackedCollection<?> in = inputs[0];
+			PackedCollection<?> result = new PackedCollection<>(in.getShape());
+
+			double r = 1.0;
+			int offset = 0;
+
+			if (pad) {
+				result.setMem(0, r);
+				offset = 1;
+			}
+
+			for (int i = offset; i < in.getMemLength(); i++) {
+				r *= in.toDouble(i - offset);
+				result.setMem(i, r);
+			}
+
+			return result;
+		}, input);
+	}
+
+	public CollectionProducer<PackedCollection<?>> extract(CollectionProducer<PackedCollection<?>> a,
+														   CollectionProducer<PackedCollection<?>> t,
+														   TraversalPolicy xShape) {
+		if (t.getShape().getDimensions() != 1) {
+			throw new IllegalArgumentException();
+		}
+
+		int batches = t.getShape().length(0);
+		CollectionProducer<PackedCollection<?>> out = a.valueAt(integers(0, batches), t);
+
+		int depth = xShape.getDimensions();
+		TraversalPolicy resultShape =
+				padDimensions(shape(batches), 1, depth, true);
+		return out.reshape(resultShape);
+	}
+
+	public CollectionProducer<PackedCollection<?>> imageTransform(CollectionProducer<PackedCollection<?>> image) {
+		return null;
+	}
+
+	@Test
+	public void imageTransform() throws IOException {
+		CollectionProducer<PackedCollection<?>> data =
+				channels(new File("/Users/michael/Desktop/output_cats.jpeg"));
+		log(data.getShape());
+
+		saveChannels("results/test_out.png", data).get().run();
+	}
+
+	public void runUnet(int dim, OperationProfileNode profile) {
+		int timesteps = 300;
+
+		CollectionProducer<PackedCollection<?>> betas = linearBetaSchedule(timesteps);
+
+		CollectionProducer<PackedCollection<?>> alphas = c(1.0).subtract(betas);
+		CollectionProducer<PackedCollection<?>> alphasCumProd = cumulativeProduct(alphas, false);
+		CollectionProducer<PackedCollection<?>> alphasCumProdPrev = cumulativeProduct(alphas, true);
+		CollectionProducer<PackedCollection<?>> sqrtRecipAlphas = sqrt(alphas.reciprocal());
+
+		CollectionProducer<PackedCollection<?>> sqrtAlphasCumProd = sqrt(alphasCumProd);
+		CollectionProducer<PackedCollection<?>> sqrtOneMinusAlphasCumProd = sqrt(c(1.0).subtract(alphasCumProd));
+
+		CollectionProducer<PackedCollection<?>> posteriorVariance = betas
+				.multiply(c(1.0).subtract(alphasCumProdPrev))
+				.divide(c(1.0).subtract(alphasCumProd));
+
+		CompiledModel unet = unet(dim).compile(profile);
+
+		PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
+		PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
+
+		for (int i = 0; i < 200; i++) {
+			unet.forward(image, time);
+			unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
+			if (i % 10 == 0) alert("UNet test completed backward pass " + i);
+		}
+	}
+
 	@Test
 	public void unet() throws IOException {
 		int dim = 28;
@@ -502,19 +591,7 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 
 		try {
 			profile(profile, () -> {
-				CompiledModel unet = unet(dim).compile(profile);
-				alert("UNet test is starting");
-
-				PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
-				PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
-
-				for (int i = 0; i < 200; i++) {
-					unet.forward(image, time);
-					// if (i % 10 == 0) alert("UNet test completed forward pass " + i);
-
-					unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
-					if (i % 10 == 0) alert("UNet test completed backward pass " + i);
-				}
+				runUnet(dim, profile);
 			});
 		} catch (Exception e) {
 			alert("UNet test failed", e);
