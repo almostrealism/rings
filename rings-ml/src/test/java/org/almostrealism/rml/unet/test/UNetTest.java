@@ -19,10 +19,13 @@ package org.almostrealism.rml.unet.test;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.compute.Process;
 import io.almostrealism.profile.OperationProfileNode;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.Random;
 import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
@@ -33,6 +36,8 @@ import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.optimize.Dataset;
+import org.almostrealism.optimize.FunctionalDataset;
+import org.almostrealism.optimize.ModelOptimizer;
 import org.almostrealism.optimize.ValueTarget;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.util.SignalWireDeliveryProvider;
@@ -587,40 +592,57 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 		saveChannels("results/test_out.png", p).get().run();
 	}
 
-	public List<ValueTarget<PackedCollection<?>>> loadDataset(File imagesDir) throws IOException {
-		List<ValueTarget<PackedCollection<?>>> data = new ArrayList<>();
+	public Iterable<PackedCollection<?>> loadInputs(File imagesDir, TraversalPolicy shape) throws IOException {
+		List<PackedCollection<?>> data = new ArrayList<>();
 
 		for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
 			if (file.getName().endsWith(".png")) {
-				PackedCollection<?> input = GraphicsConverter.loadChannels(file);
-
-				boolean circle = file.getName().contains("circle");
-
-				data.add(ValueTarget.of(input,
-						circle ? PackedCollection.of(1.0, 0.0) :
-								PackedCollection.of(0.0, 1.0)));
+				if (channels == 1) {
+					data.add(GraphicsConverter.loadGrayscale(file).reshape(shape));
+				} else {
+					data.add(GraphicsConverter.loadChannels(file).reshape(shape));
+				}
 			}
 		}
 
 		return data;
 	}
 
+	public Dataset<PackedCollection<?>> loadDataset(File imagesDir, TraversalPolicy shape) throws IOException {
+		Evaluable<PackedCollection<?>> qSample = qSample(
+												cv(shape, 0),
+												cv(shape(batchSize), 1),
+												cv(shape, 2)).get();
+		Random randn = randn(shape);
+
+		return Dataset.of(loadInputs(imagesDir, shape), xStart -> {
+			if (!xStart.getShape().equalsIgnoreAxis(shape)) {
+				throw new IllegalArgumentException();
+			}
+
+			randn.refresh();
+			PackedCollection<?> noise = randn.evaluate();
+			PackedCollection<?> t = new PackedCollection<>(batchSize, 1)
+					.fill(() -> (int) (Math.random() * timesteps));
+			PackedCollection<?> xNoisy = qSample.evaluate(xStart, t, randn.evaluate());
+			List<ValueTarget<PackedCollection<?>>> result = new ArrayList<>();
+			result.add(ValueTarget.of(xNoisy, noise).withArguments(t));
+			return result;
+		});
+	}
+
 	public void runUnet(int dim, OperationProfileNode profile) {
 		try {
-			File images = new File("generated_images");
-			Dataset<PackedCollection<?>> all = Dataset.of(loadDataset(images));
+			File images = new File("generated_images_28");
+			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim));
 			List<Dataset<PackedCollection<?>>> split = all.split(0.8);
 
 			CompiledModel unet = unet(dim).compile(profile);
+			ModelOptimizer optimizer = new ModelOptimizer(unet, () -> split.get(0));
 
-			PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
-			PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
-
-			for (int i = 0; i < 200; i++) {
-				unet.forward(image, time);
-				unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
-				if (i % 10 == 0) alert("UNet test completed backward pass " + i);
-			}
+			int iterations = 200;
+			optimizer.optimize(200);
+			alert("UNet completed " + iterations + " iterations");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
