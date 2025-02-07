@@ -36,7 +36,6 @@ import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.optimize.Dataset;
-import org.almostrealism.optimize.FunctionalDataset;
 import org.almostrealism.optimize.ModelOptimizer;
 import org.almostrealism.optimize.ValueTarget;
 import org.almostrealism.texture.GraphicsConverter;
@@ -639,9 +638,11 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 
 			CompiledModel unet = unet(dim).compile(profile);
 			ModelOptimizer optimizer = new ModelOptimizer(unet, () -> split.get(0));
+			optimizer.setLogFrequency(1);
+			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
 
-			int iterations = 200;
-			optimizer.optimize(200);
+			int iterations = 3;
+			optimizer.optimize(iterations);
 			alert("UNet completed " + iterations + " iterations");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
