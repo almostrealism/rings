@@ -78,8 +78,8 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 	CollectionProducer<PackedCollection<?>> alphasCumProdPrev = cumulativeProduct(alphas, true);
 	CollectionProducer<PackedCollection<?>> sqrtRecipAlphas = sqrt(alphas.reciprocal());
 
-	CollectionProducer<PackedCollection<?>> sqrtAlphasCumProd = sqrt(alphasCumProd);
-	CollectionProducer<PackedCollection<?>> sqrtOneMinusAlphasCumProd = sqrt(c(1.0).subtract(alphasCumProd));
+	PackedCollection<?> sqrtAlphasCumProd = sqrt(alphasCumProd).evaluate();
+	PackedCollection<?> sqrtOneMinusAlphasCumProd = sqrt(c(1.0).subtract(alphasCumProd)).evaluate();
 
 	CollectionProducer<PackedCollection<?>> posteriorVariance = betas
 			.multiply(c(1.0).subtract(alphasCumProdPrev))
@@ -534,7 +534,7 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 		}
 
 		int batches = t.getShape().length(0);
-		CollectionProducer<PackedCollection<?>> out = a.valueAt(t); // a.valueAt(integers(0, batches), t);
+		CollectionProducer<PackedCollection<?>> out = a.all().valueAt(t); // a.valueAt(integers(0, batches), t);
 
 		int depth = xShape.getDimensions();
 		TraversalPolicy resultShape =
@@ -565,9 +565,9 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 		}
 
 		CollectionProducer<PackedCollection<?>> sqrtAlphasCumProdT =
-				extract(sqrtAlphasCumProd, t, shape(xStart));
+				extract(cp(sqrtAlphasCumProd), t, shape(xStart));
 		CollectionProducer<PackedCollection<?>> sqrtOneMinusAlphasCumProdT =
-				extract(sqrtOneMinusAlphasCumProd, t, shape(xStart));
+				extract(cp(sqrtOneMinusAlphasCumProd), t, shape(xStart));
 		return xStart.multiply(sqrtAlphasCumProdT)
 				.add(sqrtOneMinusAlphasCumProdT.multiply(noise));
 	}
@@ -575,8 +575,18 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 	public CollectionProducer<PackedCollection<?>> getNoisyImage(
 																 CollectionProducer<PackedCollection<?>> xStart,
 																 CollectionProducer<PackedCollection<?>> t) {
-		CollectionProducer<PackedCollection<?>> xNoisy = qSample(xStart, t);
-		return imageTransformReverse(xNoisy);
+		TraversalPolicy shape = shape(xStart);
+		Evaluable<PackedCollection<?>> qSample = qSample(
+				cv(shape, 0),
+				cv(shape(batchSize), 1),
+				cv(shape, 2)).get();
+
+		Random randn = randn(shape);
+		PackedCollection<?> xIn = xStart.evaluate();
+		PackedCollection<?> tIn = t.evaluate();
+		PackedCollection<?> noise = randn.evaluate();
+		PackedCollection<?> xNoisy = qSample.evaluate(xIn, tIn, noise);
+		return imageTransformReverse(cp(xNoisy));
 	}
 
 	@Test
@@ -623,7 +633,7 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 			PackedCollection<?> noise = randn.evaluate();
 			PackedCollection<?> t = new PackedCollection<>(batchSize, 1)
 					.fill(() -> (int) (Math.random() * timesteps));
-			PackedCollection<?> xNoisy = qSample.evaluate(xStart, t, randn.evaluate());
+			PackedCollection<?> xNoisy = qSample.evaluate(xStart, t, noise);
 			List<ValueTarget<PackedCollection<?>>> result = new ArrayList<>();
 			result.add(ValueTarget.of(xNoisy, noise).withArguments(t));
 			return result;
