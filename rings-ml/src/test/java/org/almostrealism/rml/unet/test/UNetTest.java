@@ -25,7 +25,6 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.Random;
 import org.almostrealism.color.RGBFeatures;
-import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
@@ -644,7 +643,7 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 		try {
 			File images = new File("generated_images_28");
 			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim));
-			List<Dataset<PackedCollection<?>>> split = all.split(0.8);
+			List<Dataset<PackedCollection<?>>> split = all.split(0.5);
 
 			CompiledModel unet = unet(dim).compile(profile);
 			ModelOptimizer optimizer = new ModelOptimizer(unet, () -> split.get(0));
