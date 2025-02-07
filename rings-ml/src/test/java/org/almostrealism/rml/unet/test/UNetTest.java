@@ -632,7 +632,7 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 			PackedCollection<?> noise = randn.evaluate();
 			PackedCollection<?> t = new PackedCollection<>(batchSize, 1)
 					.fill(() -> (int) (Math.random() * timesteps));
-			PackedCollection<?> xNoisy = qSample.evaluate(xStart, t, noise);
+			PackedCollection<?> xNoisy = qSample.evaluate(xStart.each(), t, noise.each());
 			List<ValueTarget<PackedCollection<?>>> result = new ArrayList<>();
 			result.add(ValueTarget.of(xNoisy, noise).withArguments(t));
 			return result;
@@ -642,7 +642,7 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 	public void runUnet(int dim, OperationProfileNode profile) {
 		try {
 			File images = new File("generated_images_28");
-			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim));
+			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim).traverseEach());
 			List<Dataset<PackedCollection<?>>> split = all.split(0.5);
 
 			CompiledModel unet = unet(dim).compile(profile);
