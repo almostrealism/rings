@@ -29,6 +29,7 @@ import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.layers.CellularLayer;
+import org.almostrealism.ml.AttentionFeatures;
 import org.almostrealism.ml.DiffusionFeatures;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
@@ -51,7 +52,7 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
+public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatures, TestFeatures {
 
 	static {
 		if (TestUtils.getTrainTests()) {
@@ -195,25 +196,6 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 		});
 	}
 
-	protected Function<TraversalPolicy, CellularLayer> context(Block v, int heads, int dimHead, int size) {
-		if (v.getOutputShape().getDimensions() != 4 ||
-				v.getOutputShape().length(1) != heads ||
-				v.getOutputShape().length(2) != dimHead ||
-				v.getOutputShape().length(3) != size) {
-			throw new IllegalArgumentException();
-		}
-
-		return compose("context", v, shape(batchSize, heads, dimHead, dimHead), (a, b) -> {
-			CollectionProducer<PackedCollection<?>> pa = c(a)
-					.traverse(3)
-					.repeat(dimHead);
-			CollectionProducer<PackedCollection<?>> pb = c(b)
-					.traverse(2)
-					.repeat(dimHead);
-			return multiply(pa, pb).sum(4);
-		});
-	}
-
 	public Function<TraversalPolicy, Block> attention(int dim) {
 		return shape -> attention(dim, shape.length(1), shape.length(2), shape.length(3));
 	}
@@ -249,58 +231,6 @@ public class UNetTest implements DiffusionFeatures, RGBFeatures, TestFeatures {
 				.enumerate(1, 2, 1)
 				.reshape(batchSize, hiddenDim, rows, cols);
 		attention.add(convolution2d(hiddenDim, dim, 1, 0));
-		return attention;
-	}
-
-	public Function<TraversalPolicy, Block> linearAttention(int dim) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int rows = shape.length(2);
-			int cols = shape.length(3);
-			return linearAttention(dim, inputChannels, rows, cols);
-		};
-	}
-
-	public Block linearAttention(int dim, int inputChannels, int rows, int cols) {
-		return linearAttention(dim, 4, 32, inputChannels, rows, cols);
-	}
-
-	public Block linearAttention(int dim, int heads, int dimHead,
-								 int inputChannels, int rows, int cols) {
-		double scale = 1.0 / Math.sqrt(dimHead);
-		int hiddenDim = dimHead * heads;
-		int size = rows * cols;
-
-		TraversalPolicy shape = shape(batchSize, inputChannels, rows, cols);
-		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
-
-		SequentialBlock attention = new SequentialBlock(shape);
-		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
-
-		attention
-				.reshape(batchSize, 3, hiddenDim * size)
-				.enumerate(shape(batchSize, 1, hiddenDim * size))
-				.reshape(3, batchSize, heads, dimHead, size);
-
-		List<Block> qkv = attention.split(componentShape, 1);
-		Block q = qkv.get(0)
-				.andThen(scale(scale))
-				.reshape(batchSize, heads, dimHead * size)
-				.andThen(softmax(false))
-				.reshape(batchSize, heads, dimHead, size);
-		Block v = qkv.get(2);
-
-		attention.add(softmax(false));
-		attention.add(context(v, heads, dimHead, size));
-		attention.add(similarity(q, heads, dimHead, size));
-		attention.reshape(batchSize, hiddenDim, rows, cols);
-		attention.add(convolution2d(hiddenDim, dim, 1, 0));
-		attention.add(norm());
-
-		if (!attention.getOutputShape().equalsIgnoreAxis(shape)) {
-			throw new IllegalArgumentException();
-		}
-
 		return attention;
 	}
 
