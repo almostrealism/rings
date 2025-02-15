@@ -26,16 +26,21 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 
 	private int cursor;
 	private PackedCollection<?> controls;
-	private PackedCollection<?> destination;
+	private PackedCollection<?> input;
+	private PackedCollection<?> output;
 
 	public SharedMemoryAudioLine(String location) {
-		this(createControls(location), createDestination(location));
+		this(createControls(location),
+				createDestination(location, false),
+				createDestination(location, true));
 	}
 
 	public SharedMemoryAudioLine(PackedCollection<?> controls,
-								 PackedCollection<?> destination) {
+								 PackedCollection<?> input,
+								 PackedCollection<?> output) {
 		this.controls = controls;
-		this.destination = destination;
+		this.input = input;
+		this.output = output;
 	}
 
 	@Override
@@ -47,28 +52,36 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	}
 
 	@Override
-	public int getBufferSize() { return destination.getMemLength(); }
+	public int getBufferSize() { return output.getMemLength(); }
 
 	@Override
 	public void read(PackedCollection<?> sample) {
-		throw new UnsupportedOperationException();
+		if (sample.getMemLength() > input.getMemLength() - cursor) {
+			throw new IllegalArgumentException("Sample is too large for source");
+		}
+
+		sample.setMem(0, sample, cursor, sample.getMemLength());
 	}
 
 	@Override
 	public void write(PackedCollection<?> sample) {
-		if (sample.getMemLength() > destination.getMemLength() - cursor) {
+		if (sample.getMemLength() > output.getMemLength() - cursor) {
 			throw new IllegalArgumentException("Sample is too large for destination");
 		}
 
-		destination.setMem(cursor, sample);
-		cursor = (cursor + sample.getMemLength()) % destination.getMemLength();
+		output.setMem(cursor, sample);
+		cursor = (cursor + sample.getMemLength()) % output.getMemLength();
 	}
 
 	@Override
 	public void destroy() {
 		AudioLine.super.destroy();
-		destination.destroy();
-		destination = null;
+		controls.destroy();
+		input.destroy();
+		output.destroy();
+		controls = null;
+		input = null;
+		output = null;
 	}
 
 	private static PackedCollection<?> createControls(String location) {
@@ -76,8 +89,8 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 		return createCollection(shared, controlSize);
 	}
 
-	private static PackedCollection<?> createDestination(String location) {
-		String shared = location + "_shm";
+	private static PackedCollection<?> createDestination(String location, boolean output) {
+		String shared = location + (output ? "_out" : "_in");
 		return createCollection(shared, BufferDefaults.defaultBufferSize);
 	}
 

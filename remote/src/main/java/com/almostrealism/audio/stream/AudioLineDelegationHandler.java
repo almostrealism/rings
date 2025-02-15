@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
-public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFeatures {
+public class AudioLineDelegationHandler implements HttpAudioHandler, ConsoleFeatures {
 	private DelegatedAudioLine line;
 
-	public OutputLineDelegationHandler(DelegatedAudioLine line) {
+	public AudioLineDelegationHandler(DelegatedAudioLine line) {
 		this.line = line;
 	}
 

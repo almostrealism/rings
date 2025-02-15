@@ -18,7 +18,7 @@ package com.almostrealism.audio;
 
 import com.almostrealism.audio.stream.AudioServer;
 import com.almostrealism.audio.stream.HttpAudioHandler;
-import com.almostrealism.audio.stream.OutputLineDelegationHandler;
+import com.almostrealism.audio.stream.AudioLineDelegationHandler;
 import com.almostrealism.audio.stream.SharedPlayerConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
@@ -84,7 +84,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount, List<String> channelNames) {
 		DelegatedAudioLine line = new DelegatedAudioLine();
-		server.addStream(channel, new OutputLineDelegationHandler(line));
+		server.addStream(channel, new AudioLineDelegationHandler(line));
 		return addPlayer(channel, playerCount, channelNames, line);
 	}
 

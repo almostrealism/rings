@@ -19,7 +19,7 @@ package org.almostrealism.audio.line;
 import io.almostrealism.relation.Delegated;
 import org.almostrealism.collect.PackedCollection;
 
-public class DelegatedAudioLine implements AudioLine, Delegated<OutputLine> {
+public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 	private InputLine inputDelegate;
 	private OutputLine outputDelegate;
 	private int bufferSize;
@@ -39,9 +39,20 @@ public class DelegatedAudioLine implements AudioLine, Delegated<OutputLine> {
 	}
 
 	@Override
-	public OutputLine getDelegate() { return outputDelegate; }
+	public AudioLine getDelegate() {
+		return outputDelegate == inputDelegate ? (AudioLine) outputDelegate : null;
+	}
 
-	public void setDelegate(OutputLine delegate) {
+	public void setDelegate(AudioLine delegate) {
+		setInputDelegate(delegate);
+		setOutputDelegate(delegate);
+	}
+
+	public void setInputDelegate(InputLine delegate) {
+		this.inputDelegate = delegate;
+	}
+
+	public void setOutputDelegate(OutputLine delegate) {
 		this.outputDelegate = delegate;
 	}
 
