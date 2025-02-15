@@ -18,7 +18,7 @@ package com.almostrealism.audio.stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.DelegatedOutputLine;
 import org.almostrealism.audio.line.SharedMemoryOutputLine;
 import org.almostrealism.io.ConsoleFeatures;

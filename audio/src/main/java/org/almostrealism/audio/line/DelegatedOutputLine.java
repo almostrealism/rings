@@ -17,7 +17,6 @@
 package org.almostrealism.audio.line;
 
 import io.almostrealism.relation.Delegated;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
 public class DelegatedOutputLine implements OutputLine, Delegated<OutputLine> {

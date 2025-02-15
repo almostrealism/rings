@@ -22,7 +22,7 @@ import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.DelegateWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;

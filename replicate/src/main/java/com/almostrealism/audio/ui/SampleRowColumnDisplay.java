@@ -15,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.almostrealism.audio.JavaAudioSample;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 
 public class SampleRowColumnDisplay extends JPanel
 									implements Runnable,

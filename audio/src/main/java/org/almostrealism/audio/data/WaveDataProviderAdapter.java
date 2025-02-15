@@ -21,21 +21,16 @@ import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.hardware.ctx.ContextSpecific;
 import org.almostrealism.hardware.ctx.DefaultContextSpecific;
 import org.almostrealism.time.computations.Interpolate;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 								Comparable<WaveDataProvider>, CodeFeatures {

@@ -40,8 +40,8 @@ def generate_images(num_images, image_size, save_dir, csv_file):
 
 # Parameters
 num_images = 500
-image_size = 54
-save_dir = 'generated_images'
+image_size = 28
+save_dir = 'generated_images_28'
 csv_file = 'dataset.csv'
 
 generate_images(num_images, image_size, save_dir, csv_file)

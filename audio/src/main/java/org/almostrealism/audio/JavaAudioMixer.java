@@ -1,5 +1,7 @@
 package org.almostrealism.audio;
 
+import org.almostrealism.audio.line.OutputLine;
+
 import java.util.Hashtable;
 import java.util.Iterator;
 

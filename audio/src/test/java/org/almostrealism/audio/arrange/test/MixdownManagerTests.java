@@ -18,7 +18,7 @@ package org.almostrealism.audio.arrange.test;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;

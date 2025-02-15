@@ -1,7 +1,5 @@
 package org.almostrealism.audio.line;
 
-import org.almostrealism.audio.OutputLine;
-
 public class MultiplierDualOutputLine extends DefaultDualOutputLine {
 	public MultiplierDualOutputLine(OutputLine line) {
 		super(line);

@@ -21,7 +21,7 @@ import com.almostrealism.remote.ops.GenerateRequestor;
 import com.almostrealism.remote.ops.RefreshRequestor;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Channel;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audio;
+package org.almostrealism.audio.line;
 
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
@@ -43,6 +43,7 @@ public interface OutputLine extends Destroyable {
 	 * be aware of the number of bytes in a sample to write a valid
 	 * set of samples.
 	 */
+	@Deprecated
 	default void write(byte b[]) {
 		throw new UnsupportedOperationException();
 	}
@@ -50,13 +51,16 @@ public interface OutputLine extends Destroyable {
 	/**
 	 * Write the specified frames.
 	 */
+	@Deprecated
 	default void write(double d[][]) {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
-	 * Write one sample, coercing the {@link PackedCollection} value into whatever
-	 * necessary to get one sample worth of bytes.
+	 * Write all the samples from the specified {@link PackedCollection},
+	 * which cannot be larger than the buffer size.
+	 *
+	 * @see  #getBufferSize()
 	 */
 	void write(PackedCollection<?> sample);
 

@@ -17,7 +17,6 @@
 package org.almostrealism.audio.line;
 
 import io.almostrealism.code.ComputeContext;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.io.ConsoleFeatures;

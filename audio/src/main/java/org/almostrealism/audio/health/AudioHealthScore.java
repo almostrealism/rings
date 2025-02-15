@@ -16,10 +16,9 @@
 
 package org.almostrealism.audio.health;
 
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.optimize.HealthScore;
 
-import java.io.File;
 import java.util.List;
 
 public class AudioHealthScore implements HealthScore {

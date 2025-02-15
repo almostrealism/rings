@@ -18,7 +18,7 @@ package com.almostrealism.audio.test;
 
 import com.almostrealism.audio.AudioLibraryPersistence;
 import org.almostrealism.audio.AudioLibrary;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;

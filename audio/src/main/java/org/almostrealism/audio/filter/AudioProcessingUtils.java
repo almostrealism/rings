@@ -2,7 +2,7 @@ package org.almostrealism.audio.filter;
 
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;

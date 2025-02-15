@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ import com.almostrealism.audio.stream.HttpAudioHandler;
 import com.almostrealism.audio.stream.OutputLineDelegationHandler;
 import com.almostrealism.audio.stream.SharedPlayerConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.BufferedAudioPlayer;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedOutputLine;
@@ -42,9 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
+public class AudioStreamManager implements ConsoleFeatures {
 	public static final int PORT = 7799;
-	public static final String CREATE = "create";
 
 	public static double defaultLiveDuration = 180.0;
 	public static int defaultPlayerCount = 9;
@@ -58,7 +56,6 @@ public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
 	}
 
 	public void start() throws IOException {
-		server.addStream(CREATE, this);
 		server.start();
 	}
 
@@ -127,31 +124,36 @@ public class AudioStreamManager implements HttpAudioHandler, ConsoleFeatures {
 		return player.deliver(out);
 	}
 
-	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		if (Objects.equals("POST", exchange.getRequestMethod())) {
-			exchange.getResponseHeaders().add("Content-Type", "application/json");
-			exchange.sendResponseHeaders(200, 0);
-
-			try (OutputStream out = exchange.getResponseBody();
-				 	InputStream inputStream = exchange.getRequestBody()) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				SharedPlayerConfig config = objectMapper.readValue(inputStream, SharedPlayerConfig.class);
-
-				String location = config.getLocation();
-				if (config.getStream() == null) {
-					config.setStream(KeyUtils.generateKey());
-				}
-
-				SharedMemoryOutputLine sharedOutput = new SharedMemoryOutputLine(location);
-				addPlayer(config.getStream(), defaultPlayerCount, sharedOutput);
-				objectMapper.writeValue(out, config);
-			} catch (IOException e) {
-				warn("Could not create player", e);
-			}
-		} else {
-			exchange.sendResponseHeaders(405, 0);
+	public SharedPlayerConfig addPlayer(SharedPlayerConfig config) {
+		String location = config.getLocation();
+		if (config.getStream() == null) {
+			config.setStream(KeyUtils.generateKey());
 		}
+
+		SharedMemoryOutputLine sharedOutput = new SharedMemoryOutputLine(location);
+		addPlayer(config.getStream(), defaultPlayerCount, sharedOutput);
+		return config;
+	}
+
+	public HttpAudioHandler addPlayerHandler() {
+		return exchange -> {
+			if (Objects.equals("POST", exchange.getRequestMethod())) {
+				exchange.getResponseHeaders().add("Content-Type", "application/json");
+				exchange.sendResponseHeaders(200, 0);
+
+				try (OutputStream out = exchange.getResponseBody();
+						 InputStream inputStream = exchange.getRequestBody()) {
+					ObjectMapper objectMapper = new ObjectMapper();
+					SharedPlayerConfig config =
+							objectMapper.readValue(inputStream, SharedPlayerConfig.class);
+					objectMapper.writeValue(out, addPlayer(config));
+				} catch (IOException e) {
+					warn("Could not create player", e);
+				}
+			} else {
+				exchange.sendResponseHeaders(405, 0);
+			}
+		};
 	}
 
 	@Override

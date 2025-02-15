@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.almostrealism.audio;
+package org.almostrealism.audio.line;
 
 public interface DualOutputLine {
 	void setMix(double m);

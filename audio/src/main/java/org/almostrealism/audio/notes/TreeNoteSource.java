@@ -19,7 +19,7 @@ package org.almostrealism.audio.notes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.uml.Named;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;

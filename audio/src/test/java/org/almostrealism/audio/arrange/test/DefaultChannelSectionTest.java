@@ -18,7 +18,7 @@ package org.almostrealism.audio.arrange.test;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.WaveData;
@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class DefaultChannelSectionTest implements CellFeatures {
 	@Test

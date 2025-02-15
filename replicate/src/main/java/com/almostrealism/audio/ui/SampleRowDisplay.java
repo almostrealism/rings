@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 import org.almostrealism.audio.JavaAudioSample;
 import org.almostrealism.audio.line.LineUtilities;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 
 public class SampleRowDisplay extends JPanel implements Runnable, MouseListener, KeyListener {
 	private JavaAudioSample samples[];

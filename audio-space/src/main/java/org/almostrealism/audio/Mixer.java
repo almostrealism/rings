@@ -17,6 +17,7 @@
 package org.almostrealism.audio;
 
 import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.graph.CollectionCachedStateCell;
 import org.almostrealism.graph.SummationCell;
 
