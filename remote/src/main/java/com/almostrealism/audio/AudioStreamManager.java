@@ -26,8 +26,8 @@ import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
-import org.almostrealism.audio.line.DelegatedOutputLine;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.DelegatedAudioLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
@@ -83,7 +83,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount, List<String> channelNames) {
-		DelegatedOutputLine line = new DelegatedOutputLine();
+		DelegatedAudioLine line = new DelegatedAudioLine();
 		server.addStream(channel, new OutputLineDelegationHandler(line));
 		return addPlayer(channel, playerCount, channelNames, line);
 	}
@@ -130,7 +130,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 			config.setStream(KeyUtils.generateKey());
 		}
 
-		SharedMemoryOutputLine sharedOutput = new SharedMemoryOutputLine(location);
+		SharedMemoryAudioLine sharedOutput = new SharedMemoryAudioLine(location);
 		addPlayer(config.getStream(), defaultPlayerCount, sharedOutput);
 		return config;
 	}

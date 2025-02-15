@@ -20,7 +20,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -41,9 +41,9 @@ public class MixerTests implements CellFeatures {
 			}
 		});
 
-		PackedCollection<?> control = new PackedCollection<>(SharedMemoryOutputLine.controlSize);
+		PackedCollection<?> control = new PackedCollection<>(SharedMemoryAudioLine.controlSize);
 		PackedCollection<?> dest = new PackedCollection<>(BufferDefaults.defaultBufferSize);
-		SharedMemoryOutputLine line = new SharedMemoryOutputLine(control, dest);
+		SharedMemoryAudioLine line = new SharedMemoryAudioLine(control, dest);
 
 		BufferedOutputScheduler scheduler = mixer.toCellList().addRequirement(clock).buffer(line);
 		scheduler.start();

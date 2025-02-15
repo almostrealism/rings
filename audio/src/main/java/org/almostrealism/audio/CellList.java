@@ -22,7 +22,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
@@ -180,7 +180,7 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 	public CellList sum() { return sum(this); }
 
 	public BufferedOutputScheduler buffer(String location) {
-		return buffer(new SharedMemoryOutputLine(location));
+		return buffer(new SharedMemoryAudioLine(location));
 	}
 
 	public BufferedOutputScheduler buffer(OutputLine line) {

@@ -19,8 +19,8 @@ package com.almostrealism.audio.stream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.line.DelegatedOutputLine;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.DelegatedAudioLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
 
@@ -30,9 +30,9 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFeatures {
-	private DelegatedOutputLine line;
+	private DelegatedAudioLine line;
 
-	public OutputLineDelegationHandler(DelegatedOutputLine line) {
+	public OutputLineDelegationHandler(DelegatedAudioLine line) {
 		this.line = line;
 	}
 
@@ -55,7 +55,7 @@ public class OutputLineDelegationHandler implements HttpAudioHandler, ConsoleFea
 				String location = config.getLocation() + "/" + config.getStream();
 				log("Initializing shared memory @ " + location);
 
-				line.setDelegate(new SharedMemoryOutputLine(location));
+				line.setDelegate(new SharedMemoryAudioLine(location));
 
 				// Provide the configuration details to the client
 				byte[] responseBytes = objectMapper.writeValueAsBytes(config);

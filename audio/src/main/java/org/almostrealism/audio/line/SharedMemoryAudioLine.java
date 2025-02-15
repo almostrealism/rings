@@ -21,23 +21,24 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.io.ConsoleFeatures;
 
-public class SharedMemoryOutputLine implements OutputLine, ConsoleFeatures {
+public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	public static final int controlSize = 8;
 
 	private int cursor;
 	private PackedCollection<?> controls;
 	private PackedCollection<?> destination;
 
-	public SharedMemoryOutputLine(String location) {
+	public SharedMemoryAudioLine(String location) {
 		this(createControls(location), createDestination(location));
 	}
 
-	public SharedMemoryOutputLine(PackedCollection<?> controls,
-								  PackedCollection<?> destination) {
+	public SharedMemoryAudioLine(PackedCollection<?> controls,
+								 PackedCollection<?> destination) {
 		this.controls = controls;
 		this.destination = destination;
 	}
 
+	@Override
 	public int getWritePosition() { return cursor; }
 
 	@Override
@@ -49,12 +50,7 @@ public class SharedMemoryOutputLine implements OutputLine, ConsoleFeatures {
 	public int getBufferSize() { return destination.getMemLength(); }
 
 	@Override
-	public void write(byte[] b) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void write(double[][] d) {
+	public void read(PackedCollection<?> sample) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -70,7 +66,7 @@ public class SharedMemoryOutputLine implements OutputLine, ConsoleFeatures {
 
 	@Override
 	public void destroy() {
-		OutputLine.super.destroy();
+		AudioLine.super.destroy();
 		destination.destroy();
 		destination = null;
 	}
