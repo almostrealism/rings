@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2024 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.remote;
+package org.almostrealism.audio.stream;
 
-import org.almostrealism.remote.api.Generation;
+public class SharedPlayerConfig {
+	private String location;
+	private String stream;
 
-public interface AccessManager {
-	default boolean authorize(Generation.AccessKey key, String requestId) {
-		return authorize(key.getUserId(), key.getToken(), key.getKey(), requestId);
-	}
+	public String getLocation() { return location; }
+	public void setLocation(String location) { this.location = location; }
 
-	boolean authorize(String userId, String token, String key, String requestId);
+	public String getStream() { return stream; }
+	public void setStream(String stream) { this.stream = stream; }
 }

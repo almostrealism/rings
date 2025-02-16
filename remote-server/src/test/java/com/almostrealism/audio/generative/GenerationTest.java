@@ -17,9 +17,9 @@
 package com.almostrealism.audio.generative;
 
 import com.almostrealism.remote.AccessManager;
-import com.almostrealism.remote.RemoteAccessKey;
+import org.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.RemoteGenerationServer;
-import com.almostrealism.remote.RemoteGenerationProvider;
+import org.almostrealism.remote.RemoteGenerationProvider;
 import com.almostrealism.remote.mgr.DefaultAccessManager;
 import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;

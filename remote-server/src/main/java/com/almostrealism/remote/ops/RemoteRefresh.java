@@ -18,7 +18,7 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
-import com.almostrealism.remote.api.Generation;
+import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;

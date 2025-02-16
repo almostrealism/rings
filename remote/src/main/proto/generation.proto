@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package almostrealism.remote;
 
-option java_package = "com.almostrealism.remote.api";
+option java_package = "org.almostrealism.remote.api";
 
 service Generator {
   rpc refresh(stream RefreshRequest) returns (stream Status) {}

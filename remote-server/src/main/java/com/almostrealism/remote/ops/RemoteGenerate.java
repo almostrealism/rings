@@ -18,12 +18,13 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
-import com.almostrealism.remote.api.Generation;
+import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.remote.ops.WaveDataPublisher;
 
 import java.util.List;
 import java.util.function.Consumer;

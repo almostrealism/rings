@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package almostrealism.audio;
 
-option java_package = "com.almostrealism.audio.api";
+option java_package = "org.almostrealism.audio.api";
 
 message AudioLibraryData {
   map<string, WaveDetailData> info = 1;
