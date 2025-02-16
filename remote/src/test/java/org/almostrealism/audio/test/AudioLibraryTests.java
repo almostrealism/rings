@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.test;
 
-import org.almostrealism.audio.AudioLibraryPersistence;
+import org.almostrealism.audio.persistence.AudioLibraryPersistence;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
