@@ -17,27 +17,30 @@
 package org.almostrealism.audio.line;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.sources.AudioBuffer;
-import org.almostrealism.collect.CollectionFeatures;
+import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.OperationList;
 import org.almostrealism.time.TemporalRunner;
 
-public interface AudioLineOperation {
-	default BufferedOutputScheduler buffer(BufferedAudio line) {
-		return BufferedOutputScheduler.create(
-				line instanceof InputLine ? (InputLine) line : null,
-				line instanceof OutputLine ? (OutputLine) line : null,
-				this);
+public class AudioLineInputRecord implements AudioLineOperation, CellFeatures {
+	private final AudioLineOperation operation;
+	private final OutputLine record;
+
+	public AudioLineInputRecord(AudioLineOperation operation, OutputLine record) {
+		this.operation = operation;
+		this.record = record;
 	}
 
-	default TemporalRunner process(AudioBuffer buffer) {
-		return process(
-				CollectionFeatures.getInstance().p(buffer.getInputBuffer()),
-				CollectionFeatures.getInstance().p(buffer.getOutputBuffer()),
-				buffer.getDetails().getFrames());
-	}
+	@Override
+	public TemporalRunner process(Producer<PackedCollection<?>> input,
+								  Producer<PackedCollection<?>> output,
+								  int frames) {
+		TemporalRunner runner = operation.process(input, output, frames);
 
-	TemporalRunner process(Producer<PackedCollection<?>> input,
-						   Producer<PackedCollection<?>> output,
-						   int frames);
+		OperationList op = new OperationList("AudioLineInputRecord");
+		op.add(record.write(c(input)));
+		op.add(runner.tick());
+
+		return new TemporalRunner(runner.setup(), op);
+	}
 }

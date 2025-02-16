@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ package org.almostrealism.audio;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.AudioLine;
+import org.almostrealism.audio.line.AudioLineInputRecord;
+import org.almostrealism.audio.line.AudioLineOperation;
 import org.almostrealism.audio.line.BufferDefaults;
+import org.almostrealism.audio.line.BufferedAudio;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
@@ -211,6 +215,15 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	public BufferedOutputScheduler deliver(OutputLine out) {
+		return deliver(out, null);
+	}
+
+
+	public BufferedOutputScheduler deliver(AudioLine main, OutputLine inputRecord) {
+		return deliver((BufferedAudio) main, inputRecord);
+	}
+
+	private BufferedOutputScheduler deliver(BufferedAudio out, OutputLine record) {
 		if (out.getSampleRate() != sampleRate) {
 			throw new UnsupportedOperationException();
 		}
@@ -230,7 +243,13 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			cells = cells.addRequirement(clock);
 		}
 
-		return cells.buffer(out);
+		AudioLineOperation operation = cells.toLineOperation();
+
+		if (record == null) {
+			return operation.buffer(out);
+		} else {
+			return new AudioLineInputRecord(operation, record).buffer(out);
+		}
 	}
 
 	@Override

@@ -241,9 +241,14 @@ public class BufferedOutputScheduler implements CellFeatures {
 	}
 
 	public static BufferedOutputScheduler create(InputLine input, OutputLine output, CellList source) {
+		return create(input, output, source.toLineOperation());
+	}
+
+	public static BufferedOutputScheduler create(InputLine input, OutputLine output,
+												 AudioLineOperation source) {
 		return create(input, output,
 				output.getBufferSize() / BufferDefaults.batchCount,
-				source.toLineOperation());
+				source);
 	}
 
 	public static BufferedOutputScheduler create(InputLine input, OutputLine output, int frames,
@@ -253,16 +258,14 @@ public class BufferedOutputScheduler implements CellFeatures {
 						source.toLineOperation());
 	}
 
-	public static BufferedOutputScheduler create(InputLine input, OutputLine output,
-												 int frames,
+	public static BufferedOutputScheduler create(InputLine input, OutputLine output, int frames,
 												 AudioLineOperation source) {
 		return create(Executors.newSingleThreadExecutor(),
 						input, output, frames, source);
 	}
 
 	public static BufferedOutputScheduler create(ExecutorService executor,
-												 InputLine input, OutputLine output,
-												 int frames,
+												 InputLine input, OutputLine output, int frames,
 												 AudioLineOperation source) {
 		return create(executor, input, output,
 				AudioBuffer.create(output.getSampleRate(), frames),

@@ -46,7 +46,7 @@ public class AudioLineMix implements AudioLineOperation, CellFeatures {
 		CollectionProducer<PackedCollection<?>> dry = c(input).multiply(cleanLevel);
 		CollectionProducer<PackedCollection<?>> wet = cp(temp).multiply(1.0 - cleanLevel);
 
-		OperationList op = new OperationList("AudioLineOperation mix");
+		OperationList op = new OperationList("AudioLineMix");
 		op.add(wetRunner.tick());
 		op.add(a(c(output).each(), add(dry.each(), wet.each())));
 

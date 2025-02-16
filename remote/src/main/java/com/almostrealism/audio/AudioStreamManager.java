@@ -17,29 +17,22 @@
 package com.almostrealism.audio;
 
 import com.almostrealism.audio.stream.AudioServer;
-import com.almostrealism.audio.stream.HttpAudioHandler;
 import com.almostrealism.audio.stream.AudioLineDelegationHandler;
-import com.almostrealism.audio.stream.SharedPlayerConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.BufferedAudioPlayer;
+import org.almostrealism.audio.line.AudioLine;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedAudioLine;
-import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
-import org.almostrealism.util.KeyUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class AudioStreamManager implements ConsoleFeatures {
 	public static final int PORT = 7799;
@@ -74,23 +67,22 @@ public class AudioStreamManager implements ConsoleFeatures {
 		return players.get(channel);
 	}
 
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount) {
-		return addPlayer(channel, playerCount, Collections.emptyList());
-	}
-
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount, OutputLine out) {
-		return addPlayer(channel, playerCount, Collections.emptyList(), out);
-	}
-
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount, List<String> channelNames) {
-		DelegatedAudioLine line = new DelegatedAudioLine();
-		server.addStream(channel, new AudioLineDelegationHandler(line));
-		return addPlayer(channel, playerCount, channelNames, line);
+	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
+										 OutputLine inputRecord) {
+		return addPlayer(channel, playerCount, Collections.emptyList(), inputRecord);
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
 										 List<String> channelNames,
-										 OutputLine out) {
+										 OutputLine inputRecord) {
+		DelegatedAudioLine line = new DelegatedAudioLine();
+		server.addStream(channel, new AudioLineDelegationHandler(line));
+		return addPlayer(channel, playerCount, channelNames, line, inputRecord);
+	}
+
+	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
+										 List<String> channelNames,
+										 AudioLine out, OutputLine inputRecord) {
 		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
 
 		// Ensure that the player buffer size is a multiple
@@ -98,62 +90,37 @@ public class AudioStreamManager implements ConsoleFeatures {
 		maxFrames = maxFrames / out.getBufferSize();
 		maxFrames *= out.getBufferSize();
 
-		return addPlayer(channel, playerCount, channelNames, maxFrames, out);
+		return addPlayer(channel, playerCount,
+						channelNames, maxFrames,
+						out, inputRecord);
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
 										 List<String> channelNames,
-										 int maxFrames, OutputLine out) {
+										 int maxFrames,
+										 AudioLine out, OutputLine inputRecord) {
 		if (maxFrames % out.getBufferSize() != 0) {
 			throw new IllegalArgumentException();
 		}
 
 		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, channelNames,
 				out.getSampleRate(), maxFrames);
-		addPlayerScheduler(channel, player, out);
+		addPlayerScheduler(channel, player, out, inputRecord);
 		return player;
 	}
 
-	public void addPlayerScheduler(String channel, BufferedAudioPlayer player, OutputLine out) {
-		BufferedOutputScheduler scheduler = addPlayer(channel, player, out);
+	public void addPlayerScheduler(String channel, BufferedAudioPlayer player,
+								   AudioLine out, OutputLine inputRecord) {
+		BufferedOutputScheduler scheduler = addPlayer(channel, player, out, inputRecord);
 		scheduler.start();
 	}
 
-	public BufferedOutputScheduler addPlayer(String channel, BufferedAudioPlayer player, OutputLine out) {
+	public BufferedOutputScheduler addPlayer(String channel,
+											 BufferedAudioPlayer player,
+											 AudioLine out,
+											 OutputLine inputRecord) {
 		players.put(channel, player);
-		return player.deliver(out);
-	}
-
-	public SharedPlayerConfig addPlayer(SharedPlayerConfig config) {
-		String location = config.getLocation();
-		if (config.getStream() == null) {
-			config.setStream(KeyUtils.generateKey());
-		}
-
-		SharedMemoryAudioLine sharedOutput = new SharedMemoryAudioLine(location);
-		addPlayer(config.getStream(), defaultPlayerCount, sharedOutput);
-		return config;
-	}
-
-	public HttpAudioHandler addPlayerHandler() {
-		return exchange -> {
-			if (Objects.equals("POST", exchange.getRequestMethod())) {
-				exchange.getResponseHeaders().add("Content-Type", "application/json");
-				exchange.sendResponseHeaders(200, 0);
-
-				try (OutputStream out = exchange.getResponseBody();
-						 InputStream inputStream = exchange.getRequestBody()) {
-					ObjectMapper objectMapper = new ObjectMapper();
-					SharedPlayerConfig config =
-							objectMapper.readValue(inputStream, SharedPlayerConfig.class);
-					objectMapper.writeValue(out, addPlayer(config));
-				} catch (IOException e) {
-					warn("Could not create player", e);
-				}
-			} else {
-				exchange.sendResponseHeaders(405, 0);
-			}
-		};
+		return player.deliver(out, inputRecord);
 	}
 
 	@Override

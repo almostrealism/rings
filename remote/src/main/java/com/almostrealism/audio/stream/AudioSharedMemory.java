@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class AudioSharedMemory implements CellFeatures {
 
 	public void run() throws IOException, InterruptedException {
 		AudioStreamManager manager = new AudioStreamManager();
-		BufferedAudioPlayer player = manager.addPlayer("live", 2);
+		BufferedAudioPlayer player = manager.addPlayer("live", 2, null);
 		player.load(0, "Library/RAW_IU_RAW_KICK_03.wav");
 		player.load(1, "Library/RAW_IU_TOP_15.wav");
 
