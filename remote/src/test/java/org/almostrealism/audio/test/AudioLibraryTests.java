@@ -16,6 +16,9 @@
 
 package org.almostrealism.audio.test;
 
+import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.api.Audio;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.persistence.AudioLibraryPersistence;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.line.OutputLine;
@@ -26,6 +29,8 @@ import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class AudioLibraryTests implements TestFeatures {
@@ -44,6 +49,14 @@ public class AudioLibraryTests implements TestFeatures {
 		AudioLibrary library = AudioLibrary.load(new File(LIBRARY), OutputLine.sampleRate);
 		WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav"));
 		System.out.println(details.getFreqSampleRate());
+	}
+
+	@Test
+	public void loadRecording() throws IOException {
+		List<Audio.WaveDetailData> data =
+				AudioLibraryPersistence.loadRecording("recording_test", "recordings");
+		WaveData wave = AudioLibraryPersistence.toWaveData(data);
+		WavFile.write(wave, new File("results/recording_test.wav"));
 	}
 
 	@Test

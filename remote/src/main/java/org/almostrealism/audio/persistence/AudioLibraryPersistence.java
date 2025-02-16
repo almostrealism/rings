@@ -18,8 +18,10 @@ package org.almostrealism.audio.persistence;
 
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.api.Audio;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDetails;
-import org.almostrealism.io.SystemUtils;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -96,6 +100,35 @@ public class AudioLibraryPersistence {
 		}
 	}
 
+	public static void saveRecordings(List<Audio.WaveRecording> recordings, Supplier<OutputStream> out) throws IOException {
+		Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
+
+		int byteCount = 0;
+
+		for (int i = 0; i < recordings.size(); i++) {
+			Audio.WaveRecording d = recordings.get(i);
+			byteCount += d.getSerializedSize();
+			data.addRecordings(d);
+
+			if (byteCount > batchSize || i == recordings.size() - 1) {
+				OutputStream o = out.get();
+
+				try {
+					data.build().writeTo(o);
+					Console.root.features(AudioLibraryPersistence.class)
+							.log("Wrote " + data.getRecordingsCount() +
+								" recordings (" + byteCount + " bytes)");
+
+					data = Audio.AudioLibraryData.newBuilder();
+					byteCount = 0;
+					o.flush();
+				} finally {
+					o.close();
+				}
+			}
+		}
+	}
+
 	public static AudioLibrary loadLibrary(File root, int sampleRate, String dataPrefix) {
 		try {
 			return loadLibrary(root, sampleRate, new LibraryDestination(dataPrefix).in());
@@ -130,6 +163,37 @@ public class AudioLibraryPersistence {
 		}
 
 		return library;
+	}
+
+	public static List<Audio.WaveDetailData> loadRecording(String key, String dataPrefix) {
+		try {
+			return loadRecording(key, new LibraryDestination(dataPrefix).in());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static List<Audio.WaveDetailData> loadRecording(String key, Supplier<InputStream> in) throws IOException {
+		InputStream input = in.get();
+
+		TreeSet<Audio.WaveRecording> recordings = new TreeSet<>(Comparator.comparing(Audio.WaveRecording::getOrderIndex));
+
+		while (input != null) {
+			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
+
+			for (Audio.WaveRecording r : data.getRecordingsList()) {
+				if (key.equals(r.getKey())) {
+					recordings.add(r);
+				}
+			}
+
+			input = in.get();
+		}
+
+		return recordings.stream()
+				.map(Audio.WaveRecording::getDataList)
+				.flatMap(List::stream)
+				.toList();
 	}
 
 	public static Audio.WaveDetailData encode(WaveDetails details, boolean includeAudio) {
@@ -173,43 +237,19 @@ public class AudioLibraryPersistence {
 		return details;
 	}
 
-	public static class LibraryDestination {
-		private String prefix;
-		private int index;
+	public static WaveData toWaveData(List<Audio.WaveDetailData> data) {
+		if (data == null || data.isEmpty()) return null;
 
-		public LibraryDestination(String prefix) {
-			if (prefix.contains("/")) {
-				this.prefix = prefix;
-			} else {
-				this.prefix = SystemUtils.getLocalDestination(prefix);
-			}
+		int totalFrames = data.stream().mapToInt(Audio.WaveDetailData::getFrameCount).sum();
+
+		PackedCollection<?> output = new PackedCollection<>(totalFrames);
+		int cursor = 0;
+
+		for (Audio.WaveDetailData d : data) {
+			CollectionEncoder.decode(d.getData(), output, cursor);
+			cursor += d.getFrameCount();
 		}
 
-		protected String nextFile() {
-			return prefix + "_" + index++ + ".bin";
-		}
-
-		public Supplier<InputStream> in() {
-			return () -> {
-				try {
-					File f = new File(nextFile());
-					if (!f.exists()) return null;
-
-					return new FileInputStream(f);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			};
-		}
-
-		public Supplier<OutputStream> out() {
-			return () -> {
-				try {
-					return new FileOutputStream(nextFile());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			};
-		}
+		return new WaveData(output, data.get(0).getSampleRate());
 	}
 }

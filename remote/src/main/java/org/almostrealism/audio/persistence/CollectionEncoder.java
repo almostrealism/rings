@@ -43,9 +43,23 @@ public class CollectionEncoder {
 		TraversalPolicy shape = decode(data.getTraversalPolicy());
 		if (shape.getDimensions() == 0) return null;
 
-		PackedCollection<?> c = new PackedCollection<>(shape);
-		c.setMem(data.getDataList().stream().mapToDouble(d -> d).toArray());
-		return c;
+		return decode(data, new PackedCollection<>(shape.getTotalSize()));
+	}
+
+	public static PackedCollection<?> decode(Audio.CollectionData data,
+										 	 PackedCollection<?> destination) {
+		return decode(data, destination, 0);
+	}
+
+	public static PackedCollection<?> decode(Audio.CollectionData data,
+											 PackedCollection<?> destination,
+											 int destinationOffset) {
+		TraversalPolicy shape = decode(data.getTraversalPolicy());
+		if (shape.getDimensions() == 0) return null;
+
+		destination.setMem(destinationOffset,
+				data.getDataList().stream().mapToDouble(d -> d).toArray());
+		return destination.range(shape, destinationOffset);
 	}
 
 	public static TraversalPolicy decode(Audio.TraversalPolicyData data) {

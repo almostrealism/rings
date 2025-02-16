@@ -19,6 +19,10 @@ package org.almostrealism.audio.stream;
 import org.almostrealism.audio.AudioStreamManager;
 import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.line.BufferedAudio;
+import org.almostrealism.audio.persistence.AudioLibraryDataWriter;
+import org.almostrealism.audio.persistence.WaveDetailsOutputLine;
+import org.almostrealism.util.KeyUtils;
 
 import java.io.IOException;
 
@@ -28,8 +32,12 @@ public class AudioSharedMemory implements CellFeatures {
 	}
 
 	public void run() throws IOException, InterruptedException {
+		String key = "recording_test";
+		AudioLibraryDataWriter writer = new AudioLibraryDataWriter(key, "recordings");
+		WaveDetailsOutputLine record = new WaveDetailsOutputLine(writer);
+
 		AudioStreamManager manager = new AudioStreamManager();
-		BufferedAudioPlayer player = manager.addPlayer("live", 2, null);
+		BufferedAudioPlayer player = manager.addPlayer("live", 2, record);
 		player.load(0, "Library/RAW_IU_RAW_KICK_03.wav");
 		player.load(1, "Library/RAW_IU_TOP_15.wav");
 

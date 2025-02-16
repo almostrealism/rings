@@ -6,6 +6,7 @@ option java_package = "org.almostrealism.audio.api";
 
 message AudioLibraryData {
   map<string, WaveDetailData> info = 1;
+  repeated WaveRecording recordings = 2;
 }
 
 message TraversalPolicyData {
@@ -16,6 +17,12 @@ message TraversalPolicyData {
 message CollectionData {
   TraversalPolicyData traversal_policy = 1;
   repeated double data = 2;
+}
+
+message WaveRecording {
+  string key = 1;
+  int32 order_index = 2;
+  repeated WaveDetailData data = 3;
 }
 
 message WaveDetailData {
