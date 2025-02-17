@@ -63,7 +63,7 @@ public class CollectionEncoder {
 	}
 
 	public static TraversalPolicy decode(Audio.TraversalPolicyData data) {
-		return new TraversalPolicy(
+		return new TraversalPolicy(true,
 				data.getDimsList().stream().mapToInt(i -> i).toArray())
 					.traverse(data.getTraversalAxis());
 	}
