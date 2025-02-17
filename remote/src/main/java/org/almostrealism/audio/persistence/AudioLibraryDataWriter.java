@@ -18,10 +18,12 @@ package org.almostrealism.audio.persistence;
 
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.io.ConsoleFeatures;
+import org.almostrealism.util.KeyUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -36,14 +38,45 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	private List<Audio.WaveDetailData> recordings;
 	private int count;
 
-	public AudioLibraryDataWriter(String key, String prefix) {
-		this.key = key;
-		this.destination = new LibraryDestination(prefix);
+	public AudioLibraryDataWriter(LibraryDestination destination) {
+		this.destination = destination;
 		this.executor = Executors.newSingleThreadExecutor();
+	}
+
+	public AudioLibraryDataWriter(String key, String prefix) {
+		this(new LibraryDestination(prefix));
+		restart(key);
 	}
 
 	public Consumer<Audio.WaveDetailData> queueRecording() {
 		return data -> getRecordings().add(data);
+	}
+
+	public String start() { return start(KeyUtils.generateKey()); }
+
+	public String start(String key) {
+		if (this.key != null) {
+			throw new IllegalArgumentException();
+		}
+
+		this.key = key;
+		return key;
+	}
+
+	public void reset() {
+		write(recordings);
+		this.count = 0;
+		this.recordings = null;
+		this.key = null;
+	}
+
+	public String restart() {
+		return restart(KeyUtils.generateKey());
+	}
+
+	public String restart(String key) {
+		reset();
+		return start(key);
 	}
 
 	protected List<Audio.WaveDetailData> getRecordings() {
@@ -59,12 +92,13 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		if (recordings == null) return;
 
 		int index = count++;
+		String currentKey = Objects.requireNonNull(key);
 		log("Writing " + recordings.size() + " recording chunks");
 		executor.submit(() -> {
 			try {
 				AudioLibraryPersistence.saveRecordings(
 						List.of(Audio.WaveRecording.newBuilder()
-								.setKey(key).setOrderIndex(index)
+								.setKey(currentKey).setOrderIndex(index)
 								.addAllData(recordings).build()),
 						destination.out());
 				log("Saved " + recordings.size() + " recording chunks");

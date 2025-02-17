@@ -32,9 +32,9 @@ public class AudioSharedMemory implements CellFeatures {
 	}
 
 	public void run() throws IOException, InterruptedException {
-		String key = "recording_test";
-		AudioLibraryDataWriter writer = new AudioLibraryDataWriter(key, "recordings");
+		AudioLibraryDataWriter writer = new AudioLibraryDataWriter("recording_test", "recordings");
 		WaveDetailsOutputLine record = new WaveDetailsOutputLine(writer);
+		record.setActive(true);
 
 		AudioStreamManager manager = new AudioStreamManager();
 		BufferedAudioPlayer player = manager.addPlayer("live", 2, record);

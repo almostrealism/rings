@@ -39,6 +39,7 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 
 	private ExecutorService executor;
 	private Consumer<Audio.WaveDetailData> consumer;
+	private boolean active;
 
 	public WaveDetailsOutputLine(AudioLibraryDataWriter writer) {
 		this(writer.queueRecording());
@@ -68,9 +69,12 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 	@Override
 	public int getBufferSize() { return bufferA.getMemLength(); }
 
+	public boolean isActive() { return active; }
+	public void setActive(boolean active) { this.active = active; }
+
 	@Override
 	public void write(PackedCollection<?> sample) {
-		PackedCollection<?> output = getActiveBuffer();
+		PackedCollection<?> output = getRecordingBuffer();
 
 		if (sample.getMemLength() > output.getMemLength() - cursor) {
 			throw new IllegalArgumentException("Sample is too large for destination");
@@ -85,20 +89,22 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 		}
 	}
 
-	protected PackedCollection<?> getActiveBuffer() {
+	protected PackedCollection<?> getRecordingBuffer() {
 		return altBuffer ? bufferB : bufferA;
 	}
 
-	protected PackedCollection<?> getInactiveBuffer() {
+	protected PackedCollection<?> getPublishingBuffer() {
 		return altBuffer ? bufferA : bufferB;
 	}
 
 	protected void publish() {
+		if (!isActive()) return;
+
 		WaveDetails details = new WaveDetails(KeyUtils.generateKey());
 		details.setSampleRate(getSampleRate());
 		details.setChannelCount(1);
 		details.setFrameCount(getBufferSize());
-		details.setData(getInactiveBuffer());
+		details.setData(getPublishingBuffer());
 
 		// TODO  If AudioLibraryPersistence.encode is going to happen on another thread
 		// TODO  it needs to have a strict time limit or it may still be reading when
