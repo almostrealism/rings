@@ -17,4 +17,7 @@
 package org.almostrealism.audio.line;
 
 public interface AudioLine extends InputLine, OutputLine {
+	default void setPassthroughLevel(double level) { }
+
+	default double getPassthroughLevel() { return 0.0; }
 }

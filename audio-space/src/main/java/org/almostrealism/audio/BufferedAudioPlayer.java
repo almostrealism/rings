@@ -50,11 +50,13 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private TimeCell clock;
 	private Scalar level[];
 	private PackedCollection<?> loopDuration[];
+	private AudioLine outputLine;
 
 	private boolean loaded[];
 	private boolean muted[];
 	private double volume[];
 	private double duration[];
+	private double passthrough;
 	private boolean playing;
 
 	private long waitTime;
@@ -200,6 +202,10 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			setLevel(c, audible ? volume[c] : 0.0);
 			setLoopDuration(c, playing ? this.duration[c] : 0.0);
 		}
+
+		if (outputLine != null) {
+			outputLine.setPassthroughLevel(passthrough);
+		}
 	}
 
 	protected void setLevel(int c, double v) {
@@ -236,6 +242,10 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			waitTime = bufferDuration / updates;
 		} else {
 			warn("Attempting to deliver to an already active player");
+		}
+
+		if (out instanceof AudioLine) {
+			this.outputLine = (AudioLine) out;
 		}
 
 		CellList cells = mixer.toCellList();
@@ -284,6 +294,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			this.volume[c] = volume;
 		}
 
+		this.passthrough = 1.0 - volume;
 		updateLevel();
 	}
 

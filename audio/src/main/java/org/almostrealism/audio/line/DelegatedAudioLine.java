@@ -24,6 +24,8 @@ public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 	private OutputLine outputDelegate;
 	private int bufferSize;
 
+	private double passthrough;
+
 	public DelegatedAudioLine() { this(null, BufferDefaults.defaultBufferSize); }
 
 	public DelegatedAudioLine(AudioLine line, int bufferSize) {
@@ -46,6 +48,7 @@ public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 	public void setDelegate(AudioLine delegate) {
 		setInputDelegate(delegate);
 		setOutputDelegate(delegate);
+		updateDelegateSettings();
 	}
 
 	public void setInputDelegate(InputLine delegate) {
@@ -75,6 +78,21 @@ public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 		}
 
 		return bufferSize;
+	}
+
+	@Override
+	public void setPassthroughLevel(double level) {
+		this.passthrough = level;
+		updateDelegateSettings();
+	}
+
+	@Override
+	public double getPassthroughLevel() { return passthrough; }
+
+	protected void updateDelegateSettings() {
+		if (getDelegate() != null) {
+			getDelegate().setPassthroughLevel(getPassthroughLevel());
+		}
 	}
 
 	@Override

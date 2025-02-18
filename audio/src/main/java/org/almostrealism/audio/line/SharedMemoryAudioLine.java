@@ -23,6 +23,8 @@ import org.almostrealism.io.ConsoleFeatures;
 
 public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	public static final int controlSize = 8;
+	public static final int READ_POSITION = 0;
+	public static final int PASSTHROUGH_LEVEL = 2;
 
 	private int cursor;
 	private PackedCollection<?> controls;
@@ -48,7 +50,17 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 
 	@Override
 	public int getReadPosition() {
-		return Math.toIntExact((long) controls.toDouble(0));
+		return Math.toIntExact((long) controls.toDouble(READ_POSITION));
+	}
+
+	@Override
+	public void setPassthroughLevel(double level) {
+		controls.setMem(PASSTHROUGH_LEVEL, level);
+	}
+
+	@Override
+	public double getPassthroughLevel() {
+		return controls.toDouble(PASSTHROUGH_LEVEL);
 	}
 
 	@Override
