@@ -31,7 +31,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -167,10 +169,14 @@ public class AudioLibraryPersistence {
 
 	public static List<Audio.WaveDetailData> loadRecording(String key, String dataPrefix) {
 		try {
-			return loadRecording(key, new LibraryDestination(dataPrefix).in());
+			return loadRecording(key, new LibraryDestination(dataPrefix));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static List<Audio.WaveDetailData> loadRecording(String key, LibraryDestination destination) throws IOException {
+		return loadRecording(key, destination.in());
 	}
 
 	public static List<Audio.WaveDetailData> loadRecording(String key, Supplier<InputStream> in) throws IOException {
@@ -194,6 +200,36 @@ public class AudioLibraryPersistence {
 				.map(Audio.WaveRecording::getDataList)
 				.flatMap(List::stream)
 				.toList();
+	}
+
+	public static Set<String> listRecordings(String dataPrefix) {
+		try {
+			return listRecordings(new LibraryDestination(dataPrefix));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Set<String> listRecordings(LibraryDestination destination) throws IOException {
+		return listRecordings(destination.in());
+	}
+
+	public static Set<String> listRecordings(Supplier<InputStream> in) throws IOException {
+		InputStream input = in.get();
+
+		Set<String> recordings = new HashSet<>();
+
+		while (input != null) {
+			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
+
+			for (Audio.WaveRecording r : data.getRecordingsList()) {
+				recordings.add(r.getKey());
+			}
+
+			input = in.get();
+		}
+
+		return recordings;
 	}
 
 	public static Audio.WaveDetailData encode(WaveDetails details, boolean includeAudio) {
@@ -250,6 +286,6 @@ public class AudioLibraryPersistence {
 			cursor += d.getFrameCount();
 		}
 
-		return new WaveData(output, data.get(0).getSampleRate());
+		return new WaveData(output.each(), data.get(0).getSampleRate());
 	}
 }

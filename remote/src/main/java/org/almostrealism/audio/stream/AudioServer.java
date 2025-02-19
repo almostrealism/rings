@@ -82,16 +82,20 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		String path = exchange.getRequestURI().getPath();
-		String channel = path.substring(1);
-		HttpHandler handler = handlers.get(channel);
-		if (handler == null) {
-			exchange.sendResponseHeaders(404, 0);
-			exchange.getResponseBody().close();
-			return;
-		}
+		try {
+			String path = exchange.getRequestURI().getPath();
+			String channel = path.substring(1);
+			HttpHandler handler = handlers.get(channel);
+			if (handler == null) {
+				exchange.sendResponseHeaders(404, 0);
+				exchange.getResponseBody().close();
+				return;
+			}
 
-		handler.handle(exchange);
+			handler.handle(exchange);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

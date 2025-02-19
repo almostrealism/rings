@@ -25,6 +25,7 @@ import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.audio.stream.AudioServer;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -57,6 +58,22 @@ public class AudioLibraryTests implements TestFeatures {
 				AudioLibraryPersistence.loadRecording("recording_test", "recordings");
 		WaveData wave = AudioLibraryPersistence.toWaveData(data);
 		WavFile.write(wave, new File("results/recording_test.wav"));
+	}
+
+	@Test
+	public void streamRecording() throws IOException, InterruptedException {
+		String key = AudioLibraryPersistence.listRecordings("recordings")
+				.stream().findFirst().orElse(null);
+		List<Audio.WaveDetailData> data =
+				AudioLibraryPersistence.loadRecording(key, "recordings");
+		WaveData wave = AudioLibraryPersistence.toWaveData(data);
+
+		AudioServer server = new AudioServer(7800);
+		String channel = server.addStream("test", wave);
+		log("Channel: " + channel);
+		server.start();
+
+		Thread.sleep(60 * 60 * 1000);
 	}
 
 	@Test
