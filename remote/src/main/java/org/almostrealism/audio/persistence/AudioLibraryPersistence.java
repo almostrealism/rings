@@ -220,7 +220,8 @@ public class AudioLibraryPersistence {
 		Set<String> recordings = new HashSet<>();
 
 		while (input != null) {
-			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
+			Audio.AudioLibraryData data = Audio.AudioLibraryData
+						.newBuilder().mergeFrom(input).build();
 
 			for (Audio.WaveRecording r : data.getRecordingsList()) {
 				recordings.add(r.getKey());

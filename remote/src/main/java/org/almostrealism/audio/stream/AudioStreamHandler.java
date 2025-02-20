@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,11 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 		this.processor = audioProcessor;
 	}
 
-	public void load() {
+	public synchronized void load() {
+		if (data != null) {
+			return;
+		}
+
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			write(out);
 			out.flush();
@@ -67,8 +71,7 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 			update = processor.process(cp(buffer), null).get();
 		}
 
-		try (
-			 WavFile wav = WavFile.newWavFile(out, 2, totalFrames, 24, sampleRate)) {
+		try (WavFile wav = WavFile.newWavFile(out, 2, totalFrames, 24, sampleRate)) {
 			for (int pos = 0; pos < totalFrames; pos += buffer.getMemLength()) {
 				update.run();
 
@@ -95,9 +98,15 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 				load();
 			}
 
-			exchange.sendResponseHeaders(200, data.length);
+			exchange.sendResponseHeaders(200, 0);
+			log("Sent headers");
+
 			try (OutputStream out = exchange.getResponseBody()) {
-				out.write(data);
+				for (int i = 0; i < data.length; i += 1024) {
+					out.write(data, i, Math.min(1024, data.length - i));
+				}
+
+				log("Flushing stream...");
 				out.flush();
 			} catch (IOException e) {
 				warn(e.getMessage());

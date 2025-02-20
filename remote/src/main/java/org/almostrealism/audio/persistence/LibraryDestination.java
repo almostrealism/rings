@@ -16,17 +16,24 @@
 
 package org.almostrealism.audio.persistence;
 
+import org.almostrealism.audio.AudioLibrary;
+import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.io.SystemUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class LibraryDestination {
+	public static final String TEMP = "temp";
+
 	private String prefix;
 	private int index;
 
@@ -63,5 +70,55 @@ public class LibraryDestination {
 				throw new RuntimeException(e);
 			}
 		};
+	}
+
+	public void load(AudioLibrary library) {
+		try {
+			AudioLibraryPersistence.loadLibrary(library, in());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void save(AudioLibrary library) {
+		try {
+			AudioLibraryPersistence.saveLibrary(library, out());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Path getTemporaryPath() {
+		Path p = SystemUtils.getLocalDestination().resolve(TEMP);
+		File f = p.toFile();
+		if (!f.exists()) f.mkdir();
+		return p;
+	}
+
+	public File getTemporaryFile(String key, String extension) {
+		return getTemporaryPath().resolve(key + "." + extension).toFile();
+	}
+
+	public OutputStream getTemporaryDestination(String key, String extension) {
+		try {
+			return new FileOutputStream(getTemporaryFile(key, extension));
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public File getTemporaryWave(String key, WaveData data) {
+		try {
+			File f = getTemporaryFile(key, "wav");
+
+			if (!f.exists()) {
+				WavFile.write(data, f);
+			}
+
+			return f;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
