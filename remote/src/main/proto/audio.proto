@@ -17,6 +17,7 @@ message TraversalPolicyData {
 message CollectionData {
   TraversalPolicyData traversal_policy = 1;
   repeated double data = 2;
+  repeated float data_32 = 3;
 }
 
 message WaveRecording {
@@ -26,7 +27,7 @@ message WaveRecording {
 }
 
 message WaveDetailData {
-  string identifier = 1;
+  optional string identifier = 18;
 
   int32 sample_rate = 2;
   int32 channel_count = 3;
@@ -47,4 +48,6 @@ message WaveDetailData {
   CollectionData feature_data = 16;
 
   map<string, double> similarities = 11;
+
+  reserved 1;
 }

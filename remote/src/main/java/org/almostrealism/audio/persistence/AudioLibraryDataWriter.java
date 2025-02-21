@@ -101,7 +101,8 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 								.setKey(currentKey).setOrderIndex(index)
 								.addAllData(recordings).build()),
 						destination.out());
-				log("Saved " + recordings.size() + " recording chunks");
+				log("Saved " + recordings.size() + " recording chunks (" +
+						recordings.stream().filter(Audio.WaveDetailData::getSilent).count() + " silent)");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

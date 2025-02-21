@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -54,7 +55,7 @@ public class AudioLibraryPersistence {
 	public static void saveWaveDetails(WaveDetails details, String destination) throws IOException {
 		File f = new File(destination);
 		if (f.isDirectory()) {
-			f = new File(f, details.getIdentifier() + ".bin");
+			f = new File(f, Objects.requireNonNull(details.getIdentifier()) + ".bin");
 		}
 
 		encode(details, true).writeTo(new FileOutputStream(f));
@@ -235,10 +236,10 @@ public class AudioLibraryPersistence {
 
 	public static Audio.WaveDetailData encode(WaveDetails details, boolean includeAudio) {
 		Audio.WaveDetailData.Builder data = Audio.WaveDetailData.newBuilder()
-				.setIdentifier(details.getIdentifier())
 				.setSampleRate(details.getSampleRate())
 				.setChannelCount(details.getChannelCount())
 				.setFrameCount(details.getFrameCount())
+				.setSilent(details.isSilent())
 				.setFreqSampleRate(details.getFreqSampleRate())
 				.setFreqBinCount(details.getFreqBinCount())
 				.setFreqChannelCount(details.getFreqChannelCount())
@@ -250,15 +251,17 @@ public class AudioLibraryPersistence {
 				.setFeatureFrameCount(details.getFeatureFrameCount())
 				.setFeatureData(CollectionEncoder.encode(details.getFeatureData()))
 				.putAllSimilarities(details.getSimilarities());
+		if (details.getIdentifier() != null) data.setIdentifier(details.getIdentifier());
 		if (includeAudio) data.setData(CollectionEncoder.encode(details.getData()));
 		return data.build();
 	}
 
 	public static WaveDetails decode(Audio.WaveDetailData data) {
-		WaveDetails details = new WaveDetails(data.getIdentifier());
+		WaveDetails details = new WaveDetails(data.getIdentifier().isBlank() ? null : data.getIdentifier());
 		details.setSampleRate(data.getSampleRate());
 		details.setChannelCount(data.getChannelCount());
 		details.setFrameCount(data.getFrameCount());
+		details.setSilent(data.getSilent());
 		details.setFreqSampleRate(data.getFreqSampleRate());
 		details.setFreqBinCount(data.getFreqBinCount());
 		details.setFreqChannelCount(data.getFreqChannelCount());

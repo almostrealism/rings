@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.persistence;
 
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.line.BufferDefaults;
@@ -23,19 +24,25 @@ import org.almostrealism.audio.line.BufferedAudio;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.ConsoleFeatures;
-import org.almostrealism.util.KeyUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
+public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleFeatures {
 	private int sampleRate;
 	private boolean altBuffer;
-	private int cursor;
 
+	private int cursor;
+	private int batchCount, framesPerBatch;
 	private PackedCollection<?> bufferA;
 	private PackedCollection<?> bufferB;
+
+	private boolean silence[];
+	private BooleanSupplier silenceDetector;
 
 	private ExecutorService executor;
 	private Consumer<Audio.WaveDetailData> consumer;
@@ -50,14 +57,17 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 	}
 
 	public WaveDetailsOutputLine(int sampleRate, Consumer<Audio.WaveDetailData> consumer) {
-		this(sampleRate, 8 * BufferDefaults.defaultBufferSize, consumer);
+		this(sampleRate, 8, BufferDefaults.defaultBufferSize, consumer);
 	}
 
-	public WaveDetailsOutputLine(int sampleRate, int bufferSize,
+	public WaveDetailsOutputLine(int sampleRate, int batchCount, int framesPerBatch,
 								 Consumer<Audio.WaveDetailData> consumer) {
 		this.sampleRate = sampleRate;
-		this.bufferA = new PackedCollection<>(bufferSize);
-		this.bufferB = new PackedCollection<>(bufferSize);
+		this.batchCount = batchCount;
+		this.framesPerBatch = framesPerBatch;
+		this.bufferA = new PackedCollection<>(batchCount * framesPerBatch);
+		this.bufferB = new PackedCollection<>(batchCount * framesPerBatch);
+		this.silence = new boolean[batchCount];
 
 		this.executor = Executors.newSingleThreadExecutor();
 		this.consumer = consumer;
@@ -72,15 +82,21 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 
+	public BooleanSupplier getSilenceDetector() { return silenceDetector; }
+	public void setSilenceDetector(BooleanSupplier silenceDetector) {
+		this.silenceDetector = silenceDetector;
+	}
+
 	@Override
 	public void write(PackedCollection<?> sample) {
 		PackedCollection<?> output = getRecordingBuffer();
 
-		if (sample.getMemLength() > output.getMemLength() - cursor) {
-			throw new IllegalArgumentException("Sample is too large for destination");
+		if (sample.getMemLength() > output.getMemLength() - cursor || sample.getMemLength() != framesPerBatch) {
+			throw new IllegalArgumentException();
 		}
 
 		output.setMem(cursor, sample);
+		silence[cursor / framesPerBatch] = silenceDetector != null && silenceDetector.getAsBoolean();
 		cursor = (cursor + sample.getMemLength()) % output.getMemLength();
 
 		if (cursor == 0) {
@@ -100,17 +116,21 @@ public class WaveDetailsOutputLine implements OutputLine, ConsoleFeatures {
 	protected void publish() {
 		if (!isActive()) return;
 
-		WaveDetails details = new WaveDetails(KeyUtils.generateKey());
-		details.setSampleRate(getSampleRate());
-		details.setChannelCount(1);
-		details.setFrameCount(getBufferSize());
-		details.setData(getPublishingBuffer());
+		List<Audio.WaveDetailData> data = new ArrayList<>();
 
-		// TODO  If AudioLibraryPersistence.encode is going to happen on another thread
-		// TODO  it needs to have a strict time limit or it may still be reading when
-		// TODO  the buffer becomes active (on slower machines)
-		executor.submit(() ->
-				consumer.accept(AudioLibraryPersistence.encode(details, true)));
+		for (int batch = 0; batch < batchCount; batch++) {
+			WaveDetails details = new WaveDetails();
+			details.setSampleRate(getSampleRate());
+			details.setChannelCount(1);
+			details.setFrameCount(getBufferSize());
+			details.setData(getPublishingBuffer().range(shape(framesPerBatch), batch * framesPerBatch));
+			details.setSilent(silence[batch]);
+
+			// TODO  Do not store audio for silent batches?
+			data.add(AudioLibraryPersistence.encode(details, true));
+		}
+
+		executor.submit(() -> data.forEach(consumer));
 	}
 
 	@Override
