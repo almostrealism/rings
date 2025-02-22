@@ -179,26 +179,43 @@ public class AudioLibraryPersistence {
 
 	public static List<Audio.WaveDetailData> loadRecording(String key, String dataPrefix) {
 		try {
-			return loadRecording(key, new LibraryDestination(dataPrefix));
+			return loadRecording(key, new LibraryDestination(dataPrefix), false);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static List<Audio.WaveDetailData> loadRecording(String key, LibraryDestination destination) throws IOException {
-		return loadRecording(key, destination.in());
+	public static List<Audio.WaveDetailData> loadRecordingGroup(String key, String dataPrefix) {
+		try {
+			return loadRecording(key, new LibraryDestination(dataPrefix), true);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static List<Audio.WaveDetailData> loadRecording(String key, Supplier<InputStream> in) throws IOException {
+	public static List<Audio.WaveDetailData> loadRecording(String key, LibraryDestination destination, boolean group) throws IOException {
+		return loadRecording(key, destination.in(), group);
+	}
+
+	public static List<Audio.WaveDetailData> loadRecording(String key, Supplier<InputStream> in, boolean group) throws IOException {
 		InputStream input = in.get();
 
-		TreeSet<Audio.WaveRecording> recordings = new TreeSet<>(Comparator.comparing(Audio.WaveRecording::getOrderIndex));
+
+		TreeSet<Audio.WaveRecording> recordings;
+
+		if (group) {
+			recordings = new TreeSet<>(Comparator.comparing(Audio.WaveRecording::getGroupOrderIndex));
+		} else {
+			recordings = new TreeSet<>(Comparator.comparing(Audio.WaveRecording::getOrderIndex));
+		}
 
 		while (input != null) {
 			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
 
 			for (Audio.WaveRecording r : data.getRecordingsList()) {
-				if (key.equals(r.getKey())) {
+				if (group && key.equals(r.getGroupKey())) {
+					recordings.add(r);
+				} else if (!group && key.equals(r.getKey())) {
 					recordings.add(r);
 				}
 			}
@@ -214,17 +231,25 @@ public class AudioLibraryPersistence {
 
 	public static Set<String> listRecordings(String dataPrefix) {
 		try {
-			return listRecordings(new LibraryDestination(dataPrefix));
+			return listRecordings(new LibraryDestination(dataPrefix), false);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static Set<String> listRecordings(LibraryDestination destination) throws IOException {
-		return listRecordings(destination.in());
+	public static Set<String> listRecordingGroups(String dataPrefix) {
+		try {
+			return listRecordings(new LibraryDestination(dataPrefix), true);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static Set<String> listRecordings(Supplier<InputStream> in) throws IOException {
+	public static Set<String> listRecordings(LibraryDestination destination, boolean group) throws IOException {
+		return listRecordings(destination.in(), group);
+	}
+
+	public static Set<String> listRecordings(Supplier<InputStream> in, boolean group) throws IOException {
 		InputStream input = in.get();
 
 		Set<String> recordings = new HashSet<>();
@@ -234,7 +259,11 @@ public class AudioLibraryPersistence {
 						.newBuilder().mergeFrom(input).build();
 
 			for (Audio.WaveRecording r : data.getRecordingsList()) {
-				recordings.add(r.getKey());
+				if (group && r.hasGroupKey()) {
+					recordings.add(r.getGroupKey());
+				} else if (!group) {
+					recordings.add(r.getKey());
+				}
 			}
 
 			input = in.get();

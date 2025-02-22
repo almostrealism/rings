@@ -23,6 +23,10 @@ message CollectionData {
 message WaveRecording {
   string key = 1;
   int32 order_index = 2;
+
+  optional string group_key = 4;
+  optional int32 group_order_index = 5;
+
   repeated WaveDetailData data = 3;
 }
 

@@ -49,7 +49,7 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 	private boolean active;
 
 	public WaveDetailsOutputLine(AudioLibraryDataWriter writer) {
-		this(writer.queueRecording());
+		this(writer::queueData);
 	}
 
 	public WaveDetailsOutputLine(Consumer<Audio.WaveDetailData> consumer) {
@@ -122,7 +122,7 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 			WaveDetails details = new WaveDetails();
 			details.setSampleRate(getSampleRate());
 			details.setChannelCount(1);
-			details.setFrameCount(getBufferSize());
+			details.setFrameCount(framesPerBatch);
 			details.setData(getPublishingBuffer().range(shape(framesPerBatch), batch * framesPerBatch));
 			details.setSilent(silence[batch]);
 

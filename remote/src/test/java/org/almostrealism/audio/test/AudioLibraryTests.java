@@ -31,6 +31,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +56,16 @@ public class AudioLibraryTests implements TestFeatures {
 
 	@Test
 	public void loadRecording() throws IOException {
-		List<Audio.WaveDetailData> data =
-				AudioLibraryPersistence.loadRecording("recording_test", "recordings");
-		WaveData wave = AudioLibraryPersistence.toWaveData(data);
-		WavFile.write(wave, new File("results/recording_test.wav"));
+		List<String> keys = new ArrayList<>(AudioLibraryPersistence.listRecordings("recordings"));
+
+		for (int i = 0; i < keys.size(); i++) {
+			String key = keys.get(i);
+			List<Audio.WaveDetailData> data = AudioLibraryPersistence.loadRecording(key, "recordings");
+			log("Recording " + i + " contains " + data.size() + " parts " +
+							Arrays.toString(data.stream().mapToInt(d -> d.getSilent() ? 0 : 1).toArray()));
+			WaveData wave = AudioLibraryPersistence.toWaveData(data);
+			WavFile.write(wave, new File("results/recording_" + i + ".wav"));
+		}
 	}
 
 	@Test

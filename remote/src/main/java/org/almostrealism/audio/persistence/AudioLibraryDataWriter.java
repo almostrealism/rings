@@ -23,51 +23,58 @@ import org.almostrealism.util.KeyUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 public class AudioLibraryDataWriter implements ConsoleFeatures {
-	public static final int RECORD_COUNT = 4;
+	public static final int RECORD_SIZE = 64;
+	public static final int WRITE_SIZE = 32;
 
-	private String key;
+	private String groupKey;
 	private LibraryDestination destination;
 	private ExecutorService executor;
 
-	private List<Audio.WaveDetailData> recordings;
-	private int count;
+	private String sampleKey;
+	private List<Audio.WaveDetailData> buffer;
+	private int sampleCount;
+
+	private BlockingQueue<Audio.WaveRecording> queue;
+	private int groupCount;
+
+	private int totalData;
 
 	public AudioLibraryDataWriter(LibraryDestination destination) {
 		this.destination = destination;
 		this.executor = Executors.newSingleThreadExecutor();
+		this.queue = new ArrayBlockingQueue<>(WRITE_SIZE * 2);
 	}
 
-	public AudioLibraryDataWriter(String key, String prefix) {
+	public AudioLibraryDataWriter(String groupKey, String prefix) {
 		this(new LibraryDestination(prefix));
-		restart(key);
-	}
-
-	public Consumer<Audio.WaveDetailData> queueRecording() {
-		return data -> getRecordings().add(data);
+		restart(groupKey);
 	}
 
 	public String start() { return start(KeyUtils.generateKey()); }
 
-	public String start(String key) {
-		if (this.key != null) {
+	public String start(String groupKey) {
+		if (this.groupKey != null) {
 			throw new IllegalArgumentException();
 		}
 
-		this.key = key;
-		return key;
+		this.groupKey = groupKey;
+		return groupKey;
 	}
 
 	public void reset() {
-		write(recordings);
-		this.count = 0;
-		this.recordings = null;
-		this.key = null;
+		flushBuffer();
+		flushQueue();
+		this.buffer = null;
+		this.groupKey = null;
+		this.sampleKey = null;
+		this.groupCount = 0;
+		this.sampleCount = 0;
 	}
 
 	public String restart() {
@@ -79,29 +86,82 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		return start(key);
 	}
 
-	protected List<Audio.WaveDetailData> getRecordings() {
-		if (recordings == null || recordings.size() >= RECORD_COUNT) {
-			write(recordings);
-			recordings = new ArrayList<>();
+	public void queueData(Audio.WaveDetailData data) {
+		if (buffer == null || buffer.size() >= RECORD_SIZE) {
+			flushBuffer();
 		}
 
-		return recordings;
+		if (data.getSilent()) {
+			// Sample is over when silence is detected
+			endSample();
+		} else if (sampleKey == null) {
+			// Start a new sample when sound is detected,
+			// if there is not already a sample in progress
+			startSample();
+		}
+
+		buffer.add(data);
 	}
 
-	protected void write(List<Audio.WaveDetailData> recordings) {
-		if (recordings == null) return;
+	public void startSample() {
+		if (sampleKey != null) {
+			throw new UnsupportedOperationException();
+		}
 
-		int index = count++;
-		String currentKey = Objects.requireNonNull(key);
+		flushBuffer();
+		sampleKey = KeyUtils.generateKey();
+	}
+
+	public void endSample() {
+		if (sampleKey != null) {
+			flushBuffer();
+		}
+
+		sampleKey = null;
+		sampleCount = 0;
+	}
+
+	protected void flushBuffer() {
+		if (buffer == null) {
+			buffer = new ArrayList<>();
+		} else if (!buffer.isEmpty()) {
+			queueRecording(buffer);
+			buffer = new ArrayList<>();
+		}
+	}
+
+	protected void queueRecording(List<Audio.WaveDetailData> buffer) {
+		Audio.WaveRecording.Builder r = Audio.WaveRecording.newBuilder()
+				.setGroupKey(groupKey).setGroupOrderIndex(groupCount++)
+				.addAllData(buffer);
+		if (sampleKey != null) {
+			r.setKey(sampleKey).setOrderIndex(sampleCount++);
+		}
+
+		queueRecording(r.build());
+	}
+
+	protected void queueRecording(Audio.WaveRecording recording) {
+		queue.add(recording);
+
+		if (queue.size() >= WRITE_SIZE) {
+			flushQueue();
+		}
+	}
+
+	protected void flushQueue() {
+		List<Audio.WaveRecording> recordings = new ArrayList<>();
+		queue.drainTo(recordings);
 		executor.submit(() -> {
 			try {
-				AudioLibraryPersistence.saveRecordings(
-						List.of(Audio.WaveRecording.newBuilder()
-								.setKey(currentKey).setOrderIndex(index)
-								.addAllData(recordings).build()),
-						destination.out());
-				log("Saved " + recordings.size() + " recording chunks (" +
-						recordings.stream().filter(Audio.WaveDetailData::getSilent).count() + " silent)");
+				AudioLibraryPersistence.saveRecordings(recordings, destination.out());
+				totalData += recordings.stream()
+						.mapToInt(Audio.WaveRecording::getDataCount)
+						.sum();
+//				log("Saved " + totalData + " recording chunks so far (" +
+//						Arrays.toString(recordings.stream()
+//								.map(Audio.WaveRecording::getKey)
+//								.toArray()) + ")");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
