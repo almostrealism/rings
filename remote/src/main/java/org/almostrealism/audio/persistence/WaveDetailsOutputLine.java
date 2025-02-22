@@ -57,7 +57,7 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 	}
 
 	public WaveDetailsOutputLine(int sampleRate, Consumer<Audio.WaveDetailData> consumer) {
-		this(sampleRate, 8, BufferDefaults.defaultBufferSize, consumer);
+		this(sampleRate, 16, BufferDefaults.batchSize, consumer);
 	}
 
 	public WaveDetailsOutputLine(int sampleRate, int batchCount, int framesPerBatch,

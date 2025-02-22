@@ -93,7 +93,6 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 
 		int index = count++;
 		String currentKey = Objects.requireNonNull(key);
-		log("Writing " + recordings.size() + " recording chunks");
 		executor.submit(() -> {
 			try {
 				AudioLibraryPersistence.saveRecordings(

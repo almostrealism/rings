@@ -44,7 +44,7 @@ public class SilenceDetectionOutputLine implements OutputLine, CellFeatures {
 	}
 
 	public boolean isSilence() {
-		return max.toDouble(0) < threshold;
+		return max.toDouble() < threshold;
 	}
 
 	@Override

@@ -41,6 +41,6 @@ public class AudioLineInputRecord implements AudioLineOperation, CellFeatures {
 		op.add(record.write(c(input)));
 		op.add(runner.tick());
 
-		return new TemporalRunner(runner.setup(), op);
+		return new TemporalRunner(runner.setup(), op, true);
 	}
 }

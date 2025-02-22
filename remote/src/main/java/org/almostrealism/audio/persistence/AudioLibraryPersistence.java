@@ -159,7 +159,15 @@ public class AudioLibraryPersistence {
 			Audio.AudioLibraryData data = Audio.AudioLibraryData.newBuilder().mergeFrom(input).build();
 
 			for (Audio.WaveDetailData d : data.getInfoMap().values()) {
-				library.include(decode(d));
+				WaveDetails details = decode(d);
+
+				if (details.getIdentifier() == null) {
+					Console.root().features(AudioLibraryPersistence.class)
+							.warn("Missing identifier for details (" +
+									details.getFrameCount() + " frames)");
+				} else {
+					library.include(details);
+				}
 			}
 
 			input = in.get();
