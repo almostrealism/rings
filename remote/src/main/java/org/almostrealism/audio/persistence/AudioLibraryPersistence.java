@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.persistence;
 
+import io.almostrealism.code.Precision;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
@@ -243,6 +244,10 @@ public class AudioLibraryPersistence {
 	}
 
 	public static Audio.WaveDetailData encode(WaveDetails details, boolean includeAudio) {
+		return encode(details, includeAudio ? Precision.FP32 : null);
+	}
+
+	public static Audio.WaveDetailData encode(WaveDetails details, Precision audioPrecision) {
 		Audio.WaveDetailData.Builder data = Audio.WaveDetailData.newBuilder()
 				.setSampleRate(details.getSampleRate())
 				.setChannelCount(details.getChannelCount())
@@ -252,15 +257,18 @@ public class AudioLibraryPersistence {
 				.setFreqBinCount(details.getFreqBinCount())
 				.setFreqChannelCount(details.getFreqChannelCount())
 				.setFreqFrameCount(details.getFreqFrameCount())
-				.setFreqData(CollectionEncoder.encode(details.getFreqData()))
+				.setFreqData(CollectionEncoder.encode(details.getFreqData(), Precision.FP32))
 				.setFeatureSampleRate(details.getFeatureSampleRate())
 				.setFeatureBinCount(details.getFeatureBinCount())
 				.setFeatureChannelCount(details.getFeatureChannelCount())
 				.setFeatureFrameCount(details.getFeatureFrameCount())
-				.setFeatureData(CollectionEncoder.encode(details.getFeatureData()))
+				.setFeatureData(CollectionEncoder.encode(details.getFeatureData(), Precision.FP32))
 				.putAllSimilarities(details.getSimilarities());
 		if (details.getIdentifier() != null) data.setIdentifier(details.getIdentifier());
-		if (includeAudio) data.setData(CollectionEncoder.encode(details.getData()));
+		if (audioPrecision != null) {
+			data.setData(CollectionEncoder.encode(details.getData(), audioPrecision));
+		}
+
 		return data.build();
 	}
 

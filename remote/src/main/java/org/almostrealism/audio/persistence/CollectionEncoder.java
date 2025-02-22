@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.persistence;
 
+import io.almostrealism.code.Precision;
 import org.almostrealism.audio.api.Audio;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.PackedCollection;
@@ -24,11 +25,23 @@ import java.util.stream.IntStream;
 
 public class CollectionEncoder {
 	public static Audio.CollectionData encode(PackedCollection<?> c) {
+		return encode(c, Precision.FP64);
+	}
+
+	public static Audio.CollectionData encode(PackedCollection<?> c, Precision precision) {
 		if (c == null) return Audio.CollectionData.getDefaultInstance();
 
 		Audio.CollectionData.Builder data = Audio.CollectionData.newBuilder();
 		data.setTraversalPolicy(encode(c.getShape()));
-		c.doubleStream().forEach(data::addData);
+
+		if (precision == Precision.FP64) {
+			c.doubleStream().forEach(data::addData);
+		} else if (precision == Precision.FP32) {
+			c.doubleStream().forEach(d -> data.addData32((float) d));
+		} else {
+			throw new IllegalArgumentException();
+		}
+
 		return data.build();
 	}
 
@@ -57,8 +70,18 @@ public class CollectionEncoder {
 		TraversalPolicy shape = decode(data.getTraversalPolicy());
 		if (shape.getDimensions() == 0) return null;
 
-		destination.setMem(destinationOffset,
-				data.getDataList().stream().mapToDouble(d -> d).toArray());
+		if (data.getDataList().isEmpty()) {
+			float f[] = new float[data.getData32Count()];
+			for (int i = 0; i < f.length; i++) {
+				f[i] = data.getData32(i);
+			}
+
+			destination.setMem(destinationOffset, f);
+		} else {
+			destination.setMem(destinationOffset,
+					data.getDataList().stream().mapToDouble(d -> d).toArray());
+		}
+
 		return destination.range(shape, destinationOffset);
 	}
 
