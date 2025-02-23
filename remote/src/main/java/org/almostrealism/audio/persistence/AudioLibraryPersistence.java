@@ -32,8 +32,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -237,9 +239,9 @@ public class AudioLibraryPersistence {
 		}
 	}
 
-	public static Set<String> listRecordingGroups(String dataPrefix) {
+	public static Map<String, Set<String>> listRecordingGrouped(String dataPrefix) {
 		try {
-			return listRecordings(new LibraryDestination(dataPrefix), true);
+			return listRecordingsGrouped(new LibraryDestination(dataPrefix));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -249,20 +251,45 @@ public class AudioLibraryPersistence {
 		return listRecordings(destination.in(), group);
 	}
 
+	public static Map<String, Set<String>> listRecordingsGrouped(LibraryDestination destination) throws IOException {
+		return listRecordingsGrouped(destination.in());
+	}
+
 	public static Set<String> listRecordings(Supplier<InputStream> in, boolean group) throws IOException {
+		if (group) {
+			return listRecordingsGrouped(in).keySet();
+		} else {
+			return listRecordingsFlat(in);
+		}
+	}
+
+	public static Map<String, Set<String>> listRecordingsGrouped(Supplier<InputStream> in) throws IOException {
+		return listRecordings(in, null);
+	}
+
+	public static Set<String> listRecordingsFlat(Supplier<InputStream> in) throws IOException {
+		Set<String> keys = new HashSet<>();
+		listRecordings(in, keys::add);
+		return keys;
+	}
+
+	protected static Map<String, Set<String>> listRecordings(Supplier<InputStream> in, Consumer<String> keys) throws IOException {
 		InputStream input = in.get();
 
-		Set<String> recordings = new HashSet<>();
+		Map<String, Set<String>> recordings = new HashMap<>();
 
 		while (input != null) {
 			Audio.AudioLibraryData data = Audio.AudioLibraryData
 						.newBuilder().mergeFrom(input).build();
 
 			for (Audio.WaveRecording r : data.getRecordingsList()) {
-				if (group && r.hasGroupKey()) {
-					recordings.add(r.getGroupKey());
-				} else if (!group) {
-					recordings.add(r.getKey());
+				if (r.hasGroupKey()) {
+					recordings.putIfAbsent(r.getGroupKey(), new HashSet<>());
+					recordings.get(r.getGroupKey()).add(r.getKey());
+				}
+
+				if (keys != null) {
+					keys.accept(r.getKey());
 				}
 			}
 

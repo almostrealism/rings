@@ -27,6 +27,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class AudioLibraryDataWriter implements ConsoleFeatures {
 	public static final int RECORD_SIZE = 64;
@@ -39,11 +40,10 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	private String sampleKey;
 	private List<Audio.WaveDetailData> buffer;
 	private int sampleCount;
+	private Consumer<String> sampleListener;
 
 	private BlockingQueue<Audio.WaveRecording> queue;
 	private int groupCount;
-
-	private int totalData;
 
 	public AudioLibraryDataWriter(LibraryDestination destination) {
 		this.destination = destination;
@@ -54,6 +54,14 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	public AudioLibraryDataWriter(String groupKey, String prefix) {
 		this(new LibraryDestination(prefix));
 		restart(groupKey);
+	}
+
+	public Consumer<String> getSampleListener() {
+		return sampleListener;
+	}
+
+	public void setSampleListener(Consumer<String> sampleListener) {
+		this.sampleListener = sampleListener;
 	}
 
 	public String start() { return start(KeyUtils.generateKey()); }
@@ -115,6 +123,7 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	public void endSample() {
 		if (sampleKey != null) {
 			flushBuffer();
+			sampleListener.accept(sampleKey);
 		}
 
 		sampleKey = null;
@@ -155,9 +164,9 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		executor.submit(() -> {
 			try {
 				AudioLibraryPersistence.saveRecordings(recordings, destination.out());
-				totalData += recordings.stream()
-						.mapToInt(Audio.WaveRecording::getDataCount)
-						.sum();
+//				totalData += recordings.stream()
+//						.mapToInt(Audio.WaveRecording::getDataCount)
+//						.sum();
 //				log("Saved " + totalData + " recording chunks so far (" +
 //						Arrays.toString(recordings.stream()
 //								.map(Audio.WaveRecording::getKey)
