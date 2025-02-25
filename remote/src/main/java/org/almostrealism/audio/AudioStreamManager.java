@@ -35,7 +35,6 @@ public class AudioStreamManager implements ConsoleFeatures {
 	public static final int PORT = 7799;
 
 	public static double defaultLiveDuration = 180.0;
-	public static int defaultPlayerCount = 9;
 
 	private Map<String, BufferedAudioPlayer> players;
 	public AudioServer server;
@@ -45,13 +44,9 @@ public class AudioStreamManager implements ConsoleFeatures {
 		this.server = new AudioServer(PORT);
 	}
 
-	public void start() throws IOException {
-		server.start();
-	}
+	public void start() throws IOException { server.start(); }
 
-	public AudioServer getServer() {
-		return server;
-	}
+	public AudioServer getServer() { return server; }
 
 	public SampleMixer getMixer(String stream) {
 		BufferedAudioPlayer player = getPlayer(stream);

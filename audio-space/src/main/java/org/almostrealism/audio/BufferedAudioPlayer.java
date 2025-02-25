@@ -55,7 +55,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private boolean loaded[];
 	private boolean muted[];
 	private double volume[];
-	private double duration[];
+	private double playbackDuration[];
+	private double sampleDuration[];
 	private double passthrough;
 	private boolean playing;
 
@@ -82,7 +83,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		this.loaded = new boolean[playerCount];
 		this.muted = new boolean[playerCount];
 		this.volume = new double[playerCount];
-		this.duration = new double[playerCount];
+		this.playbackDuration = new double[playerCount];
+		this.sampleDuration = new double[playerCount];
 
 		this.mixer = new SampleMixer(playerCount);
 	}
@@ -155,7 +157,8 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
 		loaded[player] = true;
-		duration[player] = frames / (double) source.sampleRate();
+		playbackDuration[player] = frames / (double) source.sampleRate();
+		sampleDuration[player] = playbackDuration[player];
 
 		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
 	}
@@ -180,10 +183,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 			int frames = Math.min(result[0].length, bufferFrames);
 			loaded[player] = true;
-			duration[player] = frames / (double) sampleRate;
+			playbackDuration[player] = frames / (double) sampleRate;
 
+			getData(player).getCollection().clear();
 			getData(player).getCollection().setMem(0, result[0], 0, frames);
-			log("Loaded " + frames + " frames and set duration to " + duration[player]);
+			log("Loaded " + frames + " frames and set duration to " + playbackDuration[player]);
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}
@@ -191,7 +195,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	protected void clear(int player) {
 		loaded[player] = false;
-		duration[player] = 0.0;
+		playbackDuration[player] = 0.0;
 	}
 
 	protected void updateLevel() {
@@ -200,7 +204,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		for (int c = 0; c < mixer.getChannelCount(); c++) {
 			boolean audible = loaded[c] && !muted[c];
 			setLevel(c, audible ? volume[c] : 0.0);
-			setLoopDuration(c, playing ? this.duration[c] : 0.0);
+			setLoopDuration(c, playing ? this.playbackDuration[c] : 0.0);
 		}
 
 		if (outputLine != null) {
@@ -303,6 +307,19 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		updateLevel();
 	}
 
+	public void setPlaybackDuration(int player, double duration) {
+		this.playbackDuration[player] = duration;
+		updateLevel();
+	}
+
+	public double getPlaybackDuration(int player) {
+		return playbackDuration[player];
+	}
+
+	public double getSampleDuration(int player) {
+		return sampleDuration[player];
+	}
+
 	protected double getFrame() { return clock.getFrame(); }
 
 	protected void setFrame(double frame) {
@@ -335,7 +352,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	@Override
 	public double getTotalDuration() {
-		return DoubleStream.of(duration).max().orElse(0.0);
+		return DoubleStream.of(playbackDuration).max().orElse(0.0);
 	}
 
 	@Override
