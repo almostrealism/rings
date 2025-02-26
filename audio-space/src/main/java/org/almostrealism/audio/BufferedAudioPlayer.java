@@ -184,6 +184,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			int frames = Math.min(result[0].length, bufferFrames);
 			loaded[player] = true;
 			playbackDuration[player] = frames / (double) sampleRate;
+			sampleDuration[player] = playbackDuration[player];
 
 			getData(player).getCollection().clear();
 			getData(player).getCollection().setMem(0, result[0], 0, frames);
