@@ -33,7 +33,7 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public static final long timingPad = -3;
 
 	public static boolean enableVerbose = false;
-	public static int logRate = 32; // 1024;
+	public static int logRate = 1024;
 
 	private Consumer<Runnable> executor;
 	private TemporalRunner process;
