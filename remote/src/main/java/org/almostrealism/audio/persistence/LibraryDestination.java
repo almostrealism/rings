@@ -19,6 +19,7 @@ package org.almostrealism.audio.persistence;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.io.SystemUtils;
 
 import java.io.File;
@@ -29,9 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import java.util.Base64;
+import java.util.Objects;
 import java.util.function.Supplier;
 
-public class LibraryDestination {
+public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
 
 	private String prefix;
@@ -90,13 +93,15 @@ public class LibraryDestination {
 
 	public Path getTemporaryPath() {
 		Path p = SystemUtils.getLocalDestination().resolve(TEMP);
-		File f = p.toFile();
-		if (!f.exists()) f.mkdir();
-		return p;
+		return SystemUtils.ensureDirectoryExists(p);
 	}
 
 	public File getTemporaryFile(String key, String extension) {
-		return getTemporaryPath().resolve(key + "." + extension).toFile();
+		if (key.contains("/")) {
+			key = Base64.getEncoder().encodeToString(key.getBytes());
+		}
+
+		return temporary(getTemporaryPath().resolve(key + "." + extension).toFile());
 	}
 
 	public OutputStream getTemporaryDestination(String key, String extension) {
@@ -119,6 +124,35 @@ public class LibraryDestination {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public void cleanup() {
+		try {
+			clean(getTemporaryPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected File temporary(File f) {
+		f.deleteOnExit();
+		return f;
+	}
+
+	protected void clean(Path directory) {
+		Path root = directory.getRoot();
+		if (root != null && root.equals(directory)) {
+			throw new IllegalArgumentException();
+		}
+
+		File dir = directory.toFile();
+		if (!dir.isDirectory() || dir.getPath().length() < 3) {
+			throw new IllegalArgumentException();
+		}
+
+		for (File f : Objects.requireNonNull(dir.listFiles())) {
+			f.delete();
 		}
 	}
 }
