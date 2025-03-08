@@ -28,9 +28,20 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AudioLibraryDataWriter implements ConsoleFeatures {
+	/**
+	 * Number of {@link Audio.WaveDetailData}s to be buffered before
+	 * being grouped together as a {@link Audio.WaveRecording} and
+	 * queued for writing to the library.
+	 */
 	public static final int RECORD_SIZE = 64;
+
+	/**
+	 * Number of {@link Audio.WaveRecording}s to be queued
+	 * before being actually written to disk.
+	 */
 	public static final int WRITE_SIZE = 32;
 
 	private String groupKey;
@@ -41,9 +52,12 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	private List<Audio.WaveDetailData> buffer;
 	private int sampleCount;
 	private Consumer<String> sampleListener;
+	private Supplier<String> groupKeyProvider;
 
 	private BlockingQueue<Audio.WaveRecording> queue;
 	private int groupCount;
+	private int groupTotalFrames;
+	private int groupFrameLimit;
 
 	public AudioLibraryDataWriter(LibraryDestination destination) {
 		this.destination = destination;
@@ -56,12 +70,23 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		restart(groupKey);
 	}
 
-	public Consumer<String> getSampleListener() {
-		return sampleListener;
-	}
-
+	public Consumer<String> getSampleListener() { return sampleListener; }
 	public void setSampleListener(Consumer<String> sampleListener) {
 		this.sampleListener = sampleListener;
+	}
+
+	public Supplier<String> getGroupKeyProvider() { return groupKeyProvider; }
+	public void setGroupKeyProvider(Supplier<String> groupKeyProvider) {
+		this.groupKeyProvider = groupKeyProvider;
+	}
+
+	public int getGroupFrameLimit() { return groupFrameLimit; }
+	public void setGroupFrameLimit(int groupFrameLimit) {
+		this.groupFrameLimit = groupFrameLimit;
+	}
+
+	public boolean isGroupLimitExceeded() {
+		return groupFrameLimit > 0 && groupTotalFrames >= groupFrameLimit;
 	}
 
 	public String start() { return start(KeyUtils.generateKey()); }
@@ -76,25 +101,49 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	}
 
 	public void reset() {
-		flushBuffer();
-		flushQueue();
-		this.buffer = null;
+		reset(true);
+	}
+
+	/**
+	 * Reset the writer, optionally flushing any buffered data.
+	 *
+	 * @param flush  If true, buffered data will be flushed. This will
+	 *              allow all data to be properly written to the library.
+	 *              Setting this to false preserves the buffered data,
+	 *              which will end up written to the next group. This
+	 *              is useful for switching between groups instantly,
+	 *              but otherwise it will result in old sample being
+	 *              written to a later, unrelated group.
+	 */
+	protected void reset(boolean flush) {
+		if (flush) {
+			flushBuffer();
+			flushQueue();
+			this.buffer = null;
+		} else if (sampleKey != null) {
+			warn("Resetting without ending active sample");
+		}
+
 		this.groupKey = null;
 		this.sampleKey = null;
 		this.groupCount = 0;
+		this.groupTotalFrames = 0;
 		this.sampleCount = 0;
 	}
 
-	public String restart() {
-		return restart(KeyUtils.generateKey());
-	}
-
+	/**
+	 * Restart with a new key. Note that some data in the buffer
+	 * may end up written to the new group when using this method,
+	 * unlike when directly starting and resetting group writing
+	 * with {@link #reset()} and {@link #start()}.
+	 */
 	public String restart(String key) {
-		reset();
+		log("Restarting with key " + key);
+		reset(false);
 		return start(key);
 	}
 
-	public void queueData(Audio.WaveDetailData data) {
+	public void bufferData(Audio.WaveDetailData data) {
 		if (buffer == null || buffer.size() >= RECORD_SIZE) {
 			flushBuffer();
 		}
@@ -114,6 +163,10 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	public void startSample() {
 		if (sampleKey != null) {
 			throw new UnsupportedOperationException();
+		} else if (isGroupLimitExceeded()) {
+			// Do not allow any new samples to begin if the
+			// group limit is already exceeded
+			return;
 		}
 
 		flushBuffer();
@@ -150,12 +203,42 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		queueRecording(r.build());
 	}
 
-	protected void queueRecording(Audio.WaveRecording recording) {
+	private void queueRecording(Audio.WaveRecording recording) {
+		groupTotalFrames += recording.getDataList().stream()
+				.mapToInt(Audio.WaveDetailData::getFrameCount)
+				.sum();
+
 		queue.add(recording);
 
 		if (queue.size() >= WRITE_SIZE) {
 			flushQueue();
 		}
+
+		checkGroupLimit();
+	}
+
+	private String checkGroupLimit() {
+		if (!isGroupLimitExceeded()) {
+			return null;
+		}
+
+		// If there is a currently active sample, allow a grace period
+		// for the sample to end before the group is ended
+		double gracePeriod = sampleKey == null ? 1.0 : 1.3;
+		int limit = (int) (groupFrameLimit * gracePeriod);
+
+		if (sampleKey != null && groupTotalFrames >= limit) {
+			// If the grace period is exceeded, end the sample. No new
+			// samples will be allowed to start and the next queued
+			// recording will deal with properly ending the group
+			log("Ending sample due to group limit");
+			endSample();
+			return null;
+		} else if (getGroupKeyProvider() == null) {
+			throw new UnsupportedOperationException();
+		}
+
+		return restart(getGroupKeyProvider().get());
 	}
 
 	protected void flushQueue() {

@@ -49,7 +49,7 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 	private boolean active;
 
 	public WaveDetailsOutputLine(AudioLibraryDataWriter writer) {
-		this(writer::queueData);
+		this(writer::bufferData);
 	}
 
 	public WaveDetailsOutputLine(Consumer<Audio.WaveDetailData> consumer) {
