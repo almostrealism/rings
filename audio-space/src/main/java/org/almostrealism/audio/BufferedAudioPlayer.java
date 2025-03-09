@@ -174,7 +174,6 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 		int frames = resetPlayer(player, source.getCollection().getMemLength());
 		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
-		log("Loaded " + frames + " frames and set duration to " + playbackDuration[player]);
 	}
 
 	protected void update(int player, String file) {
@@ -197,7 +196,6 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 			int frames = resetPlayer(player, result[0].length);
 			getData(player).getCollection().setMem(0, result[0], 0, frames);
-			log("Loaded " + frames + " frames and set duration to " + playbackDuration[player]);
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}
