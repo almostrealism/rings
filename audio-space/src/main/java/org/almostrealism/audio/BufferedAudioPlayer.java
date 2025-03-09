@@ -310,6 +310,9 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		updateLevel();
 	}
 
+	@Override
+	public double getVolume() { return volume[0]; }
+
 	public void setMuted(int player, boolean muted) {
 		this.muted[player] = muted;
 		updateLevel();

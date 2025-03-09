@@ -26,6 +26,7 @@ public interface AudioPlayer {
 	boolean isReady();
 
 	void setVolume(double volume);
+	double getVolume();
 
 	void seek(double time);
 	double getCurrentTime();
