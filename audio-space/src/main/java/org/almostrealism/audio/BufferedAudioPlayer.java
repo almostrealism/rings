@@ -149,18 +149,32 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		initMonitor();
 	}
 
+	private int updateDuration(int player, int frameCount) {
+		int frames = Math.min(frameCount, bufferFrames);
+		loaded[player] = true;
+		playbackDuration[player] = frames / (double) sampleRate;
+		sampleDuration[player] = playbackDuration[player];
+		return frames;
+	}
+
+	private int resetPlayer(int player, int frameCount) {
+		int frames = updateDuration(player, frameCount);
+		getData(player).getCollection().clear();
+		return frames;
+	}
+
 	protected void update(int player, WaveData source) {
 		if (source == null) {
 			clear(player);
 			return;
+		} else if (source.getSampleRate() != sampleRate) {
+			warn("Sample rate " + source.getSampleRate() + " != " + sampleRate);
+			return;
 		}
 
-		int frames = Math.min(source.getCollection().getMemLength(), bufferFrames);
-		loaded[player] = true;
-		playbackDuration[player] = frames / (double) source.sampleRate();
-		sampleDuration[player] = playbackDuration[player];
-
+		int frames = resetPlayer(player, source.getCollection().getMemLength());
 		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
+		log("Loaded " + frames + " frames and set duration to " + playbackDuration[player]);
 	}
 
 	protected void update(int player, String file) {
@@ -181,12 +195,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
-			int frames = Math.min(result[0].length, bufferFrames);
-			loaded[player] = true;
-			playbackDuration[player] = frames / (double) sampleRate;
-			sampleDuration[player] = playbackDuration[player];
-
-			getData(player).getCollection().clear();
+			int frames = resetPlayer(player, result[0].length);
 			getData(player).getCollection().setMem(0, result[0], 0, frames);
 			log("Loaded " + frames + " frames and set duration to " + playbackDuration[player]);
 		} catch (IOException e) {
