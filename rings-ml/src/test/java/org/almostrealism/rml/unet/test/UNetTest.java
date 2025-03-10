@@ -575,12 +575,15 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim).traverseEach());
 			List<Dataset<PackedCollection<?>>> split = all.split(0.4);
 
-			CompiledModel unet = unet(dim).compile(profile);
-			ModelOptimizer optimizer = new ModelOptimizer(unet, () -> split.get(0));
+			Model unet = unet(dim);
+			unet.setLearningRate(1e-4);
+
+			CompiledModel model = unet(dim).compile(profile);
+			ModelOptimizer optimizer = new ModelOptimizer(model, () -> split.get(0));
 			optimizer.setLogFrequency(1);
 			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
 
-			int iterations = 10;
+			int iterations = 15;
 			optimizer.optimize(iterations);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
