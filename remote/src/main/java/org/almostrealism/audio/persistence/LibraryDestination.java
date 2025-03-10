@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -50,6 +51,22 @@ public class LibraryDestination implements ConsoleFeatures {
 
 	protected String nextFile() {
 		return prefix + "_" + index++ + ".bin";
+	}
+
+	protected Iterator<String> files() {
+		return new Iterator<>() {
+			int idx = 0;
+
+			@Override
+			public boolean hasNext() {
+				return new File(prefix + "_" + idx + ".bin").exists();
+			}
+
+			@Override
+			public String next() {
+				return prefix + "_" + idx++ + ".bin";
+			}
+		};
 	}
 
 	public Supplier<InputStream> in() {
@@ -125,6 +142,10 @@ public class LibraryDestination implements ConsoleFeatures {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void delete() {
+		files().forEachRemaining(f -> new File(f).delete());
 	}
 
 	public void cleanup() {
