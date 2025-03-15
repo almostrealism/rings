@@ -35,6 +35,7 @@ import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
+import org.almostrealism.optimize.AdamOptimizer;
 import org.almostrealism.optimize.Dataset;
 import org.almostrealism.optimize.ModelOptimizer;
 import org.almostrealism.optimize.ValueTarget;
@@ -576,9 +577,10 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			List<Dataset<PackedCollection<?>>> split = all.split(0.4);
 
 			Model unet = unet(dim);
-			unet.setLearningRate(1e-4);
+			// unet.setParameterUpdate(ParameterUpdate.scaled(c(1e-3)));
+			unet.setParameterUpdate(new AdamOptimizer(1e-3, 0.9, 0.999));
 
-			CompiledModel model = unet(dim).compile(profile);
+			CompiledModel model = unet.compile(profile);
 			ModelOptimizer optimizer = new ModelOptimizer(model, () -> split.get(0));
 			optimizer.setLogFrequency(1);
 			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
