@@ -37,6 +37,7 @@ import java.util.function.Supplier;
 
 public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
+	public static final String SAMPLES = "samples";
 
 	private String prefix;
 	private int index;
@@ -190,5 +191,10 @@ public class LibraryDestination implements ConsoleFeatures {
 		for (File f : Objects.requireNonNull(dir.listFiles())) {
 			f.delete();
 		}
+	}
+
+	public static Path getDefaultLibraryRoot() {
+		Path p = SystemUtils.getLocalDestination().resolve(SAMPLES);
+		return SystemUtils.ensureDirectoryExists(p);
 	}
 }
