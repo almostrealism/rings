@@ -65,7 +65,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		}
 	}
 
-	int batchSize = 1;
+	int batchSize = 4;
 	int channels = 1;
 	int dimFactors[] = { 1, 2, 4 };
 	// int dimFactors[] = { 1, 2, 4, 8 };
@@ -290,7 +290,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		SequentialBlock block = new SequentialBlock(shape(batchSize, 1));
 		block.add(sinPositionEmbeddings(dim));
 		block.add(dense(dim, timeLen));
-		block.add(gelu(shape(timeLen)));
+		block.add(gelu());
 		block.add(dense(timeLen, outLen));
 		return block;
 	}
@@ -532,15 +532,30 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 	}
 
 	public Iterable<PackedCollection<?>> loadInputs(File imagesDir, TraversalPolicy shape) throws IOException {
+		TraversalPolicy item = shape.traverse(1).item();
 		List<PackedCollection<?>> data = new ArrayList<>();
 
-		for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
-			if (file.getName().endsWith(".png")) {
-				if (channels == 1) {
-					data.add(GraphicsConverter.loadGrayscale(file).reshape(shape));
-				} else {
-					data.add(GraphicsConverter.loadChannels(file).reshape(shape));
-				}
+		int n = 0;
+		PackedCollection<PackedCollection<?>> current = new PackedCollection<>(shape.traverse(1));
+
+		f: for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
+			if (!file.getName().endsWith(".png")) continue f;
+
+			PackedCollection<?> input;
+
+			if (channels == 1) {
+				input = GraphicsConverter.loadGrayscale(file).reshape(item);
+			} else {
+				input = GraphicsConverter.loadChannels(file).reshape(item);
+			}
+
+			current.set(n, input);
+			n++;
+
+			if (n >= batchSize) {
+				data.add(current);
+				current = new PackedCollection<>(shape.traverse(1));
+				n = 0;
 			}
 		}
 
@@ -585,7 +600,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			optimizer.setLogFrequency(1);
 			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
 
-			int iterations = 15;
+			int iterations = 8;
 			optimizer.optimize(iterations);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
