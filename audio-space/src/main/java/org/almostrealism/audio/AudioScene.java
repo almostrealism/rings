@@ -265,7 +265,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public void setLibrary(AudioLibrary library, DoubleConsumer progress) {
 		this.library = library;
-		patterns.setTree(getLibrary().getRoot(), progress);
+
+		if (getLibrary() != null) {
+			patterns.setTree(getLibrary().getRoot(), progress);
+		}
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree) {
