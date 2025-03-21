@@ -308,56 +308,6 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		return residual;
 	}
 
-	protected Function<TraversalPolicy, Block> upsample(int dim) {
-		return upsample(dim, dim);
-	}
-
-	protected Function<TraversalPolicy, Block> upsample(int dim, int dimOut) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int h = shape.length(2);
-			int w = shape.length(3);
-
-			SequentialBlock upsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
-			upsample.add(layer("repeat2d",
-					shape(batchSize, inputChannels, h, w),
-					shape(batchSize, inputChannels, h * 2, w * 2),
-					(in) ->
-							c(in)
-									.repeat(4, 2)
-									.repeat(3, 2)
-									.reshape(batchSize, inputChannels, h * 2, w * 2)));
-			upsample.add(convolution2d(dim, dimOut, 3, 1));
-			return upsample;
-		};
-	}
-
-	protected Function<TraversalPolicy, Block> downsample(int dim) {
-		return downsample(dim, dim);
-	}
-
-	protected Function<TraversalPolicy, Block> downsample(int dim, int dimOut) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int h = shape.length(2);
-			int w = shape.length(3);
-
-			SequentialBlock downsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
-			downsample.add(layer("enumerate",
-					shape(batchSize, inputChannels, h, w),
-					shape(batchSize, inputChannels * 4, h / 2, w / 2),
-					in -> c(in).traverse(2)
-							.enumerate(3, 2)
-							.enumerate(3, 2)
-							.reshape(batchSize, inputChannels, (h * w) / 4, 4)
-							.traverse(2)
-							.enumerate(3, 1)
-							.reshape(batchSize, inputChannels * 4, h / 2, w / 2)));
-			downsample.add(convolution2d(dim * 4, dimOut, 1, 0));
-			return downsample;
-		};
-	}
-
 	protected Model unet(int dim) {
 		return unet(dim, null, null, false, 4);
 	}
