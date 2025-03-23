@@ -65,7 +65,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		}
 	}
 
-	int batchSize = 4;
+	int batchSize = 1;
 	int channels = 1;
 	int dimFactors[] = { 1, 2, 4 };
 	// int dimFactors[] = { 1, 2, 4, 8 };
@@ -278,7 +278,9 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 					multiply(
 							c(in).repeat(1, hd).reshape(batchSize, hd),
 							cp(values).repeat(batchSize).reshape(batchSize, hd));
-			return concat(shape(batchSize, dim), sin(embeddings), cos(embeddings));
+			return concat(shape(batchSize, dim).traverse(1),
+						sin(embeddings.traverse(1)),
+						cos(embeddings.traverse(1)));
 		});
 	}
 
