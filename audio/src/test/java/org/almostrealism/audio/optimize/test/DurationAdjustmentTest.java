@@ -19,7 +19,7 @@ package org.almostrealism.audio.optimize.test;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
@@ -43,7 +43,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		TraversalPolicy adjustmentShape = shape(10 * sr, 1).traverse(1);
 
 		PackedCollection<?> adjustmentData = c(value(adjustmentShape, 0))
-				._greaterThan(c(5.0), c(1.0), c(0.5))
+				.greaterThan(c(5.0), c(1.0), c(0.5))
 				.get().evaluate(WaveOutput.timeline.getValue().range(adjustmentShape).traverse(1));
 
 		WaveCell adjustment = new WaveCell(adjustmentData, clock.frameScalar());

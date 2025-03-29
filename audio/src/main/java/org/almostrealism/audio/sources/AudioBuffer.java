@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,21 +20,30 @@ import org.almostrealism.collect.PackedCollection;
 
 public class AudioBuffer {
 	private BufferDetails details;
-	private PackedCollection<?> buffer;
+	private PackedCollection<?> input;
+	private PackedCollection<?> output;
 
-	public AudioBuffer(BufferDetails details, PackedCollection<?> buffer) {
+	public AudioBuffer(BufferDetails details,
+					   PackedCollection<?> input,
+					   PackedCollection<?> output) {
 		this.details = details;
-		this.buffer = buffer;
+		this.input = input;
+		this.output = output;
 
-		if (details.getFrames() != buffer.getMemLength()) {
+		if (details.getFrames() != output.getMemLength() ||
+				details.getFrames() != input.getMemLength()) {
 			throw new IllegalArgumentException();
 		}
 	}
 
 	public BufferDetails getDetails() { return details; }
-	public PackedCollection<?> getBuffer() { return buffer; }
+	public PackedCollection<?> getInputBuffer() { return input; }
+	public PackedCollection<?> getOutputBuffer() { return output; }
 
 	public static AudioBuffer create(int sampleRate, int frames) {
-		return new AudioBuffer(new BufferDetails(sampleRate, frames), new PackedCollection<>(frames));
+		return new AudioBuffer(
+				new BufferDetails(sampleRate, frames),
+				new PackedCollection<>(frames),
+				new PackedCollection<>(frames));
 	}
 }

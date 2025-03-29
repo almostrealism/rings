@@ -24,7 +24,7 @@ import javax.swing.JScrollPane;
 import org.almostrealism.audio.JavaAudioSample;
 import org.almostrealism.audio.JavaAudioMixer;
 import org.almostrealism.audio.line.LineUtilities;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import io.almostrealism.relation.Evaluable;
 
 public class BeatBoxDisplay extends JPanel implements ActionListener, KeyListener, Evaluable<byte[]> {

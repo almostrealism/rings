@@ -20,8 +20,12 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.audio.line.AudioLineOperation;
+import org.almostrealism.audio.line.BufferedAudio;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.InputLine;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
@@ -179,15 +183,22 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 	public CellList sum() { return sum(this); }
 
 	public BufferedOutputScheduler buffer(String location) {
-		return buffer(new SharedMemoryOutputLine(location));
+		return buffer(new SharedMemoryAudioLine(location));
 	}
 
-	public BufferedOutputScheduler buffer(OutputLine line) {
-		return BufferedOutputScheduler.create(line, this);
+	public BufferedOutputScheduler buffer(BufferedAudio line) {
+		return BufferedOutputScheduler.create(
+				line instanceof InputLine ? (InputLine) line : null,
+				line instanceof OutputLine ? (OutputLine) line : null,
+				this);
 	}
 
 	public TemporalRunner buffer(Producer<PackedCollection<?>> destination) {
 		return buffer(this, destination);
+	}
+
+	public AudioLineOperation toLineOperation() {
+		return (in, out, frames) -> buffer(out);
 	}
 
 	public Supplier<Runnable> export(PackedCollection<PackedCollection<?>> destinations) {

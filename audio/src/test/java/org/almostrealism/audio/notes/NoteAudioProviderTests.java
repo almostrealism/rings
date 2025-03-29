@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;

@@ -25,7 +25,7 @@ import io.almostrealism.code.Computation;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.PolymorphicAudioCell;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;

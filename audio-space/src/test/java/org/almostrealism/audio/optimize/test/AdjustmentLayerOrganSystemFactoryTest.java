@@ -19,7 +19,7 @@ package org.almostrealism.audio.optimize.test;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.graph.ReceptorCell;
 import org.junit.Test;

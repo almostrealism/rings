@@ -16,8 +16,6 @@
 
 package org.almostrealism.audio.line;
 
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.ByteFunction;
 import org.almostrealism.graph.DataReceiver;

@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 
 import org.almostrealism.audio.JavaAudioSample;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 
 public class SampleDisplayPane extends JPanel implements ActionListener,
 														MouseListener,

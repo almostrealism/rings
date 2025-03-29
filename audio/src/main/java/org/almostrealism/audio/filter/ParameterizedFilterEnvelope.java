@@ -18,13 +18,11 @@ package org.almostrealism.audio.filter;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.mem.Heap;
 
 import java.util.List;
 

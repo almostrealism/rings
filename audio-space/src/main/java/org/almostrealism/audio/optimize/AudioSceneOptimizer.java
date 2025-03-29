@@ -19,9 +19,11 @@ package org.almostrealism.audio.optimize;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
@@ -36,7 +38,7 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.NoteAudioSourceAggregator;
@@ -92,10 +94,24 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		super(scene.getChannelCount() + 1, null, breeder, generator, POPULATION_FILE, totalCycles);
 		setChildrenFunction(
 				children -> {
-					if (children.isEmpty()) throw new IllegalArgumentException();
+					boolean initPopulation = false;
 
 					if (population == null) {
-						population = new AudioScenePopulation(scene, children);
+						population = new AudioScenePopulation(scene, new ArrayList<>());
+						initPopulation = true;
+					}
+
+					int expectedCount = children.isEmpty() ?
+							PopulationOptimizer.popSize : children.size();
+					List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+					IntStream.range(0, expectedCount)
+							.mapToObj(i -> i < children.size() ? children.get(i) : null)
+							.map(g -> population.validateGenome(g) ? g : null)
+							.map(g -> g == null ? getGenerator().get() : g)
+							.forEach(genomes::add);
+					population.setGenomes(genomes);
+
+					if (initPopulation) {
 						AudioHealthComputation hc = (AudioHealthComputation) getHealthComputation();
 						hc.setWaveDetailsProcessor(detailsProcessor);
 
@@ -106,9 +122,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 							log("AudioScenePopulation initialized (getCells duration = " +
 									AudioScene.console.timing("getCells").getTotal() + ")");
 						}
-					} else {
-						population.setGenomes(children);
 					}
+
+					resetGenerator();
 
 					return population;
 				});

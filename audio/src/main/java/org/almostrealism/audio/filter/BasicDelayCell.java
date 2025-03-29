@@ -17,7 +17,7 @@
 package org.almostrealism.audio.filter;
 
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.SummationCell;
 import io.almostrealism.relation.Producer;

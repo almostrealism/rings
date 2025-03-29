@@ -86,7 +86,7 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 	}
 
 	public List<File> getExportFiles(int channel) {
-		if (getStems() == null) {
+		if (getStems() == null || getStems().isEmpty()) {
 			return Collections.emptyList();
 		}
 

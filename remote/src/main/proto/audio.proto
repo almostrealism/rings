@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package almostrealism.audio;
 
-option java_package = "com.almostrealism.audio.api";
+option java_package = "org.almostrealism.audio.api";
 
 message AudioLibraryData {
   map<string, WaveDetailData> info = 1;
+  repeated WaveRecording recordings = 2;
 }
 
 message TraversalPolicyData {
@@ -16,15 +17,28 @@ message TraversalPolicyData {
 message CollectionData {
   TraversalPolicyData traversal_policy = 1;
   repeated double data = 2;
+  repeated float data_32 = 3;
+}
+
+message WaveRecording {
+  string key = 1;
+  int32 order_index = 2;
+
+  optional string group_key = 4;
+  optional int32 group_order_index = 5;
+  optional bool silent = 6;
+
+  repeated WaveDetailData data = 3;
 }
 
 message WaveDetailData {
-  string identifier = 1;
+  optional string identifier = 18;
 
   int32 sample_rate = 2;
   int32 channel_count = 3;
   int32 frame_count = 4;
   CollectionData data = 5;
+  bool silent = 17;
 
   double freq_sample_rate = 6;
   int32 freq_channel_count = 7;
@@ -39,4 +53,6 @@ message WaveDetailData {
   CollectionData feature_data = 16;
 
   map<string, double> similarities = 11;
+
+  reserved 1;
 }

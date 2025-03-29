@@ -1,6 +1,6 @@
 package org.almostrealism.audio.line.test;
 
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.LineUtilities;
 import org.junit.Test;

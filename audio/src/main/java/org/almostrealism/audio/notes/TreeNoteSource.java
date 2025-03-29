@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.almostrealism.audio.notes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.uml.Named;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.FileWaveDataProviderFilter;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
@@ -48,7 +49,7 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	private Double bpm;
 	private Double splitDurationBeats;
 
-	private List<Filter> filters;
+	private List<FileWaveDataProviderFilter> filters;
 
 	public TreeNoteSource() { this(null); }
 
@@ -56,7 +57,8 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 		this(tree, WesternChromatic.C1);
 	}
 
-	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree, KeyPosition<?> root) {
+	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree,
+						  KeyPosition<?> root) {
 		setTree(tree);
 		setRoot(root);
 		this.filters = new ArrayList<>();
@@ -95,7 +97,7 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 		if (!alwaysComputeNotes) computeProviders();
 	}
 
-	public List<Filter> getFilters() { return filters; }
+	public List<FileWaveDataProviderFilter> getFilters() { return filters; }
 
 	@Override
 	public void setTuning(KeyboardTuning tuning) {
@@ -113,7 +115,9 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public String getName() {
 		if (filters.isEmpty()) return getOrigin();
 		if (filters.size() > 1) return getOrigin() + " (" + filters.size() + " filters)";
-		return filters.get(0).filterOn.readableName() + " " + filters.get(0).filterType.readableName() + " \"" + filters.get(0).filter + "\"";
+		return filters.get(0).getFilterOn().readableName() + " " +
+				filters.get(0).getFilterType().readableName() + " \"" +
+				filters.get(0).getFilter() + "\"";
 	}
 
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
@@ -149,7 +153,7 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 					}
 
 					boolean match = filters.stream()
-							.map(filter -> filter.filterType.matches(filter.filterOn.select(tree, p), filter.filter))
+							.map(filter -> filter.matches(tree, p))
 							.reduce((a, b) -> a & b)
 							.orElse(true);
 
@@ -202,102 +206,9 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 		return CellFeatures.console;
 	}
 
-	public static TreeNoteSource fromFile(File root, Filter filter) {
+	public static TreeNoteSource fromFile(File root, FileWaveDataProviderFilter filter) {
 		TreeNoteSource t = new TreeNoteSource(new FileWaveDataProviderNode(root));
 		t.getFilters().add(filter);
 		return t;
-	}
-
-	public enum FilterOn {
-		PATH, NAME;
-
-		String select(FileWaveDataProviderTree tree, FileWaveDataProvider p) {
-			return switch (this) {
-				case NAME -> new File(p.getResourcePath()).getName();
-				case PATH -> new File(tree.getRelativePath(p.getResourcePath())).getParentFile().getPath();
-			};
-		}
-
-		public String readableName() {
-			return switch (this) {
-				case NAME -> "File Name";
-				case PATH -> "File Path";
-			};
-		}
-
-		public static FilterOn fromReadableName(String name) {
-			return switch (name) {
-				case "File Name" -> NAME;
-				case "File Path" -> PATH;
-				default -> null;
-			};
-		}
-	}
-
-	public enum FilterType {
-		EQUALS, EQUALS_IGNORE_CASE, STARTS_WITH, ENDS_WITH, CONTAINS, CONTAINS_IGNORE_CASE;
-
-		boolean matches(String value, String filter) {
-			if (filter == null || filter.isEmpty()) return false;
-
-			return switch (this) {
-				case EQUALS -> value.equals(filter);
-				case EQUALS_IGNORE_CASE -> value.equalsIgnoreCase(filter);
-				case STARTS_WITH -> value.startsWith(filter);
-				case ENDS_WITH -> value.endsWith(filter);
-				case CONTAINS -> value.contains(filter);
-				case CONTAINS_IGNORE_CASE -> value.toLowerCase().contains(filter.toLowerCase());
-			};
-		}
-
-		public String readableName() {
-			return switch (this) {
-				case EQUALS -> "Exactly Matches";
-				case EQUALS_IGNORE_CASE -> "Matches (Case Insensitive)";
-				case STARTS_WITH -> "Starts With";
-				case ENDS_WITH -> "Ends With";
-				case CONTAINS -> "Contains";
-				case CONTAINS_IGNORE_CASE -> "Contains (Case Insensitive)";
-			};
-		}
-
-		public static FilterType fromReadableName(String name) {
-			return switch (name) {
-				case "Exactly Matches" -> EQUALS;
-				case "Matches (Case Insensitive)" -> EQUALS_IGNORE_CASE;
-				case "Starts With" -> STARTS_WITH;
-				case "Ends With" -> ENDS_WITH;
-				case "Contains" -> CONTAINS;
-				case "Contains (Case Insensitive)" -> CONTAINS_IGNORE_CASE;
-				default -> null;
-			};
-		}
-	}
-
-	public static class Filter {
-		private FilterOn filterOn;
-		private FilterType filterType;
-		private String filter;
-
-		public Filter() { }
-
-		public Filter(FilterOn filterOn, FilterType filterType, String filter) {
-			this.filterOn = filterOn;
-			this.filterType = filterType;
-			this.filter = filter;
-		}
-
-		public FilterOn getFilterOn() { return filterOn; }
-		public void setFilterOn(FilterOn filterOn) { this.filterOn = filterOn; }
-
-		public FilterType getFilterType() { return filterType; }
-		public void setFilterType(FilterType filterType) { this.filterType = filterType; }
-
-		public String getFilter() { return filter; }
-		public void setFilter(String filter) { this.filter = filter; }
-
-		public static Filter nameStartsWith(String prefix) {
-			return new Filter(FilterOn.NAME, FilterType.STARTS_WITH, prefix);
-		}
 	}
 }

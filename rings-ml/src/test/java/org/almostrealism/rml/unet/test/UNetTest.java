@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,34 +17,45 @@
 package org.almostrealism.rml.unet.test;
 
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.compute.Process;
 import io.almostrealism.profile.OperationProfileNode;
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.HardwareOperator;
+import org.almostrealism.collect.computations.Random;
+import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.layers.CellularLayer;
+import org.almostrealism.ml.AttentionFeatures;
 import org.almostrealism.ml.DiffusionFeatures;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
+import org.almostrealism.optimize.Dataset;
+import org.almostrealism.optimize.ModelOptimizer;
+import org.almostrealism.optimize.ValueTarget;
+import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.util.SignalWireDeliveryProvider;
 import org.almostrealism.util.TestFeatures;
 import org.almostrealism.util.TestUtils;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class UNetTest implements DiffusionFeatures, TestFeatures {
+public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatures, TestFeatures {
 
 	static {
 		if (TestUtils.getTrainTests()) {
-			HardwareOperator.enableLargeInstructionSetMonitoring = true;
 			MetalMemoryProvider.enableLargeAllocationLogging = true;
 
 			Console.root().addListener(OutputFeatures.fileOutput("results/logs/train.out"));
@@ -57,6 +68,22 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 	int channels = 1;
 	int dimFactors[] = { 1, 2, 4 };
 	// int dimFactors[] = { 1, 2, 4, 8 };
+
+	int timesteps = 300;
+
+	CollectionProducer<PackedCollection<?>> betas = linearBetaSchedule(timesteps);
+
+	CollectionProducer<PackedCollection<?>> alphas = c(1.0).subtract(betas);
+	CollectionProducer<PackedCollection<?>> alphasCumProd = cumulativeProduct(alphas, false);
+	CollectionProducer<PackedCollection<?>> alphasCumProdPrev = cumulativeProduct(alphas, true);
+	CollectionProducer<PackedCollection<?>> sqrtRecipAlphas = sqrt(alphas.reciprocal());
+
+	PackedCollection<?> sqrtAlphasCumProd = sqrt(alphasCumProd).evaluate();
+	PackedCollection<?> sqrtOneMinusAlphasCumProd = sqrt(c(1.0).subtract(alphasCumProd)).evaluate();
+
+	CollectionProducer<PackedCollection<?>> posteriorVariance = betas
+			.multiply(c(1.0).subtract(alphasCumProdPrev))
+			.divide(c(1.0).subtract(alphasCumProd));
 
 
 	protected Block block(int dim, int dimOut, int rows, int cols) {
@@ -131,7 +158,7 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		}
 
 		SequentialBlock resNet = new SequentialBlock(shape(batchSize, dim, rows, cols));
-		CellularLayer resConv = dim != dimOut ?
+		Block resConv = dim != dimOut ?
 				resNet.branch(convolution2d(dim, dimOut, 1, 0)) : null;
 
 		resNet.add(block(dim, dimOut, groups, rows, cols, scaleShift));
@@ -141,29 +168,8 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		return resNet;
 	}
 
-	protected Function<TraversalPolicy, CellularLayer> similarity(
-			Block k, int c, int s1, int s2) {
-		if (k.getOutputShape().getDimensions() != 4 ||
-				k.getOutputShape().length(1) != c ||
-				k.getOutputShape().length(3) != s2) {
-			throw new IllegalArgumentException();
-		}
 
-		return compose("similarity", k, shape(batchSize, c, s1, s2), (a, b) -> {
-			CollectionProducer<PackedCollection<?>> pa = c(a)
-					.traverse(2)
-					.enumerate(3, 1)
-					.traverse(3)
-					.repeat(s2);
-			CollectionProducer<PackedCollection<?>> pb = c(b)
-					.traverse(2)
-					.enumerate(3, 1)
-					.repeat(s1);
-			return multiply(pa, pb).sum(4);
-		});
-	}
-
-	protected Function<TraversalPolicy, CellularLayer> weightedSum(
+	public Function<TraversalPolicy, CellularLayer> weightedSum(
 			Block v, int heads, int dimHead, int size) {
 		if (v.getOutputShape().getDimensions() != 4 ||
 				v.getOutputShape().length(1) != heads ||
@@ -187,25 +193,6 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 							.traverse(3)
 							.enumerate(4, 1)
 							.sum(4);
-		});
-	}
-
-	protected Function<TraversalPolicy, CellularLayer> context(Block v, int heads, int dimHead, int size) {
-		if (v.getOutputShape().getDimensions() != 4 ||
-				v.getOutputShape().length(1) != heads ||
-				v.getOutputShape().length(2) != dimHead ||
-				v.getOutputShape().length(3) != size) {
-			throw new IllegalArgumentException();
-		}
-
-		return compose("context", v, shape(batchSize, heads, dimHead, dimHead), (a, b) -> {
-			CollectionProducer<PackedCollection<?>> pa = c(a)
-					.traverse(3)
-					.repeat(dimHead);
-			CollectionProducer<PackedCollection<?>> pb = c(b)
-					.traverse(2)
-					.repeat(dimHead);
-			return multiply(pa, pb).sum(4);
 		});
 	}
 
@@ -244,58 +231,6 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 				.enumerate(1, 2, 1)
 				.reshape(batchSize, hiddenDim, rows, cols);
 		attention.add(convolution2d(hiddenDim, dim, 1, 0));
-		return attention;
-	}
-
-	public Function<TraversalPolicy, Block> linearAttention(int dim) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int rows = shape.length(2);
-			int cols = shape.length(3);
-			return linearAttention(dim, inputChannels, rows, cols);
-		};
-	}
-
-	public Block linearAttention(int dim, int inputChannels, int rows, int cols) {
-		return linearAttention(dim, 4, 32, inputChannels, rows, cols);
-	}
-
-	public Block linearAttention(int dim, int heads, int dimHead,
-								 int inputChannels, int rows, int cols) {
-		double scale = 1.0 / Math.sqrt(dimHead);
-		int hiddenDim = dimHead * heads;
-		int size = rows * cols;
-
-		TraversalPolicy shape = shape(batchSize, inputChannels, rows, cols);
-		TraversalPolicy componentShape = shape(batchSize, heads, dimHead, size);
-
-		SequentialBlock attention = new SequentialBlock(shape);
-		attention.add(convolution2d(dim, hiddenDim * 3, 1, 0, false));
-
-		attention
-				.reshape(batchSize, 3, hiddenDim * size)
-				.enumerate(shape(batchSize, 1, hiddenDim * size))
-				.reshape(3, batchSize, heads, dimHead, size);
-
-		List<Block> qkv = attention.split(componentShape, 1);
-		Block q = qkv.get(0)
-				.andThen(scale(scale))
-				.reshape(batchSize, heads, dimHead * size)
-				.andThen(softmax(false))
-				.reshape(batchSize, heads, dimHead, size);
-		Block v = qkv.get(2);
-
-		attention.add(softmax(false));
-		attention.add(context(v, heads, dimHead, size));
-		attention.add(similarity(q, heads, dimHead, size));
-		attention.reshape(batchSize, hiddenDim, rows, cols);
-		attention.add(convolution2d(hiddenDim, dim, 1, 0));
-		attention.add(norm());
-
-		if (!attention.getOutputShape().equalsIgnoreAxis(shape)) {
-			throw new IllegalArgumentException();
-		}
-
 		return attention;
 	}
 
@@ -514,6 +449,147 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		return unet;
 	}
 
+	public CollectionProducer<PackedCollection<?>> linearBetaSchedule(int timesteps) {
+		double betaStart = 0.0001;
+		double betaEnd = 0.02;
+		return linear(betaStart, betaEnd, timesteps);
+	}
+
+	public CollectionProducer<PackedCollection<?>> extract(CollectionProducer<PackedCollection<?>> a,
+														   CollectionProducer<PackedCollection<?>> t,
+														   TraversalPolicy xShape) {
+		if (t.getShape().getDimensions() != 1) {
+			throw new IllegalArgumentException();
+		}
+
+		int batches = t.getShape().length(0);
+		CollectionProducer<PackedCollection<?>> out = a.all().valueAt(t); // a.valueAt(integers(0, batches), t);
+
+		int depth = xShape.getDimensions();
+		TraversalPolicy resultShape =
+				padDimensions(shape(batches), 1, depth, true);
+		return out.reshape(resultShape);
+	}
+
+	public CollectionProducer<PackedCollection<?>> imageTransform(CollectionProducer<PackedCollection<?>> image) {
+		return image.multiply(2).subtract(1.0);
+	}
+
+	public CollectionProducer<PackedCollection<?>> imageTransformReverse(Producer<PackedCollection<?>> data) {
+		return c(data).add(1.0).divide(2);
+	}
+
+	public CollectionProducer<PackedCollection<?>> qSample(
+			CollectionProducer<PackedCollection<?>> xStart,
+			CollectionProducer<PackedCollection<?>> t) {
+		return qSample(xStart, t, null);
+	}
+
+	public CollectionProducer<PackedCollection<?>> qSample(
+														   CollectionProducer<PackedCollection<?>> xStart,
+														   CollectionProducer<PackedCollection<?>> t,
+														   Producer<PackedCollection<?>> noise) {
+		if (noise == null) {
+			noise = randn(shape(xStart));
+		}
+
+		CollectionProducer<PackedCollection<?>> sqrtAlphasCumProdT =
+				extract(cp(sqrtAlphasCumProd), t, shape(xStart));
+		CollectionProducer<PackedCollection<?>> sqrtOneMinusAlphasCumProdT =
+				extract(cp(sqrtOneMinusAlphasCumProd), t, shape(xStart));
+		return xStart.multiply(sqrtAlphasCumProdT)
+				.add(sqrtOneMinusAlphasCumProdT.multiply(noise));
+	}
+
+	public CollectionProducer<PackedCollection<?>> getNoisyImage(
+																 CollectionProducer<PackedCollection<?>> xStart,
+																 CollectionProducer<PackedCollection<?>> t) {
+		TraversalPolicy shape = shape(xStart);
+		Evaluable<PackedCollection<?>> qSample = qSample(
+				cv(shape, 0),
+				cv(shape(batchSize), 1),
+				cv(shape, 2)).get();
+
+		Random randn = randn(shape);
+		PackedCollection<?> xIn = xStart.evaluate();
+		PackedCollection<?> tIn = t.evaluate();
+		PackedCollection<?> noise = randn.evaluate();
+		PackedCollection<?> xNoisy = qSample.evaluate(xIn, tIn, noise);
+		return imageTransformReverse(cp(xNoisy));
+	}
+
+	@Test
+	public void imageTransform() throws IOException {
+		CollectionProducer<PackedCollection<?>> data =
+				imageTransform(channels(new File("/Users/michael/Desktop/output_cats_128.jpg")));
+		log(data.getShape());
+
+		PackedCollection<?> t = pack(299);
+		Producer<PackedCollection<?>> p = (Producer) Process.optimized(getNoisyImage(data, cp(t)));
+
+		saveChannels("results/test_out.png", p).get().run();
+	}
+
+	public Iterable<PackedCollection<?>> loadInputs(File imagesDir, TraversalPolicy shape) throws IOException {
+		List<PackedCollection<?>> data = new ArrayList<>();
+
+		for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
+			if (file.getName().endsWith(".png")) {
+				if (channels == 1) {
+					data.add(GraphicsConverter.loadGrayscale(file).reshape(shape));
+				} else {
+					data.add(GraphicsConverter.loadChannels(file).reshape(shape));
+				}
+			}
+		}
+
+		return data;
+	}
+
+	public Dataset<PackedCollection<?>> loadDataset(File imagesDir, TraversalPolicy shape) throws IOException {
+		Evaluable<PackedCollection<?>> qSample = qSample(
+												cv(shape, 0),
+												cv(shape(batchSize), 1),
+												cv(shape, 2)).get();
+		Random randn = randn(shape);
+
+		return Dataset.of(loadInputs(imagesDir, shape), xStart -> {
+			if (!xStart.getShape().equalsIgnoreAxis(shape)) {
+				throw new IllegalArgumentException();
+			}
+
+			randn.refresh();
+			PackedCollection<?> noise = randn.evaluate();
+			PackedCollection<?> t = new PackedCollection<>(batchSize, 1)
+					.fill(() -> (int) (Math.random() * timesteps));
+			PackedCollection<?> xNoisy = qSample.evaluate(xStart.each(), t, noise.each());
+			List<ValueTarget<PackedCollection<?>>> result = new ArrayList<>();
+			result.add(ValueTarget.of(xNoisy, noise).withArguments(t));
+			return result;
+		});
+	}
+
+	public void runUnet(int dim, OperationProfileNode profile) {
+		try {
+			File images = new File("generated_images_28");
+			Dataset<PackedCollection<?>> all = loadDataset(images, shape(batchSize, channels, dim, dim).traverseEach());
+			List<Dataset<PackedCollection<?>>> split = all.split(0.4);
+
+			Model unet = unet(dim);
+			unet.setLearningRate(1e-4);
+
+			CompiledModel model = unet(dim).compile(profile);
+			ModelOptimizer optimizer = new ModelOptimizer(model, () -> split.get(0));
+			optimizer.setLogFrequency(1);
+			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
+
+			int iterations = 15;
+			optimizer.optimize(iterations);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Test
 	public void unet() throws IOException {
 		int dim = 28;
@@ -522,19 +598,7 @@ public class UNetTest implements DiffusionFeatures, TestFeatures {
 		boolean failed = false;
 
 		try {
-			profile(profile, () -> {
-				CompiledModel unet = unet(dim).compile(profile);
-				alert("UNet test is starting");
-
-				PackedCollection<?> image = new PackedCollection<>(batchSize, channels, dim, dim).randnFill();
-				PackedCollection<?> time = new PackedCollection<>(batchSize, 1).randnFill();
-
-				unet.forward(image, time);
-				alert("UNet test completed forward pass");
-
-				unet.backward(new PackedCollection<>(unet.getOutputShape()).randFill());
-				alert("UNet test completed backward pass");
-			});
+			profile(profile, () -> runUnet(dim, profile));
 		} catch (Exception e) {
 			alert("UNet test failed", e);
 			failed = true;

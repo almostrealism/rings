@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ public class WaveDetails {
 	private int channelCount;
 	private int frameCount;
 	private PackedCollection<?> data;
+	private boolean silent;
 
 	private double freqSampleRate;
 	private int freqChannelCount;
@@ -42,6 +43,10 @@ public class WaveDetails {
 	private PackedCollection<?> featureData;
 
 	private Map<String, Double> similarities;
+
+	public WaveDetails() {
+		this(null);
+	}
 
 	public WaveDetails(String identifier) {
 		this(identifier, -1);
@@ -88,6 +93,9 @@ public class WaveDetails {
 	public void setData(PackedCollection<?> data) {
 		this.data = data;
 	}
+
+	public boolean isSilent() { return silent; }
+	public void setSilent(boolean silent) { this.silent = silent; }
 
 	public double getFreqSampleRate() {
 		return freqSampleRate;

@@ -17,7 +17,7 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;

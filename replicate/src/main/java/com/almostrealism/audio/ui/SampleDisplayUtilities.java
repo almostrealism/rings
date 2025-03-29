@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 
 import org.almostrealism.audio.JavaAudioSample;
 import org.almostrealism.audio.line.LineUtilities;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 
 public class SampleDisplayUtilities {
 	public static void showSplit(JavaAudioSample s) {

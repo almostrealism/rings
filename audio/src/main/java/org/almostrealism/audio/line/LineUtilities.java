@@ -2,7 +2,6 @@ package org.almostrealism.audio.line;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.JavaAudioSample;
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
 import java.io.BufferedInputStream;

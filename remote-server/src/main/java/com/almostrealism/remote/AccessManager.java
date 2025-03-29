@@ -16,7 +16,7 @@
 
 package com.almostrealism.remote;
 
-import com.almostrealism.remote.api.Generation;
+import org.almostrealism.remote.api.Generation;
 
 public interface AccessManager {
 	default boolean authorize(Generation.AccessKey key, String requestId) {

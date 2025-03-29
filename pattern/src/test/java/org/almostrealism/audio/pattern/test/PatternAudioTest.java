@@ -17,7 +17,7 @@
 package org.almostrealism.audio.pattern.test;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;

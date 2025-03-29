@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.line;
 
-import org.almostrealism.audio.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Source;
 import io.almostrealism.relation.Producer;

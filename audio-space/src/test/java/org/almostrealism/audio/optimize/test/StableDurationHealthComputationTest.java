@@ -26,7 +26,7 @@ import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.CellAdapter;

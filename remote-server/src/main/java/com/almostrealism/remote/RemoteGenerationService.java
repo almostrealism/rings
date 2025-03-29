@@ -16,14 +16,13 @@
 
 package com.almostrealism.remote;
 
-import com.almostrealism.remote.api.Generation;
-import com.almostrealism.remote.api.GeneratorGrpc;
+import org.almostrealism.remote.api.Generation;
+import org.almostrealism.remote.api.GeneratorGrpc;
 import com.almostrealism.remote.ops.RemoteGenerate;
 import com.almostrealism.remote.ops.RemoteRefresh;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.generative.GenerationResourceManager;
 
 public class RemoteGenerationService extends GeneratorGrpc.GeneratorImplBase {
 	private AccessManager accessManager;

@@ -15,8 +15,14 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
+import org.almostrealism.io.Console;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.function.Function;
 
 public class WavFile implements AutoCloseable {
@@ -685,10 +691,8 @@ public class WavFile implements AutoCloseable {
 	}
 
 	public static void write(WaveData data, File f) throws IOException {
-		if (data.getCollection().getMemLength() > 0) {
-			// System.out.println("Writing " + frames + " frames");
-		} else {
-			System.out.println("WaveOutput: No frames to write");
+		if (data.getCollection().getMemLength() <= 0) {
+			Console.root.features(WavFile.class).log("No frames to write");
 			return;
 		}
 

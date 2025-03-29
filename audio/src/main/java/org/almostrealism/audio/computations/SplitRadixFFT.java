@@ -17,7 +17,6 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Process;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;

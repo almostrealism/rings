@@ -16,7 +16,7 @@
 
 package org.almostrealism.audio.filter;
 
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.CodeFeatures;

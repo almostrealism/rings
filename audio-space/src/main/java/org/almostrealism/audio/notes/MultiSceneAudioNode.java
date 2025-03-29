@@ -18,11 +18,12 @@ package org.almostrealism.audio.notes;
 
 import java.util.List;
 
+// TODO  Rename to MultiNoteAudioNode
 public class MultiSceneAudioNode implements NoteAudioNode {
-	private final SceneAudioNode[] children;
+	private final NoteAudioNode[] children;
 
 	public MultiSceneAudioNode(int sceneCount) {
-		children = new SceneAudioNode[sceneCount];
+		children = new NoteAudioNode[sceneCount];
 
 		for (int i = 0; i < sceneCount; i++) {
 			children[i] = new SceneAudioNode();
@@ -31,6 +32,10 @@ public class MultiSceneAudioNode implements NoteAudioNode {
 
 	public void setScene(int sceneIndex, SceneAudioNode scene) {
 		children[sceneIndex] = scene;
+	}
+
+	public void setNote(int sceneIndex, AudioProviderNode node) {
+		children[sceneIndex] = node;
 	}
 
 	@Override

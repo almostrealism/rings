@@ -3,6 +3,7 @@ package org.almostrealism.audio;
 import javax.sound.sampled.AudioFormat;
 
 import io.almostrealism.relation.Evaluable;
+import org.almostrealism.audio.line.OutputLine;
 
 public class JavaAudioSample extends AudioSample implements Evaluable<byte[]> {
 	private boolean stop = true;

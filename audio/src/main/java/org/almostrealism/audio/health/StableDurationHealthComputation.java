@@ -19,7 +19,8 @@ package org.almostrealism.audio.health;
 import io.almostrealism.profile.OperationProfile;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDetailsFactory;
@@ -175,6 +176,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		long l = 0;
 		long generationTime = 0;
 
+		WaveDetails details = null;
+
 		try {
 			start = runner.get();
 			iterate = runner.getContinue();
@@ -247,8 +250,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 					if (getStems() != null) getStems().forEach(s -> s.write().get().run());
 
 					if (getWaveDetailsProcessor() != null) {
-						getWaveDetailsProcessor().accept(WaveDetailsFactory.getDefault()
-								.forProvider(new FileWaveDataProvider(getOutputFile().getPath())));
+						details = WaveDetailsFactory.getDefault()
+								.forProvider(new FileWaveDataProvider(getOutputFile().getPath()));
+						getWaveDetailsProcessor().accept(details);
 					}
 				}
 
@@ -274,7 +278,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 		AudioHealthScore result = new AudioHealthScore(l, score,
 				Optional.ofNullable(getOutputFile()).map(File::getPath).orElse(null),
 				Optional.ofNullable(getStemFiles()).map(s -> s.stream().map(File::getPath)
-						.sorted().collect(Collectors.toList())).orElse(null));
+						.sorted().collect(Collectors.toList())).orElse(null),
+				details == null ? null : List.of(details.getIdentifier()));
 		result.setGenerationTime(generationTime);
 		return result;
 	}

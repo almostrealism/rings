@@ -17,7 +17,7 @@
 package org.almostrealism.audio.health;
 
 import org.almostrealism.audio.AudioMeter;
-import org.almostrealism.audio.OutputLine;
+import org.almostrealism.audio.line.OutputLine;
 
 import java.util.ArrayList;
 import java.util.List;

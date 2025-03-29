@@ -20,7 +20,7 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.SampleMixer;
 import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
-import org.almostrealism.audio.line.SharedMemoryOutputLine;
+import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -41,16 +41,17 @@ public class MixerTests implements CellFeatures {
 			}
 		});
 
-		PackedCollection<?> control = new PackedCollection<>(SharedMemoryOutputLine.controlSize);
-		PackedCollection<?> dest = new PackedCollection<>(BufferDefaults.defaultBufferSize);
-		SharedMemoryOutputLine line = new SharedMemoryOutputLine(control, dest);
+		PackedCollection<?> control = new PackedCollection<>(SharedMemoryAudioLine.controlSize);
+		PackedCollection<?> input = new PackedCollection<>(BufferDefaults.defaultBufferSize);
+		PackedCollection<?> output = new PackedCollection<>(BufferDefaults.defaultBufferSize);
+		SharedMemoryAudioLine line = new SharedMemoryAudioLine(control, input, output);
 
 		BufferedOutputScheduler scheduler = mixer.toCellList().addRequirement(clock).buffer(line);
 		scheduler.start();
 
 		try {
 			Thread.sleep(4000);
-			Assert.assertTrue(dest.doubleStream().map(Math::abs).sum() > 0.0);
+			Assert.assertTrue(output.doubleStream().map(Math::abs).sum() > 0.0);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

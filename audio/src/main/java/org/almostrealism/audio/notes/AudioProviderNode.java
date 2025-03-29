@@ -18,6 +18,7 @@ package org.almostrealism.audio.notes;
 
 import org.almostrealism.audio.data.DelegateWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.WaveDataProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,16 +68,20 @@ public class AudioProviderNode implements NoteAudioNode {
 		return new ArrayList<>();
 	}
 
-	public static AudioProviderNode create(NoteAudioProvider note) {
-		if (note.getProvider() instanceof FileWaveDataProvider provider) {
+	public static AudioProviderNode create(WaveDataProvider provider) {
+		if (provider instanceof FileWaveDataProvider) {
 			return new AudioProviderNode(provider.getKey(), provider.getIdentifier());
-		} else if (note.getProvider() instanceof DelegateWaveDataProvider &&
-				((DelegateWaveDataProvider) note.getProvider()).getDelegate() instanceof FileWaveDataProvider provider) {
-			return new AudioProviderNode(provider.getKey(), provider.getIdentifier(),
-					((DelegateWaveDataProvider) note.getProvider()).getDelegateOffset(),
-					note.getProvider().getCount());
+		} else if (provider instanceof DelegateWaveDataProvider &&
+				((DelegateWaveDataProvider) provider).getDelegate() instanceof FileWaveDataProvider p) {
+			return new AudioProviderNode(p.getKey(), p.getIdentifier(),
+					((DelegateWaveDataProvider) provider).getDelegateOffset(),
+					provider.getCount());
 		} else {
 			return null;
 		}
+	}
+
+	public static AudioProviderNode create(NoteAudioProvider note) {
+		return create(note.getProvider());
 	}
 }

@@ -19,8 +19,8 @@ package org.almostrealism.audio.computations;
 
 import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.ParallelProcess;
-import io.almostrealism.relation.Process;
+import io.almostrealism.compute.ParallelProcess;
+import io.almostrealism.compute.Process;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.OperationMetadata;
 import io.almostrealism.scope.Scope;

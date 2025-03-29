@@ -252,7 +252,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 
 		if (relative) scale = multiply(scale, initial);
 		CollectionProducer pos = subtract(time, offset);
-		return bound(pos._greaterThan(c(0.0),
+		return bound(pos.greaterThan(c(0.0),
 						pow(polyWaveLength, c(-1.0))
 								.multiply(pos).pow(polyExp)
 								.multiply(scale).add(initial), initial),

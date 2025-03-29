@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -120,6 +120,10 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public void include(WaveDetails details) {
+		if (details.getIdentifier() == null) {
+			throw new IllegalArgumentException();
+		}
+
 		info.put(details.getIdentifier(), details);
 	}
 
@@ -130,12 +134,14 @@ public class AudioLibrary implements ConsoleFeatures {
 	protected WaveDetails computeSimilarities(WaveDetails details) {
 		try {
 			info.values().stream()
-					.filter(d -> !Objects.equals(d.getIdentifier(), details.getIdentifier()))
+					.filter(d -> details == null || !Objects.equals(d.getIdentifier(), details.getIdentifier()))
 					.filter(d -> !details.getSimilarities().containsKey(d.getIdentifier()))
 					.forEach(d -> {
 						double similarity = factory.similarity(details, d);
 						details.getSimilarities().put(d.getIdentifier(), similarity);
-						d.getSimilarities().put(details.getIdentifier(), similarity);
+
+						if (details.getIdentifier() != null)
+							d.getSimilarities().put(details.getIdentifier(), similarity);
 					});
 		} catch (Exception e) {
 			log("Failed to load similarities for " + details.getIdentifier() +
