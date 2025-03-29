@@ -46,7 +46,7 @@ Add ar-rings dependency:
         <dependency>
             <groupId>org.almostrealism</groupId>
             <artifactId>ar-rings</artifactId>
-            <version>0.37</version>
+            <version>0.38</version>
         </dependency>
 
 ## Using Rings
