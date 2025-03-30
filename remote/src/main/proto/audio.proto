@@ -26,6 +26,7 @@ message WaveRecording {
 
   optional string group_key = 4;
   optional int32 group_order_index = 5;
+  optional bool silent = 6;
 
   repeated WaveDetailData data = 3;
 }

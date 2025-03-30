@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.almostrealism.optimize.HealthComputation;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.optimize.Population;
 import org.almostrealism.time.Temporal;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,13 +35,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class AudioPopulationOptimizer<O extends Temporal> extends
 		PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore>
@@ -55,6 +53,8 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	private final String file;
 	private int tot;
 	private final AtomicInteger count;
+
+	private String outputPrefix;
 
 	private Runnable cycleListener;
 	private Runnable completionListener;
@@ -82,10 +82,12 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 			File d = new File(outputDir);
 			if (!d.exists()) d.mkdir();
 
-			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() -> outputDir + "/Output-" + count.incrementAndGet() + ".wav");
+			((StableDurationHealthComputation) getHealthComputation()).setOutputFile(() ->
+					outputDir + "/" + outputPrefix + "-" + count.incrementAndGet() + ".wav");
 
 			if (enableStemOutput) {
-				((StableDurationHealthComputation) getHealthComputation()).setStemFile(i -> outputDir + "/Output-" + count.get() + "." + i + ".wav");
+				((StableDurationHealthComputation) getHealthComputation()).setStemFile(i ->
+						outputDir + "/" + outputPrefix + "-" + count.get() + "." + i + ".wav");
 			}
 		}
 	}
@@ -101,28 +103,24 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	}
 
 	public void readPopulation() throws FileNotFoundException {
-		List<Genome<PackedCollection<?>>> genomes = null;
+		List<Genome<PackedCollection<?>>> loaded;
 
 		if (new File(file).exists()) {
-			genomes = AudioScenePopulation.read(new FileInputStream(file));
+			loaded = AudioScenePopulation.read(new FileInputStream(file));
 			log("Read chromosome data from " + file);
+		} else {
+			loaded = new ArrayList<>();
 		}
 
-		if (genomes == null || genomes.isEmpty()) {
-			genomes = Optional.ofNullable(getGenerator())
-					.map(gen -> IntStream.range(0, PopulationOptimizer.popSize)
-							.mapToObj(i -> gen.get()).collect(Collectors.toList()))
-					.orElseGet(ArrayList::new);
-			log("Generated initial population");
-		}
-
-		setPopulation(getChildrenFunction().apply(genomes));
+		setPopulation(getChildrenFunction().apply(loaded));
 		storePopulation();
 		log(getPopulation().size() + " networks in population");
 	}
 
 	@Override
 	public void run() {
+		outputPrefix = generatePrefix();
+
 		for (int i = 0; i < tot; i++) {
 			if (cycleListener != null) cycleListener.run();
 
@@ -160,6 +158,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	public void breedingComplete() {
 		storePopulation();
 		count.set(0);
+		outputPrefix = generatePrefix();
 	}
 
 	public void storePopulation() {
@@ -169,6 +168,10 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected String generatePrefix() {
+		return DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis()));
 	}
 
 	@Override

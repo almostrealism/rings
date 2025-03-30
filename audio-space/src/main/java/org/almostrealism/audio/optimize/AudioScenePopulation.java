@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,10 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 
 	private String outputPath;
 	private File outputFile;
+
+	public AudioScenePopulation(AudioScene<?> scene) {
+		this(scene, new ArrayList<>());
+	}
 
 	public AudioScenePopulation(AudioScene<?> scene, List<Genome<PackedCollection<?>>> population) {
 		this.scene = scene;
@@ -136,7 +140,22 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	@Override
 	public void disableGenome() {
 		this.currentGenome = null;
-		this.cells.reset();
+
+		if (this.cells != null) {
+			this.cells.reset();
+		}
+	}
+
+	public boolean validateGenome(Genome genome) {
+		try {
+			enableGenome(genome);
+			return true;
+		} catch (Exception e) {
+			warn("Genome incompatible with current scene (" + e.getClass().getSimpleName() + ")");
+			return false;
+		} finally {
+			disableGenome();
+		}
 	}
 
 	@Override

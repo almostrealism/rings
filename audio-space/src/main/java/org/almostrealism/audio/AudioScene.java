@@ -265,7 +265,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public void setLibrary(AudioLibrary library, DoubleConsumer progress) {
 		this.library = library;
-		patterns.setTree(getLibrary().getRoot(), progress);
+
+		if (getLibrary() != null) {
+			patterns.setTree(getLibrary().getRoot(), progress);
+		}
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree) {
@@ -408,9 +411,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		settings.getBreaks().forEach(time::addReset);
 		settings.getSections().forEach(s -> sections.addSection(s.getPosition(), s.getLength()));
 
-		if (settings.getLibraryRoot() != null) {
-			setLibrary(libraryProvider.apply(settings.getLibraryRoot()), progress);
-		}
+		setLibrary(libraryProvider.apply(settings.getLibraryRoot()), progress);
 
 		progression.setSettings(settings.getChordProgression());
 		patterns.setSettings(settings.getPatternSystem());
@@ -610,7 +611,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		defaultMapper().writeValue(file, getSettings());
 	}
 
-	public void loadSettings(File file) throws IOException {
+	public void loadSettings(File file) {
 		loadSettings(file, this::createLibrary, null);
 	}
 
@@ -789,6 +790,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	}
 
 	private AudioLibrary createLibrary(String f) {
+		if (f == null) return null;
+
 		return new AudioLibrary(createTree(f), getSampleRate());
 	}
 

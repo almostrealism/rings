@@ -239,41 +239,37 @@ public class AudioLibraryPersistence {
 		}
 	}
 
-	public static Map<String, Set<String>> listRecordingGrouped(String dataPrefix) {
-		try {
-			return listRecordingsGrouped(new LibraryDestination(dataPrefix));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static Set<String> listRecordings(LibraryDestination destination, boolean group) throws IOException {
 		return listRecordings(destination.in(), group);
 	}
 
-	public static Map<String, Set<String>> listRecordingsGrouped(LibraryDestination destination) throws IOException {
-		return listRecordingsGrouped(destination.in());
+	public static Map<String, Set<String>> listRecordingsGrouped(LibraryDestination destination,
+																 boolean includeSilent) throws IOException {
+		return listRecordingsGrouped(destination.in(), includeSilent);
 	}
 
 	public static Set<String> listRecordings(Supplier<InputStream> in, boolean group) throws IOException {
 		if (group) {
-			return listRecordingsGrouped(in).keySet();
+			return listRecordingsGrouped(in, true).keySet();
 		} else {
 			return listRecordingsFlat(in);
 		}
 	}
 
-	public static Map<String, Set<String>> listRecordingsGrouped(Supplier<InputStream> in) throws IOException {
-		return listRecordings(in, null);
+	public static Map<String, Set<String>> listRecordingsGrouped(Supplier<InputStream> in,
+																 boolean includeSilent) throws IOException {
+		return listRecordings(in, includeSilent, null);
 	}
 
 	public static Set<String> listRecordingsFlat(Supplier<InputStream> in) throws IOException {
 		Set<String> keys = new HashSet<>();
-		listRecordings(in, keys::add);
+		listRecordings(in, true, keys::add);
 		return keys;
 	}
 
-	protected static Map<String, Set<String>> listRecordings(Supplier<InputStream> in, Consumer<String> keys) throws IOException {
+	protected static Map<String, Set<String>> listRecordings(Supplier<InputStream> in,
+															 boolean includeSilent,
+															 Consumer<String> keys) throws IOException {
 		InputStream input = in.get();
 
 		Map<String, Set<String>> recordings = new HashMap<>();
@@ -282,7 +278,11 @@ public class AudioLibraryPersistence {
 			Audio.AudioLibraryData data = Audio.AudioLibraryData
 						.newBuilder().mergeFrom(input).build();
 
-			for (Audio.WaveRecording r : data.getRecordingsList()) {
+			r: for (Audio.WaveRecording r : data.getRecordingsList()) {
+				if (!includeSilent && r.hasSilent() && r.getSilent()) {
+					continue r;
+				}
+
 				if (r.hasGroupKey()) {
 					recordings.putIfAbsent(r.getGroupKey(), new HashSet<>());
 					recordings.get(r.getGroupKey()).add(r.getKey());

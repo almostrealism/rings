@@ -37,16 +37,24 @@ import java.util.function.Supplier;
 
 public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
+	public static final String SAMPLES = "samples";
 
 	private String prefix;
 	private int index;
+	private boolean append;
 
 	public LibraryDestination(String prefix) {
+		this(prefix, false);
+	}
+
+	public LibraryDestination(String prefix, boolean append) {
 		if (prefix.contains("/")) {
 			this.prefix = prefix;
 		} else {
 			this.prefix = SystemUtils.getLocalDestination(prefix);
 		}
+
+		this.append = append;
 	}
 
 	protected String nextFile() {
@@ -70,12 +78,14 @@ public class LibraryDestination implements ConsoleFeatures {
 	}
 
 	public Supplier<InputStream> in() {
+		Iterator<String> all = files();
+
 		return () -> {
 			try {
-				File f = new File(nextFile());
-				if (!f.exists()) return null;
+				if (!all.hasNext())
+					return null;
 
-				return new FileInputStream(f);
+				return new FileInputStream(all.next());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -85,7 +95,12 @@ public class LibraryDestination implements ConsoleFeatures {
 	public Supplier<OutputStream> out() {
 		return () -> {
 			try {
-				return new FileOutputStream(nextFile());
+				File f = new File(nextFile());
+				while (append && f.exists()) {
+					f = new File(nextFile());
+				}
+
+				return new FileOutputStream(f);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -146,6 +161,7 @@ public class LibraryDestination implements ConsoleFeatures {
 
 	public void delete() {
 		files().forEachRemaining(f -> new File(f).delete());
+		index = 0;
 	}
 
 	public void cleanup() {
@@ -175,5 +191,10 @@ public class LibraryDestination implements ConsoleFeatures {
 		for (File f : Objects.requireNonNull(dir.listFiles())) {
 			f.delete();
 		}
+	}
+
+	public static Path getDefaultLibraryRoot() {
+		Path p = SystemUtils.getLocalDestination().resolve(SAMPLES);
+		return SystemUtils.ensureDirectoryExists(p);
 	}
 }

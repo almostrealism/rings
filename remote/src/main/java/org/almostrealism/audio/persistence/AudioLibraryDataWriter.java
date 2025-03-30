@@ -198,6 +198,10 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 				.addAllData(buffer);
 		if (sampleKey != null) {
 			r.setKey(sampleKey).setOrderIndex(sampleCount++);
+			r.setSilent(false);
+		} else {
+			r.setKey(KeyUtils.generateKey());
+			r.setSilent(true);
 		}
 
 		queueRecording(r.build());
