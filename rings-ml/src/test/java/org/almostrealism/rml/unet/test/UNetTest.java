@@ -552,7 +552,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			optimizer.setLogFrequency(1);
 			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
 
-			int iterations = 8;
+			int iterations = 26;
 			optimizer.optimize(iterations);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
