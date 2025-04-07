@@ -17,6 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -151,7 +152,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	@JsonIgnore
-	public List<NoteAudioProvider> getAllNotes() {
+	public List<NoteAudio> getAllNotes() {
 		return getSources().stream()
 				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
@@ -159,9 +160,9 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	@JsonIgnore
-	public List<NoteAudioProvider> getValidNotes() {
+	public List<NoteAudio> getValidNotes() {
 		return getAllNotes().stream()
-				.filter(NoteAudioProvider::isValid)
+				.filter(Validity::valid)
 				.sorted()
 				.collect(Collectors.toList());
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,14 +27,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class NoOpGenerationProvider implements GenerationProvider {
-	private Map<String, List<NoteAudioSource>> sources;
+	private Map<String, List<NoteAudio>> sources;
 
 	public NoOpGenerationProvider() {
 		sources = new HashMap<>();
 	}
 
 	@Override
-	public boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources) {
+	public boolean refresh(String requestId, String generatorId, List<NoteAudio> sources) {
 		this.sources.put(generatorId, sources);
 		return true;
 	}
@@ -44,7 +45,7 @@ public class NoOpGenerationProvider implements GenerationProvider {
 	}
 
 	@Override
-	public List<NoteAudioSource> generate(String requestId, String generatorId, int count) {
+	public List<NoteAudio> generate(String requestId, String generatorId, int count) {
 		return IntStream.range(0, count)
 				.mapToObj(i -> sources.get(generatorId).get(i % sources.get(generatorId).size()))
 				.collect(Collectors.toList());

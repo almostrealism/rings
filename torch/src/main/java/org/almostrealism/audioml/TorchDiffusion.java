@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package org.almostrealism.audioml;
 
+import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.ProcessFeatures;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class TorchDiffusion implements ProcessFeatures {
+public class TorchDiffusion implements ProcessFeatures, ConsoleFeatures {
 	public static boolean enableVirtualEnv = true;
 
 	private static final String AUDIO = "audio";
@@ -43,16 +43,15 @@ public class TorchDiffusion implements ProcessFeatures {
 		run("rm", "-rf", MODELS + "/latest");
 	}
 
-	public void loadAudio(List<NoteAudioSource> sources) {
-		List<NoteAudioProvider> audio = sources.stream()
-				.flatMap(s -> s.getNotes().stream())
-				.filter(NoteAudioProvider::isValid)
-				.collect(Collectors.toList());
-		System.out.println("TorchDiffusion: Saving " + audio.size() + " audio files");
+	public void loadAudio(List<NoteAudio> sources) {
+		List<NoteAudio> audio = sources.stream()
+				.filter(Validity::valid)
+				.toList();
+		log("Saving " + audio.size() + " audio files");
 		IntStream.range(0, audio.size()).forEach(i ->
 						new WaveData(audio.get(i).getAudio(), OutputLine.sampleRate)
 								.save(new File("audio/" + i + ".wav")));
-		System.out.println("TorchDiffusion: Done saving audio files");
+		log("Done saving audio files");
 	}
 
 	public void train() {

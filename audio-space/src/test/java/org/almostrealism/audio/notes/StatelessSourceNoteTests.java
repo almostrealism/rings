@@ -61,7 +61,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		});
 
 		// Define the synth note
-		StatelessSourceNoteAudio audio = new StatelessSourceNoteAudio(sine, root, 2.0);
+		StatelessSourcePatternNote audio = new StatelessSourcePatternNote(sine, root, 2.0);
 		PatternNote sineNote = new PatternNote(List.of(audio));
 		sineNote.setTuning(tuning);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.FileNoteSource;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.util.ProcessFeatures;
 
 import java.io.File;
@@ -56,25 +56,25 @@ public class LocalResourceManager implements GenerationResourceManager, ProcessF
 	}
 
 	@Override
-	public FileNoteSource storeAudio(String id, File file) {
+	public NoteAudioProvider storeAudio(String id, File file) {
 		System.out.println("LocalResourceManager: Storing audio " + id);
 		run("mv", file.getAbsolutePath(), audio.getAbsolutePath() + "/" + id);
-		return new FileNoteSource(audio.getAbsolutePath() + "/" + id);
+		return (NoteAudioProvider) new FileNoteSource(audio.getAbsolutePath() + "/" + id).getNotes().get(0);
 	}
 
 	@Override
-	public NoteAudioSource storeAudio(String id, WaveData waveData) {
+	public NoteAudioProvider storeAudio(String id, WaveData waveData) {
 		System.out.println("LocalResourceManager: Storing audio " + id);
 		waveData.save(new File(audio.getAbsolutePath() + "/" + id));
-		return new FileNoteSource(audio.getAbsolutePath() + "/" + id);
+		return (NoteAudioProvider) new FileNoteSource(audio.getAbsolutePath() + "/" + id).getNotes().get(0);
 	}
 
 	@Override
-	public NoteAudioSource getAudio(String id) {
+	public NoteAudioProvider getAudio(String id) {
 		File file = new File(audio.getAbsolutePath() + "/" + id);
 
 		if (file.exists()) {
-			return new FileNoteSource(file.getAbsolutePath());
+			return (NoteAudioProvider) new FileNoteSource(file.getAbsolutePath()).getNotes().get(0);
 		} else {
 			return null;
 		}

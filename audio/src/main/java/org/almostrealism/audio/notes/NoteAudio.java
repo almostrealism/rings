@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,22 @@
 
 package org.almostrealism.audio.notes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
-import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.collect.CollectionFeatures;
+import org.almostrealism.collect.PackedCollection;
 
-import java.util.List;
+public interface NoteAudio extends KeyboardTuned {
+	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target);
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface NoteAudioSource extends KeyboardTuned {
-	@JsonIgnore
-	String getOrigin();
+	default PackedCollection<?> getAudio() {
+		return getAudio(null).evaluate();
+	}
 
-	@JsonIgnore
-	@Override
-	void setTuning(KeyboardTuning tuning);
+	default double getDuration(KeyPosition<?> target) {
+		return CollectionFeatures.getInstance().shape(getAudio(target)).getTotalSizeLong() / (double) getSampleRate();
+	}
 
-	@JsonIgnore
-	List<NoteAudio> getNotes();
-
-	boolean checkResourceUsed(String canonicalPath);
+	int getSampleRate();
 }

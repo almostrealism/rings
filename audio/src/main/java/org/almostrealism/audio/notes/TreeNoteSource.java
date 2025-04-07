@@ -32,6 +32,7 @@ import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -123,9 +124,9 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public String getOrigin() { return tree instanceof Named ? ((Named) tree).getName() : ""; }
 
 	@JsonIgnore
-	public List<NoteAudioProvider> getNotes() {
+	public List<NoteAudio> getNotes() {
 		if (alwaysComputeNotes) computeProviders();
-		return notes == null ? new ArrayList<>() : notes;
+		return notes == null ? Collections.emptyList() : Collections.unmodifiableList(notes);
 	}
 
 	public void refresh() {

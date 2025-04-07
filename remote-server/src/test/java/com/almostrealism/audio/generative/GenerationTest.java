@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.almostrealism.audio.generative;
 
 import com.almostrealism.remote.AccessManager;
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.RemoteGenerationServer;
 import org.almostrealism.remote.RemoteGenerationProvider;
@@ -63,9 +65,11 @@ public class GenerationTest {
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 					PatternFactoryChoiceList.class);
 
-		List<NoteAudioSource> sources = choices.stream()
+		List<NoteAudio> sources = choices.stream()
 				// .filter(c -> "Hats".equals(c.getName()))
 				.map(NoteAudioChoice::getSources)
+				.flatMap(List::stream)
+				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 
@@ -80,9 +84,11 @@ public class GenerationTest {
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
 						PatternFactoryChoiceList.class);
 
-		List<NoteAudioSource> sources = choices.stream()
+		List<NoteAudio> sources = choices.stream()
 				// .filter(c -> "Hats".equals(c.getName()))
 				.map(NoteAudioChoice::getSources)
+				.flatMap(List::stream)
+				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 
@@ -105,7 +111,7 @@ public class GenerationTest {
 										resources("local"));
 
 		String req = "test123";
-		List<NoteAudioSource> result = provider.generate(req, "test5", 15);
+		List<NoteAudio> result = provider.generate(req, "test5", 15);
 		System.out.println("GenerationTest: Received " + result.size() + " results");
 	}
 }

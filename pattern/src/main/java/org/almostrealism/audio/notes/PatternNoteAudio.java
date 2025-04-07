@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.filter.AudioSumProvider;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
@@ -26,20 +25,20 @@ import java.util.function.DoubleFunction;
 
 public interface PatternNoteAudio {
 
-	default BufferDetails getBufferDetails(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
+	default BufferDetails getBufferDetails(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
 		return new BufferDetails(
 				getSampleRate(target, audioSelection),
 				getDuration(target, audioSelection));
 	}
 
-	int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
+	int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection);
 
-	double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection);
+	double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
 										   Producer<PackedCollection<?>> automationLevel,
-										   DoubleFunction<NoteAudioProvider> audioSelection);
+										   DoubleFunction<NoteAudio> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-										   DoubleFunction<NoteAudioProvider> audioSelection);
+										   DoubleFunction<NoteAudio> audioSelection);
 }

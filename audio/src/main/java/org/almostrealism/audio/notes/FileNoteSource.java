@@ -56,7 +56,7 @@ public class FileNoteSource implements NoteAudioSource {
 	public KeyPosition<?> getRoot() { return root; }
 	public void setRoot(KeyPosition<?> root) { this.root = root; }
 
-	public List<NoteAudioProvider> getNotes() {
+	public List<NoteAudio> getNotes() {
 		if (note == null) {
 			note = NoteAudioProvider.create(source, root);
 			note.setTuning(tuning);

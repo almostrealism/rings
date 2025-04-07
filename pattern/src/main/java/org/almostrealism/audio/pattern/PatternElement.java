@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioContext;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -178,7 +178,7 @@ public class PatternElement implements CodeFeatures {
 
 	public Producer<PackedCollection<?>> getNoteAudio(ElementVoicingDetails details,
 													  Producer<PackedCollection<?>> automationLevel,
-													  DoubleFunction<NoteAudioProvider> audioSelection,
+													  DoubleFunction<NoteAudio> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;
 

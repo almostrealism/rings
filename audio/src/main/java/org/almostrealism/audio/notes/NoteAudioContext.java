@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ import java.util.function.DoubleUnaryOperator;
 
 public class NoteAudioContext implements ConsoleFeatures {
 	private ChannelInfo.Voicing voicing;
-	private DoubleFunction<NoteAudioProvider> audioSelection;
+	private DoubleFunction<NoteAudio> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
 	public NoteAudioContext() { }
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
-							List<NoteAudioProvider> audioChoices,
+							List<NoteAudio> audioChoices,
 							DoubleUnaryOperator nextNotePosition) {
 		this(voicing,
 				c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())),
@@ -43,7 +43,7 @@ public class NoteAudioContext implements ConsoleFeatures {
 	}
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
-							DoubleFunction<NoteAudioProvider> audioSelection,
+							DoubleFunction<NoteAudio> audioSelection,
 							DoubleUnaryOperator nextNotePosition) {
 		if (audioSelection == null) {
 			warn("No audio selection provided");
@@ -62,15 +62,15 @@ public class NoteAudioContext implements ConsoleFeatures {
 		this.voicing = voicing;
 	}
 
-	public DoubleFunction<NoteAudioProvider> getAudioSelection() {
+	public DoubleFunction<NoteAudio> getAudioSelection() {
 		return audioSelection;
 	}
 
-	public void setAudioSelection(DoubleFunction<NoteAudioProvider> audioSelection) {
+	public void setAudioSelection(DoubleFunction<NoteAudio> audioSelection) {
 		this.audioSelection = audioSelection;
 	}
 
-	public NoteAudioProvider selectAudio(double selection) {
+	public NoteAudio selectAudio(double selection) {
 		return getAudioSelection().apply(selection);
 	}
 

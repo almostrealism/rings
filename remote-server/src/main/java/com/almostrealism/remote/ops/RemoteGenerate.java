@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.remote.ops.WaveDataPublisher;
 
@@ -38,7 +38,9 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	private final StreamObserver<Generation.Output> reply;
 	private WaveDataPublisher publisher;
 
-	public RemoteGenerate(AccessManager accessManager, GenerationProviderQueue queue, StreamObserver<Generation.Output> reply) {
+	public RemoteGenerate(AccessManager accessManager,
+						  GenerationProviderQueue queue,
+						  StreamObserver<Generation.Output> reply) {
 		this.accessManager = accessManager;
 		this.queue = queue;
 		this.reply = reply;
@@ -57,7 +59,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		}
 	}
 
-	protected void output(String requestId, String generatorId, List<NoteAudioSource> results) {
+	protected void output(String requestId, String generatorId, List<NoteAudio> results) {
 		if (results == null) {
 			System.out.println("RemoteGenerate: Generation failed");
 			// TODO  Send back status info to client
@@ -73,7 +75,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		output(requestId, generatorId, index, result.getNotes().get(0));
 	}
 
-	protected void output(String requestId, String generatorId, int index, NoteAudioProvider note) {
+	protected void output(String requestId, String generatorId, int index, NoteAudio note) {
 		if (note.getAudio() == null) {
 			System.out.println("RemoteGenerate: Empty result will not be published");
 			return;
@@ -104,9 +106,10 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 		private String requestId;
 		private String generatorId;
 		private int count;
-		private Consumer<List<NoteAudioSource>> results;
+		private Consumer<List<NoteAudio>> results;
 
-		public GenerationOperation(String requestId, String generatorId, int count, Consumer<List<NoteAudioSource>> results) {
+		public GenerationOperation(String requestId, String generatorId, int count,
+								   Consumer<List<NoteAudio>> results) {
 			this.requestId = requestId;
 			this.generatorId = generatorId;
 			this.count = count;

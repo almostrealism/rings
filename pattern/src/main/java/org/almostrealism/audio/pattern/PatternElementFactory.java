@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,16 @@
 
 package org.almostrealism.audio.pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
-import org.almostrealism.audio.notes.ListNoteSource;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
-import org.almostrealism.util.KeyUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,13 +43,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 
 	public static int[] REPEAT_DIST;
 
-	@Deprecated
-	private String id;
-	@Deprecated
-	private String name;
-	@Deprecated
-	private List<NoteAudioSource> sources;
-
 	private PatternNoteFactory noteFactory;
 
 	private ParameterizedPositionFunction noteSelection;
@@ -68,26 +55,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	private ParameterizedPositionFunction repeatSelection;
 
 	public PatternElementFactory() {
-		this(new NoteAudioSource[0]);
-	}
-
-	public PatternElementFactory(String name) {
-		this(name, new NoteAudioSource[0]);
-	}
-
-	public PatternElementFactory(NoteAudioSource... sources) {
-		this(null, sources);
-	}
-
-	public PatternElementFactory(String name, NoteAudioProvider... notes) {
-		this(name, new ListNoteSource(notes));
-	}
-
-	public PatternElementFactory(String name, NoteAudioSource... sources) {
-		setId(KeyUtils.generateKey());
-		setName(name);
-		setSources(new ArrayList<>());
-		getSources().addAll(List.of(sources));
 		setNoteFactory(new PatternNoteFactory());
 		initSelectionFunctions();
 	}
@@ -102,32 +69,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 		filterEnvelope = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
-	}
-
-	@Deprecated
-	public String getId() { return id; }
-	@Deprecated
-	public void setId(String id) { this.id = id; }
-
-	@Deprecated
-	public String getName() { return name; }
-	@Deprecated
-	public void setName(String name) { this.name = name; }
-
-	@Deprecated
-	@JsonIgnore
-	public List<NoteAudioProvider> getAllNotes() {
-		return sources.stream()
-				.map(NoteAudioSource::getNotes)
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
-	}
-
-	@Deprecated
-	public List<NoteAudioSource> getSources() { return sources; }
-	@Deprecated
-	public void setSources(List<NoteAudioSource> sources) {
-		this.sources = sources;
 	}
 
 	public PatternNoteFactory getNoteFactory() {
@@ -174,17 +115,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	}
 	public void setRepeatSelection(ParameterizedPositionFunction repeatSelection) {
 		this.repeatSelection = repeatSelection;
-	}
-
-	@Deprecated
-	public boolean checkResourceUsed(String canonicalPath) {
-		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
-	}
-
-	@Deprecated
-	@JsonIgnore
-	public List<NoteAudioProvider> getValidNotes() {
-		return getAllNotes().stream().filter(NoteAudioProvider::isValid).collect(Collectors.toList());
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use

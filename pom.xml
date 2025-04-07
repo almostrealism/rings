@@ -43,6 +43,7 @@
 		<module>rings-ml</module>
 		<module>remote</module>
 		<module>remote-server</module>
+		<module>generate</module>
 	</modules>
 
 	<!-- Output to jar format -->

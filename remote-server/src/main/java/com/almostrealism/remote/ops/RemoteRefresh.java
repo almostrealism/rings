@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.notes.ListNoteSource;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> {
+public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>, ConsoleFeatures {
 	private final AccessManager accessManager;
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Status> reply;
@@ -87,11 +87,11 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 		reply.onCompleted();
 	}
 
-	public static class RefreshOperation implements Operation {
+	public static class RefreshOperation implements Operation, ConsoleFeatures {
 		private String requestId;
 		private String generatorId;
 
-		private List<NoteAudioSource> sources;
+		private List<NoteAudio> sources;
 		private PackedCollection<?> currentSource;
 		private int currentIndex;
 
@@ -111,7 +111,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 
 		public String getGeneratorId() { return generatorId; }
 
-		public List<NoteAudioSource> getSources() { return sources; }
+		public List<NoteAudio> getSources() { return sources; }
 
 		public void append(Generation.RefreshRequest request) {
 			if (!Objects.equals(request.getRequestId(), requestId))
@@ -132,8 +132,8 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest> 
 			currentIndex += request.getSource().getSegment().getDataList().size();
 
 			if (request.getSource().getSegment().getIsFinal()) {
-				System.out.println("RefreshOperation: Adding source (" + currentSource.getMemLength() + " samples)");
-				sources.add(new ListNoteSource(NoteAudioProvider.create(() -> currentSource)));
+				log("Adding source (" + currentSource.getMemLength() + " samples)");
+				sources.add(NoteAudioProvider.create(() -> currentSource));
 				currentSource = null;
 				currentIndex = 0;
 			}

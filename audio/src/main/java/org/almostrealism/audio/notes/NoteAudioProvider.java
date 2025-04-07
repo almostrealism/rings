@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -45,7 +46,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class NoteAudioProvider implements Comparable<NoteAudioProvider>, SamplingFeatures {
+public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAudioProvider>, SamplingFeatures {
 	public static boolean enableVerbose = false;
 
 	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
@@ -61,7 +62,7 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 						.mapToLong(m -> m instanceof RAM ? ((RAM) m).getSize() : 0)
 						.sum();
 				if (enableVerbose && size > 1024)
-					CellFeatures.console.features(PatternNoteLayer.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
+					CellFeatures.console.features(NoteAudioProvider.class).log("Cache size = " + (size / 1024 / 1024) + "mb");
 			}
 		});
 
@@ -111,6 +112,7 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 	public void setBpm(Double bpm) { this.bpm = bpm; }
 
 	@JsonIgnore
+	@Override
 	public void setTuning(KeyboardTuning tuning) {
 		if (tuning != this.tuning) {
 			this.tuning = tuning;
@@ -119,11 +121,13 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 	}
 
 	@JsonIgnore
+	@Override
 	public int getSampleRate() {
 		return provider.getSampleRate();
 	}
 
 	@JsonIgnore
+	@Override
 	public double getDuration(KeyPosition<?> target) {
 		if (target == null) return provider.getDuration();
 
@@ -136,6 +140,7 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
 	}
 
+	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
 		if (target == null) {
 			target = getRoot();
@@ -176,6 +181,7 @@ public class NoteAudioProvider implements Comparable<NoteAudioProvider>, Samplin
 		return null;
 	}
 
+	@Override
 	public boolean isValid() {
 		Boolean valid;
 

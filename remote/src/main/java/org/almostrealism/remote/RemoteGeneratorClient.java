@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.almostrealism.remote;
 
+import io.almostrealism.relation.Validity;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.remote.api.GeneratorGrpc;
 import org.almostrealism.remote.ops.GenerateRequestor;
 import org.almostrealism.remote.ops.RefreshRequestor;
@@ -24,7 +26,6 @@ import io.grpc.Channel;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,14 +67,12 @@ public class RemoteGeneratorClient {
 		this.completion = new HashMap<>();
 	}
 
-	public boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources, Consumer<Boolean> success, Runnable end) {
+	public boolean refresh(String requestId, String generatorId, List<NoteAudio> sources, Consumer<Boolean> success, Runnable end) {
 		ensureRefresh();
 
 		List<WaveData> data = sources.stream()
-				.map(NoteAudioSource::getNotes)
-				.flatMap(List::stream)
-				.filter(NoteAudioProvider::isValid)
-				.map(NoteAudioProvider::getAudio)
+				.filter(Validity::valid)
+				.map(NoteAudio::getAudio)
 				.filter(Objects::nonNull)
 				.map(c -> new WaveData(c, OutputLine.sampleRate))
 				.collect(Collectors.toList());

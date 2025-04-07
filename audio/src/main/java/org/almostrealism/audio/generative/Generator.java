@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.almostrealism.audio.generative;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.KeyUtils;
@@ -31,7 +32,7 @@ public class Generator {
 	private State state;
 
 	private List<String> sources;
-	private List<NoteAudioSource> results;
+	private List<NoteAudio> results;
 
 	private NoteSourceProvider sourceProvider;
 	private GenerationProvider generationProvider;
@@ -60,8 +61,8 @@ public class Generator {
 	public List<String> getSources() { return sources; }
 	public void setSources(List<String> sources) { this.sources = sources; }
 
-	public List<NoteAudioSource> getResults() { return results; }
-	public void setResults(List<NoteAudioSource> results) { this.results = results; }
+	public List<NoteAudio> getResults() { return results; }
+	public void setResults(List<NoteAudio> results) { this.results = results; }
 
 	@JsonIgnore
 	public NoteSourceProvider getSourceProvider() { return sourceProvider; }
@@ -80,9 +81,11 @@ public class Generator {
 			throw new IllegalStateException("Generator is busy");
 		}
 
-		List<NoteAudioSource> sources =
+		List<NoteAudio> sources =
 				getSources().stream()
 						.map(sourceProvider::getSource)
+						.flatMap(List::stream)
+						.map(NoteAudioSource::getNotes)
 						.flatMap(List::stream)
 						.collect(Collectors.toList());
 
@@ -100,7 +103,7 @@ public class Generator {
 		}
 
 		state = State.GENERATING;
-		List<NoteAudioSource> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
+		List<NoteAudio> results = generationProvider.generate(KeyUtils.generateKey(), id, count);
 		if (results != null) {
 			getResults().addAll(results);
 			state = State.READY;

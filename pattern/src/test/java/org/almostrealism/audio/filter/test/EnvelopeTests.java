@@ -26,6 +26,7 @@ import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.filter.VolumeEnvelopeExtraction;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -244,21 +245,28 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 	@Test
 	public void parameterizedVolumeEnvelope() {
-		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
-		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN,
-				PatternNoteLayer.create("Library/organ.wav"));
+		NoteAudioProvider provider =
+				NoteAudioProvider.create("Library/organ.wav");
+
+		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope
+				.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
+		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, d -> provider).evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
 	@Test
 	public void parameterizedFilterEnvelope() {
-		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
-		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN,
-				PatternNoteLayer.create("Library/organ.wav"));
+		NoteAudioProvider provider =
+				NoteAudioProvider.create("Library/organ.wav");
+
+		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope
+				.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
+		PatternNoteLayer result =
+				penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, null).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, d -> provider).evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 

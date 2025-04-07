@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,75 +16,40 @@
 
 package org.almostrealism.audio.notes;
 
-import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.KeyPosition;
-import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.IdentityFactor;
 
-import java.util.function.DoubleFunction;
-
-public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned, CodeFeatures {
-	private final StatelessSource source;
-	private final KeyPosition<?> root;
-	private final double duration;
-
+public class StatelessSourceNoteAudio implements NoteAudio, CodeFeatures {
+	private StatelessSource source;
 	private KeyboardTuning tuning;
-	private Factor<PackedCollection<?>> parameters;
 
-	public StatelessSourceNoteAudio(StatelessSource source, KeyPosition<?> root, double duration) {
+	private BufferDetails buffer;
+	private Producer<PackedCollection<?>> params;
+
+	public StatelessSourceNoteAudio(StatelessSource source,
+									BufferDetails buffer,
+									Producer<PackedCollection<?>> params) {
 		this.source = source;
-		this.root = root;
-		this.duration = duration;
-		this.parameters = new IdentityFactor<>();
-	}
-
-	public KeyboardTuning getTuning() {
-		return tuning;
+		this.buffer = buffer;
+		this.params = params;
 	}
 
 	@Override
-	public void setTuning(KeyboardTuning tuning) {
-		this.tuning = tuning;
-	}
+	public void setTuning(KeyboardTuning tuning) { this.tuning = tuning; }
 
-	public Factor<PackedCollection<?>> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(Factor<PackedCollection<?>> parameters) {
-		this.parameters = parameters;
+	@Override
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+		return source.generate(buffer, params, c(tuning.getTone(target).asHertz()));
 	}
 
 	@Override
-	public int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
-		return OutputLine.sampleRate;
-	}
+	public double getDuration(KeyPosition<?> target) { return buffer.getDuration(); }
 
 	@Override
-	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudioProvider> audioSelection) {
-		return duration;
-	}
-
-	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
-												  Producer<PackedCollection<?>> automationLevel,
-												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return source.generate(getBufferDetails(target, audioSelection),
-				getParameters().getResultant(automationLevel),
-				c(tuning.getRelativeFrequency(root, target).asHertz()));
-	}
-
-	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-												  DoubleFunction<NoteAudioProvider> audioSelection) {
-		return source.generate(getBufferDetails(target, audioSelection),
-				getParameters().getResultant(c(1.0)),
-				c(tuning.getRelativeFrequency(root, target).asHertz()));
-	}
+	public int getSampleRate() { return buffer.getSampleRate(); }
 }

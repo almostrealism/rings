@@ -56,3 +56,10 @@ message WaveDetailData {
 
   reserved 1;
 }
+
+message SynthesizerModelData {
+  string key = 1;
+  repeated double frequency_ratios = 2;
+  double level_sample_rate = 3;
+  CollectionData level_data = 4;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.almostrealism.audio.generative;
 
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudio;
 
 import java.util.List;
 
 public interface GenerationProvider {
-	boolean refresh(String requestId, String generatorId, List<NoteAudioSource> sources);
+	boolean refresh(String requestId, String generatorId, List<NoteAudio> sources);
 
 	GeneratorStatus getStatus(String id);
 
-	List<NoteAudioSource> generate(String requestId, String generatorId, int count);
+	List<NoteAudio> generate(String requestId, String generatorId, int count);
 
 	int getSampleRate();
 }

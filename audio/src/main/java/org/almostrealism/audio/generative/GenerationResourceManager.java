@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 
 import java.io.File;
 
@@ -30,9 +30,9 @@ public interface GenerationResourceManager {
 
 	boolean isModelVersionAvailable(String vers);
 
-	NoteAudioSource storeAudio(String id, File file);
+	NoteAudioProvider storeAudio(String id, File file);
 
-	NoteAudioSource storeAudio(String id, WaveData waveData);
+	NoteAudioProvider storeAudio(String id, WaveData waveData);
 
-	NoteAudioSource getAudio(String id);
+	NoteAudioProvider getAudio(String id);
 }

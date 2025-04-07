@@ -60,6 +60,7 @@ public class PatternNoteNode implements NoteAudioNode {
 		NoteAudioContext audioContext = new NoteAudioContext(ChannelInfo.Voicing.MAIN, choice.getValidNotes(), null);
 		children = note.getProviders(null, audioContext::selectAudio)
 				.stream()
+				.map(audio -> audio instanceof NoteAudioProvider ? ((NoteAudioProvider) audio) : null)
 				.filter(Objects::nonNull)
 				.distinct()
 				.map(AudioProviderNode::create)

@@ -9,25 +9,13 @@
 		<version>0.39</version>
 	</parent>
 
-	<artifactId>ar-audio-space</artifactId>
+	<artifactId>ar-generate</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-pattern</artifactId>
+			<artifactId>ar-audio</artifactId>
 			<version>0.39</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-generate</artifactId>
-			<version>0.39</version>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
