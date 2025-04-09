@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
+public class TreeNoteSource extends NoteAudioSourceBase implements Named, ConsoleFeatures {
 	public static boolean alwaysComputeNotes = false;
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
@@ -49,6 +49,7 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	private KeyPosition<?> root;
 	private Double bpm;
 	private Double splitDurationBeats;
+	private boolean useSynthesizer;
 
 	private List<FileWaveDataProviderFilter> filters;
 
@@ -127,6 +128,13 @@ public class TreeNoteSource implements NoteAudioSource, Named, ConsoleFeatures {
 	public List<NoteAudio> getNotes() {
 		if (alwaysComputeNotes) computeProviders();
 		return notes == null ? Collections.emptyList() : Collections.unmodifiableList(notes);
+	}
+
+	@Override
+	public boolean isUseSynthesizer() { return useSynthesizer; }
+
+	public void setUseSynthesizer(boolean useSynthesizer) {
+		this.useSynthesizer = useSynthesizer;
 	}
 
 	public void refresh() {

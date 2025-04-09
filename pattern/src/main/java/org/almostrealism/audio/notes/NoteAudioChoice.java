@@ -167,6 +167,22 @@ public class NoteAudioChoice implements ConsoleFeatures {
 				.collect(Collectors.toList());
 	}
 
+	@JsonIgnore
+	public List<PatternNoteAudio> getAllPatternNotes() {
+		return getSources().stream()
+				.map(NoteAudioSource::getPatternNotes)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+	}
+
+	@JsonIgnore
+	public List<PatternNoteAudio> getValidPatternNotes() {
+		return getAllPatternNotes().stream()
+				.filter(Validity::valid)
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
 	public PatternLayerSeeds seeds(ParameterSet params, double biasAdjustment) {
 		double granularity = granularitySelection.power(2, 3, -3).apply(params);
 

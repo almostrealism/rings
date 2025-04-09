@@ -29,13 +29,13 @@ import java.util.function.DoubleUnaryOperator;
 
 public class NoteAudioContext implements ConsoleFeatures {
 	private ChannelInfo.Voicing voicing;
-	private DoubleFunction<NoteAudio> audioSelection;
+	private DoubleFunction<PatternNoteAudio> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
 	public NoteAudioContext() { }
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
-							List<NoteAudio> audioChoices,
+							List<PatternNoteAudio> audioChoices,
 							DoubleUnaryOperator nextNotePosition) {
 		this(voicing,
 				c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())),
@@ -43,7 +43,7 @@ public class NoteAudioContext implements ConsoleFeatures {
 	}
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
-							DoubleFunction<NoteAudio> audioSelection,
+							DoubleFunction<PatternNoteAudio> audioSelection,
 							DoubleUnaryOperator nextNotePosition) {
 		if (audioSelection == null) {
 			warn("No audio selection provided");
@@ -62,15 +62,15 @@ public class NoteAudioContext implements ConsoleFeatures {
 		this.voicing = voicing;
 	}
 
-	public DoubleFunction<NoteAudio> getAudioSelection() {
+	public DoubleFunction<PatternNoteAudio> getAudioSelection() {
 		return audioSelection;
 	}
 
-	public void setAudioSelection(DoubleFunction<NoteAudio> audioSelection) {
+	public void setAudioSelection(DoubleFunction<PatternNoteAudio> audioSelection) {
 		this.audioSelection = audioSelection;
 	}
 
-	public NoteAudio selectAudio(double selection) {
+	public PatternNoteAudio selectAudio(double selection) {
 		return getAudioSelection().apply(selection);
 	}
 

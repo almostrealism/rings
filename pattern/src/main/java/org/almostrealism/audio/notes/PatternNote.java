@@ -64,7 +64,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	public void addLayer(double noteAudioSelection) {
-		layers.add(new PatternNoteLayer(noteAudioSelection));
+		layers.add(new PatternNoteAudioChoice(noteAudioSelection));
 	}
 
 	public List<PatternNoteAudio> getLayers() {
@@ -79,7 +79,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		this.aggregationChoice = aggregationChoice;
 	}
 
-	public List<NoteAudio> getProviders(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	public List<PatternNoteAudio> getProviders(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (delegate != null) return delegate.getProviders(target, audioSelection);
 		return layers.stream()
 				.filter(l -> l instanceof PatternNoteLayer)
@@ -108,26 +108,26 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	@Override
-	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	public double getDuration(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (delegate != null) return delegate.getDuration(target, audioSelection);
 		return layers.stream().mapToDouble(l -> l.getDuration(target, audioSelection)).max().orElse(0.0);
 	}
 
 	@Override
-	public int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	public int getSampleRate(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
 		return OutputLine.sampleRate;
 	}
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-												  DoubleFunction<NoteAudio> audioSelection) {
+												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, audioSelection);
 		return combineLayers(target, -1, null, audioSelection);
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
 														 Producer<PackedCollection<?>> automationLevel,
-														 DoubleFunction<NoteAudio> audioSelection) {
+														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			return super.computeAudio(target, noteDuration, automationLevel, audioSelection);
 		}
@@ -137,7 +137,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, double noteDuration,
 														  Producer<PackedCollection<?>> automationLevel,
-														  DoubleFunction<NoteAudio> audioSelection) {
+														  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
 		}
@@ -179,8 +179,8 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	@Override
-	protected NoteAudio getProvider(KeyPosition<?> target,
-											DoubleFunction<NoteAudio> audioSelection) {
+	protected PatternNoteAudio getProvider(KeyPosition<?> target,
+										   DoubleFunction<PatternNoteAudio> audioSelection) {
 		throw new UnsupportedOperationException();
 	}
 

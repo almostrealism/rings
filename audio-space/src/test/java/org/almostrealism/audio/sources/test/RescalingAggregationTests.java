@@ -24,6 +24,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.SimplePatternNote;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.BufferDetails;
@@ -159,11 +160,14 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		audioContext.setNextNotePosition(pos -> duration);
 		audioContext.setAudioSelection((choice) -> {
 					if (choice < 0.5) {
-						return NoteAudioProvider.create("Library/organ.wav", WesternChromatic.D3, tuning);
+						return new SimplePatternNote(NoteAudioProvider
+								.create("Library/organ.wav", WesternChromatic.D3, tuning));
 					} else if (choice < 0.7) {
-						return NoteAudioProvider.create("Library/SN_Forever_Future.wav", WesternChromatic.D3, tuning);
+						return new SimplePatternNote(NoteAudioProvider
+								.create("Library/SN_Forever_Future.wav", WesternChromatic.D3, tuning));
 					} else {
-						return NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning);
+						return new SimplePatternNote(NoteAudioProvider
+								.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning));
 					}
 				});
 

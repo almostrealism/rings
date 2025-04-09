@@ -25,20 +25,30 @@ import java.util.function.DoubleFunction;
 
 public interface PatternNoteAudio {
 
-	default BufferDetails getBufferDetails(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	default BufferDetails getBufferDetails(KeyPosition<?> target,
+										   DoubleFunction<PatternNoteAudio> audioSelection) {
 		return new BufferDetails(
 				getSampleRate(target, audioSelection),
 				getDuration(target, audioSelection));
 	}
 
-	int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection);
+	default int getSampleRate(KeyPosition<?> target) {
+		return getSampleRate(target, null);
+	}
 
-	double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection);
+	int getSampleRate(KeyPosition<?> target,
+					  DoubleFunction<PatternNoteAudio> audioSelection);
+
+	double getDuration(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection);
+
+	default Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+		return getAudio(target, null);
+	}
+
+	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+										   DoubleFunction<PatternNoteAudio> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
 										   Producer<PackedCollection<?>> automationLevel,
-										   DoubleFunction<NoteAudio> audioSelection);
-
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-										   DoubleFunction<NoteAudio> audioSelection);
+										   DoubleFunction<PatternNoteAudio> audioSelection);
 }

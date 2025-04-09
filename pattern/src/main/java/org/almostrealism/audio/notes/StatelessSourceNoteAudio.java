@@ -21,16 +21,20 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
-public class StatelessSourceNoteAudio implements NoteAudio, CodeFeatures {
+import java.util.function.DoubleFunction;
+
+public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned, CodeFeatures {
 	private StatelessSource source;
 	private KeyboardTuning tuning;
 
 	private BufferDetails buffer;
 	private Producer<PackedCollection<?>> params;
 
+	// TODO  Params should actually be a Factor, converting automation level to parameter values
 	public StatelessSourceNoteAudio(StatelessSource source,
 									BufferDetails buffer,
 									Producer<PackedCollection<?>> params) {
@@ -43,13 +47,28 @@ public class StatelessSourceNoteAudio implements NoteAudio, CodeFeatures {
 	public void setTuning(KeyboardTuning tuning) { this.tuning = tuning; }
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+	public int getSampleRate(KeyPosition<?> target,
+							 DoubleFunction<PatternNoteAudio> audioSelection) {
+		return buffer.getSampleRate();
+	}
+
+	@Override
+	public double getDuration(KeyPosition<?> target,
+							  DoubleFunction<PatternNoteAudio> audioSelection) {
+		return buffer.getDuration();
+	}
+
+	@Override
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(buffer, params, c(tuning.getTone(target).asHertz()));
 	}
 
 	@Override
-	public double getDuration(KeyPosition<?> target) { return buffer.getDuration(); }
-
-	@Override
-	public int getSampleRate() { return buffer.getSampleRate(); }
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+												  double noteDuration,
+												  Producer<PackedCollection<?>> automationLevel,
+												  DoubleFunction<PatternNoteAudio> audioSelection) {
+		return source.generate(buffer, params, c(tuning.getTone(target).asHertz()));
+	}
 }

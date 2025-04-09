@@ -28,6 +28,7 @@ import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.filter.VolumeEnvelopeExtraction;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNoteLayer;
+import org.almostrealism.audio.notes.SimplePatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
@@ -252,7 +253,8 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
 		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, d -> provider).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, d -> new SimplePatternNote(provider))
+							.evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
 
@@ -266,7 +268,8 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result =
 				penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, d -> provider).evaluate(), 44100)
+		new WaveData(result.getAudio(null, 4.0, null, d -> new SimplePatternNote(provider))
+								.evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}
 

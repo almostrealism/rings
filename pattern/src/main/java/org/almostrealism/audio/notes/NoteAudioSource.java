@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,13 @@ public interface NoteAudioSource extends KeyboardTuned {
 	@JsonIgnore
 	@Override
 	void setTuning(KeyboardTuning tuning);
+
+	default List<PatternNoteAudio> getPatternNotes() {
+		return getNotes().stream()
+				.map(SimplePatternNote::new)
+				.map(PatternNoteAudio.class::cast)
+				.toList();
+	}
 
 	@JsonIgnore
 	List<NoteAudio> getNotes();

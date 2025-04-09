@@ -426,7 +426,7 @@ public class PatternLayerManager implements PatternFeatures {
 			elements.keySet().forEach(choice -> {
 				NoteAudioContext audioContext =
 						new NoteAudioContext(voicing,
-							choice.getValidNotes(),
+							choice.getValidPatternNotes(),
 							this::nextNotePosition);
 
 				if (destination.get(voicing) != ctx.getDestination()) {

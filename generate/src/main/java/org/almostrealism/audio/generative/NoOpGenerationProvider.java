@@ -18,7 +18,6 @@ package org.almostrealism.audio.generative;
 
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 
 import java.util.HashMap;
 import java.util.List;

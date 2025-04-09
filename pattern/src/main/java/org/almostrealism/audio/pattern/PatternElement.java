@@ -24,6 +24,7 @@ import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -178,7 +179,7 @@ public class PatternElement implements CodeFeatures {
 
 	public Producer<PackedCollection<?>> getNoteAudio(ElementVoicingDetails details,
 													  Producer<PackedCollection<?>> automationLevel,
-													  DoubleFunction<NoteAudio> audioSelection,
+													  DoubleFunction<PatternNoteAudio> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;
 

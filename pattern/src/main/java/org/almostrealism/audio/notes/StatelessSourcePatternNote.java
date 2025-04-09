@@ -29,6 +29,8 @@ import org.almostrealism.heredity.IdentityFactor;
 
 import java.util.function.DoubleFunction;
 
+// TODO  This is basically a clone of StatelessSourceNoteAudio
+@Deprecated
 public class StatelessSourcePatternNote implements PatternNoteAudio, KeyboardTuned, CodeFeatures {
 	private final StatelessSource source;
 	private final KeyPosition<?> root;
@@ -62,19 +64,19 @@ public class StatelessSourcePatternNote implements PatternNoteAudio, KeyboardTun
 	}
 
 	@Override
-	public int getSampleRate(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	public int getSampleRate(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
 		return OutputLine.sampleRate;
 	}
 
 	@Override
-	public double getDuration(KeyPosition<?> target, DoubleFunction<NoteAudio> audioSelection) {
+	public double getDuration(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
 		return duration;
 	}
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
 												  Producer<PackedCollection<?>> automationLevel,
-												  DoubleFunction<NoteAudio> audioSelection) {
+												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(getBufferDetails(target, audioSelection),
 				getParameters().getResultant(automationLevel),
 				c(tuning.getRelativeFrequency(root, target).asHertz()));
@@ -82,7 +84,7 @@ public class StatelessSourcePatternNote implements PatternNoteAudio, KeyboardTun
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-												  DoubleFunction<NoteAudio> audioSelection) {
+												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(getBufferDetails(target, audioSelection),
 				getParameters().getResultant(c(1.0)),
 				c(tuning.getRelativeFrequency(root, target).asHertz()));

@@ -16,9 +16,12 @@
 
 package org.almostrealism.audio.generate.test;
 
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.notes.StatelessSourceNoteAudio;
+import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.persistence.GeneratedSourceLibrary;
 import org.almostrealism.audio.persistence.LibraryDestination;
 import org.almostrealism.audio.sources.BufferDetails;
@@ -31,7 +34,6 @@ import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.List;
 
 public class AudioSynthesizerTests implements TestFeatures {
 	private LibraryDestination library = new LibraryDestination("model");
@@ -59,7 +61,36 @@ public class AudioSynthesizerTests implements TestFeatures {
 		synth.setTuning(new DefaultKeyboardTuning());
 
 		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3).evaluate();
-		new WaveData(audio, synth.getSampleRate())
+		new WaveData(audio, synth.getSampleRate(WesternChromatic.G3))
 				.save(new File("results/test-synth.wav"));
+	}
+
+	@Test
+	public void generateFromFile() {
+		double lfo1 = 0.5;
+		double lfo2 = 1.1;
+		PackedCollection<?> levelData = new PackedCollection<>(shape(2, 10 * OutputLine.sampleRate));
+		levelData.fill(pos -> {
+			int i = pos[0];
+			double j = pos[1];
+			double t = (j / OutputLine.sampleRate) + (i == 0 ? 0 : 0.3);
+			return Math.sin(2 * Math.PI * (i == 0 ? lfo1 : lfo2) * t);
+		});
+
+		String key = "test-synth";
+
+		GeneratedSourceLibrary models = new GeneratedSourceLibrary(library);
+		TreeNoteSource source = new TreeNoteSource(new FileWaveDataProviderNode(new File("Library")));
+		source.setTuning(new DefaultKeyboardTuning());
+		source.setSynthesizerFactory(note -> models.getSource(key));
+		source.setUseSynthesizer(true);
+
+		models.add(key, new InterpolatedAudioSynthesisModel(
+				new double[] {1.0, 4.0}, OutputLine.sampleRate, levelData));
+
+		PatternNoteAudio synth = source.getPatternNotes().get(0);
+		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3).evaluate();
+		new WaveData(audio, synth.getSampleRate(WesternChromatic.G3))
+				.save(new File("results/model-synth.wav"));
 	}
 }

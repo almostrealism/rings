@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
 import org.almostrealism.audio.notes.PatternNote;
+import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 
 public interface ParameterizedEnvelope extends EnvelopeFeatures {
 
-	default PatternNoteLayer apply(ParameterSet params, ChannelInfo.Voicing voicing, PatternNoteLayer note) {
+	default PatternNoteLayer apply(ParameterSet params, ChannelInfo.Voicing voicing, PatternNoteAudio note) {
 		return PatternNoteLayer.create(note, createFilter(params, voicing));
 	}
 

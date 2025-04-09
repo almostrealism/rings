@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.almostrealism.audio.pattern;
 
 import org.almostrealism.audio.data.ChannelInfo;
@@ -7,6 +23,7 @@ import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteAudio;
+import org.almostrealism.audio.notes.PatternNoteAudioChoice;
 import org.almostrealism.audio.notes.PatternNoteLayer;
 
 import java.util.ArrayList;
@@ -57,7 +74,7 @@ public class PatternNoteFactory {
 		List<PatternNoteAudio> layers = new ArrayList<>();
 
 		for (int i = 0; i < getLayerCount(); i++) {
-			PatternNoteLayer l = new PatternNoteLayer(choices[i]);
+			PatternNoteAudio l = new PatternNoteAudioChoice(choices[i]);
 
 			if (blend) {
 				l = layerEnvelopes.getEnvelope(i).apply(params, voicing, l);

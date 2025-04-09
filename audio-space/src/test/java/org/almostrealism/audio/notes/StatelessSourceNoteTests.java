@@ -83,7 +83,8 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		NoteAudioContext audioContext = new NoteAudioContext();
 		audioContext.setNextNotePosition(pos -> duration);
 		audioContext.setAudioSelection((choice) ->
-				NoteAudioProvider.create("Library/Snare Gold 1.wav", WesternChromatic.D3, tuning));
+				new SimplePatternNote(NoteAudioProvider
+						.create("Library/Snare Gold 1.wav",WesternChromatic.D3, tuning)));
 
 		// Create the elements of the composition, leveraging
 		// the notes that have been defined in multiple places
