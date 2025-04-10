@@ -258,7 +258,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 				if (enableFft) {
 					try {
-						getWaveOut().getWaveData().fft().store(getFftOutputFile());
+						getWaveOut().getWaveData().fft(true).store(getFftOutputFile());
 					} catch (IOException e) {
 						warn("Could not store FFT", e);
 					}

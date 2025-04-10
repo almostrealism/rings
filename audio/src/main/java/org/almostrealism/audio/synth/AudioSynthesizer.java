@@ -46,10 +46,15 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 	private AudioSynthesisModel model;
 
 	public AudioSynthesizer() {
-		this(7);
+		this(null);
 	}
 
-	public AudioSynthesizer(int voiceCount) {
+	public AudioSynthesizer(AudioSynthesisModel model) {
+		this(model, 7);
+	}
+
+	public AudioSynthesizer(AudioSynthesisModel model, int voiceCount) {
+		setModel(model);
 		this.tones = new OvertoneSeries(2, voiceCount - 3);
 		this.tuning = new DefaultKeyboardTuning();
 

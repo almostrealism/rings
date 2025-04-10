@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.generate.test;
 
+import org.almostrealism.audio.data.FileWaveDataProviderFilter;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.OutputLine;
@@ -28,6 +29,8 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.synth.InterpolatedAudioSynthesisModel;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.audio.tone.KeyboardTuned;
+import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.util.TestFeatures;
@@ -67,28 +70,22 @@ public class AudioSynthesizerTests implements TestFeatures {
 
 	@Test
 	public void generateFromFile() {
-		double lfo1 = 0.5;
-		double lfo2 = 1.1;
-		PackedCollection<?> levelData = new PackedCollection<>(shape(2, 10 * OutputLine.sampleRate));
-		levelData.fill(pos -> {
-			int i = pos[0];
-			double j = pos[1];
-			double t = (j / OutputLine.sampleRate) + (i == 0 ? 0 : 0.3);
-			return Math.sin(2 * Math.PI * (i == 0 ? lfo1 : lfo2) * t);
-		});
-
-		String key = "test-synth";
+		KeyboardTuning tuning = new DefaultKeyboardTuning();
 
 		GeneratedSourceLibrary models = new GeneratedSourceLibrary(library);
-		TreeNoteSource source = new TreeNoteSource(new FileWaveDataProviderNode(new File("Library")));
-		source.setTuning(new DefaultKeyboardTuning());
-		source.setSynthesizerFactory(note -> models.getSource(key));
+		TreeNoteSource source = new TreeNoteSource(WesternChromatic.C3);
+		source.getFilters().add(
+				new FileWaveDataProviderFilter(
+						FileWaveDataProviderFilter.FilterOn.NAME,
+						FileWaveDataProviderFilter.FilterType.CONTAINS,
+						"C3"));
+		source.setTree(new FileWaveDataProviderNode(new File("Library")));
+		source.setTuning(tuning);
+		source.setSynthesizerFactory(models::getSynthesizer);
 		source.setUseSynthesizer(true);
 
-		models.add(key, new InterpolatedAudioSynthesisModel(
-				new double[] {1.0, 4.0}, OutputLine.sampleRate, levelData));
-
 		PatternNoteAudio synth = source.getPatternNotes().get(0);
+		((KeyboardTuned) synth).setTuning(tuning);
 		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3).evaluate();
 		new WaveData(audio, synth.getSampleRate(WesternChromatic.G3))
 				.save(new File("results/model-synth.wav"));

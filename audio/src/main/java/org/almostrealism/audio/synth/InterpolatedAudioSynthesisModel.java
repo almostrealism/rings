@@ -16,8 +16,13 @@
 
 package org.almostrealism.audio.synth;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, CellFeatures {
@@ -59,5 +64,23 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 		return interpolate(
 				traverse(0, cp(levelData.range(shape(samples), right * samples))),
 				traverse(1, time), sampleRate);
+	}
+
+	public static InterpolatedAudioSynthesisModel create(NoteAudio audio, KeyPosition<?> root, KeyboardTuning tuning) {
+		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root).evaluate(), audio.getSampleRate()).fft();
+
+		int samples = frequencies.getShape().length(0);
+		int frequencyCount = frequencies.getShape().length(1);
+		double fftSampleRate = audio.getSampleRate() / (double) (2 * frequencyCount);
+
+		frequencies = frequencies.reshape(new TraversalPolicy(samples, frequencyCount)).transpose();
+
+		double fundamental = tuning.getTone(root).asHertz();
+		double[] frequencyRatios = new double[frequencyCount];
+		for (int i = 0; i < frequencyCount; i++) {
+			frequencyRatios[i] = i * fftSampleRate / fundamental;
+		}
+
+		return new InterpolatedAudioSynthesisModel(frequencyRatios, fftSampleRate, frequencies);
 	}
 }

@@ -94,7 +94,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 		details.setFrameCount(data.getCollection().getMemLength());
 		details.setData(data.getCollection());
 
-		PackedCollection<?> fft = processFft(data.fft());
+		PackedCollection<?> fft = processFft(data.fft(true));
 		if (fft.getShape().length(0) < 1) {
 			throw new UnsupportedOperationException();
 		}

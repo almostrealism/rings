@@ -16,9 +16,13 @@
 
 package org.almostrealism.audio.persistence;
 
+import org.almostrealism.audio.notes.NoteAudio;
+import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.synth.AudioSynthesisModel;
 import org.almostrealism.audio.synth.AudioSynthesizer;
+import org.almostrealism.audio.synth.InterpolatedAudioSynthesisModel;
+import org.almostrealism.audio.tone.KeyboardTuning;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +47,22 @@ public class GeneratedSourceLibrary {
 			synth.setModel(models.get(key));
 		}
 
+		return synth;
+	}
+
+	public StatelessSource getSynthesizer(NoteAudio modelInput) {
+		if (!(modelInput instanceof NoteAudioProvider)) {
+			throw new UnsupportedOperationException();
+		}
+
+		KeyboardTuning tuning = ((NoteAudioProvider) modelInput).getTuning();
+
+		InterpolatedAudioSynthesisModel model = InterpolatedAudioSynthesisModel
+				.create(modelInput,
+						((NoteAudioProvider) modelInput).getRoot(),
+						tuning);
+		AudioSynthesizer synth = new AudioSynthesizer(model, 12);
+		synth.setTuning(tuning);
 		return synth;
 	}
 }

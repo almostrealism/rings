@@ -121,6 +121,9 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	}
 
 	@JsonIgnore
+	public KeyboardTuning getTuning() { return tuning; }
+
+	@JsonIgnore
 	@Override
 	public int getSampleRate() {
 		return provider.getSampleRate();

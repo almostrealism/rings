@@ -53,7 +53,12 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 
 	private List<FileWaveDataProviderFilter> filters;
 
-	public TreeNoteSource() { this(null); }
+	public TreeNoteSource() { this((FileWaveDataProviderTree) null); }
+
+
+	public TreeNoteSource(KeyPosition<?> root) {
+		this(null, root);
+	}
 
 	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree) {
 		this(tree, WesternChromatic.C1);
@@ -61,9 +66,9 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 
 	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree,
 						  KeyPosition<?> root) {
+		this.filters = new ArrayList<>();
 		setTree(tree);
 		setRoot(root);
-		this.filters = new ArrayList<>();
 	}
 
 	public KeyPosition<?> getRoot() { return root; }
@@ -146,6 +151,10 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	}
 
 	private void computeProviders() {
+		if (filters == null) {
+			return;
+		}
+
 		providers = new ArrayList<>();
 
 		if (tree != null) {
