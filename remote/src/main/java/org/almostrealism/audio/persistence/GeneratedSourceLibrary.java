@@ -22,10 +22,14 @@ import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.synth.AudioSynthesisModel;
 import org.almostrealism.audio.synth.AudioSynthesizer;
 import org.almostrealism.audio.synth.InterpolatedAudioSynthesisModel;
+import org.almostrealism.audio.synth.UniformFrequencySeries;
+import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.audio.tone.RelativeFrequencySet;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class GeneratedSourceLibrary {
 	private LibraryDestination library;
@@ -55,13 +59,22 @@ public class GeneratedSourceLibrary {
 			throw new UnsupportedOperationException();
 		}
 
-		KeyboardTuning tuning = ((NoteAudioProvider) modelInput).getTuning();
+		NoteAudioProvider provider = (NoteAudioProvider) modelInput;
+		KeyboardTuning tuning = provider.getTuning();
+		KeyPosition<?> root = provider.getRoot();
 
 		InterpolatedAudioSynthesisModel model = InterpolatedAudioSynthesisModel
-				.create(modelInput,
-						((NoteAudioProvider) modelInput).getRoot(),
-						tuning);
-		AudioSynthesizer synth = new AudioSynthesizer(model, 12);
+				.create(modelInput, root, tuning);
+
+		double ratios[] = model.getFrequencyRatios();
+		double[] filteredRatios = IntStream.range(0, ratios.length)
+				.filter(i -> i % 3 == 1)
+				.mapToDouble(i -> ratios[i])
+				.limit(12)
+				.toArray();
+
+		RelativeFrequencySet voices = new UniformFrequencySeries(filteredRatios);
+		AudioSynthesizer synth = new AudioSynthesizer(model, voices);
 		synth.setTuning(tuning);
 		return synth;
 	}

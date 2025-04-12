@@ -24,6 +24,7 @@ import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyNumbering;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.audio.tone.RelativeFrequencySet;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Cell;
@@ -38,9 +39,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeatures {
-	private OvertoneSeries tones;
+	private RelativeFrequencySet tones;
 
-	private List<SineWaveCell> voices;
+	private List<SineWaveCell> cells;
 	private SummationCell output;
 	private KeyboardTuning tuning;
 	private AudioSynthesisModel model;
@@ -54,16 +55,19 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 	}
 
 	public AudioSynthesizer(AudioSynthesisModel model, int voiceCount) {
+		this(model, new OvertoneSeries(2, voiceCount - 3));
+	}
+
+	public AudioSynthesizer(AudioSynthesisModel model, RelativeFrequencySet voices) {
 		setModel(model);
-		this.tones = new OvertoneSeries(2, voiceCount - 3);
+		this.tones = voices;
 		this.tuning = new DefaultKeyboardTuning();
+		this.output = new SummationCell();
+		this.cells = new ArrayList<>();
 
-		output = new SummationCell();
-		voices = new ArrayList<>();
-
-		for (int i = 0; i < voiceCount; i++) {
-			voices.add(new SineWaveCell());
-			voices.get(i).setReceptor(output);
+		for (int i = 0; i < voices.count(); i++) {
+			cells.add(new SineWaveCell());
+			cells.get(i).setReceptor(output);
 		}
 	}
 
@@ -81,20 +85,18 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 	}
 
 	public void setFrequency(Frequency f) {
-		tones.setRoot(f);
-
-		Iterator<SineWaveCell> itr = voices.iterator();
-		for (Frequency r : tones) itr.next().setFreq(r.asHertz());
+		Iterator<SineWaveCell> itr = cells.iterator();
+		for (Frequency r : tones.getFrequencies(f)) itr.next().setFreq(r.asHertz());
 	}
 
 	public void strike() {
-		for (SineWaveCell s : voices) s.strike();
+		for (SineWaveCell s : cells) s.strike();
 	}
 
 	@Override
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("AudioSynthesizer Tick");
-		voices.stream().map(cell -> cell.push(null)).forEach(tick::add);
+		cells.stream().map(cell -> cell.push(null)).forEach(tick::add);
 		return tick;
 	}
 
@@ -104,7 +106,7 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 												  Producer<PackedCollection<?>> frequency) {
 		double amp = 0.75;
 		return sampling(buffer.getSampleRate(), () -> {
-			double scale = amp / tones.total();
+			double scale = amp / tones.count();
 
 			List<Producer<?>> series = new ArrayList<>();
 
@@ -122,7 +124,7 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 				series.add(signal);
 			}
 
-			return add(series).multiply(scale);
+			return model == null ? add(series).multiply(scale) : add(series);
 		});
 	}
 }

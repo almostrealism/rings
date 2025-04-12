@@ -16,40 +16,38 @@
 
 package org.almostrealism.audio.synth;
 
+import org.almostrealism.audio.tone.RelativeFrequencySet;
 import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class OvertoneSeries implements Iterable<Frequency> {
+public class OvertoneSeries implements RelativeFrequencySet {
 	private int subCount, superCount;
-	private Frequency root;
 
 	public OvertoneSeries(int subCount, int superCount) {
 		this.subCount = subCount;
 		this.superCount = superCount;
-		setRoot(new Frequency(1.0));
 	}
-
-	public void setRoot(Frequency f) { this.root = f; }
 
 	@Override
-	public Iterator<Frequency> iterator() {
-		List<Frequency> l = new ArrayList<>();
+	public Iterable<Frequency> getFrequencies(Frequency fundamental) {
+		return () -> {
+			List<Frequency> l = new ArrayList<>();
 
-		for (int i = subCount; i > 0; i--) {
-			l.add(new Frequency(root.asHertz() / Math.pow(2, i)));
-		}
+			for (int i = subCount; i > 0; i--) {
+				l.add(new Frequency(fundamental.asHertz() / Math.pow(2, i)));
+			}
 
-		l.add(new Frequency(root.asHertz()));
+			l.add(new Frequency(fundamental.asHertz()));
 
-		for (int i = 1; i <= superCount; i++) {
-			l.add(new Frequency(root.asHertz() * Math.pow(2, i)));
-		}
+			for (int i = 1; i <= superCount; i++) {
+				l.add(new Frequency(fundamental.asHertz() * Math.pow(2, i)));
+			}
 
-		return l.iterator();
+			return l.iterator();
+		};
 	}
 
-	public int total() { return subCount + superCount + 1; }
+	public int count() { return subCount + superCount + 1; }
 }

@@ -46,6 +46,8 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 		}
 	}
 
+	public double[] getFrequencyRatios() { return frequencyRatios; }
+
 	@Override
 	public Producer<PackedCollection<?>> getLevels(double frequencyRatio,
 												   Producer<PackedCollection<?>> time) {
@@ -56,7 +58,6 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 			if (frequencyRatio > frequencyRatios[i]) {
 				left = i;
 				right = i + 1;
-				break;
 			}
 		}
 
@@ -67,18 +68,23 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 	}
 
 	public static InterpolatedAudioSynthesisModel create(NoteAudio audio, KeyPosition<?> root, KeyboardTuning tuning) {
-		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root).evaluate(), audio.getSampleRate()).fft();
+		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root).evaluate(), audio.getSampleRate()).fft(true);
 
 		int samples = frequencies.getShape().length(0);
 		int frequencyCount = frequencies.getShape().length(1);
-		double fftSampleRate = audio.getSampleRate() / (double) (2 * frequencyCount);
+		double frequencyMax = audio.getSampleRate() / (double) WaveData.FFT_BINS;
+		double fftSampleRate = audio.getSampleRate() / (double) (WaveData.FFT_BINS * WaveData.FFT_POOL);
 
+		// TODO Rescaling by the number of bins should not be necessary, but for the
+		// TODO moment FourierTransform does not normalize the output on its own
+		double scale = WaveData.FFT_BINS;
+		frequencies.setMem(frequencies.doubleStream().map(l -> l / scale).toArray());
 		frequencies = frequencies.reshape(new TraversalPolicy(samples, frequencyCount)).transpose();
 
 		double fundamental = tuning.getTone(root).asHertz();
 		double[] frequencyRatios = new double[frequencyCount];
 		for (int i = 0; i < frequencyCount; i++) {
-			frequencyRatios[i] = i * fftSampleRate / fundamental;
+			frequencyRatios[i] = i * frequencyMax / fundamental;
 		}
 
 		return new InterpolatedAudioSynthesisModel(frequencyRatios, fftSampleRate, frequencies);

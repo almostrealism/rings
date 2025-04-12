@@ -73,12 +73,12 @@ public class AudioSynthesizerTests implements TestFeatures {
 		KeyboardTuning tuning = new DefaultKeyboardTuning();
 
 		GeneratedSourceLibrary models = new GeneratedSourceLibrary(library);
-		TreeNoteSource source = new TreeNoteSource(WesternChromatic.C3);
+		TreeNoteSource source = new TreeNoteSource(WesternChromatic.A4);
 		source.getFilters().add(
 				new FileWaveDataProviderFilter(
 						FileWaveDataProviderFilter.FilterOn.NAME,
 						FileWaveDataProviderFilter.FilterType.CONTAINS,
-						"C3"));
+						"SinePattern"));
 		source.setTree(new FileWaveDataProviderNode(new File("Library")));
 		source.setTuning(tuning);
 		source.setSynthesizerFactory(models::getSynthesizer);
@@ -86,8 +86,8 @@ public class AudioSynthesizerTests implements TestFeatures {
 
 		PatternNoteAudio synth = source.getPatternNotes().get(0);
 		((KeyboardTuned) synth).setTuning(tuning);
-		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3).evaluate();
-		new WaveData(audio, synth.getSampleRate(WesternChromatic.G3))
+		PackedCollection<?> audio = synth.getAudio(WesternChromatic.A4).evaluate();
+		new WaveData(audio, synth.getSampleRate(WesternChromatic.A4))
 				.save(new File("results/model-synth.wav"));
 	}
 }
