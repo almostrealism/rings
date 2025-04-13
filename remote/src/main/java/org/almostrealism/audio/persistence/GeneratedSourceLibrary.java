@@ -66,15 +66,7 @@ public class GeneratedSourceLibrary {
 		InterpolatedAudioSynthesisModel model = InterpolatedAudioSynthesisModel
 				.create(modelInput, root, tuning);
 
-		double ratios[] = model.getFrequencyRatios();
-		double[] filteredRatios = IntStream.range(0, ratios.length)
-				.filter(i -> i % 3 == 1)
-				.mapToDouble(i -> ratios[i])
-				.limit(12)
-				.toArray();
-
-		RelativeFrequencySet voices = new UniformFrequencySeries(filteredRatios);
-		AudioSynthesizer synth = new AudioSynthesizer(model, voices);
+		AudioSynthesizer synth = new AudioSynthesizer(model, 2, 5, 4);
 		synth.setTuning(tuning);
 		return synth;
 	}

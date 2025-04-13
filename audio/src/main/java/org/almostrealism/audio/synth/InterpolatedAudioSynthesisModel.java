@@ -63,7 +63,7 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 
 		// TODO  Mix this value from left with value from right
 		return interpolate(
-				traverse(0, cp(levelData.range(shape(samples), right * samples))),
+				traverse(0, cp(levelData.range(shape(samples), left * samples))),
 				traverse(1, time), sampleRate);
 	}
 

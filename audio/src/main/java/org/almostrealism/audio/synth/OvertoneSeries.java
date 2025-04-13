@@ -23,11 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OvertoneSeries implements RelativeFrequencySet {
-	private int subCount, superCount;
+	private int subCount, superCount, inharmonicCount;
 
-	public OvertoneSeries(int subCount, int superCount) {
+	public OvertoneSeries(int subCount, int superCount, int inharmonicCount) {
 		this.subCount = subCount;
 		this.superCount = superCount;
+		this.inharmonicCount = inharmonicCount;
+
+		if (inharmonicCount > superCount) {
+			throw new IllegalArgumentException("There cannot be more inharmonic tones than positive overtones");
+		}
 	}
 
 	@Override
@@ -42,12 +47,19 @@ public class OvertoneSeries implements RelativeFrequencySet {
 			l.add(new Frequency(fundamental.asHertz()));
 
 			for (int i = 1; i <= superCount; i++) {
-				l.add(new Frequency(fundamental.asHertz() * Math.pow(2, i)));
+				double next = fundamental.asHertz() * Math.pow(2, i);
+
+				if (i <= inharmonicCount) {
+					double last = fundamental.asHertz() * Math.pow(2, i - 1);
+					l.add(new Frequency(last + (next - last) * 0.5));
+				}
+
+				l.add(new Frequency(next));
 			}
 
 			return l.iterator();
 		};
 	}
 
-	public int count() { return subCount + superCount + 1; }
+	public int count() { return subCount + superCount + inharmonicCount + 1; }
 }
