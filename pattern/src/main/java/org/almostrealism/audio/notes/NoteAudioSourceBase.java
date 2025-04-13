@@ -20,6 +20,7 @@ import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -43,11 +44,26 @@ public abstract class NoteAudioSourceBase implements NoteAudioSource {
 					.toList();
 		}
 
-		return getNotes().stream()
-				.map(SimplePatternNote::new)
-				.map(PatternNoteAudio.class::cast)
-				.toList();
+		List<PatternNoteAudio> notes = new ArrayList<>();
+
+		if (isForwardPlayback()) {
+			getNotes().stream()
+					.map(SimplePatternNote::new)
+					.forEach(notes::add);
+		}
+
+		if (isReversePlayback()) {
+			ReversePlaybackAudioFilter filter = new ReversePlaybackAudioFilter();
+			getNotes().stream()
+					.map(SimplePatternNote::new)
+					.map(n -> n.filter(filter))
+					.forEach(notes::add);
+		}
+
+		return notes;
 	}
 
 	public abstract boolean isUseSynthesizer();
+	public abstract boolean isForwardPlayback();
+	public abstract boolean isReversePlayback();
 }

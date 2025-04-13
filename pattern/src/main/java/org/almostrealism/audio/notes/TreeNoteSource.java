@@ -50,6 +50,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	private Double bpm;
 	private Double splitDurationBeats;
 	private boolean useSynthesizer;
+	private boolean forwardPlayback;
+	private boolean reversePlayback;
 
 	private List<FileWaveDataProviderFilter> filters;
 
@@ -140,6 +142,24 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 
 	public void setUseSynthesizer(boolean useSynthesizer) {
 		this.useSynthesizer = useSynthesizer;
+	}
+
+	@Override
+	public boolean isForwardPlayback() {
+		return forwardPlayback;
+	}
+
+	public void setForwardPlayback(boolean forwardPlayback) {
+		this.forwardPlayback = forwardPlayback;
+	}
+
+	@Override
+	public boolean isReversePlayback() {
+		return reversePlayback;
+	}
+
+	public void setReversePlayback(boolean reversePlayback) {
+		this.reversePlayback = reversePlayback;
 	}
 
 	public void refresh() {

@@ -45,6 +45,10 @@ public interface PatternNoteAudio {
 		return getAudio(target, null);
 	}
 
+	default PatternNoteLayer filter(NoteAudioFilter filter) {
+		return new PatternNoteLayer(this, filter);
+	}
+
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 

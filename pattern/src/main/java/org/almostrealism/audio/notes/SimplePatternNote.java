@@ -19,15 +19,24 @@ package org.almostrealism.audio.notes;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.tone.KeyPosition;
+import org.almostrealism.audio.tone.KeyboardTuned;
+import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.DoubleFunction;
 
-public class SimplePatternNote implements PatternNoteAudio, Validity {
+public class SimplePatternNote implements PatternNoteAudio, KeyboardTuned, Validity {
 	private NoteAudio audio;
 
 	public SimplePatternNote(NoteAudio audio) {
 		this.audio = audio;
+	}
+
+	@Override
+	public void setTuning(KeyboardTuning tuning) {
+		if (audio != null) {
+			audio.setTuning(tuning);
+		}
 	}
 
 	@Override

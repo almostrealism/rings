@@ -26,7 +26,10 @@ import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.NoteAudioProvider;
+import org.almostrealism.audio.notes.PatternNoteAudio;
+import org.almostrealism.audio.notes.PatternNoteAudioChoice;
 import org.almostrealism.audio.notes.PatternNoteLayer;
+import org.almostrealism.audio.notes.ReversePlaybackAudioFilter;
 import org.almostrealism.audio.notes.SimplePatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -43,12 +46,26 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		NoteAudioProvider provider =
 				NoteAudioProvider.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
 
-		PatternNoteLayer note = new PatternNoteLayer();
-		note.setTuning(new DefaultKeyboardTuning());
-		new WaveData(note.getAudio(WesternChromatic.G2, 1.0, null, d -> new SimplePatternNote(provider))
+		PatternNoteAudio note = new PatternNoteAudioChoice();
+		new WaveData(note.getAudio(WesternChromatic.G2, 1.0, null,
+										d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.G2, null))
-				.save(new File("results/pattern-note-audio.wav"));
+				.save(new File("results/pattern-note.wav"));
+	}
+
+	@Test
+	public void noteAudioReversed() {
+		NoteAudioProvider provider =
+				NoteAudioProvider.create("Library/Snare Perc DD.wav", WesternChromatic.C1);
+
+		PatternNoteLayer note = PatternNoteLayer.create(new SimplePatternNote(provider),
+													new ReversePlaybackAudioFilter());
+		note.setTuning(new DefaultKeyboardTuning());
+		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, null)
+				.evaluate(),
+				note.getSampleRate(WesternChromatic.C1, null))
+				.save(new File("results/pattern-note-reversed.wav"));
 	}
 
 	@Test
