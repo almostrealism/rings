@@ -69,6 +69,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	public TreeNoteSource(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree,
 						  KeyPosition<?> root) {
 		this.filters = new ArrayList<>();
+		setForwardPlayback(true);
 		setTree(tree);
 		setRoot(root);
 	}
@@ -202,6 +203,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 					warn(e.getMessage() + "(" + p.getResourcePath() + ")");
 				}
 			});
+
+			Collections.sort(providers);
 		}
 
 		computeNotes();

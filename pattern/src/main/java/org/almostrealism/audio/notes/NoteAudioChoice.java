@@ -179,7 +179,6 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	public List<PatternNoteAudio> getValidPatternNotes() {
 		return getAllPatternNotes().stream()
 				.filter(Validity::valid)
-				.sorted()
 				.collect(Collectors.toList());
 	}
 

@@ -32,6 +32,7 @@ public interface NoteAudioSource extends KeyboardTuned {
 	@Override
 	void setTuning(KeyboardTuning tuning);
 
+	@JsonIgnore
 	default List<PatternNoteAudio> getPatternNotes() {
 		return getNotes().stream()
 				.map(SimplePatternNote::new)
