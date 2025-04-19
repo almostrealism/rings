@@ -16,18 +16,6 @@
 
 package org.almostrealism.audio.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.almostrealism.cycle.Setup;
-import org.almostrealism.hardware.OperationList;
-
-import java.util.function.Supplier;
-
-public interface AudioDataProvider extends DataResource, Setup {
-	@JsonIgnore
-	@Override
+public interface DataResource {
 	String getIdentifier();
-
-	int getSampleRate();
-
-	default Supplier<Runnable> setup() { return new OperationList(); }
 }

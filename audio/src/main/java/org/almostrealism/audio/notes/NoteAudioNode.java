@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,20 @@ package org.almostrealism.audio.notes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.relation.Tree;
 import io.almostrealism.uml.Named;
+import org.almostrealism.audio.data.DataResource;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface NoteAudioNode extends Tree<NoteAudioNode>, Named {
+public interface NoteAudioNode extends Tree<NoteAudioNode>, DataResource, Named {
+	@Override
+	default String getIdentifier() {
+		return getChildren().stream()
+				.map(s -> s == null ? "null" : s.getIdentifier())
+				.reduce("", (a, b) -> a + b);
+	}
+
+	default void setIdentifier(String identifier) {
+		// Most implementations will compute the identifier from the children
+		// and assign it is not necessary, even though it is useful for it
+		// to be stored in the JSON
+	}
 }
