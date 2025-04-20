@@ -25,6 +25,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.StatelessSource;
+import org.almostrealism.audio.synth.AudioSynthesizer;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -132,8 +133,10 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
 		});
 
+		AudioSynthesizer synth = new AudioSynthesizer(2, 2);
+
 		// Define the synth note
-		AutomatedPitchNoteAudio audio = new AutomatedPitchNoteAudio(sine, 8.0);
+		AutomatedPitchNoteAudio audio = new AutomatedPitchNoteAudio(synth, 8.0);
 		PatternNote riser = new PatternNote(List.of(audio));
 
 		// Setup context for rendering the audio, including the scale,
@@ -144,7 +147,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		sceneContext.setScaleForPosition(pos -> WesternScales.major(WesternChromatic.C3, 1));
 		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
 		sceneContext.setAutomationLevel(
-				params -> t -> divide(t, c(duration)));
+				params -> t -> divide(t, c(2 * duration)));
 
 		// Setup context for voicing the notes
 		NoteAudioContext audioContext = new NoteAudioContext();

@@ -51,6 +51,10 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 		this(null);
 	}
 
+	public AudioSynthesizer(int subCount, int superCount) {
+		this(null, subCount, superCount, 0);
+	}
+
 	public AudioSynthesizer(AudioSynthesisModel model) {
 		this(model, 2, 5, 0);
 	}
