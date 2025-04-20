@@ -16,14 +16,17 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.IdentityFactor;
 
 import java.util.function.DoubleFunction;
 
@@ -32,12 +35,20 @@ public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned
 	private KeyboardTuning tuning;
 
 	private BufferDetails buffer;
-	private Producer<PackedCollection<?>> params;
+	private Factor<PackedCollection<?>> params;
 
-	// TODO  Params should actually be a Factor, converting automation level to parameter values
+	public StatelessSourceNoteAudio(StatelessSource source, double duration) {
+		this(source, new BufferDetails(OutputLine.sampleRate, duration));
+	}
+
+	public StatelessSourceNoteAudio(StatelessSource source,
+									BufferDetails buffer) {
+		this(source, buffer, new IdentityFactor<>());
+	}
+
 	public StatelessSourceNoteAudio(StatelessSource source,
 									BufferDetails buffer,
-									Producer<PackedCollection<?>> params) {
+									Factor<PackedCollection<?>> params) {
 		this.source = source;
 		this.buffer = buffer;
 		this.params = params;
@@ -61,7 +72,9 @@ public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		return source.generate(buffer, params, c(tuning.getTone(target).asHertz()));
+		return source.generate(buffer,
+				params.getResultant(c(1.0)),
+				c(tuning.getTone(target).asHertz()));
 	}
 
 	@Override
@@ -69,6 +82,8 @@ public class StatelessSourceNoteAudio implements PatternNoteAudio, KeyboardTuned
 												  double noteDuration,
 												  Producer<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		return source.generate(buffer, params, c(tuning.getTone(target).asHertz()));
+		return source.generate(buffer,
+				params.getResultant(automationLevel),
+				c(tuning.getTone(target).asHertz()));
 	}
 }

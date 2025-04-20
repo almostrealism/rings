@@ -45,7 +45,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		// tuned and a root for the scale and the synth
 		double duration = 8.0;
 		KeyboardTuning tuning = new DefaultKeyboardTuning();
-		WesternChromatic root = WesternChromatic.C3;
+		WesternChromatic root = WesternChromatic.C4;
 
 		// Settings for the synth note
 		double amp = 0.25;
@@ -53,15 +53,13 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 
 		// Source for the synth note
 		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
-			CollectionProducer<PackedCollection<?>> f =
-					multiply(c(tuning.getTone(root).asHertz()), frequency);
 			CollectionProducer<PackedCollection<?>> t =
 					integers(0, frames).divide(sampleRate);
-			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
+			return sin(t.multiply(2 * Math.PI).multiply(frequency)).multiply(amp);
 		});
 
 		// Define the synth note
-		StatelessSourcePatternNote audio = new StatelessSourcePatternNote(sine, root, 2.0);
+		StatelessSourceNoteAudio audio = new StatelessSourceNoteAudio(sine, 2.0);
 		PatternNote sineNote = new PatternNote(List.of(audio));
 		sineNote.setTuning(tuning);
 

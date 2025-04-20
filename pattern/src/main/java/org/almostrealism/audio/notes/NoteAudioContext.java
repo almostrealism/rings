@@ -32,7 +32,9 @@ public class NoteAudioContext implements ConsoleFeatures {
 	private DoubleFunction<PatternNoteAudio> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
-	public NoteAudioContext() { }
+	public NoteAudioContext() {
+		this.voicing = ChannelInfo.Voicing.MAIN;
+	}
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
 							List<PatternNoteAudio> audioChoices,
