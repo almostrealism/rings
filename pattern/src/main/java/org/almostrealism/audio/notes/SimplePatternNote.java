@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.tone.KeyPosition;
@@ -58,7 +59,7 @@ public class SimplePatternNote implements PatternNoteAudio, KeyboardTuned, Valid
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
 												  double noteDuration,
-												  Producer<PackedCollection<?>> automationLevel,
+												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return audio.getAudio(target);
 	}

@@ -56,7 +56,14 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
 			CollectionProducer<PackedCollection<?>> t =
 					integers(0, frames).divide(sampleRate);
-			return sin(t.multiply(2 * Math.PI).multiply(frequency)).multiply(amp);
+
+			// Frequency is a function of time, but to avoid
+			// the possibility of a note shifting tone while
+			// being played the time parameter is explicitly
+			// provided as 0.0 (the start of the note)
+			Producer<PackedCollection<?>> f =
+					frequency.getResultant(c(0.0));
+			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
 		});
 
 		// Define the synth note
@@ -121,7 +128,8 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
 			CollectionProducer<PackedCollection<?>> t =
 					integers(0, frames).divide(sampleRate);
-			return sin(t.multiply(2 * Math.PI).multiply(frequency)).multiply(amp);
+			Producer<PackedCollection<?>> f = frequency.getResultant(t);
+			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
 		});
 
 		// Define the synth note

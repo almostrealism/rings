@@ -58,7 +58,7 @@ public class RiseManager implements Setup, CellFeatures {
 	public CellList getRise() {
 		// TODO
 		this.generator.generate(new BufferDetails(sampleRate, riseDuration),
-								c(0.0, 0.0, 0.0), c(1.0));
+								c(0.0, 0.0, 0.0), time -> c(1.0));
 		throw new UnsupportedOperationException();
 	}
 }

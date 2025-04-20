@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.SamplingFeatures;
@@ -48,7 +49,7 @@ public abstract class PatternNoteAudioAdapter implements
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
-												  Producer<PackedCollection<?>> automationLevel,
+												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return computeAudio(target, noteDuration, automationLevel, audioSelection);
 	}
@@ -65,7 +66,7 @@ public abstract class PatternNoteAudioAdapter implements
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
-														 Producer<PackedCollection<?>> automationLevel,
+														 Factor<PackedCollection<?>> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() == null) {
 			PatternNoteAudio p = getProvider(target, audioSelection);
@@ -77,8 +78,9 @@ public abstract class PatternNoteAudioAdapter implements
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
 					() -> getFilter().apply(getDelegate()
-									.getAudio(target, noteDuration, automationLevel, audioSelection),
-												c(noteDuration), automationLevel));
+									.getAudio(target, noteDuration,
+											automationLevel, audioSelection),
+												c(noteDuration), automationLevel.getResultant(c(0.0))));
 		} else {
 			throw new UnsupportedOperationException();
 		}

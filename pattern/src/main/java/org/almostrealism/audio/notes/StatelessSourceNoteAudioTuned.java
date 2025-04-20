@@ -63,7 +63,8 @@ public class StatelessSourceNoteAudioTuned extends StatelessSourceNoteAudioAdapt
 	 * @see #setTuning(KeyboardTuning) 
 	 */
 	@Override
-	public Producer<PackedCollection<?>> getFrequency(KeyPosition<?> target, Producer<PackedCollection<?>> automationLevel) {
-		return c(tuning.getTone(target).asHertz());
+	public Factor<PackedCollection<?>> getFrequency(KeyPosition<?> target,
+													  Factor<PackedCollection<?>> automationLevel) {
+		return time -> c(tuning.getTone(target).asHertz());
 	}
 }

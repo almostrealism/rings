@@ -90,11 +90,13 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	 * Obtains the frequency of the audio associated with the given {@link KeyPosition}.
 	 *
 	 * @param target          The {@link KeyPosition} representing the audio's target.
-	 * @param automationLevel  The automation level.
+	 * @param automationLevel  A {@link Factor} which provides the automation level given
+	 *                         the position in the note in seconds (between 0.0 and the
+	 *                         duration of the note).
 	 * @return A {@link Producer} that generates the frequency in hertz.
 	 */
-	public abstract Producer<PackedCollection<?>> getFrequency(KeyPosition<?> target,
-															   Producer<PackedCollection<?>> automationLevel);
+	public abstract Factor<PackedCollection<?>> getFrequency(KeyPosition<?> target,
+															 Factor<PackedCollection<?>> automationLevel);
 
 	@Override
 	public int getSampleRate(KeyPosition<?> target,
@@ -113,16 +115,15 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(buffer,
 				params.getResultant(c(1.0)),
-				getFrequency(target, c(1.0)));
+				getFrequency(target, time -> c(0.0)));
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
-												  double noteDuration,
-												  Producer<PackedCollection<?>> automationLevel,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(buffer,
-				params.getResultant(automationLevel),
+				params.getResultant(automationLevel.getResultant(c(0.0))),
 				getFrequency(target, automationLevel));
 	}
 }

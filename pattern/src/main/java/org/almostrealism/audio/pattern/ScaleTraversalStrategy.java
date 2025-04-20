@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.CellFeatures;
@@ -45,8 +46,15 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
-			Producer<PackedCollection<?>> automationLevel =
-					context.getAutomationLevel().apply(element.getAutomationParameters()).getResultant(c(actualPosition));
+			Factor<PackedCollection<?>> automationLevel =
+					context.getAutomationLevel().apply(element.getAutomationParameters());
+
+			// TODO  actualPosition is a scene position (in measures) not a time (in seconds)
+			// TODO  this means that time needs to be converted to measures first, but there
+			// TODO  is not currently an easy way to do that since the context only provides
+			// TODO  a conversion for double not Producer<PackedCollection<?>>
+			Factor<PackedCollection<?>> relativeAutomationLevel =
+					time -> automationLevel.getResultant(c(actualPosition).add(time));
 
 			if (!melodic) {
 				if (element.getScalePositions().size() > 1) {
@@ -58,7 +66,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 								keys.get(0), relativePosition);
 				Producer<PackedCollection<?>> note =
 						element.getNoteAudio(
-								details, automationLevel,
+								details, relativeAutomationLevel,
 								audioContext.getAudioSelection(),
 								context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note,
@@ -73,7 +81,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 								keys.get(keyIndex), relativePosition);
 					Producer<PackedCollection<?>> note =
 							element.getNoteAudio(
-									details, automationLevel,
+									details, relativeAutomationLevel,
 									audioContext.getAudioSelection(),
 									context.getTimeForDuration());
 					destinations.add(new RenderedNoteAudio(note,
@@ -90,7 +98,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 						audioContext.createVoicingDetails(melodic,
 								keys.get(keyIndex), relativePosition);
 				Producer<PackedCollection<?>> note = element.getNoteAudio(
-							details, automationLevel,
+							details, relativeAutomationLevel,
 							audioContext.getAudioSelection(),
 							context.getTimeForDuration());
 				destinations.add(new RenderedNoteAudio(note, context.getFrameForPosition().applyAsInt(actualPosition)));

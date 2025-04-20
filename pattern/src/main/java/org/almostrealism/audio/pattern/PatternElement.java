@@ -17,11 +17,11 @@
 package org.almostrealism.audio.pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ChannelInfo;
-import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteAudio;
@@ -178,7 +178,7 @@ public class PatternElement implements CodeFeatures {
 	}
 
 	public Producer<PackedCollection<?>> getNoteAudio(ElementVoicingDetails details,
-													  Producer<PackedCollection<?>> automationLevel,
+													  Factor<PackedCollection<?>> automationLevel,
 													  DoubleFunction<PatternNoteAudio> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;

@@ -65,8 +65,8 @@ public class AutomatedPitchNoteAudio extends StatelessSourceNoteAudioAdapter {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getFrequency(KeyPosition<?> target,
-													  Producer<PackedCollection<?>> automationLevel) {
-		return frequency.getResultant(automationLevel);
+	public Factor<PackedCollection<?>> getFrequency(KeyPosition<?> target,
+													Factor<PackedCollection<?>> automationLevel) {
+		return time -> frequency.getResultant(automationLevel.getResultant(time));
 	}
 }

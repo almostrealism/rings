@@ -17,6 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
@@ -126,7 +127,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
-														 Producer<PackedCollection<?>> automationLevel,
+														 Factor<PackedCollection<?>> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			return super.computeAudio(target, noteDuration, automationLevel, audioSelection);
@@ -136,7 +137,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, double noteDuration,
-														  Producer<PackedCollection<?>> automationLevel,
+														  Factor<PackedCollection<?>> automationLevel,
 														  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();

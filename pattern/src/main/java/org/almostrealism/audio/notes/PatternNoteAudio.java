@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.tone.KeyPosition;
@@ -53,6 +54,6 @@ public interface PatternNoteAudio {
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
-										   Producer<PackedCollection<?>> automationLevel,
+										   Factor<PackedCollection<?>> automationLevel,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 }

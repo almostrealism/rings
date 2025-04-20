@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.synth;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.sources.BufferDetails;
@@ -104,7 +105,7 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 	@Override
 	public Producer<PackedCollection<?>> generate(BufferDetails buffer,
 												  Producer<PackedCollection<?>> params,
-												  Producer<PackedCollection<?>> frequency) {
+												  Factor<PackedCollection<?>> frequency) {
 		double amp = 0.75;
 		return sampling(buffer.getSampleRate(), () -> {
 			double scale = amp / tones.count();
@@ -114,8 +115,9 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 			for (Frequency f : tones) {
 				CollectionProducer<PackedCollection<?>> t =
 						integers(0, buffer.getFrames()).divide(buffer.getSampleRate());
+				Producer<PackedCollection<?>> ft = frequency.getResultant(t);
 				CollectionProducer<PackedCollection<?>> signal =
-						sin(t.multiply(2 * Math.PI).multiply(f.asHertz()).multiply(frequency));
+						sin(t.multiply(2 * Math.PI).multiply(f.asHertz()).multiply(ft));
 
 				if (model != null) {
 					Producer<PackedCollection<?>> levels = model.getLevels(f.asHertz(), t);

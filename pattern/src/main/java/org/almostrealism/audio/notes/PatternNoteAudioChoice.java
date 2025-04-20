@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.collect.PackedCollection;
@@ -54,7 +55,7 @@ public class PatternNoteAudioChoice implements PatternNoteAudio {
 
 	@Override
 	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
-												  Producer<PackedCollection<?>> automationLevel,
+												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return getDelegate(audioSelection).getAudio(target, noteDuration, automationLevel, audioSelection);
 	}
