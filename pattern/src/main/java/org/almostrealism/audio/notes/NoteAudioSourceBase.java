@@ -39,7 +39,7 @@ public abstract class NoteAudioSourceBase implements NoteAudioSource {
 	public List<PatternNoteAudio> getPatternNotes() {
 		if (isUseSynthesizer()) {
 			return getNotes().stream().map(getSynthesizerFactory())
-					.map(source -> (PatternNoteAudio) new StatelessSourceNoteAudio(source,
+					.map(source -> (PatternNoteAudio) new StatelessSourceNoteAudioTuned(source,
 							new BufferDetails(OutputLine.sampleRate, 10.0), null))
 					.toList();
 		}

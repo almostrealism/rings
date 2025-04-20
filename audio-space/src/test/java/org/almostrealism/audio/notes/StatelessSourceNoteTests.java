@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.notes;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
@@ -59,7 +60,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		});
 
 		// Define the synth note
-		StatelessSourceNoteAudio audio = new StatelessSourceNoteAudio(sine, 2.0);
+		StatelessSourceNoteAudioTuned audio = new StatelessSourceNoteAudioTuned(sine, 2.0);
 		PatternNote sineNote = new PatternNote(List.of(audio));
 		sineNote.setTuning(tuning);
 
@@ -106,5 +107,54 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		// Save the composition to a file
 		new WaveData(sceneContext.getDestination().traverse(1), sampleRate)
 				.save(new File("results/sine-notes.wav"));
+	}
+
+	@Test
+	public void riser() {
+		double duration = 8.0;
+
+		// Settings for the synth note
+		double amp = 0.25;
+		int frames = (int) (duration * sampleRate);
+
+		// Source for the synth note
+		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
+			CollectionProducer<PackedCollection<?>> t =
+					integers(0, frames).divide(sampleRate);
+			return sin(t.multiply(2 * Math.PI).multiply(frequency)).multiply(amp);
+		});
+
+		// Define the synth note
+		AutomatedPitchNoteAudio audio = new AutomatedPitchNoteAudio(sine, 8.0);
+		PatternNote riser = new PatternNote(List.of(audio));
+
+		// Setup context for rendering the audio, including the scale,
+		// the way to translate positions into audio frames, and the
+		// destination for the audio
+		AudioSceneContext sceneContext = new AudioSceneContext();
+		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
+		sceneContext.setScaleForPosition(pos -> WesternScales.major(WesternChromatic.C3, 1));
+		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+		sceneContext.setAutomationLevel(
+				params -> t -> divide(t, c(duration)));
+
+		// Setup context for voicing the notes
+		NoteAudioContext audioContext = new NoteAudioContext();
+		audioContext.setNextNotePosition(pos -> duration);
+
+		// Create the elements of the composition
+		List<PatternElement> elements = new ArrayList<>();
+		elements.add(new PatternElement(riser, 0.0));
+
+		// Adjust the position on the major scale for each of the
+		// elements in the composition
+		elements.get(0).setScalePosition(List.of(0.0));
+
+		// Render the composition
+		render(sceneContext, audioContext, elements, true, 0.0);
+
+		// Save the composition to a file
+		new WaveData(sceneContext.getDestination().traverse(1), sampleRate)
+				.save(new File("results/riser.wav"));
 	}
 }

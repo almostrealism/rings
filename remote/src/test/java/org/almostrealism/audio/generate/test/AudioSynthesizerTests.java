@@ -21,7 +21,7 @@ import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.PatternNoteAudio;
-import org.almostrealism.audio.notes.StatelessSourceNoteAudio;
+import org.almostrealism.audio.notes.StatelessSourceNoteAudioTuned;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.persistence.GeneratedSourceLibrary;
 import org.almostrealism.audio.persistence.LibraryDestination;
@@ -60,7 +60,7 @@ public class AudioSynthesizerTests implements TestFeatures {
 				new double[] {1.0, 4.0}, OutputLine.sampleRate, levelData));
 
 		StatelessSource source = models.getSource(key);
-		StatelessSourceNoteAudio synth = new StatelessSourceNoteAudio(source,
+		StatelessSourceNoteAudioTuned synth = new StatelessSourceNoteAudioTuned(source,
 				new BufferDetails(OutputLine.sampleRate, 10.0), null);
 		synth.setTuning(new DefaultKeyboardTuning());
 
