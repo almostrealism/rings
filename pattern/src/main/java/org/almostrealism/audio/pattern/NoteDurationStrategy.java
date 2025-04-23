@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.io.ConsoleFeatures;
+
 import java.util.function.DoubleUnaryOperator;
 
-public enum NoteDurationStrategy {
+public enum NoteDurationStrategy implements ConsoleFeatures {
 	NONE, FIXED, NO_OVERLAP;
 
 	public double getLength(DoubleUnaryOperator timeForDuration,
 							double position, double nextPosition,
 							double originalDurationSeconds, double durationSelection) {
+		if (this == NO_OVERLAP & nextPosition <= 0.0) {
+			warn("No next position provided for NO_OVERLAP duration strategy");
+		}
+
 		return switch (this) {
 			case FIXED -> Math.min(originalDurationSeconds, timeForDuration.applyAsDouble(durationSelection));
 			case NO_OVERLAP -> timeForDuration.applyAsDouble(nextPosition - position);

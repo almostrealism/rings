@@ -85,7 +85,7 @@ public class NoteAudioContext implements ConsoleFeatures {
 	}
 
 	public double nextNotePosition(double pos) {
-		return nextNotePosition.applyAsDouble(pos);
+		return nextNotePosition == null ? 0.0 : nextNotePosition.applyAsDouble(pos);
 	}
 
 	public ElementVoicingDetails createVoicingDetails(boolean melodic, KeyPosition<?> target, double position) {

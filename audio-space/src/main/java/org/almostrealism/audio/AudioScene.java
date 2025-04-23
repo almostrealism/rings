@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.cycle.Setup;
 import org.almostrealism.audio.arrange.AudioSceneContext;
@@ -173,7 +174,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	private CombinedGenome genome;
 	
 	private OperationList setup;
-	private Evaluable<PackedCollection<?>> automationLevel;
+	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
@@ -206,7 +207,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(6);
+		this.genome = new CombinedGenome(7);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
@@ -224,10 +225,12 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
 											this::getMeasureDuration, getSampleRate());
 		this.efx = new EfxManager(genome.getGenome(4), channels,
-								automation, this::getBeatDuration, getSampleRate());
-		this.mixdown = new MixdownManager(genome.getGenome(5),
-										channels, delayLayers,
-										automation, time.getClock(), getSampleRate());
+									automation, this::getBeatDuration, getSampleRate());
+		this.riser = new RiseManager(genome.getGenome(5),
+				() -> getContext(new ChannelInfo(0, ChannelInfo.Type.RISE)), getSampleRate());
+		this.mixdown = new MixdownManager(genome.getGenome(6),
+									channels, delayLayers,
+									automation, time.getClock(), getSampleRate());
 
 		this.generation = new GenerationManager(patterns, generation);
 	}
@@ -343,13 +346,21 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public int getSampleRate() { return sampleRate; }
 
+	public AudioSceneContext getContext() {
+		return getContext(Collections.emptyList());
+	}
+
+	public AudioSceneContext getContext(ChannelInfo channel) {
+		return getContext(Collections.singletonList(channel));
+	}
+
 	public AudioSceneContext getContext(List<ChannelInfo> channels) {
-		if (channels.size() != 1) {
+		if (channels.size() > 1) {
 			throw new IllegalArgumentException();
 		}
 
 		if (automationLevel == null) {
-			automationLevel = automation.getAggregatedValueAt(
+			Evaluable<PackedCollection<?>> level = automation.getAggregatedValueAt(
 						x(),
 						c(y(6), 0),
 						c(y(6), 1),
@@ -359,6 +370,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 						c(y(6), 5),
 						c(0.0))
 					.get();
+			automationLevel = gene -> position ->
+					func(shape(1),
+							args -> level.evaluate(position.evaluate(args), gene), false, false);
 		}
 
 		AudioSceneContext context = new AudioSceneContext();
@@ -368,10 +382,16 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		context.setFrameForPosition(pos -> (int) (pos * getMeasureSamples()));
 		context.setTimeForDuration(len -> len * getMeasureDuration());
 		context.setScaleForPosition(getChordProgression()::forPosition);
-		context.setAutomationLevel(gene -> position -> () -> {
-			return args -> automationLevel.evaluate(position.evaluate(args), gene);
-		});
-		if (patternDestinations != null) context.setDestination(patternDestinations.get(channels.get(0)));
+		context.setAutomationLevel(automationLevel);
+		context.setActivityBias(patternActivityBias);
+
+		if (!channels.isEmpty()) {
+			context.setSections(sections.getChannelSections(channels.get(0)));
+
+			if (patternDestinations != null)
+				context.setDestination(patternDestinations.get(channels.get(0)));
+		}
+
 		return context;
 	}
 
@@ -471,6 +491,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		setup = new OperationList("AudioScene Setup");
 		setup.add(automation.setup());
+		setup.add(riser.setup());
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
@@ -496,7 +517,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.MAIN), totalSamples, setup));
 		CellList wet = all(channelIndex.length, i ->
 				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.WET), totalSamples, setup));
-		return mixdown.cells(main, wet, measures, stems, output, i -> channelIndex[i]);
+		return mixdown.cells(main, wet, riser.getRise(totalSamples),
+				measures, stems, output, i -> channelIndex[i]);
 	}
 
 	public CellList getPatternChannel(ChannelInfo channel, int frames, OperationList setup) {
@@ -538,10 +560,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	public Supplier<Runnable> getPatternSetup(ChannelInfo channel) {
 		Supplier<AudioSceneContext> ctx = () -> {
 			refreshPatternDestination(channel, false);
-			AudioSceneContext context = getContext(List.of(channel));
-			context.setActivityBias(patternActivityBias);
-			context.setSections(sections.getChannelSections(channel));
-			return context;
+			return getContext(List.of(channel));
 		};
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
@@ -595,6 +614,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET),
 						new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
 			}
+
+			patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE),
+					new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
 		} else if (clear) {
 			patternDestinations.get(channel).clear();
 		}
