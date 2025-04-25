@@ -39,7 +39,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		layerAggregator = new NoteAudioSourceAggregator();
 	}
 
-	private PatternNote delegate;
+	private PatternNoteAudio delegate;
 	private NoteAudioFilter filter;
 
 	private List<PatternNoteAudio> layers;
@@ -59,7 +59,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		}
 	}
 
-	public PatternNote(PatternNote delegate, NoteAudioFilter filter) {
+	public PatternNote(PatternNoteAudio delegate, NoteAudioFilter filter) {
 		this.delegate = delegate;
 		this.filter = filter;
 	}
@@ -81,7 +81,9 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	public List<PatternNoteAudio> getProviders(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
-		if (delegate != null) return delegate.getProviders(target, audioSelection);
+		if (delegate instanceof PatternNote)
+			return ((PatternNote) delegate).getProviders(target, audioSelection);
+
 		return layers.stream()
 				.filter(l -> l instanceof PatternNoteLayer)
 				.map(l -> ((PatternNoteLayer) l).getProvider(target, audioSelection))
@@ -93,8 +95,8 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			layers.forEach(l -> {
 				if (l instanceof KeyboardTuned tuned) tuned.setTuning(tuning);
 			});
-		} else {
-			delegate.setTuning(tuning);
+		} else if (delegate instanceof KeyboardTuned) {
+			((KeyboardTuned) delegate).setTuning(tuning);
 		}
 	}
 

@@ -39,7 +39,8 @@ import org.almostrealism.heredity.TemporalCellular;
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
 	public static final String FFT_SUFFIX = "fft";
 	public static final int MEASURE_COUNT = 2;
-	public static int standardDuration = (int) (230 * OutputLine.sampleRate);
+	public static int standardDurationSeconds = 230;
+	public static int standardDurationFrames = standardDurationSeconds * OutputLine.sampleRate;
 
 	private TemporalCellular target;
 	private int channels;
@@ -73,7 +74,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 					Optional.ofNullable(outputFileSupplier).map(s -> {
 						outputFile = new File(s.get());
 						return outputFile;
-					}).orElse(null), 24, standardDuration);
+					}).orElse(null), 24, standardDurationFrames);
 		}
 
 		return out;
@@ -95,7 +96,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 							File f = new File(stemFileSupplier.apply(i));
 							stemFiles.put(i, f);
 							return f;
-						}, 24, HealthComputationAdapter.standardDuration)).collect(Collectors.toList());
+						}, 24, HealthComputationAdapter.standardDurationFrames)).collect(Collectors.toList());
 		}
 
 		return stems;
@@ -141,7 +142,8 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	}
 
 	public static void setStandardDuration(int sec) {
-		standardDuration = (int) (sec * OutputLine.sampleRate);
+		standardDurationSeconds = sec;
+		standardDurationFrames = standardDurationSeconds * OutputLine.sampleRate;
 	}
 
 	public static File getAuxFile(File file, String suffix) {

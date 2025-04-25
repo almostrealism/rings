@@ -17,9 +17,10 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.collect.PackedCollection;
 
-public interface NoteAudioFilter {
+public interface NoteAudioFilter extends SamplingFeatures {
 	Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
 										Producer<PackedCollection<?>> noteDuration,
 										Producer<PackedCollection<?>> automationLevel);

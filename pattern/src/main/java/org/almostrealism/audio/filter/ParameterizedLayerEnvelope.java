@@ -44,7 +44,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 		return new Filter(params, voicing);
 	}
 
-	public class Filter implements NoteAudioFilter {
+	public class Filter implements NoteAudioFilter, EnvelopeFeatures {
 		private ParameterSet params;
 		private ChannelInfo.Voicing voicing;
 

@@ -42,19 +42,15 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 		for (int i = 0; i < element.getRepeatCount(); i++) {
 			double relativePosition = element.getPosition() + i * element.getRepeatDuration();
 			double actualPosition = offset + relativePosition;
+			double actualTime = context.timeForPosition(actualPosition);
 
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
 			Factor<PackedCollection<?>> automationLevel =
 					context.getAutomationLevel().apply(element.getAutomationParameters());
-
-			// TODO  actualPosition is a scene position (in measures) not a time (in seconds)
-			// TODO  this means that time needs to be converted to measures first, but there
-			// TODO  is not currently an easy way to do that since the context only provides
-			// TODO  a conversion for double not Producer<PackedCollection<?>>
 			Factor<PackedCollection<?>> relativeAutomationLevel =
-					time -> automationLevel.getResultant(c(actualPosition).add(time));
+					time -> automationLevel.getResultant(c(actualTime).add(time));
 
 			if (!melodic) {
 				if (element.getScalePositions().size() > 1) {

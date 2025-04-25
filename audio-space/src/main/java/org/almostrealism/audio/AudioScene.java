@@ -341,7 +341,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	public double getTotalDuration() { return getTempo().l(getTotalBeats()); }
 	public int getTotalSamples() { return (int) (getTotalDuration() * getSampleRate()); }
 	public int getAvailableSamples() {
-		return Math.min(HealthComputationAdapter.standardDuration, getTotalSamples());
+		return Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples());
 	}
 
 	public int getSampleRate() { return sampleRate; }
@@ -505,9 +505,9 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 									List<Integer> channels,
 									OperationList setup) {
 		int totalSamples;
-		if (getTotalSamples() > HealthComputationAdapter.standardDuration) {
+		if (getTotalSamples() > HealthComputationAdapter.standardDurationFrames) {
 			warn("AudioScene arrangement extends beyond the standard duration");
-			totalSamples = HealthComputationAdapter.standardDuration;
+			totalSamples = HealthComputationAdapter.standardDurationFrames;
 		} else {
 			totalSamples = getTotalSamples();
 		}
@@ -610,13 +610,13 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 			patternDestinations = new HashMap<>();
 			for (int i = 0; i < getChannelCount(); i++) {
 				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
 				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
 			}
 
 			patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE),
-					new PackedCollection(Math.min(HealthComputationAdapter.standardDuration, getTotalSamples())));
+					new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
 		} else if (clear) {
 			patternDestinations.get(channel).clear();
 		}

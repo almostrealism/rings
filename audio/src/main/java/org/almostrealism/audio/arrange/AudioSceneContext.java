@@ -96,6 +96,10 @@ public class AudioSceneContext {
 		this.timeForDuration = timeForDuration;
 	}
 
+	public double timeForPosition(double pos) {
+		return getTimeForDuration().applyAsDouble(pos);
+	}
+
 	public DoubleFunction<Scale<?>> getScaleForPosition() {
 		return scaleForPosition;
 	}

@@ -26,6 +26,7 @@ import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.synth.AudioSynthesizer;
+import org.almostrealism.audio.synth.NoiseGenerator;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -121,23 +122,14 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 	public void riser() {
 		double duration = 8.0;
 
-		// Settings for the synth note
-		double amp = 0.25;
-		int frames = (int) (duration * sampleRate);
-
-		// Source for the synth note
-		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
-			CollectionProducer<PackedCollection<?>> t =
-					integers(0, frames).divide(sampleRate);
-			Producer<PackedCollection<?>> f = frequency.getResultant(t);
-			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
-		});
-
-		AudioSynthesizer synth = new AudioSynthesizer(2, 2);
-
 		// Define the synth note
-		AutomatedPitchNoteAudio audio = new AutomatedPitchNoteAudio(synth, 8.0);
-		PatternNote riser = new PatternNote(List.of(audio));
+		AudioSynthesizer synth = new AudioSynthesizer(2, 2);
+		AutomatedPitchNoteAudio riser = new AutomatedPitchNoteAudio(synth, 8.0);
+		PatternNote riseNote = new PatternNote(riser, new TremoloAudioFilter());
+
+		// Define the noise note
+		AutomatedPitchNoteAudio noise = new AutomatedPitchNoteAudio(new NoiseGenerator(), 8.0);
+		PatternNote noiseNote = new PatternNote(noise, new TremoloAudioFilter());
 
 		// Setup context for rendering the audio, including the scale,
 		// the way to translate positions into audio frames, and the
@@ -155,11 +147,8 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 
 		// Create the elements of the composition
 		List<PatternElement> elements = new ArrayList<>();
-		elements.add(new PatternElement(riser, 0.0));
-
-		// Adjust the position on the major scale for each of the
-		// elements in the composition
-		elements.get(0).setScalePosition(List.of(0.0));
+		elements.add(new PatternElement(riseNote, 0.0));
+		elements.add(new PatternElement(noiseNote, 0.0));
 
 		// Render the composition
 		render(sceneContext, audioContext, elements, true, 0.0);
