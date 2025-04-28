@@ -53,7 +53,8 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 	protected NoteAudioFilter getFilter() { return filter; }
 
 	@Override
-	protected PatternNoteAudio getProvider(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection) {
+	protected PatternNoteAudio getProvider(KeyPosition<?> target,
+										   DoubleFunction<PatternNoteAudio> audioSelection) {
 		throw new UnsupportedOperationException();
 	}
 

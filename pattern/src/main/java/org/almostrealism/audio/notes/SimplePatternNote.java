@@ -33,6 +33,8 @@ public class SimplePatternNote implements PatternNoteAudio, KeyboardTuned, Valid
 		this.audio = audio;
 	}
 
+	public NoteAudio getNoteAudio() { return audio; }
+
 	@Override
 	public void setTuning(KeyboardTuning tuning) {
 		if (audio != null) {

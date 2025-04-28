@@ -491,7 +491,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		setup = new OperationList("AudioScene Setup");
 		setup.add(automation.setup());
-		setup.add(riser.setup());
+
+		if (MixdownManager.enableRiser)
+			setup.add(riser.setup());
+
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
@@ -615,8 +618,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
 			}
 
-			patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE),
-					new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
+			if (MixdownManager.enableRiser) {
+				patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE),
+						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
+			}
 		} else if (clear) {
 			patternDestinations.get(channel).clear();
 		}

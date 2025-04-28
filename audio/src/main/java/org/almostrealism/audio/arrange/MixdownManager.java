@@ -64,6 +64,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	public static boolean enableTransmission = true;
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
+	public static boolean enableRiser = false;
 
 	public static boolean enableWetSources = true;
 
@@ -469,7 +470,9 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		}
 
 		// TODO  Riser should actually feed into effects, if they are active
-		main = cells(main, riser).sum();
+		if (enableRiser) {
+			main = cells(main, riser).sum();
+		}
 
 		// Deliver main to the output and measure #1
 		if (measures.isEmpty()) {
