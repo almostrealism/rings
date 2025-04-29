@@ -17,11 +17,12 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.relation.Tree;
+import io.almostrealism.uml.Signature;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T>, PathResource {
+public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T>, PathResource, Signature {
 	String getRelativePath(String path);
 
 	static String getRelativePath(File root, String path) {

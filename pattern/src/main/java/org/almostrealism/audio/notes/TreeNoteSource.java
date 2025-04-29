@@ -39,11 +39,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class TreeNoteSource extends NoteAudioSourceBase implements Named, ConsoleFeatures {
-	public static boolean alwaysComputeNotes = false;
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
 	private List<NoteAudioProvider> providers;
 	private List<NoteAudioProvider> notes;
+	private String latestSignature;
 
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
@@ -104,7 +104,14 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	@JsonIgnore
 	public void setTree(FileWaveDataProviderTree tree) {
 		this.tree = tree;
-		if (!alwaysComputeNotes) computeProviders();
+		if (!isUpdated()) computeProviders();
+	}
+
+	public boolean isUpdated() {
+		if (tree == null)
+			return true;
+
+		return latestSignature != null && latestSignature.equals(tree.signature());
 	}
 
 	public List<FileWaveDataProviderFilter> getFilters() { return filters; }
@@ -134,7 +141,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 
 	@JsonIgnore
 	public List<NoteAudio> getNotes() {
-		if (alwaysComputeNotes) computeProviders();
+		if (!isUpdated()) computeProviders();
 		return notes == null ? Collections.emptyList() : Collections.unmodifiableList(notes);
 	}
 
@@ -164,15 +171,12 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	}
 
 	public void refresh() {
-		if (alwaysComputeNotes) {
-			providers = null;
-		} else {
-			computeProviders();
-		}
+		computeProviders();
 	}
 
 	private void computeProviders() {
 		if (filters == null) {
+			providers = null;
 			return;
 		}
 
@@ -205,6 +209,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 			});
 
 			Collections.sort(providers);
+
+			latestSignature = tree.signature();
 		}
 
 		computeNotes();

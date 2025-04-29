@@ -243,6 +243,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	public static Supplier<List<NoteAudioChoice>> choices(List<NoteAudioChoice> choices, boolean melodic) {
 		return () -> choices.stream()
 				.filter(c -> c.isMelodic() || !melodic)
+				.filter(c -> !c.getValidPatternNotes().isEmpty())
 				.collect(Collectors.toList());
 	}
 }
