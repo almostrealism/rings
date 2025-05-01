@@ -35,14 +35,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class TreeNoteSource extends NoteAudioSourceBase implements Named, ConsoleFeatures {
 
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> tree;
-	private List<NoteAudioProvider> providers;
-	private List<NoteAudioProvider> notes;
+	private List<Provider> providers;
+	private List<Provider> notes;
 	private String latestSignature;
 
 	private KeyboardTuning tuning;
@@ -83,7 +84,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 			this.bpm = bpm;
 
 			if (providers != null) {
-				providers.forEach(n -> n.setBpm(bpm));
+				providers.forEach(n -> n.getProvider().setBpm(bpm));
 			}
 
 			computeNotes();
@@ -121,8 +122,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 		this.tuning = tuning;
 
 		if (notes != null) {
-			for (NoteAudioProvider note : notes) {
-				note.setTuning(tuning);
+			for (Provider note : notes) {
+				note.getProvider().setTuning(tuning);
 			}
 		}
 	}
@@ -142,7 +143,14 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	@JsonIgnore
 	public List<NoteAudio> getNotes() {
 		if (!isUpdated()) computeProviders();
-		return notes == null ? Collections.emptyList() : Collections.unmodifiableList(notes);
+		if (notes == null) {
+			return Collections.emptyList();
+		}
+
+		return notes.stream()
+				.filter(Provider::isActive)
+				.map(Provider::getProvider)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -187,11 +195,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 				FileWaveDataProvider p = f.get();
 
 				try {
-					if (p == null) {
-						return;
-					}
-
-					if (p.getSampleRate() != OutputLine.sampleRate) {
+					if (p == null || p.getSampleRate() != OutputLine.sampleRate) {
 						return;
 					}
 
@@ -201,7 +205,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 							.orElse(true);
 
 					if (match) {
-						providers.add(new NoteAudioProvider(p, getRoot(), getBpm()));
+						providers.add(new Provider(new NoteAudioProvider(p, getRoot(), getBpm()),
+													((FileWaveDataProviderTree) f).active()));
 					}
 				} catch (Exception e) {
 					warn(e.getMessage() + "(" + p.getResourcePath() + ")");
@@ -223,12 +228,13 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 		}
 
 		if (getSplitDurationBeats() == null || getBpm() == null) {
-			providers.forEach(n -> n.setTuning(tuning));
+			providers.forEach(n -> n.getProvider().setTuning(tuning));
 			notes = providers;
 		} else {
 			notes = providers.stream().flatMap(n -> {
-				n.setTuning(tuning);
-				return n.split(getSplitDurationBeats()).stream();
+				n.getProvider().setTuning(tuning);
+				return n.getProvider().split(getSplitDurationBeats()).stream()
+						.map(m -> new Provider(m, n.getActive()));
 			}).collect(Collectors.toList());
 		}
 	}
@@ -236,7 +242,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	public boolean checkResourceUsed(String canonicalPath) {
 		if (providers == null) computeProviders();
 
-		boolean match = providers.stream().anyMatch(note -> {
+		boolean match = providers.stream().map(Provider::getProvider).anyMatch(note -> {
 			if (note.getProvider() instanceof FileWaveDataProvider) {
 				return ((FileWaveDataProvider) note.getProvider())
 						.getResourcePath().equals(canonicalPath);
@@ -257,5 +263,32 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 		TreeNoteSource t = new TreeNoteSource(new FileWaveDataProviderNode(root));
 		t.getFilters().add(filter);
 		return t;
+	}
+
+	protected class Provider implements Comparable<Provider> {
+		private NoteAudioProvider provider;
+		private BooleanSupplier active;
+
+		public Provider(NoteAudioProvider provider, BooleanSupplier active) {
+			this.provider = provider;
+			this.active = active;
+		}
+
+		public NoteAudioProvider getProvider() { return provider; }
+
+		public boolean isActive() { return active.getAsBoolean(); }
+
+		public BooleanSupplier getActive() { return active; }
+
+		@Override
+		public int compareTo(Provider provider) {
+			if (this.provider == null) {
+				return 1;
+			} else if (provider.provider == null) {
+				return -1;
+			} else {
+				return this.provider.compareTo(provider.provider);
+			}
+		}
 	}
 }
