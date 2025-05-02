@@ -48,6 +48,10 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 
 	public double[] getFrequencyRatios() { return frequencyRatios; }
 
+	public double getSampleRate() { return sampleRate; }
+
+	public PackedCollection<?> getLevelData() { return levelData; }
+
 	@Override
 	public Producer<PackedCollection<?>> getLevels(double frequencyRatio,
 												   Producer<PackedCollection<?>> time) {
