@@ -19,6 +19,7 @@ package org.almostrealism.audio.notes;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
+import org.almostrealism.audio.tone.KeyboardTuning;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,12 @@ public abstract class NoteAudioSourceBase implements NoteAudioSource {
 	public List<PatternNoteAudio> getPatternNotes() {
 		if (isUseSynthesizer()) {
 			return getNotes().stream().map(getSynthesizerFactory())
-					.map(source -> (PatternNoteAudio) new StatelessSourceNoteAudioTuned(source,
-							new BufferDetails(OutputLine.sampleRate, 10.0), null))
+					.map(source -> {
+						StatelessSourceNoteAudioTuned audio = new StatelessSourceNoteAudioTuned(source,
+								new BufferDetails(OutputLine.sampleRate, 10.0));
+						audio.setTuning(getTuning());
+						return (PatternNoteAudio) audio;
+					})
 					.toList();
 		}
 
@@ -62,6 +67,8 @@ public abstract class NoteAudioSourceBase implements NoteAudioSource {
 
 		return notes;
 	}
+
+	public abstract KeyboardTuning getTuning();
 
 	public abstract boolean isUseSynthesizer();
 	public abstract boolean isForwardPlayback();

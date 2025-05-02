@@ -118,6 +118,11 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	public List<FileWaveDataProviderFilter> getFilters() { return filters; }
 
 	@Override
+	public KeyboardTuning getTuning() {
+		return tuning;
+	}
+
+	@Override
 	public void setTuning(KeyboardTuning tuning) {
 		this.tuning = tuning;
 
