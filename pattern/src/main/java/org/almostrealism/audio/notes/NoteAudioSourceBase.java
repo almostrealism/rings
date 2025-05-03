@@ -16,22 +16,26 @@
 
 package org.almostrealism.audio.notes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 public abstract class NoteAudioSourceBase implements NoteAudioSource {
 	private Function<NoteAudio, StatelessSource> synthesizerFactory;
 
+	@JsonIgnore
 	public Function<NoteAudio, StatelessSource> getSynthesizerFactory() {
 		return synthesizerFactory;
 	}
 
+	@JsonIgnore
 	public void setSynthesizerFactory(Function<NoteAudio, StatelessSource> synthesizerFactory) {
 		this.synthesizerFactory = synthesizerFactory;
 	}
@@ -39,6 +43,10 @@ public abstract class NoteAudioSourceBase implements NoteAudioSource {
 	@Override
 	public List<PatternNoteAudio> getPatternNotes() {
 		if (isUseSynthesizer()) {
+			if (getSynthesizerFactory() == null) {
+				return Collections.emptyList();
+			}
+
 			return getNotes().stream().map(getSynthesizerFactory())
 					.map(source -> {
 						StatelessSourceNoteAudioTuned audio = new StatelessSourceNoteAudioTuned(source,
