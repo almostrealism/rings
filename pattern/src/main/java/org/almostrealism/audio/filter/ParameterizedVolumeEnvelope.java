@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.List;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
+	public static double adjustmentBase = 0.8;
+	public static double adjustmentAutomation = 0.5;
 
 	private Mode mode;
 
@@ -103,10 +105,15 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				PackedCollection<?> dr = duration.get().evaluate();
 				PackedCollection<?> al = automationLevel.get().evaluate();
 
+				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
+//				log("Processing volume envelope with duration (" + dr.toDouble(0) +
+//						", attack: " + getAttack() + ", decay: " + getDecay() +
+//						", sustain: " + getSustain() * adj +
+//						", release: " + getRelease() * adj + ")");
 				a.set(0, getAttack());
 				d.set(0, getDecay());
-				s.set(0, getSustain() * al.toDouble(0));
-				r.set(0, getRelease() * al.toDouble(0));
+				s.set(0, getSustain() * adj);
+				r.set(0, getRelease() * adj);
 
 				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
 						.evaluate(audioData.traverse(1), dr, a, d, s, r);

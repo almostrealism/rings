@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.List;
 
 public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
+	public static double adjustmentBase = 0.8;
+	public static double adjustmentAutomation = 0.5;
 
 	private Mode mode;
 
@@ -92,12 +94,18 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 				PackedCollection<?> dr = duration.get().evaluate();
 				PackedCollection<?> al = automationLevel.get().evaluate();
 
+				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
+//				log("Processing filter envelope with duration (" + dr.toDouble(0) +
+//						", attack: " + getAttack() + ", decay: " + getDecay() +
+//						", sustain: " + getSustain() * adj +
+//						", release: " + getRelease() * adj + ")");
+
 				EnvelopeProcessor processor = AudioProcessingUtils.getFilterEnv();
 				processor.setDuration(dr.toDouble(0));
 				processor.setAttack(getAttack());
 				processor.setDecay(getDecay());
-				processor.setSustain(getSustain() * al.toDouble(0));
-				processor.setRelease(getRelease() * al.toDouble(0));
+				processor.setSustain(getSustain() * adj);
+				processor.setRelease(getRelease() * adj);
 				processor.process(audioData, result);
 				return result;
 			};

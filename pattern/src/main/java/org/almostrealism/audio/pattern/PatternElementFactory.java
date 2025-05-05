@@ -34,12 +34,18 @@ import java.util.stream.IntStream;
 public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableVolumeEnvelope = true;
 	public static boolean enableFilterEnvelope = true;
-	public static boolean enableScaleNoteLength = true;
-	public static boolean enableRegularizedNoteLength = false;
 
 	public static int MAX_LAYERS = 10;
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
-	public static double noteLengthFactor = 0.5;
+
+	/**
+	 * The maximum duration of a note, relative to the scale of the element
+	 * being generated. A value of 1.0 would mean that the note may be only
+	 * as long as the scale (eg, a 1/4 note would be at most 1/4th the length
+	 * of a measure, a 1/8 note would be at most 1/8th the length of a measure,
+	 * etc).
+	 */
+	public static double noteLengthFactor = 0.75;
 
 	public static int[] REPEAT_DIST;
 
@@ -165,17 +171,9 @@ public class PatternElementFactory implements ConsoleFeatures {
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
 
-		double ls = scale > 1.0 ? 1.0 : scale;
 
-		if (enableScaleNoteLength) {
-			if (enableRegularizedNoteLength) {
-				element.setNoteDurationSelection(ls * noteLengthSelection.power(2.0, 2, -2).apply(params));
-			} else {
-				element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
-			}
-		} else {
-			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
-		}
+		double ls = Math.min(scale, 1.0);
+		element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
 
 		double r = repeatSelection.apply(params, pos, scale);
 
@@ -199,7 +197,15 @@ public class PatternElementFactory implements ConsoleFeatures {
 		}
 
 		element.setScaleTraversalStrategy(scaleTraversalStrategy);
-		element.setRepeatDuration(ls * noteLengthFactor);
+
+		if (noteLengthFactor <= 0.5) {
+			// If the note length factor is significantly less than 1.0,
+			// there is ample time to repeat the note sooner
+			element.setRepeatDuration(ls * 0.5);
+		} else {
+			element.setRepeatDuration(ls);
+		}
+
 		return Optional.of(element);
 	}
 
