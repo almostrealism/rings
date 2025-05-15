@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@
 
 package org.almostrealism.remote.ops;
 
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteAudio;
 
 import java.util.List;
 
 public class RefreshRequest {
 	private String requestId;
 	private String generatorId;
-	private List<NoteAudioSource> sources;
+	private List<NoteAudio> sources;
 	private boolean complete;
 	private boolean error;
 
 	public RefreshRequest() { }
 
-	public RefreshRequest(String requestId, String generatorId, List<NoteAudioSource> sources) {
+	public RefreshRequest(String requestId, String generatorId, List<NoteAudio> sources) {
 		this.requestId = requestId;
 		this.generatorId = generatorId;
 		this.sources = sources;
@@ -41,8 +41,8 @@ public class RefreshRequest {
 	public String getGeneratorId() { return generatorId; }
 	public void setGeneratorId(String generatorId) { this.generatorId = generatorId; }
 
-	public List<NoteAudioSource> getSources() { return sources; }
-	public void setSources(List<NoteAudioSource> sources) { this.sources = sources; }
+	public List<NoteAudio> getSources() { return sources; }
+	public void setSources(List<NoteAudio> sources) { this.sources = sources; }
 
 	public boolean isComplete() { return complete; }
 	public void setComplete(boolean complete) { this.complete = complete; }

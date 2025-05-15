@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,6 +64,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	public static boolean enableTransmission = true;
 	public static boolean enableWetInAdjustment = true;
 	public static boolean enableMasterFilterDown = true;
+	public static boolean enableRiser = false;
 
 	public static boolean enableWetSources = true;
 
@@ -265,20 +266,21 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	public CellList cells(CellList sources,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output) {
-		return cells(sources, null, List.of(), stems, output, i -> i);
+		return cells(sources, null, null, List.of(), stems, output, i -> i);
 	}
 
-	public CellList cells(CellList sources, CellList wetSources,
-							 List<? extends Receptor<PackedCollection<?>>> measures,
-							 List<? extends Receptor<PackedCollection<?>>> stems,
-							 Receptor<PackedCollection<?>> output,
-							 IntUnaryOperator channelIndex) {
-		CellList cells = createCells(sources, wetSources, measures, stems, output, channelIndex);
+	public CellList cells(CellList sources, CellList wetSources, CellList riser,
+						  List<? extends Receptor<PackedCollection<?>>> measures,
+						  List<? extends Receptor<PackedCollection<?>>> stems,
+						  Receptor<PackedCollection<?>> output,
+						  IntUnaryOperator channelIndex) {
+		CellList cells = createCells(sources, wetSources, riser,
+						measures, stems, output, channelIndex);
 		dependencies.add(cells);
 		return cells;
 	}
 
-	protected CellList createCells(CellList sources, CellList wetSources,
+	protected CellList createCells(CellList sources, CellList wetSources, CellList riser,
 						  List<? extends Receptor<PackedCollection<?>>> measures,
 						  List<? extends Receptor<PackedCollection<?>>> stems,
 						  Receptor<PackedCollection<?>> output,
@@ -384,86 +386,102 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		main = main.sum();
 
 		if (enableEfx) {
-			if (enableTransmission) {
-				int delayLayers = delay.length();
-
-				IntFunction<Factor<PackedCollection<?>>> df =
-						i -> toPolycyclicGene(clock, sampleRate, delayDynamicsSimple, i).valueAt(0);
-
-				CellList delays = IntStream.range(0, delayLayers)
-						.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-								toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
-								toScalar(df.apply(i).getResultant(c(1.0)))))
-						.collect(CellList.collector());
-
-				IntFunction<Gene<PackedCollection<?>>> tg =
-						i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
-
-				// Route each line to each delay layer
-				efx = efx.m(fi(), delays, tg)
-						// Feedback grid
-						.mself(fi(), transmission, fc(wetOut.valueAt(0)))
-						.sum();
-			} else {
-				efx = efx.sum();
-			}
-
-			if (reverbActive) {
-				// Combine inputs and apply reverb
-				reverb = reverb.sum().map(fc(i -> new DelayNetwork(sampleRate, false)));
-
-				if (enableTransmission) {
-					// Combine reverb with efx
-					efx = cells(efx, reverb).sum();
-				} else {
-					// There are no other fx
-					efx = reverb;
-				}
-			}
-
-			if (disableClean) {
-				Receptor r[] = new Receptor[measures.size() + 1];
-				r[0] = output;
-				for (int i = 0; i < measures.size(); i++) r[i + 1] = measures.get(i);
-
-				efx.get(0).setReceptor(Receptor.to(r));
-				return efx;
-			} else {
-				List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
-				efxReceptors.add(main.get(0));
-				if (measures.size() > 1) efxReceptors.add(measures.get(1));
-				if (stems != null && !stems.isEmpty()) efxReceptors.add(stems.get(sources.size()));
-				efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
-
-//				if (stems != null && !stems.isEmpty()) {
-//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sources.size())));
-//				} else {
-//					efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-//				}
-
-				if (enableMasterFilterDown) {
-					// Apply dynamic low pass filter
-					main = main.map(fc(i -> {
-						Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
-								p(mainFilterDownAdjustmentScale), mainFilterDownSimple,
-								channelIndex.applyAsInt(i)).valueAt(0);
-						return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
-					}));
-				}
-
-				// Deliver main to the output and measure #1
-				if (measures.isEmpty()) {
-					main = main.map(i -> new ReceptorCell<>(output));
-				} else {
-					main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
-				}
-
-				return cells(main, efx);
-			}
+			main = createEfx(main, efx, reverbActive ? reverb : null, riser,
+					sources.size(), measures, stems, output, channelIndex);
 		} else {
 			// Deliver main to the output and measure #1 and #2
-			return main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
 		}
+
+		return main;
+	}
+
+	public CellList createEfx(CellList main, CellList efx, CellList reverb, CellList riser, int sourceCount,
+							  List<? extends Receptor<PackedCollection<?>>> measures,
+							  List<? extends Receptor<PackedCollection<?>>> stems,
+							  Receptor<PackedCollection<?>> output,
+							  IntUnaryOperator channelIndex) {
+		if (enableTransmission) {
+			int delayLayers = delay.length();
+
+			IntFunction<Factor<PackedCollection<?>>> df =
+					i -> toPolycyclicGene(clock, sampleRate, delayDynamicsSimple, i).valueAt(0);
+
+			CellList delays = IntStream.range(0, delayLayers)
+					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
+							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
+							toScalar(df.apply(i).getResultant(c(1.0)))))
+					.collect(CellList.collector());
+
+			IntFunction<Gene<PackedCollection<?>>> tg =
+					i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
+
+			// Route each line to each delay layer
+			efx = efx.m(fi(), delays, tg)
+					// Feedback grid
+					.mself(fi(), transmission, fc(wetOut.valueAt(0)))
+					.sum();
+		} else {
+			efx = efx.sum();
+		}
+
+		if (reverb != null) {
+			// Combine inputs and apply reverb
+			reverb = reverb.sum().map(fc(i -> new DelayNetwork(sampleRate, false)));
+
+			if (enableTransmission) {
+				// Combine reverb with efx
+				efx = cells(efx, reverb).sum();
+			} else {
+				// There are no other fx
+				efx = reverb;
+			}
+		}
+
+		if (disableClean) {
+			Receptor r[] = new Receptor[measures.size() + 1];
+			r[0] = output;
+			for (int i = 0; i < measures.size(); i++) r[i + 1] = measures.get(i);
+
+			efx.get(0).setReceptor(Receptor.to(r));
+			return efx;
+		}
+
+		List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
+		efxReceptors.add(main.get(0));
+		if (measures.size() > 1) efxReceptors.add(measures.get(1));
+		if (stems != null && !stems.isEmpty()) efxReceptors.add(stems.get(sourceCount));
+		efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
+
+//		if (stems != null && !stems.isEmpty()) {s
+//			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sourceCount)));
+//		} else {
+//			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
+//		}
+
+		if (enableMasterFilterDown) {
+			// Apply dynamic low pass filter
+			main = main.map(fc(i -> {
+				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
+						p(mainFilterDownAdjustmentScale), mainFilterDownSimple,
+						channelIndex.applyAsInt(i)).valueAt(0);
+				return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
+			}));
+		}
+
+		// TODO  Riser should actually feed into effects, if they are active
+		if (enableRiser) {
+			main = cells(main, riser).sum();
+		}
+
+		// Deliver main to the output and measure #1
+		if (measures.isEmpty()) {
+			main = main.map(i -> new ReceptorCell<>(output));
+		} else {
+			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+		}
+
+		return cells(main, efx);
 	}
 
 	@Override

@@ -35,6 +35,7 @@ import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
+import org.almostrealism.optimize.AdamOptimizer;
 import org.almostrealism.optimize.Dataset;
 import org.almostrealism.optimize.ModelOptimizer;
 import org.almostrealism.optimize.ValueTarget;
@@ -277,7 +278,9 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 					multiply(
 							c(in).repeat(1, hd).reshape(batchSize, hd),
 							cp(values).repeat(batchSize).reshape(batchSize, hd));
-			return concat(shape(batchSize, dim), sin(embeddings), cos(embeddings));
+			return concat(shape(batchSize, dim).traverse(1),
+						sin(embeddings.traverse(1)),
+						cos(embeddings.traverse(1)));
 		});
 	}
 
@@ -289,7 +292,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		SequentialBlock block = new SequentialBlock(shape(batchSize, 1));
 		block.add(sinPositionEmbeddings(dim));
 		block.add(dense(dim, timeLen));
-		block.add(gelu(shape(timeLen)));
+		block.add(gelu());
 		block.add(dense(timeLen, outLen));
 		return block;
 	}
@@ -305,56 +308,6 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		SequentialBlock residual = new SequentialBlock(block.getInputShape());
 		residual.accum(block);
 		return residual;
-	}
-
-	protected Function<TraversalPolicy, Block> upsample(int dim) {
-		return upsample(dim, dim);
-	}
-
-	protected Function<TraversalPolicy, Block> upsample(int dim, int dimOut) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int h = shape.length(2);
-			int w = shape.length(3);
-
-			SequentialBlock upsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
-			upsample.add(layer("repeat2d",
-					shape(batchSize, inputChannels, h, w),
-					shape(batchSize, inputChannels, h * 2, w * 2),
-					(in) ->
-							c(in)
-									.repeat(4, 2)
-									.repeat(3, 2)
-									.reshape(batchSize, inputChannels, h * 2, w * 2)));
-			upsample.add(convolution2d(dim, dimOut, 3, 1));
-			return upsample;
-		};
-	}
-
-	protected Function<TraversalPolicy, Block> downsample(int dim) {
-		return downsample(dim, dim);
-	}
-
-	protected Function<TraversalPolicy, Block> downsample(int dim, int dimOut) {
-		return shape -> {
-			int inputChannels = shape.length(1);
-			int h = shape.length(2);
-			int w = shape.length(3);
-
-			SequentialBlock downsample = new SequentialBlock(shape(batchSize, inputChannels, h, w));
-			downsample.add(layer("enumerate",
-					shape(batchSize, inputChannels, h, w),
-					shape(batchSize, inputChannels * 4, h / 2, w / 2),
-					in -> c(in).traverse(2)
-							.enumerate(3, 2)
-							.enumerate(3, 2)
-							.reshape(batchSize, inputChannels, (h * w) / 4, 4)
-							.traverse(2)
-							.enumerate(3, 1)
-							.reshape(batchSize, inputChannels * 4, h / 2, w / 2)));
-			downsample.add(convolution2d(dim * 4, dimOut, 1, 0));
-			return downsample;
-		};
 	}
 
 	protected Model unet(int dim) {
@@ -531,15 +484,30 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 	}
 
 	public Iterable<PackedCollection<?>> loadInputs(File imagesDir, TraversalPolicy shape) throws IOException {
+		TraversalPolicy item = shape.traverse(1).item();
 		List<PackedCollection<?>> data = new ArrayList<>();
 
-		for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
-			if (file.getName().endsWith(".png")) {
-				if (channels == 1) {
-					data.add(GraphicsConverter.loadGrayscale(file).reshape(shape));
-				} else {
-					data.add(GraphicsConverter.loadChannels(file).reshape(shape));
-				}
+		int n = 0;
+		PackedCollection<PackedCollection<?>> current = new PackedCollection<>(shape.traverse(1));
+
+		f: for (File file : Objects.requireNonNull(imagesDir.listFiles())) {
+			if (!file.getName().endsWith(".png")) continue f;
+
+			PackedCollection<?> input;
+
+			if (channels == 1) {
+				input = GraphicsConverter.loadGrayscale(file).reshape(item);
+			} else {
+				input = GraphicsConverter.loadChannels(file).reshape(item);
+			}
+
+			current.set(n, input);
+			n++;
+
+			if (n >= batchSize) {
+				data.add(current);
+				current = new PackedCollection<>(shape.traverse(1));
+				n = 0;
 			}
 		}
 
@@ -576,14 +544,15 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			List<Dataset<PackedCollection<?>>> split = all.split(0.4);
 
 			Model unet = unet(dim);
-			unet.setLearningRate(1e-4);
+			// unet.setParameterUpdate(ParameterUpdate.scaled(c(1e-3)));
+			unet.setParameterUpdate(new AdamOptimizer(1e-3, 0.9, 0.999));
 
-			CompiledModel model = unet(dim).compile(profile);
+			CompiledModel model = unet.compile(profile);
 			ModelOptimizer optimizer = new ModelOptimizer(model, () -> split.get(0));
 			optimizer.setLogFrequency(1);
 			optimizer.setLogConsumer(msg -> alert("UNet: " + msg));
 
-			int iterations = 15;
+			int iterations = 26;
 			optimizer.optimize(iterations);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

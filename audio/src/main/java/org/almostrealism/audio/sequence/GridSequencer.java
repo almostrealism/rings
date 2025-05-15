@@ -18,6 +18,7 @@ package org.almostrealism.audio.sequence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
@@ -88,7 +89,9 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 	public double getDuration() { return bpm.l(getTotalBeats()); }
 
 	@Override
-	public Producer<PackedCollection<?>> generate(BufferDetails buffer, Producer<PackedCollection<?>> params, Producer<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection<?>> generate(BufferDetails buffer,
+												  Producer<PackedCollection<?>> params,
+												  Factor<PackedCollection<?>> frequency) {
 		// TODO
 		throw new UnsupportedOperationException();
 	}

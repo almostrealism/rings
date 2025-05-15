@@ -16,6 +16,9 @@
 
 package org.almostrealism.audio.sources;
 
+import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.PackedCollection;
+
 public class BufferDetails {
 	private final int sampleRate;
 	private final int frames;
@@ -40,5 +43,9 @@ public class BufferDetails {
 
 	public double getDuration() {
 		return (double) frames / sampleRate;
+	}
+
+	public WaveData createWaveData() {
+		return new WaveData(new PackedCollection<>(getFrames()).traverseEach(), getSampleRate());
 	}
 }

@@ -17,6 +17,7 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
@@ -70,7 +71,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		setWeight(weight);
 		setMinScale(minScale);
 		setMaxScale(maxScale);
-		setMaxScaleTraversalDepth(1);
+		setMaxScaleTraversalDepth(9);
 		setSeed(true);
 		setBias(-0.5);
 		setChannels(new ArrayList<>());
@@ -151,7 +152,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	@JsonIgnore
-	public List<NoteAudioProvider> getAllNotes() {
+	public List<NoteAudio> getAllNotes() {
 		return getSources().stream()
 				.map(NoteAudioSource::getNotes)
 				.flatMap(List::stream)
@@ -159,10 +160,25 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	}
 
 	@JsonIgnore
-	public List<NoteAudioProvider> getValidNotes() {
+	public List<NoteAudio> getValidNotes() {
 		return getAllNotes().stream()
-				.filter(NoteAudioProvider::isValid)
+				.filter(Validity::valid)
 				.sorted()
+				.collect(Collectors.toList());
+	}
+
+	@JsonIgnore
+	public List<PatternNoteAudio> getAllPatternNotes() {
+		return getSources().stream()
+				.map(NoteAudioSource::getPatternNotes)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+	}
+
+	@JsonIgnore
+	public List<PatternNoteAudio> getValidPatternNotes() {
+		return getAllPatternNotes().stream()
+				.filter(Validity::valid)
 				.collect(Collectors.toList());
 	}
 
@@ -227,6 +243,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 	public static Supplier<List<NoteAudioChoice>> choices(List<NoteAudioChoice> choices, boolean melodic) {
 		return () -> choices.stream()
 				.filter(c -> c.isMelodic() || !melodic)
+				.filter(c -> !c.getValidPatternNotes().isEmpty())
 				.collect(Collectors.toList());
 	}
 }

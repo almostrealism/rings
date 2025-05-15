@@ -23,4 +23,16 @@ public interface KeyPosition<T extends KeyPosition<T>> {
 	int position();
 
 	T next();
+
+	static KeyPosition<?> none() {
+		return new KeyPosition() {
+			@Override
+			public int position() { return -1; }
+
+			@Override
+			public KeyPosition<?> next() {
+				return this;
+			}
+		};
+	}
 }

@@ -29,7 +29,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	private int maxSilence;
 	private double silenceValue = 0.001; // Lowest permissable volume
 
-	private long max = standardDuration;
+	private long max = standardDurationFrames;
 
 	private List<Runnable> silenceListeners;
 	
@@ -47,7 +47,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public void setMaxSilence(int sec) { this.maxSilence = (int) (sec * OutputLine.sampleRate); }
 	
 	public static void setStandardDuration(int sec) {
-		standardDuration = (int) (sec * OutputLine.sampleRate);
+		standardDurationFrames = (int) (sec * OutputLine.sampleRate);
 	}
 
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }
@@ -81,7 +81,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 			for (AudioMeter m : getMeasures()) {
 				// If silence occurs for too long, report the health score
 				if (checkForSilence(m)) {
-					return new AudioHealthScore(l, (double) l / standardDuration);
+					return new AudioHealthScore(l, (double) l / standardDurationFrames);
 				}
 			}
 			

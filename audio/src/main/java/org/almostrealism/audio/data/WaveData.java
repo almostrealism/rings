@@ -137,10 +137,22 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	 * Return the fourier transform of this {@link WaveData}.
 	 *
 	 * @return  The fourier transform of this {@link WaveData} over time in the
-	 *          {@link TraversalPolicy shape} (time slices, pooled bins, 1).
+	 *          {@link TraversalPolicy shape} (time slices, bins, 1).
 	 */
 	public PackedCollection<?> fft() {
-		return fft(true, false, false);
+		return fft(false);
+	}
+
+	/**
+	 * Return the fourier transform of this {@link WaveData}.
+	 *
+	 * @param pooling  If true, the fourier transform will be pooled to reduce its size
+	 *                 by {@value FFT_POOL} in each dimension.
+	 * @return  The fourier transform of this {@link WaveData} over time in the
+	 *          {@link TraversalPolicy shape} (time slices, bins, 1).
+	 */
+	public PackedCollection<?> fft(boolean pooling) {
+		return fft(pooling, false, false);
 	}
 
 	/**

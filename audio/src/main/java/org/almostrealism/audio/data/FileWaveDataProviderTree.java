@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,17 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.relation.Tree;
+import io.almostrealism.uml.Signature;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T>, PathResource {
+public interface FileWaveDataProviderTree<T extends Tree<? extends Supplier<FileWaveDataProvider>>> extends Tree<T>, PathResource, Signature {
+	default BooleanSupplier active() {
+		return () -> true;
+	}
+
 	String getRelativePath(String path);
 
 	static String getRelativePath(File root, String path) {

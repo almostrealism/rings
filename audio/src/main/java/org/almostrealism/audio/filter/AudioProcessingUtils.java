@@ -15,6 +15,7 @@ public class AudioProcessingUtils {
 	public static boolean enableMultiOrderFilter = true;
 
 	private static AudioSumProvider sum;
+	private static Evaluable<PackedCollection<?>> reverse;
 	private static Evaluable<PackedCollection<?>> layerEnv;
 	private static EnvelopeProcessor filterEnv;
 	private static Evaluable<PackedCollection<?>> volumeEnv;
@@ -27,6 +28,10 @@ public class AudioProcessingUtils {
 		if (Heap.getDefault() != null) {
 			throw new RuntimeException();
 		}
+
+		reverse = o.c(o.cv(o.shape(1), 0),
+					o.sizeOf(o.cv(o.shape(1), 0)).subtract(o.integers()))
+				.get();
 
 		CollectionProducer<PackedCollection<?>> mainDuration = o.cv(o.shape(1), 1);
 		CollectionProducer<PackedCollection<?>> duration0 = mainDuration.multiply(o.cv(o.shape(1), 2));
@@ -61,6 +66,8 @@ public class AudioProcessingUtils {
 	public static AudioSumProvider getSum() {
 		return sum;
 	}
+
+	public static Evaluable<PackedCollection<?>> getReverse() { return reverse; }
 
 	public static Evaluable<PackedCollection<?>> getLayerEnv() {
 		return layerEnv;

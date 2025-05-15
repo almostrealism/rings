@@ -123,7 +123,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 			return getCellSet().stream().map(Cell::setup).collect(OperationList.collector());
 		} else {
 			return new Switch(decision,
-					cells.stream().map(cell -> (Computation) cell.setup())
+					cells.stream().map(cell -> (Computation<?>) cell.setup())
 							.collect(Collectors.toList()));
 		}
 	}
@@ -135,11 +135,11 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 		if (parallel) {
 			getCellSet().stream().map(cell -> cell.push(protein)).forEach(push::add);
 			push.add(new Switch(decision, storage.stream()
-					.map(v -> (Computation) getReceptor().push(p(v)))
+					.map(v -> (Computation<?>) getReceptor().push(p(v)))
 					.collect(Collectors.toList())));
 		} else {
 			push.add(new Switch(decision,
-					cells.stream().map(cell -> (Computation) cell.push(protein))
+					cells.stream().map(cell -> (Computation<?>) cell.push(protein))
 							.collect(Collectors.toList())));
 			push.add(getReceptor().push(p(storage.get(0))));
 		}
@@ -153,7 +153,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 			return getCellSet().stream().map(CollectionTemporalCellAdapter::tick).collect(OperationList.collector());
 		} else {
 			return new Switch(decision,
-					cells.stream().map(CollectionTemporalCellAdapter::tick).map(v -> (Computation) v)
+					cells.stream().map(CollectionTemporalCellAdapter::tick).map(v -> (Computation<?>) v)
 							.collect(Collectors.toList()));
 		}
 	}

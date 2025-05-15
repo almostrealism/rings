@@ -57,13 +57,33 @@ public class PatternNoteNode implements NoteAudioNode {
 			return;
 		}
 
-		NoteAudioContext audioContext = new NoteAudioContext(ChannelInfo.Voicing.MAIN, choice.getValidNotes(), null);
-		children = note.getProviders(null, audioContext::selectAudio)
-				.stream()
+		NoteAudioContext audioContext = new NoteAudioContext(ChannelInfo.Voicing.MAIN,
+									choice.getValidPatternNotes(), null);
+
+		children = findChoices(note).stream()
+				.map(PatternNoteAudioChoice::getNoteAudioSelection)
+				.map(audioContext::selectAudio)
+				.map(note -> note instanceof SimplePatternNote ? ((SimplePatternNote) note).getNoteAudio() : null)
+				.map(audio -> audio instanceof NoteAudioProvider ? ((NoteAudioProvider) audio) : null)
 				.filter(Objects::nonNull)
 				.distinct()
 				.map(AudioProviderNode::create)
 				.collect(Collectors.toList());
+	}
+
+	protected List<PatternNoteAudioChoice> findChoices(PatternNoteAudio note) {
+		if (note instanceof PatternNote && ((PatternNote) note).getLayers() != null) {
+			return ((PatternNote) note).getLayers().stream()
+					.map(this::findChoices)
+					.flatMap(Collection::stream)
+					.collect(Collectors.toList());
+		} else if (note instanceof PatternNoteAudioAdapter && ((PatternNoteAudioAdapter) note).getDelegate() != null) {
+			return findChoices(((PatternNoteAudioAdapter) note).getDelegate());
+		} else if (note instanceof PatternNoteAudioChoice) {
+			return List.of(((PatternNoteAudioChoice) note));
+		}
+
+		throw new UnsupportedOperationException(note.getClass().getName());
 	}
 
 	public void setChildren(List<NoteAudioNode> children) {

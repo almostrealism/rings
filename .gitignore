@@ -11,6 +11,9 @@ audio/Library/**
 audio/pattern-factory.json
 audio/Population.xml
 
+audio-space/results/**
+audio-space/Library/**
+
 results/**
 health/**
 pattern-factory.json

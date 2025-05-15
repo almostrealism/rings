@@ -18,6 +18,7 @@ package org.almostrealism.audio.persistence;
 
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.WavFile;
+import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.io.SystemUtils;
@@ -30,8 +31,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -118,6 +121,32 @@ public class LibraryDestination implements ConsoleFeatures {
 	public void save(AudioLibrary library) {
 		try {
 			AudioLibraryPersistence.saveLibrary(library, out());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public List<Audio.AudioLibraryData> load() {
+		Supplier<InputStream> in = in();
+		InputStream input = in.get();
+
+		List<Audio.AudioLibraryData> result = new ArrayList<>();
+
+		try {
+			while (input != null) {
+				result.add(Audio.AudioLibraryData.newBuilder().mergeFrom(input).build());
+				input = in.get();
+			}
+
+			return result;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void save(Audio.AudioLibraryData data) {
+		try {
+			data.writeTo(out().get());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

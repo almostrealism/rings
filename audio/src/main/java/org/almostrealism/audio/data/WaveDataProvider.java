@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,20 @@ package org.almostrealism.audio.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Countable;
-import org.almostrealism.hardware.OperationList;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public interface WaveDataProvider extends Supplier<WaveData>, Countable, Setup, Comparable<WaveDataProvider> {
+public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>, Countable, Comparable<WaveDataProvider> {
 
 	@JsonIgnore
 	String getKey();
 
-	@JsonIgnore
-	String getIdentifier();
-
 	double getDuration();
 
 	double getDuration(double playbackRate);
-
-	int getSampleRate();
-
-	default Supplier<Runnable> setup() { return new OperationList(); }
 
 	WaveData get(double playbackRate);
 

@@ -26,6 +26,12 @@ import java.util.stream.IntStream;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface KeyboardTuning {
 	default Frequency getTone(KeyPosition pos) {
+		if (pos.position() < 0) {
+			// Frequency ratios computed against this
+			// key position should simply be unaltered
+			return new Frequency(1.0);
+		}
+
 		return getTone(pos.position(), KeyNumbering.STANDARD);
 	}
 

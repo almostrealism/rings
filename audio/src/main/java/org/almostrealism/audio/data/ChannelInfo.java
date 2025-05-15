@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,31 +20,40 @@ import java.util.Objects;
 
 public class ChannelInfo {
 	private int channel;
+	private Type type;
 	private Voicing voicing;
 
-
 	public ChannelInfo(int channel) {
-		this(channel, null);
+		this(channel,  Type.PATTERN, null);
 	}
 
 	public ChannelInfo(int channel, Voicing voicing) {
+		this(channel, Type.PATTERN, voicing);
+	}
+
+	public ChannelInfo(int channel, Type type) {
+		this(channel, type, Voicing.MAIN);
+	}
+
+	public ChannelInfo(int channel, Type type, Voicing voicing) {
 		this.channel = channel;
+		this.type = type;
 		this.voicing = voicing;
 	}
 
-	public int getChannel() {
-		return channel;
-	}
+	public int getChannel() { return channel; }
 
-	public Voicing getVoicing() {
-		return voicing;
-	}
+	public Type getType() { return type; }
+
+	public Voicing getVoicing() { return voicing; }
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof ChannelInfo that)) return false;
-		return getChannel() == that.getChannel() && getVoicing() == that.getVoicing();
+		return getChannel() == that.getChannel() &&
+				getType() == that.getType() &&
+				getVoicing() == that.getVoicing();
 	}
 
 	@Override
@@ -54,5 +63,9 @@ public class ChannelInfo {
 
 	public enum Voicing {
 		MAIN, WET
+	}
+
+	public enum Type {
+		PATTERN, RISE
 	}
 }

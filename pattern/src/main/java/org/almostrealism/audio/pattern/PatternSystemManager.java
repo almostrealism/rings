@@ -103,6 +103,12 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		return choices;
 	}
 
+	public List<NoteAudioSource> getAllSources() {
+		return getChoices()
+				.stream()
+				.flatMap(c -> c.getSources().stream()).toList();
+	}
+
 	public List<PatternLayerManager> getPatterns() { return patterns; }
 
 	public Map<NoteAudioChoice, List<PatternElement>> getPatternElements(double start, double end) {
@@ -152,10 +158,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void setTree(FileWaveDataProviderTree<?> root, DoubleConsumer progress) {
-		List<NoteAudioSource> sources = getChoices()
-				.stream()
-				.flatMap(c -> c.getSources().stream())
-				.collect(Collectors.toList());
+		List<NoteAudioSource> sources = getAllSources();
 
 		if (progress != null && !sources.isEmpty())
 			progress.accept(0.0);

@@ -56,7 +56,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private static long timeout = 40 * 60 * 1000l;
 	private static long timeoutInterval = 5000;
 
-	private long max = standardDuration;
+	private long max = standardDurationFrames;
 	private int iter;
 
 	private boolean encounteredSilence;
@@ -156,9 +156,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	@Override
 	public AudioHealthScore computeHealth() {
-		if (WaveOutput.defaultTimelineFrames < standardDuration) {
+		if (WaveOutput.defaultTimelineFrames < standardDurationFrames) {
 			throw new IllegalArgumentException("WaveOutput timeline is too short (" +
-					WaveOutput.defaultTimelineFrames + " < " + standardDuration + ")");
+					WaveOutput.defaultTimelineFrames + " < " + standardDurationFrames + ")");
 		}
 
 		encounteredSilence = false;
@@ -232,7 +232,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			// average value
 //			return ((double) l) / standardDuration -
 //					((double) avg.framesUntilAverage()) / standardDuration;
-			score = (double) (l + iter) * errorMultiplier / (standardDuration + iter);
+			score = (double) (l + iter) * errorMultiplier / (standardDurationFrames + iter);
 
 			if (enableVerbose) {
 				console().println();
@@ -258,7 +258,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 				if (enableFft) {
 					try {
-						getWaveOut().getWaveData().fft().store(getFftOutputFile());
+						getWaveOut().getWaveData().fft(true).store(getFftOutputFile());
 					} catch (IOException e) {
 						warn("Could not store FFT", e);
 					}

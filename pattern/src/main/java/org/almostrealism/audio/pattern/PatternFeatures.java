@@ -20,6 +20,9 @@ public interface PatternFeatures extends CodeFeatures {
 	default void render(AudioSceneContext sceneContext, NoteAudioContext audioContext,
 						List<PatternElement> elements, boolean melodic, double offset) {
 		PackedCollection<?> destination = sceneContext.getDestination();
+		if (destination == null) {
+			throw new IllegalArgumentException();
+		}
 
 		elements.stream()
 				.map(e -> e.getNoteDestinations(melodic, offset, sceneContext, audioContext))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,16 @@
 
 package org.almostrealism.audio.pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.ParameterizedFilterEnvelope;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
-import org.almostrealism.audio.notes.ListNoteSource;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
-import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
-import org.almostrealism.util.KeyUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,21 +34,20 @@ import java.util.stream.IntStream;
 public class PatternElementFactory implements ConsoleFeatures {
 	public static boolean enableVolumeEnvelope = true;
 	public static boolean enableFilterEnvelope = true;
-	public static boolean enableScaleNoteLength = true;
-	public static boolean enableRegularizedNoteLength = false;
 
 	public static int MAX_LAYERS = 10;
 	public static NoteDurationStrategy CHORD_STRATEGY = NoteDurationStrategy.FIXED;
-	public static double noteLengthFactor = 0.5;
+
+	/**
+	 * The maximum duration of a note, relative to the scale of the element
+	 * being generated. A value of 1.0 would mean that the note may be only
+	 * as long as the scale (eg, a 1/4 note would be at most 1/4th the length
+	 * of a measure, a 1/8 note would be at most 1/8th the length of a measure,
+	 * etc).
+	 */
+	public static double noteLengthFactor = 0.75;
 
 	public static int[] REPEAT_DIST;
-
-	@Deprecated
-	private String id;
-	@Deprecated
-	private String name;
-	@Deprecated
-	private List<NoteAudioSource> sources;
 
 	private PatternNoteFactory noteFactory;
 
@@ -68,26 +61,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	private ParameterizedPositionFunction repeatSelection;
 
 	public PatternElementFactory() {
-		this(new NoteAudioSource[0]);
-	}
-
-	public PatternElementFactory(String name) {
-		this(name, new NoteAudioSource[0]);
-	}
-
-	public PatternElementFactory(NoteAudioSource... sources) {
-		this(null, sources);
-	}
-
-	public PatternElementFactory(String name, NoteAudioProvider... notes) {
-		this(name, new ListNoteSource(notes));
-	}
-
-	public PatternElementFactory(String name, NoteAudioSource... sources) {
-		setId(KeyUtils.generateKey());
-		setName(name);
-		setSources(new ArrayList<>());
-		getSources().addAll(List.of(sources));
 		setNoteFactory(new PatternNoteFactory());
 		initSelectionFunctions();
 	}
@@ -102,32 +75,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 		filterEnvelope = ParameterizedFilterEnvelope.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);
 		chordNoteSelection = ChordPositionFunction.random();
 		repeatSelection = ParameterizedPositionFunction.random();
-	}
-
-	@Deprecated
-	public String getId() { return id; }
-	@Deprecated
-	public void setId(String id) { this.id = id; }
-
-	@Deprecated
-	public String getName() { return name; }
-	@Deprecated
-	public void setName(String name) { this.name = name; }
-
-	@Deprecated
-	@JsonIgnore
-	public List<NoteAudioProvider> getAllNotes() {
-		return sources.stream()
-				.map(NoteAudioSource::getNotes)
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
-	}
-
-	@Deprecated
-	public List<NoteAudioSource> getSources() { return sources; }
-	@Deprecated
-	public void setSources(List<NoteAudioSource> sources) {
-		this.sources = sources;
 	}
 
 	public PatternNoteFactory getNoteFactory() {
@@ -174,17 +121,6 @@ public class PatternElementFactory implements ConsoleFeatures {
 	}
 	public void setRepeatSelection(ParameterizedPositionFunction repeatSelection) {
 		this.repeatSelection = repeatSelection;
-	}
-
-	@Deprecated
-	public boolean checkResourceUsed(String canonicalPath) {
-		return getSources().stream().anyMatch(s -> s.checkResourceUsed(canonicalPath));
-	}
-
-	@Deprecated
-	@JsonIgnore
-	public List<NoteAudioProvider> getValidNotes() {
-		return getAllNotes().stream().filter(NoteAudioProvider::isValid).collect(Collectors.toList());
 	}
 
 	// TODO  This should take instruction for whether to apply note duration, relying just on isMelodic limits its use
@@ -235,17 +171,9 @@ public class PatternElementFactory implements ConsoleFeatures {
 						CHORD_STRATEGY : NoteDurationStrategy.FIXED) :
 					NoteDurationStrategy.NONE);
 
-		double ls = scale > 1.0 ? 1.0 : scale;
 
-		if (enableScaleNoteLength) {
-			if (enableRegularizedNoteLength) {
-				element.setNoteDurationSelection(ls * noteLengthSelection.power(2.0, 2, -2).apply(params));
-			} else {
-				element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
-			}
-		} else {
-			element.setNoteDurationSelection(noteLengthSelection.power(2.0, 3, -3).apply(params));
-		}
+		double ls = Math.min(scale, 1.0);
+		element.setNoteDurationSelection(ls * noteLengthFactor * noteLengthSelection.positive().apply(params));
 
 		double r = repeatSelection.apply(params, pos, scale);
 
@@ -269,7 +197,15 @@ public class PatternElementFactory implements ConsoleFeatures {
 		}
 
 		element.setScaleTraversalStrategy(scaleTraversalStrategy);
-		element.setRepeatDuration(ls * noteLengthFactor);
+
+		if (noteLengthFactor <= 0.5) {
+			// If the note length factor is significantly less than 1.0,
+			// there is ample time to repeat the note sooner
+			element.setRepeatDuration(ls * 0.5);
+		} else {
+			element.setRepeatDuration(ls);
+		}
+
 		return Optional.of(element);
 	}
 
