@@ -4,10 +4,9 @@
 	<parent>
 		<groupId>com.almostrealism</groupId>
 		<artifactId>rings</artifactId>
-		<version>0.39</version>
+		<version>0.40</version>
 	</parent>
 
-	<groupId>org.almostrealism</groupId>
 	<artifactId>ar-rings-ml</artifactId>
 	<packaging>jar</packaging>
 
@@ -15,6 +14,16 @@
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-ml</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft.onnxruntime</groupId>
+			<artifactId>onnxruntime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>ai.djl.sentencepiece</groupId>
+			<artifactId>sentencepiece</artifactId>
 		</dependency>
 
 		<dependency>

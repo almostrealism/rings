@@ -21,6 +21,7 @@ import io.almostrealism.scope.Argument;
 import io.almostrealism.code.InstructionSet;
 import io.almostrealism.scope.Scope;
 import org.tensorflow.ConcreteFunction;
+import org.tensorflow.Result;
 import org.tensorflow.Signature;
 import org.tensorflow.Tensor;
 import org.tensorflow.ndarray.Shape;
@@ -31,6 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -54,8 +56,12 @@ public class TensorFlowInstructionSet implements InstructionSet {
 		};
 	}
 
-	private void assignArgs(Object args[], Map<String, Tensor> result) {
-		List<Tensor> outputs = arguments.stream().map(Argument::getName).map(result::get).collect(Collectors.toList());
+	private void assignArgs(Object args[], Result result) {
+		List<Tensor> outputs = arguments.stream()
+				.map(Argument::getName)
+				.map(result::get)
+				.map(Optional::get)
+				.collect(Collectors.toList());
 		IntStream.range(0, outputs.size()).forEach(i -> {
 			// ((MemoryData) args[i]).reassign(new TensorFlowMemory(outputs.get(i)));
 			System.out.println("Result: " + ((DoubleDenseNdArray) outputs.get(i)).get(0));
