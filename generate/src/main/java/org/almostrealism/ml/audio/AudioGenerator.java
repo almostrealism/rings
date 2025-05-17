@@ -9,6 +9,7 @@ import ai.onnxruntime.OrtSession;
 import org.almostrealism.audio.WavFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
 import java.util.HashMap;
@@ -16,13 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class AudioGenerator implements AutoCloseable {
-	// ONNX Runtime sessions
-	private final OrtEnvironment env;
-	private final OrtSession conditionersSession;
-	private final OrtSession ditSession;
-	private final OrtSession autoencoderSession;
-
-	// Constants (matching C++ implementation)
 	private static final float AUDIO_LEN_SEC = 10.0f;
 	private static final int NUM_STEPS = 8;
 	private static final float LOGSNR_MAX = -6.0f;
@@ -30,23 +24,44 @@ public class AudioGenerator implements AutoCloseable {
 	private static final float SIGMA_MAX = 1.0f;
 
 	// Model dimensions
-	private static final long[] DIT_X_SHAPE = new long[]{1, 64, 256};
+	private static final long[] DIT_X_SHAPE = new long[] { 1, 64, 256 };
 	private static final int DIT_X_SIZE = 64 * 256;
 	private static final int T5_SEQ_LENGTH = 128;
 
-	public AudioGenerator(String modelsPath) throws OrtException {
-		// Initialize ONNX Runtime
+
+	private final OrtEnvironment env;
+	private final OrtSession conditionersSession;
+	private final OrtSession ditSession;
+	private final OrtSession autoencoderSession;
+
+	private final SpTokenizer tokenizer;
+	private final SpVocabulary vocabulary;
+
+	public AudioGenerator(String modelsPath) throws OrtException, IOException {
+		tokenizer = new SpTokenizer(AudioGenerator.class.getClassLoader().getResourceAsStream("spiece.model"));
+		vocabulary = SpVocabulary.from(tokenizer);
+
 		env = OrtEnvironment.getEnvironment();
 		OrtSession.SessionOptions options = new OrtSession.SessionOptions();
 
-		// Set number of threads
 		options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
 		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
 
-		// Create sessions for each model
 		conditionersSession = env.createSession(modelsPath + "/conditioners.onnx", options);
 		ditSession = env.createSession(modelsPath + "/dit.onnx", options);
 		autoencoderSession = env.createSession(modelsPath + "/autoencoder.onnx", options);
+	}
+
+	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {
+		double[][] audio = generateAudio(prompt, seed);
+		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, 44100)) {
+			f.writeFrames(audio);
+		}
+	}
+
+	public double[][] generateAudio(String prompt, long seed) throws OrtException {
+		long[] tokenIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
+		return generateAudio(tokenIds, seed);
 	}
 
 	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
@@ -237,14 +252,14 @@ public class AudioGenerator implements AutoCloseable {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws OrtException {
 		if (conditionersSession != null) conditionersSession.close();
 		if (ditSession != null) ditSession.close();
 		if (autoencoderSession != null) autoencoderSession.close();
 		if (env != null) env.close();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		if (args.length < 3) {
 			System.out.println("Usage: java -jar audiogen.jar <models_path> <prompt> <output_path>");
 			return;
@@ -253,42 +268,10 @@ public class AudioGenerator implements AutoCloseable {
 		String modelsPath = args[0];
 		String prompt = args[1];
 		String outputPath = args[2];
-		long seed = 99; // Fixed seed for reproducibility
+		long seed = 99;
 
-		try {
-			// Initialize tokenizer and generators
-			SpTokenizer tokenizer = new SpTokenizer(AudioGenerator.class.getClassLoader().getResourceAsStream("spiece.model"));
-			SpVocabulary vocabulary = SpVocabulary.from(tokenizer);
-
-			AudioGenerator generator = new AudioGenerator(modelsPath);
-
-			// Start timing
-			long startTime = System.currentTimeMillis();
-
-			// 1. Tokenize the prompt
-			System.out.println("Tokenizing prompt: " + prompt);
-			long[] tokenIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
-
-			// 2. Generate audio
-			System.out.println("Generating audio...");
-			double[][] stereoAudio = generator.generateAudio(tokenIds, seed);
-
-			// 3. Save as WAV
-			System.out.println("Saving audio to " + outputPath);
-			try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, stereoAudio[0].length, 32, 44100)) {
-				f.writeFrames(stereoAudio);
-			}
-
-			// Report time
-			long endTime = System.currentTimeMillis();
-			System.out.println("Total generation time: " + (endTime - startTime) + " ms");
-
-			// Clean up
-			generator.close();
-
-		} catch (Exception e) {
-			System.err.println("Error generating audio: " + e.getMessage());
-			e.printStackTrace();
+		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
+			generator.generateAudio(prompt, seed, outputPath);
 		}
 	}
 }
