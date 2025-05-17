@@ -1,9 +1,10 @@
 package org.almostrealism.audioml;
 
+import ai.djl.sentencepiece.SpTokenizer;
+import ai.djl.sentencepiece.SpVocabulary;
 import org.almostrealism.audioml.audio.AudioUtils;
 import org.almostrealism.audioml.model.DiffusionProcess;
 import org.almostrealism.audioml.model.ModelHandler;
-import org.almostrealism.audioml.text.TextTokenizer;
 import org.tensorflow.TensorFlow;
 
 public class AudioGen {
@@ -37,8 +38,9 @@ public class AudioGen {
 
 			// Step 2: Initialize text tokenizer
 			System.out.println("Initializing tokenizer...");
-			TextTokenizer tokenizer = new TextTokenizer(modelsBasePath + "/spiece.model");
-			long[] promptIds = tokenizer.convertPromptToIds(prompt);
+			SpTokenizer tokenizer = new SpTokenizer(AudioGen.class.getClassLoader().getResourceAsStream("spiece.model"));
+			SpVocabulary vocabulary = SpVocabulary.from(tokenizer);
+			long[] promptIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
 
 			// Step 3: Prepare attention mask
 			long[] attentionMask = new long[promptIds.length];
