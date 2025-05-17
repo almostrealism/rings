@@ -49,7 +49,7 @@ public class AudioGenerator implements AutoCloseable {
 		autoencoderSession = env.createSession(modelsPath + "/autoencoder.onnx", options);
 	}
 
-	public float[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
+	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
 		// 1. Process tokens through conditioners
 		long start = System.currentTimeMillis();
 		Map<String, OnnxTensor> conditionerOutputs = runConditioners(tokenIds);
@@ -66,7 +66,7 @@ public class AudioGenerator implements AutoCloseable {
 
 		// 3. Decode audio
 		start = System.currentTimeMillis();
-		float[][] audio = decodeAudio(finalLatent);
+		double[][] audio = decodeAudio(finalLatent);
 		System.out.println("Autoencoder: " + (System.currentTimeMillis() - start) + "ms");
 
 		// 4. Clean up
@@ -190,7 +190,7 @@ public class AudioGenerator implements AutoCloseable {
 		return xTensor;
 	}
 
-	private float[][] decodeAudio(OnnxTensor latent) throws OrtException {
+	private double[][] decodeAudio(OnnxTensor latent) throws OrtException {
 		// Run autoencoder
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 		inputs.put("sampled", latent);
@@ -204,7 +204,7 @@ public class AudioGenerator implements AutoCloseable {
 		int channelSamples = totalSamples / 2; // Stereo audio
 
 		// Create stereo audio array
-		float[][] stereoAudio = new float[2][channelSamples];
+		double[][] stereoAudio = new double[2][channelSamples];
 		for (int i = 0; i < channelSamples; i++) {
 			stereoAudio[0][i] = audioBuffer.get(i);                  // Left channel
 			stereoAudio[1][i] = audioBuffer.get(i + channelSamples); // Right channel
@@ -271,11 +271,13 @@ public class AudioGenerator implements AutoCloseable {
 
 			// 2. Generate audio
 			System.out.println("Generating audio...");
-			float[][] stereoAudio = generator.generateAudio(tokenIds, seed);
+			double[][] stereoAudio = generator.generateAudio(tokenIds, seed);
 
 			// 3. Save as WAV
 			System.out.println("Saving audio to " + outputPath);
-			// WavFile.newWavFile(new File(outputPath), 2, ).saveAsWav(stereoAudio, outputPath);
+			try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, stereoAudio[0].length, 32, 44100)) {
+				f.writeFrames(stereoAudio);
+			}
 
 			// Report time
 			long endTime = System.currentTimeMillis();
