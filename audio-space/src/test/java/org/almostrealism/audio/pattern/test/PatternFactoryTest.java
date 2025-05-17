@@ -31,7 +31,7 @@ import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
+import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.heredity.SimpleChromosome;
@@ -95,19 +95,19 @@ public class PatternFactoryTest implements CellFeatures {
 		});
 	}
 
-	public PatternFactoryChoiceList readChoices() throws IOException {
+	public NoteAudioChoiceList readChoices() throws IOException {
 		return readChoices(true);
 	}
 
-	public PatternFactoryChoiceList readChoices(boolean useOld) throws IOException {
+	public NoteAudioChoiceList readChoices(boolean useOld) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		File f = new File("pattern-factory.json.old");
 		if (useOld && f.exists()) {
-			return mapper.readValue(f, PatternFactoryChoiceList.class);
+			return mapper.readValue(f, NoteAudioChoiceList.class);
 		} else {
-			return mapper.readValue(new File("pattern-factory.json"), PatternFactoryChoiceList.class);
+			return mapper.readValue(new File("pattern-factory.json"), NoteAudioChoiceList.class);
 		}
 	}
 
