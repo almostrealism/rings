@@ -297,19 +297,6 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		return block;
 	}
 
-	protected Function<TraversalPolicy, Block> residual(Function<TraversalPolicy, Block> block) {
-		return shape -> residual(block.apply(shape));
-	}
-
-	protected Block residual(Block block) {
-		if (block.getInputShape().getTotalSize() != block.getOutputShape().getTotalSize())
-			throw new IllegalArgumentException();
-
-		SequentialBlock residual = new SequentialBlock(block.getInputShape());
-		residual.accum(block);
-		return residual;
-	}
-
 	protected Model unet(int dim) {
 		return unet(dim, null, null, false, 4);
 	}
