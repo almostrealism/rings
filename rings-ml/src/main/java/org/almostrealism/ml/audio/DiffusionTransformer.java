@@ -26,6 +26,10 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private final String diffusionObjective;
 	private final int maxSeqLen;
 
+	private final int audioSeqLen;
+	private final int condSeqLen;
+
+
 	// The compiled model
 	private final CompiledModel model;
 
@@ -36,12 +40,12 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 								int patchSize, int condTokenDim, int globalCondDim,
 								String diffusionObjective) {
 		this(ioChannels, embedDim, depth, numHeads, patchSize,
-				condTokenDim, globalCondDim, diffusionObjective, 2048);
+				condTokenDim, globalCondDim, diffusionObjective, 2048, 128);
 	}
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective, int maxSeqLen) {
+								String diffusionObjective, int maxSeqLen, int condSeqLen) {
 		this.ioChannels = ioChannels;
 		this.embedDim = embedDim;
 		this.depth = depth;
@@ -51,6 +55,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		this.globalCondDim = globalCondDim;
 		this.diffusionObjective = diffusionObjective;
 		this.maxSeqLen = maxSeqLen;
+		this.audioSeqLen = maxSeqLen;
+		this.condSeqLen = condSeqLen;
 		this.weightMap = new HashMap<>();
 
 		// Build and compile the model
@@ -59,7 +65,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 	private CompiledModel buildModel() {
 		// Create input shape - [batch, channels, sequence_length]
-		TraversalPolicy inputShape = shape(batchSize, ioChannels, -1);
+		TraversalPolicy inputShape = shape(batchSize, ioChannels, audioSeqLen);
 
 		// Create model
 		Model model = new Model(inputShape);
@@ -75,8 +81,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			weightMap.put("condEmbedding.weight", condProjWeight);
 
 			condEmbed = layer("condEmbedding",
-					shape(1, -1, condTokenDim),
-					shape(1, -1, embedDim),
+					shape(1, condSeqLen, condTokenDim),
+					shape(1, condSeqLen, embedDim),
 					in -> matmul(cp(condProjWeight), in),
 					List.of(condProjWeight));
 			model.addInput(condEmbed);
@@ -105,22 +111,22 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		weightMap.put("inputProjection.weight", inputProjWeight);
 		weightMap.put("inputProjection.bias", inputProjBias);
 
-		main.add(convolution1d(batchSize, ioChannels, embedDim, 1, 0));
+		main.add(convolution1d(batchSize, ioChannels, embedDim, audioSeqLen, 1, 0));
 
 		// Patching if needed (reshape from channels-first to sequence-of-tokens format)
 		if (patchSize > 1) {
 			main.add(layer("patchify",
-					shape(1, embedDim, -1),
-					shape(1, -1, embedDim * patchSize),
+					shape(1, embedDim, audioSeqLen),
+					shape(1, audioSeqLen/patchSize, embedDim * patchSize),
 					in -> {
 						// Implementation for patchify operation
-						return reshape(shape(1, -1, embedDim * patchSize), in);
+						return reshape(shape(1, audioSeqLen/patchSize, embedDim * patchSize), in);
 					}));
 		} else {
 			// Just reshape from [batch, channels, seq_len] to [batch, seq_len, channels]
-			main.reshape(batchSize, embedDim, -1)
+			main.reshape(batchSize, embedDim, audioSeqLen)
 				.enumerate(1, 2, 1)
-				.reshape(batchSize, -1, embedDim);
+				.reshape(batchSize, audioSeqLen, embedDim);
 		}
 
 		// Add transformer blocks
@@ -194,7 +200,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			Producer<PackedCollection<?>> position = p(new PackedCollection<>(1));
 
 			// Add transformer block with proper context
-			main.add(transformerBlock(batchSize, embedDim, numHeads,
+			main.add(transformerBlock(batchSize, embedDim, numHeads, audioSeqLen,
 					hasCrossAttention, condTokenDim,
 					hasGlobalCond, condEmbed));
 		}
@@ -202,17 +208,17 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		// Reshape back to channels-first format if needed
 		if (patchSize > 1) {
 			main.add(layer("unpatchify",
-					shape(1, -1, embedDim * patchSize),
-					shape(1, embedDim, -1),
+					shape(1, audioSeqLen/patchSize, embedDim * patchSize),
+					shape(1, embedDim, audioSeqLen),
 					in -> {
 						// Implementation for unpatchify operation
-						return reshape(shape(1, embedDim, -1), in);
+						return reshape(shape(1, embedDim, audioSeqLen), in);
 					}));
 		} else {
 			// Reshape from [batch, seq_len, channels] back to [batch, channels, seq_len]
-			main.reshape(batchSize, -1, embedDim)
+			main.reshape(batchSize, audioSeqLen, embedDim)
 					.enumerate(1, 2, 1)
-					.reshape(batchSize, embedDim, -1);
+					.reshape(batchSize, embedDim, audioSeqLen);
 		}
 
 		// Output projection
@@ -221,7 +227,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		weightMap.put("outputProjection.weight", outputProjWeight);
 		weightMap.put("outputProjection.bias", outputProjBias);
 
-		main.add(convolution1d(batchSize, embedDim, ioChannels, 1, 0));
+		main.add(convolution1d(batchSize, embedDim, ioChannels, audioSeqLen, 1, 0));
 
 		return model.compile();
 	}

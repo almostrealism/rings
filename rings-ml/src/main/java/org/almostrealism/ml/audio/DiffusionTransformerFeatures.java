@@ -61,24 +61,14 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		return embedding;
 	}
 
-	default Block layerNorm(int batchSize, int dim) {
-		// Use RMSNorm as specified in the DiT architecture
-		PackedCollection<?> weights = new PackedCollection<>(shape(dim));
-		for (int i = 0; i < dim; i++) {
-			weights.setMem(i, 1.0);  // Initialize to ones
-		}
-
-		return rmsnorm(weights);
-	}
-
 	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
-								int kernelSize, int padding) {
+								int seqLength, int kernelSize, int padding) {
 		PackedCollection<?> weights = new PackedCollection<>(
 				shape(outputChannels, inputChannels, kernelSize));
 		PackedCollection<?> bias = new PackedCollection<>(shape(outputChannels));
 
-		TraversalPolicy inputShape = shape(batchSize, inputChannels, -1);
-		TraversalPolicy outputShape = shape(batchSize, outputChannels, -1);
+		TraversalPolicy inputShape = shape(batchSize, inputChannels, seqLength);
+		TraversalPolicy outputShape = shape(batchSize, outputChannels, seqLength);
 
 		return layer("convolution1d",
 				inputShape, outputShape,
@@ -110,17 +100,14 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				List.of(weights, bias));
 	}
 
-	default Block transformerBlock(int batchSize, int dim, int heads,
+	default Block transformerBlock(int batchSize, int dim, int heads, int seqLen,
 								   boolean crossAttend, int contextDim,
 								   boolean globalCond, Block context) {
-		SequentialBlock block = new SequentialBlock(shape(batchSize, -1, dim));
+		SequentialBlock block = new SequentialBlock(shape(batchSize, seqLen, dim));
 		int dimHead = dim / heads;
 
 		// Self-attention with pre-norm and residual connection
-		PackedCollection<?> selfAttRmsWeight = new PackedCollection<>(shape(dim));
-		for (int i = 0; i < dim; i++) {
-			selfAttRmsWeight.setMem(i, 1.0);  // Initialize to ones
-		}
+		PackedCollection<?> selfAttRmsWeight = new PackedCollection<>(shape(dim)).fill(1.0);
 
 		PackedCollection<?> selfWq = new PackedCollection<>(shape(dim, dim));
 		PackedCollection<?> selfWk = new PackedCollection<>(shape(dim, dim));
@@ -128,19 +115,20 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		PackedCollection<?> selfWo = new PackedCollection<>(shape(dim, dim));
 
 		// Position encoding for rotary embeddings
-		int seqLen = 2048; // Maximum sequence length
 		PackedCollection<?> freqCis = new PackedCollection<>(shape(seqLen, dimHead / 2, 2));
 		Producer<PackedCollection<?>> position = p(new PackedCollection<>(1));
 
-		// Create self-attention block
-		Block selfAttention = attention(heads, selfAttRmsWeight, selfWk, selfWv, selfWq, selfWo,
-				freqCis, position);
-
-		// Add self-attention with pre-norm and residual
+		Block selfAttention = attention(heads, selfAttRmsWeight,
+									selfWk, selfWv, selfWq, selfWo,
+									freqCis, position);
 		block.add(residual(preNorm(selfAttention)));
 
 		// Cross-attention (if needed)
-		if (crossAttend && context != null) {
+		if (crossAttend) {
+			if (context == null) {
+				throw new IllegalArgumentException("Context block cannot be null for cross-attention");
+			}
+
 			PackedCollection<?> crossAttRmsWeight = new PackedCollection<>(shape(dim));
 			for (int i = 0; i < dim; i++) {
 				crossAttRmsWeight.setMem(i, 1.0);
@@ -154,7 +142,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 			// Create cross-attention block with context
 			Block crossAttention = crossAttention(heads, crossAttRmsWeight,
 					crossWk, crossWv, crossWq, crossWo,
-					dimHead, context);
+					dimHead, seqLen, context);
 
 			// Add cross-attention with pre-norm and residual
 			block.add(residual(preNorm(crossAttention)));
@@ -181,7 +169,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 
 	default Block preNorm(Block block) {
 		SequentialBlock preNorm = new SequentialBlock(block.getInputShape());
-		preNorm.add(layerNorm(block.getInputShape().length(0), block.getInputShape().length(-1)));
+		preNorm.add(rmsnorm(block.getInputShape().getTotalSize()));
 		preNorm.add(block);
 		return preNorm;
 	}
