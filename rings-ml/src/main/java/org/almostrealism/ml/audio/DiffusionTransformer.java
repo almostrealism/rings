@@ -170,8 +170,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			if (hasCrossAttention) {
 				crossAttRmsWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
 				crossWq = new PackedCollection<>(shape(embedDim, embedDim));
-				crossWk = new PackedCollection<>(shape(condTokenDim, embedDim));
-				crossWv = new PackedCollection<>(shape(condTokenDim, embedDim));
+				crossWk = new PackedCollection<>(shape(embedDim, embedDim));
+				crossWv = new PackedCollection<>(shape(embedDim, embedDim));
 				crossWo = new PackedCollection<>(shape(embedDim, embedDim));
 
 				// Store cross-attention weights

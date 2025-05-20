@@ -134,7 +134,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 			}
 
 			// Create cross-attention block with context
-			Block crossAttention = crossAttention(contextSeqLen, heads,
+			Block crossAttention = crossAttention(1, contextSeqLen, heads,
 					dimHead, crossAttRmsWeight,
 					crossWk, crossWv, crossWq, crossWo,
 					context);
