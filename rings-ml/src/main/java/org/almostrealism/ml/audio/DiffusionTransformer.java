@@ -63,7 +63,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		this.model = buildModel();
 	}
 
-	private CompiledModel buildModel() {
+	protected CompiledModel buildModel() {
 		// Create input shape - [batch, channels, sequence_length]
 		TraversalPolicy inputShape = shape(batchSize, ioChannels, audioSeqLen);
 
@@ -111,22 +111,19 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		weightMap.put("inputProjection.weight", inputProjWeight);
 		weightMap.put("inputProjection.bias", inputProjBias);
 
+		// Use the weights in convolution1d
 		main.add(convolution1d(batchSize, ioChannels, embedDim, audioSeqLen, 1, 0));
 
-		// Patching if needed (reshape from channels-first to sequence-of-tokens format)
+		// Reshape from [batch, channels, seq_len] to [batch, seq_len, channels]
 		if (patchSize > 1) {
 			main.add(layer("patchify",
 					shape(1, embedDim, audioSeqLen),
 					shape(1, audioSeqLen/patchSize, embedDim * patchSize),
-					in -> {
-						// Implementation for patchify operation
-						return reshape(shape(1, audioSeqLen/patchSize, embedDim * patchSize), in);
-					}));
+					in -> reshape(shape(1, audioSeqLen/patchSize, embedDim * patchSize), in)));
 		} else {
-			// Just reshape from [batch, channels, seq_len] to [batch, seq_len, channels]
 			main.reshape(batchSize, embedDim, audioSeqLen)
-				.enumerate(1, 2, 1)
-				.reshape(batchSize, audioSeqLen, embedDim);
+					.enumerate(1, 2, 1)
+					.reshape(batchSize, audioSeqLen, embedDim);
 		}
 
 		// Add transformer blocks
@@ -136,13 +133,32 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 			// Create and track all weights for this transformer block
 			int dimHead = embedDim / numHeads;
+			String blockPrefix = "transformerBlocks[" + i + "]";
 
 			// Self-attention weights
-			PackedCollection<?> rmsAttWeight = new PackedCollection<>(shape(embedDim));
+			PackedCollection<?> rmsAttWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
 			PackedCollection<?> wq = new PackedCollection<>(shape(embedDim, embedDim));
 			PackedCollection<?> wk = new PackedCollection<>(shape(embedDim, embedDim));
 			PackedCollection<?> wv = new PackedCollection<>(shape(embedDim, embedDim));
 			PackedCollection<?> wo = new PackedCollection<>(shape(embedDim, embedDim));
+			PackedCollection<?> freqCis = new PackedCollection<>(shape(maxSeqLen, dimHead / 2, 2));
+
+			// Initialize freqCis with rotary position embeddings
+			for (int pos = 0; pos < maxSeqLen; pos++) {
+				for (int j = 0; j < dimHead / 2; j++) {
+					double theta = pos * Math.pow(10000, -2.0 * j / dimHead);
+					freqCis.setMem(pos * (dimHead / 2) * 2 + j * 2, Math.cos(theta));     // cos
+					freqCis.setMem(pos * (dimHead / 2) * 2 + j * 2 + 1, Math.sin(theta)); // sin
+				}
+			}
+
+			// Store self-attention weights
+			weightMap.put(blockPrefix + ".selfAttention.rmsWeight", rmsAttWeight);
+			weightMap.put(blockPrefix + ".selfAttention.wq", wq);
+			weightMap.put(blockPrefix + ".selfAttention.wk", wk);
+			weightMap.put(blockPrefix + ".selfAttention.wv", wv);
+			weightMap.put(blockPrefix + ".selfAttention.wo", wo);
+			weightMap.put(blockPrefix + ".selfAttention.freqCis", freqCis);
 
 			// Cross-attention weights (if needed)
 			PackedCollection<?> crossAttRmsWeight = null;
@@ -152,35 +168,13 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> crossWo = null;
 
 			if (hasCrossAttention) {
-				crossAttRmsWeight = new PackedCollection<>(shape(embedDim));
+				crossAttRmsWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
 				crossWq = new PackedCollection<>(shape(embedDim, embedDim));
 				crossWk = new PackedCollection<>(shape(condTokenDim, embedDim));
 				crossWv = new PackedCollection<>(shape(condTokenDim, embedDim));
 				crossWo = new PackedCollection<>(shape(embedDim, embedDim));
-			}
 
-			// Feedforward weights
-			PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(embedDim));
-			PackedCollection<?> w1 = new PackedCollection<>(shape(embedDim, embedDim * 4));
-			PackedCollection<?> w2 = new PackedCollection<>(shape(embedDim * 4, embedDim));
-			PackedCollection<?> w3 = new PackedCollection<>(shape(embedDim, embedDim * 4));
-
-			// Position encoding
-			PackedCollection<?> freqCis = new PackedCollection<>(shape(maxSeqLen, dimHead / 2, 2));
-
-			// Store all weights in map for later loading
-			String blockPrefix = "transformerBlocks[" + i + "]";
-
-			// Self-attention weights
-			weightMap.put(blockPrefix + ".selfAttention.rmsWeight", rmsAttWeight);
-			weightMap.put(blockPrefix + ".selfAttention.wq", wq);
-			weightMap.put(blockPrefix + ".selfAttention.wk", wk);
-			weightMap.put(blockPrefix + ".selfAttention.wv", wv);
-			weightMap.put(blockPrefix + ".selfAttention.wo", wo);
-			weightMap.put(blockPrefix + ".selfAttention.freqCis", freqCis);
-
-			// Cross-attention weights
-			if (hasCrossAttention) {
+				// Store cross-attention weights
 				weightMap.put(blockPrefix + ".crossAttention.rmsWeight", crossAttRmsWeight);
 				weightMap.put(blockPrefix + ".crossAttention.wq", crossWq);
 				weightMap.put(blockPrefix + ".crossAttention.wk", crossWk);
@@ -189,34 +183,37 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			}
 
 			// Feed-forward weights
+			PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
+			PackedCollection<?> w1 = new PackedCollection<>(shape(embedDim, embedDim * 4));
+			PackedCollection<?> w2 = new PackedCollection<>(shape(embedDim * 4, embedDim));
+			PackedCollection<?> w3 = new PackedCollection<>(shape(embedDim, embedDim * 4));
+
+			// Store feed-forward weights
 			weightMap.put(blockPrefix + ".feedForward.rmsWeight", rmsFfnWeight);
 			weightMap.put(blockPrefix + ".feedForward.w1", w1);
 			weightMap.put(blockPrefix + ".feedForward.w2", w2);
 			weightMap.put(blockPrefix + ".feedForward.w3", w3);
 
-			// Position encoding
-			weightMap.put(blockPrefix + ".position.freqCis", freqCis);
-
-			// Create position supplier
-			Producer<PackedCollection<?>> position = p(new PackedCollection<>(1));
-
-			// Add transformer block with proper context
-			main.add(transformerBlock(batchSize, embedDim, numHeads, audioSeqLen,
-					hasCrossAttention, condTokenDim,
-					hasGlobalCond, condEmbed));
+			// Add transformer block with all weights explicitly passed
+			main.add(transformerBlock(
+					batchSize, embedDim, audioSeqLen, numHeads,
+					hasCrossAttention, condTokenDim, condSeqLen, hasGlobalCond, condEmbed,
+					// Self-attention weights
+					rmsAttWeight, wq, wk, wv, wo, freqCis,
+					// Cross-attention weights
+					crossAttRmsWeight, crossWq, crossWk, crossWv, crossWo,
+					// Feed-forward weights
+					rmsFfnWeight, w1, w2, w3
+			));
 		}
 
-		// Reshape back to channels-first format if needed
+		// Reshape back to channels-first format
 		if (patchSize > 1) {
 			main.add(layer("unpatchify",
 					shape(1, audioSeqLen/patchSize, embedDim * patchSize),
 					shape(1, embedDim, audioSeqLen),
-					in -> {
-						// Implementation for unpatchify operation
-						return reshape(shape(1, embedDim, audioSeqLen), in);
-					}));
+					in -> reshape(shape(1, embedDim, audioSeqLen), in)));
 		} else {
-			// Reshape from [batch, seq_len, channels] back to [batch, channels, seq_len]
 			main.reshape(batchSize, audioSeqLen, embedDim)
 					.enumerate(1, 2, 1)
 					.reshape(batchSize, embedDim, audioSeqLen);
@@ -228,7 +225,9 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		weightMap.put("outputProjection.weight", outputProjWeight);
 		weightMap.put("outputProjection.bias", outputProjBias);
 
-		main.add(convolution1d(batchSize, embedDim, ioChannels, audioSeqLen, 1, 0));
+		main.add(convolution1d(
+				batchSize, embedDim, ioChannels, audioSeqLen,
+				1, 0, outputProjWeight, outputProjBias));
 
 		return model.compile();
 	}

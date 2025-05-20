@@ -62,10 +62,14 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 
 	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
 								int seqLength, int kernelSize, int padding) {
-		PackedCollection<?> weights = new PackedCollection<>(
-				shape(outputChannels, inputChannels, kernelSize));
-		PackedCollection<?> bias = new PackedCollection<>(shape(outputChannels));
+		return convolution1d(batchSize, inputChannels, outputChannels, seqLength, kernelSize, padding,
+				new PackedCollection<>(shape(outputChannels, inputChannels, kernelSize)),
+				new PackedCollection<>(shape(outputChannels)));
+	}
 
+	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
+								int seqLength, int kernelSize, int padding,
+								PackedCollection<?> weights, PackedCollection<?> bias) {
 		TraversalPolicy inputShape = shape(batchSize, inputChannels, seqLength);
 		TraversalPolicy outputShape = shape(batchSize, outputChannels, seqLength);
 
@@ -99,35 +103,28 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				List.of(weights, bias));
 	}
 
-	default Block transformerBlock(int batchSize, int dim, int heads, int seqLen,
+	default Block transformerBlock(int batchSize, int dim, int seqLen, int heads,
 								   boolean crossAttend, int contextDim,
-								   boolean globalCond, Block context) {
+								   int contextSeqLen, boolean globalCond, Block context,
+								   // Self-attention weights
+								   PackedCollection<?> selfAttRmsWeight,
+								   PackedCollection<?> selfWq, PackedCollection<?> selfWk,
+								   PackedCollection<?> selfWv, PackedCollection<?> selfWo,
+								   PackedCollection<?> freqCis,
+								   // Cross-attention weights
+								   PackedCollection<?> crossAttRmsWeight,
+								   PackedCollection<?> crossWq, PackedCollection<?> crossWk,
+								   PackedCollection<?> crossWv, PackedCollection<?> crossWo,
+								   // Feed-forward weights
+								   PackedCollection<?> rmsFfnWeight,
+								   PackedCollection<?> w1, PackedCollection<?> w2, PackedCollection<?> w3) {
 		SequentialBlock block = new SequentialBlock(shape(batchSize, seqLen, dim));
 		int dimHead = dim / heads;
 
-		// Self-attention with pre-norm and residual connection
-		PackedCollection<?> selfAttRmsWeight = new PackedCollection<>(shape(dim)).fill(1.0);
-
-		PackedCollection<?> selfWq = new PackedCollection<>(shape(dim, dim));
-		PackedCollection<?> selfWk = new PackedCollection<>(shape(dim, dim));
-		PackedCollection<?> selfWv = new PackedCollection<>(shape(dim, dim));
-		PackedCollection<?> selfWo = new PackedCollection<>(shape(dim, dim));
-
-		// Position encoding for rotary embeddings
-		PackedCollection<?> freqCis = new PackedCollection<>(shape(seqLen, dimHead / 2, 2));
-
-		// Generate frequency basis for rotary embeddings
-		for (int pos = 0; pos < seqLen; pos++) {
-			for (int i = 0; i < dimHead / 2; i++) {
-				double theta = pos * Math.pow(10000, -2.0 * i / dimHead);
-				freqCis.setMem(pos * (dimHead / 2) * 2 + i * 2, Math.cos(theta));     // cos
-				freqCis.setMem(pos * (dimHead / 2) * 2 + i * 2 + 1, Math.sin(theta)); // sin
-			}
-		}
-
 		// Create self-attention block with sequence processing
-		Block selfAttention = sequenceAttention(batchSize, seqLen, heads, selfAttRmsWeight,
-												selfWk, selfWv, selfWq, selfWo, freqCis);
+		Block selfAttention = sequenceAttention(
+								batchSize, seqLen, heads, selfAttRmsWeight,
+								selfWk, selfWv, selfWq, selfWo, freqCis);
 		block.add(residual(preNorm(selfAttention)));
 
 		// Cross-attention (if needed)
@@ -136,34 +133,18 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				throw new IllegalArgumentException("Context block cannot be null for cross-attention");
 			}
 
-			PackedCollection<?> crossAttRmsWeight = new PackedCollection<>(shape(dim));
-			for (int i = 0; i < dim; i++) {
-				crossAttRmsWeight.setMem(i, 1.0);
-			}
-
-			PackedCollection<?> crossWq = new PackedCollection<>(shape(dim, dim));
-			PackedCollection<?> crossWk = new PackedCollection<>(shape(contextDim, dim));
-			PackedCollection<?> crossWv = new PackedCollection<>(shape(contextDim, dim));
-			PackedCollection<?> crossWo = new PackedCollection<>(shape(dim, dim));
-
 			// Create cross-attention block with context
-			Block crossAttention = crossAttention(heads, crossAttRmsWeight,
+			Block crossAttention = crossAttention(contextSeqLen, heads,
+					dimHead, crossAttRmsWeight,
 					crossWk, crossWv, crossWq, crossWo,
-					dimHead, seqLen, context);
-
-			// Add cross-attention with pre-norm and residual
+					context);
 			block.add(residual(preNorm(crossAttention)));
 		}
 
-		// Feed-forward with pre-norm and residual connection
-		PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(dim))
-												.fill(1.0);
-		PackedCollection<?> w1 = new PackedCollection<>(shape(dim, dim * 4));
-		PackedCollection<?> w2 = new PackedCollection<>(shape(dim * 4, dim));
-		PackedCollection<?> w3 = new PackedCollection<>(shape(dim, dim * 4));
-
+		// Feed-forward block
 		Block feedForward = feedForward(rmsFfnWeight, w1, w2, w3);
 		block.add(residual(preNorm(feedForward)));
+
 		return block;
 	}
 
