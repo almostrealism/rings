@@ -116,11 +116,19 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 
 		// Position encoding for rotary embeddings
 		PackedCollection<?> freqCis = new PackedCollection<>(shape(seqLen, dimHead / 2, 2));
-		Producer<PackedCollection<?>> position = p(new PackedCollection<>(1));
 
-		Block selfAttention = attention(heads, selfAttRmsWeight,
-									selfWk, selfWv, selfWq, selfWo,
-									freqCis, position);
+		// Generate frequency basis for rotary embeddings
+		for (int pos = 0; pos < seqLen; pos++) {
+			for (int i = 0; i < dimHead / 2; i++) {
+				double theta = pos * Math.pow(10000, -2.0 * i / dimHead);
+				freqCis.setMem(pos * (dimHead / 2) * 2 + i * 2, Math.cos(theta));     // cos
+				freqCis.setMem(pos * (dimHead / 2) * 2 + i * 2 + 1, Math.sin(theta)); // sin
+			}
+		}
+
+		// Create self-attention block with sequence processing
+		Block selfAttention = sequenceAttention(heads, selfAttRmsWeight,
+							selfWk, selfWv, selfWq, selfWo, freqCis, seqLen);
 		block.add(residual(preNorm(selfAttention)));
 
 		// Cross-attention (if needed)
@@ -149,21 +157,14 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		}
 
 		// Feed-forward with pre-norm and residual connection
-		PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(dim));
-		for (int i = 0; i < dim; i++) {
-			rmsFfnWeight.setMem(i, 1.0);
-		}
-
+		PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(dim))
+												.fill(1.0);
 		PackedCollection<?> w1 = new PackedCollection<>(shape(dim, dim * 4));
 		PackedCollection<?> w2 = new PackedCollection<>(shape(dim * 4, dim));
 		PackedCollection<?> w3 = new PackedCollection<>(shape(dim, dim * 4));
 
-		// Create feed-forward block
 		Block feedForward = feedForward(rmsFfnWeight, w1, w2, w3);
-
-		// Add feed-forward with pre-norm and residual
 		block.add(residual(preNorm(feedForward)));
-
 		return block;
 	}
 

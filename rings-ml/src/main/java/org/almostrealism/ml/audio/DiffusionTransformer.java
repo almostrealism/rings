@@ -177,6 +177,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			weightMap.put(blockPrefix + ".selfAttention.wk", wk);
 			weightMap.put(blockPrefix + ".selfAttention.wv", wv);
 			weightMap.put(blockPrefix + ".selfAttention.wo", wo);
+			weightMap.put(blockPrefix + ".selfAttention.freqCis", freqCis);
 
 			// Cross-attention weights
 			if (hasCrossAttention) {
