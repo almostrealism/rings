@@ -1,7 +1,6 @@
 package org.almostrealism.ml.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.AttentionFeatures;
@@ -127,8 +126,8 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		}
 
 		// Create self-attention block with sequence processing
-		Block selfAttention = sequenceAttention(heads, selfAttRmsWeight,
-							selfWk, selfWv, selfWq, selfWo, freqCis, seqLen);
+		Block selfAttention = sequenceAttention(batchSize, seqLen, heads, selfAttRmsWeight,
+												selfWk, selfWv, selfWq, selfWo, freqCis);
 		block.add(residual(preNorm(selfAttention)));
 
 		// Cross-attention (if needed)
