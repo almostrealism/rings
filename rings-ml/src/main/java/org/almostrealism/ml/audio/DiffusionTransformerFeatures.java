@@ -43,7 +43,9 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 					CollectionProducer<PackedCollection<?>> cosValues = cos(xfreq);
 
 					// Concatenate sin and cos values
-					return concat(shape(batchSize, outFeatures), sinValues, cosValues);
+					return concat(shape(batchSize, outFeatures),
+							sinValues.reshape(batchSize, freqDim),
+							cosValues.reshape(batchSize, freqDim));
 				},
 				List.of(freqs));
 	}
@@ -134,15 +136,14 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 			}
 
 			// Create cross-attention block with context
-			Block crossAttention = crossAttention(1, contextSeqLen, heads,
-					dimHead, crossAttRmsWeight,
-					crossWk, crossWv, crossWq, crossWo,
-					context);
+			Block crossAttention = crossAttention(
+					1, seqLen, contextSeqLen, heads, dimHead,
+					crossAttRmsWeight, crossWk, crossWv, crossWq, crossWo, context);
 			block.add(residual(preNorm(crossAttention)));
 		}
 
 		// Feed-forward block
-		Block feedForward = feedForward(rmsFfnWeight, w1, w2, w3);
+		Block feedForward = feedForward(block.getOutputShape(), rmsFfnWeight, w1, w2, w3);
 		block.add(residual(preNorm(feedForward)));
 
 		return block;

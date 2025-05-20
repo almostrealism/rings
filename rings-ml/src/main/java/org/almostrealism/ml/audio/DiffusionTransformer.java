@@ -75,30 +75,24 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		model.addInput(timestepEmbed);
 
 		// Add cross-attention condition input if needed
-		Block condEmbed = null;
+		SequentialBlock condEmbed = null;
 		if (condTokenDim > 0) {
-			PackedCollection<?> condProjWeight = new PackedCollection<>(shape(condTokenDim, embedDim));
+			PackedCollection<?> condProjWeight = new PackedCollection<>(shape(embedDim, condTokenDim));
 			weightMap.put("condEmbedding.weight", condProjWeight);
 
-			condEmbed = layer("condEmbedding",
-					shape(1, condSeqLen, condTokenDim),
-					shape(1, condSeqLen, embedDim),
-					in -> matmul(cp(condProjWeight), in),
-					List.of(condProjWeight));
+			condEmbed = new SequentialBlock(shape(condSeqLen, condTokenDim));
+			condEmbed.add(dense(condProjWeight));
 			model.addInput(condEmbed);
 		}
 
 		// Add global condition input if needed
-		Block globalEmbed = null;
+		SequentialBlock globalEmbed = null;
 		if (globalCondDim > 0) {
-			PackedCollection<?> globalProjWeight = new PackedCollection<>(shape(globalCondDim, embedDim * 6));
+			PackedCollection<?> globalProjWeight = new PackedCollection<>(shape(embedDim * 6, globalCondDim));
 			weightMap.put("globalEmbedding.weight", globalProjWeight);
 
-			globalEmbed = layer("globalEmbedding",
-					shape(1, globalCondDim),
-					shape(1, embedDim * 6),
-					in -> matmul(cp(globalProjWeight), in),
-					List.of(globalProjWeight));
+			globalEmbed = new SequentialBlock(shape(globalCondDim));
+			globalEmbed.add(dense(globalProjWeight));
 			model.addInput(globalEmbed);
 		}
 
@@ -183,10 +177,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			}
 
 			// Feed-forward weights
+			int hiddenDim = embedDim * 4;
 			PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
-			PackedCollection<?> w1 = new PackedCollection<>(shape(embedDim, embedDim * 4));
-			PackedCollection<?> w2 = new PackedCollection<>(shape(embedDim * 4, embedDim));
-			PackedCollection<?> w3 = new PackedCollection<>(shape(embedDim, embedDim * 4));
+			PackedCollection<?> w1 = new PackedCollection<>(shape(hiddenDim, embedDim));
+			PackedCollection<?> w2 = new PackedCollection<>(shape(embedDim, hiddenDim));
+			PackedCollection<?> w3 = new PackedCollection<>(shape(hiddenDim, embedDim));
 
 			// Store feed-forward weights
 			weightMap.put(blockPrefix + ".feedForward.rmsWeight", rmsFfnWeight);
