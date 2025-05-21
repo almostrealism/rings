@@ -224,7 +224,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				batchSize, embedDim, ioChannels, audioSeqLen,
 				1, 0, outputProjWeight, outputProjBias));
 
-		return model.compile();
+		return model.compile(false);
 	}
 
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
