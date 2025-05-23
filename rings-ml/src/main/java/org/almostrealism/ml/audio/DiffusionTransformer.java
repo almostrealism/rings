@@ -1,7 +1,22 @@
+/*
+ * Copyright 2025 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.ml.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
@@ -9,13 +24,11 @@ import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	public static final int batchSize = 1;
 
-	// Model configuration from model_config.json
 	private final int ioChannels;
 	private final int embedDim;
 	private final int depth;
@@ -23,18 +36,15 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private final int patchSize;
 	private final int condTokenDim;
 	private final int globalCondDim;
-	private final String diffusionObjective;
 	private final int maxSeqLen;
 
 	private final int audioSeqLen;
 	private final int condSeqLen;
 
-
-	// The compiled model
-	private final CompiledModel model;
-
-	// Weight mapping for loading from checkpoints
 	private final Map<String, PackedCollection<?>> weightMap;
+	private final Model model;
+
+	private CompiledModel compiled;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
@@ -53,17 +63,15 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		this.patchSize = patchSize;
 		this.condTokenDim = condTokenDim;
 		this.globalCondDim = globalCondDim;
-		this.diffusionObjective = diffusionObjective;
 		this.maxSeqLen = maxSeqLen;
 		this.audioSeqLen = maxSeqLen;
 		this.condSeqLen = condSeqLen;
 		this.weightMap = new HashMap<>();
 
-		// Build and compile the model
 		this.model = buildModel();
 	}
 
-	protected CompiledModel buildModel() {
+	protected Model buildModel() {
 		// Create input shape - [batch, channels, sequence_length]
 		TraversalPolicy inputShape = shape(batchSize, ioChannels, audioSeqLen);
 
@@ -224,37 +232,37 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				batchSize, embedDim, ioChannels, audioSeqLen,
 				1, 0, outputProjWeight, outputProjBias));
 
-		return model.compile(false);
+		return model;
 	}
 
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
 									   PackedCollection<?> crossAttnCond,
 									   PackedCollection<?> globalCond) {
+		if (compiled == null) {
+			compiled = model.compile(false);
+		}
+
 		// Run the model with appropriate inputs
 		if (condTokenDim > 0 && globalCondDim > 0) {
-			return model.forward(x, t, crossAttnCond, globalCond);
+			return compiled.forward(x, t, crossAttnCond, globalCond);
 		} else if (condTokenDim > 0) {
-			return model.forward(x, t, crossAttnCond);
+			return compiled.forward(x, t, crossAttnCond);
 		} else if (globalCondDim > 0) {
-			return model.forward(x, t, globalCond);
+			return compiled.forward(x, t, globalCond);
 		} else {
-			return model.forward(x, t);
+			return compiled.forward(x, t);
 		}
 	}
 
 	public void loadWeights(Map<String, PackedCollection<?>> weights) {
-		// Copy weights from the provided map to our internal weights
 		for (Map.Entry<String, PackedCollection<?>> entry : weights.entrySet()) {
 			if (weightMap.containsKey(entry.getKey())) {
 				PackedCollection<?> dest = weightMap.get(entry.getKey());
 				PackedCollection<?> src = entry.getValue();
 
 				// Check shape compatibility
-				if (dest.getShape().getTotalSize() == src.getShape().getTotalSize()) {
-					// Copy weights
-					for (int i = 0; i < dest.getShape().getTotalSize(); i++) {
-						dest.setMem(i, src.toDouble(i));
-					}
+				if (dest.getShape().equalsIgnoreAxis(src.getShape())) {
+					dest.setMem(0, src);
 				} else {
 					System.err.println("Shape mismatch for " + entry.getKey() + ": " +
 							dest.getShape() + " vs " + src.getShape());

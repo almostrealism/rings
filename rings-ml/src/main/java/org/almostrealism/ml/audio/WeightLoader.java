@@ -12,16 +12,15 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WeightLoader {
 	private final String weightDir;
 	private final Map<String, WeightInfo> weightInfoMap;
-	private final Map<String, String> javaMapping;
 
 	public WeightLoader(String weightDir) throws IOException {
 		this.weightDir = weightDir;
 		this.weightInfoMap = loadWeightMetadata(weightDir);
-		this.javaMapping = loadJavaMapping(weightDir);
 	}
 
 	private Map<String, WeightInfo> loadWeightMetadata(String dir) throws IOException {
@@ -49,26 +48,7 @@ public class WeightLoader {
 		return result;
 	}
 
-	private Map<String, String> loadJavaMapping(String dir) throws IOException {
-		File mappingFile = new File(dir, "java_mapping.json");
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(mappingFile);
-
-		Map<String, String> result = new HashMap<>();
-
-		root.fields().forEachRemaining(entry -> {
-			result.put(entry.getKey(), entry.getValue().asText());
-		});
-
-		return result;
-	}
-
-	public PackedCollection<?> loadWeight(String name) throws IOException {
-		if (!weightInfoMap.containsKey(name)) {
-			throw new IllegalArgumentException("Unknown weight: " + name);
-		}
-
-		WeightInfo info = weightInfoMap.get(name);
+	public PackedCollection<?> loadWeight(WeightInfo info) throws IOException {
 		File weightFile = new File(weightDir, info.file);
 
 		// Read .npy file
@@ -89,8 +69,14 @@ public class WeightLoader {
 			channel.read(buffer, 128);
 			buffer.flip();
 
-			// Fill PackedCollection based on dtype
-			if (info.dtype.equals("float32")) {
+
+			// TODO  These are incredibly inefficient copy mechanisms
+			if (info.dtype.equals("torch.float32")) {
+				for (int i = 0; i < result.getShape().getTotalSize(); i++) {
+					float value = buffer.getFloat();
+					result.setMem(i, value);
+				}
+			} else if (info.dtype.equals("float32")) {
 				for (int i = 0; i < result.getShape().getTotalSize(); i++) {
 					float value = buffer.getFloat();
 					result.setMem(i, value);
@@ -101,29 +87,24 @@ public class WeightLoader {
 					result.setMem(i, value);
 				}
 			} else {
-				throw new IllegalArgumentException("Unsupported dtype: " + info.dtype);
+				throw new IllegalArgumentException("Unsupported dtype \"" + info.dtype + "\"");
 			}
 
 			return result;
 		}
 	}
 
-	public void loadWeightsIntoModel(DiffusionTransformer model) throws IOException {
-		Map<String, PackedCollection<?>> weights = new HashMap<>();
-
-		// Load all weights
-		for (String name : weightInfoMap.keySet()) {
-			if (javaMapping.containsKey(name)) {
-				String javaName = javaMapping.get(name);
-				weights.put(javaName, loadWeight(name));
+	public Map<String, PackedCollection<?>> getWeights() {
+		return weightInfoMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+			try {
+				return loadWeight(entry.getValue());
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to load weight data for \"" + entry.getKey() + "\"", e);
 			}
-		}
-
-		// Set weights in model
-		model.loadWeights(weights);
+		}));
 	}
 
-	private static class WeightInfo {
+	public static class WeightInfo {
 		public final int[] shape;
 		public final String dtype;
 		public final String file;
