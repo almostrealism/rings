@@ -141,7 +141,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 
 		// Create self-attention block with sequence processing
 		Block selfAttention = sequenceAttention(
-								batchSize, seqLen, heads, selfAttRmsWeight,
+								batchSize, seqLen, dim, heads, selfAttRmsWeight,
 								selfWk, selfWv, selfWq, selfWo, freqCis);
 		block.add(residual(preNorm(selfAttention)));
 
