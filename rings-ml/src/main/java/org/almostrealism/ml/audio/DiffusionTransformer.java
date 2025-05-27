@@ -16,7 +16,6 @@
 
 package org.almostrealism.ml.audio;
 
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
@@ -72,15 +71,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Model buildModel() {
-		// Create input shape - [batch, channels, sequence_length]
-		TraversalPolicy inputShape = shape(batchSize, ioChannels, audioSeqLen);
-
-		// Create model
-		Model model = new Model(inputShape);
+		// Create model with input shape - [batch, channels, sequence_length]
+		Model model = new Model(shape(batchSize, ioChannels, audioSeqLen));
 
 		// Add timestep embedding input
-		Block timestepEmbed = timestepEmbedding(batchSize, embedDim);
-		model.addInput(timestepEmbed);
+		model.addInput(createTimestampEmbedding());
 
 		// Add cross-attention condition input if needed
 		SequentialBlock condEmbed = null;
@@ -94,13 +89,16 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		}
 
 		// Add global condition input if needed
-		SequentialBlock globalEmbed = null;
 		if (globalCondDim > 0) {
-			PackedCollection<?> globalProjWeight = new PackedCollection<>(shape(embedDim * 6, globalCondDim));
-			weightMap.put("globalEmbedding.weight", globalProjWeight);
+			PackedCollection<?> globalProjInWeight = new PackedCollection<>(shape(embedDim, globalCondDim));
+			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim, embedDim * 6));
+			weightMap.put("globalEmbeddingIn.weight", globalProjInWeight);
+			weightMap.put("globalEmbeddingOut.weight", globalProjOutWeight);
 
-			globalEmbed = new SequentialBlock(shape(globalCondDim));
-			globalEmbed.add(dense(globalProjWeight));
+			SequentialBlock globalEmbed = new SequentialBlock(shape(globalCondDim));
+			globalEmbed.add(dense(globalProjInWeight));
+			globalEmbed.add(silu());
+			globalEmbed.add(dense(globalProjOutWeight));
 			model.addInput(globalEmbed);
 		}
 
@@ -154,6 +152,20 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				1, 0, outputProjWeight, outputProjBias));
 
 		return model;
+	}
+
+	protected Block createTimestampEmbedding() {
+		PackedCollection<?> timestampEmbeddingInWeight = new PackedCollection<>(shape(256, embedDim));
+		PackedCollection<?> timestampEmbeddingInBias = new PackedCollection<>(shape(embedDim));
+		PackedCollection<?> timestampEmbeddingOutWeight = new PackedCollection<>(shape(embedDim, embedDim));
+		PackedCollection<?> timestampEmbeddingOutBias = new PackedCollection<>(shape(embedDim));
+		weightMap.put("timestepEmbedding.0.weight", timestampEmbeddingInWeight);
+		weightMap.put("timestepEmbedding.0.bias", timestampEmbeddingInBias);
+		weightMap.put("timestepEmbedding.2.weight", timestampEmbeddingOutWeight);
+		weightMap.put("timestepEmbedding.2.bias", timestampEmbeddingOutBias);
+		return timestepEmbedding(batchSize, embedDim,
+				timestampEmbeddingInWeight, timestampEmbeddingInBias,
+				timestampEmbeddingOutWeight, timestampEmbeddingOutBias);
 	}
 
 	protected void addTransformerBlocks(SequentialBlock main, SequentialBlock condEmbed, int dim) {

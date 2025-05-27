@@ -66,23 +66,15 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				List.of(freqs));
 	}
 
-	default Block timestepEmbedding(int batchSize, int embedDim) {
+	default Block timestepEmbedding(int batchSize, int embedDim,
+									PackedCollection<?> weight0, PackedCollection<?> bias0,
+									PackedCollection<?> weight2, PackedCollection<?> bias2) {
 		SequentialBlock embedding = new SequentialBlock(shape(batchSize, 1));
-
-		// Fourier embedding followed by MLP
 		embedding.add(fourierFeatures(batchSize, 1, 256));
-		embedding.add(dense(256, embedDim));
+		embedding.add(dense(weight0, bias0));
 		embedding.add(silu(shape(embedDim)));
-		embedding.add(dense(embedDim, embedDim));
-
+		embedding.add(dense(weight2, bias2));
 		return embedding;
-	}
-
-	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
-								int seqLength, int kernelSize, int padding) {
-		return convolution1d(batchSize, inputChannels, outputChannels, seqLength, kernelSize, padding,
-				new PackedCollection<>(shape(outputChannels, inputChannels, kernelSize)),
-				new PackedCollection<>(shape(outputChannels)));
 	}
 
 	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
