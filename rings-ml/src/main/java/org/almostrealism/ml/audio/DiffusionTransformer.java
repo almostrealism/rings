@@ -222,7 +222,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				crossAttKNormBias = createWeight(blockPrefix + ".crossAttention.kNormBias", dimHead);
 			}
 
-			int hiddenDim = embedDim * 4;
+			int hiddenDim = dim * 4;
 			PackedCollection<?> rmsFfnWeight = createWeight(blockPrefix + ".feedForward.rmsWeight", dim).fill(1.0);
 			PackedCollection<?> ffRmsBias = createWeight(blockPrefix + ".feedForward.rmsBias", dim);
 			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
@@ -286,11 +286,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				if (dest.getShape().equalsIgnoreAxis(src.getShape())) {
 					dest.setMem(0, src);
 				} else {
-					System.err.println("Shape mismatch for " + entry.getKey() + ": " +
-							dest.getShape() + " vs " + src.getShape());
+					warn("Shape mismatch for " + entry.getKey() + ": Expected " +
+							dest.getShape() + " while " + src.getShape() + " was provided");
 				}
 			} else {
-				System.err.println("Unknown weight key: " + entry.getKey());
+				warn("Unknown weight key: " + entry.getKey());
 			}
 		}
 	}
