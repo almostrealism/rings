@@ -91,7 +91,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		// Add global condition input if needed
 		if (globalCondDim > 0) {
 			PackedCollection<?> globalProjInWeight = new PackedCollection<>(shape(embedDim, globalCondDim));
-			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim, embedDim * 6));
+			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim * 6, embedDim));
 			weightMap.put("globalEmbeddingIn.weight", globalProjInWeight);
 			weightMap.put("globalEmbeddingOut.weight", globalProjOutWeight);
 
@@ -155,7 +155,10 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Block createTimestampEmbedding() {
-		PackedCollection<?> timestampEmbeddingInWeight = new PackedCollection<>(shape(256, embedDim));
+		PackedCollection<?> timestepFeaturesWeight = new PackedCollection<>(shape(256));
+		weightMap.put("timestepFeatures.weight", timestepFeaturesWeight);
+
+		PackedCollection<?> timestampEmbeddingInWeight = new PackedCollection<>(shape(embedDim, 256));
 		PackedCollection<?> timestampEmbeddingInBias = new PackedCollection<>(shape(embedDim));
 		PackedCollection<?> timestampEmbeddingOutWeight = new PackedCollection<>(shape(embedDim, embedDim));
 		PackedCollection<?> timestampEmbeddingOutBias = new PackedCollection<>(shape(embedDim));
@@ -169,6 +172,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected void addTransformerBlocks(SequentialBlock main, SequentialBlock condEmbed, int dim) {
+		PackedCollection<?> transformerProjectInWeight = new PackedCollection<>(shape(dim * patchSize, embedDim));
+		PackedCollection<?> transformerProjectOutWeight = new PackedCollection<>(shape(embedDim, ioChannels * patchSize));
+		weightMap.put("transformerProjectIn.weight", transformerProjectInWeight);
+		weightMap.put("transformerProjectOut.weight", transformerProjectOutWeight);
+
 		for (int i = 0; i < depth; i++) {
 			boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
 			boolean hasGlobalCond = globalCondDim > 0;
@@ -176,77 +184,69 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			// Create and track all weights for this transformer block
 			int dimHead = dim / numHeads;
 			String blockPrefix = "transformerBlocks[" + i + "]";
-
-			// Self-attention weights
-			PackedCollection<?> rmsAttWeight = new PackedCollection<>(shape(dim)).fill(1.0);
-			PackedCollection<?> wq = new PackedCollection<>(shape(dim, dim));
-			PackedCollection<?> wk = new PackedCollection<>(shape(dim, dim));
-			PackedCollection<?> wv = new PackedCollection<>(shape(dim, dim));
-			PackedCollection<?> wo = new PackedCollection<>(shape(dim, dim));
-			PackedCollection<?> freqCis = new PackedCollection<>(shape(maxSeqLen, dimHead / 2, 2));
-
-			// Initialize freqCis with rotary position embeddings
-			for (int pos = 0; pos < maxSeqLen; pos++) {
-				for (int j = 0; j < dimHead / 2; j++) {
-					double theta = pos * Math.pow(10000, -2.0 * j / dimHead);
-					freqCis.setMem(pos * (dimHead / 2) * 2 + j * 2, Math.cos(theta));     // cos
-					freqCis.setMem(pos * (dimHead / 2) * 2 + j * 2 + 1, Math.sin(theta)); // sin
-				}
-			}
-
-			// Store self-attention weights
-			weightMap.put(blockPrefix + ".selfAttention.rmsWeight", rmsAttWeight);
-			weightMap.put(blockPrefix + ".selfAttention.wq", wq);
-			weightMap.put(blockPrefix + ".selfAttention.wk", wk);
-			weightMap.put(blockPrefix + ".selfAttention.wv", wv);
-			weightMap.put(blockPrefix + ".selfAttention.wo", wo);
-			weightMap.put(blockPrefix + ".selfAttention.freqCis", freqCis);
+			
+			PackedCollection<?> rmsAttWeight = createWeight(blockPrefix + ".selfAttention.rmsWeight", dim).fill(1.0);
+			PackedCollection<?> selfAttRmsBias = createWeight(blockPrefix + ".selfAttention.rmsBias", dim);
+			PackedCollection<?> wq = createWeight(blockPrefix + ".selfAttention.wq", dim, dim);
+			PackedCollection<?> wk = createWeight(blockPrefix + ".selfAttention.wk", dim, dim);
+			PackedCollection<?> wv = createWeight(blockPrefix + ".selfAttention.wv", dim, dim);
+			PackedCollection<?> wo = createWeight(blockPrefix + ".selfAttention.wo", dim, dim);
+			PackedCollection<?> selfAttQNormWeight = createWeight(blockPrefix + ".selfAttention.qNormWeight", dimHead);
+			PackedCollection<?> selfAttQNormBias = createWeight(blockPrefix + ".selfAttention.qNormBias", dimHead);
+			PackedCollection<?> selfAttKNormWeight = createWeight(blockPrefix + ".selfAttention.kNormWeight", dimHead);
+			PackedCollection<?> selfAttKNormBias = createWeight(blockPrefix + ".selfAttention.kNormBias", dimHead);
+			PackedCollection<?> freqCis = createWeight(blockPrefix + ".selfAttention.freqCis", maxSeqLen, dimHead / 2, 2);
 
 			// Cross-attention weights (if needed)
 			PackedCollection<?> crossAttRmsWeight = null;
+			PackedCollection<?> crossAttRmsBias = null;
 			PackedCollection<?> crossWq = null;
 			PackedCollection<?> crossWk = null;
 			PackedCollection<?> crossWv = null;
 			PackedCollection<?> crossWo = null;
+			PackedCollection<?> crossAttQNormWeight = null;
+			PackedCollection<?> crossAttQNormBias = null;
+			PackedCollection<?> crossAttKNormWeight = null;
+			PackedCollection<?> crossAttKNormBias = null;
 
 			if (hasCrossAttention) {
-				crossAttRmsWeight = new PackedCollection<>(shape(dim)).fill(1.0);
-				crossWq = new PackedCollection<>(shape(dim, dim));
-				crossWk = new PackedCollection<>(shape(dim, dim));
-				crossWv = new PackedCollection<>(shape(dim, dim));
-				crossWo = new PackedCollection<>(shape(dim, dim));
-
-				// Store cross-attention weights
-				weightMap.put(blockPrefix + ".crossAttention.rmsWeight", crossAttRmsWeight);
-				weightMap.put(blockPrefix + ".crossAttention.wq", crossWq);
-				weightMap.put(blockPrefix + ".crossAttention.wk", crossWk);
-				weightMap.put(blockPrefix + ".crossAttention.wv", crossWv);
-				weightMap.put(blockPrefix + ".crossAttention.wo", crossWo);
+				crossAttRmsWeight = createWeight(blockPrefix + ".crossAttention.rmsWeight", dim).fill(1.0);
+				crossAttRmsBias = createWeight(blockPrefix + ".crossAttention.rmsBias", dim);
+				crossWq = createWeight(blockPrefix + ".crossAttention.wq", dim, dim);
+				crossWk = createWeight(blockPrefix + ".crossAttention.wk", dim, dim);
+				crossWv = createWeight(blockPrefix + ".crossAttention.wv", dim, dim);
+				crossWo = createWeight(blockPrefix + ".crossAttention.wo", dim, dim);
+				crossAttQNormWeight = createWeight(blockPrefix + ".crossAttention.qNormWeight", dimHead);
+				crossAttQNormBias = createWeight(blockPrefix + ".crossAttention.qNormBias", dimHead);
+				crossAttKNormWeight = createWeight(blockPrefix + ".crossAttention.kNormWeight", dimHead);
+				crossAttKNormBias = createWeight(blockPrefix + ".crossAttention.kNormBias", dimHead);
 			}
 
-			// Feed-forward weights
 			int hiddenDim = embedDim * 4;
-			PackedCollection<?> rmsFfnWeight = new PackedCollection<>(shape(embedDim)).fill(1.0);
-			PackedCollection<?> w1 = new PackedCollection<>(shape(hiddenDim, embedDim));
-			PackedCollection<?> w2 = new PackedCollection<>(shape(embedDim, hiddenDim));
-			PackedCollection<?> w3 = new PackedCollection<>(shape(hiddenDim, embedDim));
-
-			// Store feed-forward weights
-			weightMap.put(blockPrefix + ".feedForward.rmsWeight", rmsFfnWeight);
-			weightMap.put(blockPrefix + ".feedForward.w1", w1);
-			weightMap.put(blockPrefix + ".feedForward.w2", w2);
-			weightMap.put(blockPrefix + ".feedForward.w3", w3);
+			PackedCollection<?> rmsFfnWeight = createWeight(blockPrefix + ".feedForward.rmsWeight", dim).fill(1.0);
+			PackedCollection<?> ffRmsBias = createWeight(blockPrefix + ".feedForward.rmsBias", dim);
+			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
+			PackedCollection<?> ffW1Bias = createWeight(blockPrefix + ".feedForward.w1Bias", hiddenDim);
+			PackedCollection<?> w2 = createWeight(blockPrefix + ".feedForward.w2", dim, hiddenDim);
+			PackedCollection<?> ffW2Bias = createWeight(blockPrefix + ".feedForward.w2Bias", dim);
+			PackedCollection<?> w3 = createWeight(blockPrefix + ".feedForward.w3", hiddenDim, dim);
 
 			// Add transformer block with all weights explicitly passed
 			main.add(transformerBlock(
 					batchSize, dim, audioSeqLen, numHeads,
 					hasCrossAttention, condTokenDim, condSeqLen, hasGlobalCond, condEmbed,
 					// Self-attention weights
-					rmsAttWeight, wq, wk, wv, wo, freqCis,
+					rmsAttWeight, selfAttRmsBias,
+					wq, wk, wv, wo,
+					selfAttQNormWeight, selfAttQNormBias, selfAttKNormWeight, selfAttKNormBias,
+					freqCis,
 					// Cross-attention weights
-					crossAttRmsWeight, crossWq, crossWk, crossWv, crossWo,
+					crossAttRmsWeight, crossAttRmsBias,
+					crossWq, crossWk, crossWv, crossWo,
+					crossAttQNormWeight, crossAttQNormBias, crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
-					rmsFfnWeight, w1, w2, w3
+					rmsFfnWeight, ffRmsBias,
+					w1, w2, w3, ffW1Bias, ffW2Bias
 			));
 		}
 	}
@@ -268,6 +268,12 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		} else {
 			return compiled.forward(x, t);
 		}
+	}
+
+	protected PackedCollection<?> createWeight(String key, int... shape) {
+		PackedCollection<?> weight = new PackedCollection<>(shape);
+		weightMap.put(key, weight);
+		return weight;
 	}
 
 	public void loadWeights(Map<String, PackedCollection<?>> weights) {
