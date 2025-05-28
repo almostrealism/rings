@@ -91,7 +91,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		// Add global condition input if needed
 		if (globalCondDim > 0) {
 			PackedCollection<?> globalProjInWeight = new PackedCollection<>(shape(embedDim, globalCondDim));
-			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim * 6, embedDim));
+			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim, embedDim));
 			weightMap.put("globalEmbeddingIn.weight", globalProjInWeight);
 			weightMap.put("globalEmbeddingOut.weight", globalProjOutWeight);
 
@@ -106,7 +106,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		SequentialBlock main = model.sequential();
 
 		// Input projection
-		PackedCollection<?> inputProjWeight = new PackedCollection<>(shape(ioChannels, embedDim));
+		PackedCollection<?> inputProjWeight = new PackedCollection<>(shape(ioChannels, ioChannels));
 		PackedCollection<?> inputProjBias = new PackedCollection<>(shape(embedDim));
 		weightMap.put("inputProjection.weight", inputProjWeight);
 		weightMap.put("inputProjection.bias", inputProjBias);
@@ -142,7 +142,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		}
 
 		// Output projection
-		PackedCollection<?> outputProjWeight = new PackedCollection<>(shape(embedDim, ioChannels));
+		PackedCollection<?> outputProjWeight = new PackedCollection<>(shape(ioChannels, ioChannels));
 		PackedCollection<?> outputProjBias = new PackedCollection<>(shape(ioChannels));
 		weightMap.put("outputProjection.weight", outputProjWeight);
 		weightMap.put("outputProjection.bias", outputProjBias);
@@ -155,7 +155,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Block createTimestampEmbedding() {
-		PackedCollection<?> timestepFeaturesWeight = new PackedCollection<>(shape(256));
+		PackedCollection<?> timestepFeaturesWeight = new PackedCollection<>(shape(128));
 		weightMap.put("timestepFeatures.weight", timestepFeaturesWeight);
 
 		PackedCollection<?> timestampEmbeddingInWeight = new PackedCollection<>(shape(embedDim, 256));
@@ -172,8 +172,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected void addTransformerBlocks(SequentialBlock main, SequentialBlock condEmbed, int dim) {
-		PackedCollection<?> transformerProjectInWeight = new PackedCollection<>(shape(dim * patchSize, embedDim));
-		PackedCollection<?> transformerProjectOutWeight = new PackedCollection<>(shape(embedDim, ioChannels * patchSize));
+		PackedCollection<?> transformerProjectInWeight = new PackedCollection<>(shape(dim, ioChannels * patchSize));
+		PackedCollection<?> transformerProjectOutWeight = new PackedCollection<>(shape(ioChannels * patchSize, dim));
 		weightMap.put("transformerProjectIn.weight", transformerProjectInWeight);
 		weightMap.put("transformerProjectOut.weight", transformerProjectOutWeight);
 
@@ -282,10 +282,13 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				PackedCollection<?> dest = weightMap.get(entry.getKey());
 				PackedCollection<?> src = entry.getValue();
 
-				// Check shape compatibility
-				if (dest.getShape().equalsIgnoreAxis(src.getShape())) {
+				// Confirm shape compatibility
+				if (dest.getShape().trim().equalsIgnoreAxis(src.getShape().trim())) {
 					dest.setMem(0, src);
-				} else {
+				}
+
+				// Warn about shapes not being identical
+				if (!dest.getShape().equalsIgnoreAxis(src.getShape())) {
 					warn("Shape mismatch for " + entry.getKey() + ": Expected " +
 							dest.getShape() + " while " + src.getShape() + " was provided");
 				}
