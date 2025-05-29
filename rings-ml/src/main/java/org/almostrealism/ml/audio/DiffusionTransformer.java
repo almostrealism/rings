@@ -133,20 +133,20 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		// Reshape back to channels-first format
 		if (patchSize > 1) {
 			main.add(layer("unpatchify",
-					shape(1, audioSeqLen / patchSize, embedDim * patchSize),
+					shape(1, audioSeqLen / patchSize, ioChannels * patchSize),
 					shape(1, embedDim, audioSeqLen),
-					in -> reshape(shape(1, embedDim, audioSeqLen), in)));
+					in -> reshape(shape(1, ioChannels, audioSeqLen), in)));
 		} else {
-			main.reshape(batchSize, audioSeqLen, embedDim)
+			main.reshape(batchSize, audioSeqLen, ioChannels)
 					.enumerate(1, 2, 1)
-					.reshape(batchSize, embedDim, audioSeqLen);
+					.reshape(batchSize, ioChannels, audioSeqLen);
 		}
 
 		// Output projection
 		PackedCollection<?> outputProjWeight =
 				createWeight("outputProjection.weight", ioChannels, ioChannels);
 		main.add(residual(convolution1d(
-				batchSize, embedDim, ioChannels, audioSeqLen,
+				batchSize, ioChannels, ioChannels, audioSeqLen,
 				1, 0, outputProjWeight, null)));
 
 		return model;
@@ -174,6 +174,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		PackedCollection<?> transformerProjectOutWeight = new PackedCollection<>(shape(ioChannels * patchSize, dim));
 		weightMap.put("transformerProjectIn.weight", transformerProjectInWeight);
 		weightMap.put("transformerProjectOut.weight", transformerProjectOutWeight);
+
+		main.add(dense(transformerProjectInWeight));
 
 		for (int i = 0; i < depth; i++) {
 			boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
@@ -247,6 +249,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					w1, w2, w3, ffW1Bias, ffW2Bias
 			));
 		}
+
+		main.add(dense(transformerProjectOutWeight));
 	}
 
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
