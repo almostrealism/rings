@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DiffusionTransformer implements DiffusionTransformerFeatures {
+	private static final int SAMPLE_SIZE = 524288;
+	private static final int DOWNSAMPLING_RATIO = 2048;
+
 	public static final int batchSize = 1;
 
 	private final int ioChannels;
@@ -49,7 +52,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 								int patchSize, int condTokenDim, int globalCondDim,
 								String diffusionObjective) {
 		this(ioChannels, embedDim, depth, numHeads, patchSize,
-				condTokenDim, globalCondDim, diffusionObjective, 2048, 128);
+				condTokenDim, globalCondDim, diffusionObjective,
+				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65);
 	}
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
@@ -170,10 +174,14 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected void addTransformerBlocks(SequentialBlock main, SequentialBlock condEmbed, int dim) {
-		PackedCollection<?> transformerProjectInWeight = new PackedCollection<>(shape(dim, ioChannels * patchSize));
-		PackedCollection<?> transformerProjectOutWeight = new PackedCollection<>(shape(ioChannels * patchSize, dim));
-		weightMap.put("transformerProjectIn.weight", transformerProjectInWeight);
-		weightMap.put("transformerProjectOut.weight", transformerProjectOutWeight);
+		int dimHead = dim / numHeads;
+
+		PackedCollection<?> transformerProjectInWeight =
+				createWeight("transformerProjectIn.weight", dim, ioChannels * patchSize);
+		PackedCollection<?> transformerProjectOutWeight =
+				createWeight("transformerProjectOut.weight", ioChannels * patchSize, dim);
+		PackedCollection<?> freqCis =
+				createWeight("selfAttention.freqCis", maxSeqLen, dimHead / 2, 2);
 
 		main.add(dense(transformerProjectInWeight));
 
@@ -182,9 +190,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			boolean hasGlobalCond = globalCondDim > 0;
 
 			// Create and track all weights for this transformer block
-			int dimHead = dim / numHeads;
 			String blockPrefix = "transformerBlocks[" + i + "]";
-			
 			PackedCollection<?> rmsAttWeight = createWeight(blockPrefix + ".selfAttention.rmsWeight", dim).fill(1.0);
 			PackedCollection<?> selfAttRmsBias = createWeight(blockPrefix + ".selfAttention.rmsBias", dim);
 			PackedCollection<?> wq = createWeight(blockPrefix + ".selfAttention.wq", dim, dim);
@@ -195,7 +201,6 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> selfAttQNormBias = createWeight(blockPrefix + ".selfAttention.qNormBias", dimHead);
 			PackedCollection<?> selfAttKNormWeight = createWeight(blockPrefix + ".selfAttention.kNormWeight", dimHead);
 			PackedCollection<?> selfAttKNormBias = createWeight(blockPrefix + ".selfAttention.kNormBias", dimHead);
-			PackedCollection<?> freqCis = createWeight(blockPrefix + ".selfAttention.freqCis", maxSeqLen, dimHead / 2, 2);
 
 			// Cross-attention weights (if needed)
 			PackedCollection<?> crossAttRmsWeight = null;
@@ -295,7 +300,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 							dest.getShape() + " while " + src.getShape() + " was provided");
 				}
 			} else {
-				warn("Unknown weight key: " + entry.getKey());
+				throw new IllegalArgumentException("Unknown weight key " + entry.getKey());
 			}
 		}
 	}

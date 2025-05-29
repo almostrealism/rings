@@ -24,6 +24,7 @@ import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.ml.OnnxFeatures;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class AudioGeneratorJava implements AutoCloseable {
+public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 	private static final float AUDIO_LEN_SEC = 10.0f;
 	private static final int NUM_STEPS = 8;
 	private static final float LOGSNR_MAX = -6.0f;
@@ -170,11 +171,12 @@ public class AudioGeneratorJava implements AutoCloseable {
 		fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
 
 		// Convert OnnxTensors to PackedCollections
-		PackedCollection<?> xPC = convertToPackedCollection(x, DIT_X_SHAPE);
+		PackedCollection<?> xPC = new PackedCollection<>(shape(DIT_X_SHAPE));
+		xPC.setMem(x);
 
 		// Get cross attention and global condition data
-		PackedCollection<?> crossAttnCondPC = convertOnnxTensorToPackedCollection(crossAttentionInput);
-		PackedCollection<?> globalCondPC = convertOnnxTensorToPackedCollection(globalCond);
+		PackedCollection<?> crossAttnCondPC = pack(crossAttentionInput);
+		PackedCollection<?> globalCondPC = pack(globalCond);
 
 		// Run diffusion steps
 		for (int step = 0; step < NUM_STEPS; step++) {
@@ -189,8 +191,8 @@ public class AudioGeneratorJava implements AutoCloseable {
 			PackedCollection<?> outputPC = ditModel.forward(xPC, tPC, crossAttnCondPC, globalCondPC);
 
 			// Get data back as float array
-			float[] xData = getFloatArrayFromPackedCollection(xPC);
-			float[] outputData = getFloatArrayFromPackedCollection(outputPC);
+			double[] xData = xPC.toArray();
+			double[] outputData = outputPC.toArray();
 
 			// Apply ping-pong sampling
 			for (int i = 0; i < DIT_X_SIZE; i++) {
@@ -206,15 +208,15 @@ public class AudioGeneratorJava implements AutoCloseable {
 			// Update x for next step
 			float[] newX = new float[DIT_X_SIZE];
 			for (int i = 0; i < DIT_X_SIZE; i++) {
-				newX[i] = ((1.0f - nextT) * outputData[i]) + (nextT * newNoise[i]);
+				newX[i] = (float) ((1.0f - nextT) * outputData[i]) + (nextT * newNoise[i]);
 			}
 
 			// Update x for next iteration
-			xPC = convertToPackedCollection(newX, DIT_X_SHAPE);
+			xPC.setMem(newX);
 		}
 
 		// Convert final result back to OnnxTensor
-		float[] finalX = getFloatArrayFromPackedCollection(xPC);
+		float[] finalX = xPC.toFloatArray();
 		return OnnxTensor.createTensor(env, FloatBuffer.wrap(finalX), DIT_X_SHAPE);
 	}
 
@@ -258,44 +260,6 @@ public class AudioGeneratorJava implements AutoCloseable {
 
 		arr[0] = SIGMA_MAX;
 		arr[size - 1] = SIGMA_MIN;
-	}
-
-	// Utility methods for converting between OnnxTensor and PackedCollection
-	private PackedCollection<?> convertToPackedCollection(float[] data, long[] shape) {
-		// Convert float array to PackedCollection
-		PackedCollection<?> result = new PackedCollection<>(toIntArray(shape));
-		for (int i = 0; i < data.length; i++) {
-			// Need to calculate proper indices based on shape
-			// This is a simplified placeholder
-			result.setMem(i, data[i]);
-		}
-		return result;
-	}
-
-	private PackedCollection<?> convertOnnxTensorToPackedCollection(OnnxTensor tensor) throws OrtException {
-		FloatBuffer buffer = tensor.getFloatBuffer();
-		float[] data = new float[buffer.capacity()];
-		buffer.get(data);
-		return convertToPackedCollection(data, tensor.getInfo().getShape());
-	}
-
-	private float[] getFloatArrayFromPackedCollection(PackedCollection<?> pc) {
-		// Convert PackedCollection to float array
-		int size = (int) pc.getShape().getTotalSize();
-		float[] result = new float[size];
-		for (int i = 0; i < size; i++) {
-			// Need proper index calculation
-			result[i] = (float) pc.valueAt(i);
-		}
-		return result;
-	}
-
-	private int[] toIntArray(long[] longArray) {
-		int[] intArray = new int[longArray.length];
-		for (int i = 0; i < longArray.length; i++) {
-			intArray[i] = (int) longArray[i];
-		}
-		return intArray;
 	}
 
 	@Override
