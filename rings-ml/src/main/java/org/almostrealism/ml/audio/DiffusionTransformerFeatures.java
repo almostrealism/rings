@@ -77,42 +77,6 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		return embedding;
 	}
 
-	default Block convolution1d(int batchSize, int inputChannels, int outputChannels,
-								int seqLength, int kernelSize, int padding,
-								PackedCollection<?> weights, PackedCollection<?> bias) {
-		TraversalPolicy inputShape = shape(batchSize, inputChannels, seqLength);
-		TraversalPolicy outputShape = shape(batchSize, outputChannels, seqLength);
-
-		return layer("convolution1d",
-				inputShape, outputShape,
-				input -> {
-					// Implementation using matrix multiplication for 1D convolution
-					CollectionProducer<PackedCollection<?>> paddedInput;
-					if (padding > 0) {
-						// Add padding - this would need a proper implementation
-						// For now, we'll just use the input without padding
-						paddedInput = c(input);
-					} else {
-						paddedInput = c(input);
-					}
-
-					// Extract sequence length
-					int seqLen = paddedInput.getShape().length(2);
-
-					// Reshape for matrix multiplication
-					CollectionProducer<PackedCollection<?>> output =
-							matmul(cp(weights.reshape(outputChannels, inputChannels * kernelSize)),
-									paddedInput.reshape(batchSize, inputChannels * kernelSize, seqLen))
-									.reshape(batchSize, outputChannels, seqLen);
-
-					// Add bias
-					output = output.add(cp(bias).expand(seqLen));
-
-					return output;
-				},
-				List.of(weights, bias));
-	}
-
 	default Block transformerBlock(int batchSize, int dim, int seqLen, int heads,
 								   boolean crossAttend, int contextDim,
 								   int contextSeqLen, boolean globalCond, Block context,
