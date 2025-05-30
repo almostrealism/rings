@@ -180,8 +180,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				createWeight("transformerProjectIn.weight", dim, ioChannels * patchSize);
 		PackedCollection<?> transformerProjectOutWeight =
 				createWeight("transformerProjectOut.weight", ioChannels * patchSize, dim);
-		PackedCollection<?> freqCis =
-				createWeight("selfAttention.freqCis", maxSeqLen, dimHead / 2, 2);
+		PackedCollection<?> invFreq =
+				createWeight("selfAttention.invFreq", dimHead / 4);
 
 		main.add(dense(transformerProjectInWeight));
 
@@ -244,7 +244,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					rmsAttWeight, selfAttRmsBias,
 					wq, wk, wv, wo,
 					selfAttQNormWeight, selfAttQNormBias, selfAttKNormWeight, selfAttKNormBias,
-					freqCis,
+					invFreq,
 					// Cross-attention weights
 					crossAttRmsWeight, crossAttRmsBias,
 					crossWq, crossWk, crossWv, crossWo,
@@ -295,9 +295,13 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				}
 
 				// Warn about shapes not being identical
-				if (!dest.getShape().equalsIgnoreAxis(src.getShape())) {
-					warn("Shape mismatch for " + entry.getKey() + ": Expected " +
-							dest.getShape() + " while " + src.getShape() + " was provided");
+				if (dest.getShape().getTotalSizeLong() != src.getShape().getTotalSizeLong()) {
+					throw new IllegalArgumentException("Expected " +
+							dest.getShape() + " for key " + entry.getKey() +
+							" while " + src.getShape() + " was provided");
+				} else if (!dest.getShape().equalsIgnoreAxis(src.getShape())) {
+					warn("Expected " + dest.getShape() + " for key " + entry.getKey() +
+							" while " + src.getShape() + " was provided");
 				}
 			} else {
 				throw new IllegalArgumentException("Unknown weight key " + entry.getKey());

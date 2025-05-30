@@ -16,7 +16,6 @@
 
 package org.almostrealism.ml.audio;
 
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.AttentionFeatures;
@@ -86,7 +85,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								   PackedCollection<?> selfWv, PackedCollection<?> selfWo,
 								   PackedCollection<?> selfQNormWeight, PackedCollection<?> selfQNormBias,
 								   PackedCollection<?> selfKNormWeight, PackedCollection<?> selfKNormBias,
-								   PackedCollection<?> freqCis,
+								   PackedCollection<?> invFreq,
 								   // Cross-attention weights
 								   PackedCollection<?> crossAttRmsWeight, PackedCollection<?> crossAttRmsBias,
 								   PackedCollection<?> crossWq, PackedCollection<?> crossWk,
@@ -107,7 +106,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								selfWk, selfWv, selfWq, selfWo,
 								selfQNormWeight, selfQNormBias,
 								selfKNormWeight, selfKNormBias,
-								freqCis);
+								invFreq);
 		block.add(residual(preNorm(selfAttention)));
 
 		// Cross-attention (if needed)
