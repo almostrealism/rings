@@ -289,12 +289,15 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		}
 	}
 
-	protected PackedCollection<?> createWeight(String key, int... shape) {
+	protected PackedCollection<?> createWeight(String key, int... dims) {
+		return createWeight(key, shape(dims));
+	}
+
+	protected PackedCollection<?> createWeight(String key, TraversalPolicy expectedShape) {
 		if (stateDictionary != null && stateDictionary.containsKey(key)) {
 			PackedCollection<?> weight = stateDictionary.get(key);
 			
 			// Verify shape compatibility
-			TraversalPolicy expectedShape = new TraversalPolicy(shape);
 			if (!weight.getShape().trim().equalsIgnoreAxis(expectedShape.trim())) {
 				if (weight.getShape().getTotalSizeLong() != expectedShape.getTotalSizeLong()) {
 					throw new IllegalArgumentException("Expected " + expectedShape +
@@ -305,16 +308,13 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				}
 			}
 			
-			return weight;
+			return weight.range(expectedShape);
 		} else {
-			// Create empty weight if StateDictionary is null or key not found
-			PackedCollection<?> weight = new PackedCollection<>(shape);
-			if (stateDictionary == null) {
-				// This is expected when no weights are provided (e.g., for inference setup)
-			} else {
-				warn("Weight not found in StateDictionary: " + key);
+			if (stateDictionary != null) {
+				throw new IllegalArgumentException(key + " not found in StateDictionary");
 			}
-			return weight;
+
+			return  new PackedCollection<>(expectedShape);
 		}
 	}
 
