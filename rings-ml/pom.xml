@@ -11,7 +11,7 @@
 	<packaging>jar</packaging>
 
 	<build>
-		<!-- Detect OS and architecture for plugins which depend on native binaries s-->
+		<!-- Detect OS and architecture for plugins which depend on native binaries -->
 		<extensions>
 			<extension>
 				<groupId>kr.motd.maven</groupId>

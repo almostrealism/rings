@@ -74,12 +74,9 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 				1,
 				768,
 				768,
-				"rf_denoiser"
+				"rf_denoiser",
+				weightsDir
 		);
-
-		// Load weights
-		WeightLoader loader = new WeightLoader(weightsDir);
-		ditModel.loadWeights(loader.getWeights());
 	}
 
 	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {
