@@ -16,14 +16,14 @@
 
 package org.almostrealism.ml.audio;
 
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private static final int SAMPLE_SIZE = 524288;
@@ -43,7 +43,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private final int audioSeqLen;
 	private final int condSeqLen;
 
-	private final Map<String, PackedCollection<?>> weightMap;
+	private final StateDictionary stateDictionary;
 	private final Model model;
 
 	private CompiledModel compiled;
@@ -53,12 +53,30 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 								String diffusionObjective) {
 		this(ioChannels, embedDim, depth, numHeads, patchSize,
 				condTokenDim, globalCondDim, diffusionObjective,
-				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65);
+				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65, null);
 	}
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
 								String diffusionObjective, int maxSeqLen, int condSeqLen) {
+		this(ioChannels, embedDim, depth, numHeads, patchSize,
+				condTokenDim, globalCondDim, diffusionObjective,
+				maxSeqLen, condSeqLen, null);
+	}
+
+	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
+								int patchSize, int condTokenDim, int globalCondDim,
+								String diffusionObjective, String weightsDirectory) throws IOException {
+		this(ioChannels, embedDim, depth, numHeads, patchSize,
+				condTokenDim, globalCondDim, diffusionObjective,
+				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65,
+				weightsDirectory != null ? new StateDictionary(weightsDirectory) : null);
+	}
+
+	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
+								int patchSize, int condTokenDim, int globalCondDim,
+								String diffusionObjective, int maxSeqLen, int condSeqLen,
+								StateDictionary stateDictionary) {
 		this.ioChannels = ioChannels;
 		this.embedDim = embedDim;
 		this.depth = depth;
@@ -69,7 +87,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		this.maxSeqLen = maxSeqLen;
 		this.audioSeqLen = maxSeqLen;
 		this.condSeqLen = condSeqLen;
-		this.weightMap = new HashMap<>();
+		this.stateDictionary = stateDictionary;
 
 		this.model = buildModel();
 	}
@@ -97,11 +115,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 		// Add global condition input if needed
 		if (globalCondDim > 0) {
-			PackedCollection<?> globalProjInWeight = new PackedCollection<>(shape(embedDim, globalCondDim));
-			PackedCollection<?> globalProjOutWeight = new PackedCollection<>(shape(embedDim, embedDim));
-			weightMap.put("globalEmbeddingIn.weight", globalProjInWeight);
-			weightMap.put("globalEmbeddingOut.weight", globalProjOutWeight);
-
+			PackedCollection<?> globalProjInWeight =
+					createWeight("globalEmbeddingIn.weight", embedDim, globalCondDim);
+			PackedCollection<?> globalProjOutWeight =
+					createWeight("globalEmbeddingOut.weight", embedDim, embedDim);
+			
 			SequentialBlock globalEmbed = new SequentialBlock(shape(globalCondDim));
 			globalEmbed.add(dense(globalProjInWeight));
 			globalEmbed.add(silu());
@@ -157,17 +175,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Block createTimestampEmbedding() {
-		PackedCollection<?> timestepFeaturesWeight = new PackedCollection<>(shape(128));
-		weightMap.put("timestepFeatures.weight", timestepFeaturesWeight);
+		PackedCollection<?> timestampEmbeddingInWeight = createWeight("timestepEmbedding.0.weight", embedDim, 256);
+		PackedCollection<?> timestampEmbeddingInBias = createWeight("timestepEmbedding.0.bias", embedDim);
+		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("timestepEmbedding.2.weight", embedDim, embedDim);
+		PackedCollection<?> timestampEmbeddingOutBias = createWeight("timestepEmbedding.2.bias", embedDim);
 
-		PackedCollection<?> timestampEmbeddingInWeight = new PackedCollection<>(shape(embedDim, 256));
-		PackedCollection<?> timestampEmbeddingInBias = new PackedCollection<>(shape(embedDim));
-		PackedCollection<?> timestampEmbeddingOutWeight = new PackedCollection<>(shape(embedDim, embedDim));
-		PackedCollection<?> timestampEmbeddingOutBias = new PackedCollection<>(shape(embedDim));
-		weightMap.put("timestepEmbedding.0.weight", timestampEmbeddingInWeight);
-		weightMap.put("timestepEmbedding.0.bias", timestampEmbeddingInBias);
-		weightMap.put("timestepEmbedding.2.weight", timestampEmbeddingOutWeight);
-		weightMap.put("timestepEmbedding.2.bias", timestampEmbeddingOutBias);
 		return timestepEmbedding(batchSize, embedDim,
 				timestampEmbeddingInWeight, timestampEmbeddingInBias,
 				timestampEmbeddingOutWeight, timestampEmbeddingOutBias);
@@ -278,34 +290,34 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected PackedCollection<?> createWeight(String key, int... shape) {
-		PackedCollection<?> weight = new PackedCollection<>(shape);
-		weightMap.put(key, weight);
-		return weight;
-	}
-
-	public void loadWeights(Map<String, PackedCollection<?>> weights) {
-		for (Map.Entry<String, PackedCollection<?>> entry : weights.entrySet()) {
-			if (weightMap.containsKey(entry.getKey())) {
-				PackedCollection<?> dest = weightMap.get(entry.getKey());
-				PackedCollection<?> src = entry.getValue();
-
-				// Confirm shape compatibility
-				if (dest.getShape().trim().equalsIgnoreAxis(src.getShape().trim())) {
-					dest.setMem(0, src);
+		if (stateDictionary != null && stateDictionary.containsKey(key)) {
+			PackedCollection<?> weight = stateDictionary.get(key);
+			
+			// Verify shape compatibility
+			TraversalPolicy expectedShape = new TraversalPolicy(shape);
+			if (!weight.getShape().trim().equalsIgnoreAxis(expectedShape.trim())) {
+				if (weight.getShape().getTotalSizeLong() != expectedShape.getTotalSizeLong()) {
+					throw new IllegalArgumentException("Expected " + expectedShape +
+							" for key " + key + " while " + weight.getShape() + " was provided");
+				} else {
+					warn("Expected " + expectedShape + " for key " + key +
+							" while " + weight.getShape() + " was provided");
 				}
-
-				// Warn about shapes not being identical
-				if (dest.getShape().getTotalSizeLong() != src.getShape().getTotalSizeLong()) {
-					throw new IllegalArgumentException("Expected " +
-							dest.getShape() + " for key " + entry.getKey() +
-							" while " + src.getShape() + " was provided");
-				} else if (!dest.getShape().equalsIgnoreAxis(src.getShape())) {
-					warn("Expected " + dest.getShape() + " for key " + entry.getKey() +
-							" while " + src.getShape() + " was provided");
-				}
-			} else {
-				throw new IllegalArgumentException("Unknown weight key " + entry.getKey());
 			}
+			
+			return weight;
+		} else {
+			// Create empty weight if StateDictionary is null or key not found
+			PackedCollection<?> weight = new PackedCollection<>(shape);
+			if (stateDictionary == null) {
+				// This is expected when no weights are provided (e.g., for inference setup)
+			} else {
+				warn("Weight not found in StateDictionary: " + key);
+			}
+			return weight;
 		}
 	}
+
+	// loadWeights method removed - weights are now loaded during StateDictionary construction
+	// All weight loading is handled through StateDictionary in the constructor
 }

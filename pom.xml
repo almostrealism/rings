@@ -99,6 +99,14 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-ml</artifactId>
+				<version>${common.version}</version>
+				<classifier>proto</classifier>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>io.flowtree</groupId>
 				<artifactId>ar-flowtree</artifactId>
 				<version>${flowtree.version}</version>
