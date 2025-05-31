@@ -14,7 +14,7 @@
 	*  limitations under the License.
 	*/
 
-package org.almostrealism.ml.audio;
+package org.almostrealism.ml;
 
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.persistence.CollectionEncoder;
