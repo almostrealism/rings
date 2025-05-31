@@ -80,34 +80,34 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								   boolean crossAttend, int contextDim,
 								   int contextSeqLen, boolean globalCond, Block context,
 								   // Self-attention weights
-								   PackedCollection<?> selfAttRmsWeight, PackedCollection<?> selfAttRmsBias,
+								   PackedCollection<?> preNormWeight, PackedCollection<?> preNormBias,
 								   PackedCollection<?> selfWq, PackedCollection<?> selfWk,
 								   PackedCollection<?> selfWv, PackedCollection<?> selfWo,
 								   PackedCollection<?> selfQNormWeight, PackedCollection<?> selfQNormBias,
 								   PackedCollection<?> selfKNormWeight, PackedCollection<?> selfKNormBias,
 								   PackedCollection<?> invFreq,
 								   // Cross-attention weights
-								   PackedCollection<?> crossAttRmsWeight, PackedCollection<?> crossAttRmsBias,
+								   PackedCollection<?> crossAttPreNormWeight, PackedCollection<?> crossAttPreNormBias,
 								   PackedCollection<?> crossWq, PackedCollection<?> crossWk,
 								   PackedCollection<?> crossWv, PackedCollection<?> crossWo,
 								   PackedCollection<?> crossQNormWeight, PackedCollection<?> crossQNormBias,
 								   PackedCollection<?> crossKNormWeight, PackedCollection<?> crossKNormBias,
 								   // Feed-forward weights
-								   PackedCollection<?> rmsFfnWeight, PackedCollection<?> rmsFfnBias,
+								   PackedCollection<?> ffnNormWeight, PackedCollection<?> ffnNormBias,
 								   PackedCollection<?> w1, PackedCollection<?> w2, PackedCollection<?> w3,
 								   PackedCollection<?> w1Bias, PackedCollection<?> w2Bias) {
 		SequentialBlock block = new SequentialBlock(shape(batchSize, seqLen, dim));
 		int dimHead = dim / heads;
 
-		// Create self-attention block with sequence processing
+		// Create self-attention block with sequence processing and layer normalization
 		Block selfAttention = sequenceAttention(
 								batchSize, seqLen, dim, heads,
-								selfAttRmsWeight, selfAttRmsBias,
+								preNormWeight, preNormBias,
 								selfWk, selfWv, selfWq, selfWo,
 								selfQNormWeight, selfQNormBias,
 								selfKNormWeight, selfKNormBias,
 								invFreq);
-		block.add(residual(preNorm(selfAttention)));
+		block.add(residual(selfAttention));
 
 		// Cross-attention (if needed)
 		if (crossAttend) {
@@ -115,30 +115,23 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				throw new IllegalArgumentException("Context block cannot be null for cross-attention");
 			}
 
-			// Create cross-attention block with context
+			// Create cross-attention block with context and layer normalization
 			Block crossAttention = crossAttention(
 					batchSize, seqLen, contextSeqLen, heads, dimHead,
-					crossAttRmsWeight, crossAttRmsBias,
+					crossAttPreNormWeight, crossAttPreNormBias,
 					crossWk, crossWv, crossWq, crossWo,
 					crossQNormWeight, crossQNormBias,
 					crossKNormWeight, crossKNormBias,
 					context);
-			block.add(residual(preNorm(crossAttention)));
+			block.add(residual(crossAttention));
 		}
 
-		// Feed-forward block
-		Block feedForward = feedForward(block.getOutputShape(),
-										rmsFfnWeight, rmsFfnBias,
-										w1, w2, w3, w1Bias, w2Bias);
-		block.add(residual(preNorm(feedForward)));
+		// Feed-forward block with layer normalization
+		block.add(residual(feedForward(block.getOutputShape(),
+				ffnNormWeight, ffnNormBias,
+				w1, w2, w3, w1Bias, w2Bias,
+				false)));
 
 		return block;
-	}
-
-	default Block preNorm(Block block) {
-		SequentialBlock preNorm = new SequentialBlock(block.getInputShape());
-		preNorm.add(rmsnorm(block.getInputShape().getTotalSize()));
-		preNorm.add(block);
-		return preNorm;
 	}
 }

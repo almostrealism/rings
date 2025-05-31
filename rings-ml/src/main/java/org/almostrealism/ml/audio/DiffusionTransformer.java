@@ -191,8 +191,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 			// Create and track all weights for this transformer block
 			String blockPrefix = "transformerBlocks[" + i + "]";
-			PackedCollection<?> rmsAttWeight = createWeight(blockPrefix + ".selfAttention.rmsWeight", dim).fill(1.0);
-			PackedCollection<?> selfAttRmsBias = createWeight(blockPrefix + ".selfAttention.rmsBias", dim);
+			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim).fill(1.0);
+			PackedCollection<?> preNormBias = createWeight(blockPrefix + ".preNorm.bias", dim);
 			PackedCollection<?> wq = createWeight(blockPrefix + ".selfAttention.wq", dim, dim);
 			PackedCollection<?> wk = createWeight(blockPrefix + ".selfAttention.wk", dim, dim);
 			PackedCollection<?> wv = createWeight(blockPrefix + ".selfAttention.wv", dim, dim);
@@ -203,8 +203,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> selfAttKNormBias = createWeight(blockPrefix + ".selfAttention.kNormBias", dimHead);
 
 			// Cross-attention weights (if needed)
-			PackedCollection<?> crossAttRmsWeight = null;
-			PackedCollection<?> crossAttRmsBias = null;
+			PackedCollection<?> crossAttPreNormWeight = null;
+			PackedCollection<?> crossAttPreNormBias = null;
 			PackedCollection<?> crossWq = null;
 			PackedCollection<?> crossWk = null;
 			PackedCollection<?> crossWv = null;
@@ -215,8 +215,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> crossAttKNormBias = null;
 
 			if (hasCrossAttention) {
-				crossAttRmsWeight = createWeight(blockPrefix + ".crossAttention.rmsWeight", dim).fill(1.0);
-				crossAttRmsBias = createWeight(blockPrefix + ".crossAttention.rmsBias", dim);
+				crossAttPreNormWeight = createWeight(blockPrefix + ".crossAttention.preNormWeight", dim).fill(1.0);
+				crossAttPreNormBias = createWeight(blockPrefix + ".crossAttention.preNormBias", dim);
 				crossWq = createWeight(blockPrefix + ".crossAttention.wq", dim, dim);
 				crossWk = createWeight(blockPrefix + ".crossAttention.wk", dim, dim);
 				crossWv = createWeight(blockPrefix + ".crossAttention.wv", dim, dim);
@@ -228,8 +228,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			}
 
 			int hiddenDim = dim * 4;
-			PackedCollection<?> rmsFfnWeight = createWeight(blockPrefix + ".feedForward.rmsWeight", dim).fill(1.0);
-			PackedCollection<?> ffRmsBias = createWeight(blockPrefix + ".feedForward.rmsBias", dim);
+			PackedCollection<?> ffnPreNormWeight = createWeight(blockPrefix + ".feedForward.preNormWeight", dim).fill(1.0);
+			PackedCollection<?> ffnPreNormBias = createWeight(blockPrefix + ".feedForward.preNormBias", dim);
 			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
 			PackedCollection<?> ffW1Bias = createWeight(blockPrefix + ".feedForward.w1Bias", hiddenDim);
 			PackedCollection<?> w2 = createWeight(blockPrefix + ".feedForward.w2", dim, hiddenDim);
@@ -241,16 +241,16 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					batchSize, dim, audioSeqLen, numHeads,
 					hasCrossAttention, condTokenDim, condSeqLen, hasGlobalCond, condEmbed,
 					// Self-attention weights
-					rmsAttWeight, selfAttRmsBias,
+					preNormWeight, preNormBias,
 					wq, wk, wv, wo,
 					selfAttQNormWeight, selfAttQNormBias, selfAttKNormWeight, selfAttKNormBias,
 					invFreq,
 					// Cross-attention weights
-					crossAttRmsWeight, crossAttRmsBias,
+					crossAttPreNormWeight, crossAttPreNormBias,
 					crossWq, crossWk, crossWv, crossWo,
 					crossAttQNormWeight, crossAttQNormBias, crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
-					rmsFfnWeight, ffRmsBias,
+					ffnPreNormWeight, ffnPreNormBias,
 					w1, w2, w3, ffW1Bias, ffW2Bias
 			));
 		}
