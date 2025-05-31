@@ -4,21 +4,12 @@ package almostrealism.audio;
 
 option java_package = "org.almostrealism.audio.api";
 
+import "collections.proto";
+
 message AudioLibraryData {
   map<string, WaveDetailData> info = 1;
   repeated WaveRecording recordings = 2;
   repeated SynthesizerModelData models = 3;
-}
-
-message TraversalPolicyData {
-  repeated int32 dims = 1;
-  int32 traversal_axis = 2;
-}
-
-message CollectionData {
-  TraversalPolicyData traversal_policy = 1;
-  repeated double data = 2;
-  repeated float data_32 = 3;
 }
 
 message WaveRecording {

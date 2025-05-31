@@ -12,6 +12,7 @@
 	<artifactId>ar-remote</artifactId>
 
 	<build>
+		<!-- Detect OS and architecture for plugins which depend on native binaries s-->
 		<extensions>
 			<extension>
 				<groupId>kr.motd.maven</groupId>
@@ -19,7 +20,29 @@
 				<version>1.6.0</version>
 			</extension>
 		</extensions>
+
 		<plugins>
+			<!-- Extract proto files from dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.8.1</version>
+				<executions>
+					<execution>
+						<id>unpack-proto</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeClassifiers>proto</includeClassifiers>
+							<outputDirectory>${project.build.directory}/proto-dependencies</outputDirectory>
+							<includes>**/*.proto</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
@@ -39,12 +62,25 @@
 					<protocArtifact>com.google.protobuf:protoc:3.21.7:exe:${os.detected.classifier}</protocArtifact>
 					<pluginId>grpc-java</pluginId>
 					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.52.1:exe:${os.detected.classifier}</pluginArtifact>
+
+					<!-- Include proto files from dependencies -->
+					<importDirectories>
+						<importDirectory>${project.build.directory}/proto-dependencies</importDirectory>
+					</importDirectories>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-ml</artifactId>
+			<version>${common.version}</version>
+			<classifier>proto</classifier>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-audio-space</artifactId>

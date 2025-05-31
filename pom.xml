@@ -46,7 +46,6 @@
 		<module>generate</module>
 	</modules>
 
-	<!-- Output to jar format -->
 	<packaging>pom</packaging>
 
 	<dependencyManagement>

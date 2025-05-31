@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.Console;
+import org.almostrealism.persistence.CollectionEncoder;
 
 import java.io.File;
 import java.io.FileInputStream;
