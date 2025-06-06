@@ -99,10 +99,12 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		SequentialBlock block = new SequentialBlock(shape(batchSize, seqLen, dim));
 		int dimHead = dim / heads;
 
+		// Pre-normalization (matches TransformerBlock.pre_norm in Python)
+		block.add(norm(preNormWeight, preNormBias));
+
 		// Create self-attention block with sequence processing and layer normalization
 		Block selfAttention = sequenceAttention(
 								batchSize, seqLen, dim, heads,
-								preNormWeight, preNormBias,
 								selfWk, selfWv, selfWq, selfWo,
 								selfQNormWeight, selfQNormBias,
 								selfKNormWeight, selfKNormBias,
