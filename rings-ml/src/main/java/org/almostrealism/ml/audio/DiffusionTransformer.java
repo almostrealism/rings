@@ -217,8 +217,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> crossAttPreNormWeight = null;
 			PackedCollection<?> crossAttPreNormBias = null;
 			PackedCollection<?> crossWq = null;
-			PackedCollection<?> crossWk = null;
-			PackedCollection<?> crossWv = null;
+			PackedCollection<?> crossKv = null;
 			PackedCollection<?> crossWo = null;
 			PackedCollection<?> crossAttQNormWeight = null;
 			PackedCollection<?> crossAttQNormBias = null;
@@ -229,8 +228,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				crossAttPreNormWeight = createWeight(blockPrefix + ".crossAttention.preNormWeight", dim).fill(1.0);
 				crossAttPreNormBias = createWeight(blockPrefix + ".crossAttention.preNormBias", dim);
 				crossWq = createWeight(blockPrefix + ".crossAttention.wq", dim, dim);
-				crossWk = createWeight(blockPrefix + ".crossAttention.wk", dim, dim);
-				crossWv = createWeight(blockPrefix + ".crossAttention.wv", dim, dim);
+				crossKv = createWeight(blockPrefix + ".crossAttention.kv", 2 * dim, dim);
 				crossWo = createWeight(blockPrefix + ".crossAttention.wo", dim, dim);
 				crossAttQNormWeight = createWeight(blockPrefix + ".crossAttention.qNormWeight", dimHead);
 				crossAttQNormBias = createWeight(blockPrefix + ".crossAttention.qNormBias", dimHead);
@@ -258,7 +256,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					invFreq,
 					// Cross-attention weights
 					crossAttPreNormWeight, crossAttPreNormBias,
-					crossWq, crossWk, crossWv, crossWo,
+					crossWq, crossKv, crossWo,
 					crossAttQNormWeight, crossAttQNormBias, crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
@@ -316,7 +314,4 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			return  new PackedCollection<>(expectedShape);
 		}
 	}
-
-	// loadWeights method removed - weights are now loaded during StateDictionary construction
-	// All weight loading is handled through StateDictionary in the constructor
 }

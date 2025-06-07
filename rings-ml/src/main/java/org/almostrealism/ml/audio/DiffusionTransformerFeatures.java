@@ -87,8 +87,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								   PackedCollection<?> invFreq,
 								   // Cross-attention weights
 								   PackedCollection<?> crossAttPreNormWeight, PackedCollection<?> crossAttPreNormBias,
-								   PackedCollection<?> crossWq, PackedCollection<?> crossWk,
-								   PackedCollection<?> crossWv, PackedCollection<?> crossWo,
+								   PackedCollection<?> crossWq, PackedCollection<?> crossKv, PackedCollection<?> crossWo,
 								   PackedCollection<?> crossQNormWeight, PackedCollection<?> crossQNormBias,
 								   PackedCollection<?> crossKNormWeight, PackedCollection<?> crossKNormBias,
 								   // Feed-forward weights
@@ -120,9 +119,9 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 			block.add(norm(crossAttPreNormWeight, crossAttPreNormBias));
 
 			// Create cross-attention block with context
-			Block crossAttention = crossAttention(
-					batchSize, seqLen, contextSeqLen, heads, dimHead,
-					crossWk, crossWv, crossWq, crossWo,
+			Block crossAttention = sequenceCrossAttention(
+					batchSize, seqLen, contextSeqLen, dim, heads,
+					crossWq, crossKv, crossWo,
 					crossQNormWeight, crossQNormBias,
 					crossKNormWeight, crossKNormBias,
 					context);
