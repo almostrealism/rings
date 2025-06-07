@@ -101,7 +101,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		// Pre-normalization (matches TransformerBlock.pre_norm in Python)
 		block.add(norm(preNormWeight, preNormBias));
 
-		// Create self-attention block with sequence processing and layer normalization
+		// Create self-attention block with sequence processing
 		Block selfAttention = sequenceAttention(
 								batchSize, seqLen, dim, heads,
 								selfQkv, selfWo,
@@ -116,10 +116,12 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				throw new IllegalArgumentException("Context block cannot be null for cross-attention");
 			}
 
-			// Create cross-attention block with context and layer normalization
+			// Pre-normalization (matches TransformerBlock.cross_attend_norm in Python)
+			block.add(norm(crossAttPreNormWeight, crossAttPreNormBias));
+
+			// Create cross-attention block with context
 			Block crossAttention = crossAttention(
 					batchSize, seqLen, contextSeqLen, heads, dimHead,
-					crossAttPreNormWeight, crossAttPreNormBias,
 					crossWk, crossWv, crossWq, crossWo,
 					crossQNormWeight, crossQNormBias,
 					crossKNormWeight, crossKNormBias,
