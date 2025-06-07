@@ -81,8 +81,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								   int contextSeqLen, boolean globalCond, Block context,
 								   // Self-attention weights
 								   PackedCollection<?> preNormWeight, PackedCollection<?> preNormBias,
-								   PackedCollection<?> selfWq, PackedCollection<?> selfWk,
-								   PackedCollection<?> selfWv, PackedCollection<?> selfWo,
+								   PackedCollection<?> selfQkv, PackedCollection<?> selfWo,
 								   PackedCollection<?> selfQNormWeight, PackedCollection<?> selfQNormBias,
 								   PackedCollection<?> selfKNormWeight, PackedCollection<?> selfKNormBias,
 								   PackedCollection<?> invFreq,
@@ -105,7 +104,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		// Create self-attention block with sequence processing and layer normalization
 		Block selfAttention = sequenceAttention(
 								batchSize, seqLen, dim, heads,
-								selfWk, selfWv, selfWq, selfWo,
+								selfQkv, selfWo,
 								selfQNormWeight, selfQNormBias,
 								selfKNormWeight, selfKNormBias,
 								invFreq);

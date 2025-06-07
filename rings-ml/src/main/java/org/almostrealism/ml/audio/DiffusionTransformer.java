@@ -206,9 +206,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			String blockPrefix = "transformerBlocks[" + i + "]";
 			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim).fill(1.0);
 			PackedCollection<?> preNormBias = createWeight(blockPrefix + ".preNorm.bias", dim);
-			PackedCollection<?> wq = createWeight(blockPrefix + ".selfAttention.wq", dim, dim);
-			PackedCollection<?> wk = createWeight(blockPrefix + ".selfAttention.wk", dim, dim);
-			PackedCollection<?> wv = createWeight(blockPrefix + ".selfAttention.wv", dim, dim);
+			PackedCollection<?> qkv = createWeight(blockPrefix + ".selfAttention.qkv", dim * 3, dim);
 			PackedCollection<?> wo = createWeight(blockPrefix + ".selfAttention.wo", dim, dim);
 			PackedCollection<?> selfAttQNormWeight = createWeight(blockPrefix + ".selfAttention.qNormWeight", dimHead);
 			PackedCollection<?> selfAttQNormBias = createWeight(blockPrefix + ".selfAttention.qNormBias", dimHead);
@@ -255,7 +253,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					hasCrossAttention, condTokenDim, condSeqLen, hasGlobalCond, condEmbed,
 					// Self-attention weights
 					preNormWeight, preNormBias,
-					wq, wk, wv, wo,
+					qkv, wo,
 					selfAttQNormWeight, selfAttQNormBias, selfAttKNormWeight, selfAttKNormBias,
 					invFreq,
 					// Cross-attention weights
