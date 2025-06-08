@@ -93,7 +93,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 								   // Feed-forward weights
 								   PackedCollection<?> ffnNormWeight, PackedCollection<?> ffnNormBias,
 								   PackedCollection<?> w1, PackedCollection<?> w2, PackedCollection<?> w3,
-								   PackedCollection<?> w1Bias, PackedCollection<?> w3Bias) {
+								   PackedCollection<?> w1Bias, PackedCollection<?> w2Bias, PackedCollection<?> w3Bias) {
 		SequentialBlock block = new SequentialBlock(shape(batchSize, seqLen, dim));
 		int dimHead = dim / heads;
 
@@ -131,7 +131,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		// Feed-forward block with layer normalization
 		block.add(residual(feedForward(block.getOutputShape(),
 				ffnNormWeight, ffnNormBias,
-				w1, w2, w3, w1Bias, null, w3Bias,
+				w1, w2, w3, w1Bias, w2Bias, w3Bias,
 				false)));
 
 		return block;
