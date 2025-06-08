@@ -242,7 +242,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
 			PackedCollection<?> ffW1Bias = createWeight(blockPrefix + ".feedForward.w1Bias", hiddenDim);
 			PackedCollection<?> w2 = createWeight(blockPrefix + ".feedForward.w2", dim, hiddenDim);
-			PackedCollection<?> ffW2Bias = createWeight(blockPrefix + ".feedForward.w2Bias", dim);
+			PackedCollection<?> ffW3Bias = createWeight(blockPrefix + ".feedForward.w3Bias", dim);
 			PackedCollection<?> w3 = createWeight(blockPrefix + ".feedForward.w3", hiddenDim, dim);
 
 			// Add transformer block with all weights explicitly passed
@@ -260,7 +260,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					crossAttQNormWeight, crossAttQNormBias, crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
-					w1, w2, w3, ffW1Bias, ffW2Bias
+					w1, w2, w3, ffW1Bias, ffW3Bias
 			));
 		}
 
