@@ -25,6 +25,8 @@ import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private static final int SAMPLE_SIZE = 524288;
@@ -45,6 +47,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private final int condSeqLen;
 
 	private final StateDictionary stateDictionary;
+	private final Set<String> unusedWeights;
 	private final Model model;
 
 	private CompiledModel compiled;
@@ -89,6 +92,11 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		this.audioSeqLen = maxSeqLen;
 		this.condSeqLen = condSeqLen;
 		this.stateDictionary = stateDictionary;
+		this.unusedWeights = new HashSet<>();
+
+		if (stateDictionary != null) {
+			this.unusedWeights.addAll(stateDictionary.keySet());
+		}
 
 		this.model = buildModel();
 	}
@@ -274,6 +282,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 									   PackedCollection<?> crossAttnCond,
 									   PackedCollection<?> globalCond) {
 		if (compiled == null) {
+			validateWeights();
+
 			compiled = model.compile(false);
 		}
 
@@ -294,27 +304,32 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected PackedCollection<?> createWeight(String key, TraversalPolicy expectedShape) {
-		if (stateDictionary != null && stateDictionary.containsKey(key)) {
-			PackedCollection<?> weight = stateDictionary.get(key);
-			
-			// Verify shape compatibility
-			if (!weight.getShape().trim().equalsIgnoreAxis(expectedShape.trim())) {
-				if (weight.getShape().getTotalSizeLong() != expectedShape.getTotalSizeLong()) {
-					throw new IllegalArgumentException("Expected " + expectedShape +
-							" for key " + key + " while " + weight.getShape() + " was provided");
-				} else {
-					warn("Expected " + expectedShape + " for key " + key +
-							" while " + weight.getShape() + " was provided");
-				}
-			}
-			
-			return weight.range(expectedShape);
-		} else {
-			if (stateDictionary != null) {
-				throw new IllegalArgumentException(key + " not found in StateDictionary");
-			}
-
-			return  new PackedCollection<>(expectedShape);
+		if (stateDictionary == null) {
+			return new PackedCollection<>(expectedShape);
+		} else if (!stateDictionary.containsKey(key)) {
+			throw new IllegalArgumentException(key + " not found in StateDictionary");
 		}
+
+		PackedCollection<?> weight = stateDictionary.get(key);
+
+		// Verify shape compatibility
+		if (!weight.getShape().trim().equalsIgnoreAxis(expectedShape.trim())) {
+			if (weight.getShape().getTotalSizeLong() != expectedShape.getTotalSizeLong()) {
+				throw new IllegalArgumentException("Expected " + expectedShape +
+						" for key " + key + " while " + weight.getShape() + " was provided");
+			} else {
+				warn("Expected " + expectedShape + " for key " + key +
+						" while " + weight.getShape() + " was provided");
+			}
+		}
+
+		unusedWeights.remove(key);
+		return weight.range(expectedShape);
+	}
+
+	protected void validateWeights() {
+		unusedWeights.stream().findFirst().ifPresent(unusedWeight -> {
+			throw new IllegalArgumentException(unusedWeight + " weights were not used by the model");
+		});
 	}
 }
