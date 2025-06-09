@@ -27,19 +27,10 @@ import java.util.List;
 
 public interface DiffusionTransformerFeatures extends AttentionFeatures, DiffusionFeatures {
 
-	default Block fourierFeatures(int batchSize, int inFeatures, int outFeatures) {
+	default Block fourierFeatures(int batchSize, int inFeatures, int outFeatures, PackedCollection<?> learnedWeights) {
 		// Output dim should be even for sin/cos pairs
 		if (outFeatures % 2 != 0) {
 			throw new IllegalArgumentException("Output features must be even for Fourier features");
-		}
-
-		// Create frequency basis for position embedding
-		int freqDim = outFeatures / 2;
-		PackedCollection<?> freqs = new PackedCollection<>(freqDim);
-		for (int i = 0; i < freqDim; i++) {
-			// Geometric sequence as in standard transformer positional encoding
-			double freq = Math.pow(10000, -2.0 * i / freqDim);
-			freqs.setMem(i, freq);
 		}
 
 		return layer("fourierFeatures",
@@ -47,29 +38,31 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				shape(batchSize, outFeatures),
 				in -> {
 					CollectionProducer<PackedCollection<?>> input = c(in);
-					CollectionProducer<PackedCollection<?>> freqTensor = cp(freqs);
+					CollectionProducer<PackedCollection<?>> weights = cp(learnedWeights);
 
-					// Compute x * freq for each frequency
-					CollectionProducer<PackedCollection<?>> xfreq =
-							input.multiply(freqTensor.expand(inFeatures).transpose());
+					// Compute x * learned_frequencies for each frequency
+					// learnedWeights shape: [outFeatures // 2]
+					// input shape: [batchSize, inFeatures] = [batchSize, 1]
+					// We want to broadcast multiply: input * weights -> [batchSize, outFeatures//2]
+					CollectionProducer<PackedCollection<?>> xfreq = input.multiply(weights.expand(batchSize));
 
 					// Calculate sin and cos components
 					CollectionProducer<PackedCollection<?>> sinValues = sin(xfreq);
 					CollectionProducer<PackedCollection<?>> cosValues = cos(xfreq);
 
-					// Concatenate sin and cos values
+					// Concatenate sin and cos values along feature dimension
 					return concat(shape(batchSize, outFeatures),
-							sinValues.reshape(batchSize, freqDim),
-							cosValues.reshape(batchSize, freqDim));
+							sinValues, cosValues);
 				},
-				List.of(freqs));
+				List.of(learnedWeights));
 	}
 
 	default Block timestepEmbedding(int batchSize, int embedDim,
+									PackedCollection<?> timestepFeaturesWeight,
 									PackedCollection<?> weight0, PackedCollection<?> bias0,
 									PackedCollection<?> weight2, PackedCollection<?> bias2) {
 		SequentialBlock embedding = new SequentialBlock(shape(batchSize, 1));
-		embedding.add(fourierFeatures(batchSize, 1, 256));
+		embedding.add(fourierFeatures(batchSize, 1, 256, timestepFeaturesWeight));
 		embedding.add(dense(weight0, bias0));
 		embedding.add(silu(shape(embedDim)));
 		embedding.add(dense(weight2, bias2));

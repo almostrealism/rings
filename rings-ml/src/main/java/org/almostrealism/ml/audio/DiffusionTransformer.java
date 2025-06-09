@@ -176,12 +176,14 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Block createTimestampEmbedding() {
+		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128); // 256 // 2 = 128 for sin/cos pairs
 		PackedCollection<?> timestampEmbeddingInWeight = createWeight("timestepEmbedding.0.weight", embedDim, 256);
 		PackedCollection<?> timestampEmbeddingInBias = createWeight("timestepEmbedding.0.bias", embedDim);
 		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("timestepEmbedding.2.weight", embedDim, embedDim);
 		PackedCollection<?> timestampEmbeddingOutBias = createWeight("timestepEmbedding.2.bias", embedDim);
 
 		return timestepEmbedding(batchSize, embedDim,
+				timestepFeaturesWeight,
 				timestampEmbeddingInWeight, timestampEmbeddingInBias,
 				timestampEmbeddingOutWeight, timestampEmbeddingOutBias);
 	}
