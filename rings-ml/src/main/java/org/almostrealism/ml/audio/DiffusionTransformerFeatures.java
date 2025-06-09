@@ -37,22 +37,24 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				shape(batchSize, inFeatures),
 				shape(batchSize, outFeatures),
 				in -> {
-					CollectionProducer<PackedCollection<?>> input = c(in);
-					CollectionProducer<PackedCollection<?>> weights = cp(learnedWeights);
+					CollectionProducer<PackedCollection<?>> input = c(in);  // Shape: [batchSize, inFeatures]
+					CollectionProducer<PackedCollection<?>> weights = cp(learnedWeights);  // Shape: [outFeatures // 2, inFeatures]
 
-					// Compute x * learned_frequencies for each frequency
-					// learnedWeights shape: [outFeatures // 2]
-					// input shape: [batchSize, inFeatures] = [batchSize, 1]
-					// We want to broadcast multiply: input * weights -> [batchSize, outFeatures//2]
-					CollectionProducer<PackedCollection<?>> xfreq = input.multiply(weights.expand(batchSize));
+					// Compute f = 2 * pi * input @ weights.T as in Python FourierFeatures
+					// input: [batchSize, inFeatures] @ weights.T: [inFeatures, outFeatures // 2]
+					// -> [batchSize, outFeatures // 2]
+					CollectionProducer<PackedCollection<?>> f = multiply(
+							c(2.0 * Math.PI),
+							matmul(input, weights.transpose(1))
+					);
 
-					// Calculate sin and cos components
-					CollectionProducer<PackedCollection<?>> sinValues = sin(xfreq);
-					CollectionProducer<PackedCollection<?>> cosValues = cos(xfreq);
+					// Calculate cos and sin components as in Python: torch.cat([f.cos(), f.sin()], dim=-1)
+					CollectionProducer<PackedCollection<?>> cosValues = cos(f);
+					CollectionProducer<PackedCollection<?>> sinValues = sin(f);
 
-					// Concatenate sin and cos values along feature dimension
+					// Concatenate cos first, then sin (matching Python order)
 					return concat(shape(batchSize, outFeatures),
-							sinValues, cosValues);
+							cosValues, sinValues);
 				},
 				List.of(learnedWeights));
 	}

@@ -110,7 +110,6 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 		// Add cross-attention condition input if needed
 		SequentialBlock condEmbed = null;
-		// TODO  Switch to use feedForward
 		if (condTokenDim > 0) {
 			PackedCollection<?> condProjWeight1 = createWeight("condEmbedding.0.weight", embedDim, condTokenDim);
 			PackedCollection<?> condProjWeight2 = createWeight("condEmbedding.2.weight", embedDim, embedDim);
@@ -184,7 +183,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	}
 
 	protected Block createTimestampEmbedding() {
-		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128); // 256 // 2 = 128 for sin/cos pairs
+		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128, 1); // [out_features // 2, in_features] = [128, 1] for timestep features
 		PackedCollection<?> timestampEmbeddingInWeight = createWeight("timestepEmbedding.0.weight", embedDim, 256);
 		PackedCollection<?> timestampEmbeddingInBias = createWeight("timestepEmbedding.0.bias", embedDim);
 		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("timestepEmbedding.2.weight", embedDim, embedDim);
