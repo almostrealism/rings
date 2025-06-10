@@ -164,4 +164,87 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         assertEquals("First sin value", expectedSin1, output.valueAt(0, 2));
         assertEquals("Second sin value", expectedSin2, output.valueAt(0, 3));
     }
+    
+    /**
+     * Tests the input projection component (preprocess_conv + residual) against reference data
+     * from the actual DiT model. This is critical because it's one of the first operations
+     * in the forward pass, so any errors here propagate through the entire model.
+     */
+    @Test
+    public void inputProjectionCompare() throws Exception {
+        String referenceDir = "/Users/michael/Documents/AlmostRealism/models/input_projection";
+    
+        // Load reference data using StateDictionary
+        StateDictionary referenceData = new StateDictionary(referenceDir);
+        referenceData.keySet()
+                .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
+    
+        // Extract test configuration
+        PackedCollection<?> testConfig = referenceData.get("test_config");
+        int batchSize = (int) testConfig.valueAt(0);
+        int ioChannels = (int) testConfig.valueAt(1);
+        int audioSeqLen = (int) testConfig.valueAt(2);
+    
+        log("Input projection test configuration:");
+        log("  batchSize=" + batchSize + ", ioChannels=" + ioChannels + ", audioSeqLen=" + audioSeqLen);
+    
+        // Load test data
+        PackedCollection<?> input = referenceData.get("input");
+        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
+        PackedCollection<?> convOutput = referenceData.get("conv_output");
+        PackedCollection<?> inputProjWeight = referenceData.get("model.model.preprocess_conv.weight");
+    
+        assertNotNull("Input not found", input);
+        assertNotNull("Expected output not found", expectedOutput);
+        assertNotNull("Conv output not found", convOutput);
+        assertNotNull("Input projection weight not found", inputProjWeight);
+    
+        log("Input projection shapes:");
+        log("  Input: " + input.getShape());
+        log("  Weight: " + inputProjWeight.getShape());
+        log("  Expected output: " + expectedOutput.getShape());
+    
+        // Verify weight shape matches expected 1D conv weight [out_channels, in_channels, kernel_size]
+        // For DiT: [io_channels, io_channels, 1]
+        assertEquals("Weight should have 3 dimensions for 1D conv", 3, inputProjWeight.getShape().getDimensions());
+        assertEquals("Weight out_channels should match io_channels", ioChannels, inputProjWeight.getShape().length(0));
+        assertEquals("Weight in_channels should match io_channels", ioChannels, inputProjWeight.getShape().length(1));
+        assertEquals("Weight kernel_size should be 1", 1, inputProjWeight.getShape().length(2));
+    
+        // Create test model with input projection (conv1d + residual)
+        Model model = new Model(shape(batchSize, ioChannels, audioSeqLen));
+        SequentialBlock main = model.sequential();
+    
+        // Add input projection exactly as in DiffusionTransformer.buildModel()
+        main.add(residual(convolution1d(batchSize, ioChannels, ioChannels, audioSeqLen,
+                1, 0, inputProjWeight, null)));
+    
+        // Compile and run the model
+        CompiledModel compiled = model.compile(false);
+        PackedCollection<?> actualOutput = compiled.forward(input);
+    
+        log("Input total: " + input.doubleStream().map(Math::abs).sum());
+        log("Expected conv output total: " + convOutput.doubleStream().map(Math::abs).sum());
+        log("Expected final output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
+        log("Actual output total: " + actualOutput.doubleStream().map(Math::abs).sum());
+    
+        assertEquals(expectedOutput.getShape().getTotalSize(),
+                actualOutput.getShape().getTotalSize());
+    
+        double diff = compare(expectedOutput, actualOutput);
+        log("Input projection difference between expected and actual output = " + diff);
+        assertTrue("Input projection output does not match Python reference within tolerance", diff < 1e-5);
+    
+        // Additional verification: Check that this is indeed a residual connection
+        // The output should be input + conv(input), not just conv(input)
+        double inputSum = input.doubleStream().sum();
+        double outputSum = actualOutput.doubleStream().sum();
+        log("Input sum: " + inputSum);
+        log("Output sum: " + outputSum);
+        
+        // The output should include the input due to residual connection
+        // so output sum should be related to input sum (though not exactly equal due to conv)
+        assertTrue("Output should be different from input (conv should add something)",
+                Math.abs(inputSum - outputSum) > 1e-8);
+    }
 }
