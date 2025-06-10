@@ -17,6 +17,7 @@
 package org.almostrealism.ml.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.StateDictionary;
 import org.almostrealism.model.Block;
@@ -106,7 +107,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		Model model = new Model(shape(batchSize, ioChannels, audioSeqLen));
 
 		// Add timestep embedding input
-		model.addInput(createTimestampEmbedding());
+		Block timestampEmbed = timestampEmbedding();
+		model.addInput(timestampEmbed);
 
 		// Add cross-attention condition input if needed
 		SequentialBlock condEmbed = null;
@@ -122,13 +124,14 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		}
 
 		// Add global condition input if needed
+		SequentialBlock globalEmbed = null;
 		if (globalCondDim > 0) {
 			PackedCollection<?> globalProjInWeight =
 					createWeight("globalEmbeddingIn.weight", embedDim, globalCondDim);
 			PackedCollection<?> globalProjOutWeight =
 					createWeight("globalEmbeddingOut.weight", embedDim, embedDim);
 			
-			SequentialBlock globalEmbed = new SequentialBlock(shape(globalCondDim));
+			globalEmbed = new SequentialBlock(shape(globalCondDim));
 			globalEmbed.add(dense(globalProjInWeight));
 			globalEmbed.add(silu());
 			globalEmbed.add(dense(globalProjOutWeight));
@@ -144,7 +147,6 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		main.add(residual(convolution1d(batchSize, ioChannels, ioChannels, audioSeqLen,
 				1, 0, inputProjWeight, null)));
 
-
 		// Reshape from [batch, channels, seq_len] to [batch, seq_len, channels]
 		if (patchSize > 1) {
 			main.add(layer("patchify",
@@ -157,8 +159,9 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					.reshape(batchSize, audioSeqLen, ioChannels);
 		}
 
-		// Add transformer blocks
-		addTransformerBlocks(main, condEmbed, embedDim);
+		// Add the transformer blocks
+		addTransformerBlocks(main, timestampEmbed, condEmbed, globalEmbed,
+				embedDim, globalCondDim > 0 ? audioSeqLen + 1 : audioSeqLen);
 
 		// Reshape back to channels-first format
 		if (patchSize > 1) {
@@ -182,8 +185,8 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		return model;
 	}
 
-	protected Block createTimestampEmbedding() {
-		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128, 1); // [out_features // 2, in_features] = [128, 1] for timestep features
+	protected Block timestampEmbedding() {
+		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128, 1);
 		PackedCollection<?> timestampEmbeddingInWeight = createWeight("timestepEmbedding.0.weight", embedDim, 256);
 		PackedCollection<?> timestampEmbeddingInBias = createWeight("timestepEmbedding.0.bias", embedDim);
 		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("timestepEmbedding.2.weight", embedDim, embedDim);
@@ -195,7 +198,25 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 				timestampEmbeddingOutWeight, timestampEmbeddingOutBias);
 	}
 
-	protected void addTransformerBlocks(SequentialBlock main, SequentialBlock condEmbed, int dim) {
+	protected Block prependConditioning(Block timestampEmbed, Block globalEmbed) {
+		PackedCollection<?> timestep = new PackedCollection<>(timestampEmbed.getOutputShape());
+		PackedCollection<?> globalCond = new PackedCollection<>(globalEmbed.getOutputShape());
+
+		timestampEmbed.andThen(into(timestep));
+		globalEmbed.andThen(into(globalCond));
+
+		return layer("prependConditioning",
+				shape(batchSize, audioSeqLen, embedDim),
+				shape(batchSize, audioSeqLen + 1, embedDim),
+				in ->
+						concat(1,  (Producer) add(cp(globalCond), cp(timestep)).reshape(batchSize, 1, embedDim), c(in)));
+	}
+
+	protected void addTransformerBlocks(SequentialBlock main,
+										Block timestepEmbed,
+										Block condEmbed,
+										Block globalEmbed,
+										int dim, int seqLen) {
 		int dimHead = dim / numHeads;
 
 		PackedCollection<?> transformerProjectInWeight =
@@ -207,10 +228,14 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 		main.add(dense(transformerProjectInWeight));
 
-		for (int i = 0; i < depth; i++) {
-			boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
-			boolean hasGlobalCond = globalCondDim > 0;
 
+		boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
+
+		if (globalCondDim > 0) {
+			main.add(prependConditioning(timestepEmbed, globalEmbed));
+		}
+
+		for (int i = 0; i < depth; i++) {
 			// Create and track all weights for this transformer block
 			String blockPrefix = "transformerBlocks[" + i + "]";
 			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim).fill(1.0);
@@ -255,10 +280,10 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			PackedCollection<?> w3 = createWeight(blockPrefix + ".feedForward.w3", hiddenDim, dim);
 			PackedCollection<?> ffW3Bias = createWeight(blockPrefix + ".feedForward.w3Bias", hiddenDim);
 
-			// Add transformer block with all weights explicitly passed
+			// Add transformer block with updated sequence length
 			main.add(transformerBlock(
-					batchSize, dim, audioSeqLen, numHeads,
-					hasCrossAttention, condTokenDim, condSeqLen, hasGlobalCond, condEmbed,
+					batchSize, dim, seqLen, numHeads,
+					hasCrossAttention, condSeqLen, condEmbed,
 					// Self-attention weights
 					preNormWeight, preNormBias,
 					qkv, wo,
@@ -272,6 +297,13 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 					ffnPreNormWeight, ffnPreNormBias,
 					w1, w2, w3, ffW1Bias, ffW2Bias, ffW3Bias
 			));
+		}
+
+		// Remove any prepended conditioning tokens before output
+		if (seqLen > audioSeqLen) {
+			int prependedLength = seqLen - audioSeqLen;
+			main.reshape(batchSize, seqLen, embedDim)
+					.subset(shape(batchSize, audioSeqLen, embedDim), 0, prependedLength, 0);
 		}
 
 		main.add(dense(transformerProjectOutWeight));
