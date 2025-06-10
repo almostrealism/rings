@@ -332,6 +332,91 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         assertEquals("Output should maintain sequence length", condSeqLen, actualOutput.getShape().length(1));
         assertEquals("Output should have embed_dim features", embedDim, actualOutput.getShape().length(2));
         
-        log("Conditioning embedding test completed successfully");
+    log("Conditioning embedding test completed successfully");
+    }
+
+    /**
+     * Tests the global embedding component (globalEmbed block) against reference data
+     * from the actual DiT model. This tests the two linear layers with SiLU activation
+     * that process global conditioning vectors.
+     */
+    @Test
+    public void globalEmbeddingCompare() throws Exception {
+        String referenceDir = "/Users/michael/Documents/AlmostRealism/models/global_embedding";
+
+        // Load reference data using StateDictionary
+        StateDictionary referenceData = new StateDictionary(referenceDir);
+        referenceData.keySet()
+                .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
+
+        // Extract test configuration
+        PackedCollection<?> testConfig = referenceData.get("test_config");
+        int batchSize = (int) testConfig.valueAt(0);
+        int globalCondDim = (int) testConfig.valueAt(1);
+        int embedDim = (int) testConfig.valueAt(2);
+
+        log("Global embedding test configuration:");
+        log("  batchSize=" + batchSize + ", globalCondDim=" + globalCondDim + ", embedDim=" + embedDim);
+
+        // Load test data
+        PackedCollection<?> input = referenceData.get("input");
+        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
+        PackedCollection<?> globalProjInWeight = referenceData.get("model.model.to_global_embed.0.weight");
+        PackedCollection<?> globalProjOutWeight = referenceData.get("model.model.to_global_embed.2.weight");
+
+        assertNotNull("Input not found", input);
+        assertNotNull("Expected output not found", expectedOutput);
+        assertNotNull("Global projection in weight not found", globalProjInWeight);
+        assertNotNull("Global projection out weight not found", globalProjOutWeight);
+
+        log("Global embedding shapes:");
+        log("  Input: " + input.getShape());
+        log("  Expected output: " + expectedOutput.getShape());
+        log("  Global proj in weight: " + globalProjInWeight.getShape());
+        log("  Global proj out weight: " + globalProjOutWeight.getShape());
+
+        // Verify weight shapes match expected DiT configuration
+        // First layer: (global_cond_dim, embed_dim) = (768, 1024)
+        assertEquals("First weight should have input dim " + globalCondDim,
+                globalCondDim, globalProjInWeight.getShape().length(1));
+        assertEquals("First weight should have output dim " + embedDim,
+                embedDim, globalProjInWeight.getShape().length(0));
+        
+        // Second layer: (embed_dim, embed_dim) = (1024, 1024)
+        assertEquals("Second weight should have input dim " + embedDim,
+                embedDim, globalProjOutWeight.getShape().length(1));
+        assertEquals("Second weight should have output dim " + embedDim,
+                embedDim, globalProjOutWeight.getShape().length(0));
+
+        // Create test model matching the globalEmbed block from DiffusionTransformer
+        Model model = new Model(shape(batchSize, globalCondDim));
+        SequentialBlock globalEmbed = model.sequential();
+
+        // Add layers exactly as in DiffusionTransformer.buildModel()
+        globalEmbed.add(dense(globalProjInWeight));
+        globalEmbed.add(silu());
+        globalEmbed.add(dense(globalProjOutWeight));
+        globalEmbed.reshape(batchSize, embedDim);
+
+        // Compile and run the model
+        CompiledModel compiled = model.compile(false);
+        PackedCollection<?> actualOutput = compiled.forward(input);
+
+        log("Input total: " + input.doubleStream().map(Math::abs).sum());
+        log("Expected output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
+        log("Actual output total: " + actualOutput.doubleStream().map(Math::abs).sum());
+
+        assertEquals(expectedOutput.getShape().getTotalSize(),
+                actualOutput.getShape().getTotalSize());
+
+        double diff = compare(expectedOutput, actualOutput);
+        log("Global embedding difference between expected and actual output = " + diff);
+        assertTrue("Global embedding output does not match Python reference within tolerance", diff < 1e-5);
+
+        // Additional verification: Check shape consistency
+        assertEquals("Output should have batch size", batchSize, actualOutput.getShape().length(0));
+        assertEquals("Output should have embed_dim features", embedDim, actualOutput.getShape().length(1));
+        
+        log("Global embedding test completed successfully");
     }
 }
