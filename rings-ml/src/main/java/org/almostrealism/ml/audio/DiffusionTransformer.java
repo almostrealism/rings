@@ -120,6 +120,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			condEmbed.add(dense(condProjWeight1));
 			condEmbed.add(silu());
 			condEmbed.add(dense(condProjWeight2));
+			condEmbed.reshape(batchSize, condSeqLen, embedDim);
 			model.addInput(condEmbed);
 		}
 
@@ -135,6 +136,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 			globalEmbed.add(dense(globalProjInWeight));
 			globalEmbed.add(silu());
 			globalEmbed.add(dense(globalProjOutWeight));
+			globalEmbed.reshape(batchSize, embedDim);
 			model.addInput(globalEmbed);
 		}
 

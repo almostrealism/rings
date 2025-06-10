@@ -247,4 +247,91 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         assertTrue("Output should be different from input (conv should add something)",
                 Math.abs(inputSum - outputSum) > 1e-8);
     }
+
+    /**
+     * Tests the conditioning embedding component (condEmbed block) against reference data
+     * from the actual DiT model. This tests the two linear layers with SiLU activation
+     * that process conditioning tokens from T5 embeddings.
+     */
+    @Test
+    public void conditioningEmbeddingCompare() throws Exception {
+        String referenceDir = "/Users/michael/Documents/AlmostRealism/models/conditioning_embedding";
+
+        // Load reference data using StateDictionary
+        StateDictionary referenceData = new StateDictionary(referenceDir);
+        referenceData.keySet()
+                .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
+
+        // Extract test configuration
+        PackedCollection<?> testConfig = referenceData.get("test_config");
+        int batchSize = (int) testConfig.valueAt(0);
+        int condSeqLen = (int) testConfig.valueAt(1);
+        int condTokenDim = (int) testConfig.valueAt(2);
+        int embedDim = (int) testConfig.valueAt(3);
+
+        log("Conditioning embedding test configuration:");
+        log("  batchSize=" + batchSize + ", condSeqLen=" + condSeqLen +
+            ", condTokenDim=" + condTokenDim + ", embedDim=" + embedDim);
+
+        // Load test data
+        PackedCollection<?> input = referenceData.get("input");
+        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
+        PackedCollection<?> condProjWeight1 = referenceData.get("model.model.to_cond_embed.0.weight");
+        PackedCollection<?> condProjWeight2 = referenceData.get("model.model.to_cond_embed.2.weight");
+
+        assertNotNull("Input not found", input);
+        assertNotNull("Expected output not found", expectedOutput);
+        assertNotNull("First projection weight not found", condProjWeight1);
+        assertNotNull("Second projection weight not found", condProjWeight2);
+
+        log("Conditioning embedding shapes:");
+        log("  Input: " + input.getShape());
+        log("  Expected output: " + expectedOutput.getShape());
+        log("  First weight: " + condProjWeight1.getShape());
+        log("  Second weight: " + condProjWeight2.getShape());
+
+        // Verify weight shapes match expected DiT configuration
+        // First layer: (cond_token_dim, embed_dim) = (768, 1024)
+        assertEquals("First weight should have input dim " + condTokenDim,
+                condTokenDim, condProjWeight1.getShape().length(1));
+        assertEquals("First weight should have output dim " + embedDim,
+                embedDim, condProjWeight1.getShape().length(0));
+        
+        // Second layer: (embed_dim, embed_dim) = (1024, 1024)
+        assertEquals("Second weight should have input dim " + embedDim,
+                embedDim, condProjWeight2.getShape().length(1));
+        assertEquals("Second weight should have output dim " + embedDim,
+                embedDim, condProjWeight2.getShape().length(0));
+
+        // Create test model matching the condEmbed block from DiffusionTransformer
+        Model model = new Model(shape(batchSize, condSeqLen, condTokenDim));
+        SequentialBlock condEmbed = model.sequential();
+
+        // Add layers exactly as in DiffusionTransformer.buildModel()
+        condEmbed.add(dense(condProjWeight1));
+        condEmbed.add(silu());
+        condEmbed.add(dense(condProjWeight2));
+        condEmbed.reshape(batchSize, condSeqLen, embedDim);
+
+        // Compile and run the model
+        CompiledModel compiled = model.compile(false);
+        PackedCollection<?> actualOutput = compiled.forward(input);
+
+        log("Input total: " + input.doubleStream().map(Math::abs).sum());
+        log("Expected output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
+        log("Actual output total: " + actualOutput.doubleStream().map(Math::abs).sum());
+
+        assertEquals(expectedOutput.getShape().getTotalSize(),
+                actualOutput.getShape().getTotalSize());
+
+        double diff = compare(expectedOutput, actualOutput);
+        log("Conditioning embedding difference between expected and actual output = " + diff);
+        assertTrue("Conditioning embedding output does not match Python reference within tolerance", diff < 1e-5);
+
+        // Additional verification: Check shape consistency
+        assertEquals("Output should maintain sequence length", condSeqLen, actualOutput.getShape().length(1));
+        assertEquals("Output should have embed_dim features", embedDim, actualOutput.getShape().length(2));
+        
+        log("Conditioning embedding test completed successfully");
+    }
 }
