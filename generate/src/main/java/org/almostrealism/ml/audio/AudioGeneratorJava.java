@@ -187,7 +187,7 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 			// Run DiffusionTransformer
 			PackedCollection<?> outputPC = ditModel.forward(xPC, tPC, crossAttnCondPC, globalCondPC);
 
-			// Get data back as float array
+			// Get data back as array
 			double[] xData = xPC.toArray();
 			double[] outputData = outputPC.toArray();
 

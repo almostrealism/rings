@@ -52,6 +52,9 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 	private final Model model;
 
 	private CompiledModel compiled;
+	
+	// Add field to capture pre-transformer state for debugging
+	private PackedCollection<?> preTransformerState;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
@@ -230,12 +233,17 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 
 		main.add(dense(transformerProjectInWeight));
 
-
 		boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
 
 		if (globalCondDim > 0) {
 			main.add(prependConditioning(timestepEmbed, globalEmbed));
 		}
+
+		// Capture state before transformer blocks for debugging comparison with Python
+		TraversalPolicy captureShape = main.getOutputShape();
+		PackedCollection<?> preTransformerCapture = new PackedCollection<>(captureShape);
+		main.branch().andThen(into(preTransformerCapture));
+		this.preTransformerState = preTransformerCapture;
 
 		for (int i = 0; i < depth; i++) {
 			// Create and track all weights for this transformer block
@@ -330,6 +338,17 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		} else {
 			return compiled.forward(x, t);
 		}
+	}
+
+	/**
+	* Returns the captured state before transformer blocks are applied.
+	* This is populated after forward() is called and can be used for
+	* debugging and comparison with Python implementation.
+	*
+	* @return PackedCollection containing the pre-transformer state
+	*/
+	public PackedCollection<?> getPreTransformerState() {
+		return preTransformerState;
 	}
 
 	protected PackedCollection<?> createWeight(String key, int... dims) {
