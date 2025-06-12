@@ -17,6 +17,7 @@
 package org.almostrealism.ml;
 
 import ai.onnxruntime.OnnxTensor;
+import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.TensorInfo;
 import io.almostrealism.collect.TraversalPolicy;
@@ -24,6 +25,7 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 import java.nio.FloatBuffer;
+import java.util.Objects;
 
 public interface OnnxFeatures extends CodeFeatures {
 	default TraversalPolicy shape(TensorInfo info) {
@@ -41,5 +43,19 @@ public interface OnnxFeatures extends CodeFeatures {
 		PackedCollection<?> result = new PackedCollection<>(shape(tensor.getInfo()));
 		result.setMem(0, data);
 		return result;
+	}
+
+	/**
+	 * Converts a {@link PackedCollection} to an {@link OnnxTensor}.
+	 *
+	 * @param env The OrtEnvironment to use for creating the tensor.
+	 * @param collection The {@link PackedCollection} to convert.
+	 * @return An {@link OnnxTensor} representing the {@link PackedCollection}.
+	 * @throws OrtException If there is an error creating the tensor.
+	 */
+	default OnnxTensor toOnnx(OrtEnvironment env, PackedCollection<?> collection) throws OrtException {
+		return OnnxTensor.createTensor(env,
+				FloatBuffer.wrap(Objects.requireNonNull(collection).toFloatArray()),
+				collection.getShape().extentLong());
 	}
 }

@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
+	public static boolean enableOnnxDit = true;
+
 	private static final float AUDIO_LEN_SEC = 10.0f;
 	private static final int NUM_STEPS = 8;
 	private static final float LOGSNR_MAX = -6.0f;
@@ -49,7 +51,7 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 	private final OrtEnvironment env;
 	private final OrtSession conditionersSession;
 	private final OrtSession autoencoderSession;
-	private final DiffusionTransformer ditModel;
+	private final DitModel ditModel;
 
 	private final SpTokenizer tokenizer;
 	private final SpVocabulary vocabulary;
@@ -59,24 +61,29 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 		vocabulary = SpVocabulary.from(tokenizer);
 
 		env = OrtEnvironment.getEnvironment();
-		OrtSession.SessionOptions options = new OrtSession.SessionOptions();
 
+		OrtSession.SessionOptions options = new OrtSession.SessionOptions();
 		options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
 		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
 
 		conditionersSession = env.createSession(modelsPath + "/conditioners.onnx", options);
 		autoencoderSession = env.createSession(modelsPath + "/autoencoder.onnx", options);
-		ditModel = new DiffusionTransformer(
-				64,
-				1024,
-				16,
-				8,
-				1,
-				768,
-				768,
-				"rf_denoiser",
-				weightsDir
-		);
+
+		if (enableOnnxDit) {
+			ditModel = new OnnxDitModel(env, options, modelsPath);
+		} else {
+			ditModel = new DiffusionTransformer(
+					64,
+					1024,
+					16,
+					8,
+					1,
+					768,
+					768,
+					"rf_denoiser",
+					weightsDir
+			);
+		}
 	}
 
 	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {

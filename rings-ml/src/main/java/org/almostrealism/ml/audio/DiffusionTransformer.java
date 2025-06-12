@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DiffusionTransformer implements DiffusionTransformerFeatures {
+public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatures {
 	private static final int SAMPLE_SIZE = 524288;
 	private static final int DOWNSAMPLING_RATIO = 2048;
 
@@ -319,6 +319,7 @@ public class DiffusionTransformer implements DiffusionTransformerFeatures {
 		main.add(dense(transformerProjectOutWeight));
 	}
 
+	@Override
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
 									   PackedCollection<?> crossAttnCond,
 									   PackedCollection<?> globalCond) {
