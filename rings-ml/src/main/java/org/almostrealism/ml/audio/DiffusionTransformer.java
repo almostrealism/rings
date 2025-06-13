@@ -26,7 +26,9 @@ import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatures {
@@ -52,9 +54,9 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private final Model model;
 
 	private CompiledModel compiled;
-	
-	// Add field to capture pre-transformer state for debugging
-	private PackedCollection<?> preTransformerState;
+
+	private PackedCollection<?> preTransformerState, postTransformerState;
+	private List<PackedCollection<?>> transformerStates;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
@@ -106,6 +108,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	}
 
 	protected Model buildModel() {
+		this.transformerStates = new ArrayList<>();
+
 		// Create model with input shape - [batch, channels, sequence_length]
 		Model model = new Model(shape(batchSize, ioChannels, audioSeqLen));
 
@@ -164,9 +168,18 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					.reshape(batchSize, audioSeqLen, ioChannels);
 		}
 
+		int seqLen = globalCondDim > 0 ? audioSeqLen + 1 : audioSeqLen;
+
 		// Add the transformer blocks
-		addTransformerBlocks(main, timestampEmbed, condEmbed, globalEmbed,
-				embedDim, globalCondDim > 0 ? audioSeqLen + 1 : audioSeqLen);
+		addTransformerBlocks(main, timestampEmbed,
+				condEmbed, globalEmbed, embedDim, seqLen);
+
+		// Remove any prepended conditioning tokens before output
+		if (seqLen > audioSeqLen) {
+			int prependedLength = seqLen - audioSeqLen;
+			main.reshape(batchSize, seqLen, ioChannels)
+					.subset(shape(batchSize, audioSeqLen, ioChannels), 0, prependedLength, 0);
+		}
 
 		// Reshape back to channels-first format
 		if (patchSize > 1) {
@@ -239,11 +252,10 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			main.add(prependConditioning(timestepEmbed, globalEmbed));
 		}
 
-		// Capture state before transformer blocks for debugging comparison with Python
+		// Capture state before transformer blocks for debugging
 		TraversalPolicy captureShape = main.getOutputShape();
-		PackedCollection<?> preTransformerCapture = new PackedCollection<>(captureShape);
-		main.branch().andThen(into(preTransformerCapture));
-		this.preTransformerState = preTransformerCapture;
+		preTransformerState = new PackedCollection<>(captureShape);
+		main.branch().andThen(into(preTransformerState));
 
 		for (int i = 0; i < depth; i++) {
 			// Create and track all weights for this transformer block
@@ -297,26 +309,31 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					// Self-attention weights
 					preNormWeight, preNormBias,
 					qkv, wo,
-					selfAttQNormWeight, selfAttQNormBias, selfAttKNormWeight, selfAttKNormBias,
+					selfAttQNormWeight, selfAttQNormBias,
+					selfAttKNormWeight, selfAttKNormBias,
 					invFreq,
 					// Cross-attention weights
 					crossAttPreNormWeight, crossAttPreNormBias,
 					crossWq, crossKv, crossWo,
-					crossAttQNormWeight, crossAttQNormBias, crossAttKNormWeight, crossAttKNormBias,
+					crossAttQNormWeight, crossAttQNormBias,
+					crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
 					w1, w2, w3, ffW1Bias, ffW2Bias, ffW3Bias
 			));
-		}
 
-		// Remove any prepended conditioning tokens before output
-		if (seqLen > audioSeqLen) {
-			int prependedLength = seqLen - audioSeqLen;
-			main.reshape(batchSize, seqLen, embedDim)
-					.subset(shape(batchSize, audioSeqLen, embedDim), 0, prependedLength, 0);
+			// Capture state after each transformer block for debugging
+			PackedCollection<?> transformerState = new PackedCollection<>(main.getOutputShape());
+			main.branch().andThen(into(transformerState));
+			transformerStates.add(transformerState);
 		}
 
 		main.add(dense(transformerProjectOutWeight));
+
+		// Capture state after transformer blocks for debugging
+		TraversalPolicy postTransformerShape = main.getOutputShape();
+		postTransformerState = new PackedCollection<>(postTransformerShape);
+		main.branch().andThen(into(postTransformerState));
 	}
 
 	@Override
@@ -341,16 +358,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		}
 	}
 
-	/**
-	* Returns the captured state before transformer blocks are applied.
-	* This is populated after forward() is called and can be used for
-	* debugging and comparison with Python implementation.
-	*
-	* @return PackedCollection containing the pre-transformer state
-	*/
-	public PackedCollection<?> getPreTransformerState() {
-		return preTransformerState;
-	}
+	public PackedCollection<?> getPreTransformerState() { return preTransformerState; }
+	public PackedCollection<?> getPostTransformerState() { return postTransformerState; }
 
 	protected PackedCollection<?> createWeight(String key, int... dims) {
 		return createWeight(key, shape(dims));
