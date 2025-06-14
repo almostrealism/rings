@@ -121,8 +121,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		// Add cross-attention condition input if needed
 		SequentialBlock condEmbed = null;
 		if (condTokenDim > 0) {
-			PackedCollection<?> condProjWeight1 = createWeight("condEmbedding.0.weight", embedDim, condTokenDim);
-			PackedCollection<?> condProjWeight2 = createWeight("condEmbedding.2.weight", embedDim, embedDim);
+			PackedCollection<?> condProjWeight1 = createWeight("model.model.to_cond_embed.0.weight", embedDim, condTokenDim);
+			PackedCollection<?> condProjWeight2 = createWeight("model.model.to_cond_embed.2.weight", embedDim, embedDim);
 
 			condEmbed = new SequentialBlock(shape(condSeqLen, condTokenDim));
 			condEmbed.add(dense(condProjWeight1));
@@ -136,9 +136,9 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		SequentialBlock globalEmbed = null;
 		if (globalCondDim > 0) {
 			PackedCollection<?> globalProjInWeight =
-					createWeight("globalEmbeddingIn.weight", embedDim, globalCondDim);
+					createWeight("model.model.to_global_embed.0.weight", embedDim, globalCondDim);
 			PackedCollection<?> globalProjOutWeight =
-					createWeight("globalEmbeddingOut.weight", embedDim, embedDim);
+					createWeight("model.model.to_global_embed.2.weight", embedDim, embedDim);
 			
 			globalEmbed = new SequentialBlock(shape(globalCondDim));
 			globalEmbed.add(dense(globalProjInWeight));
@@ -153,7 +153,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 		// Input projection
 		PackedCollection<?> inputProjWeight =
-				createWeight("inputProjection.weight", ioChannels, ioChannels);
+				createWeight("model.model.preprocess_conv.weight", ioChannels, ioChannels);
 		main.add(residual(convolution1d(batchSize, ioChannels, ioChannels, audioSeqLen,
 				1, 0, inputProjWeight, null)));
 
@@ -196,7 +196,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 		// Output projection
 		PackedCollection<?> outputProjWeight =
-				createWeight("outputProjection.weight", ioChannels, ioChannels);
+				createWeight("model.model.postprocess_conv.weight", ioChannels, ioChannels);
 		main.add(residual(convolution1d(
 				batchSize, ioChannels, ioChannels, audioSeqLen,
 				1, 0, outputProjWeight, null)));
@@ -205,11 +205,11 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	}
 
 	protected Block timestampEmbedding() {
-		PackedCollection<?> timestepFeaturesWeight = createWeight("timestepFeatures.weight", 128, 1);
-		PackedCollection<?> timestampEmbeddingInWeight = createWeight("timestepEmbedding.0.weight", embedDim, 256);
-		PackedCollection<?> timestampEmbeddingInBias = createWeight("timestepEmbedding.0.bias", embedDim);
-		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("timestepEmbedding.2.weight", embedDim, embedDim);
-		PackedCollection<?> timestampEmbeddingOutBias = createWeight("timestepEmbedding.2.bias", embedDim);
+		PackedCollection<?> timestepFeaturesWeight = createWeight("model.model.timestep_features.weight", 128, 1);
+		PackedCollection<?> timestampEmbeddingInWeight = createWeight("model.model.to_timestep_embed.0.weight", embedDim, 256);
+		PackedCollection<?> timestampEmbeddingInBias = createWeight("model.model.to_timestep_embed.0.bias", embedDim);
+		PackedCollection<?> timestampEmbeddingOutWeight = createWeight("model.model.to_timestep_embed.2.weight", embedDim, embedDim);
+		PackedCollection<?> timestampEmbeddingOutBias = createWeight("model.model.to_timestep_embed.2.bias", embedDim);
 
 		return timestepEmbedding(batchSize, embedDim,
 				timestepFeaturesWeight,
@@ -239,11 +239,11 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		int dimHead = dim / numHeads;
 
 		PackedCollection<?> transformerProjectInWeight =
-				createWeight("transformerProjectIn.weight", dim, ioChannels * patchSize);
+				createWeight("model.model.transformer.project_in.weight", dim, ioChannels * patchSize);
 		PackedCollection<?> transformerProjectOutWeight =
-				createWeight("transformerProjectOut.weight", ioChannels * patchSize, dim);
+				createWeight("model.model.transformer.project_out.weight", ioChannels * patchSize, dim);
 		PackedCollection<?> invFreq =
-				createWeight("selfAttention.invFreq", dimHead / 4);
+				createWeight("model.model.transformer.rotary_pos_emb.inv_freq", dimHead / 4);
 
 		main.add(dense(transformerProjectInWeight));
 
@@ -261,15 +261,14 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 		for (int i = 0; i < depth; i++) {
 			// Create and track all weights for this transformer block
-			String blockPrefix = "transformerBlocks[" + i + "]";
-			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim);
-			PackedCollection<?> preNormBias = createWeight(blockPrefix + ".preNorm.bias", dim);
-			PackedCollection<?> qkv = createWeight(blockPrefix + ".selfAttention.qkv", dim * 3, dim);
-			PackedCollection<?> wo = createWeight(blockPrefix + ".selfAttention.wo", dim, dim);
-			PackedCollection<?> selfAttQNormWeight = createWeight(blockPrefix + ".selfAttention.qNormWeight", dimHead);
-			PackedCollection<?> selfAttQNormBias = createWeight(blockPrefix + ".selfAttention.qNormBias", dimHead);
-			PackedCollection<?> selfAttKNormWeight = createWeight(blockPrefix + ".selfAttention.kNormWeight", dimHead);
-			PackedCollection<?> selfAttKNormBias = createWeight(blockPrefix + ".selfAttention.kNormBias", dimHead);
+			PackedCollection<?> preNormWeight = createWeight("model.model.transformer.layers." + i + ".pre_norm.gamma", dim);
+			PackedCollection<?> preNormBias = createWeight("model.model.transformer.layers." + i + ".pre_norm.beta", dim);
+			PackedCollection<?> qkv = createWeight("model.model.transformer.layers." + i + ".self_attn.to_qkv.weight", dim * 3, dim);
+			PackedCollection<?> wo = createWeight("model.model.transformer.layers." + i + ".self_attn.to_out.weight", dim, dim);
+			PackedCollection<?> selfAttQNormWeight = createWeight("model.model.transformer.layers." + i + ".self_attn.q_norm.weight", dimHead);
+			PackedCollection<?> selfAttQNormBias = createWeight("model.model.transformer.layers." + i + ".self_attn.q_norm.bias", dimHead);
+			PackedCollection<?> selfAttKNormWeight = createWeight("model.model.transformer.layers." + i + ".self_attn.k_norm.weight", dimHead);
+			PackedCollection<?> selfAttKNormBias = createWeight("model.model.transformer.layers." + i + ".self_attn.k_norm.bias", dimHead);
 
 			// Cross-attention weights (if needed)
 			PackedCollection<?> crossAttPreNormWeight = null;
@@ -283,26 +282,27 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			PackedCollection<?> crossAttKNormBias = null;
 
 			if (hasCrossAttention) {
-				crossAttPreNormWeight = createWeight(blockPrefix + ".crossAttention.preNormWeight", dim);
-				crossAttPreNormBias = createWeight(blockPrefix + ".crossAttention.preNormBias", dim);
-				crossWq = createWeight(blockPrefix + ".crossAttention.wq", dim, dim);
-				crossKv = createWeight(blockPrefix + ".crossAttention.kv", 2 * dim, dim);
-				crossWo = createWeight(blockPrefix + ".crossAttention.wo", dim, dim);
-				crossAttQNormWeight = createWeight(blockPrefix + ".crossAttention.qNormWeight", dimHead);
-				crossAttQNormBias = createWeight(blockPrefix + ".crossAttention.qNormBias", dimHead);
-				crossAttKNormWeight = createWeight(blockPrefix + ".crossAttention.kNormWeight", dimHead);
-				crossAttKNormBias = createWeight(blockPrefix + ".crossAttention.kNormBias", dimHead);
+				crossAttPreNormWeight = createWeight("model.model.transformer.layers." + i + ".cross_attend_norm.gamma", dim);
+				crossAttPreNormBias = createWeight("model.model.transformer.layers." + i + ".cross_attend_norm.beta", dim);
+				crossWq = createWeight("model.model.transformer.layers." + i + ".cross_attn.to_q.weight", dim, dim);
+				crossKv = createWeight("model.model.transformer.layers." + i + ".cross_attn.to_kv.weight", 2 * dim, dim);
+				crossWo = createWeight("model.model.transformer.layers." + i + ".cross_attn.to_out.weight", dim, dim);
+				crossAttQNormWeight = createWeight("model.model.transformer.layers." + i + ".cross_attn.q_norm.weight", dimHead);
+				crossAttQNormBias = createWeight("model.model.transformer.layers." + i + ".cross_attn.q_norm.bias", dimHead);
+				crossAttKNormWeight = createWeight("model.model.transformer.layers." + i + ".cross_attn.k_norm.weight", dimHead);
+				crossAttKNormBias = createWeight("model.model.transformer.layers." + i + ".cross_attn.k_norm.bias", dimHead);
 			}
 
 			int hiddenDim = dim * 4;
-			PackedCollection<?> ffnPreNormWeight = createWeight(blockPrefix + ".feedForward.preNormWeight", dim);
-			PackedCollection<?> ffnPreNormBias = createWeight(blockPrefix + ".feedForward.preNormBias", dim);
-			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
-			PackedCollection<?> ffW1Bias = createWeight(blockPrefix + ".feedForward.w1Bias", hiddenDim);
-			PackedCollection<?> w2 = createWeight(blockPrefix + ".feedForward.w2", dim, hiddenDim);
-			PackedCollection<?> ffW2Bias = createWeight(blockPrefix + ".feedForward.w2Bias", dim);
-			PackedCollection<?> w3 = createWeight(blockPrefix + ".feedForward.w3", hiddenDim, dim);
-			PackedCollection<?> ffW3Bias = createWeight(blockPrefix + ".feedForward.w3Bias", hiddenDim);
+			PackedCollection<?> ffnPreNormWeight = createWeight("model.model.transformer.layers." + i + ".ff_norm.gamma", dim);
+			PackedCollection<?> ffnPreNormBias = createWeight("model.model.transformer.layers." + i + ".ff_norm.beta", dim);
+			PackedCollection<?> w1 = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w1.weight", hiddenDim, dim);
+			PackedCollection<?> w3 = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w3.weight", hiddenDim, dim);
+			PackedCollection<?> ffW1Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w1.bias", hiddenDim);
+			PackedCollection<?> ffW3Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w3.bias", hiddenDim);
+			
+			PackedCollection<?> w2 = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.weight", dim, hiddenDim);
+			PackedCollection<?> ffW2Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.bias", dim);
 
 			// Add transformer block with updated sequence length
 			main.add(transformerBlock(
@@ -363,6 +363,51 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 	protected PackedCollection<?> createWeight(String key, int... dims) {
 		return createWeight(key, shape(dims));
+	}
+
+	protected PackedCollection<?>[] createSplitWeight(String key, int... dims) {
+		return createSplitWeight(key, shape(dims));
+	}
+
+	protected PackedCollection<?>[] createSplitWeight(String key, TraversalPolicy expectedShape) {
+		if (stateDictionary == null) {
+			// Create two empty weights of half the expected size
+			PackedCollection<?> w1 = new PackedCollection<>(expectedShape);
+			PackedCollection<?> w3 = new PackedCollection<>(expectedShape);
+			return new PackedCollection<?>[] { w1, w3 };
+		} else if (!stateDictionary.containsKey(key)) {
+			throw new IllegalArgumentException(key + " not found in StateDictionary");
+		}
+
+		PackedCollection<?> combinedWeight = stateDictionary.get(key);
+		
+		// For ff.ff.0.proj weights, the combined tensor has shape [2*hidden_dim, dim] or [2*hidden_dim]
+		// We need to split it into two equal parts along the first dimension
+		TraversalPolicy combinedShape = combinedWeight.getShape();
+		int splitDim = combinedShape.length(0) / 2;
+		
+		// Create shapes for the two parts
+		int[] w1Dims = new int[combinedShape.getDimensions()];
+		int[] w3Dims = new int[combinedShape.getDimensions()];
+		for (int i = 0; i < combinedShape.getDimensions(); i++) {
+			if (i == 0) {
+				w1Dims[i] = splitDim;
+				w3Dims[i] = splitDim;
+			} else {
+				w1Dims[i] = combinedShape.length(i);
+				w3Dims[i] = combinedShape.length(i);
+			}
+		}
+		
+		TraversalPolicy w1Shape = shape(w1Dims);
+		TraversalPolicy w3Shape = shape(w3Dims);
+		
+		// Extract the two parts
+		PackedCollection<?> w1 = combinedWeight.range(w1Shape, 0);
+		PackedCollection<?> w3 = combinedWeight.range(w3Shape, w1Shape.getTotalSize());
+		
+		unusedWeights.remove(key);
+		return new PackedCollection<?>[] { w1, w3 };
 	}
 
 	protected PackedCollection<?> createWeight(String key, TraversalPolicy expectedShape) {
