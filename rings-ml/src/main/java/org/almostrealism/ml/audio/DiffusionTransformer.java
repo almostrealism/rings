@@ -335,7 +335,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 			profile = new OperationProfile();
 			Hardware.getLocalHardware().assignProfile(profile);
-			compiled = model.compile(profile);
+			compiled = model.compile(false, profile);
 		}
 
 		// Run the model with appropriate inputs
