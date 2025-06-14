@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
-	public static boolean enableOnnxDit = true;
+	public static boolean enableOnnxDit = false;
 
 	private static final float AUDIO_LEN_SEC = 10.0f;
 	private static final int NUM_STEPS = 8;

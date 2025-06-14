@@ -56,6 +56,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private CompiledModel compiled;
 
 	private PackedCollection<?> preTransformerState, postTransformerState;
+	private PackedCollection<?> condEmbedState;
 	private List<PackedCollection<?>> transformerStates;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
@@ -253,14 +254,15 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		}
 
 		// Capture state before transformer blocks for debugging
-		TraversalPolicy captureShape = main.getOutputShape();
-		preTransformerState = new PackedCollection<>(captureShape);
+		condEmbedState = new PackedCollection<>(condEmbed.getOutputShape());
+		condEmbed.branch().andThen(into(condEmbedState));
+		preTransformerState = new PackedCollection<>(main.getOutputShape());
 		main.branch().andThen(into(preTransformerState));
 
 		for (int i = 0; i < depth; i++) {
 			// Create and track all weights for this transformer block
 			String blockPrefix = "transformerBlocks[" + i + "]";
-			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim).fill(1.0);
+			PackedCollection<?> preNormWeight = createWeight(blockPrefix + ".preNorm.weight", dim);
 			PackedCollection<?> preNormBias = createWeight(blockPrefix + ".preNorm.bias", dim);
 			PackedCollection<?> qkv = createWeight(blockPrefix + ".selfAttention.qkv", dim * 3, dim);
 			PackedCollection<?> wo = createWeight(blockPrefix + ".selfAttention.wo", dim, dim);
@@ -281,7 +283,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			PackedCollection<?> crossAttKNormBias = null;
 
 			if (hasCrossAttention) {
-				crossAttPreNormWeight = createWeight(blockPrefix + ".crossAttention.preNormWeight", dim).fill(1.0);
+				crossAttPreNormWeight = createWeight(blockPrefix + ".crossAttention.preNormWeight", dim);
 				crossAttPreNormBias = createWeight(blockPrefix + ".crossAttention.preNormBias", dim);
 				crossWq = createWeight(blockPrefix + ".crossAttention.wq", dim, dim);
 				crossKv = createWeight(blockPrefix + ".crossAttention.kv", 2 * dim, dim);
@@ -293,7 +295,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			}
 
 			int hiddenDim = dim * 4;
-			PackedCollection<?> ffnPreNormWeight = createWeight(blockPrefix + ".feedForward.preNormWeight", dim).fill(1.0);
+			PackedCollection<?> ffnPreNormWeight = createWeight(blockPrefix + ".feedForward.preNormWeight", dim);
 			PackedCollection<?> ffnPreNormBias = createWeight(blockPrefix + ".feedForward.preNormBias", dim);
 			PackedCollection<?> w1 = createWeight(blockPrefix + ".feedForward.w1", hiddenDim, dim);
 			PackedCollection<?> ffW1Bias = createWeight(blockPrefix + ".feedForward.w1Bias", hiddenDim);
@@ -319,20 +321,18 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
-					w1, w2, w3, ffW1Bias, ffW2Bias, ffW3Bias
-			));
-
-			// Capture state after each transformer block for debugging
-			PackedCollection<?> transformerState = new PackedCollection<>(main.getOutputShape());
-			main.branch().andThen(into(transformerState));
-			transformerStates.add(transformerState);
+					w1, w2, w3, ffW1Bias, ffW2Bias, ffW3Bias,
+					shape -> {
+						PackedCollection<?> transformerState = new PackedCollection<>(shape);
+						transformerStates.add(transformerState);
+						return into(transformerState);
+					}));
 		}
 
 		main.add(dense(transformerProjectOutWeight));
 
 		// Capture state after transformer blocks for debugging
-		TraversalPolicy postTransformerShape = main.getOutputShape();
-		postTransformerState = new PackedCollection<>(postTransformerShape);
+		postTransformerState = new PackedCollection<>(main.getOutputShape());
 		main.branch().andThen(into(postTransformerState));
 	}
 
