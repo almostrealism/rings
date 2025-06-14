@@ -22,6 +22,8 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import io.almostrealism.profile.OperationProfile;
+import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.OnnxFeatures;
@@ -93,12 +95,12 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 		}
 	}
 
-	public double[][] generateAudio(String prompt, long seed) throws OrtException {
+	public double[][] generateAudio(String prompt, long seed) throws OrtException, IOException {
 		long[] tokenIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
 		return generateAudio(tokenIds, seed);
 	}
 
-	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
+	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException, IOException {
 		// 1. Process tokens through conditioners
 		long start = System.currentTimeMillis();
 		Map<String, OnnxTensor> conditionerOutputs = runConditioners(tokenIds);
@@ -123,6 +125,12 @@ public class AudioGeneratorJava implements AutoCloseable, OnnxFeatures {
 			tensor.close();
 		}
 		finalLatent.close();
+
+		OperationProfile profile = ditModel.getProfile();
+
+		if (profile instanceof OperationProfileNode) {
+			((OperationProfileNode) profile).save("results/dit.xml");
+		}
 
 		return audio;
 	}

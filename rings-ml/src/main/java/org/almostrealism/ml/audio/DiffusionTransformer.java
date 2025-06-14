@@ -17,8 +17,10 @@
 package org.almostrealism.ml.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 import org.almostrealism.ml.StateDictionary;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
@@ -53,6 +55,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private final Set<String> unusedWeights;
 	private final Model model;
 
+	private OperationProfile profile;
 	private CompiledModel compiled;
 
 	private PackedCollection<?> preTransformerState, postTransformerState;
@@ -330,7 +333,9 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		if (compiled == null) {
 			validateWeights();
 
-			compiled = model.compile(false);
+			profile = new OperationProfile();
+			Hardware.getLocalHardware().assignProfile(profile);
+			compiled = model.compile(profile);
 		}
 
 		// Run the model with appropriate inputs
@@ -344,6 +349,9 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			return compiled.forward(x, t);
 		}
 	}
+
+	@Override
+	public OperationProfile getProfile() { return profile; }
 
 	public PackedCollection<?> getPreTransformerState() { return preTransformerState; }
 	public PackedCollection<?> getPostTransformerState() { return postTransformerState; }
