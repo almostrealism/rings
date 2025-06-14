@@ -296,11 +296,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			int hiddenDim = dim * 4;
 			PackedCollection<?> ffnPreNormWeight = createWeight("model.model.transformer.layers." + i + ".ff_norm.gamma", dim);
 			PackedCollection<?> ffnPreNormBias = createWeight("model.model.transformer.layers." + i + ".ff_norm.beta", dim);
-			PackedCollection<?> w1 = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w1.weight", hiddenDim, dim);
-			PackedCollection<?> w3 = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w3.weight", hiddenDim, dim);
-			PackedCollection<?> ffW1Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w1.bias", hiddenDim);
-			PackedCollection<?> ffW3Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.w3.bias", hiddenDim);
-			
+			PackedCollection<?> w1 = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.weight", 2 * hiddenDim, dim);
+			PackedCollection<?> ffW1Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.0.proj.bias", 2 * hiddenDim);
 			PackedCollection<?> w2 = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.weight", dim, hiddenDim);
 			PackedCollection<?> ffW2Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.bias", dim);
 
@@ -321,7 +318,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
-					w1, w2, w3, ffW1Bias, ffW2Bias, ffW3Bias,
+					w1, w2, ffW1Bias, ffW2Bias,
 					shape -> {
 						PackedCollection<?> transformerState = new PackedCollection<>(shape);
 						transformerStates.add(transformerState);
