@@ -601,42 +601,6 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
 
         double diff = compare(expectedPostTransformerOutput, actualPostTransformerOutput);
         log("DiT post-transformer state difference between expected and actual = " + diff);
-
-        // Test results interpretation
-        if (diff < 1e-5) {
-            log("DiT post-transformer state matches Python reference within tolerance - transformer blocks are working correctly!");
-            log("If the final output still differs, the issue is in the post-processing steps.");
-        } else {
-            log("DiT post-transformer state does NOT match Python reference");
-            log("This indicates issues in the transformer block processing itself.");
-            log("Expected vs Actual first 10 values:");
-            for (int i = 0; i < Math.min(10, expectedPostTransformerOutput.getShape().getTotalSize()); i++) {
-                log("  [" + i + "] Expected: " + expectedPostTransformerOutput.toDouble(i) +
-                        ", Actual: " + actualPostTransformerOutput.toDouble(i) +
-                        ", Diff: " + Math.abs(expectedPostTransformerOutput.toDouble(i) - actualPostTransformerOutput.toDouble(i)));
-            }
-
-            // Compare with pre-transformer state to isolate the issue
-            PackedCollection<?> actualPreTransformerState = transformer.getPreTransformerState();
-            if (actualPreTransformerState != null) {
-                PackedCollection<?> expectedPreTransformerState = referenceData.get("captured_state");
-                if (expectedPreTransformerState != null) {
-                    double preTransformerDiff = compare(expectedPreTransformerState, actualPreTransformerState);
-                    log("Pre-transformer state difference: " + preTransformerDiff);
-                    if (preTransformerDiff < 1e-5) {
-                        log("Pre-transformer state matches, so the issue is specifically in the transformer block processing.");
-                    } else {
-                        log("Pre-transformer state also differs, so the issue is in the preprocessing pipeline.");
-                    }
-                }
-            }
-
-            // Use a looser tolerance for initial debugging to allow development to continue
-            assertTrue("DiT post-transformer state differs significantly from Python reference. " +
-                            "This indicates issues in the transformer block processing that need to be resolved.",
-                    diff < 1.0);  // Very loose tolerance for initial debugging
-        }
-
-        log("DiT post-transformer state comparison completed");
+        assertTrue(diff < 0.25);
     }
 }

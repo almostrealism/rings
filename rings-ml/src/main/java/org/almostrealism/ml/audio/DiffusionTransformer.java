@@ -56,8 +56,6 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private CompiledModel compiled;
 
 	private PackedCollection<?> preTransformerState, postTransformerState;
-	private PackedCollection<?> condEmbedState;
-	private List<PackedCollection<?>> transformerStates;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
@@ -109,8 +107,6 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	}
 
 	protected Model buildModel() {
-		this.transformerStates = new ArrayList<>();
-
 		// Create model with input shape - [batch, channels, sequence_length]
 		Model model = new Model(shape(batchSize, ioChannels, audioSeqLen));
 
@@ -253,9 +249,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			main.add(prependConditioning(timestepEmbed, globalEmbed));
 		}
 
-		// Capture state before transformer blocks for debugging
-		condEmbedState = new PackedCollection<>(condEmbed.getOutputShape());
-		condEmbed.branch().andThen(into(condEmbedState));
+		// Capture state before transformer blocks for test validation
 		preTransformerState = new PackedCollection<>(main.getOutputShape());
 		main.branch().andThen(into(preTransformerState));
 
@@ -318,17 +312,13 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
-					w1, w2, ffW1Bias, ffW2Bias,
-					shape -> {
-						PackedCollection<?> transformerState = new PackedCollection<>(shape);
-						transformerStates.add(transformerState);
-						return into(transformerState);
-					}));
+					w1, w2, ffW1Bias, ffW2Bias
+			));
 		}
 
 		main.add(dense(transformerProjectOutWeight));
 
-		// Capture state after transformer blocks for debugging
+		// Capture state after transformer blocks for test validation
 		postTransformerState = new PackedCollection<>(main.getOutputShape());
 		main.branch().andThen(into(postTransformerState));
 	}
