@@ -22,7 +22,7 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.compute.ParallelProcess;
 import io.almostrealism.compute.Process;
 import io.almostrealism.scope.HybridScope;
-import io.almostrealism.code.OperationMetadata;
+import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
