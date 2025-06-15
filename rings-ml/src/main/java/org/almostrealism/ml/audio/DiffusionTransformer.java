@@ -18,6 +18,7 @@ package org.almostrealism.ml.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.profile.OperationProfile;
+import io.almostrealism.profile.OperationProfileNode;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Hardware;
@@ -333,7 +334,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		if (compiled == null) {
 			validateWeights();
 
-			profile = new OperationProfile();
+			profile = new OperationProfileNode("dit");
 			Hardware.getLocalHardware().assignProfile(profile);
 			compiled = model.compile(false, profile);
 		}
