@@ -36,7 +36,7 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 	private HttpServer server;
 
 	public AudioServer(int port) throws IOException {
-		handlers = new FrequencyCache<>(100, 0.6f);
+		handlers = new FrequencyCache<>(100, 0.6);
 		handlers.setEvictionListener((key, value) -> {
 			value.destroy();
 		});
