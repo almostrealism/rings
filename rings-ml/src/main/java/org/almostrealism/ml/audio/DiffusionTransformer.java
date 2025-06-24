@@ -334,9 +334,11 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		if (compiled == null) {
 			validateWeights();
 
+			long start = System.currentTimeMillis();
 			profile = new OperationProfileNode("dit");
 			Hardware.getLocalHardware().assignProfile(profile);
 			compiled = model.compile(false, profile);
+			log("Compiled DiffusionTransformer in " + (System.currentTimeMillis() - start) + "ms");
 		}
 
 		// Run the model with appropriate inputs

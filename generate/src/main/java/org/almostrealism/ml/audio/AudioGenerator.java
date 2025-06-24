@@ -92,6 +92,8 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		}
 	}
 
+	public DitModel getDitModel() { return ditModel; }
+
 	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {
 		double[][] audio = generateAudio(prompt, seed);
 		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, 44100)) {
@@ -129,12 +131,6 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 			tensor.close();
 		}
 		finalLatent.close();
-
-		OperationProfile profile = ditModel.getProfile();
-
-		if (profile instanceof OperationProfileNode) {
-			((OperationProfileNode) profile).save("results/dit.xml");
-		}
 
 		return audio;
 	}
@@ -310,10 +306,21 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		String modelsPath = args[0];
 		String prompt = args[1];
 		String outputPath = args[2];
-		long seed = 99;
+
+		Random rand = new Random();
 
 		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
-			generator.generateAudio(prompt, seed, outputPath);
+			for (int i = 0; i < 10; i++) {
+				long seed = rand.nextLong();
+				System.out.println("AudioGenerator: Generating audio with seed " + seed);
+				generator.generateAudio(prompt, seed, outputPath + "/output_" + seed + ".wav");
+			}
+
+			OperationProfile profile = generator.getDitModel().getProfile();
+
+			if (profile instanceof OperationProfileNode) {
+				((OperationProfileNode) profile).save("results/dit.xml");
+			}
 		}
 	}
 }
