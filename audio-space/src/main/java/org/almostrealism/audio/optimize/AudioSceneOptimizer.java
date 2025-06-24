@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import io.almostrealism.code.DataContext;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -252,6 +253,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 			if (!results.exists()) results.mkdir();
 
 			profile.save("results/optimizer.xml");
+
+			Hardware.getLocalHardware().getAllDataContexts().forEach(DataContext::destroy);
 		}
 	}
 
