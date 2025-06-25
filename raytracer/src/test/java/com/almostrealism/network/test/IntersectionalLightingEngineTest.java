@@ -83,7 +83,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void evaluateDotProduct() {
 		ExpressionComputation<Scalar> dp = dotProduct();
 		Evaluable<Scalar> ev = dp.get();
-		((OperationAdapter) ev).compile();
 
 		Scalar s = ev.evaluate();
 		System.out.println(s);
@@ -94,7 +93,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void evaluateVectorFromScalars() {
 		ExpressionComputation<Vector> dp = vectorFromScalars();
 		Evaluable<Vector> ev = dp.get();
-		((OperationAdapter) ev).compile();
 
 		Vector v = ev.evaluate();
 		System.out.println(v);
@@ -117,7 +115,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void evaluateScalarFromVector() {
 		ExpressionComputation<Scalar> dp = scalarFromVector();
 		Evaluable<Scalar> ev = dp.get();
-		((OperationAdapter) ev).compile();
 
 		Scalar s = ev.evaluate();
 		System.out.println(s);
@@ -128,7 +125,6 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	public void evaluateRayDirection() {
 		Producer<Vector> dp = rayDirection();
 		Evaluable<Vector> ev = dp.get();
-		((OperationAdapter) ev).compile();
 
 		Vector v = ev.evaluate();
 		System.out.println(v);

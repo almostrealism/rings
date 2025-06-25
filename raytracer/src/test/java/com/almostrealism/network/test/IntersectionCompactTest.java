@@ -27,7 +27,6 @@ public class IntersectionCompactTest extends AbstractIntersectionTest {
 	public void compact() {
 		Producer<Scalar> combined = combined();
 		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
-		ev.compile();
 
 		Scalar r = ev.evaluate(new Pair(50, 50));
 		System.out.println(r.getX());
