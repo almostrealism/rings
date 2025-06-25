@@ -17,6 +17,7 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.lighting.PointLight;
+import io.almostrealism.code.ComputableBase;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.primitives.Sphere;
 import com.almostrealism.rayshade.DiffuseShader;
@@ -63,19 +64,19 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 	}
 
 	protected ExpressionComputation<Vector> vectorFromScalars() {
-		return (ExpressionComputation<Vector>) ((OperationAdapter) dotProduct()).getInputs().get(1);
+		return (ExpressionComputation<Vector>) ((ComputableBase) dotProduct()).getInputs().get(1);
 	}
 
 	protected ExpressionComputation<Scalar> scalarProduct() {
-		return (ExpressionComputation<Scalar>) ((OperationAdapter) vectorFromScalars()).getInputs().get(1);
+		return (ExpressionComputation<Scalar>) ((ComputableBase) vectorFromScalars()).getInputs().get(1);
 	}
 
 	protected ExpressionComputation<Scalar> scalarFromVector() {
-		return (ExpressionComputation<Scalar>) ((OperationAdapter) scalarProduct()).getInputs().get(1);
+		return (ExpressionComputation<Scalar>) ((ComputableBase) scalarProduct()).getInputs().get(1);
 	}
 
 	protected Producer<Vector> rayDirection() {
-		return (Producer<Vector>) ((OperationAdapter) scalarFromVector()).getInputs().get(1);
+		return (Producer<Vector>) ((ComputableBase) scalarFromVector()).getInputs().get(1);
 	}
 
 	@Test
