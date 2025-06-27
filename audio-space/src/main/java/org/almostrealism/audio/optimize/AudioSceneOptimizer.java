@@ -56,6 +56,7 @@ import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
+import org.almostrealism.hardware.mem.MemoryDataReplacementMap;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
@@ -239,9 +240,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					if (AudioSumProvider.timing.getTotal() > 120)
 						AudioSumProvider.timing.print();
 
-					if (MemoryDataArgumentMap.profile != null &&
-							MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
-						MemoryDataArgumentMap.profile.print();
+					if (MemoryDataReplacementMap.profile != null &&
+							MemoryDataReplacementMap.profile.getMetric().getTotal() > 10)
+						MemoryDataReplacementMap.profile.print();
 
 					AcceleratedOperation.printTimes();
 				} catch (IOException e) {
