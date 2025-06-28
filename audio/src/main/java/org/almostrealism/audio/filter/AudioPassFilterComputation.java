@@ -69,22 +69,22 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 		return new AudioPassFilterComputation(high, children.toArray(Supplier[]::new));
 	}
 
-	public ArrayVariable<Double> getOutput() { return getArgument(0, 1); }
-	public ArrayVariable<Double> getFrequency() { return getArgument(1, 1); }
-	public ArrayVariable<Double> getResonance() { return getArgument(2, 2); }
-	public ArrayVariable<Double> getSampleRate() { return getArgument(3, 2); }
-	public ArrayVariable<Double> getC() { return getArgument(4, 2); }
-	public ArrayVariable<Double> getA1() { return getArgument(5, 2); }
-	public ArrayVariable<Double> getA2() { return getArgument(6, 2); }
-	public ArrayVariable<Double> getA3() { return getArgument(7, 2); }
-	public ArrayVariable<Double> getB1() { return getArgument(8, 2); }
-	public ArrayVariable<Double> getB2() { return getArgument(9, 2); }
-	public ArrayVariable<Double> getInputHistory0() { return getArgument(10, 2); }
-	public ArrayVariable<Double> getInputHistory1() { return getArgument(11, 2); }
-	public ArrayVariable<Double> getOutputHistory0() { return getArgument(12, 2); }
-	public ArrayVariable<Double> getOutputHistory1() { return getArgument(13, 2); }
-	public ArrayVariable<Double> getOutputHistory2() { return getArgument(14, 2); }
-	public ArrayVariable<Double> getInput() { return getArgument(15, 1); }
+	public ArrayVariable<Double> getOutput() { return getArgument(0); }
+	public ArrayVariable<Double> getFrequency() { return getArgument(1); }
+	public ArrayVariable<Double> getResonance() { return getArgument(2); }
+	public ArrayVariable<Double> getSampleRate() { return getArgument(3); }
+	public ArrayVariable<Double> getC() { return getArgument(4); }
+	public ArrayVariable<Double> getA1() { return getArgument(5); }
+	public ArrayVariable<Double> getA2() { return getArgument(6); }
+	public ArrayVariable<Double> getA3() { return getArgument(7); }
+	public ArrayVariable<Double> getB1() { return getArgument(8); }
+	public ArrayVariable<Double> getB2() { return getArgument(9); }
+	public ArrayVariable<Double> getInputHistory0() { return getArgument(10); }
+	public ArrayVariable<Double> getInputHistory1() { return getArgument(11); }
+	public ArrayVariable<Double> getOutputHistory0() { return getArgument(12); }
+	public ArrayVariable<Double> getOutputHistory1() { return getArgument(13); }
+	public ArrayVariable<Double> getOutputHistory2() { return getArgument(14); }
+	public ArrayVariable<Double> getInput() { return getArgument(15); }
 
 	protected Expression<Double> output() { return getOutput().valueAt(0); }
 	protected Expression<Double> frequency() { return getFrequency().getValueRelative(0); }
