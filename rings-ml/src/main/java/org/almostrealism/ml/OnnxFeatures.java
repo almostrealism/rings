@@ -25,6 +25,7 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 import java.nio.FloatBuffer;
+import java.nio.LongBuffer;
 import java.util.Objects;
 
 public interface OnnxFeatures extends CodeFeatures {
@@ -57,5 +58,21 @@ public interface OnnxFeatures extends CodeFeatures {
 		return OnnxTensor.createTensor(env,
 				FloatBuffer.wrap(Objects.requireNonNull(collection).toFloatArray()),
 				collection.getShape().extentLong());
+	}
+
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, float... data) throws OrtException {
+		return packOnnx(env, shape, FloatBuffer.wrap(data));
+	}
+
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, FloatBuffer data) throws OrtException {
+		return OnnxTensor.createTensor(env, data,  shape.extentLong());
+	}
+
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, long... data) throws OrtException {
+		return packOnnx(env, shape, LongBuffer.wrap(data));
+	}
+
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, LongBuffer data) throws OrtException {
+		return OnnxTensor.createTensor(env, data, shape.extentLong());
 	}
 }

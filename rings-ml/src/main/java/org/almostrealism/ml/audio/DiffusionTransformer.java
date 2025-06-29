@@ -29,9 +29,7 @@ import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatures {
@@ -47,7 +45,6 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private final int patchSize;
 	private final int condTokenDim;
 	private final int globalCondDim;
-	private final int maxSeqLen;
 
 	private final int audioSeqLen;
 	private final int condSeqLen;
@@ -88,7 +85,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective, int maxSeqLen, int condSeqLen,
+								String diffusionObjective, int audioSeqLen, int condSeqLen,
 								StateDictionary stateDictionary) {
 		this.ioChannels = ioChannels;
 		this.embedDim = embedDim;
@@ -97,8 +94,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		this.patchSize = patchSize;
 		this.condTokenDim = condTokenDim;
 		this.globalCondDim = globalCondDim;
-		this.maxSeqLen = maxSeqLen;
-		this.audioSeqLen = maxSeqLen;
+		this.audioSeqLen = audioSeqLen;
 		this.condSeqLen = condSeqLen;
 		this.stateDictionary = stateDictionary;
 		this.unusedWeights = new HashSet<>();
