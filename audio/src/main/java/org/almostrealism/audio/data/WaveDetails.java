@@ -29,6 +29,7 @@ public class WaveDetails {
 	private int frameCount;
 	private PackedCollection<?> data;
 	private boolean silent;
+	private boolean persistent;
 
 	private double freqSampleRate;
 	private int freqChannelCount;
@@ -96,6 +97,11 @@ public class WaveDetails {
 
 	public boolean isSilent() { return silent; }
 	public void setSilent(boolean silent) { this.silent = silent; }
+
+	public boolean isPersistent() { return persistent; }
+	public void setPersistent(boolean persistent) {
+		this.persistent = persistent;
+	}
 
 	public double getFreqSampleRate() {
 		return freqSampleRate;

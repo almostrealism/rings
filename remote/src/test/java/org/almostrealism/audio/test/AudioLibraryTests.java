@@ -50,7 +50,7 @@ public class AudioLibraryTests implements TestFeatures {
 	@Test
 	public void loadDetails() {
 		AudioLibrary library = AudioLibrary.load(new File(LIBRARY), OutputLine.sampleRate);
-		WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav"));
+		WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav"), true);
 		System.out.println(details.getFreqSampleRate());
 	}
 

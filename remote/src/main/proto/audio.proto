@@ -31,6 +31,7 @@ message WaveDetailData {
   int32 frame_count = 4;
   CollectionData data = 5;
   bool silent = 17;
+  bool persistent = 19;
 
   double freq_sample_rate = 6;
   int32 freq_channel_count = 7;
