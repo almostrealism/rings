@@ -26,6 +26,7 @@ import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.ml.OnnxFeatures;
 
 import java.io.File;
@@ -34,6 +35,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.DoubleConsumer;
 
 public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	public static boolean enableOnnxDit = false;
@@ -57,10 +59,11 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	private final OrtEnvironment env;
 	private final OrtSession conditionersSession;
 	private final OrtSession autoencoderSession;
-
 	private final DitModel ditModel;
 
 	private double audioDurationSeconds;
+
+	private DoubleConsumer progressMonitor;
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
 		this(modelsPath, modelsPath + "/weights");
@@ -105,6 +108,11 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		this.audioDurationSeconds = seconds;
 	}
 
+	public DoubleConsumer getProgressMonitor() { return progressMonitor; }
+	public void setProgressMonitor(DoubleConsumer monitor) {
+		this.progressMonitor = monitor;
+	}
+
 	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {
 		double[][] audio = generateAudio(prompt, seed);
 		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, SAMPLE_RATE)) {
@@ -115,8 +123,14 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	}
 
 	public double[][] generateAudio(String prompt, long seed) throws OrtException {
-		long[] tokenIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
-		return generateAudio(tokenIds, seed);
+		try {
+			long[] tokenIds = tokenizer.tokenize(prompt).stream().mapToLong(vocabulary::getIndex).toArray();
+			return generateAudio(tokenIds, seed);
+		} finally {
+			if (progressMonitor != null) {
+				progressMonitor.accept(1.0);
+			}
+		}
 	}
 
 	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
@@ -210,8 +224,9 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 			float nextT = sigmas[step + 1];
 			tPC.setMem(0, currT);
 
-			log("Diffusion step " + step +
-					" (currT = " + currT + ", nextT = " + nextT + ")");
+			if (progressMonitor != null) {
+				progressMonitor.accept((double) step / NUM_STEPS);
+			}
 
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
@@ -309,9 +324,12 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	}
 
 	private void checkNan(PackedCollection<?> x, String context) {
-		long nanCount = x.count(Double::isNaN);
-		if (nanCount > 0) {
-			warn(nanCount + " NaN values detected at " + context);
+		if (HardwareFeatures.outputMonitoring) {
+			long nanCount = x.count(Double::isNaN);
+
+			if (nanCount > 0) {
+				warn(nanCount + " NaN values detected at " + context);
+			}
 		}
 	}
 
