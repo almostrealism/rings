@@ -38,6 +38,8 @@ import java.util.Random;
 public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	public static boolean enableOnnxDit = false;
 
+	public static double MAX_DURATION = 11.0;
+
 	private static final int SAMPLE_RATE = 44100;
 	private static final int NUM_STEPS = 8;
 	private static final float LOGSNR_MAX = -6.0f;
@@ -118,6 +120,9 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	}
 
 	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
+		log("Generating audio with seed " + seed +
+				" (duration = " + getAudioDuration() + ")");
+
 		// 1. Process tokens through conditioners
 		Map<String, OnnxTensor> conditionerOutputs = runConditioners(tokenIds);
 
@@ -156,7 +161,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 		inputs.put("input_ids", packOnnx(env, shape(1, T5_SEQ_LENGTH), paddedIds));
 		inputs.put("attention_mask", packOnnx(env, shape(1, T5_SEQ_LENGTH), attentionMask));
-		inputs.put("seconds_total", packOnnx(env, shape(1), (float) audioDurationSeconds));
+		inputs.put("seconds_total", packOnnx(env, shape(1), (float) getAudioDuration()));
 
 		try {
 			OrtSession.Result result =
@@ -171,8 +176,9 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		}
 	}
 
-	private OnnxTensor runDiffusionSteps(OnnxTensor crossAttentionInput, OnnxTensor globalCond, long seed)
-			throws OrtException {
+	private OnnxTensor runDiffusionSteps(OnnxTensor crossAttentionInput,
+										 OnnxTensor globalCond, long seed)
+									throws OrtException {
 		// Initialize random noise
 		Random random = new Random(seed);
 		float[] x = new float[DIT_X_SIZE];
@@ -187,6 +193,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		// Convert OnnxTensors to PackedCollections
 		PackedCollection<?> xPC = new PackedCollection<>(shape(DIT_X_SHAPE));
 		xPC.setMem(x);
+		checkNan(xPC, "initial x");
 
 		// Get cross attention and global condition data
 		PackedCollection<?> crossAttnCondPC = pack(crossAttentionInput);
@@ -203,14 +210,21 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 			float nextT = sigmas[step + 1];
 			tPC.setMem(0, currT);
 
+			log("Diffusion step " + step +
+					" (currT = " + currT + ", nextT = " + nextT + ")");
+
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
-			PackedCollection<?> outputPC = ditModel.forward(xPC, tPC, crossAttnCondPC, globalCondPC);
+			PackedCollection<?> output = ditModel.forward(xPC, tPC, crossAttnCondPC, globalCondPC);
+
+			checkNan(xPC, "input after model step " + step);
+			checkNan(output, "output after model step " + step);
+
 			modelTotal += System.currentTimeMillis() - start;
 			start = System.currentTimeMillis();
 
 			double[] xData = xPC.toArray();
-			double[] outputData = outputPC.toArray();
+			double[] outputData = output.toArray();
 
 			// Apply ping-pong sampling
 			for (int i = 0; i < DIT_X_SIZE; i++) {
@@ -231,6 +245,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 			// Update x for next iteration
 			xPC.setMem(newX);
+			checkNan(xPC, "new input after model step " + step);
 
 			samplingTotal += System.currentTimeMillis() - start;
 		}
@@ -238,7 +253,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		log("Diffusion completed - " + samplingTotal + "ms sampling, " + modelTotal + "ms model");
 
 		double total = xPC.doubleStream().map(Math::abs).sum();
-		log("Average latent amplitude = " + (total / DIT_X_SIZE));
+		log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + xPC.count(Double::isNaN) + " NaN values)");
 
 		return toOnnx(env, xPC);
 	}
@@ -293,6 +308,13 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		arr[size - 1] = SIGMA_MIN;
 	}
 
+	private void checkNan(PackedCollection<?> x, String context) {
+		long nanCount = x.count(Double::isNaN);
+		if (nanCount > 0) {
+			warn(nanCount + " NaN values detected at " + context);
+		}
+	}
+
 	@Override
 	public void close() throws OrtException {
 		if (conditionersSession != null) conditionersSession.close();
@@ -303,18 +325,19 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length < 3) {
-			System.out.println("Usage: java -jar audiogen.jar <models_path> <prompt> <output_path>");
+			System.out.println("Usage: java -jar audiogen.jar <models_path> <output_path> <prompt> <duration>");
 			return;
 		}
 
 		String modelsPath = args[0];
-		String prompt = args[1];
-		String outputPath = args[2];
+		String outputPath = args[1];
+		String prompt = args[2];
+		double duration = Double.parseDouble(args[3]);
 
 		Random rand = new Random();
 
 		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
-			generator.setAudioDurationSeconds(5);
+			generator.setAudioDurationSeconds(duration);
 
 			for (int i = 0; i < 10; i++) {
 				long seed = rand.nextLong();

@@ -25,6 +25,7 @@ public class AudioModel {
 	private String id;
 	private String name;
 	private double duration;
+	private boolean pattern;
 	private List<String> textConditions;
 
 	public AudioModel() {
@@ -38,7 +39,8 @@ public class AudioModel {
 	public AudioModel(String name, List<String> textConditions) {
 		setId(KeyUtils.generateKey());
 		setName(name);
-		setDuration(5);
+		setDuration(1);
+		setPattern(false);
 		setTextConditions(textConditions);
 	}
 
@@ -50,6 +52,9 @@ public class AudioModel {
 
 	public double getDuration() { return duration; }
 	public void setDuration(double duration) { this.duration = duration; }
+
+	public boolean isPattern() { return pattern; }
+	public void setPattern(boolean pattern) { this.pattern = pattern; }
 
 	public List<String> getTextConditions() { return textConditions; }
 	public void setTextConditions(List<String> textConditions) { this.textConditions = textConditions; }
