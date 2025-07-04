@@ -30,9 +30,9 @@ public class OnnxDitModel implements DitModel, OnnxFeatures {
 	private final OrtEnvironment env;
 	private final OrtSession session;
 
-	public OnnxDitModel(OrtEnvironment env, OrtSession.SessionOptions options, String modelsPath) throws OrtException {
+	public OnnxDitModel(OrtEnvironment env, OrtSession.SessionOptions options, String modelFile) throws OrtException {
 		this.env = env;
-		this.session = env.createSession(modelsPath + "/dit.onnx", options);
+		this.session = env.createSession(modelFile, options);
 	}
 
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,

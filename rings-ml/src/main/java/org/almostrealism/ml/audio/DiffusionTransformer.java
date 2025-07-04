@@ -60,27 +60,11 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective) {
-		this(ioChannels, embedDim, depth, numHeads, patchSize,
-				condTokenDim, globalCondDim, diffusionObjective,
-				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65, null);
-	}
-
-	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
-								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective, int maxSeqLen, int condSeqLen) {
-		this(ioChannels, embedDim, depth, numHeads, patchSize,
-				condTokenDim, globalCondDim, diffusionObjective,
-				maxSeqLen, condSeqLen, null);
-	}
-
-	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
-								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective, String weightsDirectory) throws IOException {
+								String diffusionObjective, StateDictionary stateDictionary) throws IOException {
 		this(ioChannels, embedDim, depth, numHeads, patchSize,
 				condTokenDim, globalCondDim, diffusionObjective,
 				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65,
-				weightsDirectory != null ? new StateDictionary(weightsDirectory) : null);
+				stateDictionary);
 	}
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,

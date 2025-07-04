@@ -28,6 +28,9 @@ import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.ml.OnnxFeatures;
+import org.almostrealism.ml.StateDictionary;
+import org.almostrealism.persistence.Asset;
+import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,10 +69,13 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	private DoubleConsumer progressMonitor;
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
-		this(modelsPath, modelsPath + "/weights");
+		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
+				new Asset(new File(modelsPath + "/autoencoder.onnx")),
+				new Asset(new File(modelsPath + "/dit.onnx"))),
+				new StateDictionary(modelsPath + "/weights"));
 	}
 
-	public AudioGenerator(String modelsPath, String weightsDir) throws OrtException, IOException {
+	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates) throws OrtException, IOException {
 		tokenizer = new SpTokenizer(AudioGenerator.class.getClassLoader().getResourceAsStream("spiece.model"));
 		vocabulary = SpVocabulary.from(tokenizer);
 
@@ -79,11 +85,11 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
 		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
 
-		conditionersSession = env.createSession(modelsPath + "/conditioners.onnx", options);
-		autoencoderSession = env.createSession(modelsPath + "/autoencoder.onnx", options);
+		conditionersSession = env.createSession(onnxAssets.getAssetPath("conditioners.onnx"), options);
+		autoencoderSession = env.createSession(onnxAssets.getAssetPath("autoencoder.onnx"), options);
 
 		if (enableOnnxDit) {
-			ditModel = new OnnxDitModel(env, options, modelsPath);
+			ditModel = new OnnxDitModel(env, options, onnxAssets.getAssetPath("dit.onnx"));
 		} else {
 			ditModel = new DiffusionTransformer(
 					64,
@@ -94,7 +100,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 					768,
 					768,
 					"rf_denoiser",
-					weightsDir
+					ditStates
 			);
 		}
 

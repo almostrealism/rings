@@ -477,7 +477,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         DiffusionTransformer transformer = new DiffusionTransformer(
                 ioChannels, embedDim, 16, 8, 1,
                 condTokenDim, globalCondDim, "rf_denoiser",
-                weightsDir);
+                new StateDictionary(weightsDir));
 
         // Run forward pass to populate the captured state
         PackedCollection<?> output = transformer.forward(input, timestep, crossAttnCond, globalCond);
@@ -578,7 +578,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         DiffusionTransformer transformer = new DiffusionTransformer(
                 ioChannels, embedDim, 16, 8, 1,
                 condTokenDim, globalCondDim, "rf_denoiser",
-                weightsDir);
+                new StateDictionary(weightsDir));
 
         // Run forward pass to populate the captured states
         PackedCollection<?> output = transformer.forward(input, timestep, crossAttnCond, globalCond);
