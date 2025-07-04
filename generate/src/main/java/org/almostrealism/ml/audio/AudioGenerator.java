@@ -268,7 +268,9 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		log("Diffusion completed - " + samplingTotal + "ms sampling, " + modelTotal + "ms model");
 
 		double total = xPC.doubleStream().map(Math::abs).sum();
-		log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + xPC.count(Double::isNaN) + " NaN values)");
+
+		if (HardwareFeatures.outputMonitoring)
+			log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + xPC.count(Double::isNaN) + " NaN values)");
 
 		return toOnnx(env, xPC);
 	}
@@ -294,7 +296,6 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 				total += Math.abs(stereoAudio[0][i]) + Math.abs(stereoAudio[1][i]);
 			}
 
-			log("Average audio amplitude = " + (total / (finalSamples * 2)));
 			return stereoAudio;
 		} finally {
 			audioTensor.close();
