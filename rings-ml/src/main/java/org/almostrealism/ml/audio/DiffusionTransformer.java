@@ -339,53 +339,15 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	public PackedCollection<?> getPreTransformerState() { return preTransformerState; }
 	public PackedCollection<?> getPostTransformerState() { return postTransformerState; }
 
+	@Override
+	public void destroy() {
+		if (stateDictionary != null) {
+			stateDictionary.destroy();
+		}
+	}
+
 	protected PackedCollection<?> createWeight(String key, int... dims) {
 		return createWeight(key, shape(dims));
-	}
-
-	protected PackedCollection<?>[] createSplitWeight(String key, int... dims) {
-		return createSplitWeight(key, shape(dims));
-	}
-
-	protected PackedCollection<?>[] createSplitWeight(String key, TraversalPolicy expectedShape) {
-		if (stateDictionary == null) {
-			// Create two empty weights of half the expected size
-			PackedCollection<?> w1 = new PackedCollection<>(expectedShape);
-			PackedCollection<?> w3 = new PackedCollection<>(expectedShape);
-			return new PackedCollection<?>[] { w1, w3 };
-		} else if (!stateDictionary.containsKey(key)) {
-			throw new IllegalArgumentException(key + " not found in StateDictionary");
-		}
-
-		PackedCollection<?> combinedWeight = stateDictionary.get(key);
-		
-		// For ff.ff.0.proj weights, the combined tensor has shape [2*hidden_dim, dim] or [2*hidden_dim]
-		// We need to split it into two equal parts along the first dimension
-		TraversalPolicy combinedShape = combinedWeight.getShape();
-		int splitDim = combinedShape.length(0) / 2;
-		
-		// Create shapes for the two parts
-		int[] w1Dims = new int[combinedShape.getDimensions()];
-		int[] w3Dims = new int[combinedShape.getDimensions()];
-		for (int i = 0; i < combinedShape.getDimensions(); i++) {
-			if (i == 0) {
-				w1Dims[i] = splitDim;
-				w3Dims[i] = splitDim;
-			} else {
-				w1Dims[i] = combinedShape.length(i);
-				w3Dims[i] = combinedShape.length(i);
-			}
-		}
-		
-		TraversalPolicy w1Shape = shape(w1Dims);
-		TraversalPolicy w3Shape = shape(w3Dims);
-		
-		// Extract the two parts
-		PackedCollection<?> w1 = combinedWeight.range(w1Shape, 0);
-		PackedCollection<?> w3 = combinedWeight.range(w3Shape, w1Shape.getTotalSize());
-		
-		unusedWeights.remove(key);
-		return new PackedCollection<?>[] { w1, w3 };
 	}
 
 	protected PackedCollection<?> createWeight(String key, TraversalPolicy expectedShape) {
