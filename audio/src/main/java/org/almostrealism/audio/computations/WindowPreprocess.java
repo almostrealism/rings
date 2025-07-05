@@ -28,12 +28,15 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.function.Supplier;
 
 public class WindowPreprocess extends ScalarBankPad {
-	public WindowPreprocess(FrameExtractionSettings settings, Supplier<Evaluable<? extends PackedCollection<Scalar>>> input) {
+	public WindowPreprocess(FrameExtractionSettings settings,
+							Supplier<Evaluable<? extends PackedCollection<Scalar>>> input) {
 		this(settings.getWindowSize(), settings.getPaddedWindowSize(), settings.getWindowType(),
 				settings.getBlackmanCoeff(), settings.getPreemphCoeff(), input);
 	}
 
-	public WindowPreprocess(int windowSize, int paddedWindowSize, String windowType, Scalar blackmanCoeff, Scalar preemphCoeff, Supplier<Evaluable<? extends PackedCollection<Scalar>>> input) {
+	public WindowPreprocess(int windowSize, int paddedWindowSize, String windowType,
+							Scalar blackmanCoeff, Scalar preemphCoeff,
+							Supplier<Evaluable<? extends PackedCollection<Scalar>>> input) {
 		super(windowSize, paddedWindowSize,
 				new FeatureWindowFunction(windowSize, windowType, blackmanCoeff).getWindow(
 						ScalarBankFeatures.getInstance().preemphasize(windowSize,

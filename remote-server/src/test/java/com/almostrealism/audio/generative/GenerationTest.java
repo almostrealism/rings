@@ -18,7 +18,6 @@ package com.almostrealism.audio.generative;
 
 import com.almostrealism.remote.AccessManager;
 import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.RemoteGenerationServer;
 import org.almostrealism.remote.RemoteGenerationProvider;
@@ -27,7 +26,7 @@ import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
+import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audioml.DiffusionGenerationProvider;
 import org.almostrealism.audio.generative.LocalResourceManager;
 import org.almostrealism.util.KeyUtils;
@@ -63,7 +62,7 @@ public class GenerationTest {
 	public void train() throws IOException {
 		List<NoteAudioChoice> choices =
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
-					PatternFactoryChoiceList.class);
+					NoteAudioChoiceList.class);
 
 		List<NoteAudio> sources = choices.stream()
 				// .filter(c -> "Hats".equals(c.getName()))
@@ -82,7 +81,7 @@ public class GenerationTest {
 	public void trainRemote() throws IOException {
 		List<NoteAudioChoice> choices =
 				new ObjectMapper().readValue(new File(ROOT + "ringsdesktop/pattern-factory.json"),
-						PatternFactoryChoiceList.class);
+						NoteAudioChoiceList.class);
 
 		List<NoteAudio> sources = choices.stream()
 				// .filter(c -> "Hats".equals(c.getName()))

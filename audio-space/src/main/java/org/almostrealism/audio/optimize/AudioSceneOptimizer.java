@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import io.almostrealism.code.DataContext;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -55,6 +56,7 @@ import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
+import org.almostrealism.hardware.mem.MemoryDataReplacementMap;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
@@ -183,7 +185,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		NoteAudioSourceAggregator.enableAdvancedAggregation = true;
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 16;
+		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 6;
 
 		// Verbosity level 0
 		enableBreeding = verbosity < 1;
@@ -238,9 +240,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					if (AudioSumProvider.timing.getTotal() > 120)
 						AudioSumProvider.timing.print();
 
-					if (MemoryDataArgumentMap.profile != null &&
-							MemoryDataArgumentMap.profile.getMetric().getTotal() > 10)
-						MemoryDataArgumentMap.profile.print();
+					if (MemoryDataReplacementMap.profile != null &&
+							MemoryDataReplacementMap.profile.getMetric().getTotal() > 10)
+						MemoryDataReplacementMap.profile.print();
 
 					AcceleratedOperation.printTimes();
 				} catch (IOException e) {
@@ -252,6 +254,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 			if (!results.exists()) results.mkdir();
 
 			profile.save("results/optimizer.xml");
+
+			Hardware.getLocalHardware().getAllDataContexts().forEach(DataContext::destroy);
 		}
 	}
 

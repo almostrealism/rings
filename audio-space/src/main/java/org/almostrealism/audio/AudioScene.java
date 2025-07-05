@@ -41,7 +41,7 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.pattern.PatternFactoryChoiceList;
+import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -283,8 +283,8 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	}
 
 	public void loadPatterns(String patternsFile) throws IOException {
-		PatternFactoryChoiceList choices = defaultMapper()
-				.readValue(new File(patternsFile), PatternFactoryChoiceList.class);
+		NoteAudioChoiceList choices = defaultMapper()
+				.readValue(new File(patternsFile), NoteAudioChoiceList.class);
 		getPatternManager().getChoices().addAll(choices);
 	}
 

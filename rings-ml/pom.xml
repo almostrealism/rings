@@ -4,17 +4,72 @@
 	<parent>
 		<groupId>com.almostrealism</groupId>
 		<artifactId>rings</artifactId>
-		<version>0.39</version>
+		<version>0.40</version>
 	</parent>
 
-	<groupId>org.almostrealism</groupId>
 	<artifactId>ar-rings-ml</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<!-- Detect OS and architecture for plugins which depend on native binaries -->
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.6.0</version>
+			</extension>
+		</extensions>
+
+		<plugins>
+			<!-- Extract proto files from dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.8.1</version>
+				<executions>
+					<execution>
+						<id>unpack-proto</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeClassifiers>proto</includeClassifiers>
+							<outputDirectory>${project.build.directory}/proto-dependencies</outputDirectory>
+							<includes>**/*.proto</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-ml</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-ml</artifactId>
+			<classifier>proto</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft.onnxruntime</groupId>
+			<artifactId>onnxruntime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>ai.djl.sentencepiece</groupId>
+			<artifactId>sentencepiece</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 		<dependency>

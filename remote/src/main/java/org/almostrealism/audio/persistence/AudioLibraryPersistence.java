@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.Console;
+import org.almostrealism.persistence.CollectionEncoder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -309,6 +310,7 @@ public class AudioLibraryPersistence {
 				.setChannelCount(details.getChannelCount())
 				.setFrameCount(details.getFrameCount())
 				.setSilent(details.isSilent())
+				.setPersistent(details.isPersistent())
 				.setFreqSampleRate(details.getFreqSampleRate())
 				.setFreqBinCount(details.getFreqBinCount())
 				.setFreqChannelCount(details.getFreqChannelCount())
@@ -334,6 +336,7 @@ public class AudioLibraryPersistence {
 		details.setChannelCount(data.getChannelCount());
 		details.setFrameCount(data.getFrameCount());
 		details.setSilent(data.getSilent());
+		details.setPersistent(data.getPersistent());
 		details.setFreqSampleRate(data.getFreqSampleRate());
 		details.setFreqBinCount(data.getFreqBinCount());
 		details.setFreqChannelCount(data.getFreqChannelCount());

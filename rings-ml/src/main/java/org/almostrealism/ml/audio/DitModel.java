@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.pattern;
+package org.almostrealism.ml.audio;
 
-import org.almostrealism.audio.notes.NoteAudioChoice;
+import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.profile.OperationProfile;
+import org.almostrealism.collect.PackedCollection;
 
-import java.util.ArrayList;
+public interface DitModel extends Destroyable {
+	PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
+								PackedCollection<?> crossAttnCond,
+								PackedCollection<?> globalCond);
 
-public class PatternFactoryChoiceList extends ArrayList<NoteAudioChoice> {
+	default OperationProfile getProfile() { return null; }
 }
