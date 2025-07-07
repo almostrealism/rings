@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
-	public static final String FFT_SUFFIX = "fft";
 	public static final int MEASURE_COUNT = 2;
 	public static int standardDurationSeconds = 230;
 	public static int standardDurationFrames = standardDurationSeconds * OutputLine.sampleRate;
@@ -110,11 +109,6 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	public void setOutputFile(Supplier<String> file) { this.outputFileSupplier = file; }
 
 	protected File getOutputFile() { return outputFile; }
-	protected File getFftOutputFile() {
-		return Optional.ofNullable(outputFile)
-				.map(f -> getAuxFile(f, FFT_SUFFIX))
-				.orElse(null);
-	}
 
 	protected Collection<File> getStemFiles() { return stemFiles.values(); }
 

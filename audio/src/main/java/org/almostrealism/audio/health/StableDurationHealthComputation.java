@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
-	public static boolean enableFft = false;
 	public static boolean enableTimeout = false;
 
 	public static OperationProfile profile;
@@ -253,14 +252,6 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 						details = WaveDetailsFactory.getDefault()
 								.forProvider(new FileWaveDataProvider(getOutputFile().getPath()));
 						getWaveDetailsProcessor().accept(details);
-					}
-				}
-
-				if (enableFft) {
-					try {
-						getWaveOut().getWaveData().fft(true).store(getFftOutputFile());
-					} catch (IOException e) {
-						warn("Could not store FFT", e);
 					}
 				}
 			}

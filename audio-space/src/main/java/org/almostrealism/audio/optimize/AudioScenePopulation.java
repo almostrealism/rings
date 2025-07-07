@@ -203,16 +203,6 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 
 					out.write().get().run();
 
-					if (outputPath != null) {
-						try {
-							File fftFile = HealthComputationAdapter.getAuxFile(new File(outputPath),
-									HealthComputationAdapter.FFT_SUFFIX);
-							out.getWaveData().fft(true).store(fftFile);
-						} catch (IOException e) {
-							warn("Could not store FFT", e);
-						}
-					}
-
 					out.reset();
 					if (cells != null) cells.reset();
 
