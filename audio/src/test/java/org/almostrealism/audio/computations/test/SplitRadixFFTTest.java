@@ -16,12 +16,12 @@
 
 package org.almostrealism.audio.computations.test;
 
+import io.almostrealism.kernel.KernelTraversalProvider;
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.time.computations.FourierTransform;
 import org.almostrealism.util.TestFeatures;
@@ -116,7 +116,7 @@ public class SplitRadixFFTTest implements TestFeatures {
 			compute(-1).run();
 		} finally {
 			profile.print();
-			AcceleratedComputationOperation.printTimes();
+			KernelTraversalProvider.printTimes();
 
 			if (totalComputations > 0) {
 				System.out.println("FFT required " +

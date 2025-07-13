@@ -29,13 +29,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AudioLibrary implements ConsoleFeatures {
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
@@ -78,14 +82,26 @@ public class AudioLibrary implements ConsoleFeatures {
 		return info.values();
 	}
 
-	public WaveDetails getDetails(String key) {
-		return getDetails(new FileWaveDataProvider(key));
+	public WaveDetails getDetails(String key, boolean persistent) {
+		return getDetails(new FileWaveDataProvider(key), persistent);
 	}
 
-	public WaveDetails getDetails(WaveDataProvider provider) {
+	/**
+	 * Retrieve {@link WaveDetails} for the given {@link WaveDataProvider}.
+	 *
+	 * @param provider  {@link WaveDataProvider} to retrieve details for.
+	 * @param persistent  If true, the details will be stored in the library for future use
+	 *                    even if no associated file can be found.
+	 *
+	 * @return  {@link WaveDetails} for the given provider, or null if an error occurs.
+	 */
+	public WaveDetails getDetails(WaveDataProvider provider, boolean persistent) {
 		try {
 			String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
-			return info.computeIfAbsent(id, k -> computeDetails(provider));
+
+			WaveDetails details = info.computeIfAbsent(id, k -> computeDetails(provider, persistent));
+			details.setPersistent(persistent || details.isPersistent());
+			return details;
 		} catch (Exception e) {
 			AudioScene.console.warn("Failed to create WaveDetails for " +
 					provider.getKey() + " (" +
@@ -107,7 +123,7 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
-		return computeSimilarities(getDetails(provider)).getSimilarities();
+		return computeSimilarities(getDetails(provider, false)).getSimilarities();
 	}
 
 	public WaveDataProvider find(String identifier) {
@@ -127,8 +143,10 @@ public class AudioLibrary implements ConsoleFeatures {
 		info.put(details.getIdentifier(), details);
 	}
 
-	protected WaveDetails computeDetails(WaveDataProvider provider) {
-		return factory.forProvider(provider);
+	protected WaveDetails computeDetails(WaveDataProvider provider, boolean persistent) {
+		WaveDetails details = factory.forProvider(provider);
+		details.setPersistent(persistent);
+		return details;
 	}
 
 	protected WaveDetails computeSimilarities(WaveDetails details) {
@@ -168,13 +186,32 @@ public class AudioLibrary implements ConsoleFeatures {
 
 			try {
 				if (provider == null) return;
-				getDetails(provider);
+				getDetails(provider, true);
 			} finally {
 				if (count > 0) {
 					progress.accept(total.addAndGet(1) / count);
 				}
 			}
 		});
+	}
+
+	public void cleanup(Predicate<String> preserve) {
+		// Identify current library files
+		Set<String> activeIds = root.children()
+				.map(Supplier::get).filter(Objects::nonNull)
+				.map(WaveDataProvider::getIdentifier).filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+
+		// Exclude persistent info and those associated with active files
+		// or otherwise explicitly preserved
+		List<String> keys = info.entrySet().stream()
+				.filter(e -> !e.getValue().isPersistent())
+				.filter(e -> !activeIds.contains(e.getKey()))
+				.filter(e -> preserve == null || !preserve.test(e.getKey()))
+				.map(Map.Entry::getKey).toList();
+
+		// Remove everything else
+		keys.forEach(info::remove);
 	}
 
 	@Override

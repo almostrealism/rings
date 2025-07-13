@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.code.OperationMetadata;
-import io.almostrealism.code.OperationWithInfo;
+import io.almostrealism.profile.OperationMetadata;
+import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;

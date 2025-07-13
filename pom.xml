@@ -7,8 +7,8 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.68</common.version>
-		<flowtree.version>0.24</flowtree.version>
+		<common.version>0.69</common.version>
+		<flowtree.version>0.25</flowtree.version>
 
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
@@ -20,7 +20,7 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>rings</artifactId>
-	<version>0.39</version>
+	<version>0.40</version>
 
 	<modules>
 		<module>audio</module>
@@ -46,7 +46,6 @@
 		<module>generate</module>
 	</modules>
 
-	<!-- Output to jar format -->
 	<packaging>pom</packaging>
 
 	<dependencyManagement>
@@ -54,7 +53,7 @@
 			<dependency>
 				<groupId>com.almostrealism</groupId>
 				<artifactId>ar-treeview</artifactId>
-				<version>0.39</version>
+				<version>0.40</version>
 			</dependency>
 
 			<dependency>
@@ -97,6 +96,14 @@
 				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-ml</artifactId>
 				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-ml</artifactId>
+				<version>${common.version}</version>
+				<classifier>proto</classifier>
+				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
@@ -148,6 +155,26 @@
 			</dependency>
 
 			<dependency>
+				<groupId>ai.djl.sentencepiece</groupId>
+				<artifactId>sentencepiece</artifactId>
+				<version>0.33.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.microsoft.onnxruntime</groupId>
+				<artifactId>onnxruntime</artifactId>
+				<version>1.22.0</version>
+			</dependency>
+
+			<!-- This is not available as a Jar because it is intended for Android -->
+			<dependency>
+				<groupId>com.google.ai.edge.litert</groupId>
+				<artifactId>litert</artifactId>
+				<version>1.2.0</version>
+				<scope>runtime</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
 				<version>${protobuf.version}</version>
@@ -193,10 +220,15 @@
 
 	<repositories>
 		<repository>
-			<id>almostrealism</id>
-			<url>https://maven.pkg.github.com/almostrealism/common</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
+			<id>google</id>
+			<url>https://maven.google.com/</url>
 		</repository>
+
+<!--		<repository>-->
+<!--			<id>almostrealism</id>-->
+<!--			<url>https://maven.pkg.github.com/almostrealism/common</url>-->
+<!--			<releases><enabled>true</enabled></releases>-->
+<!--			<snapshots><enabled>true</enabled></snapshots>-->
+<!--		</repository>-->
 	</repositories>
 </project>

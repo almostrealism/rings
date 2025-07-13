@@ -41,7 +41,7 @@ public class TFScopeTest implements CodeFeatures {
 		LanguageOperations lang = new CLanguageOperations(Precision.FP64, false, false);
 		DefaultNameProvider nameProvider = new DefaultNameProvider("test");
 		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang,
-				(p, input) -> new TensorFlowArgument<>(lang, p, p.getArgumentName(counter++), (Supplier) input));
+				(p, input) -> new TensorFlowArgument<>(p.getArgumentName(counter++), (Supplier) input));
 
 		Scalar s = new Scalar();
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));

@@ -626,6 +626,10 @@ public class WavFile implements AutoCloseable {
 		return numFramesToWrite;
 	}
 
+	public int writeFrames(double[][] sampleBuffer) throws IOException {
+		return writeFrames(sampleBuffer, sampleBuffer[0].length);
+	}
+
 	public int writeFrames(double[][] sampleBuffer, int numFramesToWrite) throws IOException {
 		return writeFrames(sampleBuffer, 0, numFramesToWrite);
 	}

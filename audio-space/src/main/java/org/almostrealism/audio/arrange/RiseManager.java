@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.arrange;
 
-import io.almostrealism.code.OperationMetadata;
-import io.almostrealism.code.OperationWithInfo;
+import io.almostrealism.profile.OperationMetadata;
+import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;

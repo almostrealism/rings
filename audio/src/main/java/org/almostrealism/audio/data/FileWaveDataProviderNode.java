@@ -76,4 +76,7 @@ public class FileWaveDataProviderNode implements FileWaveDataProviderTree<FileWa
 	public boolean isLeaf() {
 		return !file.isDirectory();
 	}
+
+	@Override
+	public String signature() { return file.getPath(); }
 }

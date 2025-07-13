@@ -41,15 +41,15 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 				(Supplier) envelope);
 	}
 
-	public ArrayVariable<Double> getOutput() { return getArgument(0, 1); }
-	public ArrayVariable<Double> getWavePosition() { return getArgument(1, 2); }
-	public ArrayVariable<Double> getWaveLength() { return getArgument(2, 2); }
-	public ArrayVariable<Double> getNotePosition() { return getArgument(3, 2); }
-	public ArrayVariable<Double> getNoteLength() { return getArgument(4, 2); }
-	public ArrayVariable<Double> getPhase() { return getArgument(5, 2); }
-	public ArrayVariable<Double> getAmplitude() { return getArgument(6, 2); }
-	public ArrayVariable<Double> getDepth() { return getArgument(7, 2); }
-	public ArrayVariable<Double> getEnvelope() { return getArgument(8, 2); }
+	public ArrayVariable<Double> getOutput() { return getArgument(0); }
+	public ArrayVariable<Double> getWavePosition() { return getArgument(1); }
+	public ArrayVariable<Double> getWaveLength() { return getArgument(2); }
+	public ArrayVariable<Double> getNotePosition() { return getArgument(3); }
+	public ArrayVariable<Double> getNoteLength() { return getArgument(4); }
+	public ArrayVariable<Double> getPhase() { return getArgument(5); }
+	public ArrayVariable<Double> getAmplitude() { return getArgument(6); }
+	public ArrayVariable<Double> getDepth() { return getArgument(7); }
+	public ArrayVariable<Double> getEnvelope() { return getArgument(8); }
 
 	public InstanceReference<ArrayVariable<Double>, Double> output() { return (InstanceReference<ArrayVariable<Double>, Double>) getOutput().valueAt(0); }
 	public InstanceReference<ArrayVariable<Double>, Double> wavePosition() { return (InstanceReference<ArrayVariable<Double>, Double>) getWavePosition().valueAt(0); }

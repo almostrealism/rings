@@ -73,7 +73,7 @@ public class NoteAudioChoice implements ConsoleFeatures {
 		setMaxScale(maxScale);
 		setMaxScaleTraversalDepth(9);
 		setSeed(true);
-		setBias(-0.5);
+		setBias(-0.2);
 		setChannels(new ArrayList<>());
 		setSources(new ArrayList<>());
 		initSelectionFunctions();
