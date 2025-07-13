@@ -34,7 +34,6 @@ import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -61,7 +60,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 	private final OrtEnvironment env;
 	private final OrtSession conditionersSession;
-	private final OrtSession autoencoderSession;
+	private final AutoEncoder autoencoder;
 	private final DitModel ditModel;
 
 	private double audioDurationSeconds;
@@ -70,7 +69,8 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
 		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
-				new Asset(new File(modelsPath + "/autoencoder.onnx")),
+				new Asset(new File(modelsPath + "/encoder.onnx")),
+				new Asset(new File(modelsPath + "/decoder.onnx")),
 				new Asset(new File(modelsPath + "/dit.onnx"))),
 				new StateDictionary(modelsPath + "/weights"));
 	}
@@ -86,7 +86,9 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
 
 		conditionersSession = env.createSession(onnxAssets.getAssetPath("conditioners.onnx"), options);
-		autoencoderSession = env.createSession(onnxAssets.getAssetPath("autoencoder.onnx"), options);
+		autoencoder = new OnnxAutoEncoder(env, options,
+				onnxAssets.getAssetPath("encoder.onnx"),
+				onnxAssets.getAssetPath("decoder.onnx"));
 
 		if (enableOnnxDit) {
 			ditModel = new OnnxDitModel(env, options, onnxAssets.getAssetPath("dit.onnx"));
@@ -147,7 +149,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		Map<String, OnnxTensor> conditionerOutputs = runConditioners(tokenIds);
 
 		// 2. Run diffusion steps
-		OnnxTensor finalLatent = runDiffusionSteps(
+		PackedCollection<?> finalLatent = runDiffusionSteps(
 				conditionerOutputs.get("cross_attention_input"),
 				conditionerOutputs.get("global_cond"),
 				seed
@@ -162,7 +164,6 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		for (OnnxTensor tensor : conditionerOutputs.values()) {
 			tensor.close();
 		}
-		finalLatent.close();
 
 		return audio;
 	}
@@ -196,24 +197,15 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		}
 	}
 
-	private OnnxTensor runDiffusionSteps(OnnxTensor crossAttentionInput,
-										 OnnxTensor globalCond, long seed)
+	private PackedCollection<?> runDiffusionSteps(OnnxTensor crossAttentionInput,
+										 		  OnnxTensor globalCond, long seed)
 									throws OrtException {
-		// Initialize random noise
-		Random random = new Random(seed);
-		float[] x = new float[DIT_X_SIZE];
-		for (int i = 0; i < DIT_X_SIZE; i++) {
-			x[i] = (float) random.nextGaussian();
-		}
-
 		// Generate sigma values
 		float[] sigmas = new float[NUM_STEPS + 1];
 		fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
 
-		// Convert OnnxTensors to PackedCollections
-		PackedCollection<?> xPC = new PackedCollection<>(shape(DIT_X_SHAPE));
-		xPC.setMem(x);
-		checkNan(xPC, "initial x");
+		Random random = new Random(seed);
+		PackedCollection<?> x = initialX(random);
 
 		// Get cross attention and global condition data
 		PackedCollection<?> crossAttnCondPC = pack(crossAttentionInput);
@@ -236,15 +228,15 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
-			PackedCollection<?> output = ditModel.forward(xPC, tPC, crossAttnCondPC, globalCondPC);
+			PackedCollection<?> output = ditModel.forward(x, tPC, crossAttnCondPC, globalCondPC);
 
-			checkNan(xPC, "input after model step " + step);
+			checkNan(x, "input after model step " + step);
 			checkNan(output, "output after model step " + step);
 
 			modelTotal += System.currentTimeMillis() - start;
 			start = System.currentTimeMillis();
 
-			double[] xData = xPC.toArray();
+			double[] xData = x.toArray();
 			double[] outputData = output.toArray();
 
 			// Apply ping-pong sampling
@@ -265,47 +257,51 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 			}
 
 			// Update x for next iteration
-			xPC.setMem(newX);
-			checkNan(xPC, "new input after model step " + step);
+			x.setMem(newX);
+			checkNan(x, "new input after model step " + step);
 
 			samplingTotal += System.currentTimeMillis() - start;
 		}
 
 		log("Diffusion completed - " + samplingTotal + "ms sampling, " + modelTotal + "ms model");
 
-		double total = xPC.doubleStream().map(Math::abs).sum();
+		double total = x.doubleStream().map(Math::abs).sum();
 
 		if (HardwareFeatures.outputMonitoring)
-			log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + xPC.count(Double::isNaN) + " NaN values)");
+			log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + x.count(Double::isNaN) + " NaN values)");
 
-		return toOnnx(env, xPC);
+		return x;
 	}
 
-	private double[][] decodeAudio(OnnxTensor latent) throws OrtException {
-		Map<String, OnnxTensor> inputs = new HashMap<>();
-		inputs.put("sampled", latent);
-
-		OrtSession.Result result = autoencoderSession.run(inputs);
-		OnnxTensor audioTensor = (OnnxTensor) result.get(0);
-
-		try {
-			FloatBuffer audioBuffer = audioTensor.getFloatBuffer();
-			int totalSamples = audioBuffer.capacity();
-			int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
-			int finalSamples = (int) (getAudioDuration() * SAMPLE_RATE);
-
-			double total = 0;
-			double[][] stereoAudio = new double[2][finalSamples];
-			for (int i = 0; i < finalSamples; i++) {
-				stereoAudio[0][i] = audioBuffer.get(i);
-				stereoAudio[1][i] = audioBuffer.get(i + channelSamples);
-				total += Math.abs(stereoAudio[0][i]) + Math.abs(stereoAudio[1][i]);
-			}
-
-			return stereoAudio;
-		} finally {
-			audioTensor.close();
+	/**
+	 * Initialize random noise.
+	 */
+	private PackedCollection<?> initialX(Random random) {
+		float[] initialX = new float[DIT_X_SIZE];
+		for (int i = 0; i < DIT_X_SIZE; i++) {
+			initialX[i] = (float) random.nextGaussian();
 		}
+
+		PackedCollection<?> x = new PackedCollection<>(shape(DIT_X_SHAPE));
+		x.setMem(initialX);
+		return x;
+	}
+
+	private double[][] decodeAudio(PackedCollection<?> latent) {
+		PackedCollection<?> result = autoencoder.decode(latent);
+
+		double data[] = result.toArray();
+		int totalSamples = data.length;
+		int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
+		int finalSamples = (int) (getAudioDuration() * SAMPLE_RATE);
+
+		double[][] stereoAudio = new double[2][finalSamples];
+		for (int i = 0; i < finalSamples; i++) {
+			stereoAudio[0][i] = data[i];
+			stereoAudio[1][i] = data[i + channelSamples];
+		}
+
+		return stereoAudio;
 	}
 
 	private void fillSigmas(float[] arr, float start, float end) {
@@ -343,7 +339,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	@Override
 	public void close() throws OrtException {
 		if (conditionersSession != null) conditionersSession.close();
-		if (autoencoderSession != null) autoencoderSession.close();
+		if (autoencoder != null) autoencoder.destroy();
 		if (ditModel != null) ditModel.destroy();
 		if (env != null) env.close();
 	}

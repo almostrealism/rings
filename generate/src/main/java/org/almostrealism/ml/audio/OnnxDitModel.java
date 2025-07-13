@@ -38,9 +38,11 @@ public class OnnxDitModel implements DitModel, OnnxFeatures {
 	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
 									   PackedCollection<?> crossAttnCond,
 									   PackedCollection<?> globalCond) {
+		Map<String, OnnxTensor> ditInputs = new HashMap<>();
+		OnnxTensor ditOutput = null;
+
 		try {
 			// Prepare DiT inputs
-			Map<String, OnnxTensor> ditInputs = new HashMap<>();
 			ditInputs.put("x", toOnnx(env, x));
 			ditInputs.put("t", toOnnx(env, t));
 			ditInputs.put("cross_attn_cond", toOnnx(env, crossAttnCond));
@@ -48,10 +50,16 @@ public class OnnxDitModel implements DitModel, OnnxFeatures {
 
 			// Run DiT model
 			OrtSession.Result ditResult = session.run(ditInputs);
-			OnnxTensor ditOutput = (OnnxTensor) ditResult.get(0);
+			ditOutput = (OnnxTensor) ditResult.get(0);
 			return pack(ditOutput);
 		} catch (OrtException e) {
 			throw new RuntimeException("Error running DiT model", e);
+		} finally {
+			ditInputs.values().forEach(OnnxTensor::close);
+
+			if (ditOutput != null) {
+				ditOutput.close();
+			}
 		}
 	}
 

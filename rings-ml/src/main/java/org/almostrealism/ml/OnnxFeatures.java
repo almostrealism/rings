@@ -23,12 +23,17 @@ import ai.onnxruntime.TensorInfo;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.HardwareException;
 
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
 import java.util.Objects;
 
 public interface OnnxFeatures extends CodeFeatures {
+	default OrtEnvironment getOnnxEnvironment() {
+		throw new UnsupportedOperationException();
+	}
+
 	default TraversalPolicy shape(TensorInfo info) {
 		return new TraversalPolicy(info.getShape());
 	}
@@ -52,12 +57,20 @@ public interface OnnxFeatures extends CodeFeatures {
 	 * @param env The OrtEnvironment to use for creating the tensor.
 	 * @param collection The {@link PackedCollection} to convert.
 	 * @return An {@link OnnxTensor} representing the {@link PackedCollection}.
-	 * @throws OrtException If there is an error creating the tensor.
+	 * @throws HardwareException If there is an error creating the tensor.
 	 */
-	default OnnxTensor toOnnx(OrtEnvironment env, PackedCollection<?> collection) throws OrtException {
-		return OnnxTensor.createTensor(env,
-				FloatBuffer.wrap(Objects.requireNonNull(collection).toFloatArray()),
-				collection.getShape().extentLong());
+	default OnnxTensor toOnnx(OrtEnvironment env, PackedCollection<?> collection) {
+		try {
+			return OnnxTensor.createTensor(env,
+					FloatBuffer.wrap(Objects.requireNonNull(collection).toFloatArray()),
+					collection.getShape().extentLong());
+		} catch (OrtException e) {
+			throw new HardwareException("Failed to create tensor", e);
+		}
+	}
+
+	default OnnxTensor toOnnx(PackedCollection<?> collection) {
+		return toOnnx(getOnnxEnvironment(), collection);
 	}
 
 	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, float... data) throws OrtException {
