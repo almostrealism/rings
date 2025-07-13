@@ -22,5 +22,5 @@ import org.almostrealism.collect.PackedCollection;
 public interface AutoEncoder extends Destroyable {
 	PackedCollection<?> encode(PackedCollection<?> input);
 
-	PackedCollection<?> decode(PackedCollection<?> input);
+	PackedCollection<?> decode(PackedCollection<?> latent);
 }

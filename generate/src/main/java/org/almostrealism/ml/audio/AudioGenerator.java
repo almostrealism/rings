@@ -346,7 +346,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length < 3) {
-			System.out.println("Usage: java -jar audiogen.jar <models_path> <output_path> <prompt> <duration>");
+			System.out.println("Usage: java AudioGenerator <models_path> <output_path> <prompt> <duration>");
 			return;
 		}
 

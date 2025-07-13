@@ -302,6 +302,24 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		}
 	}
 
+	public void saveMultiChannel(File file) {
+		PackedCollection w = getCollection();
+
+		int channelCount = w.getShape().length(0);
+		int frames = w.getShape().length(1);
+
+		try (WavFile wav = WavFile.newWavFile(file, channelCount, frames, 24, sampleRate)) {
+			double data[][] = new double[channelCount][frames];
+			for (int c = 0; c < channelCount; c++) {
+				data[c] = w.toArray(c * frames, frames);
+			}
+
+			wav.writeFrames(data, frames);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public WaveCell toCell(TimeCell clock) {
 		return toCell(clock.frameScalar());
 	}
@@ -335,6 +353,22 @@ public class WaveData implements Destroyable, SamplingFeatures {
 			int channel = 0;
 
 			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+		}
+	}
+
+	public static WaveData loadMultiChannel(File f) throws IOException {
+		try (WavFile w = WavFile.openWavFile(f)) {
+			int channelCount = w.getNumChannels();
+			PackedCollection<?> in = new PackedCollection<>(new TraversalPolicy(channelCount, w.getNumFrames()));
+
+			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
+			w.readFrames(wave, 0, (int) w.getFramesRemaining());
+
+			for (int c = 0; c < wave.length; c++) {
+				in.setMem(Math.toIntExact(c * w.getNumFrames()), wave[c]);
+			}
+
+			return new WaveData(in, (int) w.getSampleRate());
 		}
 	}
 

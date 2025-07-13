@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
+	public static final int FRAME_COUNT = 524288;
+
 	private final OrtEnvironment env;
 	private final OrtSession encoderSession;
 	private final OrtSession decoderSession;
@@ -29,8 +31,22 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public OrtEnvironment getOnnxEnvironment() { return env; }
 
 	@Override
-	public PackedCollection<?> encode(PackedCollection<?> input) {
-		return null;
+	public PackedCollection<?> encode(PackedCollection<?> audio) {
+		Map<String, OnnxTensor> inputs = new HashMap<>();
+		inputs.put("audio", toOnnx(audio));
+
+		OnnxTensor latentTensor = null;
+
+		try {
+			OrtSession.Result result = encoderSession.run(inputs);
+			latentTensor = (OnnxTensor) result.get(0);
+			return pack(latentTensor);
+		} catch (OrtException e) {
+			throw new HardwareException("Unable to run ONNX encoder", e);
+		} finally {
+			if (latentTensor != null)
+				latentTensor.close();
+		}
 	}
 
 	@Override
