@@ -104,7 +104,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 
 		List<WaveDataProvider> providers = new ArrayList<>();
 		playbackRates.forEach(rate -> {
-			PackedCollection<?> output = WaveData.allocateCollection(processor.getFrames()).traverse(1);
+			PackedCollection<?> output = new PackedCollection<>(processor.getFrames()).traverse(1);
 			WaveData destination = new WaveData(output, OutputLine.sampleRate);
 			providers.add(new DynamicWaveDataProvider("synth://" + UUID.randomUUID(), destination));
 		});

@@ -101,7 +101,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 
 	@Deprecated
 	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
-		PackedCollection<?> export = WaveData.allocateCollection(getCount());
+		PackedCollection<?> export = new PackedCollection<>(getCount());
 		WaveData destination = new WaveData(export, OutputLine.sampleRate);
 
 		Evaluable<Scalar> evX = x.get();

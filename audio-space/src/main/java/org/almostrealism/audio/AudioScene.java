@@ -279,7 +279,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
-		setLibrary(AudioLibrary.load(tree, getSampleRate(), progress), progress);
+		setLibrary(new AudioLibrary(tree, getSampleRate()), progress);
 	}
 
 	public void loadPatterns(String patternsFile) throws IOException {

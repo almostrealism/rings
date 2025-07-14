@@ -19,6 +19,7 @@ package org.almostrealism.ml;
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
+import ai.onnxruntime.OrtSession;
 import ai.onnxruntime.TensorInfo;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.CodeFeatures;
@@ -87,5 +88,16 @@ public interface OnnxFeatures extends CodeFeatures {
 
 	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, LongBuffer data) throws OrtException {
 		return OnnxTensor.createTensor(env, data, shape.extentLong());
+	}
+
+	static OrtSession.SessionOptions defaultOptions() {
+		try {
+			OrtSession.SessionOptions options = new OrtSession.SessionOptions();
+			options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
+			options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
+			return options;
+		} catch (OrtException e) {
+			throw new HardwareException("Failed to create ONNX session options", e);
+		}
 	}
 }

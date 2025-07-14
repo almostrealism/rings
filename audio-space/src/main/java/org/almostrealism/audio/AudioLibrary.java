@@ -50,6 +50,10 @@ public class AudioLibrary implements ConsoleFeatures {
 	private WaveDetailsFactory factory;
 	private Consumer<Exception> errorListener;
 
+	public AudioLibrary(File root, int sampleRate) {
+		this(new FileWaveDataProviderNode(root), sampleRate);
+	}
+
 	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
 		this.root = root;
 		this.info = new HashMap<>();
@@ -215,20 +219,5 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	@Override
-	public Console console() {
-		return AudioScene.console;
-	}
-
-	public static AudioLibrary load(File root, int sampleRate) {
-		return load(new FileWaveDataProviderNode(root), sampleRate, null);
-	}
-
-	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
-		return load(root, sampleRate, null);
-	}
-
-	public static AudioLibrary load(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate,
-									DoubleConsumer progress) {
-		return new AudioLibrary(root, sampleRate);
-	}
+	public Console console() { return AudioScene.console; }
 }

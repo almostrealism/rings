@@ -39,7 +39,7 @@ public class AudioSceneTest {
 
 		// Load a library of material to use for creating notes to use
 		// in the patterns that make up the arrangement
-		scene.setLibrary(AudioLibrary.load(new File("/Users/michael/Music/Samples"), sampleRate));
+		scene.setLibrary(new AudioLibrary(new File("/Users/michael/Music/Samples"), sampleRate));
 
 		// Create a random parameterization of the scene
 		ParameterGenome random = scene.getGenome().random();

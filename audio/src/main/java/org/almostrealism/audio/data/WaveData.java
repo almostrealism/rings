@@ -50,6 +50,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public static final int POOL_BATCH_IN = FFT_BINS / 2;
 	public static final int POOL_BATCH_OUT = POOL_BATCH_IN / FFT_POOL;
 
+	public static boolean enableMonoLoad = false;
+
 	private static Evaluable<PackedCollection<?>> magnitude;
 	private static Evaluable<PackedCollection<?>> fft;
 	private static Evaluable<PackedCollection<?>> pool2d;
@@ -93,20 +95,40 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		this.sampleRate = sampleRate;
 	}
 
+	public PackedCollection<?> getData() { return collection; }
+
 	public PackedCollection<?> getCollection() {
-		return collection;
+		if (getChannelCount() == 1) {
+			return getData();
+		} else {
+			warn("Wave data appears to be multi-channel, returning first channel only");
+			return getData().range(shape(getFrameCount()).traverseEach(), 0);
+		}
 	}
 
-	public int getSampleRate() {
-		return sampleRate;
-	}
-
+	public int getSampleRate() { return sampleRate; }
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
 	}
 
 	public double getDuration() {
-		return getCollection().getMemLength() / (double) sampleRate;
+		return getFrameCount() / (double) sampleRate;
+	}
+
+	public int getChannelCount() {
+		if (getData().getShape().getDimensions() == 1) {
+			return 1;
+		}
+
+		return getData().getShape().length(0);
+	}
+
+	public int getFrameCount() {
+		if (getData().getShape().getDimensions() == 1) {
+			return getData().getMemLength();
+		}
+
+		return getData().getShape().length(1);
 	}
 
 	public BufferDetails getBufferDetails() {
@@ -281,11 +303,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public void save(File file) {
 		PackedCollection w = getCollection();
 
-		// TODO  This actually *should* be getCount, but it is frequently
-		// TODO  wrong because the traversal axis is not set correctly.
-		// TODO  To support stereo or other multi-channel audio, we need
-		// TODO  to fix this.
-		int frames = w.getMemLength(); // w.getCount();
+		int frames = getFrameCount();
 
 		try (WavFile wav = WavFile.newWavFile(file, 2, frames, 24, sampleRate)) {
 			for (int i = 0; i < frames; i++) {
@@ -303,7 +321,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	}
 
 	public void saveMultiChannel(File file) {
-		PackedCollection w = getCollection();
+		PackedCollection w = getData();
 
 		int channelCount = w.getShape().length(0);
 		int frames = w.getShape().length(1);
@@ -343,17 +361,15 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public static void init() { }
 
 	public static WaveData load(File f) throws IOException {
-		try (WavFile w = WavFile.openWavFile(f)) {
-			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
-			w.readFrames(wave, 0, (int) w.getFramesRemaining());
-
-			int channelCount = w.getNumChannels();
-
-			assert channelCount > 0;
-			int channel = 0;
-
-			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+		if (enableMonoLoad) {
+			try (WavFile w = WavFile.openWavFile(f)) {
+				double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
+				w.readFrames(wave, 0, (int) w.getFramesRemaining());
+				return new WaveData(WavFile.channel(wave, 0), (int) w.getSampleRate());
+			}
 		}
+
+		return loadMultiChannel(f);
 	}
 
 	public static WaveData loadMultiChannel(File f) throws IOException {
@@ -370,11 +386,6 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 			return new WaveData(in, (int) w.getSampleRate());
 		}
-	}
-
-	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
-	public static PackedCollection<?> allocateCollection(int count) {
-		return new PackedCollection(count);
 	}
 
 	public static FeatureSettings getDefaultFeatureSettings() {

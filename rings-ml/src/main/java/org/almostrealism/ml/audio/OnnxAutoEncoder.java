@@ -34,6 +34,15 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	private final OrtEnvironment env;
 	private final OrtSession encoderSession;
 	private final OrtSession decoderSession;
+	private boolean destroyEnv;
+
+	public OnnxAutoEncoder(String encoderModelPath,
+						   String decoderModelPath) throws OrtException {
+		this(OrtEnvironment.getEnvironment(),
+				OnnxFeatures.defaultOptions(),
+				encoderModelPath, decoderModelPath);
+		this.destroyEnv = true;
+	}
 
 	public OnnxAutoEncoder(OrtEnvironment environment,
 						   OrtSession.SessionOptions options,
@@ -100,6 +109,10 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 		try {
 			encoderSession.close();
 			decoderSession.close();
+
+			if (destroyEnv) {
+				env.close();
+			}
 		} catch (OrtException e) {
 			throw new HardwareException("Failed to close ONNX sessions", e);
 		}
