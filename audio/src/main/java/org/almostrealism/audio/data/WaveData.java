@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
 					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
 				.get();
-		mfcc = new FeatureComputer(new FeatureSettings(OutputLine.sampleRate));
+		mfcc = new FeatureComputer(getDefaultFeatureSettings());
 	}
 
 	private PackedCollection collection;
@@ -375,5 +375,9 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
 	public static PackedCollection<?> allocateCollection(int count) {
 		return new PackedCollection(count);
+	}
+
+	public static FeatureSettings getDefaultFeatureSettings() {
+		return new FeatureSettings(OutputLine.sampleRate);
 	}
 }

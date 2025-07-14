@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.almostrealism.ml.audio;
+package org.almostrealism.audio.data;
 
-import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.collect.PackedCollection;
 
-public interface AutoEncoder extends Destroyable {
+public interface WaveDataFeatureProvider {
+	PackedCollection<?> computeFeatures(WaveData waveData);
 
 	double getSampleRate();
-
-	double getLatentSampleRate();
-
-	PackedCollection<?> encode(PackedCollection<?> input);
-
-	PackedCollection<?> decode(PackedCollection<?> latent);
 }

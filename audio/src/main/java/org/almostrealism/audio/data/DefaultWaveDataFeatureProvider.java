@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.almostrealism.ml.audio;
+package org.almostrealism.audio.data;
 
-import io.almostrealism.lifecycle.Destroyable;
+import org.almostrealism.audio.feature.FeatureSettings;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
-public interface AutoEncoder extends Destroyable {
+public class DefaultWaveDataFeatureProvider implements WaveDataFeatureProvider {
+	@Override
+	public PackedCollection<?> computeFeatures(WaveData waveData) {
+		return waveData.features();
+	}
 
-	double getSampleRate();
-
-	double getLatentSampleRate();
-
-	PackedCollection<?> encode(PackedCollection<?> input);
-
-	PackedCollection<?> decode(PackedCollection<?> latent);
+	@Override
+	public double getSampleRate() {
+		double inputSampleRate = OutputLine.sampleRate;
+		FeatureSettings settings = WaveData.getDefaultFeatureSettings();
+		return inputSampleRate / settings.getFrameExtractionSettings().getWindowShift();
+	}
 }

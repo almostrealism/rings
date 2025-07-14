@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
-	public static boolean enableFeatures = false;
 
 	public static int defaultBins = 32; // 16;
 	public static double defaultWindow = 0.25; // 0.125;
@@ -39,6 +38,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 	private PackedCollection<?> buffer;
 	private Evaluable<PackedCollection<?>> sum;
 	private Evaluable<PackedCollection<?>> difference;
+
+	private WaveDataFeatureProvider featureProvider;
 
 	public WaveDetailsFactory(int sampleRate) {
 		this(defaultBins, defaultWindow, sampleRate);
@@ -71,8 +72,14 @@ public class WaveDetailsFactory implements CodeFeatures {
 				.get();
 	}
 
-	public int getSampleRate() {
-		return sampleRate;
+	public int getSampleRate() { return sampleRate; }
+
+	public WaveDataFeatureProvider getFeatureProvider() {
+		return featureProvider;
+	}
+
+	public void setFeatureProvider(WaveDataFeatureProvider featureProvider) {
+		this.featureProvider = featureProvider;
 	}
 
 	public WaveDetails forFile(String file) {
@@ -105,14 +112,9 @@ public class WaveDetailsFactory implements CodeFeatures {
 		details.setFreqFrameCount(fft.getShape().length(0));
 		details.setFreqData(fft);
 
-		if (enableFeatures) {
-			PackedCollection<?> features = processFeatures(data.features());
-			if (features.getShape().length(0) < 1) {
-				throw new UnsupportedOperationException();
-			}
-
-			// TODO  This is not the most accurate way to determine the sample rate
-			details.setFeatureSampleRate(features.getShape().length(0) / data.getDuration());
+		if (featureProvider != null) {
+			PackedCollection<?> features = prepareFeatures(data);
+			details.setFeatureSampleRate(featureProvider.getSampleRate());
 			details.setFeatureChannelCount(1);
 			details.setFeatureBinCount(features.getShape().length(1));
 			details.setFeatureFrameCount(features.getShape().length(0));
@@ -200,7 +202,9 @@ public class WaveDetailsFactory implements CodeFeatures {
 		return output;
 	}
 
-	protected PackedCollection<?> processFeatures(PackedCollection<?> features) {
+	protected PackedCollection<?> prepareFeatures(WaveData data) {
+		PackedCollection<?> features = featureProvider.computeFeatures(data);
+
 		if (features.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();
 		}
