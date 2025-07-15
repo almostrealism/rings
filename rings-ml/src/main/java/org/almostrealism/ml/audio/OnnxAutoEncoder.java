@@ -70,21 +70,34 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public PackedCollection<?> encode(PackedCollection<?> audio) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 
-		if (audio.getShape().getDimensions() == 1 || audio.getShape().length(0) == 1) {
-			float data[] = audio.toFloatArray();
+		float leftData[];
+		float rightData[];
 
-			// Duplicate mono audio data to create stereo input
-			FloatBuffer buf = FloatBuffer.allocate(2 * data.length);
-			buf.put(data);
-			buf.put(data);
-			buf.position(0);
-			inputs.put("audio", packOnnx(shape(2, data.length), buf));
+		if (audio.getShape().getDimensions() == 1 || audio.getShape().length(0) == 1) {
+			leftData = audio.toFloatArray(0, Math.min(audio.getMemLength(), FRAME_COUNT));
+			rightData = leftData;
 		} else if (audio.getShape().length(0) == 2) {
-			inputs.put("audio", toOnnx(audio));
+			int frames = audio.getShape().length(1);
+			leftData = audio.toFloatArray(0, Math.min(frames, FRAME_COUNT));
+			rightData = audio.toFloatArray(frames, Math.min(frames, FRAME_COUNT));
 		} else {
 			throw new IllegalArgumentException(audio.getShape() +
 					" is not a valid shape for audio data");
 		}
+
+		FloatBuffer buf = FloatBuffer.allocate(2 * FRAME_COUNT);
+
+		buf.put(leftData);
+		if (leftData.length < FRAME_COUNT)
+			buf.put(new float[FRAME_COUNT - leftData.length]);
+
+		buf.put(rightData);
+		if (rightData.length < FRAME_COUNT)
+			buf.put(new float[FRAME_COUNT - rightData.length]);
+
+		inputs.put("audio",
+				packOnnx(shape(2, FRAME_COUNT), buf.position(0)));
+
 
 		OnnxTensor latentTensor = null;
 
@@ -97,6 +110,7 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 		} finally {
 			if (latentTensor != null)
 				latentTensor.close();
+			inputs.values().forEach(OnnxTensor::close);
 		}
 	}
 
