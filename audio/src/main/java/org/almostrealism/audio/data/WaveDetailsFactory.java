@@ -86,6 +86,10 @@ public class WaveDetailsFactory implements CodeFeatures {
 		return forProvider(new FileWaveDataProvider(file), null);
 	}
 
+	public WaveDetails forProvider(WaveDataProvider provider) {
+		return forProvider(provider, null);
+	}
+
 	public WaveDetails forProvider(WaveDataProvider provider, WaveDetails existing) {
 		return forWaveData(provider.getIdentifier(), provider.get(), existing);
 	}
