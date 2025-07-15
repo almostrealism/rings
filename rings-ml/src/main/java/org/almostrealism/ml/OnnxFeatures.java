@@ -74,12 +74,20 @@ public interface OnnxFeatures extends CodeFeatures {
 		return toOnnx(getOnnxEnvironment(), collection);
 	}
 
-	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, float... data) throws OrtException {
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, float... data) {
 		return packOnnx(env, shape, FloatBuffer.wrap(data));
 	}
 
-	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, FloatBuffer data) throws OrtException {
-		return OnnxTensor.createTensor(env, data,  shape.extentLong());
+	default OnnxTensor packOnnx(TraversalPolicy shape, FloatBuffer data) {
+		return packOnnx(getOnnxEnvironment(), shape, data);
+	}
+
+	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, FloatBuffer data) {
+		try {
+			return OnnxTensor.createTensor(env, data,  shape.extentLong());
+		} catch (OrtException e) {
+			throw new HardwareException("Failed to create tensor", e);
+		}
 	}
 
 	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, long... data) throws OrtException {

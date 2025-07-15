@@ -30,11 +30,6 @@ public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, Code
 
 	@Override
 	public PackedCollection<?> computeFeatures(WaveData waveData) {
-		if (waveData.getChannelCount() != 2) {
-			// TODO  This should actually just duplicate the mono channel to compute the features anyway
-			throw new IllegalArgumentException();
-		}
-
 		PackedCollection<?> features = autoencoder.encode(waveData.getData());
 		int frames = features.getShape().length(2);
 		int bins = features.getShape().length(1);

@@ -24,6 +24,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.ml.OnnxFeatures;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +69,22 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	@Override
 	public PackedCollection<?> encode(PackedCollection<?> audio) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
-		inputs.put("audio", toOnnx(audio));
+
+		if (audio.getShape().getDimensions() == 1 || audio.getShape().length(0) == 1) {
+			float data[] = audio.toFloatArray();
+
+			// Duplicate mono audio data to create stereo input
+			FloatBuffer buf = FloatBuffer.allocate(2 * data.length);
+			buf.put(data);
+			buf.put(data);
+			buf.position(0);
+			inputs.put("audio", packOnnx(shape(2, data.length), buf));
+		} else if (audio.getShape().length(0) == 2) {
+			inputs.put("audio", toOnnx(audio));
+		} else {
+			throw new IllegalArgumentException(audio.getShape() +
+					" is not a valid shape for audio data");
+		}
 
 		OnnxTensor latentTensor = null;
 
