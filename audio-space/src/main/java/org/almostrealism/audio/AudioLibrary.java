@@ -103,7 +103,12 @@ public class AudioLibrary implements ConsoleFeatures {
 		try {
 			String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
 
-			WaveDetails details = info.computeIfAbsent(id, k -> computeDetails(provider, persistent));
+			WaveDetails details = info.computeIfAbsent(id, k -> computeDetails(provider, null, persistent));
+			if (getWaveDetailsFactory().getFeatureProvider() != null && details.getFeatureData() == null) {
+				details = computeDetails(provider, details, persistent);
+				info.put(id, details);
+			}
+
 			details.setPersistent(persistent || details.isPersistent());
 			return details;
 		} catch (Exception e) {
@@ -147,9 +152,9 @@ public class AudioLibrary implements ConsoleFeatures {
 		info.put(details.getIdentifier(), details);
 	}
 
-	protected WaveDetails computeDetails(WaveDataProvider provider, boolean persistent) {
-		WaveDetails details = factory.forProvider(provider);
-		details.setPersistent(persistent);
+	protected WaveDetails computeDetails(WaveDataProvider provider, WaveDetails existing, boolean persistent) {
+		WaveDetails details = factory.forProvider(provider, existing);
+		details.setPersistent((existing != null && existing.isPersistent()) || persistent);
 		return details;
 	}
 

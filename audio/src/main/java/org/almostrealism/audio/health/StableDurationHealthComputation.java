@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDetailsFactory;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
@@ -31,7 +30,6 @@ import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -250,7 +248,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 					if (getWaveDetailsProcessor() != null) {
 						details = WaveDetailsFactory.getDefault()
-								.forProvider(new FileWaveDataProvider(getOutputFile().getPath()));
+								.forFile(getOutputFile().getPath());
 						getWaveDetailsProcessor().accept(details);
 					}
 				}

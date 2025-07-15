@@ -87,8 +87,6 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public WaveData(PackedCollection wave, int sampleRate) {
 		if (wave == null) {
 			System.out.println("WARN: Wave data is null");
-		} else if (wave.getCount() == 1) {
-			warn("Wave data appears to be the wrong shape");
 		}
 
 		this.collection = wave;

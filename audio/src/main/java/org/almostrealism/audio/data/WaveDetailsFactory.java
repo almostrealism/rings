@@ -83,45 +83,50 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public WaveDetails forFile(String file) {
-		return forProvider(new FileWaveDataProvider(file));
+		return forProvider(new FileWaveDataProvider(file), null);
 	}
 
-	public WaveDetails forProvider(WaveDataProvider provider) {
-		return forWaveData(provider.getIdentifier(), provider.get());
+	public WaveDetails forProvider(WaveDataProvider provider, WaveDetails existing) {
+		return forWaveData(provider.getIdentifier(), provider.get(), existing);
 	}
 
-	public WaveDetails forWaveData(String identifier, WaveData data) {
+	public WaveDetails forWaveData(String identifier, WaveData data, WaveDetails existing) {
+		if (existing == null) {
+			existing = new WaveDetails(identifier, data.getSampleRate());
+		}
+
 		if (data.getSampleRate() != getSampleRate()) {
-			return new WaveDetails(identifier, data.getSampleRate());
+			return existing;
 		}
 
-		WaveDetails details = new WaveDetails(identifier);
-		details.setSampleRate(data.getSampleRate());
-		details.setChannelCount(1);
-		details.setFrameCount(data.getCollection().getMemLength());
-		details.setData(data.getCollection());
+		existing.setSampleRate(data.getSampleRate());
+		existing.setChannelCount(1);
+		existing.setFrameCount(data.getCollection().getMemLength());
+		existing.setData(data.getCollection());
 
-		PackedCollection<?> fft = processFft(data.fft(true));
-		if (fft.getShape().length(0) < 1) {
-			throw new UnsupportedOperationException();
+		if (existing.getFreqFrameCount() <= 1) {
+			PackedCollection<?> fft = processFft(data.fft(true));
+			if (fft.getShape().length(0) < 1) {
+				throw new UnsupportedOperationException();
+			}
+
+			existing.setFreqSampleRate(fftSampleRate / scaleTime);
+			existing.setFreqChannelCount(1);
+			existing.setFreqBinCount(freqBins);
+			existing.setFreqFrameCount(fft.getShape().length(0));
+			existing.setFreqData(fft);
 		}
-
-		details.setFreqSampleRate(fftSampleRate / scaleTime);
-		details.setFreqChannelCount(1);
-		details.setFreqBinCount(freqBins);
-		details.setFreqFrameCount(fft.getShape().length(0));
-		details.setFreqData(fft);
 
 		if (featureProvider != null) {
 			PackedCollection<?> features = prepareFeatures(data);
-			details.setFeatureSampleRate(featureProvider.getSampleRate());
-			details.setFeatureChannelCount(1);
-			details.setFeatureBinCount(features.getShape().length(1));
-			details.setFeatureFrameCount(features.getShape().length(0));
-			details.setFeatureData(features);
+			existing.setFeatureSampleRate(featureProvider.getSampleRate());
+			existing.setFeatureChannelCount(1);
+			existing.setFeatureBinCount(features.getShape().length(1));
+			existing.setFeatureFrameCount(features.getShape().length(0));
+			existing.setFeatureData(features);
 		}
 
-		return details;
+		return existing;
 	}
 
 	public double similarity(WaveDetails a, WaveDetails b) {
