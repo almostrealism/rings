@@ -27,6 +27,7 @@ public class AudioModel {
 	private double duration;
 	private boolean pattern;
 	private List<String> textConditions;
+	private List<String> audioConditions;
 
 	public AudioModel() {
 		this(null);
@@ -58,4 +59,9 @@ public class AudioModel {
 
 	public List<String> getTextConditions() { return textConditions; }
 	public void setTextConditions(List<String> textConditions) { this.textConditions = textConditions; }
+
+	public List<String> getAudioConditions() { return audioConditions; }
+	public void setAudioConditions(List<String> audioConditions) {
+		this.audioConditions = audioConditions;
+	}
 }

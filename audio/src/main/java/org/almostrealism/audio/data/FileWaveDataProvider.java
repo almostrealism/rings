@@ -44,6 +44,10 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 
 	public FileWaveDataProvider() { }
 
+	public FileWaveDataProvider(File file) {
+		this(file.getPath());
+	}
+
 	public FileWaveDataProvider(String resourcePath) {
 		if (resourcePath == null) {
 			throw new IllegalArgumentException();
