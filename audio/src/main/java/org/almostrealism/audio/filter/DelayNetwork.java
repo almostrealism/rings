@@ -164,7 +164,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	}
 
 	public double[][] householderMatrix(Producer<PackedCollection<?>> v, double scale) {
-		return householderMatrix((_normalize(v).evaluate()).toArray(), scale);
+		return householderMatrix((normalize(v).evaluate()).toArray(), scale);
 	}
 
 	public double[][] householderMatrix(double[] v, double scale) {

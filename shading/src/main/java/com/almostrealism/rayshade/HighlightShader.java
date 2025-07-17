@@ -83,9 +83,9 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			return null;
 		}
 		
-		n = scalarMultiply(n, length(n).pow(-1.0));
+		n = scalarMultiply(n, vlength(n).pow(-1.0));
 		ExpressionComputation<Vector> h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
-		h = scalarMultiply(h, length(h).pow(-1.0));
+		h = scalarMultiply(h, vlength(h).pow(-1.0));
 
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(p));
 		if (super.size() > 0) hc = multiply(hc, super.shade(p, normals));
