@@ -36,9 +36,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	public PackedCollection<?> project(PackedCollection<?> audio) {
-		TraversalPolicy shape = shape(2, OnnxAutoEncoder.FRAME_COUNT);
-		PackedCollection<?> paddedAudio = pad(shape, cp(audio), 0, 0).evaluate();
-		PackedCollection<?> encoded = autoencoder.encode(paddedAudio);
+		PackedCollection<?> encoded = autoencoder.encode(cp(audio)).evaluate();
 
 		TraversalPolicy encodedShape = encoded.getShape();
 		log("Encoded shape = " + encodedShape);
@@ -46,8 +44,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		double a = 0.7;
 		double b = (1 - a) * 1.3;
 		PackedCollection<?> noise = new PackedCollection<>(encodedShape).randnFill();
-		PackedCollection<?> sum = cp(encoded).multiply(c(a)).add(cp(noise).multiply(c(b))).evaluate();
-		return autoencoder.decode(sum);
+		return autoencoder.decode(cp(encoded).multiply(c(a)).add(cp(noise).multiply(c(b)))).evaluate();
 	}
 
 	public static void main(String[] args) throws Exception {

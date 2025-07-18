@@ -20,7 +20,9 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.ml.OnnxFeatures;
 
@@ -30,7 +32,7 @@ import java.util.Map;
 
 public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public static final int SAMPLE_RATE = 44100;
-	public static final int FRAME_COUNT = 524288;
+	public static final int FRAME_COUNT = 2048 * 256;
 
 	private final OrtEnvironment env;
 	private final OrtSession encoderSession;
@@ -67,6 +69,17 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	}
 
 	@Override
+	public Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent) {
+		return func(shape(2, FRAME_COUNT),
+				in -> args -> decode(in[0]), latent);
+	}
+
+	@Override
+	public Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input) {
+		return func(shape(64, 256),
+				in -> args -> encode(in[0]), input);
+	}
+
 	public PackedCollection<?> encode(PackedCollection<?> audio) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 
@@ -114,7 +127,6 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 		}
 	}
 
-	@Override
 	public PackedCollection<?> decode(PackedCollection<?> latent) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 		inputs.put("sampled", toOnnx(latent));

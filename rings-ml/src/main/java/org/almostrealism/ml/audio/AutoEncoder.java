@@ -17,6 +17,7 @@
 package org.almostrealism.ml.audio;
 
 import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public interface AutoEncoder extends Destroyable {
@@ -25,7 +26,7 @@ public interface AutoEncoder extends Destroyable {
 
 	double getLatentSampleRate();
 
-	PackedCollection<?> encode(PackedCollection<?> input);
+	Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input);
 
-	PackedCollection<?> decode(PackedCollection<?> latent);
+	Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent);
 }

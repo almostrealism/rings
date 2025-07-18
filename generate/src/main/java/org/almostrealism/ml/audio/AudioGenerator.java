@@ -288,7 +288,7 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 	}
 
 	private double[][] decodeAudio(PackedCollection<?> latent) {
-		PackedCollection<?> result = autoencoder.decode(latent);
+		PackedCollection<?> result = autoencoder.decode(cp(latent)).evaluate();
 
 		double data[] = result.toArray();
 		int totalSamples = data.length;
