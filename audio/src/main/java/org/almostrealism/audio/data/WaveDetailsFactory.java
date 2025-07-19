@@ -23,7 +23,6 @@ import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
-	public static boolean enableNormalizeSimilarity = false;
 
 	public static int defaultBins = 32; // 16;
 	public static double defaultWindow = 0.25; // 0.125;
@@ -37,7 +36,6 @@ public class WaveDetailsFactory implements CodeFeatures {
 	private int scaleBins, scaleTime;
 	private PackedCollection<?> buffer;
 	private Evaluable<PackedCollection<?>> sum;
-	private Evaluable<PackedCollection<?>> difference;
 
 	private WaveDataFeatureProvider featureProvider;
 
@@ -64,11 +62,6 @@ public class WaveDetailsFactory implements CodeFeatures {
 				.enumerate(2, scaleTime)
 				.traverse(3)
 				.sum()
-				.get();
-		difference = cv(shape(freqBins, 1), 0)
-				.subtract(cv(shape(freqBins, 1), 1))
-				.traverseEach()
-				.magnitude()
 				.get();
 	}
 
@@ -134,52 +127,10 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public double similarity(WaveDetails a, WaveDetails b) {
-		int bins = freqBins;
-		int n;
-
-		if (a.getFreqBinCount() == b.getFreqBinCount()) {
-			n = Math.min(a.getFreqFrameCount(), b.getFreqFrameCount());
-			bins = a.getFreqBinCount();
+		if (a.getFeatureData() != null && b.getFeatureData() != null) {
+			return WaveDetails.similarity(a.getFeatureData(), b.getFeatureData());
 		} else {
-			// WaveDetails with different shapes are not easily comparable
-			n = 0;
-		}
-
-		TraversalPolicy overlap = new TraversalPolicy(true, n, bins, 1);
-
-		double d = 0.0;
-
-		if (n > 0) {
-			PackedCollection<?> aFft = a.getFreqData().range(overlap).traverse(1);
-			PackedCollection<?> bFft = b.getFreqData().range(overlap).traverse(1);
-			PackedCollection diff = difference.evaluate(aFft, bFft);
-			d += diff.doubleStream().sum();
-		}
-
-		if (a.getFreqFrameCount() > n) {
-			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, a.getFreqBinCount(), 1), overlap.getTotalSize())
-					.doubleStream().map(Math::abs).sum();
-		}
-
-		if (b.getFreqFrameCount() > n) {
-			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, b.getFreqBinCount(), 1), overlap.getTotalSize())
-					.doubleStream().map(Math::abs).sum();
-		}
-
-		if (enableNormalizeSimilarity) {
-			double max = Math.max(
-					a.getFreqFrameCount() <= 0 ? 0.0 : a.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0),
-					b.getFreqFrameCount() <= 0 ? 0.0 : b.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0));
-			max = max * freqBins * Math.max(a.getFreqFrameCount(), b.getFreqFrameCount());
-			double r = max == 0 ? Double.MAX_VALUE : (d / max);
-
-			if (r > 1.0 && max != 0) {
-				warn("Similarity = " + r);
-			}
-
-			return r;
-		} else {
-			return d;
+			return WaveDetails.similarity(a.getFreqData(), b.getFreqData());
 		}
 	}
 
