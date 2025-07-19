@@ -16,6 +16,8 @@
 
 package org.almostrealism.ml.audio;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -26,24 +28,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class AudioComposer implements Factor<PackedCollection<?>>, CodeFeatures {
+public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, CodeFeatures {
 	private final AutoEncoder autoencoder;
+	private final int dim;
+
 	private List<ComposableAudioFeatures> features;
 
 	private Random random;
+	private double deviation;
 
-	public AudioComposer(AutoEncoder autoencoder) {
-		this(autoencoder, System.currentTimeMillis());
+	public AudioComposer(AutoEncoder autoencoder, int dim) {
+		this(autoencoder, dim, System.currentTimeMillis());
 	}
 
-	public AudioComposer(AutoEncoder autoencoder, long seed) {
-		this(autoencoder, new Random(seed));
+	public AudioComposer(AutoEncoder autoencoder, int dim, long seed) {
+		this(autoencoder, dim, new Random(seed));
 	}
 
-	public AudioComposer(AutoEncoder autoencoder, Random random) {
+	public AudioComposer(AutoEncoder autoencoder, int dim, Random random) {
 		this.autoencoder = autoencoder;
+		this.dim = dim;
 		this.random = random;
 		this.features = new ArrayList<>();
+		this.deviation = 1.5;
+	}
+
+	public double getDeviation() { return deviation; }
+	public void setDeviation(double deviation) {
+		this.deviation = deviation;
+	}
+
+	public TraversalPolicy getFeatureShape() {
+		if (features.isEmpty()) return null;
+		return features.getLast().getFeatureShape();
+	}
+
+	public void addAudio(Producer<PackedCollection<?>> audio) {
+		addSource(autoencoder.encode(audio));
 	}
 
 	public void addSource(Producer<PackedCollection<?>> features) {
@@ -51,6 +72,11 @@ public class AudioComposer implements Factor<PackedCollection<?>>, CodeFeatures 
 	}
 
 	public void addSource(ComposableAudioFeatures features) {
+		TraversalPolicy featureShape = getFeatureShape();
+		if (featureShape != null && !featureShape.equals(features.getFeatureShape())) {
+			throw new IllegalArgumentException();
+		}
+
 		this.features.add(features);
 	}
 
@@ -64,6 +90,14 @@ public class AudioComposer implements Factor<PackedCollection<?>>, CodeFeatures 
 	}
 
 	protected CollectionProducer<PackedCollection<?>> createWeights(Producer<PackedCollection<?>> features) {
-		return randn(shape(features), random);
+		double scale = 1.0 / dim;
+		return randn(shape(features).appendDimension(dim), scale, scale * getDeviation(), random);
+	}
+
+	@Override
+	public void destroy() {
+		if (autoencoder != null) {
+			autoencoder.destroy();
+		}
 	}
 }

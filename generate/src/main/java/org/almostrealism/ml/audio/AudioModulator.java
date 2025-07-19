@@ -1,8 +1,22 @@
+/*
+ * Copyright 2025 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.ml.audio;
 
-import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
-import ai.onnxruntime.OrtSession;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.WaveData;
@@ -13,10 +27,12 @@ import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 public class AudioModulator implements AutoCloseable, CodeFeatures {
-	private final OrtEnvironment env;
-	private final AutoEncoder autoencoder;
+	public static final int DIM = 2;
+
+	private final AudioComposer composer;
 
 	public AudioModulator(String modelsPath) throws OrtException {
 		this(new AssetGroup(
@@ -25,57 +41,71 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	public AudioModulator(AssetGroup onnxAssets) throws OrtException {
-		env = OrtEnvironment.getEnvironment();
-
-		OrtSession.SessionOptions options = new OrtSession.SessionOptions();
-		options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
-		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-		autoencoder = new OnnxAutoEncoder(env, options,
+		composer = new AudioComposer(new OnnxAutoEncoder(
 				onnxAssets.getAssetPath("encoder.onnx"),
-				onnxAssets.getAssetPath("decoder.onnx"));
+				onnxAssets.getAssetPath("decoder.onnx")), DIM);
 	}
 
-	public PackedCollection<?> project(PackedCollection<?> audio) {
-		PackedCollection<?> encoded = autoencoder.encode(cp(audio)).evaluate();
+	public void addAudio(PackedCollection<?> audio) {
+		composer.addAudio(cp(audio));
+	}
 
-		TraversalPolicy encodedShape = encoded.getShape();
-		log("Encoded shape = " + encodedShape);
+	public void addFeatures(PackedCollection<?> features) {
+		composer.addSource(cp(features));
+	}
 
-		double a = 0.7;
-		double b = (1 - a) * 1.3;
-		PackedCollection<?> noise = new PackedCollection<>(encodedShape).randnFill();
-		return autoencoder.decode(cp(encoded).multiply(c(a)).add(cp(noise).multiply(c(b)))).evaluate();
+	public PackedCollection<?> project(PackedCollection<?> position) {
+		return composer.getResultant(cp(position)).evaluate();
 	}
 
 	public static void main(String[] args) throws Exception {
-		if (args.length < 3) {
-			System.out.println("Usage: java AudioModulator <models_path> <input> <output_path>");
+		if (args.length < 4) {
+			System.out.println("Usage: java AudioModulator <models_path> <input1> <input2> <output_path>");
 			return;
 		}
 
+		int sampleRate = 44100;
+		boolean noise = false;
+
 		String modelsPath = args[0];
-		String input = args[1];
-		String outputPath = args[2];
+		String input1 = args[1];
+		String input2 = args[2];
+		String outputPath = args[3];
+
+		List<String> inputs = List.of(input1, input2);
 
 		try (AudioModulator modulator = new AudioModulator(modelsPath)) {
-			WaveData wave = WaveData.loadMultiChannel(new File(input));
-			if (wave.getSampleRate() != 44100) {
-				throw new IllegalArgumentException();
+			for (String in : inputs) {
+				WaveData wave = WaveData.loadMultiChannel(new File(in));
+				if (wave.getSampleRate() != sampleRate) {
+					throw new IllegalArgumentException();
+				}
+
+				modulator.addAudio(wave.getData());
 			}
 
-			PackedCollection<?> data = modulator.project(wave.getCollection());
-			WaveData out = new WaveData(data, wave.getSampleRate());
+			if (noise) {
+				modulator.addFeatures(
+						new PackedCollection<>(new TraversalPolicy(64, 256))
+								.randnFill());
+			}
 
-			Path p = Path.of(outputPath).resolve("modulated.wav");
-			out.saveMultiChannel(p.toFile());
-			Console.root().features(AudioModulator.class)
-					.log("Saved modulated audio to " + p);
+			for (int i = 0; i < 5; i++) {
+				PackedCollection<?> position =
+						new PackedCollection<>(new TraversalPolicy(DIM)).randFill();
+				PackedCollection<?> result = modulator.project(position);
+				WaveData out = new WaveData(result, sampleRate);
+
+				Path p = Path.of(outputPath).resolve("modulated_" + i + ".wav");
+				out.saveMultiChannel(p.toFile());
+				Console.root().features(AudioModulator.class)
+						.log("Saved modulated audio to " + p);
+			}
 		}
 	}
 
 	@Override
 	public void close() throws Exception {
-		autoencoder.destroy();
-		env.close();
+		composer.destroy();
 	}
 }

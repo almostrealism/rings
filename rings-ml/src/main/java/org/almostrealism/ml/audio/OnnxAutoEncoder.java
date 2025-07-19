@@ -20,9 +20,9 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.computations.DynamicCollectionProducer;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.ml.OnnxFeatures;
 
@@ -70,6 +70,10 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 
 	@Override
 	public Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent) {
+		if (!shape(latent).equalsIgnoreAxis(shape(64, 256))) {
+			throw new IllegalArgumentException();
+		}
+
 		return func(shape(2, FRAME_COUNT),
 				in -> args -> decode(in[0]), latent);
 	}
@@ -128,8 +132,10 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	}
 
 	public PackedCollection<?> decode(PackedCollection<?> latent) {
+		TraversalPolicy shape = padDimensions(latent.getShape(), 1, 3);
+
 		Map<String, OnnxTensor> inputs = new HashMap<>();
-		inputs.put("sampled", toOnnx(latent));
+		inputs.put("sampled", toOnnx(latent.reshape(shape)));
 
 		OnnxTensor audioTensor = null;
 

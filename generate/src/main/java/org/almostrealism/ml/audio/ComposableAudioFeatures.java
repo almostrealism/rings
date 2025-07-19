@@ -16,6 +16,7 @@
 
 package org.almostrealism.ml.audio;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -41,6 +42,8 @@ public class ComposableAudioFeatures implements Factor<PackedCollection<?>>, Cod
 		this.weights = weights;
 	}
 
+	public TraversalPolicy getFeatureShape() { return shape(features); }
+
 	/**
 	 * Compute the dot product of each weight vector with the provided value vector
 	 * and use the resulting values to scale the feature data.
@@ -51,6 +54,7 @@ public class ComposableAudioFeatures implements Factor<PackedCollection<?>>, Cod
 	@Override
 	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
 		CollectionProducer<PackedCollection<?>> scale = c(weights).traverse(2).multiply(c(value)).sum();
+		scale = scale.reshape(scale.getShape().trim());
 		return c(features).multiply(scale);
 	}
 }
