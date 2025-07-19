@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Random;
 
 public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, CodeFeatures {
+	public static boolean normalizeWeights = true;
+
 	private final AutoEncoder autoencoder;
 	private final int dim;
 
@@ -50,7 +52,7 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		this.dim = dim;
 		this.random = random;
 		this.features = new ArrayList<>();
-		this.deviation = 1.5;
+		this.deviation = 1.0;
 	}
 
 	public double getDeviation() { return deviation; }
@@ -90,8 +92,14 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	}
 
 	protected CollectionProducer<PackedCollection<?>> createWeights(Producer<PackedCollection<?>> features) {
-		double scale = 1.0 / dim;
-		return randn(shape(features).appendDimension(dim), scale, scale * getDeviation(), random);
+		double scale = 1.0;
+		int bins = shape(features).length(0);
+		int time = shape(features).length(1);
+
+		CollectionProducer<PackedCollection<?>> rand = randn(shape(dim), scale, scale * getDeviation(), random);
+		if (normalizeWeights)
+			rand = normalize(rand);
+		return rand.repeat(bins).repeat(time);
 	}
 
 	@Override

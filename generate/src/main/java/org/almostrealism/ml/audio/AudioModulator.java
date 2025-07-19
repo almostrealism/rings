@@ -27,10 +27,11 @@ import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AudioModulator implements AutoCloseable, CodeFeatures {
-	public static final int DIM = 2;
+	public static final int DIM = 8;
 
 	private final AudioComposer composer;
 
@@ -59,8 +60,8 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	public static void main(String[] args) throws Exception {
-		if (args.length < 4) {
-			System.out.println("Usage: java AudioModulator <models_path> <input1> <input2> <output_path>");
+		if (args.length < 3) {
+			System.out.println("Usage: java AudioModulator <models_path> <output_path> <input1> [additional_inputs...]");
 			return;
 		}
 
@@ -68,11 +69,12 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		boolean noise = false;
 
 		String modelsPath = args[0];
-		String input1 = args[1];
-		String input2 = args[2];
-		String outputPath = args[3];
+		String outputPath = args[1];
 
-		List<String> inputs = List.of(input1, input2);
+		List<String> inputs = new ArrayList<>();
+		for (int i = 2; i < args.length; i++) {
+			inputs.add(args[i]);
+		}
 
 		try (AudioModulator modulator = new AudioModulator(modelsPath)) {
 			for (String in : inputs) {
@@ -90,16 +92,26 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 								.randnFill());
 			}
 
-			for (int i = 0; i < 5; i++) {
+			int count = 8;
+
+			for (int i = 0; i < count; i++) {
 				PackedCollection<?> position =
-						new PackedCollection<>(new TraversalPolicy(DIM)).randFill();
+						new PackedCollection<>(new TraversalPolicy(DIM))
+								.randnFill();
+
+//				double p = (double) i / (count - 1);
+//				double l = 2 * p - 1;
+//				double r = 1 - 2 * p;
+//				position.fill(l, r);
+//				position.print();
+
 				PackedCollection<?> result = modulator.project(position);
 				WaveData out = new WaveData(result, sampleRate);
 
-				Path p = Path.of(outputPath).resolve("modulated_" + i + ".wav");
-				out.saveMultiChannel(p.toFile());
+				Path op = Path.of(outputPath).resolve("modulated_" + i + ".wav");
+				out.saveMultiChannel(op.toFile());
 				Console.root().features(AudioModulator.class)
-						.log("Saved modulated audio to " + p);
+						.log("Saved modulated audio to " + op);
 			}
 		}
 	}
