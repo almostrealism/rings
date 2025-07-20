@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
+	public static double MAX_DURATION = 11.0;
 	public static final int SAMPLE_RATE = 44100;
 	public static final int FRAME_COUNT = 2048 * 256;
 
@@ -67,6 +68,9 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 		double ratio = 256.0 / FRAME_COUNT;
 		return getSampleRate() * ratio;
 	}
+
+	@Override
+	public double getMaximumDuration() { return MAX_DURATION; }
 
 	@Override
 	public Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent) {

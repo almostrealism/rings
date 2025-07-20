@@ -126,8 +126,6 @@ public class AudioGenerator implements AutoCloseable, OnnxFeatures {
 		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, SAMPLE_RATE)) {
 			f.writeFrames(audio);
 		}
-
-		log("Wrote " + outputPath);
 	}
 
 	public double[][] generateAudio(String prompt, long seed) throws OrtException {

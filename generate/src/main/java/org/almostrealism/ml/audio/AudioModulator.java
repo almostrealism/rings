@@ -42,9 +42,21 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	public AudioModulator(AssetGroup onnxAssets) throws OrtException {
+		this(onnxAssets, System.currentTimeMillis());
+	}
+
+	public AudioModulator(AssetGroup onnxAssets, long seed) throws OrtException {
+		this(onnxAssets, DIM, seed);
+	}
+
+	public AudioModulator(AssetGroup onnxAssets, int dim, long seed) throws OrtException {
 		composer = new AudioComposer(new OnnxAutoEncoder(
 				onnxAssets.getAssetPath("encoder.onnx"),
-				onnxAssets.getAssetPath("decoder.onnx")), DIM);
+				onnxAssets.getAssetPath("decoder.onnx")), dim, seed);
+	}
+
+	public void setAudioDuration(double seconds) {
+		composer.setAudioDuration(Math.min(composer.getMaximumAudioDuration(), seconds));
 	}
 
 	public void addAudio(PackedCollection<?> audio) {
@@ -57,6 +69,16 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 
 	public PackedCollection<?> project(PackedCollection<?> position) {
 		return composer.getResultant(cp(position)).evaluate();
+	}
+
+	public void generateAudio(PackedCollection<?> position, String destination) {
+		generateAudio(position, new File(destination));
+	}
+
+	public void generateAudio(PackedCollection<?> position, File destination) {
+		PackedCollection<?> result = project(position);
+		WaveData out = new WaveData(result, (int) composer.getSampleRate());
+		out.saveMultiChannel(destination);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -99,17 +121,8 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 						new PackedCollection<>(new TraversalPolicy(DIM))
 								.randnFill();
 
-//				double p = (double) i / (count - 1);
-//				double l = 2 * p - 1;
-//				double r = 1 - 2 * p;
-//				position.fill(l, r);
-//				position.print();
-
-				PackedCollection<?> result = modulator.project(position);
-				WaveData out = new WaveData(result, sampleRate);
-
 				Path op = Path.of(outputPath).resolve("modulated_" + i + ".wav");
-				out.saveMultiChannel(op.toFile());
+				modulator.generateAudio(position, op.toFile());
 				Console.root().features(AudioModulator.class)
 						.log("Saved modulated audio to " + op);
 			}
@@ -117,7 +130,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		composer.destroy();
 	}
 }

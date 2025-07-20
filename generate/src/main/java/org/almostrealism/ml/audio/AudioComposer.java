@@ -38,6 +38,7 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 
 	private Random random;
 	private double deviation;
+	private double audioDuration;
 
 	public AudioComposer(AutoEncoder autoencoder, int dim) {
 		this(autoencoder, dim, System.currentTimeMillis());
@@ -58,6 +59,19 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	public double getDeviation() { return deviation; }
 	public void setDeviation(double deviation) {
 		this.deviation = deviation;
+	}
+
+	public double getAudioDuration() { return audioDuration; }
+	public void setAudioDuration(double audioDuration) {
+		this.audioDuration = audioDuration;
+	}
+
+	public double getMaximumAudioDuration() {
+		return autoencoder.getMaximumDuration();
+	}
+
+	public double getSampleRate() {
+		return autoencoder.getSampleRate();
 	}
 
 	public TraversalPolicy getFeatureShape() {
