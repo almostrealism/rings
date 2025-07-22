@@ -191,6 +191,14 @@ public class WaveDetails {
 		this.featureData = featureData;
 	}
 
+	public PackedCollection<?> getFeatureData(boolean transpose) {
+		if (transpose) {
+			return featureData.transpose();
+		} else {
+			return featureData;
+		}
+	}
+
 	public Map<String, Double> getSimilarities() {
 		return similarities;
 	}

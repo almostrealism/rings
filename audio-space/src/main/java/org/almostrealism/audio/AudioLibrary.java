@@ -90,6 +90,10 @@ public class AudioLibrary implements ConsoleFeatures {
 		return getDetails(new FileWaveDataProvider(key), persistent);
 	}
 
+	public WaveDetails getDetails(WaveDataProvider provider) {
+		return getDetails(provider, false);
+	}
+
 	/**
 	 * Retrieve {@link WaveDetails} for the given {@link WaveDataProvider}.
 	 *
