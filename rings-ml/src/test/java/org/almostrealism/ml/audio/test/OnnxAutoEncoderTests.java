@@ -33,9 +33,7 @@ public class OnnxAutoEncoderTests implements TestFeatures {
 		AssetGroup assets = new AssetGroup(AssetGroupInfo
 				.forDirectory(new File("assets/stable-audio")));
 
-		AutoEncoder encoder = new OnnxAutoEncoder(
-				assets.getAssetPath("encoder.onnx"),
-				assets.getAssetPath("decoder.onnx"));
+		AutoEncoder encoder = new OnnxAutoEncoder(assets);
 		PackedCollection<?> input = new PackedCollection<>(shape(2, 10 * 2048));
 		PackedCollection<?> out = encoder.encode(cp(input)).evaluate();
 		log(out.getShape());

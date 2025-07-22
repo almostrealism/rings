@@ -25,6 +25,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
 import org.almostrealism.ml.OnnxFeatures;
+import org.almostrealism.persistence.AssetGroup;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -39,6 +40,11 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	private final OrtSession encoderSession;
 	private final OrtSession decoderSession;
 	private boolean destroyEnv;
+
+	public OnnxAutoEncoder(AssetGroup assets) throws OrtException {
+		this(assets.getAssetPath("encoder.onnx"),
+				assets.getAssetPath("decoder.onnx"));
+	}
 
 	public OnnxAutoEncoder(String encoderModelPath,
 						   String decoderModelPath) throws OrtException {
