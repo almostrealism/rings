@@ -16,6 +16,7 @@
 
 package org.almostrealism.ml.audio;
 
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataFeatureProvider;
@@ -23,6 +24,7 @@ import org.almostrealism.collect.PackedCollection;
 
 public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, CodeFeatures {
 	private AutoEncoder autoencoder;
+	private Evaluable<PackedCollection<?>> transpose;
 
 	public AutoEncoderFeatureProvider(AutoEncoder autoencoder) {
 		this.autoencoder = autoencoder;
@@ -33,7 +35,12 @@ public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, Code
 		PackedCollection<?> features = autoencoder.encode(cp(waveData.getData())).evaluate();
 		int frames = features.getShape().length(2);
 		int bins = features.getShape().length(1);
-		return cp(features).reshape(bins, frames).transpose().evaluate();
+
+		if (transpose == null) {
+			transpose = cv(shape(bins, frames), 0).transpose().get();
+		}
+
+		return transpose.evaluate(features.reshape(bins, frames));
 	}
 
 	@Override

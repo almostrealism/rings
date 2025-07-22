@@ -51,6 +51,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public static final int POOL_BATCH_OUT = POOL_BATCH_IN / FFT_POOL;
 
 	public static boolean enableMonoLoad = false;
+	public static boolean enableWarnings = false;
 
 	private static Evaluable<PackedCollection<?>> magnitude;
 	private static Evaluable<PackedCollection<?>> fft;
@@ -95,11 +96,14 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 	public PackedCollection<?> getData() { return collection; }
 
+	@Deprecated
 	public PackedCollection<?> getCollection() {
 		if (getChannelCount() == 1) {
 			return getData();
 		} else {
-			warn("Wave data appears to be multi-channel, returning first channel only");
+			if (enableWarnings)
+				warn("Wave data appears to be multi-channel, returning first channel only");
+
 			return getData().range(shape(getFrameCount()).traverseEach(), 0);
 		}
 	}

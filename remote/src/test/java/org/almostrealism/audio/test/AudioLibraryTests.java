@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.test;
 
+import ai.onnxruntime.OrtException;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
@@ -26,6 +27,11 @@ import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.stream.AudioServer;
+import org.almostrealism.ml.audio.AutoEncoder;
+import org.almostrealism.ml.audio.AutoEncoderFeatureProvider;
+import org.almostrealism.ml.audio.OnnxAutoEncoder;
+import org.almostrealism.persistence.AssetGroup;
+import org.almostrealism.persistence.AssetGroupInfo;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -35,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AudioLibraryTests implements TestFeatures {
 	public static String LIBRARY = "Library";
@@ -87,7 +94,29 @@ public class AudioLibraryTests implements TestFeatures {
 	@Test
 	public void libraryRefresh() {
 		AudioLibrary library = new AudioLibrary(new File(LIBRARY), OutputLine.sampleRate);
-		library.refresh();
+
+		AssetGroup assets = new AssetGroup(AssetGroupInfo
+				.forDirectory(new File("assets/stable-audio")));
+
+		try {
+			AutoEncoder encoder = new OnnxAutoEncoder(
+					assets.getAssetPath("encoder.onnx"),
+					assets.getAssetPath("decoder.onnx"));
+			library.getWaveDetailsFactory()
+					.setFeatureProvider(new AutoEncoderFeatureProvider(encoder));
+		} catch (OrtException e) {
+			warn("Unable to create ONNX encoder", e);
+		}
+
+		AtomicInteger progress = new AtomicInteger(0);
+		library.refresh(p -> {
+			int current = (int) (p * 100);
+
+			if (progress.get() != current) {
+				progress.set(current);
+				log(current + "%");
+			}
+		});
 
 		AudioLibraryPersistence.saveLibrary(library, "library");
 	}

@@ -89,6 +89,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 
 		int sampleRate = 44100;
 		boolean noise = false;
+		boolean empty = false;
 
 		String modelsPath = args[0];
 		String outputPath = args[1];
@@ -112,6 +113,10 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 				modulator.addFeatures(
 						new PackedCollection<>(new TraversalPolicy(64, 256))
 								.randnFill());
+			}
+
+			if (empty) {
+				modulator.addFeatures(new PackedCollection<>(new TraversalPolicy(64, 256)));
 			}
 
 			int count = 8;
