@@ -28,6 +28,8 @@ import org.almostrealism.hardware.HardwareException;
 
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public interface OnnxFeatures extends CodeFeatures {
@@ -42,13 +44,19 @@ public interface OnnxFeatures extends CodeFeatures {
 	/**
 	 * Converts an {@link OnnxTensor} to a {@link PackedCollection}.
 	 */
-	default PackedCollection<?> pack(OnnxTensor tensor) throws OrtException {
+	default PackedCollection<?> pack(OnnxTensor tensor) {
 		FloatBuffer buffer = tensor.getFloatBuffer();
 		float[] data = new float[buffer.capacity()];
 		buffer.get(data);
 
 		PackedCollection<?> result = new PackedCollection<>(shape(tensor.getInfo()));
 		result.setMem(0, data);
+		return result;
+	}
+
+	default Map<String, PackedCollection<?>> pack(Map<String, OnnxTensor> tensors) throws OrtException {
+		Map<String, PackedCollection<?>> result = new HashMap<>();
+		tensors.forEach((key, value) -> result.put(key, pack(value)));
 		return result;
 	}
 
@@ -74,6 +82,10 @@ public interface OnnxFeatures extends CodeFeatures {
 		return toOnnx(getOnnxEnvironment(), collection);
 	}
 
+	default OnnxTensor packOnnx(TraversalPolicy shape, float... data) {
+		return packOnnx(getOnnxEnvironment(), shape, data);
+	}
+
 	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, float... data) {
 		return packOnnx(env, shape, FloatBuffer.wrap(data));
 	}
@@ -88,6 +100,11 @@ public interface OnnxFeatures extends CodeFeatures {
 		} catch (OrtException e) {
 			throw new HardwareException("Failed to create tensor", e);
 		}
+	}
+
+
+	default OnnxTensor packOnnx(TraversalPolicy shape, long... data) throws OrtException {
+		return packOnnx(getOnnxEnvironment(), shape, data);
 	}
 
 	default OnnxTensor packOnnx(OrtEnvironment env, TraversalPolicy shape, long... data) throws OrtException {
