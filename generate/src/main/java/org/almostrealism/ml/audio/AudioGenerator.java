@@ -16,9 +16,7 @@
 
 package org.almostrealism.ml.audio;
 
-import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtException;
-import ai.onnxruntime.OrtSession;
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.WavFile;
@@ -30,7 +28,6 @@ import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.DoubleConsumer;
@@ -73,8 +70,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 	public double[][] generateAudio(String prompt, long seed) throws OrtException {
 		try {
-			long[] tokenIds = getTokenizer().tokenize(prompt).stream().mapToLong(getVocabulary()::getIndex).toArray();
-			return generateAudio(tokenIds, seed);
+			return generateAudio(tokenize(prompt), seed);
 		} finally {
 			if (progressMonitor != null) {
 				progressMonitor.accept(1.0);
@@ -82,7 +78,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 	}
 
-	public double[][] generateAudio(long[] tokenIds, long seed) throws OrtException {
+	public double[][] generateAudio(long[] tokenIds, long seed) {
 		log("Generating audio with seed " + seed +
 				" (duration = " + getAudioDuration() + ")");
 
@@ -103,13 +99,12 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		return audio;
 	}
 
-	protected Map<String, PackedCollection<?>> runConditioners(long[] ids) throws OrtException {
+	protected Map<String, PackedCollection<?>> runConditioners(long[] ids) {
 		return runConditioners(ids, getAudioDuration());
 	}
 
 	private PackedCollection<?> runDiffusionSteps(PackedCollection<?> crossAttentionInput,
-												  PackedCollection<?> globalCond, long seed)
-									throws OrtException {
+												  PackedCollection<?> globalCond, long seed) {
 		// Generate sigma values
 		float[] sigmas = new float[NUM_STEPS + 1];
 		fillSigmas(sigmas, LOGSNR_MAX, 2.0f);

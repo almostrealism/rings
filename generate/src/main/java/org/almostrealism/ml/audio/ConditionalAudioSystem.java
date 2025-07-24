@@ -58,6 +58,12 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 	private final DitModel ditModel;
 
 	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates)
+			throws IOException, OrtException {
+		this(onnxAssets, ditStates, false);
+	}
+
+	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates,
+								  boolean captureAttentionScores)
 			throws OrtException, IOException {
 		tokenizer = new SpTokenizer(
 				ConditionalAudioSystem.class.getClassLoader()
@@ -87,7 +93,7 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 					768,
 					768,
 					"rf_denoiser",
-					ditStates
+					ditStates, captureAttentionScores
 			);
 		}
 	}
@@ -102,7 +108,11 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 
 	public DitModel getDitModel() { return ditModel; }
 
-	protected Map<String, PackedCollection<?>> runConditioners(long[] ids, double seconds) throws OrtException {
+	public long[] tokenize(String text) {
+		return getTokenizer().tokenize(text).stream().mapToLong(getVocabulary()::getIndex).toArray();
+	}
+
+	protected Map<String, PackedCollection<?>> runConditioners(long[] ids, double seconds) {
 		long[] paddedIds = new long[T5_SEQ_LENGTH];
 		long[] attentionMask = new long[T5_SEQ_LENGTH];
 
@@ -127,6 +137,8 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 			outputs.put("cross_attention_masks", (OnnxTensor) result.get(1));
 			outputs.put("global_cond", (OnnxTensor) result.get(2));
 			return pack(outputs);
+		} catch (OrtException e) {
+			throw new RuntimeException(e);
 		} finally {
 			inputs.forEach((key, tensor) -> tensor.close());
 			outputs.forEach((key, tensor) -> tensor.close());

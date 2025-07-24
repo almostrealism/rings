@@ -21,6 +21,7 @@ import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.ml.StateDictionary;
 import org.almostrealism.model.Block;
@@ -28,8 +29,9 @@ import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatures {
@@ -57,20 +59,30 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private CompiledModel compiled;
 
 	private PackedCollection<?> preTransformerState, postTransformerState;
+	private Map<Integer, PackedCollection<?>> attentionScores;
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
-								String diffusionObjective, StateDictionary stateDictionary) throws IOException {
+								String diffusionObjective, StateDictionary stateDictionary) {
+		this(ioChannels, embedDim, depth, numHeads, patchSize,
+				condTokenDim, globalCondDim, diffusionObjective,
+				stateDictionary, false);
+	}
+
+	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
+								int patchSize, int condTokenDim, int globalCondDim,
+								String diffusionObjective, StateDictionary stateDictionary,
+								boolean captureAttentionScores) {
 		this(ioChannels, embedDim, depth, numHeads, patchSize,
 				condTokenDim, globalCondDim, diffusionObjective,
 				SAMPLE_SIZE / DOWNSAMPLING_RATIO, 65,
-				stateDictionary);
+				stateDictionary, captureAttentionScores);
 	}
 
 	public DiffusionTransformer(int ioChannels, int embedDim, int depth, int numHeads,
 								int patchSize, int condTokenDim, int globalCondDim,
 								String diffusionObjective, int audioSeqLen, int condSeqLen,
-								StateDictionary stateDictionary) {
+								StateDictionary stateDictionary, boolean captureAttentionScores) {
 		this.ioChannels = ioChannels;
 		this.embedDim = embedDim;
 		this.depth = depth;
@@ -85,6 +97,10 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 		if (stateDictionary != null) {
 			this.unusedWeights.addAll(stateDictionary.keySet());
+		}
+
+		if (captureAttentionScores) {
+			attentionScores = new HashMap<>();
 		}
 
 		this.model = buildModel();
@@ -279,6 +295,14 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			PackedCollection<?> w2 = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.weight", dim, hiddenDim);
 			PackedCollection<?> ffW2Bias = createWeight("model.model.transformer.layers." + i + ".ff.ff.2.bias", dim);
 
+			Receptor<PackedCollection<?>> attentionCapture = null;
+
+			if (attentionScores != null) {
+				PackedCollection<?> scores = new PackedCollection<>(shape(batchSize, numHeads, seqLen, condSeqLen));
+				attentionScores.put(i, scores);
+				attentionCapture = into(scores);
+			}
+
 			// Add transformer block with updated sequence length
 			main.add(transformerBlock(
 					batchSize, dim, seqLen, numHeads,
@@ -296,7 +320,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 					crossAttKNormWeight, crossAttKNormBias,
 					// Feed-forward weights
 					ffnPreNormWeight, ffnPreNormBias,
-					w1, w2, ffW1Bias, ffW2Bias
+					w1, w2, ffW1Bias, ffW2Bias,
+					attentionCapture
 			));
 		}
 
@@ -335,6 +360,9 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 
 	@Override
 	public OperationProfile getProfile() { return profile; }
+
+	@Override
+	public Map<Integer, PackedCollection<?>> getAttentionActivations() { return attentionScores; }
 
 	public PackedCollection<?> getPreTransformerState() { return preTransformerState; }
 	public PackedCollection<?> getPostTransformerState() { return postTransformerState; }
