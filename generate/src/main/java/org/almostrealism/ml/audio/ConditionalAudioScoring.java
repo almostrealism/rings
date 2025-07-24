@@ -28,11 +28,16 @@ import org.almostrealism.persistence.AssetGroup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConditionalAudioScoring extends ConditionalAudioSystem {
+
+//	double[] timesteps = {0.25, 0.5, 0.75};
+//	double[] timestepWeights = {0.2, 0.6, 0.2};
+	double[] timesteps = {0.0, 0.25, 0.5, 0.75, 1.0};
+	double[] timestepWeights = {0.1, 0.25, 0.3, 0.25, 0.1};
 
 	public ConditionalAudioScoring(String modelsPath) throws OrtException, IOException {
 		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
@@ -48,7 +53,9 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	}
 
 	public double computeScore(String prompt, WaveData audio) {
-		return computeScore(tokenize(prompt), audio);
+		long[] tokens = tokenize(prompt);
+		log("\t\"" + prompt + "\" (" + tokens.length + " tokens)");
+		return computeScore(tokens, audio);
 	}
 
 	public double computeScore(long promptTokenIds[], WaveData audio) {
@@ -62,62 +69,114 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		// 2. Get audio latent
 		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
-		// 3. Run forward pass with attention extraction
-		PackedCollection<?> output = getDitModel().forward(
-				audioLatent, pack(0.0),
-				conditionerOutputs.get("cross_attention_input"),
-				conditionerOutputs.get("global_cond"));
+		// 3. Run forward passes at multiple noise levels
+		List<Map<Integer, PackedCollection<?>>> allAttentions = new ArrayList<>();
 
-		// 4. Extract and aggregate attention weights
-		Map<Integer, PackedCollection<?>> activations = getDitModel().getAttentionActivations();
-		Map<Integer, Double> scores = computeAttentionLayerScores(activations);
-		log("First score: " + scores.get(0) + ", Last score: " + scores.get(scores.size() - 1));
-		return scores.values().stream().mapToDouble(v -> v).average().orElse(0.0);
+		for (double t : timesteps) {
+			PackedCollection<?> output = getDitModel().forward(
+					audioLatent, pack(t),
+					conditionerOutputs.get("cross_attention_input"),
+					conditionerOutputs.get("global_cond"));
+
+			allAttentions.add(getDitModel().getAttentionActivations().entrySet().stream()
+					.collect(Collectors.toMap(
+							Map.Entry::getKey, ent -> new PackedCollection<>(ent.getValue()))));
+		}
+
+		// 4. Extract attention mask from conditioner outputs
+		PackedCollection<?> attentionMask = conditionerOutputs.get("cross_attention_masks");
+
+		// 5. Compute scores with mask-aware aggregation
+		int audioSeqLen = (int) Math.ceil(getAutoencoder().getLatentSampleRate() * duration);
+		return computeMultiTimestepScore(allAttentions, attentionMask, audioSeqLen);
 	}
 
-	public Map<Integer, Double> computeAttentionLayerScores(Map<Integer, PackedCollection<?>> attentionWeights) {
-		Map<Integer, Double> layerScores = new HashMap<>();
-		attentionWeights.forEach((layer, weights) -> {
-			// Attention weights shape: [batch, num_heads, seq_len_audio, seq_len_text]
-			// Aggregate by taking mean across heads and max across audio sequence
-			layerScores.put(layer, computeLayerAttentionScore(weights));
-		});
-		return layerScores;
+	private double computeMultiTimestepScore(List<Map<Integer, PackedCollection<?>>> allAttentions,
+											 PackedCollection<?> attentionMask, int audioSeqLen) {
+		// Weight later layers more heavily
+		double[] layerWeights = computeLayerWeights(allAttentions.get(0).size());
+
+		// Aggregate across timesteps
+		double totalScore = 0.0;
+		for (int t = 0; t < allAttentions.size(); t++) {
+			double timestepScore = 0.0;
+			Map<Integer, PackedCollection<?>> attentions = allAttentions.get(t);
+
+			for (Map.Entry<Integer, PackedCollection<?>> entry : attentions.entrySet()) {
+				int layer = entry.getKey();
+				PackedCollection<?> attention = entry.getValue();
+				double layerScore = computeMaskedAttentionScore(attention, attentionMask, audioSeqLen);
+				timestepScore += layerScore * layerWeights[layer];
+			}
+
+			totalScore += timestepScore * timestepWeights[t];
+		}
+
+		return totalScore;
 	}
 
-	private double computeLayerAttentionScore(PackedCollection<?> attentionWeights) {
-		TraversalPolicy shape = attentionWeights.getShape();
-		double[] weights = attentionWeights.toArray();
-		
-		// Assuming shape [batch, num_heads, seq_len_audio, seq_len_text]
+	private double[] computeLayerWeights(int numLayers) {
+		// Exponentially increasing weights for later layers
+		double[] weights = new double[numLayers];
+		double sum = 0.0;
+		for (int i = 0; i < numLayers; i++) {
+			weights[i] = Math.pow(2, i);
+			sum += weights[i];
+		}
+		// Normalize
+		for (int i = 0; i < numLayers; i++) {
+			weights[i] /= sum;
+		}
+		return weights;
+	}
+
+	private double computeMaskedAttentionScore(PackedCollection<?> attention,
+											   PackedCollection<?> mask,
+											   int audioSeqLen) {
+		TraversalPolicy shape = attention.getShape();
 		int batch = shape.length(0);
 		int numHeads = shape.length(1);
-		int seqLenAudio = shape.length(2);
 		int seqLenText = shape.length(3);
-		
-		double maxAttention = 0.0;
-		double sumAttention = 0.0;
-		int total = 0;
-		
+
+		// Compute entropy-based score for attention distribution
+		double totalScore = 0.0;
+		int validPositions = 0;
+
 		for (int b = 0; b < batch; b++) {
 			for (int h = 0; h < numHeads; h++) {
-				for (int a = 0; a < seqLenAudio; a++) {
-					double audioPositionMax = 0.0;
+				for (int a = 1; a < (1 + audioSeqLen); a++) { // Skip first position (global conditioning)
+					double rowSum = 0.0;
+					double entropy = 0.0;
+
+					// First pass: compute sum for normalization
 					for (int t = 0; t < seqLenText; t++) {
-						int idx = b * numHeads * seqLenAudio * seqLenText +
-									h * seqLenAudio * seqLenText +
-									a * seqLenText + t;
-						audioPositionMax = Math.max(audioPositionMax, weights[idx]);
-						sumAttention += weights[idx];
-						total++;
+						if (mask == null || mask.valueAt(b, t) > 0.5) {
+							rowSum += attention.valueAt(b, h, a, t);
+						}
 					}
-					maxAttention = Math.max(maxAttention, audioPositionMax);
+
+					if (rowSum > 0) {
+						// Second pass: compute entropy
+						for (int t = 0; t < seqLenText; t++) {
+							if (mask == null || mask.valueAt(b, t) > 0.5) {
+								double p = attention.valueAt(b, h, a, t) / rowSum;
+								if (p > 0) {
+									entropy -= p * Math.log(p);
+								}
+							}
+						}
+
+						// Lower entropy = more focused attention = better alignment
+						// Convert to score where higher is better
+						double focusScore = Math.exp(-entropy);
+						totalScore += focusScore;
+						validPositions++;
+					}
 				}
 			}
 		}
-		
-//		return maxAttention;
-		return sumAttention / total;
+
+		return validPositions > 0 ? totalScore / validPositions : 0.0;
 	}
 
 	public static void main(String args[]) throws IOException, OrtException {
@@ -142,7 +201,9 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 					}
 
 					Console.root().features(ConditionalAudioScoring.class)
-							.log(in + " -> score = " + scoring.computeScore(prompt, wave));
+							.log(in + " ->");
+					Console.root().features(ConditionalAudioScoring.class)
+							.log("\tscore = " + scoring.computeScore(prompt, wave));
 				}
 			}
 		}
