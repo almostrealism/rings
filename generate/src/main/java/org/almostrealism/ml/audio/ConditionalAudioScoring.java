@@ -59,7 +59,81 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	}
 
 	public double computeScore(long promptTokenIds[], WaveData audio) {
-		return computeScore(promptTokenIds, audio.getData(), audio.getDuration());
+		// return computeScore(promptTokenIds, audio.getData(), audio.getDuration());
+		// return computeDenoisingScore(promptTokenIds, audio.getData(), audio.getDuration());
+		return computeReconstructionScore(promptTokenIds, audio.getData(), audio.getDuration());
+	}
+
+	/**
+	 * Compute score using conditional denoising loss.
+	 * Lower loss = better alignment between audio and text.
+	 */
+	public double computeDenoisingScore(long[] promptTokenIds, PackedCollection<?> audio, double duration) {
+		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
+
+		double totalScore = 0.0;
+		double[] noiseLevels = {0.1, 0.3, 0.5, 0.7, 0.9};
+
+		for (double sigma : noiseLevels) {
+			// Add noise to the latent
+			PackedCollection<?> noise = new PackedCollection<>(audioLatent.getShape()).randnFill();
+			PackedCollection<?> noisyLatent = cp(audioLatent).add(cp(noise).multiply(sigma)).evaluate();
+
+			// Predict the noise with conditioning
+			PackedCollection<?> predictedNoise = getDitModel().forward(
+					noisyLatent,
+					pack(sigma),
+					conditionerOutputs.get("cross_attention_input"),
+					conditionerOutputs.get("global_cond")
+			);
+
+			// Compute MSE between predicted and actual noise
+			double mse = cp(predictedNoise).subtract(cp(noise)).sq().mean().evaluateOptimized().toDouble();
+
+			// Lower MSE = better denoising = better alignment
+			totalScore += Math.exp(-mse);
+		}
+
+		return totalScore / noiseLevels.length;
+	}
+
+	/**
+	 * Compute score using reconstruction similarity.
+	 * Generate audio from text, then compare latents.
+	 */
+	public double computeReconstructionScore(long[] promptTokenIds, PackedCollection<?> audio, double duration) {
+		// This would require full generation capability
+		// For now, we'll compute a proxy using partial diffusion
+
+		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
+
+		// Start from noise and denoise partially
+		PackedCollection<?> noise = new PackedCollection<>(audioLatent.getShape()).randnFill();
+		PackedCollection<?> current = noise;
+
+		// Run a few denoising steps
+		double[] sigmas = {1.0, 0.7, 0.5, 0.3};
+		for (double sigma : sigmas) {
+			current = getDitModel().forward(
+					current,
+					pack(sigma),
+					conditionerOutputs.get("cross_attention_input"),
+					conditionerOutputs.get("global_cond")
+			);
+		}
+
+		// Compare with original latent
+		double similarity = computeCosineSimilarity(current, audioLatent);
+		return similarity;
+	}
+
+	private double computeCosineSimilarity(PackedCollection<?> a, PackedCollection<?> b) {
+		double dotProduct = cp(a).multiply(cp(b)).sum(0).evaluateOptimized().valueAt(0);
+		double normA = cp(a).each().sq().sum(0).sqrt().evaluateOptimized().toDouble();
+		double normB = cp(b).each().sq().sum(0).sqrt().evaluateOptimized().toDouble();
+		return dotProduct / (normA * normB + 1e-6);
 	}
 
 	public double computeScore(long promptTokenIds[], PackedCollection<?> audio, double duration) {

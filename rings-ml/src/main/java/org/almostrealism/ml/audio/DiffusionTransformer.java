@@ -38,7 +38,8 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 	private static final int SAMPLE_SIZE = 524288;
 	private static final int DOWNSAMPLING_RATIO = 2048;
 
-	public static final int batchSize = 1;
+	public static boolean enableProfile = false;
+	public static int batchSize = 1;
 
 	private final int ioChannels;
 	private final int embedDim;
@@ -339,9 +340,12 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		if (compiled == null) {
 			validateWeights();
 
+			if (enableProfile) {
+				profile = new OperationProfileNode("dit");
+				Hardware.getLocalHardware().assignProfile(profile);
+			}
+
 			long start = System.currentTimeMillis();
-			profile = new OperationProfileNode("dit");
-			Hardware.getLocalHardware().assignProfile(profile);
 			compiled = model.compile(false, profile);
 			log("Compiled DiffusionTransformer in " + (System.currentTimeMillis() - start) + "ms");
 		}
