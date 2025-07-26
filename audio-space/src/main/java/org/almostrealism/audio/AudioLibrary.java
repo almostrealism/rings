@@ -86,6 +86,10 @@ public class AudioLibrary implements ConsoleFeatures {
 		return info.values();
 	}
 
+	public WaveDetails getDetails(String key) {
+		return getDetails(new FileWaveDataProvider(key));
+	}
+
 	public WaveDetails getDetails(String key, boolean persistent) {
 		return getDetails(new FileWaveDataProvider(key), persistent);
 	}

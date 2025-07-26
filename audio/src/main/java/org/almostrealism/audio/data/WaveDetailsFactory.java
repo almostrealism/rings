@@ -88,6 +88,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public WaveDetails forWaveData(String identifier, WaveData data, WaveDetails existing) {
+		if (data == null) return existing;
+
 		if (existing == null) {
 			existing = new WaveDetails(identifier, data.getSampleRate());
 		}
