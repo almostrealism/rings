@@ -22,18 +22,25 @@ import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.data.WaveDetailsFactory;
-import org.almostrealism.io.Console;
+import org.almostrealism.audio.data.WaveDetailsJob;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -43,12 +50,18 @@ import java.util.stream.Collectors;
 
 public class AudioLibrary implements ConsoleFeatures {
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
-	private Map<String, WaveDetails> info;
-	private Map<String, String> identifiers;
-
 	private int sampleRate;
+
+	private Map<String, String> identifiers;
+	private Map<String, WaveDetails> info;
+
 	private WaveDetailsFactory factory;
+	private PriorityBlockingQueue<WaveDetailsJob> queue;
+	private int totalJobs;
+
+	private DoubleConsumer progressListener;
 	private Consumer<Exception> errorListener;
+	private ExecutorService executor;
 
 	public AudioLibrary(File root, int sampleRate) {
 		this(new FileWaveDataProviderNode(root), sampleRate);
@@ -56,50 +69,121 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public AudioLibrary(FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root, int sampleRate) {
 		this.root = root;
-		this.info = new HashMap<>();
-		this.identifiers = new HashMap<>();
 		this.sampleRate = sampleRate;
+		this.identifiers = new HashMap<>();
+		this.info = new HashMap<>();
 		this.factory = new WaveDetailsFactory(sampleRate);
+		this.queue = new PriorityBlockingQueue<>(100, Comparator.comparing(WaveDetailsJob::getPriority).reversed());
+
+		start();
+	}
+
+	public void start() {
+		if (executor != null) return;
+
+		executor = Executors.newSingleThreadExecutor();
+
+		Thread mgr = new Thread(() -> {
+			try {
+				WaveDetailsJob job = queue.poll(1, TimeUnit.MINUTES);
+				if (job == null) {
+					// Reset total jobs to zero if a minute goes by
+					// without any work to do
+					totalJobs = 0;
+				} else {
+					executor.submit(() -> processJob(job));
+				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}, "AudioLibrary Queue Manager");
+		mgr.setDaemon(true);
+		mgr.start();
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
 		return root;
 	}
 
-	public int getSampleRate() {
-		return sampleRate;
+	public int getSampleRate() { return sampleRate; }
+
+	public DoubleConsumer getProgressListener() { return progressListener; }
+	public void setProgressListener(DoubleConsumer progressListener) {
+		this.progressListener = progressListener;
 	}
 
-	public Consumer<Exception> getErrorListener() {
-		return errorListener;
-	}
-
+	public Consumer<Exception> getErrorListener() { return errorListener; }
 	public void setErrorListener(Consumer<Exception> errorListener) {
 		this.errorListener = errorListener;
 	}
 
-	public WaveDetailsFactory getWaveDetailsFactory() {
-		return factory;
+	public WaveDetailsFactory getWaveDetailsFactory() { return factory; }
+
+	public Collection<WaveDetails> getAllDetails() { return info.values(); }
+
+	public Optional<WaveDetails> getDetailsNow(String key) {
+		return getDetailsNow(new FileWaveDataProvider(key));
 	}
 
-	public Collection<WaveDetails> getDetails() {
-		return info.values();
+	public Optional<WaveDetails> getDetailsNow(String key, boolean persistent) {
+		return getDetailsNow(new FileWaveDataProvider(key), persistent);
 	}
 
-	public WaveDetails getDetails(String key) {
-		return getDetails(new FileWaveDataProvider(key));
+
+	public Optional<WaveDetails> getDetailsNow(WaveDataProvider provider) {
+		return getDetailsNow(provider, false);
 	}
 
-	public WaveDetails getDetails(String key, boolean persistent) {
-		return getDetails(new FileWaveDataProvider(key), persistent);
+	public Optional<WaveDetails> getDetailsNow(WaveDataProvider provider, boolean persistent) {
+		return Optional.ofNullable(getDetails(provider, persistent).getNow(null));
 	}
 
-	public WaveDetails getDetails(WaveDataProvider provider) {
-		return getDetails(provider, false);
+	public WaveDetails getDetailsAwait(String key, boolean persistent) {
+		return getDetailsAwait(new FileWaveDataProvider(key), persistent);
+	}
+
+	public WaveDetails getDetailsAwait(WaveDataProvider provider) {
+		return getDetailsAwait(provider, false);
+	}
+
+	public WaveDetails getDetailsAwait(WaveDataProvider provider, boolean persistent) {
+		try {
+			return getDetails(provider, persistent).get();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return null;
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void getDetails(WaveDataProvider provider, Consumer<WaveDetails> consumer) {
+		getDetails(provider, false).thenAccept(consumer);
 	}
 
 	/**
-	 * Retrieve {@link WaveDetails} for the given {@link WaveDataProvider}.
+	 * Retrieve {@link WaveDetails} for the given {@link WaveDataProvider}, queueing its computation
+	 * if it is not already available.
+	 *
+	 * @param provider  {@link WaveDataProvider} to retrieve details for.
+	 * @param persistent  If true, the details will be stored in the library for future use
+	 *                    even if no associated file can be found.
+	 *
+	 * @return  {@link CompletableFuture} with the {@link WaveDetails} for the given provider.
+	 */
+	protected CompletableFuture<WaveDetails> getDetails(WaveDataProvider provider, boolean persistent) {
+		WaveDetails existing = info.get(provider.getIdentifier());
+
+		if (existing == null) {
+			return submitJob(provider, persistent, 1.0).getFuture();
+		} else {
+			existing.setPersistent(persistent || existing.isPersistent());
+			return CompletableFuture.completedFuture(existing);
+		}
+	}
+
+	/**
+	 * Compute {@link WaveDetails} for the given {@link WaveDataProvider}.
 	 *
 	 * @param provider  {@link WaveDataProvider} to retrieve details for.
 	 * @param persistent  If true, the details will be stored in the library for future use
@@ -107,9 +191,9 @@ public class AudioLibrary implements ConsoleFeatures {
 	 *
 	 * @return  {@link WaveDetails} for the given provider, or null if an error occurs.
 	 */
-	public WaveDetails getDetails(WaveDataProvider provider, boolean persistent) {
+	protected WaveDetails computeDetails(WaveDataProvider provider, boolean persistent) {
 		try {
-			String id = identifiers.computeIfAbsent(provider.getKey(), k -> provider.getIdentifier());
+			String id = provider.getIdentifier();
 
 			WaveDetails details = info.computeIfAbsent(id, k -> computeDetails(provider, null, persistent));
 			if (getWaveDetailsFactory().getFeatureProvider() != null && details.getFeatureData() == null) {
@@ -120,7 +204,7 @@ public class AudioLibrary implements ConsoleFeatures {
 			details.setPersistent(persistent || details.isPersistent());
 			return details;
 		} catch (Exception e) {
-			AudioScene.console.warn("Failed to create WaveDetails for " +
+			warn("Failed to create WaveDetails for " +
 					provider.getKey() + " (" +
 					Optional.ofNullable(e.getMessage()).orElse(e.getClass().getSimpleName()) + ")");
 			if (!(e.getCause() instanceof IOException) || !(provider instanceof FileWaveDataProvider)) {
@@ -140,7 +224,7 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
-		return computeSimilarities(getDetails(provider, false)).getSimilarities();
+		return computeSimilarities(getDetailsAwait(provider, false)).getSimilarities();
 	}
 
 	public WaveDataProvider find(String identifier) {
@@ -158,6 +242,58 @@ public class AudioLibrary implements ConsoleFeatures {
 		}
 
 		info.put(details.getIdentifier(), details);
+	}
+
+	protected void processJob(WaveDetailsJob job) {
+		if (job == null) return;
+
+		WaveDetails details = null;
+
+		try {
+			if (job.getTarget() != null) {
+				details = computeDetails(job.getTarget(), job.isPersistent());
+			}
+		} finally {
+			job.complete(details);
+
+			if (progressListener != null) {
+				double total = totalJobs <= 0 ? 1.0 : totalJobs;
+				double remaining = queue.size() / total;
+
+				if (remaining <= 1.0) {
+					progressListener.accept(1.0 - remaining);
+				} else {
+					progressListener.accept(-1.0);
+				}
+			}
+		}
+	}
+
+	protected WaveDetailsJob submitJob(WaveDataProvider provider, boolean persistent, double priority) {
+		return submitJob(new WaveDetailsJob(provider, persistent, priority));
+	}
+
+	protected WaveDetailsJob submitJob(WaveDetailsJob job) {
+		if (job.getTarget() != null) {
+			identifiers.computeIfAbsent(job.getTarget().getKey(), k -> job.getTarget().getIdentifier());
+		}
+
+		queue.offer(job);
+		totalJobs++;
+		return job;
+	}
+
+	public void stop() {
+		executor.shutdown();
+
+		try {
+			if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+				executor.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			executor.shutdownNow();
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	protected WaveDetails computeDetails(WaveDataProvider provider, WaveDetails existing, boolean persistent) {
@@ -186,15 +322,17 @@ public class AudioLibrary implements ConsoleFeatures {
 		return details;
 	}
 
-	public void refresh() {
-		refresh(null);
+	public CompletableFuture<Void> refresh() {
+		return refresh(null);
 	}
 
-	public void refresh(DoubleConsumer progress) {
+	public CompletableFuture<Void> refresh(DoubleConsumer progress) {
 		double count = progress == null ? 0 : root.children().count();
 		if (count > 0) {
 			progress.accept(0.0);
 		}
+
+		CompletableFuture<Void> future = new CompletableFuture<>();
 
 		AtomicLong total = new AtomicLong(0);
 
@@ -203,13 +341,18 @@ public class AudioLibrary implements ConsoleFeatures {
 
 			try {
 				if (provider == null) return;
-				getDetails(provider, true);
+				submitJob(new WaveDetailsJob(provider, true, 0.0));
 			} finally {
 				if (count > 0) {
 					progress.accept(total.addAndGet(1) / count);
 				}
 			}
 		});
+
+		WaveDetailsJob last = new WaveDetailsJob(null, false, -1.0);
+		last.getFuture().thenRun(() -> future.complete(null));
+		queue.offer(last);
+		return future;
 	}
 
 	public void cleanup(Predicate<String> preserve) {
@@ -230,7 +373,4 @@ public class AudioLibrary implements ConsoleFeatures {
 		// Remove everything else
 		keys.forEach(info::remove);
 	}
-
-	@Override
-	public Console console() { return AudioScene.console; }
 }

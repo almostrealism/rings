@@ -83,7 +83,7 @@ public class AudioLibraryPersistence {
 
 	public static void saveLibrary(AudioLibrary library, boolean includeAudio, Supplier<OutputStream> out) throws IOException {
 		Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
-		List<WaveDetails> details = new ArrayList<>(library.getDetails());
+		List<WaveDetails> details = new ArrayList<>(library.getAllDetails());
 
 		int byteCount = 0;
 

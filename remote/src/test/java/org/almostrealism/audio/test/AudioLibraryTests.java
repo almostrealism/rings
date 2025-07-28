@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AudioLibraryTests implements TestFeatures {
@@ -55,9 +56,10 @@ public class AudioLibraryTests implements TestFeatures {
 	}
 
 	@Test
-	public void loadDetails() {
+	public void loadDetails() throws ExecutionException, InterruptedException {
 		AudioLibrary library = new AudioLibrary(new File(LIBRARY), OutputLine.sampleRate);
-		WaveDetails details = library.getDetails(new FileWaveDataProvider("/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav"), true);
+		WaveDetails details = library.getDetailsAwait(
+				"/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav", true);
 		System.out.println(details.getFreqSampleRate());
 	}
 
