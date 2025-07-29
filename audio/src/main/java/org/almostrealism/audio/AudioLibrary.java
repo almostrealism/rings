@@ -35,11 +35,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -49,6 +50,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class AudioLibrary implements ConsoleFeatures {
+	public static double BACKGROUND_PRIORITY = 0.0;
+	public static double DEFAULT_PRIORITY = 0.5;
+	public static double HIGH_PRIORITY = 1.0;
+
 	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
 	private int sampleRate;
 
@@ -81,24 +86,8 @@ public class AudioLibrary implements ConsoleFeatures {
 	public void start() {
 		if (executor != null) return;
 
-		executor = Executors.newSingleThreadExecutor();
-
-		Thread mgr = new Thread(() -> {
-			try {
-				WaveDetailsJob job = queue.poll(1, TimeUnit.MINUTES);
-				if (job == null) {
-					// Reset total jobs to zero if a minute goes by
-					// without any work to do
-					totalJobs = 0;
-				} else {
-					executor.submit(() -> processJob(job));
-				}
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-		}, "AudioLibrary Queue Manager");
-		mgr.setDaemon(true);
-		mgr.start();
+		executor = new ThreadPoolExecutor(1, 1,
+				60, TimeUnit.MINUTES, (BlockingQueue) queue);
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
@@ -129,13 +118,12 @@ public class AudioLibrary implements ConsoleFeatures {
 		return getDetailsNow(new FileWaveDataProvider(key), persistent);
 	}
 
-
 	public Optional<WaveDetails> getDetailsNow(WaveDataProvider provider) {
 		return getDetailsNow(provider, false);
 	}
 
 	public Optional<WaveDetails> getDetailsNow(WaveDataProvider provider, boolean persistent) {
-		return Optional.ofNullable(getDetails(provider, persistent).getNow(null));
+		return Optional.ofNullable(getDetails(provider, persistent, DEFAULT_PRIORITY).getNow(null));
 	}
 
 	public WaveDetails getDetailsAwait(String key, boolean persistent) {
@@ -148,7 +136,7 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public WaveDetails getDetailsAwait(WaveDataProvider provider, boolean persistent) {
 		try {
-			return getDetails(provider, persistent).get();
+			return getDetails(provider, persistent, HIGH_PRIORITY).get();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return null;
@@ -157,8 +145,12 @@ public class AudioLibrary implements ConsoleFeatures {
 		}
 	}
 
-	public void getDetails(WaveDataProvider provider, Consumer<WaveDetails> consumer) {
-		getDetails(provider, false).thenAccept(consumer);
+	public void getDetails(String file, Consumer<WaveDetails> consumer, boolean priority) {
+		getDetails(new FileWaveDataProvider(file), consumer, priority);
+	}
+
+	public void getDetails(WaveDataProvider provider, Consumer<WaveDetails> consumer, boolean priority) {
+		getDetails(provider, false, priority ? HIGH_PRIORITY : DEFAULT_PRIORITY).thenAccept(consumer);
 	}
 
 	/**
@@ -171,11 +163,11 @@ public class AudioLibrary implements ConsoleFeatures {
 	 *
 	 * @return  {@link CompletableFuture} with the {@link WaveDetails} for the given provider.
 	 */
-	protected CompletableFuture<WaveDetails> getDetails(WaveDataProvider provider, boolean persistent) {
+	protected CompletableFuture<WaveDetails> getDetails(WaveDataProvider provider, boolean persistent, double priority) {
 		WaveDetails existing = info.get(provider.getIdentifier());
 
 		if (existing == null) {
-			return submitJob(provider, persistent, 1.0).getFuture();
+			return submitJob(provider, persistent, priority).getFuture();
 		} else {
 			existing.setPersistent(persistent || existing.isPersistent());
 			return CompletableFuture.completedFuture(existing);
@@ -244,18 +236,12 @@ public class AudioLibrary implements ConsoleFeatures {
 		info.put(details.getIdentifier(), details);
 	}
 
-	protected void processJob(WaveDetailsJob job) {
-		if (job == null) return;
-
-		WaveDetails details = null;
+	protected WaveDetails processJob(WaveDetailsJob job) {
+		if (job == null) return null;
 
 		try {
-			if (job.getTarget() != null) {
-				details = computeDetails(job.getTarget(), job.isPersistent());
-			}
+			return computeDetails(job.getTarget(), job.isPersistent());
 		} finally {
-			job.complete(details);
-
 			if (progressListener != null) {
 				double total = totalJobs <= 0 ? 1.0 : totalJobs;
 				double remaining = queue.size() / total;
@@ -270,7 +256,7 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	protected WaveDetailsJob submitJob(WaveDataProvider provider, boolean persistent, double priority) {
-		return submitJob(new WaveDetailsJob(provider, persistent, priority));
+		return submitJob(new WaveDetailsJob(this::processJob, provider, persistent, priority));
 	}
 
 	protected WaveDetailsJob submitJob(WaveDetailsJob job) {
@@ -278,7 +264,7 @@ public class AudioLibrary implements ConsoleFeatures {
 			identifiers.computeIfAbsent(job.getTarget().getKey(), k -> job.getTarget().getIdentifier());
 		}
 
-		queue.offer(job);
+		executor.execute(job);
 		totalJobs++;
 		return job;
 	}
@@ -341,7 +327,7 @@ public class AudioLibrary implements ConsoleFeatures {
 
 			try {
 				if (provider == null) return;
-				submitJob(new WaveDetailsJob(provider, true, 0.0));
+				submitJob(new WaveDetailsJob(this::processJob, provider, true, BACKGROUND_PRIORITY));
 			} finally {
 				if (count > 0) {
 					progress.accept(total.addAndGet(1) / count);
@@ -349,9 +335,9 @@ public class AudioLibrary implements ConsoleFeatures {
 			}
 		});
 
-		WaveDetailsJob last = new WaveDetailsJob(null, false, -1.0);
+		WaveDetailsJob last = new WaveDetailsJob(this::processJob, null, false, -1.0);
 		last.getFuture().thenRun(() -> future.complete(null));
-		queue.offer(last);
+		executor.execute(last);
 		return future;
 	}
 

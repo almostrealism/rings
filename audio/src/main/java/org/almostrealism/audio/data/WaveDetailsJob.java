@@ -16,17 +16,23 @@
 
 package org.almostrealism.audio.data;
 
-import java.util.concurrent.CompletableFuture;
+import org.almostrealism.io.ConsoleFeatures;
 
-public class WaveDetailsJob {
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
+public class WaveDetailsJob implements Runnable, ConsoleFeatures {
+	private Function<WaveDetailsJob, WaveDetails> runner;
 	private WaveDataProvider target;
 	private boolean persistent;
 	private double priority;
 
 	private CompletableFuture<WaveDetails> future;
 
-	public WaveDetailsJob(WaveDataProvider target, boolean persistent,
+	public WaveDetailsJob(Function<WaveDetailsJob, WaveDetails> runner,
+						  WaveDataProvider target, boolean persistent,
 						  double priority) {
+		this.runner = runner;
 		this.target = target;
 		this.persistent = persistent;
 		this.priority = priority;
@@ -38,6 +44,22 @@ public class WaveDetailsJob {
 
 	public void setPriority(double priority) { this.priority = priority;}
 	public double getPriority() { return priority; }
+
+	@Override
+	public void run() {
+		WaveDetails details = null;
+
+		try {
+			if (getTarget() != null) {
+				log("Processing " + getTarget().getKey());
+				details = runner.apply(this);
+			}
+		} catch (Exception e) {
+			warn("Failed to process " + this);
+		} finally {
+			complete(details);
+		}
+	}
 
 	public void complete(WaveDetails details) {
 		future.complete(details);
