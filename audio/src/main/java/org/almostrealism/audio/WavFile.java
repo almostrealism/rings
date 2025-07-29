@@ -15,7 +15,6 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
-import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -682,35 +681,9 @@ public class WavFile implements AutoCloseable {
 	}
 
 
-	public static Function<WaveCellData, WaveCell> load(File f, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
+	public static Function<WaveCellData, WaveCell> load(File f, int channel, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
 		WaveData waveform = WaveData.load(f);
-		return data -> new WaveCell(data, waveform.getCollection(), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(waveform.getCollection().getMemLength()));
-	}
-
-	public static void write(WaveData data, File f) throws IOException {
-		if (data.getCollection().getMemLength() <= 0) {
-			Console.root.features(WavFile.class).log("No frames to write");
-			return;
-		}
-
-		long start = System.currentTimeMillis();
-
-		try (WavFile wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate())) {
-			double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
-
-			for (int i = 0; i < frames.length; i++) {
-				// double value = data.valueAt(i).getValue();
-				double value = frames[i];
-
-				try {
-					wav.writeFrames(new double[][]{{value}, {value}}, 1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		return data -> new WaveCell(data, waveform.getChannelData(channel), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
+				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(waveform.getFrameCount()));
 	}
 }

@@ -35,14 +35,14 @@ public class NoteAudioProviderTests {
 
 	@Test
 	public void noteAudioProvider1() {
-		PackedCollection<?> result = organ().getAudio(WesternChromatic.C1).evaluate();
+		PackedCollection<?> result = organ().getAudio(WesternChromatic.C1, -1).evaluate();
 		WaveData data = new WaveData(result, OutputLine.sampleRate);
 		data.save(new File("results/note-audio-provider-1.wav"));
 	}
 
 	@Test
 	public void noteAudioProvider2() {
-		PackedCollection<?> result = organ().getAudio(WesternChromatic.G1).evaluate();
+		PackedCollection<?> result = organ().getAudio(WesternChromatic.G1, -1).evaluate();
 		WaveData data = new WaveData(result, OutputLine.sampleRate);
 		data.save(new File("results/note-audio-provider-2.wav"));
 	}

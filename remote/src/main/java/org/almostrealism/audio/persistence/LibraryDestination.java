@@ -174,18 +174,8 @@ public class LibraryDestination implements ConsoleFeatures {
 	}
 
 	public File getTemporaryWave(String key, WaveData data) {
-		try {
-			File f = getTemporaryFile(key, "wav");
-
-			if (!f.exists()) {
-				WavFile.write(data, f);
-			}
-
-			return f;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		File f = getTemporaryFile(key, "wav");
+		return (f.exists() || data.save(f)) ? f : null;
 	}
 
 	public void delete() {

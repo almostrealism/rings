@@ -99,12 +99,12 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		existing.setSampleRate(data.getSampleRate());
-		existing.setChannelCount(1);
-		existing.setFrameCount(data.getCollection().getMemLength());
-		existing.setData(data.getCollection());
+		existing.setChannelCount(data.getChannelCount());
+		existing.setFrameCount(data.getFrameCount());
+		existing.setData(data.getData());
 
 		if (existing.getFreqFrameCount() <= 1) {
-			PackedCollection<?> fft = processFft(data.fft(true));
+			PackedCollection<?> fft = processFft(data.fft(-1, true));
 			if (fft.getShape().length(0) < 1) {
 				throw new UnsupportedOperationException();
 			}

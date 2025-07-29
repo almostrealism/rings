@@ -60,8 +60,9 @@ public class LatentAudioCompositionTests implements TestFeatures {
 		PackedCollection<?> result = blend.evaluate();
 		log(result.getShape().toStringDetail());
 
-		PackedCollection<?> audio = encoder.decode(cp(result.traverse(0)).transpose()).get().evaluate();
-		new WaveData(audio, sampleRate).saveMultiChannel(
-				new File("results/latent-composition.wav"));
+		PackedCollection<?> audio = encoder
+				.decode(cp(result.traverse(0)).transpose()).get().evaluate();
+		new WaveData(audio, sampleRate)
+				.save(new File("results/latent-composition.wav"));
 	}
 }

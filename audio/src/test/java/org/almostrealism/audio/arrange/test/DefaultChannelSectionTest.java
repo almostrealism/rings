@@ -44,7 +44,7 @@ public class DefaultChannelSectionTest implements CellFeatures {
 
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
 		PackedCollection<?> input = new PackedCollection<>(samples);
-		input.setMem(data.getCollection().toArray(0, data.getCollection().getMemLength()));
+		input.setMem(data.getChannelData(0).toArray());
 
 		PackedCollection<?> result = new PackedCollection<>(samples);
 		Producer<PackedCollection<?>> destination = p(result);

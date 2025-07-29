@@ -62,9 +62,9 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 	}
 
 	@Override
-	public WaveData get(double playbackRate) {
+	public PackedCollection<?> getChannelData(int channel, double playbackRate) {
 		WaveData original = get();
-		if (playbackRate == 1.0) return original;
+		if (playbackRate == 1.0) return original.getChannelData(channel);
 
 		if (original.getSampleRate() != OutputLine.sampleRate) {
 			System.out.println("WARN: Cannot alter playback rate of audio which is not at " + OutputLine.sampleRate);
@@ -74,7 +74,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 		PackedCollection<?> rate = PackedCollection.factory().apply(1);
 		rate.setMem(0, playbackRate);
 
-		PackedCollection<?> audio = original.getCollection();
+		PackedCollection<?> audio = original.getChannelData(channel);
 		int len = (int) (audio.getMemLength() / playbackRate);
 		PackedCollection<?> dest = new PackedCollection<>(len);
 
@@ -85,7 +85,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 				.evaluate(audio.traverse(0),
 						timeline.range(shape(dest.getMemLength())).traverseEach(),
 						rate.traverse(0));
-		return new WaveData(dest.traverse(1), original.getSampleRate());
+		return dest.traverse(1);
 	}
 
 	@JsonIgnore
@@ -93,7 +93,7 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 	public WaveData get() {
 		if (loaded.get(getKey()) == null) {
 			DefaultContextSpecific<WaveData> specific = new DefaultContextSpecific<>(this::load);
-			specific.setValid(w -> w.getCollection() != null && !w.getCollection().isDestroyed());
+			specific.setValid(w -> w.getData() != null && !w.getData().isDestroyed());
 
 			loaded.put(getKey(), specific);
 			loaded.get(getKey()).init();

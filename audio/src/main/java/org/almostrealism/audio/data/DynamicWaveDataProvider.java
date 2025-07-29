@@ -46,7 +46,7 @@ public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements 
 
 	@Override
 	public long getCountLong() {
-		return destination.getCollection().getMemLength();
+		return destination.getFrameCount();
 	}
 
 	@Override

@@ -78,7 +78,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	public void generateAudio(PackedCollection<?> position, File destination) {
 		PackedCollection<?> result = project(position);
 		WaveData out = new WaveData(result, (int) composer.getSampleRate());
-		out.saveMultiChannel(destination);
+		out.save(destination);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -101,7 +101,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 
 		try (AudioModulator modulator = new AudioModulator(modelsPath)) {
 			for (String in : inputs) {
-				WaveData wave = WaveData.loadMultiChannel(new File(in));
+				WaveData wave = WaveData.load(new File(in));
 				if (wave.getSampleRate() != sampleRate) {
 					throw new IllegalArgumentException();
 				}

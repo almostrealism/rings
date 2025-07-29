@@ -47,7 +47,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 	@Test
 	public void grainsTimeSeries() {
 		WaveOutput source = new WaveOutput();
-		w(new File("Library/organ.wav")).map(i -> new ReceptorCell<>(source)).sec(1.0, false).get().run();
+		w(0, new File("Library/organ.wav")).map(i -> new ReceptorCell<>(source)).sec(1.0, false).get().run();
 
 		Grain grain = new Grain();
 		grain.setStart(0.2);
@@ -78,7 +78,9 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		System.out.println("GrainTest: Timeline kernel evaluated");
 
 		System.out.println("GrainTest: Rendering grains...");
-		w(new WaveData(result, OutputLine.sampleRate)).o(i -> new File("results/grain-timeseries-test.wav")).sec(5).get().run();
+		w(0, new WaveData(result, OutputLine.sampleRate))
+				.o(i -> new File("results/grain-timeseries-test.wav"))
+				.sec(5).get().run();
 		System.out.println("GrainTest: Done");
 	}
 
@@ -100,11 +102,11 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
 		CollectionProducer<PackedCollection<?>> wavelength = multiply(p(w), c(OutputLine.sampleRate));
 
-		PackedCollection<?> input = wav.getCollection();
+		PackedCollection<?> input = wav.getChannelData(0);
 		int frames = 5 * OutputLine.sampleRate;
 
 		Producer<PackedCollection<?>> series = integers(0, frames);
-		Producer<PackedCollection<?>> max = c(wav.getCollection().getCount()).subtract(start);
+		Producer<PackedCollection<?>> max = c(wav.getFrameCount()).subtract(start);
 		Producer<PackedCollection<?>> pos  = start.add(relativeMod(relativeMod(series, duration), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
@@ -117,14 +119,16 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		System.out.println("GrainTest: Kernel evaluated");
 
 		System.out.println("GrainTest: Rendering grains...");
-		w(new WaveData(result, OutputLine.sampleRate)).o(i -> new File("results/grain-test.wav")).sec(5).get().run();
+		w(0, new WaveData(result, OutputLine.sampleRate))
+				.o(i -> new File("results/grain-test.wav"))
+				.sec(5).get().run();
 		System.out.println("GrainTest: Done");
 	}
 
 	@Test
 	public void grainProcessor() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
-		PackedCollection<?> input = wav.getCollection();
+		PackedCollection<?> input = wav.getChannelData(0);
 
 		Evaluable<PackedCollection<?>> processor =
 				sampling(OutputLine.sampleRate, 5.0, () -> grains(
@@ -136,7 +140,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 
 		int tot = 5 * OutputLine.sampleRate;
 
-		w(IntStream.range(0, 10).mapToObj(i -> {
+		w(0, IntStream.range(0, 10).mapToObj(i -> {
 			Grain grain = new Grain();
 			grain.setStart(Math.random() * 0.3 + 0.2);
 			grain.setDuration(Math.random() * 0.015);
@@ -162,7 +166,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 	@Test
 	public void grainProcessorEnvelope() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
-		PackedCollection<?> input = wav.getCollection();
+		PackedCollection<?> input = wav.getChannelData(0);
 
 		double attack = 1.0;
 
@@ -179,7 +183,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 
 		int tot = 5 * OutputLine.sampleRate;
 
-		w(IntStream.range(0, 10).mapToObj(i -> {
+		w(0, IntStream.range(0, 10).mapToObj(i -> {
 			Grain grain = new Grain();
 			grain.setStart(Math.random() * 0.3 + 0.2);
 			grain.setDuration(Math.random() * 0.015);

@@ -144,28 +144,28 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel) {
 		if (target == null) {
 			target = getRoot();
 		}
 
 		if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target).get())));
+			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target, channel).get())));
 		}
 
 		return notes.get(target);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target) {
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel) {
 		return () -> args -> {
 			double r = target == null ? 1.0 :
 					(tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz());
-			return provider.get(r).getCollection();
+			return provider.getChannelData(channel, r);
 		};
 	}
 
 	@JsonIgnore
-	public PackedCollection<?> getAudio() {
+	public WaveData getWaveData() {
 		if (provider != null) {
 			WaveData data = provider.get();
 
@@ -174,7 +174,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 			}
 
 			if (data.getSampleRate() == OutputLine.sampleRate) {
-				return provider.get().getCollection();
+				return data;
 			} else {
 				warn("Sample rate of " + data.getSampleRate() +
 						" does not match required sample rate of " + OutputLine.sampleRate);

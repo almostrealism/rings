@@ -64,7 +64,7 @@ public class AudioLibraryTests implements TestFeatures {
 	}
 
 	@Test
-	public void loadRecording() throws IOException {
+	public void loadRecording() {
 		List<String> keys = new ArrayList<>(AudioLibraryPersistence.listRecordings("recordings"));
 
 		for (int i = 0; i < keys.size(); i++) {
@@ -73,7 +73,7 @@ public class AudioLibraryTests implements TestFeatures {
 			log("Recording " + i + " contains " + data.size() + " parts " +
 							Arrays.toString(data.stream().mapToInt(d -> d.getSilent() ? 0 : 1).toArray()));
 			WaveData wave = AudioLibraryPersistence.toWaveData(data);
-			WavFile.write(wave, new File("results/recording_" + i + ".wav"));
+			wave.save(new File("results/recording_" + i + ".wav"));
 		}
 	}
 

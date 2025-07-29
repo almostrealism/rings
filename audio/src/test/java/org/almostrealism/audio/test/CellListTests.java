@@ -21,11 +21,11 @@ public class CellListTests implements CellFeatures {
 	@Test
 	public void export() throws IOException {
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
-		int samples = data.getCollection().getMemLength();
+		int samples = data.getFrameCount();
 
 		PackedCollection<?> result = new PackedCollection<>(samples);
 		Producer<PackedCollection<?>> destination = p(result);
-		Producer<PackedCollection<?>> source = p(data.getCollection());
+		Producer<PackedCollection<?>> source = p(data.getChannelData(0));
 
 		PackedCollection<?> input = new PackedCollection<>(samples);
 		PackedCollection<PackedCollection<?>> output = new PackedCollection<PackedCollection<?>>(shape(1, samples)).traverse(1);
@@ -44,7 +44,7 @@ public class CellListTests implements CellFeatures {
 
 	@Test
 	public void mselfDelay() {
-		CellList cells = w("Library/Snare Perc DD.wav");
+		CellList cells = w(0, "Library/Snare Perc DD.wav");
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate, scalar(2.0)))

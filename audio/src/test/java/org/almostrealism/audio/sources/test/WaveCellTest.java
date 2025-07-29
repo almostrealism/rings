@@ -42,7 +42,7 @@ import java.util.stream.IntStream;
 
 public class WaveCellTest implements CellFeatures, TestFeatures {
 	protected WaveCell cell() throws IOException {
-		return WavFile.load(new File("src/main/resources/test.wav"), 1000, null, c(10)).apply(new DefaultWaveCellData());
+		return WavFile.load(new File("src/main/resources/test.wav"), 0, 1000, null, c(10)).apply(new DefaultWaveCellData());
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 
 		IntStream.range(0, 100).forEach(x -> {
 			dc(() -> {
-				CellList cells = w("Library/Snare Perc DD.wav")
+				CellList cells = w(0, "Library/Snare Perc DD.wav")
 						.o(i -> new File("results/snare-clean-test.wav"));
 				Runnable r = cells.sec(70).get();
 
@@ -87,7 +87,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void clean() {
 		int count = 8;
 
-		CellList cells = w("Library/Snare Perc DD.wav")
+		CellList cells = w(0, "Library/Snare Perc DD.wav")
 				.o(i -> new File("results/snare-clean-test.wav"));
 
 		cells.sec(bpm(128).l(count)).get().run();
@@ -97,7 +97,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void repeatHat() {
 		int count = 32;
 
-		CellList cells = w(c(bpm(128).l(0.5)), c(bpm(128).l(4)),
+		CellList cells = w(0, c(bpm(128).l(0.5)), c(bpm(128).l(4)),
 						"Library/GT_HAT_31.wav")
 				.o(i -> new File("results/hat-repeat-test.wav"));
 
@@ -108,7 +108,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void repeatSnare() {
 		int count = 32;
 
-		CellList cells = w(c(bpm(128).l(1)), c(bpm(128).l(2)),
+		CellList cells = w(0, c(bpm(128).l(1)), c(bpm(128).l(2)),
 				"Library/Snare Perc DD.wav")
 				.o(i -> new File("results/snare-repeat-test.wav"));
 
@@ -119,7 +119,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void sequence() {
 		int count = 32;
 
-		CellList cells = silence().and(w(c(bpm(128).l(0.5)), c(bpm(128).l(1)),
+		CellList cells = silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)),
 							"Library/GT_HAT_31.wav"))
 							.gr(bpm(128).l(count), count, i -> 1)
 							.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
@@ -131,7 +131,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	@Test
 	public void assignment() {
 		PackedCollection<?> out = new PackedCollection<>(1);
-		CellList cells = w(c(0), c(bpm(128).l(2)),
+		CellList cells = w(0, c(0), c(bpm(128).l(2)),
 				"Library/Snare Perc DD.wav")
 				.map(i -> new ReceptorCell<>(protein -> a(1, p(out), protein)));
 		OperationList ops = (OperationList) cells.sec(10);

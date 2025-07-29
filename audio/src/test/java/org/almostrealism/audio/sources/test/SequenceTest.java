@@ -158,7 +158,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		int count = 32;
 
 		CellList cells =
-				silence().and(w(c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
+				silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
 						.gr(bpm(128).l(count), count * 2, i -> i % 2 == 0 ? 0 : 1)
 				.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
 				.sum().o(i -> new File("results/sample-seq-test.wav"));
@@ -175,7 +175,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		CellList cells = cells(
 //				silence().and(w(one, "Library/BD 909 Color 06.wav"))
 //						.gr(10, count, i -> 0),
-				silence().and(w(one, "Library/Snare Perc DD.wav"))
+				silence().and(w(0, one, "Library/Snare Perc DD.wav"))
 						.gr(10, count, i -> 0)
 				)
 				 .o(i -> new File("results/stems-test-" + i + ".wav"));
@@ -189,11 +189,11 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		int count = 32;
 
 		CellList cells = cells(
-					silence().and(w(c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
+					silence().and(w(0, c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
 						.gr(bpm(128).l(count), count, i -> 1),
-					silence().and(w(c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
+					silence().and(w(0, c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
 						.gr(bpm(128).l(count), count, i -> i % 2 == 0 ? 0 : 1),
-					silence().and(w(c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
+					silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
 						.gr(bpm(128).l(count), count * 2, i -> i % 2 == 0 ? 0 : 1))
 				.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
 				.sum().o(i -> new File("results/mix-test.wav"));
@@ -210,11 +210,11 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		ParameterFunctionSequence snareSeq = ParameterFunctionSequence.random(32);
 
 		CellList cells = cells(
-				silence().and(w(c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
+				silence().and(w(0, c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
 						.gr(bpm(128).l(count), count, i -> 1),
-				silence().and(w(c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
+				silence().and(w(0, c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
 						.gr(bpm(128).l(count), count, i -> (int) (Math.max(0, snareSeq.apply(i).apply(params)) * 2)),
-				silence().and(w(c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
+				silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
 						.gr(bpm(128).l(count), count * 2, i -> (int) (Math.max(0, hatSeq.apply(i).apply(params)) * 2)))
 				.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
 				.sum().o(i -> new File("results/param-mix-test.wav"));
@@ -231,11 +231,11 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		WaveOutput output = new WaveOutput();
 
 		CellList cells = cells(
-				silence().and(w(c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
+				silence().and(w(0, c(bpm(128).l(1)), "Library/BD 909 Color 06.wav"))
 						.gr(bpm(128).l(count), count, i -> 1),
-				silence().and(w(c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
+				silence().and(w(0, c(bpm(128).l(1)), "Library/Snare Perc DD.wav"))
 						.gr(bpm(128).l(count), count, i -> i % 2 == 0 ? 0 : 1),
-				silence().and(w(c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
+				silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
 						.gr(bpm(128).l(count), count * 2, i -> i % 2 == 0 ? 0 : 1))
 				.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
 				.sum().map(i -> new ReceptorCell<>(output));

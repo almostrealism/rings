@@ -51,7 +51,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 
 		int count = 32;
 
-		CellList cells = w(c(0.0), factor.getResultant(c(1.0)),
+		CellList cells = w(0, c(0.0), factor.getResultant(c(1.0)),
 				"Library/Snare Perc DD.wav")
 				.addRequirements(clock, (TemporalFactor) factor)
 				.o(i -> new File("results/dynamic-repeat.wav"));
@@ -78,7 +78,7 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 
 		int count = 32;
 
-		CellList cells = w(c(0.0), adjust, "Library/Snare Perc DD.wav")
+		CellList cells = w(0, c(0.0), adjust, "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
 				.map(fc(i -> sf(0.1)))
 				.o(i -> new File("results/duration-adjustment.wav"));

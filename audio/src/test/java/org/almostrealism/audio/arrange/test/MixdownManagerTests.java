@@ -90,7 +90,7 @@ public class MixdownManagerTests implements CellFeatures {
 
 		genome.assignTo(genome.getParameters().random());
 
-		CellList cells = w(c(0.0), c(1.0),
+		CellList cells = w(0, c(0.0), c(1.0),
 				WaveData.load(new File("Library/Snare Gold 1.wav")),
 				WaveData.load(new File("Library/SN_Forever_Future.wav")));
 		run("mixdown1", time, mixdown, cells);

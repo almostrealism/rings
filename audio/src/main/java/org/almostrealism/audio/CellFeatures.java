@@ -143,12 +143,12 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return c;
 	}
 
-	default CellList w(WaveData... waves) {
-		return w((Supplier) PolymorphicAudioData::new, waves);
+	default CellList w(int channel, WaveData... waves) {
+		return w(channel, (Supplier) PolymorphicAudioData::new, waves);
 	}
 
-	default CellList w(Supplier<PolymorphicAudioData> data, WaveData... waves) {
-		return w(data, null, null, waves);
+	default CellList w(int channel, Supplier<PolymorphicAudioData> data, WaveData... waves) {
+		return w(channel, data, null, null, waves);
 	}
 
 	default CellList w(Collection<Frequency> frequencies) {
@@ -180,47 +180,47 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
-	default CellList w(String... path) {
-		return w(Stream.of(path).map(File::new).toArray(File[]::new));
+	default CellList w(int channel, String... path) {
+		return w(channel, Stream.of(path).map(File::new).toArray(File[]::new));
 	}
 
-	default CellList w(Producer<PackedCollection<?>> repeat, String... path) {
-		return w(null, repeat, path);
+	default CellList w(int channel, Producer<PackedCollection<?>> repeat, String... path) {
+		return w(channel, null, repeat, path);
 	}
 
-	default CellList w(Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, String... path) {
-		return w(offset, repeat, Stream.of(path).map(File::new).toArray(File[]::new));
+	default CellList w(int channel, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, String... path) {
+		return w(channel, offset, repeat, Stream.of(path).map(File::new).toArray(File[]::new));
 	}
 
-	default CellList w(File... files) {
-		return w((Supplier<PolymorphicAudioData>) PolymorphicAudioData::new, files);
+	default CellList w(int channel, File... files) {
+		return w(channel, (Supplier<PolymorphicAudioData>) PolymorphicAudioData::new, files);
 	}
 
-	default CellList w(Producer<PackedCollection<?>> repeat, File... files) {
-		return w(null, repeat, files);
+	default CellList w(int channel, Producer<PackedCollection<?>> repeat, File... files) {
+		return w(channel, null, repeat, files);
 	}
 
-	default CellList w(Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, File... files) {
-		return w(PolymorphicAudioData::new, offset, repeat, files);
+	default CellList w(int channel, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, File... files) {
+		return w(channel, PolymorphicAudioData::new, offset, repeat, files);
 	}
 
-	default CellList w(Producer<PackedCollection<?>> repeat, WaveData... data) {
-		return w(null, repeat, data);
+	default CellList w(int channel, Producer<PackedCollection<?>> repeat, WaveData... data) {
+		return w(channel, null, repeat, data);
 	}
 
-	default CellList w(Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... data) {
-		return w(PolymorphicAudioData::new, offset, repeat, data);
+	default CellList w(int channel, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... data) {
+		return w(channel, PolymorphicAudioData::new, offset, repeat, data);
 	}
 
-	default CellList w(Supplier<PolymorphicAudioData> data, File... files) {
-		return w(data, null, null, files);
+	default CellList w(int channel, Supplier<PolymorphicAudioData> data, File... files) {
+		return w(channel, data, null, null, files);
 	}
 
-	default CellList w(Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, File... files) {
+	default CellList w(int channel, Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, File... files) {
 		CellList cells = new CellList();
 		Stream.of(files).map(f -> {
 			try {
-				return WavFile.load(f, 1.0, offset, repeat).apply(data.get());
+				return WavFile.load(f, channel, 1.0, offset, repeat).apply(data.get());
 			} catch (IOException e) {
 				e.printStackTrace();
 				return silence().get(0);
@@ -238,22 +238,12 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
-	default CellList w(Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... waves) {
+	default CellList w(int channel, Supplier<PolymorphicAudioData> data, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat, WaveData... waves) {
 		CellList cells = new CellList();
 		Stream.of(waves)
-				.map(w -> w.toCell(1.0, offset, repeat).apply(data.get()))
+				.map(w -> w.toCell(channel, 1.0, offset, repeat).apply(data.get()))
 				.forEach(cells::addRoot);
 		return cells;
-	}
-
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, String... choices) {
-		return poly(count, data, decision, Stream.of(choices).map(File::new).toArray(File[]::new));
-	}
-
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, File... choices) {
-		return poly(count, data, decision, Stream.of(choices)
-				.map(f -> (Function<PolymorphicAudioData, CollectionTemporalCellAdapter>) d -> (CollectionTemporalCellAdapter) w(data, f).get(0)).
-				toArray(Function[]::new));
 	}
 
 	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection<?>>> decision, Frequency... choices) {

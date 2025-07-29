@@ -17,20 +17,19 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 public interface NoteAudio extends KeyboardTuned {
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target);
+	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel);
 
-	default PackedCollection<?> getAudio() {
-		return getAudio(null).evaluate();
-	}
+	WaveData getWaveData();
 
 	default double getDuration(KeyPosition<?> target) {
-		return CollectionFeatures.getInstance().shape(getAudio(target)).getTotalSizeLong() / (double) getSampleRate();
+		return CollectionFeatures.getInstance().shape(getAudio(target, -1)).getTotalSizeLong() / (double) getSampleRate();
 	}
 
 	int getSampleRate();

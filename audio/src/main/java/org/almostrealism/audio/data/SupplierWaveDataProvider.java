@@ -33,7 +33,7 @@ public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 
 	@Override
 	public long getCountLong() {
-		return get().getCollection().getCountLong();
+		return get().getFrameCount();
 	}
 
 	@Override

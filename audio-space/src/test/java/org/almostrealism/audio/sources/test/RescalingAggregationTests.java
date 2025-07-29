@@ -75,8 +75,8 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, input.getDuration()),
 				null, null,
-				cp(input.getCollection()),
-				cp(filter.getCollection()));
+				cp(input.getChannelData(0)),
+				cp(filter.getChannelData(0)));
 
 		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
 		out.save(new File("results/rescaling-volume.wav"));
@@ -93,8 +93,8 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, 28.0),
 				null, null,
-				cp(input.getCollection()),
-				cp(filter.getCollection()));
+				cp(input.getChannelData(0)),
+				cp(filter.getChannelData(0)));
 
 		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
 		out.save(new File("results/rescaling-frequency.wav"));
@@ -126,9 +126,9 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, input.getDuration()),
 				null, null,
-				cp(input.getCollection()),
-				cp(filter.getCollection()),
-				cp(env.getCollection()));
+				cp(input.getChannelData(0)),
+				cp(filter.getChannelData(0)),
+				cp(env.getChannelData(0)));
 
 		WaveData out = new WaveData(Process.optimized(aggregated).get().evaluate(), sampleRate);
 		out.save(new File("results/" + name + ".wav"));

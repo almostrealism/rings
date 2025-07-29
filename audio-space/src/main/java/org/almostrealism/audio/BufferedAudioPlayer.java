@@ -98,7 +98,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 		this.mixer.init(c -> {
 			WaveCell cell = enableUnifiedClock ? getData(c).toCell(clock)
-					: (WaveCell) w(p(loopDuration[c]), getData(c)).get(0);
+					: (WaveCell) w(0, p(loopDuration[c]), getData(c)).get(0);
 			level[c] = cell.getData().amplitude();
 			return cell;
 		});
@@ -159,7 +159,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	private int resetPlayer(int player, int frameCount) {
 		int frames = updateDuration(player, frameCount);
-		getData(player).getCollection().clear();
+		getData(player).getData().clear();
 		return frames;
 	}
 
@@ -172,8 +172,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 			return;
 		}
 
-		int frames = resetPlayer(player, source.getCollection().getMemLength());
-		getData(player).getCollection().setMem(0, source.getCollection(), 0, frames);
+		int frames = resetPlayer(player, source.getFrameCount());
+
+		for (int c = 0; c < source.getChannelCount(); c++) {
+			getData(player).getChannelData(c).setMem(source.getChannelData(c), 0, frames);
+		}
 	}
 
 	protected void update(int player, String file) {
@@ -190,12 +193,14 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 				return;
 			}
 
-			// TODO  Merge channels
 			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
 			int frames = resetPlayer(player, result[0].length);
-			getData(player).getCollection().setMem(0, result[0], 0, frames);
+
+			for (int c = 0; c < getData(player).getChannelCount(); c++) {
+				getData(player).getChannelData(c).setMem(result[c], 0, frames);
+			}
 		} catch (IOException e) {
 			warn("Could not load " + getFileString() + " to player", e);
 		}

@@ -115,7 +115,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 
 		for (WaveDataProvider p : samples) {
 			try {
-				cells = cells.and(w(c(bpm.l(1)), p.get()));
+				cells = cells.and(w(0, c(bpm.l(1)), p.get()));
 			} catch (Exception e) {
 				System.out.println("Skipping invalid sample: " + e.getMessage());
 			}
