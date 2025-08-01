@@ -106,10 +106,10 @@ public class EfxManager implements CellFeatures {
 		}
 
 		CellList wet = createCells(applyFilter(channel, audio, setup), totalDuration)
-						.map(fc(i -> delayLevels.valueAt(channel.getChannel(), 0)));
+						.map(fc(i -> delayLevels.valueAt(channel.getPatternChannel(), 0)));
 		CellList dry = createCells(audio, totalDuration);
 
-		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getChannel(), 0).getResultant(c(1.0));
+		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getPatternChannel(), 0).getResultant(c(1.0));
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
@@ -121,14 +121,14 @@ public class EfxManager implements CellFeatures {
 				enableAutomation ?
 						fc(i -> in -> {
 							Producer<PackedCollection<?>> value = automation
-									.getAggregatedValue(delayAutomation.valueAt(channel.getChannel()), null, 0.0);
+									.getAggregatedValue(delayAutomation.valueAt(channel.getPatternChannel()), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
 						}) :
 						fi();
 
 		wet = wet.m(auto, delays)
-				.mself(fi(), i -> g(delayLevels.valueAt(channel.getChannel(), 1)))
+				.mself(fi(), i -> g(delayLevels.valueAt(channel.getPatternChannel(), 1)))
 				.sum();
 
 		CellList cells = cells(wet, dry).sum();
@@ -145,9 +145,9 @@ public class EfxManager implements CellFeatures {
 		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
 
 		Producer<PackedCollection<?>> decision =
-				delayLevels.valueAt(channel.getChannel(), 2).getResultant(c(1.0));
+				delayLevels.valueAt(channel.getPatternChannel(), 2).getResultant(c(1.0));
 		Producer<PackedCollection<?>> cutoff = c(20000)
-				.multiply(delayLevels.valueAt(channel.getChannel(), 3).getResultant(c(1.0)));
+				.multiply(delayLevels.valueAt(channel.getPatternChannel(), 3).getResultant(c(1.0)));
 
 		CollectionProducer<PackedCollection<?>> lpCoefficients =
 				lowPassCoefficients(cutoff, sampleRate, filterOrder)

@@ -18,6 +18,8 @@ package org.almostrealism.audio.arrange.test;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.AutomationManager;
@@ -45,6 +47,8 @@ public class MixdownManagerTests implements CellFeatures {
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
+		MultiChannelAudioOutput output = new MultiChannelAudioOutput();
+
 		List<WaveOutput> stemsOut = new ArrayList<>();
 		for (int i = 0; i < cells.size(); i++)
 			stemsOut.add(new WaveOutput(new File("results/" + name + "-stem" + i + ".wav")));
@@ -53,7 +57,7 @@ public class MixdownManagerTests implements CellFeatures {
 
 		WaveOutput mixOut = new WaveOutput(new File("results/" + name + "-mix.wav"));
 
-		cells = mixdown.cells(cells, stemsOut, mixOut);
+		cells = mixdown.cells(cells, output, ChannelInfo.StereoChannel.LEFT);
 		cells.addRequirement(time::tick);
 
 		setup.get().run();

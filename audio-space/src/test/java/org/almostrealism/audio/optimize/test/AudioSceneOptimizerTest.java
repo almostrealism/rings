@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 			System.out.println("Creating AudioScenePopulation...");
 			AudioScenePopulation pop = new AudioScenePopulation(scene, genomes);
 			AudioHealthComputation hc = (AudioHealthComputation) optimizer.getHealthComputation();
-			pop.init(pop.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
+			pop.init(pop.getGenomes().get(0), hc.getOutput());
 			return pop;
 		});
 
@@ -104,7 +104,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 					System.out.println("Creating LayeredOrganPopulation...");
 					AudioScenePopulation pop =
 							new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream(AudioSceneOptimizer.POPULATION_FILE)));
-					pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
+					pop.init(pop.getGenomes().get(0), health.getOutput());
 
 					IntStream.range(0, 4).forEach(i -> {
 						TemporalCellular organ = pop.enableGenome(i);

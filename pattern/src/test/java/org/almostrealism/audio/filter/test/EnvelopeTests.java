@@ -253,7 +253,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
 		PatternNoteLayer result = penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, d -> new SimplePatternNote(provider))
+		new WaveData(result.getAudio(null, -1, 4.0, null, d -> new SimplePatternNote(provider))
 							.evaluate(), 44100)
 				.save(new File("results/parameterized-volume-envelope.wav"));
 	}
@@ -268,7 +268,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		PatternNoteLayer result =
 				penv.apply(ParameterSet.random(), ChannelInfo.Voicing.MAIN, new PatternNoteLayer());
 		result.setTuning(new DefaultKeyboardTuning());
-		new WaveData(result.getAudio(null, 4.0, null, d -> new SimplePatternNote(provider))
+		new WaveData(result.getAudio(null, -1, 4.0, null, d -> new SimplePatternNote(provider))
 								.evaluate(), 44100)
 				.save(new File("results/parameterized-filter-envelope.wav"));
 	}

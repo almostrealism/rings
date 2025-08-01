@@ -278,7 +278,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 		for (int i = 0; i < count; i++) {
 			WaveOutput out = new WaveOutput(f.apply(i));
-			result.add(new ReceptorCell<>(out));
+			result.add(out.getWriterCell(0));
 			result.getFinals().add(out.write().get());
 		}
 
@@ -290,8 +290,8 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 		for (int i = 0; i < cells.size(); i++) {
 			WaveOutput out = new WaveOutput(f.apply(i));
-			cells.get(i).setReceptor(out);
-			result.getFinals().add(out.writeCsv(f.apply(i)).get());
+			cells.get(i).setReceptor(out.getWriter(0));
+			result.getFinals().add(out.writeCsv(0, f.apply(i)).get());
 		}
 
 		return result;
@@ -302,7 +302,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 		for (int i = 0; i < cells.size(); i++) {
 			WaveOutput out = new WaveOutput(f.apply(i));
-			ReceptorCell c = new ReceptorCell(out);
+			ReceptorCell c = out.getWriterCell(0);
 			cells.get(i).setReceptor(c);
 			result.add(c);
 			result.getFinals().add(out.write().get());
@@ -318,9 +318,9 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 			WaveOutput out = new WaveOutput(f.apply(i));
 
 			if (cells.get(i) instanceof CellAdapter) {
-				((CellAdapter) cells.get(i)).setMeter(out);
+				((CellAdapter) cells.get(i)).setMeter(out.getWriter(0));
 			} else {
-				cells.get(i).setReceptor(out);
+				cells.get(i).setReceptor(out.getWriter(0));
 			}
 
 			result.getFinals().add(out.write().get());
@@ -553,15 +553,16 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 			throw new UnsupportedOperationException();
 		}
 
-		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(destination)));
+		cells = map(cells, i -> new WaveOutput(destination).getWriterCell(0));
 		return cells.buffer(shape.getTotalSize());
 	}
 
 	default Supplier<Runnable> export(CellList cells, PackedCollection<PackedCollection<?>> wavs) {
 		if (wavs.getCount() != cells.size()) throw new IllegalArgumentException("Destination count must match cell count");
 
-		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput(
-				wavs.range(shape(wavs.getAtomicMemLength()), i * wavs.getAtomicMemLength()))));
+		cells = map(cells, i -> new WaveOutput(
+					wavs.range(shape(wavs.getAtomicMemLength()), i * wavs.getAtomicMemLength()))
+				.getWriterCell(0));
 
 		OperationList export = new OperationList("Export " + wavs.getAtomicMemLength() + " frames");
 		export.add(iter(cells, wavs.getAtomicMemLength()));
@@ -574,14 +575,17 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList mixdown(CellList cells, double seconds) {
-		cells = map(cells, i -> new ReceptorCell<>(new WaveOutput()));
+		List<WaveOutput> outputs = IntStream.range(0, cells.size())
+				.mapToObj(i -> new WaveOutput()).toList();
+
+		cells = map(cells, i -> outputs.get(i).getWriterCell(0));
 
 		OperationList export = new OperationList("Mixdown Export");
 
 		PackedCollection<PackedCollection<?>> wavs = (PackedCollection)
 				new PackedCollection(shape(cells.size(), WaveOutput.defaultTimelineFrames)).traverse(1);
 		for (int i = 0; i < cells.size(); i++) {
-			export.add(((WaveOutput) ((ReceptorCell) cells.get(i)).getReceptor()).export(wavs.get(i)));
+			export.add(outputs.get(i).export(0, wavs.get(i)));
 		}
 
 		OperationList setup = new OperationList(seconds + " second mixdown");

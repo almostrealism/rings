@@ -47,7 +47,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 				NoteAudioProvider.create("Library/SN_Forever_Future.wav", WesternChromatic.C1);
 
 		PatternNoteAudio note = new PatternNoteAudioChoice();
-		new WaveData(note.getAudio(WesternChromatic.G2, 1.0,
+		new WaveData(note.getAudio(WesternChromatic.G2, -1, 1.0,
 						null, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.G2, null))
@@ -62,7 +62,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		PatternNoteLayer note = PatternNoteLayer.create(new SimplePatternNote(provider),
 													new ReversePlaybackAudioFilter());
 		note.setTuning(new DefaultKeyboardTuning());
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, null)
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, null, null)
 				.evaluate(),
 				note.getSampleRate(WesternChromatic.C1, null))
 				.save(new File("results/pattern-note-reversed.wav"));
@@ -77,7 +77,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note = PatternNoteLayer.create(note, attack(c(0.5)));
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, d -> new SimplePatternNote(provider))
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, null, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.G2, null))
 				.save(new File("results/pattern-note-envelope.wav"));
@@ -107,7 +107,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, factor, d -> new SimplePatternNote(provider))
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, factor, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.C1, d -> new SimplePatternNote(provider)))
 				.save(new File("results/pattern-note-conditional-envelope.wav"));
@@ -134,7 +134,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, factor, d -> new SimplePatternNote(provider))
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, factor, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.C1, d -> new SimplePatternNote(provider)))
 				.save(new File("results/pattern-note-envelope-passthrough.wav"));
@@ -152,7 +152,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note = PatternNoteLayer.create(note, section.get());
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, d -> new SimplePatternNote(provider))
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, null, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.C1, d -> new SimplePatternNote(provider)))
 				.save(new File("results/pattern-note-envelope-sections.wav"));
@@ -169,7 +169,7 @@ public class PatternAudioTest implements EnvelopeFeatures {
 		note = envelope.apply(new ParameterSet(), ChannelInfo.Voicing.MAIN, note);
 		note.setTuning(new DefaultKeyboardTuning());
 
-		new WaveData(note.getAudio(WesternChromatic.C1, 1.0, null, d -> new SimplePatternNote(provider))
+		new WaveData(note.getAudio(WesternChromatic.C1, -1, 1.0, null, d -> new SimplePatternNote(provider))
 							.evaluate(),
 					note.getSampleRate(WesternChromatic.C1, d -> new SimplePatternNote(provider)))
 				.save(new File("results/pattern-note-param-envelope.wav"));

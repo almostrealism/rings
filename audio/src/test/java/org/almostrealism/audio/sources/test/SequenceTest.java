@@ -238,12 +238,12 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 				silence().and(w(0, c(bpm(128).l(0.5)), c(bpm(128).l(1)), "Library/GT_HAT_31.wav"))
 						.gr(bpm(128).l(count), count * 2, i -> i % 2 == 0 ? 0 : 1))
 				.f(i -> i == 0 ? new ScaleFactor(0.5) : new ScaleFactor(0.1))
-				.sum().map(i -> new ReceptorCell<>(output));
+				.sum().map(i -> output.getWriterCell(0));
 
 		cells.sec(10).get().run();
 
 		PackedCollection<Scalar> export = Scalar.scalarBank(WaveOutput.defaultTimelineFrames);
-		output.export(export).get().run();
+		output.export(0, export).get().run();
 
 		WavFile f = WavFile.newWavFile(new File("results/mix-export-test.wav"), 1,
 				10 * OutputLine.sampleRate, 24, OutputLine.sampleRate);

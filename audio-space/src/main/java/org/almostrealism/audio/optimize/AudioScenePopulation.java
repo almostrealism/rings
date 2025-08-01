@@ -19,11 +19,9 @@ package org.almostrealism.audio.optimize;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -34,10 +32,9 @@ import io.almostrealism.profile.OperationProfile;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.health.HealthComputationAdapter;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.TemporalCellular;
@@ -69,30 +66,15 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	}
 
 	public void init(Genome<PackedCollection<?>> templateGenome,
-					 Receptor<PackedCollection<?>> output) {
-		init(templateGenome, Collections.emptyList(), Collections.emptyList(), output);
+					 MultiChannelAudioOutput output) {
+		init(templateGenome, output, null);
 	}
 
 	public void init(Genome<PackedCollection<?>> templateGenome,
-					 Receptor<PackedCollection<?>> output,
-					 List<Integer> channels) {
-		init(templateGenome, Collections.emptyList(), Collections.emptyList(), output, channels);
-	}
-
-	public void init(Genome<PackedCollection<?>> templateGenome,
-					 List<? extends Receptor<PackedCollection<?>>> measures,
-					 List<? extends Receptor<PackedCollection<?>>> stems,
-					 Receptor<PackedCollection<?>> output) {
-		init(templateGenome, measures, stems, output, null);
-	}
-
-	public void init(Genome<PackedCollection<?>> templateGenome,
-					 List<? extends Receptor<PackedCollection<?>>> measures,
-					 List<? extends Receptor<PackedCollection<?>>> stems,
-					 Receptor<PackedCollection<?>> output, List<Integer> channels) {
+					 MultiChannelAudioOutput output, List<Integer> channels) {
 		enableGenome(templateGenome);
-		this.cells = channels == null ? scene.getCells(measures, stems, output) :
-									scene.getCells(measures, stems, output, channels);
+		this.cells = channels == null ?
+				scene.getCells(output) : scene.getCells(output, channels);
 
 		// TODO  Replace with scene.runner()
 		this.temporal = new TemporalCellular() {
@@ -171,7 +153,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 						return outputFile;
 					}).orElse(null), 24);
 
-			init(getGenomes().get(0), out, List.of(channel));
+			init(getGenomes().get(0), new MultiChannelAudioOutput(out), List.of(channel));
 
 			OperationProfile profile = new OperationProfile("AudioScenePopulation");
 

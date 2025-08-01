@@ -47,7 +47,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 	@Test
 	public void grainsTimeSeries() {
 		WaveOutput source = new WaveOutput();
-		w(0, new File("Library/organ.wav")).map(i -> new ReceptorCell<>(source)).sec(1.0, false).get().run();
+		w(0, new File("Library/organ.wav")).map(i -> source.getWriterCell(0)).sec(1.0, false).get().run();
 
 		Grain grain = new Grain();
 		grain.setStart(0.2);
@@ -72,8 +72,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
 		verboseLog(() -> {
-//			source.getData().valueAt(cursor).get().into(result).evaluate();
-			c((Producer) p(source.getData()), cursor).get().into(result).evaluate();
+			c(source.getChannelData(0), cursor).get().into(result).evaluate();
 		});
 		System.out.println("GrainTest: Timeline kernel evaluated");
 

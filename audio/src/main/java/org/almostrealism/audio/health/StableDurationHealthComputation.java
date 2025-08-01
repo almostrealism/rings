@@ -187,13 +187,13 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if ((int) getWaveOut().getCursor().toDouble(0) != l + iter) {
+				if (getMaster().getFrameCount() != l + iter) {
 					log("Cursor out of sync (" +
-							(int) getWaveOut().getCursor().toDouble(0) + " != " + (l + iter) + ")");
+							getMaster().getFrameCount() + " != " + (l + iter) + ")");
 					throw new RuntimeException();
 				}
 
-				getMeasures().forEach(m -> {
+				getMeasures().values().forEach(m -> {
 					checkForSilence(m);
 
 					if (m.getClipCount() > 0) {
@@ -208,7 +208,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				});
 
 				// If clipping or silence occurs, report the health score
-				if (getMeasures().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
+				if (getMeasures().values().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
 
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
@@ -241,9 +241,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			if (score > 0) {
 				if (enableOutput) {
 					if (enableVerbose)
-						log("Cursor = " + getWaveOut().getCursor().toDouble(0));
+						log("Cursor = " + getMaster().getFrameCount());
 
-					getWaveOut().write().get().run();
+					getMaster().write().get().run();
 					if (getStems() != null) getStems().forEach(s -> s.write().get().run());
 
 					if (getWaveDetailsProcessor() != null) {
@@ -259,7 +259,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				recordGenerationTime(l, generationTime);
 			}
 
-			getWaveOut().reset();
+			getMaster().reset();
 			if (getStems() != null) getStems().forEach(WaveOutput::reset);
  			reset();
 		}

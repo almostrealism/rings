@@ -17,6 +17,7 @@
 package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
@@ -57,7 +58,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
 	}
 
-	protected Cells organ(boolean adjust, List<? extends Receptor<PackedCollection<?>>> measures, Receptor<PackedCollection<?>> output) {
+	protected Cells organ(boolean adjust, MultiChannelAudioOutput output) {
 		ArrayListChromosome<PackedCollection<?>> x = new ArrayListChromosome();
 		x.add(new ArrayListGene<>(0.4, 0.6));
 		x.add(new ArrayListGene<>(0.8, 0.2));
@@ -86,7 +87,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		genome.add(z);
 		genome.add(a);
 
-		return scene().getCells(measures, null, output);
+		return scene().getCells(output);
 	}
 
 	@Test
@@ -97,7 +98,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-noadjust.wav");
 
-		Cells organ = organ(false, health.getMeasures(), health.getOutput());
+		Cells organ = organ(false, health.getOutput());
 		organ.reset();
 		health.setTarget(organ);
 		health.computeHealth();
@@ -111,7 +112,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-adjust.wav");
 
-		Cells organ = organ(true, health.getMeasures(), health.getOutput());
+		Cells organ = organ(true, health.getOutput());
 		organ.reset();
 		health.setTarget(organ);
 		health.computeHealth();

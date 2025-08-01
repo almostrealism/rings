@@ -23,6 +23,7 @@ import java.util.Objects;
 
 public class ElementVoicingDetails {
 	private ChannelInfo.Voicing voicing;
+	private ChannelInfo.StereoChannel stereoChannel;
 	private boolean melodic;
 	private KeyPosition<?> target;
 	private double position;
@@ -57,6 +58,14 @@ public class ElementVoicingDetails {
 
 	public void setVoicing(ChannelInfo.Voicing voicing) {
 		this.voicing = voicing;
+	}
+
+	public ChannelInfo.StereoChannel getStereoChannel() {
+		return stereoChannel;
+	}
+
+	public void setStereoChannel(ChannelInfo.StereoChannel stereoChannel) {
+		this.stereoChannel = stereoChannel;
 	}
 
 	public boolean isMelodic() {

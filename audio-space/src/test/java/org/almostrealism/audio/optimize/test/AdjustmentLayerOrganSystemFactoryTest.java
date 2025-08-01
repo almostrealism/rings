@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.optimize.test;
 
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
@@ -32,47 +33,47 @@ public class AdjustmentLayerOrganSystemFactoryTest extends AudioSceneOptimizatio
 	@Test
 	public void compare() {
 		dc(() -> {
-			ReceptorCell outa = (ReceptorCell) o(1, i -> new File("results/layered-organ-factory-comp-a.wav")).get(0);
-			Cells organa = cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), outa);
+			WaveOutput outa = new WaveOutput(new File("results/layered-organ-factory-comp-a.wav"));
+			Cells organa = randomOrgan(pattern(2, 2), new MultiChannelAudioOutput(outa));
 			organa.reset();
 
-			ReceptorCell outb = (ReceptorCell) o(1, i -> new File("results/layered-organ-factory-comp-b.wav")).get(0);
-			Cells organb = cells(pattern(2, 2), null, outb); // TODO
+			WaveOutput outb = new WaveOutput(new File("results/layered-organ-factory-comp-b.wav"));
+			Cells organb = randomOrgan(pattern(2, 2),  new MultiChannelAudioOutput(outb));
 			organb.reset();
 
 			Runnable organRunA = new TemporalRunner(organa, 8 * OutputLine.sampleRate).get();
 			Runnable organRunB = new TemporalRunner(organb, 8 * OutputLine.sampleRate).get();
 
 			organRunA.run();
-			((WaveOutput) outa.getReceptor()).write().get().run();
+			outa.write().get().run();
 
 			organRunB.run();
-			((WaveOutput) outb.getReceptor()).write().get().run();
+			outb.write().get().run();
 		});
 	}
 
 	@Test
 	public void layered() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/layered-organ-factory-test.wav")).get(0);
-		Cells organ = cells(pattern(2, 2), null, out); // TODO
+		WaveOutput out = new WaveOutput(new File("results/layered-organ-factory-test.wav"));
+		Cells organ = randomOrgan(pattern(2, 2), new MultiChannelAudioOutput(out));
 		organ.reset();
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
-		((WaveOutput) out.getReceptor()).write().get().run();
+		out.write().get().run();
 
 		organRun.run();
-		((WaveOutput) out.getReceptor()).write().get().run();
+		out.write().get().run();
 	}
 
 	@Test
 	public void layeredRandom() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("results/layered-organ-factory-rand-test.wav")).get(0);
-		Cells organ = cells(pattern(2, 2), null, out); // TODO
+		WaveOutput out = new WaveOutput(new File("results/layered-organ-factory-rand-test.wav"));
+		Cells organ = randomOrgan(pattern(2, 2), new MultiChannelAudioOutput(out));
 		organ.reset();
 
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
-		((WaveOutput) out.getReceptor()).write().get().run();
+		out.write().get().run();
 	}
 }

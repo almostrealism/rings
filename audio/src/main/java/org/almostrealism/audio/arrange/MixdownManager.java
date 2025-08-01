@@ -21,6 +21,8 @@ import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.filter.DelayNetwork;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
@@ -264,27 +266,25 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	}
 
 	public CellList cells(CellList sources,
-						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output) {
-		return cells(sources, null, null, List.of(), stems, output, i -> i);
+						  MultiChannelAudioOutput output,
+						  ChannelInfo.StereoChannel audioChannel) {
+		return cells(sources, null, null, output, audioChannel, i -> i);
 	}
 
 	public CellList cells(CellList sources, CellList wetSources, CellList riser,
-						  List<? extends Receptor<PackedCollection<?>>> measures,
-						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output,
+						  MultiChannelAudioOutput output,
+						  ChannelInfo.StereoChannel audioChannel,
 						  IntUnaryOperator channelIndex) {
 		CellList cells = createCells(sources, wetSources, riser,
-						measures, stems, output, channelIndex);
+							output, audioChannel, channelIndex);
 		dependencies.add(cells);
 		return cells;
 	}
 
 	protected CellList createCells(CellList sources, CellList wetSources, CellList riser,
-						  List<? extends Receptor<PackedCollection<?>>> measures,
-						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output,
-						  IntUnaryOperator channelIndex) {
+								   MultiChannelAudioOutput output,
+								   ChannelInfo.StereoChannel audioChannel,
+								   IntUnaryOperator channelIndex) {
 		CellList cells = sources;
 
 		if (enableMainFilterUp) {
@@ -313,8 +313,8 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 
 		if (enableSourcesOnly) {
 			List<Receptor<PackedCollection<?>>> r = new ArrayList<>();
-			r.add(output);
-			r.addAll(measures);
+			r.add(output.getMaster(audioChannel));
+			r.addAll(output.getMeasures(audioChannel));
 
 			return cells
 					.map(fc(v))
@@ -377,8 +377,8 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			reverb = branch[2];
 		}
 
-		if (stems != null && !stems.isEmpty()) {
-			main = main.branch(i -> new ReceptorCell<>(stems.get(i)),
+		if (output.isStemsActive()) {
+			main = main.branch(i -> new ReceptorCell<>(output.getStem(i, audioChannel)),
 								i -> new PassThroughCell<>())[1];
 		}
 
@@ -387,19 +387,22 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 
 		if (enableEfx) {
 			main = createEfx(main, efx, reverbActive ? reverb : null, riser,
-					sources.size(), measures, stems, output, channelIndex);
+					sources.size(), output, audioChannel, channelIndex);
 		} else {
-			// Deliver main to the output and measure #1 and #2
-			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0), measures.get(1))));
+			// Deliver main to the output and measure for MAIN and WET
+			main = main.map(i -> new ReceptorCell<>(Receptor.to(
+					output.getMaster(audioChannel),
+					output.getMeasure(ChannelInfo.Voicing.MAIN, audioChannel),
+					output.getMeasure(ChannelInfo.Voicing.WET, audioChannel))));
 		}
 
 		return main;
 	}
 
-	public CellList createEfx(CellList main, CellList efx, CellList reverb, CellList riser, int sourceCount,
-							  List<? extends Receptor<PackedCollection<?>>> measures,
-							  List<? extends Receptor<PackedCollection<?>>> stems,
-							  Receptor<PackedCollection<?>> output,
+	public CellList createEfx(CellList main, CellList efx, CellList reverb,
+							  CellList riser, int sourceCount,
+							  MultiChannelAudioOutput output,
+							  ChannelInfo.StereoChannel audioChannel,
 							  IntUnaryOperator channelIndex) {
 		if (enableTransmission) {
 			int delayLayers = delay.length();
@@ -439,8 +442,10 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		}
 
 		if (disableClean) {
+			List<Receptor<PackedCollection<?>>> measures = output.getMeasures(audioChannel);
+
 			Receptor r[] = new Receptor[measures.size() + 1];
-			r[0] = output;
+			r[0] = output.getMaster(audioChannel);
 			for (int i = 0; i < measures.size(); i++) r[i + 1] = measures.get(i);
 
 			efx.get(0).setReceptor(Receptor.to(r));
@@ -449,15 +454,14 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 
 		List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
 		efxReceptors.add(main.get(0));
-		if (measures.size() > 1) efxReceptors.add(measures.get(1));
-		if (stems != null && !stems.isEmpty()) efxReceptors.add(stems.get(sourceCount));
-		efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
+		if (output.isMeasuresActive()) {
+			efxReceptors.add(output.getMeasure(ChannelInfo.Voicing.WET, audioChannel));
+		}
+		if (output.isStemsActive()) {
+			efxReceptors.add(output.getStem(sourceCount, audioChannel));
+		}
 
-//		if (stems != null && !stems.isEmpty()) {s
-//			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1), stems.get(sourceCount)));
-//		} else {
-//			efx.get(0).setReceptor(Receptor.to(main.get(0), measures.get(1)));
-//		}
+		efx.get(0).setReceptor(Receptor.to(efxReceptors.toArray(Receptor[]::new)));
 
 		if (enableMasterFilterDown) {
 			// Apply dynamic low pass filter
@@ -475,10 +479,12 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		}
 
 		// Deliver main to the output and measure #1
-		if (measures.isEmpty()) {
-			main = main.map(i -> new ReceptorCell<>(output));
+		if (output.isMeasuresActive()) {
+			main = main.map(i -> new ReceptorCell<>(output.getMaster(audioChannel)));
 		} else {
-			main = main.map(i -> new ReceptorCell<>(Receptor.to(output, measures.get(0))));
+			main = main.map(i -> new ReceptorCell<>(Receptor.to(
+					output.getMaster(audioChannel),
+					output.getMeasure(ChannelInfo.Voicing.MAIN, audioChannel))));
 		}
 
 		return cells(main, efx);

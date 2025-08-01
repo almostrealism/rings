@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 						hc.setWaveDetailsProcessor(detailsProcessor);
 
 						if (enableVerbose) log("Initializing AudioScenePopulation");
-						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
+						population.init(population.getGenomes().get(0), hc.getOutput());
 
 						if (enableVerbose) {
 							log("AudioScenePopulation initialized (getCells duration = " +

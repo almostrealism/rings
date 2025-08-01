@@ -115,7 +115,7 @@ public class PatternLayerManager implements PatternFeatures {
 		}
 
 		context.getChannels().forEach(c -> {
-			if (c.getChannel() == channel) {
+			if (c.getPatternChannel() == channel) {
 				destination.put(c.getVoicing(), context.getDestination());
 			}
 		});

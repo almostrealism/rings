@@ -26,11 +26,9 @@ import org.almostrealism.collect.PackedCollection;
 public interface NoteAudio extends KeyboardTuned {
 	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel);
 
-	WaveData getWaveData();
+	double getDuration(KeyPosition<?> target);
 
-	default double getDuration(KeyPosition<?> target) {
-		return CollectionFeatures.getInstance().shape(getAudio(target, -1)).getTotalSizeLong() / (double) getSampleRate();
-	}
+	WaveData getWaveData();
 
 	int getSampleRate();
 }

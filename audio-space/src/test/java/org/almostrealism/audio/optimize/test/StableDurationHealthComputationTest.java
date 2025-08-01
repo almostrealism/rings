@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.almostrealism.audio.optimize.test;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.health.HealthComputationAdapter;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.line.OutputLine;
@@ -41,7 +41,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -65,9 +64,9 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		// WaveOutput output3 = new WaveOutput(new File("results/health-test-firstcell-processed.wav"));
 		// WaveOutput output4 = new WaveOutput(new File("results/health-test-lastcell-processed.wav"));
 
-		CellList cells = (CellList) cells(pattern(2, 2), Arrays.asList(a(p(new Scalar())), a(p(new Scalar()))), null);
-		((CellAdapter) cells.get(0)).setMeter(output1);
-		((CellAdapter) cells.get(1)).setMeter(output2);
+		CellList cells = (CellList) randomOrgan(pattern(2, 2), new MultiChannelAudioOutput());
+		((CellAdapter) cells.get(0)).setMeter(output1.getWriter(0));
+		((CellAdapter) cells.get(1)).setMeter(output2.getWriter(0));
 
 		cells.setup().get().run();
 
@@ -95,7 +94,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 			health.setMaxDuration(8);
 			health.setOutputFile(() -> "results/cells-pattern-dc-test" + index.incrementAndGet() + ".wav");
 
-			Cells organ = cells(pattern(2, 2), health.getMeasures(), health.getOutput(), false);
+			Cells organ = randomOrgan(pattern(2, 2), health.getOutput());
 			organ.reset();
 			health.setTarget(organ);
 			health.computeHealth();
@@ -121,7 +120,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		AudioScene<?> pattern = pattern(2, 2, true);
 		pattern.assignGenome(pattern.getGenome().random());
 
-		Cells organ = cells(pattern, health.getMeasures(), health.getOutput());
+		Cells organ = randomOrgan(pattern, health.getOutput());
 
 		organ.reset();
 		health.setTarget(organ);
@@ -136,7 +135,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		StableDurationHealthComputation health = new StableDurationHealthComputation(5);
 		health.setOutputFile("results/small-cells-pattern-test.wav");
 
-		Cells cells = cells(pattern(5, 3), health.getMeasures(), health.getOutput());
+		Cells cells = randomOrgan(pattern(5, 3), health.getOutput());
 
 		cells.reset();
 		health.setTarget(cells);
@@ -165,7 +164,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 				System.out.println("Creating AudioScenePopulation...");
 				AudioScenePopulation pop =
 						new AudioScenePopulation(null, AudioScenePopulation.read(new FileInputStream(AudioSceneOptimizer.POPULATION_FILE)));
-				pop.init(pop.getGenomes().get(0), health.getMeasures(), health.getStems(), health.getOutput());
+				pop.init(pop.getGenomes().get(0), health.getOutput());
 
 				IntStream.range(0, 2).forEach(i -> {
 					TemporalCellular organ = pop.enableGenome(i);

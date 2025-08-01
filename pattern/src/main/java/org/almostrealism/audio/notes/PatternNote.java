@@ -122,23 +122,28 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		if (getDelegate() != null) return super.getAudio(target, audioSelection);
-		return combineLayers(target, -1, null, audioSelection);
+		if (getDelegate() != null) return super.getAudio(target, channel, audioSelection);
+		return combineLayers(target, channel, -1, null, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel,
+														 double noteDuration,
 														 Factor<PackedCollection<?>> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
-			return super.computeAudio(target, noteDuration, automationLevel, audioSelection);
+			return super.computeAudio(
+					target, channel,
+					noteDuration,
+					automationLevel, audioSelection);
 		}
 
-		return combineLayers(target, noteDuration, automationLevel, audioSelection);
+		return combineLayers(target, channel, noteDuration, automationLevel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, double noteDuration,
+	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, int channel,
+														  double noteDuration,
 														  Factor<PackedCollection<?>> automationLevel,
 														  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (noteDuration < 0) {
@@ -151,7 +156,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			return () -> {
 				List<Evaluable<PackedCollection<?>>> layerAudio =
 						layers.stream()
-								.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection).get())
+								.map(l -> l.getAudio(target, channel, noteDuration, automationLevel, audioSelection).get())
 								.toList();
 				int frames[] = IntStream.range(0, layerAudio.size())
 						.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
@@ -176,7 +181,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			return layerAggregator.getAggregator(c(aggregationChoice)).aggregate(getBufferDetails(target, audioSelection),
 					null, null,
 					layers.stream()
-							.map(l -> l.getAudio(target, noteDuration, automationLevel, audioSelection))
+							.map(l -> l.getAudio(target, channel, noteDuration, automationLevel, audioSelection))
 							.toArray(Producer[]::new));
 		}
 	}

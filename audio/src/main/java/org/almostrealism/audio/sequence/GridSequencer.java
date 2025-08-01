@@ -129,10 +129,10 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 							s.setMem(sequence.apply(i).apply(params));
 							return s;
 						})
-				.sum().map(i -> new ReceptorCell<>(output));
+				.sum().map(i -> output.getWriterCell(0));
 
 		setup.add(cells.iter(getCount()));
-		setup.add(output.export(export));
+		setup.add(output.export(0, export));
 
 		// TODO  Should respect playbackRates
 		return new WaveDataProviderList(List.of(new DynamicWaveDataProvider("seq://" + UUID.randomUUID(), destination)), setup);

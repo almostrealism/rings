@@ -42,18 +42,19 @@ public interface PatternNoteAudio {
 
 	double getDuration(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection);
 
-	default Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
-		return getAudio(target, null);
+	default Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel) {
+		return getAudio(target, channel, null);
 	}
 
 	default PatternNoteLayer filter(NoteAudioFilter filter) {
 		return new PatternNoteLayer(this, filter);
 	}
 
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+										   double noteDuration,
 										   Factor<PackedCollection<?>> automationLevel,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 }
