@@ -90,7 +90,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		AtomicInteger index = new AtomicInteger();
 
 		dc(() -> {
-			StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+			StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 			health.setMaxDuration(8);
 			health.setOutputFile(() -> "results/cells-pattern-dc-test" + index.incrementAndGet() + ".wav");
 
@@ -114,7 +114,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
 		HealthComputationAdapter.setStandardDuration(150);
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+		StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 		health.setOutputFile("results/cells-pattern-small.wav");
 
 		AudioScene<?> pattern = pattern(2, 2, true);
@@ -132,7 +132,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		HealthComputationAdapter.setStandardDuration(150);
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(5);
+		StableDurationHealthComputation health = new StableDurationHealthComputation(5, false);
 		health.setOutputFile("results/small-cells-pattern-test.wav");
 
 		Cells cells = randomOrgan(pattern(5, 3), health.getOutput());
@@ -156,7 +156,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 		IntStream.range(0, 3).forEach(j ->
 			dc(() -> {
-				StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+				StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 				health.setMaxDuration(8);
 
 				health.setOutputFile(() -> "results/samples-pop-test-" + index.incrementAndGet() + ".wav");

@@ -187,7 +187,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		patterns.clear();
 	}
 
-	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
+	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context,
+								  ChannelInfo.Voicing voicing,
+								  ChannelInfo.StereoChannel audioChannel) {
 		OperationList updateDestinations = new OperationList("PatternSystemManager Update Destinations");
 		updateDestinations.add(() -> () -> this.destination = context.get().getDestination());
 		updateDestinations.add(() -> () ->
@@ -216,7 +218,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 					}
 
 					patternsForChannel.stream().forEach(i -> {
-						patterns.get(i).sum(context, voicing);
+						patterns.get(i).sum(context, voicing, audioChannel);
 					});
 
 					if (enableVerbose)

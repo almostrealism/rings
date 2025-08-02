@@ -567,7 +567,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
 		op.add(() -> () -> refreshPatternDestination(channel, true));
-		op.add(patterns.sum(ctx, channel.getVoicing()));
+		op.add(patterns.sum(ctx, channel.getVoicing(), channel.getAudioChannel()));
 		return op;
 	}
 
@@ -603,12 +603,18 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private void refreshPatternDestination(ChannelInfo channel, boolean clear) {
 		if (patternDestinations == null) {
+			int frames = Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples());
+
 			patternDestinations = new HashMap<>();
 			for (int i = 0; i < getChannelCount(); i++) {
-				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN, null),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
-				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET, null),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.RIGHT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.LEFT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.RIGHT),
+						new PackedCollection(frames));
 			}
 
 			if (MixdownManager.enableRiser) {

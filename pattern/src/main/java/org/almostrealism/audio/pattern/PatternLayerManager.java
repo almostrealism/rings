@@ -66,7 +66,7 @@ public class PatternLayerManager implements PatternFeatures {
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
 
-	private Map<ChannelInfo.Voicing, PackedCollection<?>> destination;
+	private Map<ChannelInfo, PackedCollection<?>> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
 							   SimpleChromosome layerChoiceChromosome,
@@ -105,7 +105,7 @@ public class PatternLayerManager implements PatternFeatures {
 		elementFactory = new PatternElementFactory();
 	}
 
-	public Map<ChannelInfo.Voicing, PackedCollection<?>> getDestination() { return destination; }
+	public Map<ChannelInfo, PackedCollection<?>> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
 		if (context.getChannels() == null) return;
@@ -116,7 +116,9 @@ public class PatternLayerManager implements PatternFeatures {
 
 		context.getChannels().forEach(c -> {
 			if (c.getPatternChannel() == channel) {
-				destination.put(c.getVoicing(), context.getDestination());
+				destination.put(
+						new ChannelInfo(c.getVoicing(), c.getAudioChannel()),
+						context.getDestination());
 			}
 		});
 	}
@@ -395,7 +397,9 @@ public class PatternLayerManager implements PatternFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
+	public void sum(Supplier<AudioSceneContext> context,
+					ChannelInfo.Voicing voicing,
+					ChannelInfo.StereoChannel audioChannel) {
 		Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -425,11 +429,11 @@ public class PatternLayerManager implements PatternFeatures {
 			double offset = i * duration;
 			elements.keySet().forEach(choice -> {
 				NoteAudioContext audioContext =
-						new NoteAudioContext(voicing,
-							choice.getValidPatternNotes(),
-							this::nextNotePosition);
+						new NoteAudioContext(voicing, audioChannel,
+								choice.getValidPatternNotes(),
+								this::nextNotePosition);
 
-				if (destination.get(voicing) != ctx.getDestination()) {
+				if (destination.get(new ChannelInfo(voicing, audioChannel)) != ctx.getDestination()) {
 					throw new IllegalArgumentException();
 				}
 

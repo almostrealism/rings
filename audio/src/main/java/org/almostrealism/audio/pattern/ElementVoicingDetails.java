@@ -34,18 +34,20 @@ public class ElementVoicingDetails {
 	}
 
 	public ElementVoicingDetails(ChannelInfo.Voicing voicing) {
-		this(voicing, false, null, 0, 0);
+		this(voicing, null, false, null, 0, 0);
 	}
 
 	public ElementVoicingDetails(ChannelInfo.Voicing voicing, boolean melodic,
 									 KeyPosition<?> target) {
-		this(voicing, melodic, target, 0, 0);
+		this(voicing, null, melodic, target, 0, 0);
 	}
 
-	public ElementVoicingDetails(ChannelInfo.Voicing voicing, boolean melodic,
-								 KeyPosition<?> target,
+	public ElementVoicingDetails(ChannelInfo.Voicing voicing,
+								 ChannelInfo.StereoChannel stereoChannel,
+								 boolean melodic, KeyPosition<?> target,
 								 double position, double nextNotePosition) {
 		this.voicing = voicing;
+		this.stereoChannel = stereoChannel;
 		this.melodic = melodic;
 		this.target = target;
 		this.position = position;

@@ -96,7 +96,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 
 		IntStream.range(0, 3).forEach(j ->
 				dc(() -> {
-					StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+					StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 					health.setMaxDuration(8);
 
 					health.setOutputFile(() -> "results/layered-organ-optimizer-test-" + index.incrementAndGet() + ".wav");

@@ -65,8 +65,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private long startTime, iterStart;
 	private Scalar abortFlag;
 	
-	public StableDurationHealthComputation(int channels) {
-		super(channels, 6);
+	public StableDurationHealthComputation(int channels, boolean stereo) {
+		super(channels, stereo, 6);
 		addSilenceListener(() -> encounteredSilence = true);
 		setBatchSize(OutputLine.sampleRate / 2);
 	}
@@ -187,9 +187,10 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if (getMaster().getFrameCount() != l + iter) {
+				long fc = l + iter - 1;
+				if (getMaster().getFrameCount() != fc) {
 					log("Cursor out of sync (" +
-							getMaster().getFrameCount() + " != " + (l + iter) + ")");
+							getMaster().getFrameCount() + " != " + fc + ")");
 					throw new RuntimeException();
 				}
 

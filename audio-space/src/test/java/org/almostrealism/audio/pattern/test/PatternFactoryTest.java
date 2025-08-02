@@ -166,9 +166,10 @@ public class PatternFactoryTest implements CellFeatures {
 		context.setScaleForPosition(chordProgression::forPosition);
 
 		manager.updateDestination(context);
-		manager.sum(() -> context, ChannelInfo.Voicing.MAIN);
+		manager.sum(() -> context, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT);
 
-		WaveData out = new WaveData(manager.getDestination().get(ChannelInfo.Voicing.MAIN), OutputLine.sampleRate);
+		WaveData out = new WaveData(manager.getDestination().get(
+				new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT)), OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));
 	}
 }

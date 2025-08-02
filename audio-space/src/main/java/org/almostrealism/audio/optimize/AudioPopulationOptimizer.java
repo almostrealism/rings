@@ -180,6 +180,6 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	}
 
 	public static <O extends Temporal> HealthComputation<O, AudioHealthScore> healthComputation(int channels) {
-		return (HealthComputation<O, AudioHealthScore>) new StableDurationHealthComputation(channels);
+		return (HealthComputation<O, AudioHealthScore>) new StableDurationHealthComputation(channels, true);
 	}
 }

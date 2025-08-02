@@ -33,8 +33,6 @@ import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveDetails;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
@@ -56,18 +54,18 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	private List<WaveOutput> stems;
 	private MultiChannelAudioOutput output;
 
-	public HealthComputationAdapter(int channels) {
+	public HealthComputationAdapter(int channels, boolean stereo) {
 		this.channels = channels;
 		this.stemFiles = new HashMap<>();
-		initOutput();
+		initOutput(stereo);
 	}
 
-	protected void initOutput() {
+	protected void initOutput(boolean stereo) {
 		out = new WaveOutput(() ->
 				Optional.ofNullable(outputFileSupplier).map(s -> {
 					outputFile = new File(s.get());
 					return outputFile;
-				}).orElse(null), 24, standardDurationFrames);
+				}).orElse(null), 24, OutputLine.sampleRate, standardDurationFrames, stereo);
 		measures = new HashMap<>();
 		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT), new AudioMeter());
 		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.RIGHT), new AudioMeter());

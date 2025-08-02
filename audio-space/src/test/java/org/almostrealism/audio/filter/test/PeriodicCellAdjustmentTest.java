@@ -23,7 +23,6 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
 import org.almostrealism.heredity.ArrayListChromosome;
 import org.almostrealism.heredity.ArrayListGene;
@@ -36,7 +35,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PeriodicCellAdjustmentTest implements TestFeatures {
 	@BeforeClass
@@ -94,7 +92,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 	public void healthTestNoAdjustment() {
 		if (testDepth < 1) return;
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+		StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-noadjust.wav");
 
@@ -108,7 +106,7 @@ public class PeriodicCellAdjustmentTest implements TestFeatures {
 	public void healthTestWithAdjustment() {
 		if (testDepth < 1) return;
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(2);
+		StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
 		health.setMaxDuration(8);
 		health.setOutputFile("results/periodic-test-adjust.wav");
 
