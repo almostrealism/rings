@@ -62,10 +62,11 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 
 	protected void initOutput(boolean stereo) {
 		out = new WaveOutput(() ->
-				Optional.ofNullable(outputFileSupplier).map(s -> {
-					outputFile = new File(s.get());
-					return outputFile;
-				}).orElse(null), 24, OutputLine.sampleRate, standardDurationFrames, stereo);
+							Optional.ofNullable(outputFileSupplier).map(s -> {
+								outputFile = new File(s.get());
+								return outputFile;
+							}).orElse(null),
+				24, OutputLine.sampleRate, standardDurationFrames, stereo);
 		measures = new HashMap<>();
 		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT), new AudioMeter());
 		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.RIGHT), new AudioMeter());
@@ -73,14 +74,15 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		measures.put(new ChannelInfo(ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.RIGHT), new AudioMeter());
 		configureMeasures(measures);
 
-		if (stemFileSupplier != null) {
-			stems = IntStream.range(0, channels).mapToObj(i ->
-					new WaveOutput(() -> {
-						File f = new File(stemFileSupplier.apply(i));
-						stemFiles.put(i, f);
-						return f;
-					}, 24, HealthComputationAdapter.standardDurationFrames)).collect(Collectors.toList());
-		}
+		stems = IntStream.range(0, channels).mapToObj(i ->
+				new WaveOutput(() ->
+						Optional.ofNullable(stemFileSupplier).map(s -> {
+							File f = new File(stemFileSupplier.apply(i));
+							stemFiles.put(i, f);
+							return f;
+						}).orElse(null),
+						24, OutputLine.sampleRate,
+						HealthComputationAdapter.standardDurationFrames, stereo)).collect(Collectors.toList());
 
 		output = new MultiChannelAudioOutput(out, stems, (channelInfo) -> new AudioMeter());
 	}
