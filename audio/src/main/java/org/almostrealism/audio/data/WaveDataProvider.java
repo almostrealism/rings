@@ -34,6 +34,14 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 
 	double getDuration(double playbackRate);
 
+	default PackedCollection<?> getChannelData(int channel, double playbackRate, int sampleRate) {
+		if (getSampleRate() == sampleRate) {
+			return getChannelData(channel, playbackRate);
+		}
+
+		return getChannelData(channel, playbackRate * getSampleRate() / (double) sampleRate);
+	}
+
 	PackedCollection<?> getChannelData(int channel, double playbackRate);
 
 	@Override
