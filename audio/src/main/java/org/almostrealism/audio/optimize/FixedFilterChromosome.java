@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.ProjectedGene;
 
 public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, CellFeatures {
 	public static final int SIZE = 2;
@@ -69,10 +69,14 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, C
 	}
 
 	public void setHighPassRange(double min, double max) {
-		((SimpleChromosome) source).setParameterRange(0, min / maxFrequency, max / maxFrequency);
+		source.forEach(gene -> {
+			((ProjectedGene) gene).setRange(0, min / maxFrequency, max / maxFrequency);
+		});
 	}
 
 	public void setLowPassRange(double min, double max) {
-		((SimpleChromosome) source).setParameterRange(1, min / maxFrequency, max / maxFrequency);
+		source.forEach(gene -> {
+			((ProjectedGene) gene).setRange(1, min / maxFrequency, max / maxFrequency);
+		});
 	}
 }

@@ -22,9 +22,9 @@ import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.util.TestUtils;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
@@ -48,11 +48,12 @@ import java.util.stream.IntStream;
 
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
 	protected AudioScenePopulation population(AudioScene<?> scene, MultiChannelAudioOutput output) {
+		int params = 8;
 		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
 
 		AudioScenePopulation pop = new AudioScenePopulation(scene, genomes);
 		pop.init(genomes.get(0), output);
@@ -179,9 +180,14 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		File file = new File(AudioSceneOptimizer.POPULATION_FILE);
 
 		if (file.exists()) {
-			List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
-			log("Loaded " + genomes.size() + " genomes from " + file);
-			return new AudioScenePopulation(scene, genomes);
+			try {
+				List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
+				log("Loaded " + genomes.size() + " genomes from " + file);
+				return new AudioScenePopulation(scene, genomes);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new AudioScenePopulation(scene);
+			}
 		}
 
 		throw new FileNotFoundException(AudioSceneOptimizer.POPULATION_FILE + " not found");

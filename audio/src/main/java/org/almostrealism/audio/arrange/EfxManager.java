@@ -26,9 +26,9 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.util.ArrayList;
@@ -46,17 +46,17 @@ public class EfxManager implements CellFeatures {
 
 	private AutomationManager automation;
 
-	private ConfigurableGenome genome;
-	private SimpleChromosome delayTimes;
-	private SimpleChromosome delayLevels;
-	private SimpleChromosome delayAutomation;
+	private ProjectedGenome genome;
+	private ProjectedChromosome delayTimes;
+	private ProjectedChromosome delayLevels;
+	private ProjectedChromosome delayAutomation;
 	private int channels;
 	private List<Integer> wetChannels;
 
 	private DoubleSupplier beatDuration;
 	private int sampleRate;
 
-	public EfxManager(ConfigurableGenome genome, int channels,
+	public EfxManager(ProjectedGenome genome, int channels,
 					  AutomationManager automation,
 					  DoubleSupplier beatDuration, int sampleRate) {
 		this.genome = genome;
@@ -83,18 +83,18 @@ public class EfxManager implements CellFeatures {
 		PackedCollection<?> c = new PackedCollection<>(choices.length);
 		c.setMem(choices);
 
-		delayTimes = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
+		delayTimes = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c, 1));
 
-		delayLevels = genome.addSimpleChromosome(4);
+		delayLevels = genome.addChromosome();
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = delayLevels.addGene();
+			ProjectedGene g = delayLevels.addGene(4);
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
 			if (maxFeedback != 1.0) g.setTransform(1, p -> multiply(p, c(maxFeedback)));
 		});
 
-		delayAutomation = genome.addSimpleChromosome(AutomationManager.GENE_LENGTH);
-		IntStream.range(0, channels).forEach(i -> delayAutomation.addGene());
+		delayAutomation = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> delayAutomation.addGene(AutomationManager.GENE_LENGTH));
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }

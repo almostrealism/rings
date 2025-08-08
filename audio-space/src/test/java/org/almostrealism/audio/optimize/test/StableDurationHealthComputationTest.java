@@ -38,8 +38,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -143,7 +143,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 	}
 
 	@Test
-	public void samplesPopulationHealth() throws FileNotFoundException {
+	public void samplesPopulationHealth() throws IOException {
 		AudioScene<?> scene = pattern(2, 2);
 
 		AtomicInteger index = new AtomicInteger();

@@ -20,7 +20,7 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class SceneSectionManager implements Setup, Destroyable {
 	private List<SceneSection> sections;
 	private OperationList setup;
 
-	private ConfigurableGenome genome;
+	private ProjectedGenome genome;
 	private int channels;
 
 	private Supplier<Frequency> tempo;
@@ -46,7 +46,7 @@ public class SceneSectionManager implements Setup, Destroyable {
 
 	private List<Integer> wetChannels;
 
-	public SceneSectionManager(ConfigurableGenome genome, int channels, Supplier<Frequency> tempo,
+	public SceneSectionManager(ProjectedGenome genome, int channels, Supplier<Frequency> tempo,
 							   DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
@@ -58,7 +58,7 @@ public class SceneSectionManager implements Setup, Destroyable {
 		this.wetChannels = new ArrayList<>();
 	}
 
-	public ConfigurableGenome getGenome() {
+	public ProjectedGenome getGenome() {
 		return genome;
 	}
 

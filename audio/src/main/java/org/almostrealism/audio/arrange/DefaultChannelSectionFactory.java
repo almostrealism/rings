@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
-import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 
@@ -55,12 +55,12 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 	private TimeCell clock;
 	private PackedCollection<?> duration;
 
-	private SimpleChromosome volume;
-	private SimpleChromosome volumeExp;
-	private SimpleChromosome lowPassFilter;
-	private SimpleChromosome lowPassFilterExp;
-	private SimpleChromosome simpleDuration;
-	private SimpleChromosome simpleDurationSpeedUp;
+	private ProjectedChromosome volume;
+	private ProjectedChromosome volumeExp;
+	private ProjectedChromosome lowPassFilter;
+	private ProjectedChromosome lowPassFilterExp;
+	private ProjectedChromosome simpleDuration;
+	private ProjectedChromosome simpleDurationSpeedUp;
 
 	private int channel, channels;
 	private IntPredicate wetChannels;
@@ -71,7 +71,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ConfigurableGenome genome, int channels,
+	public DefaultChannelSectionFactory(ProjectedGenome genome, int channels,
 										IntPredicate wetChannels, IntPredicate repeatChannels,
 										Supplier<Frequency> tempo, DoubleSupplier measureDuration,
 										int length, int sampleRate) {
@@ -86,52 +86,49 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 		this.length = length;
 		this.sampleRate = sampleRate;
 
-		this.volume = genome.addSimpleChromosome(3);
-		IntStream.range(0, channels).forEach(i -> volume.addGene());
-
-		this.volumeExp = genome.addSimpleChromosome(1);
+		this.volume = genome.addChromosome();
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = volumeExp.addGene();
-			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			ProjectedGene gene = volume.addGene(3);
+			gene.setRange(0, 0.1, 0.9);
+			gene.setRange(1, 0.4, 0.8);
+			gene.setRange(2, 0.0, 0.9);
 		});
 
-		this.lowPassFilter = genome.addSimpleChromosome(3);
-		IntStream.range(0, channels).forEach(i -> lowPassFilter.addGene());
-
-		this.lowPassFilterExp = genome.addSimpleChromosome(1);
+		this.volumeExp = genome.addChromosome();
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = lowPassFilterExp.addGene();
+			ProjectedGene g = volumeExp.addGene(1);
 			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setRange(0, factorForExponent(0.9), factorForExponent(1.2));
+		});
+
+		this.lowPassFilter = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> {
+			ProjectedGene gene = lowPassFilter.addGene(3);
+			gene.setRange(0, 0.1, 0.9);
+			gene.setRange(1, 0.4, 0.8);
+			gene.setRange(2, 0.0, 0.75);
+		});
+
+		this.lowPassFilterExp = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> {
+			ProjectedGene g = lowPassFilterExp.addGene(1);
+			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
+			g.setRange(0, factorForExponent(0.9), factorForExponent(2.5));
 		});
 
 		PackedCollection<?> repeat = new PackedCollection<>(repeatChoices.length);
 		repeat.setMem(Arrays.stream(repeatChoices).map(this::factorForRepeat).toArray());
 
-		this.simpleDuration = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> simpleDuration.addChoiceGene(repeat));
+		this.simpleDuration = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> simpleDuration.addChoiceGene(repeat, 1));
 
-		this.simpleDurationSpeedUp = genome.addSimpleChromosome(2);
+		this.simpleDurationSpeedUp = genome.addChromosome();
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = simpleDurationSpeedUp.addGene();
+			ProjectedGene g = simpleDurationSpeedUp.addGene(2);
 			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
+			g.setRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
+			g.setRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(80));
 		});
-
-		initRanges();
-	}
-
-	protected void initRanges() {
-		lowPassFilter.setParameterRange(0, 0.1, 0.9);
-		lowPassFilter.setParameterRange(1, 0.4, 0.8);
-		lowPassFilter.setParameterRange(2, 0.0, 0.75);
-		lowPassFilterExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(2.5));
-
-		volume.setParameterRange(0, 0.1, 0.9);
-		volume.setParameterRange(1, 0.4, 0.8);
-		volume.setParameterRange(2, 0.0, 0.9);
-		volumeExp.setParameterRange(0, factorForExponent(0.9), factorForExponent(1.2));
-
-		simpleDurationSpeedUp.setParameterRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
-		simpleDurationSpeedUp.setParameterRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(80));
 	}
 
 	public Section createSection(int position) {

@@ -50,10 +50,9 @@ import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.CombinedGenome;
-import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.ProjectedGenome;
+import org.almostrealism.heredity.ProjectedGenomeSet;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
@@ -171,7 +170,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private GenerationManager generation;
 
-	private CombinedGenome genome;
+	private ProjectedGenomeSet genome;
 	
 	private OperationList setup;
 	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
@@ -207,7 +206,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(7);
+		this.genome = new ProjectedGenomeSet(16, 7);
 
 		this.tuning = new DefaultKeyboardTuning();
 		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
@@ -290,12 +289,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public Animation<T> getScene() { return scene; }
 
-	public ParameterGenome getGenome() { return genome.getParameters(); }
+	public ProjectedGenomeSet getGenome() { return genome; }
 
-	public GenomeBreeder<PackedCollection<?>> getBreeder() { return genome.getBreeder(); }
-
-	public void assignGenome(Genome<PackedCollection<?>> genome) {
-		this.genome.assignTo(genome);
+	public void assignGenome(ProjectedGenome genome) {
+		this.genome.assignTo(genome.getParameters());
 		this.progression.refreshParameters();
 		this.patterns.refreshParameters();
 	}

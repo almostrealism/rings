@@ -24,18 +24,17 @@ import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.util.TestUtils;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Genome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,15 +52,17 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 		int delayLayers = 2;
 		int cycles = 1;
 
+		int params = 8;
 		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
 
 		AudioScene<?> scene = scene();
 
-		AudioSceneOptimizer optimizer = new AudioSceneOptimizer(scene, scene::getBreeder, null, cycles);
+		AudioSceneOptimizer optimizer = new AudioSceneOptimizer(scene,
+				() -> AudioSceneOptimizer.defaultBreeder(0.001), null, cycles);
 
 		optimizer.setChildrenFunction(g -> {
 			System.out.println("Creating AudioScenePopulation...");
@@ -81,16 +82,17 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 	}
 
 	@Test
-	public void healthTest() throws FileNotFoundException {
+	public void healthTest() throws IOException {
 		AudioScene<?> scene = scene();
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome<Scalar>> genomes = new ArrayList<>();
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
+		int params = 8;
+		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
 
 		AudioScenePopulation.store(genomes, new FileOutputStream(AudioSceneOptimizer.POPULATION_FILE));
 

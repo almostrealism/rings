@@ -66,11 +66,6 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 		WaveData original = get();
 		if (playbackRate == 1.0) return original.getChannelData(channel);
 
-		if (original.getSampleRate() != OutputLine.sampleRate) {
-			System.out.println("WARN: Cannot alter playback rate of audio which is not at " + OutputLine.sampleRate);
-			return null;
-		}
-
 		PackedCollection<?> rate = PackedCollection.factory().apply(1);
 		rate.setMem(0, playbackRate);
 

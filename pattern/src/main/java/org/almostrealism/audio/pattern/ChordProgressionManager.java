@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.pattern;
 
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.tone.KeyPosition;
@@ -23,20 +24,19 @@ import org.almostrealism.audio.tone.Scale;
 import org.almostrealism.audio.tone.StaticScale;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ChordProgressionManager {
+public class ChordProgressionManager implements CodeFeatures {
 	public static final int MAX_SIZE = 64;
 
-	private ConfigurableGenome genome;
-	private SimpleChromosome chromosome;
+	private ProjectedGenome genome;
+	private ProjectedChromosome chromosome;
 
 	private Scale<?> key;
 	private int chordDepth;
@@ -47,11 +47,11 @@ public class ChordProgressionManager {
 
 	private List<Region> regions;
 
-	public ChordProgressionManager() {
-		this(new ConfigurableGenome(), WesternScales.major(WesternChromatic.C1, 1));
+	public ChordProgressionManager(int parameters) {
+		this(new ProjectedGenome(parameters), WesternScales.major(WesternChromatic.C1, 1));
 	}
 
-	public ChordProgressionManager(ConfigurableGenome genome, Scale<?> key) {
+	public ChordProgressionManager(ProjectedGenome genome, Scale<?> key) {
 		this.genome = genome;
 		setKey(key);
 		setChordDepth(5);
@@ -67,17 +67,17 @@ public class ChordProgressionManager {
 				.mapToObj(i -> ChordPositionFunction.random())
 				.collect(Collectors.toUnmodifiableList());
 
-		chromosome = genome.addSimpleChromosome(3);
-		chromosome.addGene();
+		chromosome = genome.addChromosome();
+		chromosome.addGene(3);
 	}
 
 	protected ParameterSet getParams() {
-		PackedCollection data = chromosome.getParameters(0);
+		chromosome.getResultant(0, 0, c(1.0)).evaluate().toDouble();
 
 		ParameterSet params = new ParameterSet();
-		params.setX(data.toDouble(0));
-		params.setY(data.toDouble(1));
-		params.setZ(data.toDouble(2));
+		params.setX(chromosome.getResultant(0, 0, c(1.0)).evaluate().toDouble());
+		params.setY(chromosome.getResultant(0, 1, c(1.0)).evaluate().toDouble());
+		params.setZ(chromosome.getResultant(0, 2, c(1.0)).evaluate().toDouble());
 		return params;
 	}
 
@@ -122,7 +122,7 @@ public class ChordProgressionManager {
 		}
 	}
 
-	public ConfigurableGenome getGenome() { return genome; }
+	public ProjectedGenome getGenome() { return genome; }
 
 	public Settings getSettings() {
 		Settings settings = new Settings();

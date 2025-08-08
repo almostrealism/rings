@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,6 @@ import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
-import org.almostrealism.heredity.ArrayListChromosome;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.ArrayListGenome;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.junit.AfterClass;
@@ -62,31 +59,6 @@ public class AssignableGenomeTest implements CellFeatures {
 
 	protected AudioScene<?> scene() {
 		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
-	}
-
-	protected Genome genome1() {
-		ArrayListChromosome<Scalar> x = new ArrayListChromosome();
-		x.add(new ArrayListGene<>(0.5468, 0.7491));
-		x.add(new ArrayListGene<>(0.1541, 0.8454));
-
-		ArrayListChromosome<Scalar> y = new ArrayListChromosome();
-		y.add(new ArrayListGene<>(0.5637, 0.5149));
-		y.add(new ArrayListGene<>(0.2710, 0.4959));
-
-		ArrayListChromosome<Scalar> z = new ArrayListChromosome();
-		z.add(new ArrayListGene<>(0.6777, 0.3041));
-		z.add(new ArrayListGene<>(0.9222, 0.0999));
-
-		ArrayListChromosome<Scalar> a = new ArrayListChromosome();
-		a.add(new ArrayListGene<>(0.8690, 0.3474, 0.5589));
-		a.add(new ArrayListGene<>(0.7410, 0.4526, 0.4011));
-
-		ArrayListGenome genome = new ArrayListGenome();
-		genome.add(x);
-		genome.add(y);
-		genome.add(z);
-		genome.add(a);
-		return genome;
 	}
 
 	protected Cells cells(Receptor<PackedCollection<?>> meter) {

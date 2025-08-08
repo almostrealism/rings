@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class DefaultChannelSectionTest implements CellFeatures {
 	public void section() throws IOException {
 		int samples = 2 * 8 * OutputLine.sampleRate;
 
-		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ConfigurableGenome(),
+		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ProjectedGenome(8),
 											1, c -> true, c -> true,
 											() -> Frequency.forBPM(120.0), () -> 2.0,
 											8, OutputLine.sampleRate);

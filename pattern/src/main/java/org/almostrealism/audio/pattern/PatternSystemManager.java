@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -35,7 +34,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,24 +62,16 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
-	private ConfigurableGenome genome;
+	private ProjectedGenome genome;
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
 
-	public PatternSystemManager() {
-		this(new ArrayList<>());
-	}
-
-	public PatternSystemManager(List<NoteAudioChoice> choices) {
-		this(choices, new ConfigurableGenome());
-	}
-
-	public PatternSystemManager(ConfigurableGenome genome) {
+	public PatternSystemManager(ProjectedGenome genome) {
 		this(new ArrayList<>(), genome);
 	}
 
-	public PatternSystemManager(List<NoteAudioChoice> choices, ConfigurableGenome genome) {
+	public PatternSystemManager(List<NoteAudioChoice> choices, ProjectedGenome genome) {
 		this.choices = choices;
 		this.patterns = new ArrayList<>();
 		this.genome = genome;
@@ -175,10 +166,10 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public PatternLayerManager addPattern(int channel, double measures, boolean melodic) {
-		PatternLayerManager pattern = new PatternLayerManager(choices,
-								genome.addSimpleChromosome(3),
-								genome.addSimpleChromosome(AutomationManager.GENE_LENGTH),
-								channel, measures, melodic);
+		PatternLayerManager pattern =
+				new PatternLayerManager(choices,
+						genome.addChromosome(), genome.addChromosome(),
+						channel, measures, melodic);
 		patterns.add(pattern);
 		return pattern;
 	}

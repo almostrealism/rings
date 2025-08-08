@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.computations.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.RandomChromosomeFactory;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProbabilisticFactory;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
@@ -48,7 +48,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 	private ProbabilisticFactory<ShadableSurface> surfaces;
 	
 	public SceneFactory() {
-		this(new RandomChromosomeFactory().setChromosomeSize(1, 1).generateChromosome(1.0));
+		this(new ProjectedChromosome(new PackedCollection<>().randFill()));
 	}
 	
 	public SceneFactory(Chromosome<PackedCollection<?>> c) {

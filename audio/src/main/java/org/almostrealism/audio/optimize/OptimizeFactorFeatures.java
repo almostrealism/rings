@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
 import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
 
 import java.util.stream.IntStream;
 
@@ -38,9 +38,9 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 	int ADJUSTMENT_CHROMOSOME_SIZE = 6;
 	int POLYCYCLIC_CHROMOSOME_SIZE = 6;
 
-	default SimpleChromosome initializeAdjustment(int channels, SimpleChromosome chromosome) {
+	default ProjectedChromosome initializeAdjustment(int channels, ProjectedChromosome chromosome) {
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = chromosome.addGene();
+			ProjectedGene g = chromosome.addGene(ADJUSTMENT_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
@@ -51,9 +51,9 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return chromosome;
 	}
 
-	default SimpleChromosome initializePolycyclic(int channels, SimpleChromosome chromosome) {
+	default ProjectedChromosome initializePolycyclic(int channels, ProjectedChromosome chromosome) {
 		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = chromosome.addGene();
+			ProjectedGene g = chromosome.addGene(POLYCYCLIC_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 0.5).multiply(c(10.0)));
 			g.setTransform(2, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
@@ -266,11 +266,6 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 																Producer<PackedCollection<?>> polySpeedUpWaveLength,
 																Producer<PackedCollection<?>> polySpeedUpExp,
 																Producer<PackedCollection<?>> time) {
-
-//		return c(1.0).relativeAdd(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-//					.relativeMultiply(c(1.0).relativeSubtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-//					.relativeMultiply(c(1.0).relativeAdd(pow(polySpeedUpWaveLength, c(-1.0))
-//							.relativeMultiply(time).pow(polySpeedUpExp)));
 		return c(1.0).add(relativeSinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
 				.multiply(c(1.0).subtract(relativeSinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))

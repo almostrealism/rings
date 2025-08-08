@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.ParameterSet;
@@ -34,7 +33,7 @@ import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
@@ -140,13 +139,15 @@ public class PatternFactoryTest implements CellFeatures {
 			c.setBias(1.0);
 		});
 
-		ChordProgressionManager chordProgression = new ChordProgressionManager();
+		ChordProgressionManager chordProgression = new ChordProgressionManager(8);
 		chordProgression.setSettings(settings.getChordProgression());
 		chordProgression.refreshParameters();
 
+		ProjectedGenome genome = new ProjectedGenome(8);
+		genome.addChromosome();
+
 		PatternLayerManager manager = new PatternLayerManager(choices,
-				new SimpleChromosome(3),
-				new SimpleChromosome(AutomationManager.GENE_LENGTH),
+				genome.addChromosome(), genome.addChromosome(),
 				3, 16.0, true);
 		manager.setScaleTraversalDepth(3);
 

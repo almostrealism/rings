@@ -20,7 +20,7 @@ import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.junit.Test;
 
 import java.io.File;
@@ -43,7 +43,7 @@ public class AudioSceneTest {
 		scene.setLibrary(new AudioLibrary(new File("/Users/michael/Music/Samples"), sampleRate));
 
 		// Create a random parameterization of the scene
-		ParameterGenome random = scene.getGenome().random();
+		ProjectedGenome random = scene.getGenome().random();
 		scene.assignGenome(random);
 
 		// Create a destination for the output audio

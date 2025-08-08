@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
@@ -84,7 +85,8 @@ public class MixdownManagerTests implements CellFeatures {
 		GlobalTimeManager time = new GlobalTimeManager(
 				measure -> (int) (measure * measureDuration * sampleRate));
 
-		ConfigurableGenome genome = new ConfigurableGenome();
+		int params = 8;
+		ProjectedGenome genome = new ProjectedGenome(params);
 		AutomationManager automation = new AutomationManager(
 				genome, time.getClock(),
 				() -> measureDuration, sampleRate);
@@ -92,7 +94,8 @@ public class MixdownManagerTests implements CellFeatures {
 										automation, time.getClock(), sampleRate);
 		mixdown.setReverbChannels(List.of(0, 1));
 
-		genome.assignTo(genome.getParameters().random());
+
+		genome.assignTo(new PackedCollection<>(params).randFill());
 
 		CellList cells = w(0, c(0.0), c(1.0),
 				WaveData.load(new File("Library/Snare Gold 1.wav")),

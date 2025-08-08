@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
 import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 public class AutomationManager implements Setup, CellFeatures {
 	public static final int GENE_LENGTH = 6;
 
-	private ConfigurableGenome genome;
+	private ProjectedGenome genome;
 	private TimeCell clock;
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
@@ -40,7 +40,7 @@ public class AutomationManager implements Setup, CellFeatures {
 	private double r = 1.0;
 	private double p = 0.5;
 
-	public AutomationManager(ConfigurableGenome genome, TimeCell clock,
+	public AutomationManager(ProjectedGenome genome, TimeCell clock,
 							 DoubleSupplier measureDuration, int sampleRate) {
 		this.genome = genome;
 		this.clock = clock;

@@ -24,16 +24,13 @@ import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.Gene;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.heredity.ArrayListGene;
 import org.junit.Test;
 
 import java.io.File;
@@ -139,13 +136,5 @@ public class AudioSceneOptimizationTest implements CellFeatures {
 		Runnable organRun = new TemporalRunner(organ, 8 * OutputLine.sampleRate).get();
 		organRun.run();
 		out.write().get().run();
-	}
-
-	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
-		ArrayListGene<PackedCollection<?>> gene = new ArrayListGene<>();
-		gene.add(wet.valueAt(0));
-		// gene.add(new IdentityFactor<>());
-		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));
-		return gene;
 	}
 }

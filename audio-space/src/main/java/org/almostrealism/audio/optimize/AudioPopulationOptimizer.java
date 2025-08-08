@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -106,8 +107,13 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 		List<Genome<PackedCollection<?>>> loaded;
 
 		if (new File(file).exists()) {
-			loaded = AudioScenePopulation.read(new FileInputStream(file));
-			log("Read chromosome data from " + file);
+			try {
+				loaded = AudioScenePopulation.read(new FileInputStream(file));
+				log("Read chromosome data from " + file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				loaded = new ArrayList<>();
+			}
 		} else {
 			loaded = new ArrayList<>();
 		}
@@ -165,7 +171,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 		try {
 			((AudioScenePopulation) getPopulation()).store(new FileOutputStream(file));
 			log("Wrote " + file);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

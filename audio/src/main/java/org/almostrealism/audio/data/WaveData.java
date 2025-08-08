@@ -79,7 +79,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
 					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
 				.get();
-		mfcc = new FeatureComputer(getDefaultFeatureSettings());
+		// mfcc = new FeatureComputer(getDefaultFeatureSettings());
 	}
 
 	private PackedCollection collection;

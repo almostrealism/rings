@@ -34,12 +34,11 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ArrayListGene;
-import org.almostrealism.heredity.ConfigurableGenome;
 import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalFactor;
 
 import java.util.ArrayList;
@@ -81,26 +80,26 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	private PackedCollection<?> mainFilterDownAdjustmentScale;
 	private PackedCollection<?> reverbAdjustmentScale;
 
-	private SimpleChromosome volumeSimple;
-	private SimpleChromosome mainFilterUpSimple;
-	private SimpleChromosome wetInSimple;
+	private ProjectedChromosome volumeSimple;
+	private ProjectedChromosome mainFilterUpSimple;
+	private ProjectedChromosome wetInSimple;
 
-	private SimpleChromosome transmission;
-	private SimpleChromosome wetOut;
-	private SimpleChromosome delay;
+	private ProjectedChromosome transmission;
+	private ProjectedChromosome wetOut;
+	private ProjectedChromosome delay;
 
-	private SimpleChromosome delayDynamicsSimple;
+	private ProjectedChromosome delayDynamicsSimple;
 
-	private SimpleChromosome reverb;
-	private SimpleChromosome reverbAutomation;
+	private ProjectedChromosome reverb;
+	private ProjectedChromosome reverbAutomation;
 	private FixedFilterChromosome wetFilter;
-	private SimpleChromosome mainFilterDownSimple;
+	private ProjectedChromosome mainFilterDownSimple;
 
 	private List<Integer> reverbChannels;
 
 	private List<Destroyable> dependencies;
 
-	public MixdownManager(ConfigurableGenome genome,
+	public MixdownManager(ProjectedGenome genome,
 						  int channels, int delayLayers,
 						  AutomationManager automation,
 						  TimeCell clock, int sampleRate) {
@@ -113,37 +112,37 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		this.mainFilterDownAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 		this.reverbAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 
-		this.volumeSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
-		this.mainFilterUpSimple = genome.addSimpleChromosome(AutomationManager.GENE_LENGTH);
-		IntStream.range(0, channels).forEach(i -> mainFilterUpSimple.addGene());
+		this.volumeSimple = initializeAdjustment(channels, genome.addChromosome());
+		this.mainFilterUpSimple = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> mainFilterUpSimple.addGene(AutomationManager.GENE_LENGTH));
 
-		this.wetInSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
+		this.wetInSimple = initializeAdjustment(channels, genome.addChromosome());
 
-		this.transmission = genome.addSimpleChromosome(delayLayers);
-		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene());
+		this.transmission = genome.addChromosome();
+		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene(delayLayers));
 
-		this.wetOut = genome.addSimpleChromosome(delayLayers);
-		this.wetOut.addGene();
+		this.wetOut = genome.addChromosome();
+		this.wetOut.addGene(delayLayers);
 
-		this.delay = genome.addSimpleChromosome(1);
+		this.delay = genome.addChromosome();
 		IntStream.range(0, delayLayers).forEach(i -> {
-			SimpleGene g = delay.addGene();
+			ProjectedGene g = delay.addGene(1);
 			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 		});
 
-		this.delayDynamicsSimple = initializePolycyclic(delayLayers, genome.addSimpleChromosome(POLYCYCLIC_CHROMOSOME_SIZE));
+		this.delayDynamicsSimple = initializePolycyclic(delayLayers, genome.addChromosome());
 
-		this.reverb = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> reverb.addGene());
+		this.reverb = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> reverb.addGene(1));
 
-		this.reverbAutomation = genome.addSimpleChromosome(AutomationManager.GENE_LENGTH);
-		IntStream.range(0, channels).forEach(i -> reverbAutomation.addGene());
+		this.reverbAutomation = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> reverbAutomation.addGene(AutomationManager.GENE_LENGTH));
 
-		SimpleChromosome wf = genome.addSimpleChromosome(FixedFilterChromosome.SIZE);
-		IntStream.range(0, channels).forEach(i -> wf.addGene());
+		ProjectedChromosome wf = genome.addChromosome();
+		IntStream.range(0, channels).forEach(i -> wf.addGene(FixedFilterChromosome.SIZE));
 		this.wetFilter = new FixedFilterChromosome(wf, sampleRate);
 
-		this.mainFilterDownSimple = initializeAdjustment(channels, genome.addSimpleChromosome(ADJUSTMENT_CHROMOSOME_SIZE));
+		this.mainFilterDownSimple = initializeAdjustment(channels, genome.addChromosome());
 
 		initRanges(new Configuration(channels), delayLayers);
 
@@ -178,86 +177,110 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	}
 
 	public void initRanges(Configuration config, int delayLayers) {
-		volumeSimple.setParameterRange(0,
-				factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
-				factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
-		volumeSimple.setParameterRange(1,
-				factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
-				factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
-		volumeSimple.setParameterRange(2,
-				factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
-				factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
-		volumeSimple.setParameterRange(3,
-				factorForAdjustmentInitial(config.minVolumeValue),
-				factorForAdjustmentInitial(config.maxVolumeValue));
-		volumeSimple.setParameterRange(4, -1.0, -1.0);
-		volumeSimple.setParameterRange(5,
-				factorForAdjustmentOffset(config.overallVolumeOffsetMin),
-				factorForAdjustmentOffset(config.overallVolumeOffsetMax));
+		volumeSimple.forEach(gene -> {
+			((ProjectedGene) gene).setRange(0,
+					factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMin),
+					factorForPeriodicAdjustmentDuration(config.periodicVolumeDurationMax));
+			((ProjectedGene) gene).setRange(1,
+					factorForPolyAdjustmentDuration(config.overallVolumeDurationMin),
+					factorForPolyAdjustmentDuration(config.overallVolumeDurationMax));
+			((ProjectedGene) gene).setRange(2,
+					factorForPolyAdjustmentExponent(config.overallVolumeExponentMin),
+					factorForPolyAdjustmentExponent(config.overallVolumeExponentMax));
+			((ProjectedGene) gene).setRange(3,
+					factorForAdjustmentInitial(config.minVolumeValue),
+					factorForAdjustmentInitial(config.maxVolumeValue));
+			((ProjectedGene) gene).setRange(4, -1.0, -1.0);
+			((ProjectedGene) gene).setRange(5,
+					factorForAdjustmentOffset(config.overallVolumeOffsetMin),
+					factorForAdjustmentOffset(config.overallVolumeOffsetMax));
+		});
 
-		wetInSimple.setParameterRange(0,
-				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMin),
-				factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMax));
-		wetInSimple.setParameterRange(1,
-				factorForPolyAdjustmentDuration(config.overallWetInDurationMin),
-				factorForPolyAdjustmentDuration(config.overallWetInDurationMax));
-		wetInSimple.setParameterRange(2,
-				factorForPolyAdjustmentExponent(config.overallWetInExponentMin),
-				factorForPolyAdjustmentExponent(config.overallWetInExponentMax));
-		wetInSimple.setParameterRange(3,
-				factorForAdjustmentInitial(0),
-				factorForAdjustmentInitial(0));
-		wetInSimple.setParameterRange(4, 1.0, 1.0);
-		wetInSimple.setParameterRange(5,
-				factorForAdjustmentOffset(config.overallWetInOffsetMin),
-				factorForAdjustmentOffset(config.overallWetInOffsetMax));
+		wetInSimple.forEach(gene -> {
+			((ProjectedGene) gene).setRange(0,
+					factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMin),
+					factorForPeriodicAdjustmentDuration(config.periodicWetInDurationMax));
+			((ProjectedGene) gene).setRange(1,
+					factorForPolyAdjustmentDuration(config.overallWetInDurationMin),
+					factorForPolyAdjustmentDuration(config.overallWetInDurationMax));
+			((ProjectedGene) gene).setRange(2,
+					factorForPolyAdjustmentExponent(config.overallWetInExponentMin),
+					factorForPolyAdjustmentExponent(config.overallWetInExponentMax));
+			((ProjectedGene) gene).setRange(3,
+					factorForAdjustmentInitial(0),
+					factorForAdjustmentInitial(0));
+			((ProjectedGene) gene).setRange(4, 1.0, 1.0);
+			((ProjectedGene) gene).setRange(5,
+					factorForAdjustmentOffset(config.overallWetInOffsetMin),
+					factorForAdjustmentOffset(config.overallWetInOffsetMax));
+		});
 
-		IntStream.range(0, delayLayers).forEach(i -> transmission.setParameterRange(i, config.minTransmission, config.maxTransmission));
+		transmission.forEach(gene -> {
+			ProjectedGene pg = (ProjectedGene) gene;
+			IntStream.range(0, delayLayers).forEach(i -> pg.setRange(i,
+					config.minTransmission, config.maxTransmission));
+		});
 
-		IntStream.range(0, delayLayers).forEach(i -> wetOut.setParameterRange(i, config.minWetOut, config.maxWetOut));
+		wetOut.forEach(gene -> {
+			ProjectedGene pg = (ProjectedGene) gene;
+			IntStream.range(0, delayLayers).forEach(i ->
+					pg.setRange(i, config.minWetOut, config.maxWetOut));
+		});
 
-		delay.setParameterRange(0, factorForDelay(config.minDelay), factorForDelay(config.maxDelay));
+		delay.forEach(gene -> {
+			ProjectedGene pg = (ProjectedGene) gene;
+			pg.setRange(0,
+					factorForDelay(config.minDelay),
+					factorForDelay(config.maxDelay));
+		});
 
-		delayDynamicsSimple.setParameterRange(0,
-				factorForSpeedUpDuration(config.periodicSpeedUpDurationMin),
-				factorForSpeedUpDuration(config.periodicSpeedUpDurationMax));
-		delayDynamicsSimple.setParameterRange(1,
-				factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMin),
-				factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMax));
-		delayDynamicsSimple.setParameterRange(2,
-				factorForSlowDownDuration(config.periodicSlowDownDurationMin),
-				factorForSlowDownDuration(config.periodicSlowDownDurationMax));
-		delayDynamicsSimple.setParameterRange(3,
-				factorForSlowDownPercentage(config.periodicSlowDownPercentageMin),
-				factorForSlowDownPercentage(config.periodicSlowDownPercentageMax));
-		delayDynamicsSimple.setParameterRange(4,
-				factorForPolySpeedUpDuration(config.overallSpeedUpDurationMin),
-				factorForPolySpeedUpDuration(config.overallSpeedUpDurationMax));
-		delayDynamicsSimple.setParameterRange(5,
-				factorForPolySpeedUpExponent(config.overallSpeedUpExponentMin),
-				factorForPolySpeedUpExponent(config.overallSpeedUpExponentMax));
+		delayDynamicsSimple.forEach(gene -> {
+			ProjectedGene pg = (ProjectedGene) gene;
+			pg.setRange(0,
+					factorForSpeedUpDuration(config.periodicSpeedUpDurationMin),
+					factorForSpeedUpDuration(config.periodicSpeedUpDurationMax));
+			pg.setRange(1,
+					factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMin),
+					factorForSpeedUpPercentage(config.periodicSpeedUpPercentageMax));
+			pg.setRange(2,
+					factorForSlowDownDuration(config.periodicSlowDownDurationMin),
+					factorForSlowDownDuration(config.periodicSlowDownDurationMax));
+			pg.setRange(3,
+					factorForSlowDownPercentage(config.periodicSlowDownPercentageMin),
+					factorForSlowDownPercentage(config.periodicSlowDownPercentageMax));
+			pg.setRange(4,
+					factorForPolySpeedUpDuration(config.overallSpeedUpDurationMin),
+					factorForPolySpeedUpDuration(config.overallSpeedUpDurationMax));
+			pg.setRange(5,
+					factorForPolySpeedUpExponent(config.overallSpeedUpExponentMin),
+					factorForPolySpeedUpExponent(config.overallSpeedUpExponentMax));
+		});
 
-		reverb.setParameterRange(0, 0.0, 1.0);
+		reverb.forEach(gene -> {
+			((ProjectedGene) gene).setRange(0, 0.0, 1.0);
+		});
 
 		wetFilter.setHighPassRange(config.minHighPass, config.maxHighPass);
 		wetFilter.setLowPassRange(config.minLowPass, config.maxLowPass);
 
-		mainFilterDownSimple.setParameterRange(0,
-				factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMin),
-				factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMax));
-		mainFilterDownSimple.setParameterRange(1,
-				factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMin),
-				factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMax));
-		mainFilterDownSimple.setParameterRange(2,
-				factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMin),
-				factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMax));
-		mainFilterDownSimple.setParameterRange(3,
-				factorForAdjustmentInitial(1.0),
-				factorForAdjustmentInitial(1.0));
-		mainFilterDownSimple.setParameterRange(4, -1.0, -1.0);
-		mainFilterDownSimple.setParameterRange(5,
-				factorForAdjustmentOffset(config.overallMasterFilterDownOffsetMin),
-				factorForAdjustmentOffset(config.overallMasterFilterDownOffsetMax));
+		mainFilterDownSimple.forEach(gene -> {
+			((ProjectedGene) gene).setRange(0,
+					factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMin),
+					factorForPeriodicAdjustmentDuration(config.periodicMasterFilterDownDurationMax));
+			((ProjectedGene) gene).setRange(1,
+					factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMin),
+					factorForPolyAdjustmentDuration(config.overallMasterFilterDownDurationMax));
+			((ProjectedGene) gene).setRange(2,
+					factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMin),
+					factorForPolyAdjustmentExponent(config.overallMasterFilterDownExponentMax));
+			((ProjectedGene) gene).setRange(3,
+					factorForAdjustmentInitial(1.0),
+					factorForAdjustmentInitial(1.0));
+			((ProjectedGene) gene).setRange(4, -1.0, -1.0);
+			((ProjectedGene) gene).setRange(5,
+					factorForAdjustmentOffset(config.overallMasterFilterDownOffsetMin),
+					factorForAdjustmentOffset(config.overallMasterFilterDownOffsetMax));
+		});
 	}
 
 	@Override
@@ -516,16 +539,16 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	 * delivers nothing to the others.
 	 */
 	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
-		ArrayListGene<PackedCollection<?>> gene = new ArrayListGene<>();
+		Factor<PackedCollection<?>> gene[] = new Factor[delays];
 
 		if (enableWetInAdjustment) {
-			gene.add(factor(wet.valueAt(0)));
+			gene[0] = factor(wet.valueAt(0));
 		} else {
-			gene.add(p -> c(0.2).multiply(p));
+			gene[0] = p -> c(0.2).multiply(p);
 		}
 
-		IntStream.range(0, delays - 1).forEach(i -> gene.add(p -> c(0.0)));
-		return gene;
+		IntStream.range(1, delays).forEach(i -> gene[i] = (p -> c(0.0)));
+		return g(gene);
 	}
 
 	public static class Configuration implements OptimizeFactorFeatures {

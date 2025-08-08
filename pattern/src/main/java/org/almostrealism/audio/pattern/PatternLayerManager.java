@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
@@ -56,8 +56,8 @@ public class PatternLayerManager implements PatternFeatures {
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private SimpleChromosome layerChoiceChromosome;
-	private SimpleChromosome envelopeAutomationChromosome;
+	private ProjectedChromosome layerChoiceChromosome;
+	private ProjectedChromosome envelopeAutomationChromosome;
 
 	private ParameterFunction factorySelection; // TODO  rename
 	private ParameterizedPositionFunction activeSelection;
@@ -69,8 +69,8 @@ public class PatternLayerManager implements PatternFeatures {
 	private Map<ChannelInfo, PackedCollection<?>> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
-							   SimpleChromosome layerChoiceChromosome,
-							   SimpleChromosome envelopeAutomationChromosome,
+							   ProjectedChromosome layerChoiceChromosome,
+							   ProjectedChromosome envelopeAutomationChromosome,
 							   int channel, double measures, boolean melodic) {
 		this(NoteAudioChoice.choices(choices, false), NoteAudioChoice.choices(choices, true),
 				layerChoiceChromosome, envelopeAutomationChromosome, channel, measures, melodic);
@@ -78,8 +78,8 @@ public class PatternLayerManager implements PatternFeatures {
 
 	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices,
 							   Supplier<List<NoteAudioChoice>> melodicChoices,
-							   SimpleChromosome layerChoiceChromosome,
-							   SimpleChromosome envelopeAutomationChromosome,
+							   ProjectedChromosome layerChoiceChromosome,
+							   ProjectedChromosome envelopeAutomationChromosome,
 							   int channel, double measures, boolean melodic) {
 		this.channel = channel;
 		this.duration = measures;
@@ -276,13 +276,10 @@ public class PatternLayerManager implements PatternFeatures {
 	}
 
 	public void addLayer(ParameterSet params) {
-		envelopeAutomationChromosome.addGene();
+		envelopeAutomationChromosome.addGene(AutomationManager.GENE_LENGTH);
 
-		SimpleGene g = layerChoiceChromosome.addGene();
-		g.set(0, params.getX());
-		g.set(1, params.getY());
-		g.set(2, params.getZ());
-		layer(params);
+		ProjectedGene g = layerChoiceChromosome.addGene(3);
+		layer(ParameterSet.fromGene(g));
 	}
 
 	public void layer(Gene<PackedCollection<?>> gene) {

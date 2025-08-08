@@ -55,11 +55,12 @@ import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
-import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.almostrealism.hardware.mem.MemoryDataReplacementMap;
 import org.almostrealism.hardware.metal.MetalMemoryProvider;
+import org.almostrealism.heredity.Breeders;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
@@ -68,12 +69,13 @@ import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
-	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.xml");
+	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
 	public static final int verbosity = 1;
 	public static boolean enableVerbose = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
+	public static double breederPerturbation = 0.01;
 	public static final int singleChannel = -1;
 
 	public static String LIBRARY = "Library";
@@ -149,7 +151,23 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 											AudioScene<?> scene, int cycles) {
-		return new AudioSceneOptimizer(scene, scene::getBreeder, generator, cycles);
+		return new AudioSceneOptimizer(scene, () -> defaultBreeder(breederPerturbation), generator, cycles);
+	}
+
+	public static GenomeBreeder<PackedCollection<?>> defaultBreeder(double magnitude) {
+		return (g1, g2) -> {
+			PackedCollection<?> a = ((ProjectedGenome) g1).getParameters();
+			PackedCollection<?> b = ((ProjectedGenome) g2).getParameters();
+
+			int len = a.getShape().getTotalSize();
+			PackedCollection<?> combined = new PackedCollection<>(len);
+
+			for (int i = 0; i < len; i++) {
+				combined.setMem(0, Breeders.perturbation(a.toDouble(i), b.toDouble(i), magnitude));
+			}
+
+			return new ProjectedGenome(new PackedCollection<>(combined));
+		};
 	}
 
 	/**
