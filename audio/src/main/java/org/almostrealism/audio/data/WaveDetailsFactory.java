@@ -104,7 +104,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 		existing.setData(data.getData());
 
 		if (existing.getFreqFrameCount() <= 1) {
-			PackedCollection<?> fft = processFft(data.fft(-1, true));
+			// TODO  FFT should be performed on all channels, not just the first
+			PackedCollection<?> fft = processFft(data.fft(0, true));
 			if (fft.getShape().length(0) < 1) {
 				throw new UnsupportedOperationException();
 			}
