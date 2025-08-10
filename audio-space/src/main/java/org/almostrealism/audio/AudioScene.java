@@ -289,7 +289,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public Animation<T> getScene() { return scene; }
 
-	public ProjectedGenomeSet getGenome() { return genome; }
+	public ProjectedGenome getGenome() { return new ProjectedGenome(genome.getParameters()); }
 
 	public void assignGenome(ProjectedGenome genome) {
 		this.genome.assignTo(genome.getParameters());
@@ -703,7 +703,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		return mapper;
 	}
 
-	public static UnaryOperator<ParameterGenome> defaultVariation() {
+	public static UnaryOperator<ProjectedGenome> defaultVariation() {
 		return genome -> {
 			Random rand = new Random();
 			return genome.variation(0, 1, variationRate,

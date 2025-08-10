@@ -17,7 +17,7 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternElementFactory;
@@ -102,8 +102,10 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void createGenomes() throws IOException {
-		int count = 12;
+		createGenomes(12);
+	}
 
+	public void createGenomes(int count) throws IOException {
 		File settings = new File(SystemUtils.getLocalDestination("scene-settings.json"));
 
 		AudioScene scene = AudioScene.load(settings.getCanonicalPath(), SystemUtils.getLocalDestination("pattern-factory.json"),
@@ -124,12 +126,8 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void generate() throws Exception {
-		DefaultChannelSectionFactory.enableVolumeRiseFall = false;
-		DefaultChannelSectionFactory.enableFilter = false;
-		// EfxManager.enableEfx = false;
-
 		if (!new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
-			createGenomes();
+			createGenomes(1);
 		}
 
 		int channel = 2;
@@ -144,7 +142,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				.stream().filter(c -> c.getChannel() == channel).filter(c -> c.getLayerCount() > 0).count();
 		log("Channel " + channel + " has " + activeLayers  + " active pattern layers");
 
-		int frames = scene.getContext(List.of(channel)).getFrameForPosition().applyAsInt(duration);
+		int frames = scene.getContext(new ChannelInfo(channel)).getFrameForPosition().applyAsInt(duration);
 
 		Heap heap = new Heap(8 * 1024 * 1024);
 

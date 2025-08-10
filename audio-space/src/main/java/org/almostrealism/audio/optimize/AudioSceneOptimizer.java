@@ -180,7 +180,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static void main(String args[]) throws IOException {
 		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 
-		NativeComputeContext.enableLargeScopeMonitoring = false;
 		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 

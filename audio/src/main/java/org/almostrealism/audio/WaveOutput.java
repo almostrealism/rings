@@ -85,7 +85,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	public WaveOutput() { this((File) null); }
 
 	public WaveOutput(int maxFrames) {
-		this(null, 24, maxFrames);
+		this(null, 24, maxFrames, false);
 	}
 
 	public WaveOutput(File f) {
@@ -97,11 +97,15 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	}
 
 	public WaveOutput(Supplier<File> f, int bits) {
-		this(f, bits, -1);
+		this(f, bits, -1, false);
 	}
 
-	public WaveOutput(Supplier<File> f, int bits, int maxFrames) {
-		this(f, bits, OutputLine.sampleRate, maxFrames, false);
+	public WaveOutput(Supplier<File> f, int bits, boolean stereo) {
+		this(f, bits, -1, stereo);
+	}
+
+	public WaveOutput(Supplier<File> f, int bits, int maxFrames, boolean stereo) {
+		this(f, bits, OutputLine.sampleRate, maxFrames, stereo);
 	}
 
 	public WaveOutput(Supplier<File> f, int bits, long sampleRate, int maxFrames, boolean stereo) {

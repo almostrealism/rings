@@ -502,7 +502,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		}
 
 		// Deliver main to the output and measure #1
-		if (output.isMeasuresActive()) {
+		if (!output.isMeasuresActive()) {
 			main = main.map(i -> new ReceptorCell<>(output.getMaster(audioChannel)));
 		} else {
 			main = main.map(i -> new ReceptorCell<>(Receptor.to(

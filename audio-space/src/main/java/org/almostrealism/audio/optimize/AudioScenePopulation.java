@@ -155,7 +155,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 						outputPath = s.get();
 						outputFile = new File(outputPath);
 						return outputFile;
-					}).orElse(null), 24);
+					}).orElse(null), 24, true);
 
 			init(getGenomes().get(0), new MultiChannelAudioOutput(out), List.of(channel));
 

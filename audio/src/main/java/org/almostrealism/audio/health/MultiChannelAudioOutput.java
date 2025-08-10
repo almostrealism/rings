@@ -133,6 +133,8 @@ public class MultiChannelAudioOutput {
 	public boolean isStemsActive() { return stems != null; }
 
 	protected <K, V> V retrieve(Map<K, V> map, Predicate<K> predicate) {
+		if (map == null) return null;
+
 		List<V> values = map.entrySet().stream()
 				.filter(e -> predicate.test(e.getKey()))
 				.map(Map.Entry::getValue)
