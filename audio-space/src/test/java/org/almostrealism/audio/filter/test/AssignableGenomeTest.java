@@ -66,7 +66,7 @@ public class AssignableGenomeTest implements CellFeatures {
 
 		CellList cells =
 					w(frequencies.iterator().next(), frequencies.iterator().next())
-							.d(i -> scalar(1.0))
+							.d(i -> c(1.0))
 							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, c(0.0), scalar(0.1), true)
 										.andThen(new AudioPassFilter(OutputLine.sampleRate, c(20000), scalar(0.1), false))),
 									i -> {

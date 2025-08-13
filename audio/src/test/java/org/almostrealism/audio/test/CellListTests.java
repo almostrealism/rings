@@ -47,7 +47,7 @@ public class CellListTests implements CellFeatures {
 		CellList cells = w(0, "Library/Snare Perc DD.wav");
 
 		CellList delays = IntStream.range(0, 1)
-				.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate, scalar(2.0)))
+				.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate, c(2.0)))
 				.collect(CellList.collector());
 
 		cells = cells.m(fi(), delays)

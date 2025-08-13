@@ -112,6 +112,6 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 						d, m, p, e, time(), c(seconds));
 
 		PackedCollection<?> data = new PackedCollection<>(seconds * sr);
-		new WaveData(data.traverseEach(), sr).sample(-1, freq).save(new File("results/rise-fall-test.wav"));
+		new WaveData(data.traverseEach(), sr).sample(0, freq).save(new File("results/rise-fall-test.wav"));
 	}
 }

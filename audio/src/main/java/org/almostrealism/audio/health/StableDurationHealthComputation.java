@@ -17,6 +17,7 @@
 package org.almostrealism.audio.health;
 
 import io.almostrealism.profile.OperationProfile;
+import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveDetails;
@@ -30,6 +31,7 @@ import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
 	public static boolean enableTimeout = false;
+	public static boolean enableProfileAutosave = false;
 
 	public static OperationProfile profile;
 	private static long totalGeneratedFrames, totalGenerationTime;
@@ -68,7 +71,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public StableDurationHealthComputation(int channels, boolean stereo) {
 		super(channels, stereo, 6);
 		addSilenceListener(() -> encounteredSilence = true);
-		setBatchSize(OutputLine.sampleRate / 2);
+		setBatchSize(TemporalRunner.enableOptimization ? 1 : (OutputLine.sampleRate / 2));
 	}
 
 	public void setBatchSize(int iter) {
@@ -146,7 +149,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	@Override
 	public void reset() {
-		abortFlag.setValue(0.0);
+		if (abortFlag != null)
+			abortFlag.setValue(0.0);
+
 		super.reset();
 		getTarget().reset();
 	}
@@ -186,6 +191,17 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			l:
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
+
+				if (enableProfileAutosave && profile instanceof OperationProfileNode) {
+					try {
+						String name = "results/optimizer-" + l + ".xml";
+						log("Saving profile to " + name);
+						((OperationProfileNode) profile).save(name);
+						log("Saved profile to " + name);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 
 				long fc = l + iter - 1;
 				if (getMaster().getFrameCount() != fc) {

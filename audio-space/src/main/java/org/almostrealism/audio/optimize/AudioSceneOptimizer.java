@@ -170,6 +170,19 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		};
 	}
 
+	public static void setFeatureLevel(int featureLevel) {
+		MixdownManager.enableReverb = featureLevel > 4;
+		MixdownManager.enableMainFilterUp = featureLevel > 2;
+		MixdownManager.enableEfxFilters = featureLevel > 2;
+		MixdownManager.enableEfx = featureLevel > 2;
+		MixdownManager.enableWetInAdjustment = featureLevel > 3;
+		MixdownManager.enableMasterFilterDown = featureLevel > 3;
+		MixdownManager.enableTransmission = featureLevel > 1;
+		MixdownManager.disableClean = false;
+		MixdownManager.enableSourcesOnly = featureLevel <= 0;
+		EfxManager.enableEfx = featureLevel > 1;
+	}
+
 	/**
 	 * Build a {@link AudioSceneOptimizer} and initialize and run it.
 	 *
@@ -180,19 +193,11 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	public static void main(String args[]) throws IOException {
 		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 
-		TemporalRunner.enableOptimization = false;
 		TemporalRunner.enableIsolation = false;
 
+		setFeatureLevel(3);
+
 		StableDurationHealthComputation.enableTimeout = false;
-		MixdownManager.enableReverb = true;
-		MixdownManager.enableMainFilterUp = true;
-		MixdownManager.enableEfxFilters = true;
-		MixdownManager.enableEfx = true;
-		MixdownManager.enableWetInAdjustment = true;
-		MixdownManager.enableMasterFilterDown = true;
-		MixdownManager.disableClean = false;
-		MixdownManager.enableSourcesOnly = false;
-		EfxManager.enableEfx = true;
 		PatternElementFactory.enableVolumeEnvelope = true;
 		PatternElementFactory.enableFilterEnvelope = true;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
@@ -202,7 +207,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		NoteAudioSourceAggregator.enableAdvancedAggregation = true;
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 6;
+		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 2;
 
 		// Verbosity level 0
 		enableBreeding = verbosity < 1;

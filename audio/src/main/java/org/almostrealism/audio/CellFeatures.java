@@ -220,7 +220,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		CellList cells = new CellList();
 		Stream.of(files).map(f -> {
 			try {
-				return WavFile.load(f, channel, 1.0, offset, repeat).apply(data.get());
+				return WaveData.load(f).toCell(channel, 1.0, offset, repeat).apply(data.get());
 			} catch (IOException e) {
 				e.printStackTrace();
 				return silence().get(0);
@@ -229,12 +229,17 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
-	default CellList w(Supplier<PolymorphicAudioData> data, int sampleRate, int frames, Producer<PackedCollection<?>> offset,
-					   Producer<PackedCollection<?>> repeat, Producer<PackedCollection<?>>... waves) {
+	default CellList w(Supplier<PolymorphicAudioData> data, int sampleRate, int frames,
+					   Producer<PackedCollection<?>> offset,
+					   Producer<PackedCollection<?>> repeat,
+					   Producer<PackedCollection<?>>... waves) {
 		CellList cells = new CellList();
 		Stream.of(waves)
-				.map(w -> new WaveCell(data.get(), w, sampleRate, 1.0, Ops.o().toScalar(offset),
-					Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(frames))).forEach(cells::addRoot);
+				.map(w ->
+						new WaveCell(data.get(), w, sampleRate, 1.0,
+									offset == null ? null : Ops.o().c(offset),
+									repeat == null ? null : Ops.o().c(repeat),
+									Ops.o().c(0.0), Ops.o().c(frames))).forEach(cells::addRoot);
 		return cells;
 	}
 
@@ -370,11 +375,13 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return layer;
 	}
 
-	default CellList d(int count, IntFunction<Producer<Scalar>> d) {
-		return d(count, d, i -> scalar(1.0));
+	default CellList d(int count, IntFunction<Producer<PackedCollection<?>>> d) {
+		return d(count, d, i -> c(1.0));
 	}
 
-	default CellList d(int count, IntFunction<Producer<Scalar>> d, IntFunction<Producer<Scalar>> s) {
+	default CellList d(int count,
+					   IntFunction<Producer<PackedCollection<?>>> d,
+					   IntFunction<Producer<PackedCollection<?>>> s) {
 		CellList result = new CellList();
 
 		for (int i = 0; i < count; i++) {
@@ -384,11 +391,13 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return result;
 	}
 
-	default CellList d(CellList cells, IntFunction<Producer<Scalar>> delay) {
-		return d(cells, delay, i -> scalar(1.0));
+	default CellList d(CellList cells, IntFunction<Producer<PackedCollection<?>>> delay) {
+		return d(cells, delay, i -> c(1.0));
 	}
 
-	default CellList d(CellList cells, IntFunction<Producer<Scalar>> delay, IntFunction<Producer<Scalar>> scale) {
+	default CellList d(CellList cells,
+					   IntFunction<Producer<PackedCollection<?>>> delay,
+					   IntFunction<Producer<PackedCollection<?>>> scale) {
 		return map(cells, i -> new AdjustableDelayCell(OutputLine.sampleRate, delay.apply(i), scale.apply(i)));
 	}
 

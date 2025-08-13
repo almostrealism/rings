@@ -339,16 +339,25 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	}
 
 	public WaveCell toCell(TimeCell clock) {
-		return toCell(clock.frameScalar(), 0);
+		return toCell(clock, 0);
 	}
 
-	public WaveCell toCell(Producer<Scalar> frame, int channel) {
+	public WaveCell toCell(TimeCell clock, int channel) {
+		return toCell(clock.frame(), channel);
+	}
+
+	public WaveCell toCell(Producer<PackedCollection<?>> frame, int channel) {
 		return new WaveCell(getChannelData(channel), frame);
 	}
 
-	public Function<WaveCellData, WaveCell> toCell(int channel, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
-		return data -> new WaveCell(data, getChannelData(channel), getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(getFrameCount()));
+	public Function<WaveCellData, WaveCell> toCell(int channel, double amplitude,
+												   Producer<PackedCollection<?>> offset,
+												   Producer<PackedCollection<?>> repeat) {
+		return data -> new WaveCell(data, getChannelData(channel),
+									getSampleRate(), amplitude,
+									offset == null ? null : Ops.o().c(offset),
+									repeat == null ? null : Ops.o().c(repeat),
+									Ops.o().c(0.0), Ops.o().c(getFrameCount()));
 	}
 
 	@Override

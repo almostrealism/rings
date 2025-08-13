@@ -55,7 +55,7 @@ public class ReverbCellTests implements CellFeatures, TestFeatures {
 	@Test
 	public void delayReverb() {
 		CellList c = w(0, "Library/Snare Perc DD.wav")
-				.d(i -> scalar(2.0))
+				.d(i -> c(2.0))
 				.map(fc(i -> new DelayNetwork(sampleRate, false)))
 				.o(i -> new File("results/delay-reverb.wav"));
 		Supplier<Runnable> r = c.sec(12);

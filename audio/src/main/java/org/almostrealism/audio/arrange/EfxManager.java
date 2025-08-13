@@ -113,8 +113,8 @@ public class EfxManager implements CellFeatures {
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
-						scalar(shape(1), multiply(c(beatDuration.getAsDouble()), delay), 0),
-						scalar(1.0)))
+						multiply(c(beatDuration.getAsDouble()), delay),
+						c(1.0)))
 				.collect(CellList.collector());
 
 		IntFunction<Cell<PackedCollection<?>>> auto =

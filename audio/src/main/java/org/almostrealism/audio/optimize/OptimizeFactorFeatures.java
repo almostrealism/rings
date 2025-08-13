@@ -279,7 +279,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 															  Producer<PackedCollection<?>> e,
 															  Producer<PackedCollection<?>> time,
 															  Producer<PackedCollection<?>> duration) {
-		PackedCollection<Scalar> directionChoices = Scalar.scalarBank(2);
+		PackedCollection<Scalar> directionChoices = new PackedCollection<>(shape(2, 1).traverse(1));
 		directionChoices.set(0, -1);
 		directionChoices.set(1, 1);
 
@@ -292,23 +292,18 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		CollectionProducer downOrigin = c(maxValue).subtract(multiply(scale, p));
 		CollectionProducer upOrigin = c(minValue).add(multiply(scale, p));
 
-		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
+		CollectionProducer originChoices = concat(shape(2), downOrigin, upOrigin)
+				.reshape(shape(2, 1).traverse(1));
 
-		CollectionProducerComputation direction = c(scalarChoice(2, toScalar(d), p(directionChoices)), 0);
+		CollectionProducerComputation direction = choice(2, shape(1), d, p(directionChoices));
 
 		CollectionProducer magnitude = multiply(scale, m);
-		CollectionProducer start = c(scalarChoice(2, toScalar(d), originChoices), 0);
+		CollectionProducer start = choice(2, shape(1), d, originChoices);
 		CollectionProducer end = multiply(direction, magnitude).add(start);
 
 		CollectionProducer pos = pow(divide(time, duration), e);
 
 		return add(start, multiply(end.subtract(start), pos));
-	}
-
-	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
-																	   Producer<PackedCollection<?>> speedUpOffset,
-																	   Producer<PackedCollection<?>> time) {
-		return durationAdjustment(c(params, 0), c(params, 1), speedUpOffset, time);
 	}
 
 	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,

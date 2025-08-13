@@ -46,13 +46,11 @@ import org.almostrealism.optimize.Population;
 import org.almostrealism.CodeFeatures;
 
 public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, Destroyable, CodeFeatures {
-	public static boolean enableFlatten = true;
 
 	private AudioScene<?> scene;
 
 	private List<Genome<PackedCollection<?>>> pop;
 	private Genome currentGenome;
-	private Cells cells;
 	private TemporalCellular temporal;
 
 	private String outputPath;
@@ -75,25 +73,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	public void init(Genome<PackedCollection<?>> templateGenome,
 					 MultiChannelAudioOutput output, List<Integer> channels) {
 		enableGenome(templateGenome);
-		this.cells = channels == null ?
-				scene.getCells(output) : scene.getCells(output, channels);
-
-		// TODO  Replace with scene.runner()
-		this.temporal = new TemporalCellular() {
-			@Override
-			public Supplier<Runnable> setup() {
-				OperationList setup = new OperationList("AudioScenePopulation Cellular Setup");
-				setup.addAll((List) scene.setup());
-				setup.addAll((List) cells.setup());
-				return enableFlatten ? setup.flatten() : setup;
-			}
-
-			@Override
-			public Supplier<Runnable> tick() {
-				return cells.tick();
-			}
-		};
-
+		this.temporal = scene.runner(output, channels);
 		disableGenome();
 	}
 
@@ -108,7 +88,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	@Override
 	public TemporalCellular enableGenome(int index) {
 		enableGenome(getGenomes().get(index));
-		cells.reset();
+		temporal.reset();
 		return temporal;
 	}
 
@@ -125,8 +105,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	public void disableGenome() {
 		this.currentGenome = null;
 
-		if (this.cells != null) {
-			this.cells.reset();
+		if (temporal != null) {
+			temporal.reset();
 		}
 	}
 
@@ -209,8 +189,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	@Override
 	public void destroy() {
 		Destroyable.super.destroy();
-		if (cells instanceof Destroyable) ((Destroyable) cells).destroy();
-		cells = null;
+		if (temporal instanceof Destroyable) ((Destroyable) temporal).destroy();
+		temporal = null;
 	}
 
 	@Override

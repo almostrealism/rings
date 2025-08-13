@@ -411,12 +411,15 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		if (enableEfx) {
 			main = createEfx(main, efx, reverbActive ? reverb : null, riser,
 					sources.size(), output, audioChannel, channelIndex);
-		} else {
+		} else if (output.isMeasuresActive()) {
 			// Deliver main to the output and measure for MAIN and WET
 			main = main.map(i -> new ReceptorCell<>(Receptor.to(
 					output.getMaster(audioChannel),
 					output.getMeasure(ChannelInfo.Voicing.MAIN, audioChannel),
 					output.getMeasure(ChannelInfo.Voicing.WET, audioChannel))));
+		} else {
+			// Deliver main to the output
+			main = main.map(i -> new ReceptorCell<>(output.getMaster(audioChannel)));
 		}
 
 		return main;
@@ -435,8 +438,8 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 
 			CellList delays = IntStream.range(0, delayLayers)
 					.mapToObj(i -> new AdjustableDelayCell(OutputLine.sampleRate,
-							toScalar(delay.valueAt(i, 0).getResultant(c(1.0))),
-							toScalar(df.apply(i).getResultant(c(1.0)))))
+							delay.valueAt(i, 0).getResultant(c(1.0)),
+							df.apply(i).getResultant(c(1.0))))
 					.collect(CellList.collector());
 
 			IntFunction<Gene<PackedCollection<?>>> tg =

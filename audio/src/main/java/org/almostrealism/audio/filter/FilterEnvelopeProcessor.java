@@ -55,7 +55,7 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
 
 		WaveData audio = new WaveData(input.traverse(1), sampleRate);
-		process = cells(1, i -> audio.toCell(clock.frameScalar(), 0))
+		process = cells(1, i -> audio.toCell(clock.frame(), 0))
 				.addRequirement(clock)
 				.f(i -> lp(freq, c(0.1)))
 				.export(output).get();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ package org.almostrealism.audio.sources.test;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
@@ -42,7 +42,9 @@ import java.util.stream.IntStream;
 
 public class WaveCellTest implements CellFeatures, TestFeatures {
 	protected WaveCell cell() throws IOException {
-		return WavFile.load(new File("src/main/resources/test.wav"), 0, 1000, null, c(10)).apply(new DefaultWaveCellData());
+		return WaveData.load(new File("src/main/resources/test.wav"))
+						.toCell(0, 1000, null, c(10))
+				.apply(new DefaultWaveCellData());
 	}
 
 	@Test
@@ -179,7 +181,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		data.setMem(IntStream.range(0, OutputLine.sampleRate).mapToDouble(i -> Math.sin(i * rate)).toArray());
 
 		TimeCell clock = new TimeCell();
-		WaveCell cell = new WaveCell(data, clock.frameScalar());
+		WaveCell cell = new WaveCell(data, clock);
 
 		TemporalList tick = new TemporalList();
 		tick.add(clock);

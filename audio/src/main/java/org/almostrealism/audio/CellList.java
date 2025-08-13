@@ -136,9 +136,12 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		return f(this, filter);
 	}
 
-	public CellList d(IntFunction<Producer<Scalar>> delay) { return d(this, delay); }
+	public CellList d(IntFunction<Producer<PackedCollection<?>>> delay) { return d(this, delay); }
 
-	public CellList d(IntFunction<Producer<Scalar>> delay, IntFunction<Producer<Scalar>> scale) { return d(this, delay, scale); }
+	public CellList d(IntFunction<Producer<PackedCollection<?>>> delay,
+					  IntFunction<Producer<PackedCollection<?>>> scale) {
+		return d(this, delay, scale);
+	}
 
 	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter) {
 		return m(this, adapter);

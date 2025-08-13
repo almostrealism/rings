@@ -8,13 +8,8 @@
 
 package org.almostrealism.audio;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.graph.temporal.WaveCellData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.function.Function;
 
 public class WavFile implements AutoCloseable {
 
@@ -678,12 +672,5 @@ public class WavFile implements AutoCloseable {
 		out.printf("IO State: %s\n", readerState);
 		out.printf("Sample Rate: %d, Block Align: %d\n", sampleRate, blockAlign);
 		out.printf("Valid Bits: %d, Bytes per sample: %d\n", validBits, bytesPerSample);
-	}
-
-
-	public static Function<WaveCellData, WaveCell> load(File f, int channel, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
-		WaveData waveform = WaveData.load(f);
-		return data -> new WaveCell(data, waveform.getChannelData(channel), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(waveform.getFrameCount()));
 	}
 }

@@ -109,7 +109,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 		assertEquals(DELAY_FRAMES + 25, cursors.getDelayCursor());
 
 		AcceleratedTimeSeries buffer = delay.getBuffer();
-		TemporalScalar t = buffer.valueAt(delay.getDelay().get().evaluate().getValue() * OutputLine.sampleRate);
+		TemporalScalar t = buffer.valueAt(delay.getDelay().get().evaluate().toDouble() * OutputLine.sampleRate);
 		System.out.println(t);
 		assertEquals(0.1, t.getValue());
 	}

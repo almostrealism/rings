@@ -120,7 +120,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
 
 		WaveData audio = WaveData.load(new File("Library/organ.wav"));
-		cells(1, i -> audio.toCell(clock.frameScalar(), 0))
+		cells(1, i -> audio.toCell(clock))
 				.addRequirement(clock)
 				.f(i -> lp(freq, c(0.1)))
 				.o(i -> new File("results/adsr-filter.wav"))

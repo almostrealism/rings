@@ -195,10 +195,10 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 													.getResultant(c(1.0));
 			Producer<PackedCollection<?>> so = simpleDurationSpeedUp.valueAt(repeatGene, 1)
 													.getResultant(c(1.0));
-			Producer<PackedCollection<?>> repeat = durationAdjustment(concat(r, su), so, clock.time(sampleRate));
+			Producer<PackedCollection<?>> repeat = durationAdjustment(r, su, so, clock.time(sampleRate));
 
 			CellList cells = cells(1, i ->
-					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), repeatChannels.test(channel) ? toScalar(repeat) : null))
+					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), repeatChannels.test(channel) ? c(repeat) : null))
 					.addRequirements(clock);
 
 			if (enableVolumeRiseFall) {

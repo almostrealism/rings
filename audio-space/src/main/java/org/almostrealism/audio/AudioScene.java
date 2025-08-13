@@ -573,7 +573,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	}
 
 	public TemporalCellular runner(MultiChannelAudioOutput output,
-								 List<Integer> channels) {
+								   List<Integer> channels) {
 		Cells cells = channels == null ?
 				getCells(output) : getCells(output, channels);
 
