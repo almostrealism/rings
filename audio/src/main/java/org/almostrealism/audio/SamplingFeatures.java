@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@
 
 package org.almostrealism.audio;
 
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.grains.Grain;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.CollectionProducer;
@@ -78,14 +76,14 @@ public interface SamplingFeatures extends CodeFeatures {
 
 	default int toFrames(double sec) { return (int) (sampleRate() * sec); }
 
-	default Producer<Scalar> toFrames(Supplier<Evaluable<? extends Scalar>> sec) {
-		return scalarsMultiply(scalar(sampleRate()), sec);
+	default Producer<PackedCollection<?>> toFrames(Producer<PackedCollection<?>> sec) {
+		return multiply(c(sampleRate()), sec);
 	}
 
 	default int toFramesMilli(int msec) { return (int) (sampleRate() * msec / 1000d); }
 
-	default Producer<Scalar> toFramesMilli(Supplier<Evaluable<? extends Scalar>> msec) {
-		return scalarsMultiply(scalar(sampleRate() / 1000d), msec);
+	default Producer<PackedCollection<?>> toFramesMilli(Producer<PackedCollection<?>> msec) {
+		return multiply(c(sampleRate() / 1000d), msec);
 	}
 
 	default CollectionProducer<PackedCollection<?>> grains(Producer<PackedCollection<?>> input,

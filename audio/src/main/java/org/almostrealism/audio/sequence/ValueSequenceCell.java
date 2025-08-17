@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package org.almostrealism.audio.sequence;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.temporal.BaseAudioData;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.hardware.OperationList;
 
@@ -32,19 +31,22 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ValueSequenceCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private ValueSequenceData data;
+	private BaseAudioData data;
 	private List<Producer<PackedCollection<?>>> values;
-	private Producer<Scalar> durationFrames;
+	private Producer<PackedCollection<?>> durationFrames;
 
-	public ValueSequenceCell(IntFunction<Producer<PackedCollection<?>>> values, Producer<Scalar> duration, int steps) {
+	public ValueSequenceCell(IntFunction<Producer<PackedCollection<?>>> values,
+							 Producer<PackedCollection<?>> duration, int steps) {
 		this(new PolymorphicAudioData(), values, duration, steps);
 	}
 
-	public ValueSequenceCell(ValueSequenceData data, IntFunction<Producer<PackedCollection<?>>> values, Producer<Scalar> duration, int steps) {
+	public ValueSequenceCell(BaseAudioData data,
+							 IntFunction<Producer<PackedCollection<?>>> values,
+							 Producer<PackedCollection<?>> duration, int steps) {
 		this.data = data;
 		this.values = IntStream.range(0, steps).mapToObj(values).collect(Collectors.toList());
 		this.durationFrames = toFrames(duration);
-		addSetup(a(1, data.getWaveLength(), scalar(1)));
+		addSetup(a(data.getWaveLength(), c(1)));
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,14 +30,14 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 	protected static final double TWO_PI = 2 * Math.PI;
 
 	public SineWaveComputation(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
-		super((Supplier) Ops.o().p(output),
-				(Supplier) data.getWavePosition(),
-				(Supplier) data.getWaveLength(),
-				(Supplier) data.getNotePosition(),
-				(Supplier) data.getNoteLength(),
-				(Supplier) data.getPhase(),
-				(Supplier) data.getAmplitude(),
-				(Supplier) data.getDepth(),
+		super(Ops.o().p(output),
+				data.getWavePosition(),
+				data.getWaveLength(),
+				data.getNotePosition(),
+				data.getNoteLength(),
+				data.getPhase(),
+				data.getAmplitude(),
+				data.getDepth(),
 				(Supplier) envelope);
 	}
 

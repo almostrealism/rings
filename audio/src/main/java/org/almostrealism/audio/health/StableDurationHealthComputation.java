@@ -232,7 +232,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 					console().println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds (rendered in " +
 							(System.currentTimeMillis() - iterStart) + " msec)");
 					iterStart = System.currentTimeMillis();
-				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20) == 0) {
+				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20L) == 0) {
 					console().print(">");
 				}
 			}

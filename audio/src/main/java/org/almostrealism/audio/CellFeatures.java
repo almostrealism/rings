@@ -513,7 +513,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		dest.add(v);
 	}
 
-	default CellList seq(IntFunction<Producer<PackedCollection<?>>> values, Producer<Scalar> duration, int steps) {
+	default CellList seq(IntFunction<Producer<PackedCollection<?>>> values, Producer<PackedCollection<?>> duration, int steps) {
 		CellList cells = new CellList();
 		cells.addRoot(new ValueSequenceCell(values, duration, steps));
 		return cells;
@@ -533,7 +533,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 				cells.stream()
 						.map(c -> (Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>) data -> (CollectionTemporalCellAdapter) c).collect(Collectors.toList());
 		DynamicAudioCell cell = new DynamicAudioCell(c(1).multiply(p(out)), cellChoices);
-		ValueSequenceCell c = (ValueSequenceCell) seq(choices, scalar(duration), segments).get(0);
+		ValueSequenceCell c = (ValueSequenceCell) seq(choices, c(duration), segments).get(0);
 		c.setReceptor(a(p(out)));
 
 		// WaveOutput csv = new WaveOutput(new File("value-sequence-debug.wav"));

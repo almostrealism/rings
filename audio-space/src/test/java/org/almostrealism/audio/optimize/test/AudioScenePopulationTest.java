@@ -126,14 +126,14 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void generate() throws Exception {
-		AudioSceneOptimizer.setFeatureLevel(3);
+		AudioSceneOptimizer.setFeatureLevel(4);
 
 		if (!new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
 			createGenomes(1);
 		}
 
 		int channel = 2;
-		double duration = 4; // 16;
+		double duration = 8; // 16;
 
 		AudioScene scene = AudioScene.load(
 				SystemUtils.getLocalDestination("scene-settings.json"),
