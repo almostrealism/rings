@@ -189,11 +189,11 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		// Verbosity level 1;
 		NoteAudioProvider.enableVerbose = verbosity > 0;
 		SilenceDurationHealthComputation.enableVerbose = verbosity > 0;
-		StableDurationHealthComputation.enableProfileAutosave = verbosity > 0;
 
 		// Verbosity level 2
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 		PopulationOptimizer.enableVerbose = verbosity > 1;
+		StableDurationHealthComputation.enableProfileAutosave = verbosity > 1;
 
 		// Verbosity level 3
 		WaveOutput.enableVerbose = verbosity > 2;

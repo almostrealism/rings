@@ -192,7 +192,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if (enableProfileAutosave && profile instanceof OperationProfileNode) {
+				if (enableProfileAutosave && profile instanceof OperationProfileNode
+						&& (l + iter) % (OutputLine.sampleRate * 60L) == 0) {
 					try {
 						String name = "results/optimizer-" + l + ".xml";
 						log("Saving profile to " + name);
