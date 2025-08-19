@@ -55,7 +55,7 @@ public class WaveDetailsJob implements Runnable, ConsoleFeatures {
 				details = runner.apply(this);
 			}
 		} catch (Exception e) {
-			warn("Failed to process " + this);
+			warn("Failed to process " + this, e);
 		} finally {
 			complete(details);
 		}
