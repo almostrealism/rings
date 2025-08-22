@@ -188,21 +188,21 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		// Verbosity level 1;
 		NoteAudioProvider.enableVerbose = verbosity > 0;
-		SilenceDurationHealthComputation.enableVerbose = verbosity > 0;
 
 		// Verbosity level 2
 		AudioSceneOptimizer.enableVerbose = verbosity > 1;
 		PopulationOptimizer.enableVerbose = verbosity > 1;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 1;
 		StableDurationHealthComputation.enableProfileAutosave = verbosity > 1;
 
 		// Verbosity level 3
-		WaveOutput.enableVerbose = verbosity > 2;
 		PatternSystemManager.enableVerbose = verbosity > 2;
 		enableDisplayGenomes = verbosity > 2;
 		Hardware.enableVerbose = verbosity > 2;
 		HardwareOperator.enableLog = verbosity > 2;
 
 		// Verbosity level 4
+		WaveOutput.enableVerbose = verbosity > 3;
 		NativeComputeContext.enableVerbose = verbosity > 3;
 		HardwareOperator.enableVerboseLog = verbosity > 3;
 
@@ -231,7 +231,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		setFeatureLevel(4);
 
 		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 2;
+		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 20;
 		OperationProfileNode profile = setVerbosity(verbosity, enableProfile);
 
 		AdjustableDelayCell.defaultPurgeFrequency = 1.0;

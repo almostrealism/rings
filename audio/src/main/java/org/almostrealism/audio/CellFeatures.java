@@ -495,7 +495,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 			Cell<PackedCollection<?>> clean = Optional.ofNullable(passthrough).map(p -> p.apply(i.get())).orElse(null);
 
 			List<Cell<PackedCollection<?>>> dest = new ArrayList<>();
-			IntStream.range(0, g == null ? destinationCount : g.length()).mapToObj(j -> destinations.apply(j)).forEach(dest::add);
+			IntStream.range(0, g == null ? destinationCount : g.length()).mapToObj(destinations).forEach(dest::add);
 
 			layer.addRequirement(MultiCell.split(source, adapter.apply(i.get()), dest, g, clean));
 			dest.forEach(c -> append(layer, c));

@@ -51,7 +51,7 @@ public class CellListTests implements CellFeatures {
 				.collect(CellList.collector());
 
 		cells = cells.m(fi(), delays)
-				.mself(fi(), i -> g(2.0))
+				.mself(fi(), i -> g(2.0), fc(i -> sf(0.5)))
 				.sum().o(i -> new File("results/mself-delay-test.wav"));
 
 		cells.sec(10).get().run();
