@@ -24,19 +24,23 @@ import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class DefaultChannelSectionTest implements CellFeatures {
 	@Test
 	public void section() throws IOException {
 		int samples = 2 * 8 * OutputLine.sampleRate;
 
-		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ProjectedGenome(8),
+		ProjectedGenome genome = new ProjectedGenome(8);
+		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(genome.addChromosome(),
 											1, c -> true, c -> true,
 											() -> Frequency.forBPM(120.0), () -> 2.0,
 											8, OutputLine.sampleRate);

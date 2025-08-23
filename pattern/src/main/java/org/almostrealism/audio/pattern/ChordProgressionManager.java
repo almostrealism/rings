@@ -35,7 +35,6 @@ import java.util.stream.IntStream;
 public class ChordProgressionManager implements CodeFeatures {
 	public static final int MAX_SIZE = 64;
 
-	private ProjectedGenome genome;
 	private ProjectedChromosome chromosome;
 
 	private Scale<?> key;
@@ -48,11 +47,12 @@ public class ChordProgressionManager implements CodeFeatures {
 	private List<Region> regions;
 
 	public ChordProgressionManager(int parameters) {
-		this(new ProjectedGenome(parameters), WesternScales.major(WesternChromatic.C1, 1));
+		this(new ProjectedGenome(parameters).addChromosome(),
+				WesternScales.major(WesternChromatic.C1, 1));
 	}
 
-	public ChordProgressionManager(ProjectedGenome genome, Scale<?> key) {
-		this.genome = genome;
+	public ChordProgressionManager(ProjectedChromosome chromosome, Scale<?> key) {
+		this.chromosome = chromosome;
 		setKey(key);
 		setChordDepth(5);
 		init();
@@ -67,7 +67,6 @@ public class ChordProgressionManager implements CodeFeatures {
 				.mapToObj(i -> ChordPositionFunction.random())
 				.collect(Collectors.toUnmodifiableList());
 
-		chromosome = genome.addChromosome();
 		chromosome.addGene(3);
 	}
 
@@ -121,8 +120,6 @@ public class ChordProgressionManager implements CodeFeatures {
 			length += regionLength;
 		}
 	}
-
-	public ProjectedGenome getGenome() { return genome; }
 
 	public Settings getSettings() {
 		Settings settings = new Settings();

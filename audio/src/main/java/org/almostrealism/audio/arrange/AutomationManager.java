@@ -23,7 +23,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.ProjectedGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 public class AutomationManager implements Setup, CellFeatures {
 	public static final int GENE_LENGTH = 6;
 
-	private ProjectedGenome genome;
+	private ProjectedChromosome chromosome;
 	private TimeCell clock;
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
@@ -40,9 +40,9 @@ public class AutomationManager implements Setup, CellFeatures {
 	private double r = 1.0;
 	private double p = 0.5;
 
-	public AutomationManager(ProjectedGenome genome, TimeCell clock,
+	public AutomationManager(ProjectedChromosome chromosome, TimeCell clock,
 							 DoubleSupplier measureDuration, int sampleRate) {
-		this.genome = genome;
+		this.chromosome = chromosome;
 		this.clock = clock;
 		this.measureDuration = measureDuration;
 		this.sampleRate = sampleRate;

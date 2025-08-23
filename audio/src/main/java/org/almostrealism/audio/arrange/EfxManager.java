@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,15 +26,16 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGene;
-import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
@@ -46,20 +47,20 @@ public class EfxManager implements CellFeatures {
 
 	private AutomationManager automation;
 
-	private ProjectedGenome genome;
-	private ProjectedChromosome delayTimes;
-	private ProjectedChromosome delayLevels;
-	private ProjectedChromosome delayAutomation;
+	private ProjectedChromosome chromosome;
+	private Chromosome<PackedCollection<?>> delayTimes;
+	private Chromosome<PackedCollection<?>> delayLevels;
+	private Chromosome<PackedCollection<?>> delayAutomation;
 	private int channels;
 	private List<Integer> wetChannels;
 
 	private DoubleSupplier beatDuration;
 	private int sampleRate;
 
-	public EfxManager(ProjectedGenome genome, int channels,
+	public EfxManager(ProjectedChromosome chromosome, int channels,
 					  AutomationManager automation,
 					  DoubleSupplier beatDuration, int sampleRate) {
-		this.genome = genome;
+		this.chromosome = chromosome;
 		this.channels = channels;
 		this.wetChannels = new ArrayList<>();
 		IntStream.range(0, channels).forEach(this.wetChannels::add);
@@ -83,18 +84,21 @@ public class EfxManager implements CellFeatures {
 		PackedCollection<?> c = new PackedCollection<>(choices.length);
 		c.setMem(choices);
 
-		delayTimes = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c, 1));
+		delayTimes = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addChoiceGene(c, 1))
+				.collect(Collectors.toList()));
 
-		delayLevels = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene g = delayLevels.addGene(4);
+		delayLevels = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(4);
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
 			if (maxFeedback != 1.0) g.setTransform(1, p -> multiply(p, c(maxFeedback)));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 
-		delayAutomation = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> delayAutomation.addGene(AutomationManager.GENE_LENGTH));
+		delayAutomation = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(AutomationManager.GENE_LENGTH);
+			return g;
+		}).collect(Collectors.toList()));
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }

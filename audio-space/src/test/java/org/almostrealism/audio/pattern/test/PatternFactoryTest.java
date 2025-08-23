@@ -24,7 +24,6 @@ import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
@@ -144,18 +143,14 @@ public class PatternFactoryTest implements CellFeatures {
 		chordProgression.refreshParameters();
 
 		ProjectedGenome genome = new ProjectedGenome(8);
-		genome.addChromosome();
 
-		PatternLayerManager manager = new PatternLayerManager(choices,
-				genome.addChromosome(), genome.addChromosome(),
+		PatternLayerManager manager = new PatternLayerManager(
+				choices, genome.addChromosome(),
 				3, 16.0, true);
 		manager.setScaleTraversalDepth(3);
 
 		double a = Math.random(); // 0.2;
-		manager.addLayer(new ParameterSet(a, 0.3, 0.9));
-		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
-		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
-//		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+		manager.setLayerCount(3);
 
 		System.out.println("a = " + a);
 

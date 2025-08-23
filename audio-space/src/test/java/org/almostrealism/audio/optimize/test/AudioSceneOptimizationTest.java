@@ -19,7 +19,6 @@ package org.almostrealism.audio.optimize.test;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.ChannelInfo;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.pattern.PatternLayerManager;
@@ -72,9 +71,7 @@ public class AudioSceneOptimizationTest implements CellFeatures {
 		scene.setTuning(new DefaultKeyboardTuning());
 
 		PatternLayerManager layer = scene.getPatternManager().addPattern(0, 1.0, false);
-		layer.addLayer(new ParameterSet());
-		layer.addLayer(new ParameterSet());
-		layer.addLayer(new ParameterSet());
+		layer.setLayerCount(3);
 		
 		if (sections) {
 			scene.addSection(0, 16);

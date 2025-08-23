@@ -50,9 +50,8 @@ import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGenome;
-import org.almostrealism.heredity.ProjectedGenomeSet;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
@@ -87,6 +86,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
+	public static final int MAX_SCENE_SECTIONS = 16;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
 	public static final IntToDoubleFunction DEFAULT_LAYER_SCALE;
@@ -170,7 +170,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private GenerationManager generation;
 
-	private ProjectedGenomeSet genome;
+	private ProjectedGenome genome;
 	
 	private OperationList setup;
 	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
@@ -206,28 +206,39 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new ProjectedGenomeSet(16, 7);
+		this.genome = new ProjectedGenome(16);
+
+		List<ProjectedChromosome> sectionChromosomes =
+				IntStream.range(0, MAX_SCENE_SECTIONS)
+					.mapToObj(i -> genome.addChromosome())
+					.toList();
 
 		this.tuning = new DefaultKeyboardTuning();
-		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
-		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
+		this.sections = new SceneSectionManager(sectionChromosomes, channels, this::getTempo, this::getMeasureDuration, getSampleRate());
+		this.progression = new ChordProgressionManager(genome.addChromosome(),
+								WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
 
-		patterns = new PatternSystemManager(choices, genome.getGenome(2));
+		List<ProjectedChromosome> patternChromosomes =
+				IntStream.range(0, channels * DEFAULT_PATTERNS_PER_CHANNEL)
+					.mapToObj(i -> genome.addChromosome())
+					.toList();
+
+		patterns = new PatternSystemManager(choices, patternChromosomes);
 		patterns.init();
 
 		this.channelNames = new ArrayList<>();
 
 		addDurationListener(duration -> destroyPatternDestinations());
 
-		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
+		this.automation = new AutomationManager(genome.addChromosome(), time.getClock(),
 											this::getMeasureDuration, getSampleRate());
-		this.efx = new EfxManager(genome.getGenome(4), channels,
+		this.efx = new EfxManager(genome.addChromosome(), channels,
 									automation, this::getBeatDuration, getSampleRate());
-		this.riser = new RiseManager(genome.getGenome(5),
+		this.riser = new RiseManager(genome.addChromosome(),
 				() -> getContext(new ChannelInfo(0, ChannelInfo.Type.RISE, null)), getSampleRate());
-		this.mixdown = new MixdownManager(genome.getGenome(6),
+		this.mixdown = new MixdownManager(genome.addChromosome(),
 									channels, delayLayers,
 									automation, time.getClock(), getSampleRate());
 

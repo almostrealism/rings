@@ -88,9 +88,9 @@ public class MixdownManagerTests implements CellFeatures {
 		int params = 8;
 		ProjectedGenome genome = new ProjectedGenome(params);
 		AutomationManager automation = new AutomationManager(
-				genome, time.getClock(),
+				genome.addChromosome(), time.getClock(),
 				() -> measureDuration, sampleRate);
-		MixdownManager mixdown = new MixdownManager(genome, 2, 3,
+		MixdownManager mixdown = new MixdownManager(genome.addChromosome(), 2, 3,
 										automation, time.getClock(), sampleRate);
 		mixdown.setReverbChannels(List.of(0, 1));
 

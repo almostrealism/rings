@@ -35,10 +35,10 @@ import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
 import io.almostrealism.relation.Factor;
+import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGene;
-import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalFactor;
 
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MixdownManager implements Setup, Destroyable, CellFeatures, OptimizeFactorFeatures {
@@ -80,26 +81,26 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	private PackedCollection<?> mainFilterDownAdjustmentScale;
 	private PackedCollection<?> reverbAdjustmentScale;
 
-	private ProjectedChromosome volumeSimple;
-	private ProjectedChromosome mainFilterUpSimple;
-	private ProjectedChromosome wetInSimple;
+	private Chromosome<PackedCollection<?>> volumeSimple;
+	private Chromosome<PackedCollection<?>> mainFilterUpSimple;
+	private Chromosome<PackedCollection<?>> wetInSimple;
 
-	private ProjectedChromosome transmission;
-	private ProjectedChromosome wetOut;
-	private ProjectedChromosome delay;
+	private Chromosome<PackedCollection<?>> transmission;
+	private Chromosome<PackedCollection<?>> wetOut;
+	private Chromosome<PackedCollection<?>> delay;
 
-	private ProjectedChromosome delayDynamicsSimple;
+	private Chromosome<PackedCollection<?>> delayDynamicsSimple;
 
-	private ProjectedChromosome reverb;
-	private ProjectedChromosome reverbAutomation;
+	private Chromosome<PackedCollection<?>> reverb;
+	private Chromosome<PackedCollection<?>> reverbAutomation;
 	private FixedFilterChromosome wetFilter;
-	private ProjectedChromosome mainFilterDownSimple;
+	private Chromosome<PackedCollection<?>> mainFilterDownSimple;
 
 	private List<Integer> reverbChannels;
 
 	private List<Destroyable> dependencies;
 
-	public MixdownManager(ProjectedGenome genome,
+	public MixdownManager(ProjectedChromosome chromosome,
 						  int channels, int delayLayers,
 						  AutomationManager automation,
 						  TimeCell clock, int sampleRate) {
@@ -112,37 +113,41 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		this.mainFilterDownAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 		this.reverbAdjustmentScale = new PackedCollection<>(1).fill(1.0);
 
-		this.volumeSimple = initializeAdjustment(channels, genome.addChromosome());
-		this.mainFilterUpSimple = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> mainFilterUpSimple.addGene(AutomationManager.GENE_LENGTH));
+		this.volumeSimple = chromosome(initializeAdjustment(channels, chromosome));
+		this.mainFilterUpSimple = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.collect(Collectors.toList()));
 
-		this.wetInSimple = initializeAdjustment(channels, genome.addChromosome());
+		this.wetInSimple = chromosome(initializeAdjustment(channels, chromosome));
 
-		this.transmission = genome.addChromosome();
-		IntStream.range(0, delayLayers).forEach(i -> transmission.addGene(delayLayers));
+		this.transmission = chromosome(IntStream.range(0, delayLayers)
+				.mapToObj(i -> chromosome.addGene(delayLayers))
+				.collect(Collectors.toList()));
 
-		this.wetOut = genome.addChromosome();
-		this.wetOut.addGene(delayLayers);
+		this.wetOut = chromosome(List.of(chromosome.addGene(delayLayers)));
 
-		this.delay = genome.addChromosome();
-		IntStream.range(0, delayLayers).forEach(i -> {
-			ProjectedGene g = delay.addGene(1);
+		this.delay = chromosome(IntStream.range(0, delayLayers).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(1);
 			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 
-		this.delayDynamicsSimple = initializePolycyclic(delayLayers, genome.addChromosome());
+		this.delayDynamicsSimple = chromosome(initializePolycyclic(delayLayers, chromosome));
 
-		this.reverb = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> reverb.addGene(1));
+		this.reverb = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addGene(1))
+				.collect(Collectors.toList()));
 
-		this.reverbAutomation = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> reverbAutomation.addGene(AutomationManager.GENE_LENGTH));
+		this.reverbAutomation = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.collect(Collectors.toList()));
 
-		ProjectedChromosome wf = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> wf.addGene(FixedFilterChromosome.SIZE));
+		Chromosome<PackedCollection<?>> wf = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addGene(FixedFilterChromosome.SIZE))
+				.collect(Collectors.toList()));
 		this.wetFilter = new FixedFilterChromosome(wf, sampleRate);
 
-		this.mainFilterDownSimple = initializeAdjustment(channels, genome.addChromosome());
+		this.mainFilterDownSimple = chromosome(initializeAdjustment(channels, chromosome));
 
 		initRanges(new Configuration(channels), delayLayers);
 

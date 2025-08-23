@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 
@@ -37,7 +38,7 @@ public class SceneSectionManager implements Setup, Destroyable {
 	private List<SceneSection> sections;
 	private OperationList setup;
 
-	private ProjectedGenome genome;
+	private List<ProjectedChromosome> chromosomes;
 	private int channels;
 
 	private Supplier<Frequency> tempo;
@@ -46,20 +47,17 @@ public class SceneSectionManager implements Setup, Destroyable {
 
 	private List<Integer> wetChannels;
 
-	public SceneSectionManager(ProjectedGenome genome, int channels, Supplier<Frequency> tempo,
+	public SceneSectionManager(List<ProjectedChromosome> chromosomes, int channels,
+							   Supplier<Frequency> tempo,
 							   DoubleSupplier measureDuration, int sampleRate) {
 		this.sections = new ArrayList<>();
 		this.setup = new OperationList("SceneSectionManager Setup");
-		this.genome = genome;
+		this.chromosomes = chromosomes;
 		this.channels = channels;
 		this.tempo = tempo;
 		this.measureDuration = measureDuration;
 		this.sampleRate = sampleRate;
 		this.wetChannels = new ArrayList<>();
-	}
-
-	public ProjectedGenome getGenome() {
-		return genome;
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }
@@ -72,7 +70,8 @@ public class SceneSectionManager implements Setup, Destroyable {
 	}
 
 	public SceneSection addSection(int position, int length) {
-		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(genome, channels,
+		ProjectedChromosome chromosome = chromosomes.get(sections.size());
+		DefaultChannelSectionFactory channelFactory = new DefaultChannelSectionFactory(chromosome, channels,
 																		c -> getWetChannels().contains(c),
 																		DEFAULT_REPEAT_CHANNELS,
 																		tempo, measureDuration, length, sampleRate);
@@ -85,7 +84,7 @@ public class SceneSectionManager implements Setup, Destroyable {
 	public void removeSection(int index) {
 		sections.remove(index).destroy();
 		setup.remove(index);
-		genome.removeChromosome(index);
+		chromosomes.get(0).removeAllGenes();
 	}
 
 	@Override

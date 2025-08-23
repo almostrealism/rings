@@ -32,14 +32,16 @@ import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGene;
 import org.almostrealism.heredity.ScaleFactor;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 	int ADJUSTMENT_CHROMOSOME_SIZE = 6;
 	int POLYCYCLIC_CHROMOSOME_SIZE = 6;
 
-	default ProjectedChromosome initializeAdjustment(int channels, ProjectedChromosome chromosome) {
-		IntStream.range(0, channels).forEach(i -> {
+	default List<ProjectedGene> initializeAdjustment(int channels, ProjectedChromosome chromosome) {
+		return IntStream.range(0, channels).mapToObj(i -> {
 			ProjectedGene g = chromosome.addGene(ADJUSTMENT_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
@@ -47,12 +49,12 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setTransform(4, p -> p);
 			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-		});
-		return chromosome;
+			return g;
+		}).collect(Collectors.toList());
 	}
 
-	default ProjectedChromosome initializePolycyclic(int channels, ProjectedChromosome chromosome) {
-		IntStream.range(0, channels).forEach(i -> {
+	default List<ProjectedGene> initializePolycyclic(int channels, ProjectedChromosome chromosome) {
+		return IntStream.range(0, channels).mapToObj(i -> {
 			ProjectedGene g = chromosome.addGene(POLYCYCLIC_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 0.5).multiply(c(10.0)));
@@ -60,8 +62,8 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 			g.setTransform(3, p -> p);
 			g.setTransform(4, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(5, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
-		});
-		return chromosome;
+			return g;
+		}).collect(Collectors.toList());
 	}
 
 	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate,

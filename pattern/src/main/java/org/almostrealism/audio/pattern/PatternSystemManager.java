@@ -34,6 +34,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
@@ -62,19 +63,19 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
-	private ProjectedGenome genome;
+	private List<ProjectedChromosome> chromosomes;
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
 
-	public PatternSystemManager(ProjectedGenome genome) {
-		this(new ArrayList<>(), genome);
+	public PatternSystemManager( List<ProjectedChromosome> chromosomes) {
+		this(new ArrayList<>(), chromosomes);
 	}
 
-	public PatternSystemManager(List<NoteAudioChoice> choices, ProjectedGenome genome) {
+	public PatternSystemManager(List<NoteAudioChoice> choices,  List<ProjectedChromosome> chromosomes) {
 		this.choices = choices;
 		this.patterns = new ArrayList<>();
-		this.genome = genome;
+		this.chromosomes = chromosomes;
 	}
 
 	public void init() {
@@ -119,7 +120,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	public Settings getSettings() {
 		Settings settings = new Settings();
-		settings.getPatterns().addAll(patterns.stream().map(PatternLayerManager::getSettings).collect(Collectors.toList()));
+		settings.getPatterns().addAll(patterns.stream().map(PatternLayerManager::getSettings).toList());
 		return settings;
 	}
 
@@ -168,7 +169,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public PatternLayerManager addPattern(int channel, double measures, boolean melodic) {
 		PatternLayerManager pattern =
 				new PatternLayerManager(choices,
-						genome.addChromosome(), genome.addChromosome(),
+						chromosomes.get(patterns.size()),
 						channel, measures, melodic);
 		patterns.add(pattern);
 		return pattern;
@@ -260,9 +261,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 
 				if (p < activePatterns.applyAsInt(c)) {
-					IntStream.range(0, layersPerPattern.applyAsInt(c)).forEach(l -> {
-						pattern.getLayers().add(ParameterSet.random());
-					});
+					pattern.setLayerCount(layersPerPattern.applyAsInt(c));
 				}
 
 				settings.getPatterns().add(pattern);

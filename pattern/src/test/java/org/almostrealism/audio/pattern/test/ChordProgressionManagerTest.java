@@ -31,7 +31,8 @@ public class ChordProgressionManagerTest {
 		int params = 8;
 		ProjectedGenome genome = new ProjectedGenome(params);
 
-		ChordProgressionManager progression = new ChordProgressionManager(genome, WesternScales.minor(WesternChromatic.G1, 1));
+		ChordProgressionManager progression = new ChordProgressionManager(genome.addChromosome(),
+											WesternScales.minor(WesternChromatic.G1, 1));
 		progression.setSize(8);
 		progression.setDuration(16);
 

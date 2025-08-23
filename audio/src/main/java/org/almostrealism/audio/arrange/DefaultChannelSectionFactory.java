@@ -29,9 +29,9 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
+import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGene;
-import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 
@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DefaultChannelSectionFactory implements Setup, Destroyable,
@@ -55,12 +56,12 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 	private TimeCell clock;
 	private PackedCollection<?> duration;
 
-	private ProjectedChromosome volume;
-	private ProjectedChromosome volumeExp;
-	private ProjectedChromosome lowPassFilter;
-	private ProjectedChromosome lowPassFilterExp;
-	private ProjectedChromosome simpleDuration;
-	private ProjectedChromosome simpleDurationSpeedUp;
+	private Chromosome<PackedCollection<?>> volume;
+	private Chromosome<PackedCollection<?>> volumeExp;
+	private Chromosome<PackedCollection<?>> lowPassFilter;
+	private Chromosome<PackedCollection<?>> lowPassFilterExp;
+	private Chromosome<PackedCollection<?>> simpleDuration;
+	private Chromosome<PackedCollection<?>> simpleDurationSpeedUp;
 
 	private int channel, channels;
 	private IntPredicate wetChannels;
@@ -71,7 +72,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 	private int length;
 	private int sampleRate;
 
-	public DefaultChannelSectionFactory(ProjectedGenome genome, int channels,
+	public DefaultChannelSectionFactory(ProjectedChromosome chromosome, int channels,
 										IntPredicate wetChannels, IntPredicate repeatChannels,
 										Supplier<Frequency> tempo, DoubleSupplier measureDuration,
 										int length, int sampleRate) {
@@ -86,49 +87,50 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 		this.length = length;
 		this.sampleRate = sampleRate;
 
-		this.volume = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene gene = volume.addGene(3);
+		this.volume = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene gene = chromosome.addGene(3);
 			gene.setRange(0, 0.1, 0.9);
 			gene.setRange(1, 0.4, 0.8);
 			gene.setRange(2, 0.0, 0.9);
-		});
+			return gene;
+		}).collect(Collectors.toList()));
 
-		this.volumeExp = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene g = volumeExp.addGene(1);
+		this.volumeExp = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(1);
 			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setRange(0, factorForExponent(0.9), factorForExponent(1.2));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 
-		this.lowPassFilter = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene gene = lowPassFilter.addGene(3);
+		this.lowPassFilter = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene gene = chromosome.addGene(3);
 			gene.setRange(0, 0.1, 0.9);
 			gene.setRange(1, 0.4, 0.8);
 			gene.setRange(2, 0.0, 0.75);
-		});
+			return gene;
+		}).collect(Collectors.toList()));
 
-		this.lowPassFilterExp = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene g = lowPassFilterExp.addGene(1);
+		this.lowPassFilterExp = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(1);
 			g.setTransform(p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setRange(0, factorForExponent(0.9), factorForExponent(2.5));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 
 		PackedCollection<?> repeat = new PackedCollection<>(repeatChoices.length);
 		repeat.setMem(Arrays.stream(repeatChoices).map(this::factorForRepeat).toArray());
 
-		this.simpleDuration = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> simpleDuration.addChoiceGene(repeat, 1));
+		this.simpleDuration = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addChoiceGene(repeat,1))
+				.collect(Collectors.toList()));
 
-		this.simpleDurationSpeedUp = genome.addChromosome();
-		IntStream.range(0, channels).forEach(i -> {
-			ProjectedGene g = simpleDurationSpeedUp.addGene(2);
+		this.simpleDurationSpeedUp = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(2);
 			g.setTransform(p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setRange(0, factorForRepeatSpeedUpDuration(1), factorForRepeatSpeedUpDuration(4));
 			g.setRange(1, factorForRepeatSpeedUpDuration(16), factorForRepeatSpeedUpDuration(80));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 	}
 
 	public Section createSection(int position) {
