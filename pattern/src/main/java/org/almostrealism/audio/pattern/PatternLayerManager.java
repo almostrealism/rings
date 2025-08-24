@@ -286,7 +286,7 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
 		PackedCollection<?> automationParams =
 				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
-						automationGene.valueAt(pos[0]).getResultant(c(1.0)).evaluate().toDouble());
+						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);

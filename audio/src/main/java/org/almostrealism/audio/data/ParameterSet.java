@@ -65,9 +65,9 @@ public class ParameterSet {
 				CollectionFeatures.getInstance().c(1.0);
 
 		ParameterSet params = new ParameterSet();
-		params.setX(gene.getResultant(0, one).evaluate().toDouble());
-		params.setY(gene.getResultant(1, one).evaluate().toDouble());
-		params.setZ(gene.getResultant(2, one).evaluate().toDouble());
+		params.setX(gene.getResultant(0, null).evaluate().toDouble());
+		params.setY(gene.getResultant(1, null).evaluate().toDouble());
+		params.setZ(gene.getResultant(2, null).evaluate().toDouble());
 		return params;
 	}
 }
