@@ -34,6 +34,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	public static final int DIM = 8;
 
 	private final AudioComposer composer;
+	private double audioDuration;
 
 	public AudioModulator(String modelsPath) throws OrtException {
 		this(new AssetGroup(
@@ -53,10 +54,12 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		composer = new AudioComposer(new OnnxAutoEncoder(
 				onnxAssets.getAssetPath("encoder.onnx"),
 				onnxAssets.getAssetPath("decoder.onnx")), dim, seed);
+		audioDuration = composer.getMaximumAudioDuration();
 	}
 
+	public double getAudioDuration() { return audioDuration; }
 	public void setAudioDuration(double seconds) {
-		composer.setAudioDuration(Math.min(composer.getMaximumAudioDuration(), seconds));
+		this.audioDuration = Math.min(composer.getMaximumAudioDuration(), seconds);
 	}
 
 	public void addAudio(PackedCollection<?> audio) {
@@ -68,7 +71,20 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	}
 
 	public PackedCollection<?> project(PackedCollection<?> position) {
-		return composer.getResultant(cp(position)).evaluate();
+		try (PackedCollection<?> result = composer.getResultant(cp(position)).evaluate()) {
+			double data[] = result.toArray();
+			int totalSamples = data.length;
+			int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
+			int finalSamples = (int) (getAudioDuration() * composer.getSampleRate());
+
+			double stereoAudio[] = new double[2 * finalSamples];
+			for (int i = 0; i < finalSamples; i++) {
+				stereoAudio[i] = data[i];
+				stereoAudio[finalSamples + i] = data[channelSamples + i];
+			}
+
+			return pack(stereoAudio).reshape(2, finalSamples);
+		}
 	}
 
 	public void generateAudio(PackedCollection<?> position, String destination) {

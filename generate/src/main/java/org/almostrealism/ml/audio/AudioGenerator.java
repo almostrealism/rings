@@ -68,7 +68,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 	}
 
-	public double[][] generateAudio(String prompt, long seed) throws OrtException {
+	public double[][] generateAudio(String prompt, long seed) {
 		try {
 			return generateAudio(tokenize(prompt), seed);
 		} finally {
