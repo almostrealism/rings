@@ -18,6 +18,7 @@ package org.almostrealism.audio.data;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
@@ -84,19 +85,14 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public WaveDetails forProvider(WaveDataProvider provider, WaveDetails existing) {
-		return forWaveData(provider.getIdentifier(), provider.get(), existing);
-	}
-
-	public WaveDetails forWaveData(String identifier, WaveData data, WaveDetails existing) {
-		if (data == null) return existing;
+		if (provider == null) return existing;
 
 		if (existing == null) {
-			existing = new WaveDetails(identifier, data.getSampleRate());
+			existing = new WaveDetails(provider.getIdentifier(), provider.getSampleRate());
 		}
 
-		if (data.getSampleRate() != getSampleRate()) {
-			return existing;
-		}
+		WaveData data = provider.get(getSampleRate());
+		if (data == null) return existing;
 
 		existing.setSampleRate(data.getSampleRate());
 		existing.setChannelCount(data.getChannelCount());
@@ -118,8 +114,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		if (featureProvider != null) {
-			PackedCollection<?> features = prepareFeatures(data);
-			existing.setFeatureSampleRate(featureProvider.getSampleRate());
+			PackedCollection<?> features = prepareFeatures(provider);
+			existing.setFeatureSampleRate(featureProvider.getFeatureSampleRate());
 			existing.setFeatureChannelCount(1);
 			existing.setFeatureBinCount(features.getShape().length(1));
 			existing.setFeatureFrameCount(features.getShape().length(0));
@@ -131,10 +127,16 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	public double similarity(WaveDetails a, WaveDetails b) {
 		if (a.getFeatureData() != null && b.getFeatureData() != null) {
-			return WaveDetails.similarity(a.getFeatureData(), b.getFeatureData());
+			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()));
 		} else {
-			return WaveDetails.similarity(a.getFreqData(), b.getFreqData());
+			return WaveDetails.differenceSimilarity(a.getFreqData(), b.getFreqData());
 		}
+	}
+
+	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b) {
+		return multiply(a, b).sum(1)
+				.divide(multiply(length(1, a), length(1, b)))
+				.evaluate().doubleStream().average().orElse(0.0);
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft) {
@@ -165,8 +167,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 		return output;
 	}
 
-	protected PackedCollection<?> prepareFeatures(WaveData data) {
-		PackedCollection<?> features = featureProvider.computeFeatures(data);
+	protected PackedCollection<?> prepareFeatures(WaveDataProvider provider) {
+		PackedCollection<?> features = featureProvider.computeFeatures(provider);
 
 		if (features.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();

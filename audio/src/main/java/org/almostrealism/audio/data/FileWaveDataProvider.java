@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 
 	private Integer sampleRate;
 	private Integer count;
+	private Integer channels;
 	private Double duration;
 	private String resourcePath;
 
@@ -137,6 +138,23 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		}
 
 		return duration;
+	}
+
+	@JsonIgnore
+	@Override
+	public int getChannelCount() {
+		if (corruptFiles.contains(getResourcePath())) return 0;
+
+		if (channels == null) {
+			try (WavFile w = WavFile.openWavFile(new File(resourcePath))) {
+				this.channels = w.getNumChannels();
+			} catch (IOException e) {
+				corruptFiles.add(getResourcePath());
+				throw new RuntimeException(e);
+			}
+		}
+
+		return channels;
 	}
 
 	protected WaveData load() {

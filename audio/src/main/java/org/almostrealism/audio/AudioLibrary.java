@@ -295,6 +295,11 @@ public class AudioLibrary implements ConsoleFeatures {
 					.filter(d -> !details.getSimilarities().containsKey(d.getIdentifier()))
 					.forEach(d -> {
 						double similarity = factory.similarity(details, d);
+
+						if (Math.abs(similarity - 1.0) < 1e-5) {
+							warn("Identical features for distinct files");
+						}
+
 						details.getSimilarities().put(d.getIdentifier(), similarity);
 
 						if (details.getIdentifier() != null)

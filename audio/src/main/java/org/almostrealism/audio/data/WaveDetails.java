@@ -223,7 +223,7 @@ public class WaveDetails {
 				.magnitude()).get());
 	}
 
-	public static double similarity(PackedCollection<?> a, PackedCollection<?> b) {
+	public static double differenceSimilarity(PackedCollection<?> a, PackedCollection<?> b) {
 		if (a.getShape().getDimensions() != 2 && a.getShape().getDimensions() != 3) {
 			throw new IllegalArgumentException();
 		} else if (a.getShape().getDimensions() != b.getShape().getDimensions()) {

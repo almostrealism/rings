@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements 
 	public double getDuration() {
 		return getCount() / (double) getSampleRate();
 	}
+
+	@Override
+	public int getChannelCount() { return 1; }
 
 	@Override
 	public int getSampleRate() {

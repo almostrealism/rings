@@ -44,7 +44,12 @@ public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, Code
 	}
 
 	@Override
-	public double getSampleRate() {
+	public int getAudioSampleRate() {
+		return (int) autoencoder.getSampleRate();
+	}
+
+	@Override
+	public double getFeatureSampleRate() {
 		return autoencoder.getLatentSampleRate();
 	}
 }

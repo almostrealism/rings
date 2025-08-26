@@ -27,7 +27,12 @@ public class DefaultWaveDataFeatureProvider implements WaveDataFeatureProvider {
 	}
 
 	@Override
-	public double getSampleRate() {
+	public int getAudioSampleRate() {
+		return OutputLine.sampleRate;
+	}
+
+	@Override
+	public double getFeatureSampleRate() {
 		double inputSampleRate = OutputLine.sampleRate;
 		FeatureSettings settings = WaveData.getDefaultFeatureSettings();
 		return inputSampleRate / settings.getFrameExtractionSettings().getWindowShift();
