@@ -18,6 +18,7 @@ package org.almostrealism.audio.data;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.Console;
@@ -25,7 +26,7 @@ import org.almostrealism.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WaveDetails {
+public class WaveDetails implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
 
 	private static Map<Integer, Evaluable<PackedCollection<?>>> differenceCalc = new HashMap<>();
@@ -145,6 +146,10 @@ public class WaveDetails {
 
 	public PackedCollection<?> getFreqData() {
 		return freqData;
+	}
+
+	public PackedCollection<?> getFreqData(int channel) {
+		return getFreqData().get(channel, shape(getFreqFrameCount(), getFreqBinCount(), 1));
 	}
 
 	public void setFreqData(PackedCollection<?> freqData) {

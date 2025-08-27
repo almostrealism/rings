@@ -100,17 +100,28 @@ public class WaveDetailsFactory implements CodeFeatures {
 		existing.setData(data.getData());
 
 		if (existing.getFreqFrameCount() <= 1) {
-			// TODO  FFT should be performed on all channels, not just the first
-			PackedCollection<?> fft = processFft(data.fft(0, true));
-			if (fft.getShape().length(0) < 1) {
-				throw new UnsupportedOperationException();
+			PackedCollection<?> fft = null;
+
+			for (int c = 0; c < data.getChannelCount(); c++) {
+				PackedCollection<?> df = data.fft(c, true);
+
+				int count = df.getShape().length(0) / scaleTime;
+				if (df.getShape().length(0) % scaleTime != 0) count++;
+
+				if (fft == null) {
+					fft = new PackedCollection<>(data.getChannelCount(), count, freqBins, 1);
+				}
+
+				processFft(df, fft.range(shape(count, freqBins, 1), c * freqBins));
 			}
 
-			existing.setFreqSampleRate(fftSampleRate / scaleTime);
-			existing.setFreqChannelCount(1);
-			existing.setFreqBinCount(freqBins);
-			existing.setFreqFrameCount(fft.getShape().length(0));
-			existing.setFreqData(fft);
+			if (fft != null) {
+				existing.setFreqSampleRate(fftSampleRate / scaleTime);
+				existing.setFreqChannelCount(fft.getShape().length(0));
+				existing.setFreqFrameCount(fft.getShape().length(1));
+				existing.setFreqBinCount(freqBins);
+				existing.setFreqData(fft);
+			}
 		}
 
 		if (featureProvider != null) {
@@ -139,16 +150,13 @@ public class WaveDetailsFactory implements CodeFeatures {
 				.evaluate().doubleStream().average().orElse(0.0);
 	}
 
-	protected PackedCollection<?> processFft(PackedCollection<?> fft) {
+	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {
 		if (fft.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();
 		}
 
-		int count = fft.getShape().length(0) / scaleTime;
-		if (fft.getShape().length(0) % scaleTime != 0) count++;
-
+		int count = output.getShape().length(0);
 		TraversalPolicy inShape = shape(scaleTime, WaveData.FFT_POOL_BINS);
-		PackedCollection<?> output = new PackedCollection<>(count, freqBins, 1);
 
 		for (int i = 0; i < count; i++) {
 			PackedCollection in;
