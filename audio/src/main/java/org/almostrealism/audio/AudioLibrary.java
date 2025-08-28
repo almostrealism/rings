@@ -23,6 +23,7 @@ import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.data.WaveDetailsFactory;
 import org.almostrealism.audio.data.WaveDetailsJob;
+import org.almostrealism.concurrent.SuspendableThreadPoolExecutor;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
@@ -35,12 +36,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -66,7 +64,7 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	private DoubleConsumer progressListener;
 	private Consumer<Exception> errorListener;
-	private ExecutorService executor;
+	private SuspendableThreadPoolExecutor executor;
 
 	public AudioLibrary(File root, int sampleRate) {
 		this(new FileWaveDataProviderNode(root), sampleRate);
@@ -86,8 +84,17 @@ public class AudioLibrary implements ConsoleFeatures {
 	public void start() {
 		if (executor != null) return;
 
-		executor = new ThreadPoolExecutor(1, 1,
-				60, TimeUnit.MINUTES, (BlockingQueue) queue);
+		executor = new SuspendableThreadPoolExecutor(1, 1,
+				60, TimeUnit.MINUTES, queue);
+		executor.setPriority(job -> ((WaveDetailsJob) job).getPriority());
+	}
+
+	public void pause() {
+		executor.setPriorityThreshold(HIGH_PRIORITY);
+	}
+
+	public void resume() {
+		executor.resumeAllTasks();
 	}
 
 	public FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> getRoot() {
@@ -273,7 +280,7 @@ public class AudioLibrary implements ConsoleFeatures {
 		executor.shutdown();
 
 		try {
-			if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+			if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
 				executor.shutdownNow();
 			}
 		} catch (InterruptedException e) {
