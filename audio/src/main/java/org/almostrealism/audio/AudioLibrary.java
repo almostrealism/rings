@@ -90,7 +90,9 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public void pause() {
-		executor.setPriorityThreshold(HIGH_PRIORITY);
+		if (executor != null) {
+			executor.setPriorityThreshold(HIGH_PRIORITY);
+		}
 	}
 
 	public void resume() {
@@ -276,16 +278,21 @@ public class AudioLibrary implements ConsoleFeatures {
 		return job;
 	}
 
-	public void stop() {
-		executor.shutdown();
+	public void stop() { stop(5); }
 
+	public void stop(int timeout) {
 		try {
-			if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
+			queue.clear();
+			executor.shutdown();
+
+			if (!executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
 				executor.shutdownNow();
 			}
 		} catch (InterruptedException e) {
-			executor.shutdownNow();
+			warn("Interrupted waiting for executor to shut down", e);
 			Thread.currentThread().interrupt();
+		} finally {
+			executor = null;
 		}
 	}
 
