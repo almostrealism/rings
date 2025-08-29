@@ -204,7 +204,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		// Verbosity level 4
 		WaveOutput.enableVerbose = verbosity > 3;
 		NativeComputeContext.enableVerbose = verbosity > 3;
-		HardwareOperator.enableVerboseLog = verbosity > 3;
+
+		// Verbosity level 5
+		HardwareOperator.enableVerboseLog = verbosity > 4;
 
 		OperationProfileNode profile = enableProfile ? new OperationProfileNode("AudioSceneOptimizer") : null;
 		Hardware.getLocalHardware().assignProfile(profile);
