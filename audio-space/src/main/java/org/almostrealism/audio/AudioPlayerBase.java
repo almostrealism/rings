@@ -25,19 +25,16 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 	public static boolean enableStemsExport = false;
 
 	private String file, uri;
-	private List<String> channelNames;
 	private List<String> stems;
 
-	protected AudioPlayerBase(List<String> channelNames) {
-		this(null, null, channelNames, null);
+	protected AudioPlayerBase() {
+		this(null, null, null);
 	}
 
 	public AudioPlayerBase(String file, String uri,
-						   List<String> channelNames,
 						   List<String> stems) {
 		this.file = file;
 		this.uri = uri;
-		this.channelNames = channelNames;
 		this.stems = stems;
 	}
 
@@ -47,10 +44,6 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 
 	public void setUri(String uri) {
 		this.uri = uri;
-	}
-
-	public List<String> getChannelNames() {
-		return channelNames;
 	}
 
 	public void setStems(List<String> stems) {

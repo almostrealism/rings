@@ -26,9 +26,7 @@ import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AudioStreamManager implements ConsoleFeatures {
@@ -61,19 +59,12 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
 										 OutputLine inputRecord) {
-		return addPlayer(channel, playerCount, Collections.emptyList(), inputRecord);
-	}
-
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
-										 List<String> channelNames,
-										 OutputLine inputRecord) {
 		DelegatedAudioLine line = new DelegatedAudioLine();
 		server.addStream(channel, new AudioLineDelegationHandler(line));
-		return addPlayer(channel, playerCount, channelNames, line, inputRecord);
+		return addPlayer(channel, playerCount, line, inputRecord);
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
-										 List<String> channelNames,
 										 AudioLine out, OutputLine inputRecord) {
 		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
 
@@ -82,21 +73,17 @@ public class AudioStreamManager implements ConsoleFeatures {
 		maxFrames = maxFrames / out.getBufferSize();
 		maxFrames *= out.getBufferSize();
 
-		return addPlayer(channel, playerCount,
-						channelNames, maxFrames,
-						out, inputRecord);
+		return addPlayer(channel, playerCount, maxFrames, out, inputRecord);
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
-										 List<String> channelNames,
 										 int maxFrames,
 										 AudioLine out, OutputLine inputRecord) {
 		if (maxFrames % out.getBufferSize() != 0) {
 			throw new IllegalArgumentException();
 		}
 
-		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, channelNames,
-				out.getSampleRate(), maxFrames);
+		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, out.getSampleRate(), maxFrames);
 		addPlayerScheduler(channel, player, out, inputRecord);
 		return player;
 	}

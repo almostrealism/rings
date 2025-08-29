@@ -65,12 +65,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private boolean stopped;
 
 	public BufferedAudioPlayer(int playerCount, int sampleRate, int bufferFrames) {
-		this(playerCount, null, sampleRate, bufferFrames);
-	}
-
-	public BufferedAudioPlayer(int playerCount, List<String> channelNames,
-							   int sampleRate, int bufferFrames) {
-		super(channelNames);
+		super();
 		this.bufferFrames = bufferFrames;
 		this.sampleRate = sampleRate;
 
