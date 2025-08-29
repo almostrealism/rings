@@ -70,8 +70,8 @@ public class AudioLibraryPersistence {
 	}
 
 	public static void saveLibrary(AudioLibrary library, String dataPrefix) {
-		try {
-			saveLibrary(library, new LibraryDestination(dataPrefix).out());
+		try (LibraryDestination.Writer out = new LibraryDestination(dataPrefix).out()) {
+			saveLibrary(library, out);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

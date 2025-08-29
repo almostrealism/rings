@@ -76,7 +76,8 @@ public class AudioLibrary implements ConsoleFeatures {
 		this.identifiers = new HashMap<>();
 		this.info = new HashMap<>();
 		this.factory = new WaveDetailsFactory(sampleRate);
-		this.queue = new PriorityBlockingQueue<>(100, Comparator.comparing(WaveDetailsJob::getPriority).reversed());
+		this.queue = new PriorityBlockingQueue<>(100,
+				Comparator.comparing(WaveDetailsJob::getPriority).reversed());
 
 		start();
 	}
