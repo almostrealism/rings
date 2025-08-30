@@ -43,7 +43,7 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 			return new WaveData(getChannelData(0, 1.0, sampleRate), sampleRate);
 		}
 
-		int frames = getCount() * sampleRate / getSampleRate();
+		int frames = Math.toIntExact(getCountLong() * sampleRate / getSampleRate());
 		WaveData result = new WaveData(getChannelCount(), frames, sampleRate);
 
 		for (int i = 0; i < getChannelCount(); i++) {
