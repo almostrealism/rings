@@ -40,7 +40,9 @@ public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, Code
 			transpose = cv(shape(bins, frames), 0).transpose().get();
 		}
 
-		return transpose.evaluate(features.reshape(bins, frames));
+		return transpose
+				.into(new PackedCollection(shape(frames, bins)).each())
+				.evaluate(features.reshape(bins, frames));
 	}
 
 	@Override
