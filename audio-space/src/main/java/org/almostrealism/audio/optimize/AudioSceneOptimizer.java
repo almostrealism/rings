@@ -169,6 +169,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	}
 
 	public static void setFeatureLevel(int featureLevel) {
+		PatternElementFactory.enableVolumeEnvelope = true;
+		PatternElementFactory.enableFilterEnvelope = true;
+
 		MixdownManager.enableReverb = featureLevel > 4;
 		MixdownManager.enableMainFilterUp = featureLevel > 2;
 		MixdownManager.enableAutomationManager = featureLevel > 2;
@@ -180,6 +183,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = featureLevel < 0;
 		EfxManager.enableEfx = featureLevel > 1;
+
+		StableDurationHealthComputation.enableTimeout = false;
+		SilenceDurationHealthComputation.enableSilenceCheck = false;
+		enableStemOutput = true;
 	}
 
 	public static OperationProfileNode setVerbosity(int verbosity, boolean enableProfile) {
@@ -222,22 +229,15 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
+		// Configure logging and profiling
 		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
-
-		StableDurationHealthComputation.enableTimeout = false;
-		PatternElementFactory.enableVolumeEnvelope = true;
-		PatternElementFactory.enableFilterEnvelope = true;
-		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		enableIsolatedContext = false;
-		enableStemOutput = true;
-		setFeatureLevel(4);
-
-		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 20;
 		OperationProfileNode profile = setVerbosity(verbosity, enableProfile);
 
-		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
+		// Setup features
+		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
+		setFeatureLevel(5);
 
+		// Create computations before applying Heap
 		AudioProcessingUtils.init();
 		WaveData.init();
 
@@ -301,10 +301,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		if (singleChannel >= 0) {
 			PatternSystemManager.enableWarnings = false;
-			// PatternLayerManager.enableLogging = true;
-			// DefaultChannelSectionFactory.enableFilter = false;
-
-			// settings.setWetChannels(Collections.emptyList());
 
 			settings.getPatternSystem().setPatterns(
 					settings

@@ -16,6 +16,8 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.code.ComputationBase;
+import io.almostrealism.compute.ComputeRequirement;
 import io.almostrealism.kernel.KernelPreferences;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.CellFeatures;
@@ -24,6 +26,8 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.io.TimingMetric;
+
+import java.util.List;
 
 public class AudioSumProvider implements CellFeatures {
 	public static TimingMetric timing = CellFeatures.console.timing("audioSumProvider");
@@ -44,6 +48,8 @@ public class AudioSumProvider implements CellFeatures {
 		this.parallel = parallel;
 
 		CollectionProducer sum = add(v(shape(1), 0), v(shape(1), 1));
+		((ComputationBase) sum).setComputeRequirements(List.of(ComputeRequirement.CPU));
+
 		CollectionProducer scaleVolume = multiply(v(shape(1), 0), v(shape(1), 1));
 
 		if (parallel) {
