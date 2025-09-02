@@ -155,7 +155,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 				sum = multiply(sum, c(gain / count));
 
 				if (WaveOutput.enableVerbose) System.out.println("GranularSynthesizer: Summing grains...");
-				sum.get().into(providers.get(i).get().getChannelData(0)).evaluate(results.stream().toArray(MemoryBank[]::new));
+				sum.get().into(providers.get(i).get().getChannelData(0)).evaluate(results.stream().toArray(Object[]::new));
 				if (WaveOutput.enableVerbose) System.out.println("GranularSynthesizer: Done");
 			}
 		});
