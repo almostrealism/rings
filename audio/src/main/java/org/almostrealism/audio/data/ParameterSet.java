@@ -16,6 +16,11 @@
 
 package org.almostrealism.audio.data;
 
+import org.almostrealism.collect.CollectionFeatures;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.Gene;
+
 public class ParameterSet {
 	private double x, y, z;
 
@@ -53,5 +58,16 @@ public class ParameterSet {
 
 	public static ParameterSet random() {
 		return new ParameterSet(Math.random(), Math.random(), Math.random());
+	}
+
+	public static ParameterSet fromGene(Gene<PackedCollection<?>> gene) {
+		CollectionProducer<PackedCollection<?>> one =
+				CollectionFeatures.getInstance().c(1.0);
+
+		ParameterSet params = new ParameterSet();
+		params.setX(gene.getResultant(0, null).evaluate().toDouble());
+		params.setY(gene.getResultant(1, null).evaluate().toDouble());
+		params.setZ(gene.getResultant(2, null).evaluate().toDouble());
+		return params;
 	}
 }

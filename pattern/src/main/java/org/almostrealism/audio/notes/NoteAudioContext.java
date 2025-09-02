@@ -29,6 +29,7 @@ import java.util.function.DoubleUnaryOperator;
 
 public class NoteAudioContext implements ConsoleFeatures {
 	private ChannelInfo.Voicing voicing;
+	private ChannelInfo.StereoChannel audioChannel;
 	private DoubleFunction<PatternNoteAudio> audioSelection;
 	private DoubleUnaryOperator nextNotePosition;
 
@@ -37,14 +38,16 @@ public class NoteAudioContext implements ConsoleFeatures {
 	}
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
+							ChannelInfo.StereoChannel audioChannel,
 							List<PatternNoteAudio> audioChoices,
 							DoubleUnaryOperator nextNotePosition) {
-		this(voicing,
+		this(voicing, audioChannel,
 				c -> audioChoices.isEmpty() ? null : audioChoices.get((int) (c * audioChoices.size())),
 				nextNotePosition);
 	}
 
 	public NoteAudioContext(ChannelInfo.Voicing voicing,
+							ChannelInfo.StereoChannel audioChannel,
 							DoubleFunction<PatternNoteAudio> audioSelection,
 							DoubleUnaryOperator nextNotePosition) {
 		if (audioSelection == null) {
@@ -52,16 +55,19 @@ public class NoteAudioContext implements ConsoleFeatures {
 		}
 
 		this.voicing = voicing;
+		this.audioChannel = audioChannel;
 		this.audioSelection = audioSelection;
 		this.nextNotePosition = nextNotePosition;
 	}
 
-	public ChannelInfo.Voicing getVoicing() {
-		return voicing;
-	}
-
+	public ChannelInfo.Voicing getVoicing() { return voicing; }
 	public void setVoicing(ChannelInfo.Voicing voicing) {
 		this.voicing = voicing;
+	}
+
+	public ChannelInfo.StereoChannel getAudioChannel() { return audioChannel; }
+	public void setAudioChannel(ChannelInfo.StereoChannel audioChannel) {
+		this.audioChannel = audioChannel;
 	}
 
 	public DoubleFunction<PatternNoteAudio> getAudioSelection() {
@@ -90,7 +96,7 @@ public class NoteAudioContext implements ConsoleFeatures {
 
 	public ElementVoicingDetails createVoicingDetails(boolean melodic, KeyPosition<?> target, double position) {
 		return new ElementVoicingDetails(
-				voicing, melodic, target,
+				voicing, audioChannel, melodic, target,
 				position, nextNotePosition(position));
 	}
 

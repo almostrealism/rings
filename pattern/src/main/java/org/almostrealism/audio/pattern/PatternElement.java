@@ -183,14 +183,18 @@ public class PatternElement implements CodeFeatures {
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;
 
-		double originalDuration = getNote(details.getVoicing()).getDuration(details.getTarget(), audioSelection);
+		double originalDuration = getNote(details.getVoicing())
+				.getDuration(details.getTarget(), audioSelection);
 
 		if (getDurationStrategy() == NoteDurationStrategy.NONE) {
-			return getNote(details.getVoicing()).getAudio(k, originalDuration, automationLevel, audioSelection);
-		} else {
 			return getNote(details.getVoicing()).getAudio(k,
-					getNoteDuration(timeForDuration, details.getPosition(),
-						details.getNextNotePosition(), originalDuration),
+					details.getStereoChannel().getIndex(),
+					originalDuration, automationLevel, audioSelection);
+		} else {
+			double duration = getNoteDuration(timeForDuration, details.getPosition(),
+					details.getNextNotePosition(), originalDuration);
+			return getNote(details.getVoicing()).getAudio(k,
+					details.getStereoChannel().getIndex(), duration,
 					automationLevel, audioSelection);
 		}
 	}

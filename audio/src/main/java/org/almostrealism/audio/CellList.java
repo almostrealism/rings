@@ -19,7 +19,6 @@ package org.almostrealism.audio;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.line.AudioLineOperation;
 import org.almostrealism.audio.line.BufferedAudio;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
@@ -136,9 +135,12 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		return f(this, filter);
 	}
 
-	public CellList d(IntFunction<Producer<Scalar>> delay) { return d(this, delay); }
+	public CellList d(IntFunction<Producer<PackedCollection<?>>> delay) { return d(this, delay); }
 
-	public CellList d(IntFunction<Producer<Scalar>> delay, IntFunction<Producer<Scalar>> scale) { return d(this, delay, scale); }
+	public CellList d(IntFunction<Producer<PackedCollection<?>>> delay,
+					  IntFunction<Producer<PackedCollection<?>>> scale) {
+		return d(this, delay, scale);
+	}
 
 	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter) {
 		return m(this, adapter);
@@ -164,7 +166,9 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		return m(this, adapter, destinations);
 	}
 
-	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter, List<Cell<PackedCollection<?>>> destinations, IntFunction<Gene<PackedCollection<?>>> transmission) {
+	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter,
+					  List<Cell<PackedCollection<?>>> destinations,
+					  IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return m(this, adapter, destinations, transmission);
 	}
 
@@ -172,11 +176,15 @@ public class CellList extends ArrayList<Cell<PackedCollection<?>>> implements Ce
 		return mself(this, adapter, transmission);
 	}
 
-	public CellList mself(IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Gene<PackedCollection<?>>> transmission, IntFunction<Cell<PackedCollection<?>>> passthrough) {
+	public CellList mself(IntFunction<Cell<PackedCollection<?>>> adapter,
+						  IntFunction<Gene<PackedCollection<?>>> transmission,
+						  IntFunction<Cell<PackedCollection<?>>> passthrough) {
 		return mself(this, adapter, transmission, passthrough);
 	}
 
-	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter, IntFunction<Cell<PackedCollection<?>>> destinations, IntFunction<Gene<PackedCollection<?>>> transmission) {
+	public CellList m(IntFunction<Cell<PackedCollection<?>>> adapter,
+					  IntFunction<Cell<PackedCollection<?>>> destinations,
+					  IntFunction<Gene<PackedCollection<?>>> transmission) {
 		return m(this, adapter, destinations, transmission);
 	}
 

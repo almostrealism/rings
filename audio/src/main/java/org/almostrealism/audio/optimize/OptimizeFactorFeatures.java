@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,40 +28,42 @@ import org.almostrealism.graph.TimeCell;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
 import org.almostrealism.heredity.ScaleFactor;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 	int ADJUSTMENT_CHROMOSOME_SIZE = 6;
 	int POLYCYCLIC_CHROMOSOME_SIZE = 6;
 
-	default SimpleChromosome initializeAdjustment(int channels, SimpleChromosome chromosome) {
-		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = chromosome.addGene();
+	default List<ProjectedGene> initializeAdjustment(int channels, ProjectedChromosome chromosome) {
+		return IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(ADJUSTMENT_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(2, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setTransform(3, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
 			g.setTransform(4, p -> p);
 			g.setTransform(5, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
-		});
-		return chromosome;
+			return g;
+		}).collect(Collectors.toList());
 	}
 
-	default SimpleChromosome initializePolycyclic(int channels, SimpleChromosome chromosome) {
-		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = chromosome.addGene();
+	default List<ProjectedGene> initializePolycyclic(int channels, ProjectedChromosome chromosome) {
+		return IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(POLYCYCLIC_CHROMOSOME_SIZE);
 			g.setTransform(0, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(1, p -> oneToInfinity(p, 0.5).multiply(c(10.0)));
 			g.setTransform(2, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(3, p -> p);
 			g.setTransform(4, p -> oneToInfinity(p, 3.0).multiply(c(60.0)));
 			g.setTransform(5, p -> oneToInfinity(p, 1.0).multiply(c(10.0)));
-		});
-		return chromosome;
+			return g;
+		}).collect(Collectors.toList());
 	}
 
 	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate,
@@ -266,11 +268,6 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 																Producer<PackedCollection<?>> polySpeedUpWaveLength,
 																Producer<PackedCollection<?>> polySpeedUpExp,
 																Producer<PackedCollection<?>> time) {
-
-//		return c(1.0).relativeAdd(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
-//					.relativeMultiply(c(1.0).relativeSubtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
-//					.relativeMultiply(c(1.0).relativeAdd(pow(polySpeedUpWaveLength, c(-1.0))
-//							.relativeMultiply(time).pow(polySpeedUpExp)));
 		return c(1.0).add(relativeSinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
 				.multiply(c(1.0).subtract(relativeSinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
@@ -284,7 +281,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 															  Producer<PackedCollection<?>> e,
 															  Producer<PackedCollection<?>> time,
 															  Producer<PackedCollection<?>> duration) {
-		PackedCollection<Scalar> directionChoices = Scalar.scalarBank(2);
+		PackedCollection<Scalar> directionChoices = new PackedCollection<>(shape(2, 1).traverse(1));
 		directionChoices.set(0, -1);
 		directionChoices.set(1, 1);
 
@@ -297,23 +294,18 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		CollectionProducer downOrigin = c(maxValue).subtract(multiply(scale, p));
 		CollectionProducer upOrigin = c(minValue).add(multiply(scale, p));
 
-		CollectionProducer originChoices = concat(downOrigin, c(1.0), upOrigin, c(1.0)).reshape(shape(2, 2));
+		CollectionProducer originChoices = concat(shape(2), downOrigin, upOrigin)
+				.reshape(shape(2, 1).traverse(1));
 
-		CollectionProducerComputation direction = c(scalarChoice(2, toScalar(d), p(directionChoices)), 0);
+		CollectionProducerComputation direction = choice(2, shape(1), d, p(directionChoices));
 
 		CollectionProducer magnitude = multiply(scale, m);
-		CollectionProducer start = c(scalarChoice(2, toScalar(d), originChoices), 0);
+		CollectionProducer start = choice(2, shape(1), d, originChoices);
 		CollectionProducer end = multiply(direction, magnitude).add(start);
 
 		CollectionProducer pos = pow(divide(time, duration), e);
 
 		return add(start, multiply(end.subtract(start), pos));
-	}
-
-	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> params,
-																	   Producer<PackedCollection<?>> speedUpOffset,
-																	   Producer<PackedCollection<?>> time) {
-		return durationAdjustment(c(params, 0), c(params, 1), speedUpOffset, time);
 	}
 
 	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,

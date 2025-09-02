@@ -17,7 +17,6 @@
 package org.almostrealism.audio.persistence;
 
 import org.almostrealism.audio.AudioLibrary;
-import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.io.ConsoleFeatures;
@@ -30,7 +29,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ public class LibraryDestination implements ConsoleFeatures {
 	private String prefix;
 	private int index;
 	private boolean append;
+	private List<String> temporaryFiles;
 
 	public LibraryDestination(String prefix) {
 		this(prefix, false);
@@ -58,10 +60,19 @@ public class LibraryDestination implements ConsoleFeatures {
 		}
 
 		this.append = append;
+		this.temporaryFiles = new ArrayList<>();
 	}
 
 	protected String nextFile() {
 		return prefix + "_" + index++ + ".bin";
+	}
+
+	protected String nextTemporaryFile() {
+		String tempFile = getTemporaryPath().resolve("lib_" +
+				System.currentTimeMillis() +
+				"_" + temporaryFiles.size() + ".tmp").toString();
+		temporaryFiles.add(tempFile);
+		return tempFile;
 	}
 
 	protected Iterator<String> files() {
@@ -95,19 +106,53 @@ public class LibraryDestination implements ConsoleFeatures {
 		};
 	}
 
-	public Supplier<OutputStream> out() {
-		return () -> {
-			try {
-				File f = new File(nextFile());
-				while (append && f.exists()) {
-					f = new File(nextFile());
-				}
+	public Writer out() { return new Writer(); }
 
-				return new FileOutputStream(f);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+	/**
+	 * Flushes all temporary files to their final destinations by moving them
+	 * from temporary locations to the actual expected file paths.
+	 * 
+	 * @throws IOException if moving any file fails
+	 */
+	public void flush() throws IOException {
+		int finalIndex = 0;
+		
+		for (String tempFile : temporaryFiles) {
+			File temp = new File(tempFile);
+			if (!temp.exists()) {
+				continue;
 			}
-		};
+			
+			String finalFile = prefix + "_" + finalIndex++ + ".bin";
+			File finalDest = new File(finalFile);
+			
+			// Ensure parent directories exist
+			if (finalDest.getParentFile() != null) {
+				finalDest.getParentFile().mkdirs();
+			}
+			
+			// Move temporary file to final destination
+			Files.move(temp.toPath(), finalDest.toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+		}
+		
+		// Update the index to reflect the actual number of files created
+		index = finalIndex;
+		
+		// Clear the temporary files list since they've been moved
+		temporaryFiles.clear();
+	}
+
+	/**
+	 * Discards all temporary files without moving them to final destinations.
+	 * This can be used to cancel an operation before flushing.
+	 */
+	public void discardTemporary() {
+		for (String tempFile : temporaryFiles) {
+			new File(tempFile).delete();
+		}
+
+		temporaryFiles.clear();
 	}
 
 	public void load(AudioLibrary library) {
@@ -119,8 +164,8 @@ public class LibraryDestination implements ConsoleFeatures {
 	}
 
 	public void save(AudioLibrary library) {
-		try {
-			AudioLibraryPersistence.saveLibrary(library, out());
+		try (Writer writer = out()) {
+			AudioLibraryPersistence.saveLibrary(library, writer);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -145,8 +190,8 @@ public class LibraryDestination implements ConsoleFeatures {
 	}
 
 	public void save(Audio.AudioLibraryData data) {
-		try {
-			data.writeTo(out().get());
+		try (Writer writer = out()) {
+			data.writeTo(writer.get());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -174,22 +219,13 @@ public class LibraryDestination implements ConsoleFeatures {
 	}
 
 	public File getTemporaryWave(String key, WaveData data) {
-		try {
-			File f = getTemporaryFile(key, "wav");
-
-			if (!f.exists()) {
-				WavFile.write(data, f);
-			}
-
-			return f;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		File f = getTemporaryFile(key, "wav");
+		return (f.exists() || data.save(f)) ? f : null;
 	}
 
 	public void delete() {
 		files().forEachRemaining(f -> new File(f).delete());
+		discardTemporary(); // Also clean up any pending temporary files
 		index = 0;
 	}
 
@@ -225,5 +261,30 @@ public class LibraryDestination implements ConsoleFeatures {
 	public static Path getDefaultLibraryRoot() {
 		Path p = SystemUtils.getLocalDestination().resolve(SAMPLES);
 		return SystemUtils.ensureDirectoryExists(p);
+	}
+
+	public class Writer implements Supplier<OutputStream>, AutoCloseable {
+		@Override
+		public OutputStream get() {
+			try {
+				if (append) {
+					// In append mode, write directly to final destination
+					File f = new File(nextFile());
+					while (append && f.exists()) {
+						f = new File(nextFile());
+					}
+					return new FileOutputStream(f);
+				} else {
+					// In non-append mode, write to temporary files first
+					File f = new File(nextTemporaryFile());
+					return new FileOutputStream(f);
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public void close() throws IOException { flush(); }
 	}
 }

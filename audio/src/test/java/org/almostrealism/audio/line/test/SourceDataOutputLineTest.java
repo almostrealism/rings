@@ -15,11 +15,11 @@ import java.io.IOException;
 
 public class SourceDataOutputLineTest {
 	@Test
-	public void playWaveData() throws IOException, InterruptedException, UnsupportedAudioFileException {
+	public void playWaveData() throws IOException, InterruptedException {
 		File f = new File("Library/MD_SNARE_09.wav");
 
 		WaveData d = WaveData.load(f);
-		double data[] = d.getCollection().toArray(0, d.getCollection().getMemLength());
+		double data[] = d.getChannelData(0).toArray();
 
 		OutputLine line = LineUtilities.getLine();
 		line.write(new double[][] { data });

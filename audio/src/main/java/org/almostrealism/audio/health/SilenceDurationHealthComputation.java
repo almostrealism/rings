@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 package org.almostrealism.audio.health;
 
 import org.almostrealism.audio.AudioMeter;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.line.OutputLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableVerbose = false;
@@ -34,12 +36,12 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	private List<Runnable> silenceListeners;
 	
 	public SilenceDurationHealthComputation(int channels) {
-		this(channels, 2);
+		this(channels, false, 2);
 	}
 	
 
-	public SilenceDurationHealthComputation(int channels, int maxSilenceSec) {
-		super(channels);
+	public SilenceDurationHealthComputation(int channels, boolean stereo, int maxSilenceSec) {
+		super(channels, stereo);
 		setMaxSilence(maxSilenceSec);
 		silenceListeners = new ArrayList<>();
 	}
@@ -53,8 +55,8 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }
 
 	@Override
-	protected void configureMeasures(List<AudioMeter> measures) {
-		measures.forEach(m -> m.setSilenceValue(silenceValue));
+	protected void configureMeasures(Map<ChannelInfo, AudioMeter> measures) {
+		measures.values().forEach(m -> m.setSilenceValue(silenceValue));
 	}
 
 	public boolean checkForSilence(AudioMeter meter) {
@@ -78,7 +80,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 		l: for (l = 0; l < max; l++) {
 			// push.run();
 
-			for (AudioMeter m : getMeasures()) {
+			for (AudioMeter m : getMeasures().values()) {
 				// If silence occurs for too long, report the health score
 				if (checkForSilence(m)) {
 					return new AudioHealthScore(l, (double) l / standardDurationFrames);

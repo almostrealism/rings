@@ -35,7 +35,7 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.RAM;
+import org.almostrealism.hardware.mem.RAM;
 import org.almostrealism.io.Console;
 import org.almostrealism.util.KeyUtils;
 
@@ -84,7 +84,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	private KeyPosition<?> root;
 	private Double bpm;
 
-	private Map<KeyPosition, Producer<PackedCollection<?>>> notes;
+	private Map<NoteAudioKey, Producer<PackedCollection<?>>> notes;
 
 	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root) {
 		this(provider, root, null);
@@ -138,50 +138,37 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		return provider.getDuration(r);
 	}
 
-	public TraversalPolicy getShape(KeyPosition<?> target) {
-		double r = tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz();
+	public TraversalPolicy getShape(NoteAudioKey key) {
+		double r = tuning.getTone(key.getPosition()).asHertz() / tuning.getTone(getRoot()).asHertz();
 		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target) {
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel) {
 		if (target == null) {
 			target = getRoot();
 		}
 
-		if (!notes.containsKey(target)) {
-			notes.put(target, c(getShape(target), audioCache.get(computeAudio(target).get())));
+		NoteAudioKey key = new NoteAudioKey(target, channel);
+
+		if (!notes.containsKey(key)) {
+			notes.put(key, c(getShape(key), audioCache.get(computeAudio(key).get())));
 		}
 
-		return notes.get(target);
+		return notes.get(key);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target) {
+	protected Producer<PackedCollection<?>> computeAudio(NoteAudioKey key) {
 		return () -> args -> {
-			double r = target == null ? 1.0 :
-					(tuning.getTone(target).asHertz() / tuning.getTone(getRoot()).asHertz());
-			return provider.get(r).getCollection();
+			double r = key.getPosition() == null ? 1.0 :
+					(tuning.getTone(key.getPosition()).asHertz() / tuning.getTone(getRoot()).asHertz());
+			return provider.getChannelData(key.getAudioChannel(), r, OutputLine.sampleRate);
 		};
 	}
 
 	@JsonIgnore
-	public PackedCollection<?> getAudio() {
-		if (provider != null) {
-			WaveData data = provider.get();
-
-			if (data == null) {
-				throw new UnsupportedOperationException();
-			}
-
-			if (data.getSampleRate() == OutputLine.sampleRate) {
-				return provider.get().getCollection();
-			} else {
-				warn("Sample rate of " + data.getSampleRate() +
-						" does not match required sample rate of " + OutputLine.sampleRate);
-			}
-		}
-
-		return null;
+	public WaveData getWaveData() {
+		return provider == null ? null : provider.get();
 	}
 
 	@Override
@@ -189,7 +176,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		Boolean valid;
 
 		try {
-			valid = provider.getSampleRate() == OutputLine.sampleRate;
+			valid = provider.getSampleRate() > 0;
 		} catch (Exception e) {
 			if (provider instanceof FileWaveDataProvider) {
 				warn(e.getMessage() + "(" + ((FileWaveDataProvider) provider).getResourcePath() + ")");

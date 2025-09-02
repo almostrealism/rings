@@ -9,7 +9,7 @@ import java.io.IOException;
 public class ResampleTest implements CellFeatures {
 	@Test
 	public void resample() throws IOException {
-		w("src/test/resources/161858-SFX-Whoosh-Deep_Phase.wav")
+		w(0, "src/test/resources/161858-SFX-Whoosh-Deep_Phase.wav")
 				.om(i -> new File("results/resample-test.wav"))
 				.sec(3).get().run();
 	}

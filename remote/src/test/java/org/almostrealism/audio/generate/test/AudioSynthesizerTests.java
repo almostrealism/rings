@@ -64,7 +64,7 @@ public class AudioSynthesizerTests implements TestFeatures {
 				new BufferDetails(OutputLine.sampleRate, 10.0), null);
 		synth.setTuning(new DefaultKeyboardTuning());
 
-		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3).evaluate();
+		PackedCollection<?> audio = synth.getAudio(WesternChromatic.G3, 0).evaluate();
 		new WaveData(audio, synth.getSampleRate(WesternChromatic.G3))
 				.save(new File("results/test-synth.wav"));
 	}
@@ -104,7 +104,7 @@ public class AudioSynthesizerTests implements TestFeatures {
 
 		PatternNoteAudio synth = source.getPatternNotes().get(0);
 		((KeyboardTuned) synth).setTuning(tuning);
-		PackedCollection<?> audio = synth.getAudio(target).evaluate();
+		PackedCollection<?> audio = synth.getAudio(target, 0).evaluate();
 		new WaveData(audio, synth.getSampleRate(target))
 				.save(new File("results/" + name + ".wav"));
 	}

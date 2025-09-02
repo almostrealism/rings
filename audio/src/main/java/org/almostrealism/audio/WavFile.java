@@ -8,14 +8,8 @@
 
 package org.almostrealism.audio;
 
-import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.WaveCell;
-import org.almostrealism.graph.temporal.WaveCellData;
-import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.function.Function;
 
 public class WavFile implements AutoCloseable {
 
@@ -185,14 +178,8 @@ public class WavFile implements AutoCloseable {
 	}
 
 	public static PackedCollection<?> channel(double[][] data, int chan, int padFrames) {
-		// System.out.println("WavFile: Allocating " + data[chan].length / OutputLine.sampleRate + " seconds");
-
 		PackedCollection<?> waveform = new PackedCollection(data[chan].length + padFrames);
-
-		for (int i = 0; i < data[chan].length; i++) {
-			waveform.setMem(i, data[chan][i]);
-		}
-
+		waveform.setMem(0, data[chan]);
 		return waveform.traverse(1);
 	}
 
@@ -685,38 +672,5 @@ public class WavFile implements AutoCloseable {
 		out.printf("IO State: %s\n", readerState);
 		out.printf("Sample Rate: %d, Block Align: %d\n", sampleRate, blockAlign);
 		out.printf("Valid Bits: %d, Bytes per sample: %d\n", validBits, bytesPerSample);
-	}
-
-
-	public static Function<WaveCellData, WaveCell> load(File f, double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) throws IOException {
-		WaveData waveform = WaveData.load(f);
-		return data -> new WaveCell(data, waveform.getCollection(), waveform.getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(waveform.getCollection().getMemLength()));
-	}
-
-	public static void write(WaveData data, File f) throws IOException {
-		if (data.getCollection().getMemLength() <= 0) {
-			Console.root.features(WavFile.class).log("No frames to write");
-			return;
-		}
-
-		long start = System.currentTimeMillis();
-
-		try (WavFile wav = WavFile.newWavFile(f, 2, data.getCollection().getMemLength(), 24, data.getSampleRate())) {
-			double frames[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
-
-			for (int i = 0; i < frames.length; i++) {
-				// double value = data.valueAt(i).getValue();
-				double value = frames[i];
-
-				try {
-					wav.writeFrames(new double[][]{{value}, {value}}, 1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

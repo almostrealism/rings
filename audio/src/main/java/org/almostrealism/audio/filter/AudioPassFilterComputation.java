@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	private boolean high;
 
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
-		super((Supplier) data.getOutput(),
-				(Supplier) frequency,
+		super(data.getOutput(),
+				frequency,
 				(Supplier) resonance,
 				(Supplier) data.getSampleRate(),
 				(Supplier) data.getC(),

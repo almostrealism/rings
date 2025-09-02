@@ -16,12 +16,21 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Evaluable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.Ops;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.Console;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WaveDetails {
+public class WaveDetails implements CodeFeatures {
+	public static boolean enableNormalizeSimilarity = false;
+
+	private static Map<Integer, Evaluable<PackedCollection<?>>> differenceCalc = new HashMap<>();
+
 	private String identifier;
 
 	private int sampleRate;
@@ -139,6 +148,10 @@ public class WaveDetails {
 		return freqData;
 	}
 
+	public PackedCollection<?> getFreqData(int channel) {
+		return getFreqData().get(channel, shape(getFreqFrameCount(), getFreqBinCount(), 1));
+	}
+
 	public void setFreqData(PackedCollection<?> freqData) {
 		this.freqData = freqData;
 	}
@@ -183,11 +196,92 @@ public class WaveDetails {
 		this.featureData = featureData;
 	}
 
+	public PackedCollection<?> getFeatureData(boolean transpose) {
+		if (transpose) {
+			return featureData.transpose();
+		} else {
+			return featureData;
+		}
+	}
+
 	public Map<String, Double> getSimilarities() {
 		return similarities;
 	}
 
 	public void setSimilarities(Map<String, Double> similarities) {
 		this.similarities = similarities;
+	}
+
+	private static int frameCount(PackedCollection<?> data) {
+		return data.getShape().length(0);
+	}
+
+	private static int binCount(PackedCollection<?> data) {
+		return data.getShape().length(1);
+	}
+
+	private static Evaluable<PackedCollection<?>> differenceMagnitude(int bins) {
+		return differenceCalc.computeIfAbsent(bins, key -> Ops.op(o ->
+						o.cv(new TraversalPolicy(bins, 1), 0)
+				.subtract(o.cv(new TraversalPolicy(bins, 1), 1))
+				.traverseEach()
+				.magnitude()).get());
+	}
+
+	public static double differenceSimilarity(PackedCollection<?> a, PackedCollection<?> b) {
+		if (a.getShape().getDimensions() != 2 && a.getShape().getDimensions() != 3) {
+			throw new IllegalArgumentException();
+		} else if (a.getShape().getDimensions() != b.getShape().getDimensions()) {
+			throw new IllegalArgumentException();
+		}
+
+		int bins = 0;
+		int n;
+
+		if (binCount(a) == binCount(b)) {
+			n = Math.min(frameCount(a), frameCount(b));
+			bins = binCount(a);
+		} else {
+			// Feature data with different shapes are not easily comparable
+			n = 0;
+		}
+
+		TraversalPolicy overlap = new TraversalPolicy(true, n, bins, 1);
+
+		double d = 0.0;
+
+		if (n > 0) {
+			PackedCollection<?> featuresA = a.range(overlap).traverse(1);
+			PackedCollection<?> featuresB = b.range(overlap).traverse(1);
+			PackedCollection diff = differenceMagnitude(bins)
+					.evaluate(featuresA, featuresB);
+			d += diff.doubleStream().sum();
+		}
+
+		if (frameCount(a) > n) {
+			d += a.range(new TraversalPolicy(frameCount(a) - n, binCount(a), 1), overlap.getTotalSize())
+					.doubleStream().map(Math::abs).sum();
+		}
+
+		if (frameCount(b) > n) {
+			d += b.range(new TraversalPolicy(frameCount(b) - n, binCount(b), 1), overlap.getTotalSize())
+					.doubleStream().map(Math::abs).sum();
+		}
+
+		if (enableNormalizeSimilarity) {
+			double max = Math.max(
+					frameCount(a) <= 0 ? 0.0 : a.doubleStream().map(Math::abs).max().orElse(0.0),
+					frameCount(b) <= 0 ? 0.0 : b.doubleStream().map(Math::abs).max().orElse(0.0));
+			max = max * bins * Math.max(frameCount(a), frameCount(b));
+			double r = max == 0 ? Double.MAX_VALUE : (d / max);
+
+			if (r > 1.0 && max != 0) {
+				Console.root().features(WaveDetails.class).warn("Similarity = " + r);
+			}
+
+			return r;
+		} else {
+			return d;
+		}
 	}
 }

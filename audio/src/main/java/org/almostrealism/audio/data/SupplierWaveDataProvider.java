@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,13 +33,16 @@ public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 
 	@Override
 	public long getCountLong() {
-		return get().getCollection().getCountLong();
+		return get().getFrameCount();
 	}
 
 	@Override
 	public double getDuration() {
 		return get().getDuration();
 	}
+
+	@Override
+	public int getChannelCount() { return get().getChannelCount(); }
 
 	@Override
 	public int getSampleRate() {

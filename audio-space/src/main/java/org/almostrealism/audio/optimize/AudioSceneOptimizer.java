@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSourceAggregator;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
@@ -52,29 +51,30 @@ import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
-import org.almostrealism.hardware.cl.CLMemoryProvider;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
-import org.almostrealism.hardware.mem.MemoryDataArgumentMap;
 import org.almostrealism.hardware.mem.MemoryDataReplacementMap;
-import org.almostrealism.hardware.metal.MetalMemoryProvider;
+import org.almostrealism.heredity.Breeders;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.optimize.PopulationOptimizer;
-import org.almostrealism.time.TemporalRunner;
 
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
-	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.xml");
+	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
 	public static final int verbosity = 1;
+	public static final int singleChannel = -1;
+
 	public static boolean enableVerbose = false;
+	public static boolean enableProfile = true;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
-	public static final int singleChannel = -1;
+	public static double breederPerturbation = 0.01;
 
 	public static String LIBRARY = "Library";
 
@@ -118,7 +118,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 						hc.setWaveDetailsProcessor(detailsProcessor);
 
 						if (enableVerbose) log("Initializing AudioScenePopulation");
-						population.init(population.getGenomes().get(0), hc.getMeasures(), hc.getStems(), hc.getOutput());
+						population.init(population.getGenomes().get(0), hc.getOutput());
 
 						if (enableVerbose) {
 							log("AudioScenePopulation initialized (getCells duration = " +
@@ -149,7 +149,76 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
 											AudioScene<?> scene, int cycles) {
-		return new AudioSceneOptimizer(scene, scene::getBreeder, generator, cycles);
+		return new AudioSceneOptimizer(scene, () -> defaultBreeder(breederPerturbation), generator, cycles);
+	}
+
+	public static GenomeBreeder<PackedCollection<?>> defaultBreeder(double magnitude) {
+		return (g1, g2) -> {
+			PackedCollection<?> a = ((ProjectedGenome) g1).getParameters();
+			PackedCollection<?> b = ((ProjectedGenome) g2).getParameters();
+
+			int len = a.getShape().getTotalSize();
+			PackedCollection<?> combined = new PackedCollection<>(len);
+
+			for (int i = 0; i < len; i++) {
+				combined.setMem(0, Breeders.perturbation(a.toDouble(i), b.toDouble(i), magnitude));
+			}
+
+			return new ProjectedGenome(new PackedCollection<>(combined));
+		};
+	}
+
+	public static void setFeatureLevel(int featureLevel) {
+		PatternElementFactory.enableVolumeEnvelope = true;
+		PatternElementFactory.enableFilterEnvelope = true;
+
+		MixdownManager.enableReverb = featureLevel > 4;
+		MixdownManager.enableMainFilterUp = featureLevel > 2;
+		MixdownManager.enableAutomationManager = featureLevel > 2;
+		MixdownManager.enableEfxFilters = featureLevel > 2;
+		MixdownManager.enableEfx = featureLevel > 2;
+		MixdownManager.enableWetInAdjustment = featureLevel > 3;
+		MixdownManager.enableMasterFilterDown = featureLevel > 3;
+		MixdownManager.enableTransmission = featureLevel > 1;
+		MixdownManager.disableClean = false;
+		MixdownManager.enableSourcesOnly = featureLevel < 0;
+		EfxManager.enableEfx = featureLevel > 1;
+
+		StableDurationHealthComputation.enableTimeout = false;
+		SilenceDurationHealthComputation.enableSilenceCheck = false;
+		enableStemOutput = true;
+	}
+
+	public static OperationProfileNode setVerbosity(int verbosity, boolean enableProfile) {
+		// Verbosity level 0
+		enableBreeding = verbosity < 1;
+
+		// Verbosity level 1;
+		NoteAudioProvider.enableVerbose = verbosity > 0;
+
+		// Verbosity level 2
+		AudioSceneOptimizer.enableVerbose = verbosity > 1;
+		PopulationOptimizer.enableVerbose = verbosity > 1;
+		SilenceDurationHealthComputation.enableVerbose = verbosity > 1;
+		StableDurationHealthComputation.enableProfileAutosave = verbosity > 1;
+
+		// Verbosity level 3
+		PatternSystemManager.enableVerbose = verbosity > 2;
+		enableDisplayGenomes = verbosity > 2;
+		Hardware.enableVerbose = verbosity > 2;
+		HardwareOperator.enableLog = verbosity > 2;
+
+		// Verbosity level 4
+		WaveOutput.enableVerbose = verbosity > 3;
+		NativeComputeContext.enableVerbose = verbosity > 3;
+
+		// Verbosity level 5
+		HardwareOperator.enableVerboseLog = verbosity > 4;
+
+		OperationProfileNode profile = enableProfile ? new OperationProfileNode("AudioSceneOptimizer") : null;
+		Hardware.getLocalHardware().assignProfile(profile);
+		StableDurationHealthComputation.profile = profile;
+		return profile;
 	}
 
 	/**
@@ -160,65 +229,15 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	 * @see  AudioSceneOptimizer#run()
 	 */
 	public static void main(String args[]) throws IOException {
+		// Configure logging and profiling
 		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
+		OperationProfileNode profile = setVerbosity(verbosity, enableProfile);
 
-		NativeComputeContext.enableLargeScopeMonitoring = false;
-		TemporalRunner.enableOptimization = false;
-		TemporalRunner.enableIsolation = false;
+		// Setup features
+		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
+		setFeatureLevel(5);
 
-		StableDurationHealthComputation.enableTimeout = false;
-		MixdownManager.enableReverb = true;
-		MixdownManager.enableMainFilterUp = true;
-		MixdownManager.enableEfxFilters = true;
-		MixdownManager.enableEfx = true;
-		MixdownManager.enableWetInAdjustment = true;
-		MixdownManager.enableMasterFilterDown = true;
-		MixdownManager.disableClean = false;
-		MixdownManager.enableSourcesOnly = false;
-		EfxManager.enableEfx = true;
-		PatternElementFactory.enableVolumeEnvelope = true;
-		PatternElementFactory.enableFilterEnvelope = true;
-		SilenceDurationHealthComputation.enableSilenceCheck = false;
-		enableIsolatedContext = false;
-		enableStemOutput = true;
-
-		NoteAudioSourceAggregator.enableAdvancedAggregation = true;
-
-		PopulationOptimizer.THREADS = 1;
-		PopulationOptimizer.popSize = verbosity < 1 ? 60 : 6;
-
-		// Verbosity level 0
-		enableBreeding = verbosity < 1;
-
-		// Verbosity level 1;
-		NoteAudioProvider.enableVerbose = verbosity > 0;
-		CLMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
-		MetalMemoryProvider.enableLargeAllocationLogging = verbosity > 0;
-		HardwareOperator.enableLargeInstructionSetMonitoring = verbosity > 0;
-
-		// Verbosity level 2
-		AudioSceneOptimizer.enableVerbose = verbosity > 1;
-		PopulationOptimizer.enableVerbose = verbosity > 1;
-		HardwareOperator.enableInstructionSetMonitoring = verbosity > 1;
-
-		// Verbosity level 3
-		WaveOutput.enableVerbose = verbosity > 2;
-		PatternSystemManager.enableVerbose = verbosity > 2;
-		SilenceDurationHealthComputation.enableVerbose = verbosity > 2;
-		enableDisplayGenomes = verbosity > 2;
-		NativeComputeContext.enableVerbose = verbosity > 2;
-		Hardware.enableVerbose = verbosity > 2;
-		HardwareOperator.enableLog = verbosity > 2;
-
-		// Verbosity level 4
-		HardwareOperator.enableVerboseLog = verbosity > 3;
-
-		AdjustableDelayCell.defaultPurgeFrequency = 1.0;
-
-		OperationProfileNode profile = new OperationProfileNode("AudioSceneOptimizer");
-		Hardware.getLocalHardware().assignProfile(profile);
-		StableDurationHealthComputation.profile = profile;
-
+		// Create computations before applying Heap
 		AudioProcessingUtils.init();
 		WaveData.init();
 
@@ -232,7 +251,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 					opt.init();
 					opt.run();
 
-					profile.print();
+					if (profile != null)
+						profile.print();
 
 					if (enableVerbose)
 						PatternLayerManager.sizes.print();
@@ -281,10 +301,6 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		if (singleChannel >= 0) {
 			PatternSystemManager.enableWarnings = false;
-			// PatternLayerManager.enableLogging = true;
-			// DefaultChannelSectionFactory.enableFilter = false;
-
-			// settings.setWetChannels(Collections.emptyList());
 
 			settings.getPatternSystem().setPatterns(
 					settings

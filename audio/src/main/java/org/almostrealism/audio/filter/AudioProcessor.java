@@ -29,7 +29,7 @@ public interface AudioProcessor extends Lifecycle {
 	Supplier<Runnable> process(Producer<PackedCollection<?>> destination,
 							   Producer<PackedCollection<?>> source);
 
-	static AudioProcessor fromWave(WaveData data) {
+	static AudioProcessor fromWave(WaveData data, int channel) {
 		PackedCollection<?> position = new PackedCollection<>(1);
 
 		return new AudioProcessor() {
@@ -42,11 +42,11 @@ public interface AudioProcessor extends Lifecycle {
 						PackedCollection<?> out = dest.evaluate();
 						int len = out.getMemLength();
 						int pos = (int) position.toDouble(0);
-						if (pos + len > data.getCollection().getMemLength()) {
-							len = data.getCollection().getMemLength() - pos;
+						if (pos + len > data.getFrameCount()) {
+							len = data.getFrameCount() - pos;
 						}
 
-						out.setMem(data.getCollection().range(new TraversalPolicy(len), pos).toArray());
+						out.setMem(data.getChannelData(channel).range(new TraversalPolicy(len), pos).toArray());
 						position.set(0, position.toDouble(0) + len);
 					};
 				};

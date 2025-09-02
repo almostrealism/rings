@@ -63,10 +63,10 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 		this.parallel = parallel;
 
 		if (parallel) {
-			storage = (PackedCollection) WaveData.allocateCollection(choices.size()).traverse(1);
+			storage = new PackedCollection(choices.size()).traverse(1);
 			initParallel();
 		} else {
-			storage = (PackedCollection) WaveData.allocateCollection(1).traverse(1);
+			storage = new PackedCollection(1).traverse(1);
 			cells.forEach(cell -> cell.setReceptor(a(p(storage.get(0)))));
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,12 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
-import org.almostrealism.hardware.PooledMem;
 import org.almostrealism.hardware.mem.Heap;
 
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-public class PolymorphicAudioData extends DefaultWaveCellData implements SineWaveCellData, AudioFilterData, ValueSequenceData {
+public class PolymorphicAudioData extends DefaultWaveCellData implements SineWaveCellData, AudioFilterData {
 	public PolymorphicAudioData() {
 		super();
 	}

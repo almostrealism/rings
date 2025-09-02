@@ -23,8 +23,6 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.mem.MemoryDataCopy;
 
-import java.io.File;
-
 // TODO  This should implement AudioProcessor
 public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
 	public static double filterPeak = 20000;
@@ -57,7 +55,7 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
 
 		WaveData audio = new WaveData(input.traverse(1), sampleRate);
-		process = cells(1, i -> audio.toCell(clock.frameScalar()))
+		process = cells(1, i -> audio.toCell(clock.frame(), 0))
 				.addRequirement(clock)
 				.f(i -> lp(freq, c(0.1)))
 				.export(output).get();

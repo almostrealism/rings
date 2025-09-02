@@ -91,34 +91,34 @@ public class GeneratedSourceLibrary {
 	}
 
 	public void save() throws IOException {
-		Supplier<OutputStream> out = library.out();
+		try (LibraryDestination.Writer out = library.out()) {
+			Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
 
-		Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
+			int byteCount = 0;
 
-		int byteCount = 0;
+			List<Map.Entry<String, AudioSynthesisModel>> entries = new ArrayList<>(models.entrySet());
 
-		List<Map.Entry<String, AudioSynthesisModel>> entries = new ArrayList<>(models.entrySet());
+			for (int i = 0; i < entries.size(); i++) {
+				Audio.SynthesizerModelData d = convert(entries.get(i).getKey(),
+						(InterpolatedAudioSynthesisModel) entries.get(i).getValue());
+				byteCount += d.getSerializedSize();
+				data.addModels(d);
 
-		for (int i = 0; i < entries.size(); i++) {
-			Audio.SynthesizerModelData d = convert(entries.get(i).getKey(),
-					(InterpolatedAudioSynthesisModel) entries.get(i).getValue());
-			byteCount += d.getSerializedSize();
-			data.addModels(d);
+				if (byteCount > AudioLibraryPersistence.batchSize || i == entries.size() - 1) {
+					OutputStream o = out.get();
 
-			if (byteCount > AudioLibraryPersistence.batchSize || i == entries.size() - 1) {
-				OutputStream o = out.get();
+					try {
+						data.build().writeTo(o);
+						Console.root.features(AudioLibraryPersistence.class)
+								.log("Wrote " + data.getRecordingsCount() +
+										" recordings (" + byteCount + " bytes)");
 
-				try {
-					data.build().writeTo(o);
-					Console.root.features(AudioLibraryPersistence.class)
-							.log("Wrote " + data.getRecordingsCount() +
-									" recordings (" + byteCount + " bytes)");
-
-					data = Audio.AudioLibraryData.newBuilder();
-					byteCount = 0;
-					o.flush();
-				} finally {
-					o.close();
+						data = Audio.AudioLibraryData.newBuilder();
+						byteCount = 0;
+						o.flush();
+					} finally {
+						o.close();
+					}
 				}
 			}
 		}

@@ -24,8 +24,8 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.temporal.BaseAudioData;
 import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
@@ -39,8 +39,10 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	protected HybridScope scope;
 	protected final boolean repeat;
 
-	public ValueSequenceComputation(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output,
-									boolean repeat, Producer<PackedCollection<?>>... choices) {
+	public ValueSequenceComputation(BaseAudioData data,
+									Producer<PackedCollection<?>> durationFrames,
+									PackedCollection<?> output, boolean repeat,
+									Producer<PackedCollection<?>>... choices) {
 		super(inputArgs(data, durationFrames, output, choices));
 		this.repeat = repeat;
 	}
@@ -63,7 +65,8 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	@Override
 	public Scope getScope(KernelStructureContext context) { return scope; }
 
-	private static Supplier[] inputArgs(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
+	private static Supplier[] inputArgs(BaseAudioData data, Producer<PackedCollection<?>> durationFrames,
+										PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
 		Supplier args[] = new Supplier[4 + choices.length];
 		args[0] = () -> new Provider<>(output);
 		args[1] = data::getWavePosition;

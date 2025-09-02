@@ -101,7 +101,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 
 	@Deprecated
 	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
-		PackedCollection<?> export = WaveData.allocateCollection(getCount());
+		PackedCollection<?> export = new PackedCollection<>(getCount());
 		WaveData destination = new WaveData(export, OutputLine.sampleRate);
 
 		Evaluable<Scalar> evX = x.get();
@@ -115,7 +115,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 
 		for (WaveDataProvider p : samples) {
 			try {
-				cells = cells.and(w(c(bpm.l(1)), p.get()));
+				cells = cells.and(w(0, c(bpm.l(1)), p.get()));
 			} catch (Exception e) {
 				System.out.println("Skipping invalid sample: " + e.getMessage());
 			}
@@ -129,10 +129,10 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 							s.setMem(sequence.apply(i).apply(params));
 							return s;
 						})
-				.sum().map(i -> new ReceptorCell<>(output));
+				.sum().map(i -> output.getWriterCell(0));
 
 		setup.add(cells.iter(getCount()));
-		setup.add(output.export(export));
+		setup.add(output.export(0, export));
 
 		// TODO  Should respect playbackRates
 		return new WaveDataProviderList(List.of(new DynamicWaveDataProvider("seq://" + UUID.randomUUID(), destination)), setup);

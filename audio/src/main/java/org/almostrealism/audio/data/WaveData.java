@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import io.almostrealism.relation.Factor;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
+import org.almostrealism.io.Console;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 	public static final int POOL_BATCH_IN = FFT_BINS / 2;
 	public static final int POOL_BATCH_OUT = POOL_BATCH_IN / FFT_POOL;
+
+	public static boolean enableWarnings = false;
 
 	private static Evaluable<PackedCollection<?>> magnitude;
 	private static Evaluable<PackedCollection<?>> fft;
@@ -76,59 +79,84 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
 					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
 				.get();
-		mfcc = new FeatureComputer(new FeatureSettings(OutputLine.sampleRate));
+		// mfcc = new FeatureComputer(getDefaultFeatureSettings());
 	}
 
 	private PackedCollection collection;
 	private int sampleRate;
 
+	public WaveData(int channels, int frames, int sampleRate) {
+		this(new PackedCollection<>(channels, frames), sampleRate);
+	}
+
 	public WaveData(PackedCollection wave, int sampleRate) {
 		if (wave == null) {
 			System.out.println("WARN: Wave data is null");
-		} else if (wave.getCount() == 1) {
-			warn("Wave data appears to be the wrong shape");
 		}
 
 		this.collection = wave;
 		this.sampleRate = sampleRate;
 	}
 
-	public PackedCollection<?> getCollection() {
-		return collection;
+	public PackedCollection<?> getData() { return collection; }
+
+	public PackedCollection<?> getChannelData(int channel) {
+		if (channel < 0) {
+			throw new IndexOutOfBoundsException();
+		} else if (getChannelCount() == 1) {
+			return getData().range(shape(getFrameCount()).traverseEach(), 0);
+		} else if (channel < getChannelCount()) {
+			return getData().range(shape(getFrameCount()).traverseEach(), channel * getFrameCount());
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
-	public int getSampleRate() {
-		return sampleRate;
-	}
-
+	public int getSampleRate() { return sampleRate; }
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
 	}
 
 	public double getDuration() {
-		return getCollection().getMemLength() / (double) sampleRate;
+		return getFrameCount() / (double) sampleRate;
+	}
+
+	public int getChannelCount() {
+		if (getData().getShape().getDimensions() == 1) {
+			return 1;
+		}
+
+		return getData().getShape().length(0);
+	}
+
+	public int getFrameCount() {
+		if (getData().getShape().getDimensions() == 1) {
+			return getData().getMemLength();
+		}
+
+		return getData().getShape().length(1);
 	}
 
 	public BufferDetails getBufferDetails() {
 		return new BufferDetails(getSampleRate(), getDuration());
 	}
 
-	public WaveData range(double start, double length) {
-		return range((int) (start * sampleRate), (int) (length * sampleRate));
+	public WaveData range(int channel, double start, double length) {
+		return range(channel, (int) (start * sampleRate), (int) (length * sampleRate));
 	}
 
-	public WaveData range(int start, int length) {
-		return new WaveData(getCollection().range(new TraversalPolicy(length), start), sampleRate);
+	public WaveData range(int channel, int start, int length) {
+		return new WaveData(getChannelData(channel).range(new TraversalPolicy(length), start), sampleRate);
 	}
 
-	public WaveData sample(Factor<PackedCollection<?>> processor) {
-		return sample(() -> processor);
+	public WaveData sample(int channel, Factor<PackedCollection<?>> processor) {
+		return sample(channel, () -> processor);
 	}
 
-	public WaveData sample(Supplier<Factor<PackedCollection<?>>> processor) {
-		PackedCollection<?> result = new PackedCollection<>(getCollection().getShape());
+	public WaveData sample(int channel, Supplier<Factor<PackedCollection<?>>> processor) {
+		PackedCollection<?> result = new PackedCollection<>(getChannelData(channel).getShape());
 		sampling(getSampleRate(), getDuration(),
-					() -> processor.get().getResultant(c(p(getCollection()), frame())))
+					() -> processor.get().getResultant(c(p(getChannelData(channel)), frame())))
 				.get().into(result).evaluate();
 		return new WaveData(result, getSampleRate());
 	}
@@ -136,23 +164,25 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	/**
 	 * Return the fourier transform of this {@link WaveData}.
 	 *
+	 * @param channel  Audio channel to apply the transform to.
 	 * @return  The fourier transform of this {@link WaveData} over time in the
 	 *          {@link TraversalPolicy shape} (time slices, bins, 1).
 	 */
-	public PackedCollection<?> fft() {
-		return fft(false);
+	public PackedCollection<?> fft(int channel) {
+		return fft(channel, false);
 	}
 
 	/**
 	 * Return the fourier transform of this {@link WaveData}.
 	 *
-	 * @param pooling  If true, the fourier transform will be pooled to reduce its size
-	 *                 by {@value FFT_POOL} in each dimension.
-	 * @return  The fourier transform of this {@link WaveData} over time in the
-	 *          {@link TraversalPolicy shape} (time slices, bins, 1).
+	 * @param channel  Audio channel to apply the transform to.
+	 * @param pooling If true, the fourier transform will be pooled to reduce its size
+	 *                by {@value FFT_POOL} in each dimension.
+	 * @return The fourier transform of this {@link WaveData} over time in the
+	 * {@link TraversalPolicy shape} (time slices, bins, 1).
 	 */
-	public PackedCollection<?> fft(boolean pooling) {
-		return fft(pooling, false, false);
+	public PackedCollection<?> fft(int channel, boolean pooling) {
+		return fft(channel, pooling, false, false);
 	}
 
 	/**
@@ -165,14 +195,14 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	 *          {@link TraversalPolicy shape} (bins, 1).
 	 */
 	public PackedCollection<?> aggregatedFft(boolean includeAll) {
-		return fft(false, true, includeAll);
+		return fft(-1, false, true, includeAll);
 	}
 
-	public PackedCollection<?> fft(boolean pooling, boolean sum, boolean includeAll) {
+	protected PackedCollection<?> fft(int channel, boolean pooling, boolean sum, boolean includeAll) {
 		PackedCollection<?> inRoot = new PackedCollection<>(FFT_BINS * FFT_BINS);
 		PackedCollection<?> outRoot = new PackedCollection<>(POOL_BATCH_OUT * POOL_BATCH_OUT);
 
-		int count = getCollection().getMemLength() > FFT_BINS ? getCollection().getMemLength() / FFT_BINS : 1;
+		int count = getFrameCount() > FFT_BINS ? getFrameCount() / FFT_BINS : 1;
 		int finalBins = includeAll ? FFT_BINS : (FFT_BINS / 2);
 		PackedCollection<?> out =
 				new PackedCollection<>(count * finalBins)
@@ -180,7 +210,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 		try {
 			if (enableGpu && count > 1) {
-				PackedCollection<?> frameIn = getCollection().range(shape(count, FFT_BINS, 2));
+				PackedCollection<?> frameIn = getChannelData(channel).range(shape(count, FFT_BINS, 2));
 				PackedCollection<?> frameOut = new PackedCollection<>(shape(count, FFT_BINS, 2));
 
 				fft.into(frameOut.traverse()).evaluate(frameIn.traverse());
@@ -199,8 +229,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
 
 				for (int i = 0; i < count; i++) {
-					frameIn.setMem(0, getCollection(), i * FFT_BINS,
-							Math.min(FFT_BINS, getCollection().getMemLength() - i * FFT_BINS));
+					frameIn.setMem(0, getChannelData(channel), i * FFT_BINS,
+							Math.min(FFT_BINS, getFrameCount()- i * FFT_BINS));
 					fft.into(frameOut).evaluate(frameIn);
 
 					// TODO This may not work correctly when finalBins != FFT_BINS / 2
@@ -269,45 +299,65 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	}
 
 	public PackedCollection<?> features() {
-		TraversalPolicy inputShape = shape(getCollection().getCount(), 2);
+		TraversalPolicy inputShape = shape(getFrameCount(), 2);
 		PackedCollection input = PackedCollection.factory()
 				.apply(inputShape.getTotalSize()).reshape(inputShape).traverse(1)
-				.fill((int pos[]) -> pos[1] == 0 ? getCollection().toDouble(pos[0]) : 1.0);
+				.fill((int pos[]) -> pos[1] == 0 ? getChannelData(0).toDouble(pos[0]) : 1.0);
 		return mfcc.computeFeatures(
 				Scalar.scalarBank(input.getCount(), input),
 				getSampleRate(), PackedCollection::new);
 	}
 
-	public void save(File file) {
-		PackedCollection w = getCollection();
+	public boolean save(File file) {
+		if (getFrameCount() <= 0) {
+			Console.root.features(WavFile.class).log("No frames to write");
+			return false;
+		}
 
-		// TODO  This actually *should* be getCount, but it is frequently
-		// TODO  wrong because the traversal axis is not set correctly.
-		// TODO  To support stereo or other multi-channel audio, we need
-		// TODO  to fix this.
-		int frames = w.getMemLength(); // w.getCount();
+		int frameCount = getFrameCount();
 
-		try (WavFile wav = WavFile.newWavFile(file, 2, frames, 24, sampleRate)) {
-			for (int i = 0; i < frames; i++) {
-				double value = w.toArray(i, 1)[0];
+		try (WavFile wav = WavFile.newWavFile(file, 2, frameCount, 24, getSampleRate())) {
+			double leftFrames[] = getChannelData(0).toArray(0, frameCount);
+			double rightFrames[] = getChannelData(1).toArray(0, frameCount);
+
+			for (int i = 0; i < frameCount; i++) {
+				double l = leftFrames[i];
+				double r = rightFrames[i];
 
 				try {
-					wav.writeFrames(new double[][]{{value}, {value}}, 1);
+					wav.writeFrames(new double[][]{{l}, {r}}, 1);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+
+			return true;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
 	public WaveCell toCell(TimeCell clock) {
-		return toCell(clock.frameScalar());
+		return toCell(clock, 0);
 	}
 
-	public WaveCell toCell(Producer<Scalar> frame) {
-		return new WaveCell(getCollection(), frame);
+	public WaveCell toCell(TimeCell clock, int channel) {
+		return toCell(clock.frame(), channel);
+	}
+
+	public WaveCell toCell(Producer<PackedCollection<?>> frame, int channel) {
+		return new WaveCell(getChannelData(channel), frame);
+	}
+
+	public Function<WaveCellData, WaveCell> toCell(int channel, double amplitude,
+												   Producer<PackedCollection<?>> offset,
+												   Producer<PackedCollection<?>> repeat) {
+		return data -> new WaveCell(data, getChannelData(channel),
+									getSampleRate(), amplitude,
+									offset == null ? null : Ops.o().c(offset),
+									repeat == null ? null : Ops.o().c(repeat),
+									Ops.o().c(0.0), Ops.o().c(getFrameCount()));
 	}
 
 	@Override
@@ -317,29 +367,25 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		collection = null;
 	}
 
-	public Function<WaveCellData, WaveCell> toCell(double amplitude, Producer<PackedCollection<?>> offset, Producer<PackedCollection<?>> repeat) {
-		return data -> new WaveCell(data, getCollection(), getSampleRate(), amplitude, Ops.o().toScalar(offset),
-				Ops.o().toScalar(repeat), Ops.o().scalar(0.0), Ops.o().scalar(getCollection().getMemLength()));
-	}
-
 	public static void init() { }
 
 	public static WaveData load(File f) throws IOException {
 		try (WavFile w = WavFile.openWavFile(f)) {
+			int channelCount = w.getNumChannels();
+			PackedCollection<?> in = new PackedCollection<>(new TraversalPolicy(channelCount, w.getNumFrames()));
+
 			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
 			w.readFrames(wave, 0, (int) w.getFramesRemaining());
 
-			int channelCount = w.getNumChannels();
+			for (int c = 0; c < wave.length; c++) {
+				in.setMem(Math.toIntExact(c * w.getNumFrames()), wave[c]);
+			}
 
-			assert channelCount > 0;
-			int channel = 0;
-
-			return new WaveData(WavFile.channel(wave, channel), (int) w.getSampleRate());
+			return new WaveData(in, (int) w.getSampleRate());
 		}
 	}
 
-	// TODO  This returns a collection with traversalAxis 0, which is usually not desirable
-	public static PackedCollection<?> allocateCollection(int count) {
-		return new PackedCollection(count);
+	public static FeatureSettings getDefaultFeatureSettings() {
+		return new FeatureSettings(OutputLine.sampleRate);
 	}
 }

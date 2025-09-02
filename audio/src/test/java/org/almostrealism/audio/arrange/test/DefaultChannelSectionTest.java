@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,19 +24,23 @@ import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class DefaultChannelSectionTest implements CellFeatures {
 	@Test
 	public void section() throws IOException {
 		int samples = 2 * 8 * OutputLine.sampleRate;
 
-		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(new ConfigurableGenome(),
+		ProjectedGenome genome = new ProjectedGenome(8);
+		DefaultChannelSectionFactory factory = new DefaultChannelSectionFactory(genome.addChromosome(),
 											1, c -> true, c -> true,
 											() -> Frequency.forBPM(120.0), () -> 2.0,
 											8, OutputLine.sampleRate);
@@ -44,7 +48,7 @@ public class DefaultChannelSectionTest implements CellFeatures {
 
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
 		PackedCollection<?> input = new PackedCollection<>(samples);
-		input.setMem(data.getCollection().toArray(0, data.getCollection().getMemLength()));
+		input.setMem(data.getChannelData(0).toArray());
 
 		PackedCollection<?> result = new PackedCollection<>(samples);
 		Producer<PackedCollection<?>> destination = p(result);

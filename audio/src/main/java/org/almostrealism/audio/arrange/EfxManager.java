@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,15 +26,16 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.Chromosome;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGene;
 import org.almostrealism.time.computations.MultiOrderFilter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EfxManager implements CellFeatures {
@@ -46,20 +47,20 @@ public class EfxManager implements CellFeatures {
 
 	private AutomationManager automation;
 
-	private ConfigurableGenome genome;
-	private SimpleChromosome delayTimes;
-	private SimpleChromosome delayLevels;
-	private SimpleChromosome delayAutomation;
+	private ProjectedChromosome chromosome;
+	private Chromosome<PackedCollection<?>> delayTimes;
+	private Chromosome<PackedCollection<?>> delayLevels;
+	private Chromosome<PackedCollection<?>> delayAutomation;
 	private int channels;
 	private List<Integer> wetChannels;
 
 	private DoubleSupplier beatDuration;
 	private int sampleRate;
 
-	public EfxManager(ConfigurableGenome genome, int channels,
+	public EfxManager(ProjectedChromosome chromosome, int channels,
 					  AutomationManager automation,
 					  DoubleSupplier beatDuration, int sampleRate) {
-		this.genome = genome;
+		this.chromosome = chromosome;
 		this.channels = channels;
 		this.wetChannels = new ArrayList<>();
 		IntStream.range(0, channels).forEach(this.wetChannels::add);
@@ -83,18 +84,21 @@ public class EfxManager implements CellFeatures {
 		PackedCollection<?> c = new PackedCollection<>(choices.length);
 		c.setMem(choices);
 
-		delayTimes = genome.addSimpleChromosome(1);
-		IntStream.range(0, channels).forEach(i -> delayTimes.addChoiceGene(c));
+		delayTimes = chromosome(IntStream.range(0, channels)
+				.mapToObj(i -> chromosome.addChoiceGene(c, 1))
+				.collect(Collectors.toList()));
 
-		delayLevels = genome.addSimpleChromosome(4);
-		IntStream.range(0, channels).forEach(i -> {
-			SimpleGene g = delayLevels.addGene();
+		delayLevels = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(4);
 			if (maxWet != 1.0) g.setTransform(0, p -> multiply(p, c(maxWet)));
 			if (maxFeedback != 1.0) g.setTransform(1, p -> multiply(p, c(maxFeedback)));
-		});
+			return g;
+		}).collect(Collectors.toList()));
 
-		delayAutomation = genome.addSimpleChromosome(AutomationManager.GENE_LENGTH);
-		IntStream.range(0, channels).forEach(i -> delayAutomation.addGene());
+		delayAutomation = chromosome(IntStream.range(0, channels).mapToObj(i -> {
+			ProjectedGene g = chromosome.addGene(AutomationManager.GENE_LENGTH);
+			return g;
+		}).collect(Collectors.toList()));
 	}
 
 	public List<Integer> getWetChannels() { return wetChannels; }
@@ -106,29 +110,29 @@ public class EfxManager implements CellFeatures {
 		}
 
 		CellList wet = createCells(applyFilter(channel, audio, setup), totalDuration)
-						.map(fc(i -> delayLevels.valueAt(channel.getChannel(), 0)));
+						.map(fc(i -> delayLevels.valueAt(channel.getPatternChannel(), 0)));
 		CellList dry = createCells(audio, totalDuration);
 
-		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getChannel(), 0).getResultant(c(1.0));
+		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getPatternChannel(), 0).getResultant(c(1.0));
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
-						scalar(shape(1), multiply(c(beatDuration.getAsDouble()), delay), 0),
-						scalar(1.0)))
+						multiply(c(beatDuration.getAsDouble()), delay),
+						c(1.0)))
 				.collect(CellList.collector());
 
 		IntFunction<Cell<PackedCollection<?>>> auto =
 				enableAutomation ?
 						fc(i -> in -> {
 							Producer<PackedCollection<?>> value = automation
-									.getAggregatedValue(delayAutomation.valueAt(channel.getChannel()), null, 0.0);
+									.getAggregatedValue(delayAutomation.valueAt(channel.getPatternChannel()), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
 						}) :
 						fi();
 
 		wet = wet.m(auto, delays)
-				.mself(fi(), i -> g(delayLevels.valueAt(channel.getChannel(), 1)))
+				.mself(fi(), i -> g(delayLevels.valueAt(channel.getPatternChannel(), 1)))
 				.sum();
 
 		CellList cells = cells(wet, dry).sum();
@@ -145,9 +149,9 @@ public class EfxManager implements CellFeatures {
 		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
 
 		Producer<PackedCollection<?>> decision =
-				delayLevels.valueAt(channel.getChannel(), 2).getResultant(c(1.0));
+				delayLevels.valueAt(channel.getPatternChannel(), 2).getResultant(c(1.0));
 		Producer<PackedCollection<?>> cutoff = c(20000)
-				.multiply(delayLevels.valueAt(channel.getChannel(), 3).getResultant(c(1.0)));
+				.multiply(delayLevels.valueAt(channel.getPatternChannel(), 3).getResultant(c(1.0)));
 
 		CollectionProducer<PackedCollection<?>> lpCoefficients =
 				lowPassCoefficients(cutoff, sampleRate, filterOrder)

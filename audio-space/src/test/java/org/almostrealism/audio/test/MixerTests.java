@@ -35,7 +35,7 @@ public class MixerTests implements CellFeatures {
 		mixer.init(c -> {
 			try {
 //				return WaveData.load(new File("Library/RAW_IU_ARCHE_B.wav")).toCell(clock);
-				return (WaveCell) w("Library/RAW_IU_ARCHE_B.wav").get(0);
+				return (WaveCell) w(0, "Library/RAW_IU_ARCHE_B.wav").get(0);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

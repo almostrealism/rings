@@ -39,6 +39,7 @@ import org.almostrealism.audio.generative.GenerationManager;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.HealthComputationAdapter;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.pattern.NoteAudioChoiceList;
@@ -48,12 +49,9 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.CombinedGenome;
-import org.almostrealism.heredity.Genome;
-import org.almostrealism.heredity.GenomeBreeder;
-import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
@@ -88,6 +86,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
 	public static final int DEFAULT_PATTERNS_PER_CHANNEL = 6;
+	public static final int MAX_SCENE_SECTIONS = 16;
 	public static final IntUnaryOperator DEFAULT_ACTIVE_PATTERNS;
 	public static final IntUnaryOperator DEFAULT_LAYERS;
 	public static final IntToDoubleFunction DEFAULT_LAYER_SCALE;
@@ -171,7 +170,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private GenerationManager generation;
 
-	private CombinedGenome genome;
+	private ProjectedGenome genome;
 	
 	private OperationList setup;
 	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
@@ -207,28 +206,39 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		this.time = new GlobalTimeManager(measure -> (int) (measure * getMeasureDuration() * getSampleRate()));
 
-		this.genome = new CombinedGenome(7);
+		this.genome = new ProjectedGenome(16);
+
+		List<ProjectedChromosome> sectionChromosomes =
+				IntStream.range(0, MAX_SCENE_SECTIONS)
+					.mapToObj(i -> genome.addChromosome())
+					.toList();
 
 		this.tuning = new DefaultKeyboardTuning();
-		this.sections = new SceneSectionManager(genome.getGenome(0), channels, this::getTempo, this::getMeasureDuration, getSampleRate());
-		this.progression = new ChordProgressionManager(genome.getGenome(1), WesternScales.minor(WesternChromatic.G1, 1));
+		this.sections = new SceneSectionManager(sectionChromosomes, channels, this::getTempo, this::getMeasureDuration, getSampleRate());
+		this.progression = new ChordProgressionManager(genome.addChromosome(),
+								WesternScales.minor(WesternChromatic.G1, 1));
 		this.progression.setSize(16);
 		this.progression.setDuration(8);
 
-		patterns = new PatternSystemManager(choices, genome.getGenome(2));
+		List<ProjectedChromosome> patternChromosomes =
+				IntStream.range(0, channels * DEFAULT_PATTERNS_PER_CHANNEL)
+					.mapToObj(i -> genome.addChromosome())
+					.toList();
+
+		patterns = new PatternSystemManager(choices, patternChromosomes);
 		patterns.init();
 
 		this.channelNames = new ArrayList<>();
 
 		addDurationListener(duration -> destroyPatternDestinations());
 
-		this.automation = new AutomationManager(genome.getGenome(3), time.getClock(),
+		this.automation = new AutomationManager(genome.addChromosome(), time.getClock(),
 											this::getMeasureDuration, getSampleRate());
-		this.efx = new EfxManager(genome.getGenome(4), channels,
+		this.efx = new EfxManager(genome.addChromosome(), channels,
 									automation, this::getBeatDuration, getSampleRate());
-		this.riser = new RiseManager(genome.getGenome(5),
-				() -> getContext(new ChannelInfo(0, ChannelInfo.Type.RISE)), getSampleRate());
-		this.mixdown = new MixdownManager(genome.getGenome(6),
+		this.riser = new RiseManager(genome.addChromosome(),
+				() -> getContext(new ChannelInfo(0, ChannelInfo.Type.RISE, null)), getSampleRate());
+		this.mixdown = new MixdownManager(genome.addChromosome(),
 									channels, delayLayers,
 									automation, time.getClock(), getSampleRate());
 
@@ -279,7 +289,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	}
 
 	public void setLibraryRoot(FileWaveDataProviderTree tree, DoubleConsumer progress) {
-		setLibrary(AudioLibrary.load(tree, getSampleRate(), progress), progress);
+		setLibrary(new AudioLibrary(tree, getSampleRate()), progress);
 	}
 
 	public void loadPatterns(String patternsFile) throws IOException {
@@ -290,12 +300,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	public Animation<T> getScene() { return scene; }
 
-	public ParameterGenome getGenome() { return genome.getParameters(); }
+	public ProjectedGenome getGenome() { return new ProjectedGenome(genome.getParameters()); }
 
-	public GenomeBreeder<PackedCollection<?>> getBreeder() { return genome.getBreeder(); }
-
-	public void assignGenome(Genome<PackedCollection<?>> genome) {
-		this.genome.assignTo(genome);
+	public void assignGenome(ProjectedGenome genome) {
+		this.genome.assignTo(genome.getParameters());
 		this.progression.refreshParameters();
 		this.patterns.refreshParameters();
 	}
@@ -469,24 +477,19 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	@Override
 	public Supplier<Runnable> setup() { return setup; }
 
-	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
-						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output) {
+	public Cells getCells(MultiChannelAudioOutput output) {
 		long start = System.nanoTime();
 
 		try {
-			return getCells(measures, stems, output,
+			return getCells(output,
 					IntStream.range(0, getChannelCount())
-							.mapToObj(i -> i).collect(Collectors.toList()));
+							.boxed().collect(Collectors.toList()));
 		} finally {
 			getCellsTime.addEntry(System.nanoTime() - start);
 		}
 	}
 
-	public Cells getCells(List<? extends Receptor<PackedCollection<?>>> measures,
-						  List<? extends Receptor<PackedCollection<?>>> stems,
-						  Receptor<PackedCollection<?>> output,
-						  List<Integer> channels) {
+	public Cells getCells(MultiChannelAudioOutput output, List<Integer> channels) {
 		CellList cells;
 
 		setup = new OperationList("AudioScene Setup");
@@ -498,15 +501,20 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
-		cells = getPatternCells(measures, stems, output, channels, setup);
+		cells = getPatternCells(output, channels);
 		return cells.addRequirement(time::tick);
 	}
 
-	public CellList getPatternCells(List<? extends Receptor<PackedCollection<?>>> measures,
-									List<? extends Receptor<PackedCollection<?>>> stems,
-									Receptor<PackedCollection<?>> output,
+	public CellList getPatternCells(MultiChannelAudioOutput output,
+									List<Integer> channels) {
+		return cells(
+				getPatternCells(output, channels, ChannelInfo.StereoChannel.LEFT),
+				getPatternCells(output, channels, ChannelInfo.StereoChannel.RIGHT));
+	}
+
+	public CellList getPatternCells(MultiChannelAudioOutput output,
 									List<Integer> channels,
-									OperationList setup) {
+									ChannelInfo.StereoChannel audioChannel) {
 		int totalSamples;
 		if (getTotalSamples() > HealthComputationAdapter.standardDurationFrames) {
 			warn("AudioScene arrangement extends beyond the standard duration");
@@ -517,11 +525,10 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
 		CellList main = all(channelIndex.length, i ->
-				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.MAIN), totalSamples, setup));
+				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.MAIN, audioChannel), totalSamples, setup));
 		CellList wet = all(channelIndex.length, i ->
-				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.WET), totalSamples, setup));
-		return mixdown.cells(main, wet, riser.getRise(totalSamples),
-				measures, stems, output, i -> channelIndex[i]);
+				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.WET, audioChannel), totalSamples, setup));
+		return mixdown.cells(main, wet, riser.getRise(totalSamples), output, audioChannel, i -> channelIndex[i]);
 	}
 
 	public CellList getPatternChannel(ChannelInfo channel, int frames, OperationList setup) {
@@ -568,24 +575,18 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
 		op.add(() -> () -> refreshPatternDestination(channel, true));
-		op.add(patterns.sum(ctx, channel.getVoicing()));
+		op.add(patterns.sum(ctx, channel.getVoicing(), channel.getAudioChannel()));
 		return op;
 	}
 
-	public TemporalCellular runner(Receptor<PackedCollection<?>> output) {
+	public TemporalCellular runner(MultiChannelAudioOutput output) {
 		return runner(output, null);
 	}
 
-	public TemporalCellular runner(Receptor<PackedCollection<?>> output, List<Integer> channels) {
-		return runner(Collections.emptyList(), Collections.emptyList(), output, channels);
-	}
-
-	public TemporalCellular runner(List<? extends Receptor<PackedCollection<?>>> measures,
-								 List<? extends Receptor<PackedCollection<?>>> stems,
-								 Receptor<PackedCollection<?>> output,
-								 List<Integer> channels) {
-		Cells cells = channels == null ? getCells(measures, stems, output) :
-				getCells(measures, stems, output, channels);
+	public TemporalCellular runner(MultiChannelAudioOutput output,
+								   List<Integer> channels) {
+		Cells cells = channels == null ?
+				getCells(output) : getCells(output, channels);
 
 		return new TemporalCellular() {
 			@Override
@@ -610,16 +611,22 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private void refreshPatternDestination(ChannelInfo channel, boolean clear) {
 		if (patternDestinations == null) {
+			int frames = Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples());
+
 			patternDestinations = new HashMap<>();
 			for (int i = 0; i < getChannelCount(); i++) {
-				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
-				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET),
-						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.RIGHT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.LEFT),
+						new PackedCollection(frames));
+				patternDestinations.put(new ChannelInfo(i, ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.RIGHT),
+						new PackedCollection(frames));
 			}
 
 			if (MixdownManager.enableRiser) {
-				patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE),
+				patternDestinations.put(new ChannelInfo(0, ChannelInfo.Type.RISE, null),
 						new PackedCollection(Math.min(HealthComputationAdapter.standardDurationFrames, getTotalSamples())));
 			}
 		} else if (clear) {
@@ -707,7 +714,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		return mapper;
 	}
 
-	public static UnaryOperator<ParameterGenome> defaultVariation() {
+	public static UnaryOperator<ProjectedGenome> defaultVariation() {
 		return genome -> {
 			Random rand = new Random();
 			return genome.variation(0, 1, variationRate,

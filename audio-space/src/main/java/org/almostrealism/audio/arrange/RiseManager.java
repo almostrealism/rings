@@ -35,7 +35,7 @@ import org.almostrealism.audio.synth.AudioSynthesizer;
 import org.almostrealism.audio.synth.NoiseGenerator;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ import java.util.function.Supplier;
 public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 	public static final double riseDuration = HealthComputationAdapter.standardDurationSeconds;
 
-	private ConfigurableGenome genome;
+	private ProjectedChromosome chromosome;
 	private int sampleRate;
 
 	private AudioSynthesizer synth;
@@ -53,8 +53,8 @@ public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 
 	private PackedCollection<?> destination;
 
-	public RiseManager(ConfigurableGenome genome, Supplier<AudioSceneContext> context, int sampleRate) {
-		this.genome = genome;
+	public RiseManager(ProjectedChromosome chromosome, Supplier<AudioSceneContext> context, int sampleRate) {
+		this.chromosome = chromosome;
 		this.sampleRate = sampleRate;
 		this.setup = new OperationList("RiseManager Setup");
 		this.synth = new AudioSynthesizer(2, 2);
@@ -81,9 +81,7 @@ public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 		));
 	}
 
-	public ConfigurableGenome getGenome() {
-		return genome;
-	}
+	public ProjectedChromosome getChromosome() { return chromosome; }
 
 	@Override
 	public Supplier<Runnable> setup() { return setup; }

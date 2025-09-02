@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package org.almostrealism.audio.health;
 
 import io.almostrealism.profile.OperationProfile;
+import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDetailsFactory;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
 	public static boolean enableOutput = true;
 	public static boolean enableTimeout = false;
+	public static boolean enableProfileAutosave = false;
 
 	public static OperationProfile profile;
 	private static long totalGeneratedFrames, totalGenerationTime;
@@ -67,10 +68,10 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private long startTime, iterStart;
 	private Scalar abortFlag;
 	
-	public StableDurationHealthComputation(int channels) {
-		super(channels, 6);
+	public StableDurationHealthComputation(int channels, boolean stereo) {
+		super(channels, stereo, 6);
 		addSilenceListener(() -> encounteredSilence = true);
-		setBatchSize(OutputLine.sampleRate / 2);
+		setBatchSize(TemporalRunner.enableOptimization ? 1 : (OutputLine.sampleRate / 2));
 	}
 
 	public void setBatchSize(int iter) {
@@ -148,7 +149,9 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	@Override
 	public void reset() {
-		abortFlag.setValue(0.0);
+		if (abortFlag != null)
+			abortFlag.setValue(0.0);
+
 		super.reset();
 		getTarget().reset();
 	}
@@ -189,13 +192,26 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			for (l = 0; l < max && !isTimeout(); l = l + iter) {
 				(l == 0 ? start : iterate).run();
 
-				if ((int) getWaveOut().getCursor().toDouble(0) != l + iter) {
+				if (enableProfileAutosave && profile instanceof OperationProfileNode
+						&& (l + iter) % (OutputLine.sampleRate * 60L) == 0) {
+					try {
+						String name = "results/optimizer-" + l + ".xml";
+						log("Saving profile to " + name);
+						((OperationProfileNode) profile).save(name);
+						log("Saved profile to " + name);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				long fc = l + iter - 1;
+				if (getMaster().getFrameCount() != fc) {
 					log("Cursor out of sync (" +
-							(int) getWaveOut().getCursor().toDouble(0) + " != " + (l + iter) + ")");
+							getMaster().getFrameCount() + " != " + fc + ")");
 					throw new RuntimeException();
 				}
 
-				getMeasures().forEach(m -> {
+				getMeasures().values().forEach(m -> {
 					checkForSilence(m);
 
 					if (m.getClipCount() > 0) {
@@ -210,14 +226,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				});
 
 				// If clipping or silence occurs, report the health score
-				if (getMeasures().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
+				if (getMeasures().values().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
 
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
 					console().println("StableDurationHealthComputation: " + v / OutputLine.sampleRate + " seconds (rendered in " +
 							(System.currentTimeMillis() - iterStart) + " msec)");
 					iterStart = System.currentTimeMillis();
-				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20) == 0) {
+				} else if (!enableVerbose && (l + iter) % (OutputLine.sampleRate * 20L) == 0) {
 					console().print(">");
 				}
 			}
@@ -243,14 +259,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 			if (score > 0) {
 				if (enableOutput) {
 					if (enableVerbose)
-						log("Cursor = " + getWaveOut().getCursor().toDouble(0));
+						log("Cursor = " + getMaster().getFrameCount());
 
-					getWaveOut().write().get().run();
+					getMaster().write().get().run();
 					if (getStems() != null) getStems().forEach(s -> s.write().get().run());
 
 					if (getWaveDetailsProcessor() != null) {
 						details = WaveDetailsFactory.getDefault()
-								.forProvider(new FileWaveDataProvider(getOutputFile().getPath()));
+								.forFile(getOutputFile().getPath());
 						getWaveDetailsProcessor().accept(details);
 					}
 				}
@@ -261,7 +277,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				recordGenerationTime(l, generationTime);
 			}
 
-			getWaveOut().reset();
+			getMaster().reset();
 			if (getStems() != null) getStems().forEach(WaveOutput::reset);
  			reset();
 		}

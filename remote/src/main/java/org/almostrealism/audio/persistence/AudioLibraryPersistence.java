@@ -70,8 +70,8 @@ public class AudioLibraryPersistence {
 	}
 
 	public static void saveLibrary(AudioLibrary library, String dataPrefix) {
-		try {
-			saveLibrary(library, new LibraryDestination(dataPrefix).out());
+		try (LibraryDestination.Writer out = new LibraryDestination(dataPrefix).out()) {
+			saveLibrary(library, out);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -83,7 +83,7 @@ public class AudioLibraryPersistence {
 
 	public static void saveLibrary(AudioLibrary library, boolean includeAudio, Supplier<OutputStream> out) throws IOException {
 		Audio.AudioLibraryData.Builder data = Audio.AudioLibraryData.newBuilder();
-		List<WaveDetails> details = new ArrayList<>(library.getDetails());
+		List<WaveDetails> details = new ArrayList<>(library.getAllDetails());
 
 		int byteCount = 0;
 
@@ -153,7 +153,7 @@ public class AudioLibraryPersistence {
 	}
 
 	public static AudioLibrary loadLibrary(File root, int sampleRate, Supplier<InputStream> in) throws IOException {
-		return loadLibrary(AudioLibrary.load(root, sampleRate), in);
+		return loadLibrary(new AudioLibrary(root, sampleRate), in);
 	}
 
 	public static AudioLibrary loadLibrary(AudioLibrary library, Supplier<InputStream> in) throws IOException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,15 +35,23 @@ public class NoteAudioProviderTests {
 
 	@Test
 	public void noteAudioProvider1() {
-		PackedCollection<?> result = organ().getAudio(WesternChromatic.C1).evaluate();
+		PackedCollection<?> result = organ().getAudio(WesternChromatic.C1, 0).evaluate();
 		WaveData data = new WaveData(result, OutputLine.sampleRate);
 		data.save(new File("results/note-audio-provider-1.wav"));
 	}
 
 	@Test
 	public void noteAudioProvider2() {
-		PackedCollection<?> result = organ().getAudio(WesternChromatic.G1).evaluate();
+		PackedCollection<?> result = organ().getAudio(WesternChromatic.G1, 1).evaluate();
 		WaveData data = new WaveData(result, OutputLine.sampleRate);
 		data.save(new File("results/note-audio-provider-2.wav"));
+	}
+
+	@Test
+	public void alternateSampleRate() {
+		int sampleRate = OutputLine.sampleRate / 2;
+		PackedCollection<?> result = organ().getProvider().getChannelData(0, 1.0, sampleRate);
+		WaveData data = new WaveData(result, sampleRate);
+		data.save(new File("results/alternate-sample-rate.wav"));
 	}
 }

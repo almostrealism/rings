@@ -104,7 +104,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 
 		List<WaveDataProvider> providers = new ArrayList<>();
 		playbackRates.forEach(rate -> {
-			PackedCollection<?> output = WaveData.allocateCollection(processor.getFrames()).traverse(1);
+			PackedCollection<?> output = new PackedCollection<>(processor.getFrames()).traverse(1);
 			WaveData destination = new WaveData(output, OutputLine.sampleRate);
 			providers.add(new DynamicWaveDataProvider("synth://" + UUID.randomUUID(), destination));
 		});
@@ -141,7 +141,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 						p.setMem(phase);
 						a.setMem(amp);
 
-						results.add(processor.apply(source.getCollection(), grain, w, p, a).getCollection());
+						results.add(processor.apply(source.getChannelData(0), grain, w, p, a).getChannelData(0));
 					}
 				}
 
@@ -155,7 +155,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 				sum = multiply(sum, c(gain / count));
 
 				if (WaveOutput.enableVerbose) System.out.println("GranularSynthesizer: Summing grains...");
-				sum.get().into(providers.get(i).get().getCollection()).evaluate(results.stream().toArray(MemoryBank[]::new));
+				sum.get().into(providers.get(i).get().getChannelData(0)).evaluate(results.stream().toArray(Object[]::new));
 				if (WaveOutput.enableVerbose) System.out.println("GranularSynthesizer: Done");
 			}
 		});

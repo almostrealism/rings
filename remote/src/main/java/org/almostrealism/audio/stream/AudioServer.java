@@ -58,8 +58,8 @@ public class AudioServer implements HttpHandler, CodeFeatures {
 			return key;
 		}
 
-		addStream(key, AudioProcessor.fromWave(data),
-				data.getCollection().getMemLength(), data.getSampleRate());
+		addStream(key, AudioProcessor.fromWave(data, 0),
+				data.getFrameCount(), data.getSampleRate());
 		return key;
 	}
 

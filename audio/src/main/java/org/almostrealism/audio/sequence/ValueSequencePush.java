@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,26 @@ import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.Switch;
-import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.temporal.BaseAudioData;
 
 public class ValueSequencePush extends ValueSequenceComputation implements CodeFeatures {
 	private Switch choice;
 
-	public ValueSequencePush(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
+	public ValueSequencePush(BaseAudioData data,
+							 Producer<PackedCollection<?>> durationFrames,
+							 PackedCollection<?> output,
+							 Producer<PackedCollection<?>>... choices) {
 		this(data, durationFrames, output, true, choices);
 	}
 
-	public ValueSequencePush(ValueSequenceData data, Producer<Scalar> durationFrames, PackedCollection<?> output, boolean repeat, Producer<PackedCollection<?>>... choices) {
+	public ValueSequencePush(BaseAudioData data,
+							 Producer<PackedCollection<?>> durationFrames,
+							 PackedCollection<?> output, boolean repeat,
+							 Producer<PackedCollection<?>>... choices) {
 		super(data, durationFrames, output, repeat, choices);
 		choice = new Switch((CollectionProducer) divide(wavePosition(), durationFrames()),
 						choices(in -> a(1, output(), in)));

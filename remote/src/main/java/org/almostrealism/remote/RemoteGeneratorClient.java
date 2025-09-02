@@ -72,9 +72,8 @@ public class RemoteGeneratorClient {
 
 		List<WaveData> data = sources.stream()
 				.filter(Validity::valid)
-				.map(NoteAudio::getAudio)
+				.map(NoteAudio::getWaveData)
 				.filter(Objects::nonNull)
-				.map(c -> new WaveData(c, OutputLine.sampleRate))
 				.collect(Collectors.toList());
 
 		if (data.isEmpty()) return false;
