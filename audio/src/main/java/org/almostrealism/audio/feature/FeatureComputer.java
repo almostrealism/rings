@@ -26,7 +26,6 @@ import org.almostrealism.audio.util.TensorRow;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Tensor;
-import org.almostrealism.audio.computations.SplitRadixFFT;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 
@@ -414,7 +413,7 @@ public class FeatureComputer implements CodeFeatures {
 				feature.set(i, feature.get(i + 1));
 
 			if (!settings.isUseEnergy())
-				energy *= SplitRadixFFT.SQRT_2;  // scale on C0 (actually removing a scale
+				energy *= Math.sqrt(2);  // scale on C0 (actually removing a scale
 			// we previously added that's part of one common definition of
 			// the cosine transform.)
 			feature.set(settings.getNumCeps() - 1, new Scalar(energy));
