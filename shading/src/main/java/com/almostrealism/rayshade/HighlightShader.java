@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,15 @@ package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.computations.ExpressionComputation;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.ShaderSet;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
@@ -84,7 +89,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		}
 		
 		n = scalarMultiply(n, vlength(n).pow(-1.0));
-		ExpressionComputation<Vector> h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
+		CollectionProducer<Vector> h = vector(add(p.getIntersection().getNormalAt(v(point)), p.getLightDirection()));
 		h = scalarMultiply(h, vlength(h).pow(-1.0));
 
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(p));

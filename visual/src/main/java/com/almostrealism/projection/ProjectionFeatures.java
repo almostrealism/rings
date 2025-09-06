@@ -34,8 +34,9 @@ public interface ProjectionFeatures extends CodeFeatures {
 				direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
-	default CollectionProducer<Vector> direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
-													Vector u, Vector v, Vector w, Pair blur) {
+	default CollectionProducer<Vector> direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd,
+												 Pair projectionDimensions, double focalLength,
+												 Vector u, Vector v, Vector w, Pair blur) {
 		Producer<Pair<?>> pd = v(projectionDimensions);
 
 		ExpressionComputation<Scalar> sdx = l(sd);
@@ -87,7 +88,7 @@ public interface ProjectionFeatures extends CodeFeatures {
 		return t;
 	}
 
-	private ExpressionComputation<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
+	private CollectionProducer<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
 		CollectionProducer<Scalar>  x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
 		CollectionProducer<Scalar> y = z(t).multiply(x(w)).add(x(t).multiply(z(w)).multiply(scalar(-1.0)));
 		CollectionProducer<Scalar>  z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
