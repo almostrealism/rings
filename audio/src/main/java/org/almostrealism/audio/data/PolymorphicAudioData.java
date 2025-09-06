@@ -39,7 +39,7 @@ public class PolymorphicAudioData extends DefaultWaveCellData implements SineWav
 	public Heap getDefaultDelegate() { return Heap.getDefault(); }
 
 	public static PackedCollection<PolymorphicAudioData> bank(int count) {
-		return new PackedCollection<>(new TraversalPolicy(count, SIZE), 1, delegateSpec ->
+		return new PackedCollection<>(new TraversalPolicy(count, SIZE * 2), 1, delegateSpec ->
 			new PolymorphicAudioData(delegateSpec.getDelegate(), delegateSpec.getOffset()));
 	}
 

@@ -46,13 +46,13 @@ public class ValueSequenceTick extends ValueSequenceComputation {
 
 		Consumer<String> exp = scope.code();
 
-		exp.accept(getWavePosition().referenceRelative(0).getSimpleExpression(getLanguage()));
+		exp.accept(getWavePosition().referenceAbsolute(e(0)).getSimpleExpression(getLanguage()));
 		exp.accept(" = ");
 		exp.accept(getWavePosition().valueAt(0).add(getWaveLength().valueAt(0)).getSimpleExpression(getLanguage()));
 		exp.accept(";\n");
 
 		if (repeat) {
-			exp.accept(getWavePosition().referenceRelative(0).getSimpleExpression(getLanguage()));
+			exp.accept(getWavePosition().referenceAbsolute(e(0)).getSimpleExpression(getLanguage()));
 			exp.accept(" = fmod(");
 			exp.accept(getWavePosition().valueAt(0).getSimpleExpression(getLanguage()));
 			exp.accept(", ");
