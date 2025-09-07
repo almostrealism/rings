@@ -118,6 +118,9 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	public WaveDetailsFactory getWaveDetailsFactory() { return factory; }
 
+	public int getTotalJobs() { return totalJobs; }
+	public int getPendingJobs() { return queue.size(); }
+
 	public Collection<WaveDetails> getAllDetails() { return info.values(); }
 
 	public Optional<WaveDetails> getDetailsNow(String key) {
