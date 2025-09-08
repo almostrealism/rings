@@ -21,11 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.almostrealism.relation.Editable;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -125,7 +125,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			AcceleratedRankedChoiceEvaluable<RGB> aggegator = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
+			Evaluable<RGB> aggegator = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
 			Producer<RGB> color = () -> aggegator;
 			/*
 			if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
