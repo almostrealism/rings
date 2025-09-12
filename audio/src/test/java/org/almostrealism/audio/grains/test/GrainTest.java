@@ -58,9 +58,9 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		Producer in = v(Scalar.shape(), 0);
 		Producer<PackedCollection<?>> g = v(shape(3).traverseEach(), 1);
 
-		CollectionProducer<Scalar> start = scalar(grainShape, g, 0);
-		CollectionProducer<Scalar> duration = scalar(grainShape, g, 1);
-		CollectionProducer<Scalar> rate = scalar(grainShape, g, 2);
+		CollectionProducer<PackedCollection<?>> start = c(g, 0);
+		CollectionProducer<PackedCollection<?>> duration = c(g, 1);
+		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
 
 		int frames = 240 * OutputLine.sampleRate;
 

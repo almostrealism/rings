@@ -64,11 +64,11 @@ public interface ProjectionFeatures extends CodeFeatures {
 			CollectionProducer<Vector> vv = v(wv, uv);
 
 			Producer<PackedCollection<?>> random = rand(2);
-			Producer<Scalar> rx = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 0)), 0));
-			Producer<Scalar> ry = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 1)), 0));
+			Producer<PackedCollection<?>> rx = add(c(-0.5), c(random, 0));
+			Producer<PackedCollection<?>> ry = add(c(-0.5), c(random, 1));
 
-			pqr = pqr.add(scalarMultiply(scalarMultiply(uv, blur.getX()), rx));
-			pqr = pqr.add(scalarMultiply(scalarMultiply(vv, blur.getY()), ry));
+			pqr = (CollectionProducer) pqr.add(multiply(uv, c(blur.getX())).multiply(rx));
+			pqr = (CollectionProducer) pqr.add(multiply(vv, c(blur.getY())).multiply(ry));
 
 			pqr = scalarMultiply(pqr, len);
 			pqr = scalarMultiply(pqr, length(pqr).pow(-1.0));
