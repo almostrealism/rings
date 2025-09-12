@@ -56,7 +56,7 @@ public interface ProjectionFeatures extends CodeFeatures {
 		CollectionProducer<Scalar> z = p.multiply(scalar(u.getZ())).add(q.multiply(scalar(v.getZ()))).add(r.multiply(scalar(w.getZ())));
 
 		CollectionProducer<Vector> pqr = vector(x, y, z);
-		CollectionProducer<Scalar> len = vlength(pqr);
+		CollectionProducer<Scalar> len = length(pqr);
 
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
 			CollectionProducer<Vector> wv = vnormalize(pqr);
@@ -71,7 +71,7 @@ public interface ProjectionFeatures extends CodeFeatures {
 			pqr = pqr.add(scalarMultiply(scalarMultiply(vv, blur.getY()), ry));
 
 			pqr = scalarMultiply(pqr, len);
-			pqr = scalarMultiply(pqr, vlength(pqr).pow(-1.0));
+			pqr = scalarMultiply(pqr, length(pqr).pow(-1.0));
 		}
 
 		return pqr;
@@ -89,9 +89,9 @@ public interface ProjectionFeatures extends CodeFeatures {
 	}
 
 	private CollectionProducer<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
-		CollectionProducer<Scalar>  x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar> x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
 		CollectionProducer<Scalar> y = z(t).multiply(x(w)).add(x(t).multiply(z(w)).multiply(scalar(-1.0)));
-		CollectionProducer<Scalar>  z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
+		CollectionProducer<Scalar> z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
 		return vnormalize(vector(x, y, z));
 	}
 
