@@ -23,6 +23,7 @@ import java.util.List;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.DiscreteField;
@@ -140,10 +141,10 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			 */
 
 			Producer<Scalar> c = scalar(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			Producer<Scalar> reflective = scalarAdd(scalar(reflectivity), scalar(1 - reflectivity)
-							.multiply(scalarPow(c, scalar(5.0))));
+			CollectionProducer<?> reflective = add(c(reflectivity),
+					c(1 - reflectivity).multiply(pow(c, c(5.0))));
 			Producer<RGB> fcolor = color;
-			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
+			color = reflective.multiply(fr).multiply(fcolor);
 
 			if (tc == null) {
 				tc = color;
