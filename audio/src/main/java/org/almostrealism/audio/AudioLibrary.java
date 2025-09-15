@@ -90,6 +90,10 @@ public class AudioLibrary implements ConsoleFeatures {
 		executor.setPriority(job -> ((WaveDetailsJob) job).getPriority());
 	}
 
+	public boolean isPaused() {
+		return executor == null || executor.getPriorityThreshold() >= HIGH_PRIORITY;
+	}
+
 	public void pause() {
 		if (executor != null) {
 			executor.setPriorityThreshold(HIGH_PRIORITY);
