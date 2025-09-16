@@ -139,8 +139,10 @@ public class WaveDetailsFactory implements CodeFeatures {
 	public double similarity(WaveDetails a, WaveDetails b) {
 		if (a.getFeatureData() != null && b.getFeatureData() != null) {
 			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()));
-		} else {
+		} else if (a.getFreqData() != null && b.getFreqData() != null) {
 			return WaveDetails.differenceSimilarity(a.getFreqData(), b.getFreqData());
+		} else {
+			return -1;
 		}
 	}
 
