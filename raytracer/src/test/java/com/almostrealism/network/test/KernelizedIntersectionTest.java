@@ -41,8 +41,8 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 
 	@Test
 	public void intersectionKernel() {
-		Producer<Scalar> combined = combined();
-		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
+		Producer<PackedCollection<?>> combined = combined();
+		Evaluable<PackedCollection<?>> ev = combined.get();
 
 		PackedCollection<Pair<?>> input = getInput();
 		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
@@ -53,8 +53,8 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 
 		System.out.println("KernelizedIntersectionTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			Scalar value = ev.evaluate(input.get(i), dim.get(i));
-			Assert.assertEquals(value.getValue(), output.get(i).getValue(), Math.pow(10, -10));
+			double value = ev.evaluate(input.get(i), dim.get(i)).toDouble();
+			Assert.assertEquals(value, output.get(i).getValue(), Math.pow(10, -10));
 		}
 	}
 

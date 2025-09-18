@@ -99,7 +99,7 @@ public interface SamplingFeatures extends CodeFeatures {
 		Producer<PackedCollection<?>> series = frame();
 //		Producer<PackedCollection<?>> max = subtract(p(count), start);
 //		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, d), max));
-		Producer<PackedCollection<?>> pos  = start.add(relativeMod(series, d));
+		Producer<PackedCollection<?>> pos  = start.add(mod(series, d));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(input, pos, rate);
 		return generate.multiply(sinw(series, w, phase, amp));

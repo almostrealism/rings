@@ -48,9 +48,9 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
 		CollectionProducer<Vector> point = origin(normals.get(0));
-		CollectionProducer<Vector> n = vnormalize(direction(normals.get(0)));
+		CollectionProducer<Vector> n = normalize(direction(normals.get(0)));
 		CollectionProducer<Scalar> scaleFront = dotProduct(n, p.getLightDirection());
-		CollectionProducer<Scalar> scaleBack = dotProduct(scalarMultiply(n, -1.0), p.getLightDirection());
+		CollectionProducer<Scalar> scaleBack = dotProduct(minus(n), p.getLightDirection());
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
 		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 

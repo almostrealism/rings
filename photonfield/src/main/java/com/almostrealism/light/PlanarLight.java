@@ -105,7 +105,7 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 		if (v.dotProduct(this.normal) < 0)
 			v.multiplyBy(-1.0);
 		
-		return vnormalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
+		return normalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
 	}
 
 	@Override

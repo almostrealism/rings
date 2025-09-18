@@ -86,7 +86,7 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 	@Override
 	public ShadableIntersection intersectAt(Producer r) {
 		TransformMatrix m = getTransform(true);
-		Supplier<Evaluable<? extends Ray>> sr = r;
+		Producer<Ray> sr = r;
 		if (m != null) sr = m.getInverse().transform(sr);
 
 		final Supplier<Evaluable<? extends Ray>> fr = sr;
@@ -118,8 +118,8 @@ public class Cylinder extends AbstractSurface implements CodeFeatures {
 				t0 = (-b / g) + discriminantSqrt;
 				t1 = (-b / g) - discriminantSqrt;
 
-				double l0 = ray.pointAt(scalar(t0)).get().evaluate(args).getY();
-				double l1 = ray.pointAt(scalar(t1)).get().evaluate(args).getY();
+				double l0 = ray.pointAt(c(t0)).get().evaluate(args).getY();
+				double l1 = ray.pointAt(c(t1)).get().evaluate(args).getY();
 
 				Scalar sc;
 

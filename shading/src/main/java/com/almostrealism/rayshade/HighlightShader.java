@@ -96,7 +96,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		if (super.size() > 0) hc = multiply(hc, super.shade(p, normals));
 
 		ExpressionComputation<Scalar> cFront = dotProduct(h, n);
-		ExpressionComputation<Scalar> cBack = dotProduct(h, scalarMultiply(n, -1.0));
+		ExpressionComputation<Scalar> cBack = dotProduct(h, minus(n));
 
 		Producer<RGB> fhc = hc;
 

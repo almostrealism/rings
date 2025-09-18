@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.uml.Multiple;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Intersection;
 import org.almostrealism.algebra.Scalar;
@@ -254,9 +255,9 @@ public class RefractionShader implements Shader<ShaderContext>, Editable, RGBFea
 			Producer<Ray> r = new DynamicProducerForMemoryData<>(args -> new Ray(p, d));
 
 			Intersection inter = (Intersection) s.intersectAt(r);
-			Scalar id = ((Evaluable<Scalar>) inter.getDistance().get()).evaluate();
+			PackedCollection<?> id = inter.getDistance().get().evaluate();
 			
-			if (inter == null || id.getValue() < 0) {
+			if (inter == null || id.toDouble() < 0) {
 				totalR += 1.0;
 			} else {
 				totalR += s.getIndexOfRefraction(r.get().evaluate().pointAt(v(id)).get().evaluate());

@@ -107,21 +107,21 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 						double invC2 = 1.0 / c2;
 
 						double t = (-c1 - root) * invC2;
-						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
+						Vector p = ray.pointAt(c(t)).get().evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 
 						t = (-c1 + root) * invC2;
-						p = ray.pointAt(scalar(t)).get().evaluate(args);
+						p = ray.pointAt(c(t)).get().evaluate(args);
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 					} else {
 						double t = -c1 / c2;
-						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
+						Vector p = ray.pointAt(c(t)).get().evaluate(args);
 
 						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 					}
 				} else if (Math.abs(c1) >= Intersection.e) {
 					double t = -0.5 * c0 / c1;
-					Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
+					Vector p = ray.pointAt(c(t)).get().evaluate(args);
 					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 				} else if (Math.abs(c0) < Intersection.e) {
 					inter.add(0.0);

@@ -826,7 +826,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	public Producer<Vector> getNormalAt(Producer<Vector> point) {
 		Volume<?> v = this.getVolume(this.rclosest.absorber);
 		if (v == null) return ZeroVector.getInstance();
-		return v.getNormalAt(add(point, scalarMultiply(rclosest.position, -1.0)));
+		return v.getNormalAt(add(point, minus(rclosest.position)));
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 		this.color = shadowAndShadeProduct(intersections, surface, otherSurfaces, light, otherLights, p);
 		this.intersections = intersections;
 		this.surface = surface;
-		this.distance = ((ShadableIntersection) intersections).getDistance();
+		this.distance = (Producer) ((ShadableIntersection) intersections).getDistance();
 	}
 
 	protected CollectionProducer<RGB> shadowAndShadeProduct(ContinuousField intersections,

@@ -4,6 +4,7 @@ import com.almostrealism.network.TestScene;
 import com.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.ShadableIntersection;
@@ -18,7 +19,7 @@ public class SceneTest implements TestFeatures {
 	public void intersection() throws IOException {
 		TestScene scene = new TestScene();
 		ShadableIntersection field = (ShadableIntersection) scene.getSurfaces()[0].intersectAt(ray(0, 0, 10, 0, 0, -1));
-		Producer<Scalar> distance = field.getDistance();
+		Producer<PackedCollection<?>> distance = field.getDistance();
 		assertEquals(9.0, distance.get().evaluate());
 	}
 
