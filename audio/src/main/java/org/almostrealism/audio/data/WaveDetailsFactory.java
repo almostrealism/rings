@@ -23,6 +23,8 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.stream.DoubleStream;
+
 public class WaveDetailsFactory implements CodeFeatures {
 
 	public static boolean enableFreqSimilarity = false;
@@ -150,9 +152,22 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
-		return multiply(a, b).sum(1)
+		double values[] = multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
-				.evaluate().doubleStream().limit(limit).average().orElse(-1.0);
+				.evaluate().doubleStream().limit(limit).toArray();
+		if (values.length == 0) return -1.0;
+
+		int skip = 0;
+		int total = values.length;
+		if (total > 10) {
+			// If there is enough material, remove the bottom 10%
+			// and the top 2 values to reduce outlier effects
+			skip = (int) (values.length * 0.1);
+			total = total - skip - 2;
+		}
+
+		// log("Skipping " + skip + " of " + values.length + " values, averaging " + total + " values");
+		return DoubleStream.of(values).sorted().skip(skip).limit(total).average().orElseThrow();
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {

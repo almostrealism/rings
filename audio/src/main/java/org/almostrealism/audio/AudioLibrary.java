@@ -251,9 +251,8 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public void resetSimilarities() {
-		log("Resetting similarities");
 		getAllDetails().forEach(d -> d.getSimilarities().clear());
-		log("Similarities reset");
+		// log("Similarities reset");
 	}
 
 	public WaveDataProvider find(String identifier) {
