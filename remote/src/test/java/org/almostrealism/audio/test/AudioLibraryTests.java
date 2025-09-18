@@ -56,7 +56,7 @@ public class AudioLibraryTests implements TestFeatures {
 	}
 
 	@Test
-	public void loadDetails() throws ExecutionException, InterruptedException {
+	public void loadDetails() {
 		AudioLibrary library = new AudioLibrary(new File(LIBRARY), OutputLine.sampleRate);
 		WaveDetails details = library.getDetailsAwait(
 				"/Users/michael/Music/Samples/Essential WAV From Mars/Drums/02. Kits/707 From Mars/03. Mod Kit 1/Ride 707 Mod 35.wav", true);
@@ -110,17 +110,9 @@ public class AudioLibraryTests implements TestFeatures {
 			warn("Unable to create ONNX encoder", e);
 		}
 
-		AtomicInteger progress = new AtomicInteger(0);
-		library.refresh(p -> {
-			int current = (int) (p * 100);
-
-			if (progress.get() != current) {
-				progress.set(current);
-				log(current + "%");
-			}
+		library.refresh().thenRun(() -> {
+			AudioLibraryPersistence.saveLibrary(library, "library");
 		});
-
-		AudioLibraryPersistence.saveLibrary(library, "library");
 	}
 
 	@Test

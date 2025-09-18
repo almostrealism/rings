@@ -204,6 +204,12 @@ public class WaveDetails implements CodeFeatures {
 		}
 	}
 
+	public int getValidFeatureFrameCount() {
+		double duration = (double) getFrameCount() / (double) getSampleRate();
+		int limit = (int) Math.ceil(duration * getFeatureSampleRate());
+		return Math.min(getFeatureFrameCount(), limit);
+	}
+
 	public Map<String, Double> getSimilarities() {
 		return similarities;
 	}

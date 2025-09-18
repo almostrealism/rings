@@ -28,6 +28,7 @@ import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,12 +41,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AudioLibrary implements ConsoleFeatures {
 	public static double BACKGROUND_PRIORITY = 0.0;
@@ -125,7 +127,13 @@ public class AudioLibrary implements ConsoleFeatures {
 	public int getTotalJobs() { return totalJobs; }
 	public int getPendingJobs() { return queue.size(); }
 
-	public Collection<WaveDetails> getAllDetails() { return info.values(); }
+	public Stream<WaveDetails> allDetails() {
+		return new ArrayList<>(info.keySet()).stream().map(info::get).filter(Objects::nonNull);
+	}
+
+	public Collection<WaveDetails> getAllDetails() {
+		return allDetails().toList();
+	}
 
 	public Optional<WaveDetails> getDetailsNow(String key) {
 		return getDetailsNow(new FileWaveDataProvider(key));
@@ -228,12 +236,24 @@ public class AudioLibrary implements ConsoleFeatures {
 		}
 	}
 
+	public boolean isComplete(WaveDetails details) {
+		return details != null &&
+				details.getFreqData() != null &&
+				details.getFeatureData() != null;
+	}
+
 	public Map<String, Double> getSimilarities(String key) {
 		return getSimilarities(new FileWaveDataProvider(key));
 	}
 
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
 		return computeSimilarities(getDetailsAwait(provider, false)).getSimilarities();
+	}
+
+	public void resetSimilarities() {
+		log("Resetting similarities");
+		getAllDetails().forEach(d -> d.getSimilarities().clear());
+		log("Similarities reset");
 	}
 
 	public WaveDataProvider find(String identifier) {
@@ -259,16 +279,7 @@ public class AudioLibrary implements ConsoleFeatures {
 		try {
 			return computeDetails(job.getTarget(), job.isPersistent());
 		} finally {
-			if (progressListener != null) {
-				double total = totalJobs <= 0 ? 1.0 : totalJobs;
-				double remaining = queue.size() / total;
-
-				if (remaining <= 1.0) {
-					progressListener.accept(1.0 - remaining);
-				} else {
-					progressListener.accept(-1.0);
-				}
-			}
+			reportProgress();
 		}
 	}
 
@@ -284,6 +295,28 @@ public class AudioLibrary implements ConsoleFeatures {
 		executor.execute(job);
 		totalJobs++;
 		return job;
+	}
+
+	public double getProgress() {
+		int totalJobs = getTotalJobs();
+		int queueSize = getPendingJobs();
+
+		double total = totalJobs <= 0 ? 1.0 : totalJobs;
+		double remaining = queueSize / total;
+		double progress = remaining <= 0.0 ? 1.0 : 1.0 - remaining;
+
+		if (queueSize == 0 && progress != 1.0) {
+			warn("Progress != 1.0 despite no jobs in progress (" +
+					progress + ", " + totalJobs + " total)");
+			progress = 1.0;
+		}
+
+		return progress;
+	}
+
+	protected void reportProgress() {
+		if (progressListener == null) return;
+		progressListener.accept(getProgress());
 	}
 
 	public void stop() { stop(5); }
@@ -312,7 +345,7 @@ public class AudioLibrary implements ConsoleFeatures {
 
 	protected WaveDetails computeSimilarities(WaveDetails details) {
 		try {
-			info.values().stream()
+			allDetails()
 					.filter(d -> details == null || !Objects.equals(d.getIdentifier(), details.getIdentifier()))
 					.filter(d -> !details.getSimilarities().containsKey(d.getIdentifier()))
 					.forEach(d -> {
@@ -336,36 +369,37 @@ public class AudioLibrary implements ConsoleFeatures {
 	}
 
 	public CompletableFuture<Void> refresh() {
-		return refresh(null);
-	}
+		try {
+			CompletableFuture<Void> future = new CompletableFuture<>();
+			AtomicBoolean submitted = new AtomicBoolean(false);
 
-	public CompletableFuture<Void> refresh(DoubleConsumer progress) {
-		double count = progress == null ? 0 : root.children().count();
-		if (count > 0) {
-			progress.accept(0.0);
-		}
+			root.children().forEach(f -> {
+				FileWaveDataProvider provider = f.get();
 
-		CompletableFuture<Void> future = new CompletableFuture<>();
+				boolean skipped = true;
 
-		AtomicLong total = new AtomicLong(0);
+				try {
+					if (provider == null || isComplete(info.get(provider.getIdentifier())))
+						return;
 
-		root.children().forEach(f -> {
-			FileWaveDataProvider provider = f.get();
+					// Similarities may no longer be valid if the library is being updated
+					skipped = false;
+					if (!submitted.get()) resetSimilarities();
 
-			try {
-				if (provider == null) return;
-				submitJob(new WaveDetailsJob(this::processJob, provider, true, BACKGROUND_PRIORITY));
-			} finally {
-				if (count > 0) {
-					progress.accept(total.addAndGet(1) / count);
+					submitJob(new WaveDetailsJob(this::processJob, provider, true, BACKGROUND_PRIORITY));
+				} finally {
+					// Make sure not to repeatedly reset the similarities
+					if (!skipped) submitted.set(true);
 				}
-			}
-		});
+			});
 
-		WaveDetailsJob last = new WaveDetailsJob(this::processJob, null, false, -1.0);
-		last.getFuture().thenRun(() -> future.complete(null));
-		executor.execute(last);
-		return future;
+			WaveDetailsJob last = new WaveDetailsJob(this::processJob, null, false, -1.0);
+			last.getFuture().thenRun(() -> future.complete(null));
+			executor.execute(last);
+			return future;
+		} finally {
+			reportProgress();
+		}
 	}
 
 	public void cleanup(Predicate<String> preserve) {

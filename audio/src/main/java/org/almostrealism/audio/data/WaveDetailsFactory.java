@@ -25,6 +25,8 @@ import org.almostrealism.collect.PackedCollection;
 
 public class WaveDetailsFactory implements CodeFeatures {
 
+	public static boolean enableFreqSimilarity = false;
+
 	public static int defaultBins = 32; // 16;
 	public static double defaultWindow = 0.25; // 0.125;
 
@@ -138,18 +140,19 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	public double similarity(WaveDetails a, WaveDetails b) {
 		if (a.getFeatureData() != null && b.getFeatureData() != null) {
-			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()));
-		} else if (a.getFreqData() != null && b.getFreqData() != null) {
-			return WaveDetails.differenceSimilarity(a.getFreqData(), b.getFreqData());
+			int limit = Math.max(a.getValidFeatureFrameCount(), b.getValidFeatureFrameCount());
+			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()), limit);
+		} else if (enableFreqSimilarity && a.getFreqData() != null && b.getFreqData() != null) {
+			return -WaveDetails.differenceSimilarity(a.getFreqData(0), b.getFreqData(0));
 		} else {
-			return -1;
+			return -Double.MAX_VALUE;
 		}
 	}
 
-	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b) {
+	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
 		return multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
-				.evaluate().doubleStream().average().orElse(0.0);
+				.evaluate().doubleStream().limit(limit).average().orElse(-1.0);
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {
