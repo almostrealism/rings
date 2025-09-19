@@ -199,7 +199,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		op.add(sec(temporals, 0.3));
 		op.get().run();
 
-		System.out.println("Clock after 0.3s: " + clock.frameScalar().get().evaluate().toDouble(0) +
+		System.out.println("Clock after 0.3s: " + clock.frame().evaluate().toDouble() +
 				" (expected " + 0.3 * OutputLine.sampleRate + ")");
 		System.out.println("Result after 0.3s: " + out.toDouble(0) + " (expected " +
 				data.toDouble((int) (0.3 * OutputLine.sampleRate) - 1) + ")");

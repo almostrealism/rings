@@ -18,6 +18,7 @@ package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -193,7 +194,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	// TODO  This should be a method of the Light interface
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
-		ExpressionComputation<Vector> point = origin(intersection);
+		CollectionProducer<Vector> point = origin(intersection);
 		Producer<Vector> direction = add(point, minus(v(getLocation())));
 		direction = minus(normalize(direction));
 		context.setLightDirection(direction);

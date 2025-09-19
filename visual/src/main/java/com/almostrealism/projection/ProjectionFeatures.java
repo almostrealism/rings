@@ -39,11 +39,11 @@ public interface ProjectionFeatures extends CodeFeatures {
 												 Vector u, Vector v, Vector w, Pair blur) {
 		Producer<Pair<?>> pd = v(projectionDimensions);
 
-		CollectionProducer<Scalar> sdx = l(sd);
-		CollectionProducer<Scalar> sdy = r(sd);
+		CollectionProducer<PackedCollection<?>> sdx = l(sd);
+		CollectionProducer<PackedCollection<?>> sdy = r(sd);
 
-		CollectionProducer<Scalar> pdx = l(pd);
-		CollectionProducer<Scalar> pdy = r(pd);
+		CollectionProducer<PackedCollection<?>> pdx = l(pd);
+		CollectionProducer<PackedCollection<?>> pdy = r(pd);
 
 		CollectionProducer<Scalar> p = pdx.multiply(l(pos))
 								.multiply(sdx.add(scalar(-1.0)).pow(scalar(-1.0))).add(pdx.multiply(scalar(-0.5)));

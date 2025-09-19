@@ -108,12 +108,12 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		final Producer<RGB> fr = r;
 
-		ExpressionComputation<Vector> point = origin(p.getIntersection().get(0));
+		CollectionProducer<Vector> point = origin(p.getIntersection().get(0));
 		Producer<Vector> n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		Producer<Ray> transform = transform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
-		ExpressionComputation<Vector> loc = origin(transform);
+		CollectionProducer<Vector> loc = origin(transform);
 
 		Producer<Scalar> cp = length(nor).multiply(length(n));
 

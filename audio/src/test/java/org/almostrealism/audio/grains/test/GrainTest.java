@@ -106,7 +106,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 
 		Producer<PackedCollection<?>> series = integers(0, frames);
 		Producer<PackedCollection<?>> max = c(wav.getFrameCount()).subtract(start);
-		Producer<PackedCollection<?>> pos  = start.add(relativeMod(relativeMod(series, duration), max));
+		Producer<PackedCollection<?>> pos  = start.add(mod(mod(series, duration), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
 		generate = generate.multiply(relativeSinw(series, wavelength, c(1.0)));
