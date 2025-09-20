@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@ import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Editable;
-import io.almostrealism.relation.Evaluable;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link BlendingShader} provides a method for blending values from two
@@ -81,7 +78,7 @@ public class BlendingShader implements Shader<LightingContext>, Editable, RGBFea
 			return null;
 		}
 		
-		Supplier<Evaluable<? extends Vector>> l = p.getLightDirection();
+		Producer<Vector> l = p.getLightDirection();
 
 		Producer<Scalar> k = dotProduct(direction(n), l).add(scalar(1.0));
 		Producer<Scalar> oneMinusK = scalar(1.0).subtract(k);

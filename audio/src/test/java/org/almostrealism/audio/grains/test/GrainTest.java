@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		Producer<PackedCollection<?>> pos  = start.add(mod(mod(series, duration), max));
 
 		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
-		generate = generate.multiply(relativeSinw(series, wavelength, c(1.0)));
+		generate = generate.multiply(sinw(series, wavelength, c(1.0)));
 
 		System.out.println("GrainTest: Evaluating kernel...");
 		Evaluable<PackedCollection<?>> ev = generate.get();

@@ -17,9 +17,8 @@
 package com.almostrealism.rayshade;
 
 import io.almostrealism.relation.Editable;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.collect.computations.ExpressionComputation;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
@@ -95,8 +94,8 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 		Producer<RGB> hc = v(this.getHighlightColor().get().evaluate(p));
 		if (super.size() > 0) hc = multiply(hc, super.shade(p, normals));
 
-		ExpressionComputation<Scalar> cFront = dotProduct(h, n);
-		ExpressionComputation<Scalar> cBack = dotProduct(h, minus(n));
+		CollectionProducer<PackedCollection<?>> cFront = dotProduct(h, n);
+		CollectionProducer<PackedCollection<?>> cBack = dotProduct(h, minus(n));
 
 		Producer<RGB> fhc = hc;
 
@@ -104,7 +103,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			Producer<RGB> color = null;
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
-				double c = cFront.get().evaluate(args).getValue();
+				double c = cFront.get().evaluate(args).toDouble();
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
@@ -117,7 +116,7 @@ public class HighlightShader extends ShaderSet<ShaderContext> implements Shader<
 			}
 
 			f: if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
-				double c = cBack.get().evaluate(args).getValue();
+				double c = cBack.get().evaluate(args).toDouble();
 				if (c < 0) break f;
 				c = Math.pow(c, this.getHighlightExponent());
 
