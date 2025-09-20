@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,32 @@
 
 package com.almostrealism.rayshade;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
-import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.ShaderSet;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.CodeFeatures;
-import com.almostrealism.raytrace.LightingEngineAggregator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.

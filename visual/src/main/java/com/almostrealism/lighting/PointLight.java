@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package com.almostrealism.lighting;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.color.*;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Positioned;
-
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.CodeFeatures;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
