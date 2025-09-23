@@ -36,11 +36,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -159,13 +161,27 @@ public class AudioLibrary implements ConsoleFeatures {
 		return getDetailsAwait(provider, false);
 	}
 
+	public WaveDetails getDetailsAwait(WaveDataProvider provider, long timeout) {
+		return getDetailsAwait(provider, false, OptionalLong.of(timeout));
+	}
+
 	public WaveDetails getDetailsAwait(WaveDataProvider provider, boolean persistent) {
+		return getDetailsAwait(provider, persistent, OptionalLong.empty());
+	}
+
+	public WaveDetails getDetailsAwait(WaveDataProvider provider, boolean persistent, OptionalLong timeout) {
 		try {
-			return getDetails(provider, persistent, HIGH_PRIORITY).get();
+			CompletableFuture<WaveDetails> future = getDetails(provider, persistent, HIGH_PRIORITY);
+
+			if (timeout.isPresent()) {
+				return future.get(timeout.getAsLong(), TimeUnit.SECONDS);
+			} else {
+				return future.get();
+			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return null;
-		} catch (ExecutionException e) {
+		} catch (TimeoutException | ExecutionException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -191,7 +207,7 @@ public class AudioLibrary implements ConsoleFeatures {
 	protected CompletableFuture<WaveDetails> getDetails(WaveDataProvider provider, boolean persistent, double priority) {
 		WaveDetails existing = info.get(provider.getIdentifier());
 
-		if (existing == null) {
+		if (!isComplete(existing)) {
 			return submitJob(provider, persistent, priority).getFuture();
 		} else {
 			existing.setPersistent(persistent || existing.isPersistent());

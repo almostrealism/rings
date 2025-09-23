@@ -51,7 +51,7 @@ public class WaveDetailsJob implements Runnable, ConsoleFeatures {
 
 		try {
 			if (getTarget() != null) {
-				// log("Processing " + getTarget().getKey());
+				log("Processing " + getTarget().getKey());
 				details = runner.apply(this);
 			}
 		} catch (Exception e) {
@@ -68,4 +68,9 @@ public class WaveDetailsJob implements Runnable, ConsoleFeatures {
 	public CompletableFuture<WaveDetails> getFuture() { return future; }
 
 	public void await() { future.join(); }
+
+	@Override
+	public String toString() {
+		return "WaveDetailsJob[" + getTarget().getKey() + "]";
+	}
 }
