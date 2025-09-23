@@ -21,6 +21,7 @@ import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.Ops;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
@@ -41,9 +42,9 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 		loaded = new HashMap<>();
 		interpolate = new DefaultContextSpecific<>(() ->
 				new Interpolate(
-						new PassThroughProducer<>(1, 0),
-						new PassThroughProducer<>(1, 1),
-						new PassThroughProducer<>(1, 2),
+						new PassThroughProducer<>(Ops.o().shape(-1), 0),
+						new PassThroughProducer<>(Ops.o().shape(-1), 1),
+						new PassThroughProducer<>(Ops.o().shape(-1), 2),
 						v -> Product.of(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
 						v -> Product.of(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
