@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 public class AutoEncoderFeatureProviderTests implements TestFeatures {
 	String modelsDirectory = "/Users/michael/Documents/AlmostRealism/models/";
@@ -41,6 +42,24 @@ public class AutoEncoderFeatureProviderTests implements TestFeatures {
 		} catch (OrtException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Test
+	public void comparison() throws IOException {
+		AutoEncoderFeatureProvider provider = provider();
+
+		WaveData input = WaveData.load(new File("Library/Dip Flop DD 159.wav"));
+		PackedCollection<?> rawFeatures = provider.getAutoEncoder().encode(cp(input.getData()))
+				.evaluate().reshape(shape(64, 256)).transpose();
+		PackedCollection<?> providedFeatures = provider.computeFeatures(input);
+		log("Raw features shape = " + rawFeatures.getShape());
+		log("Provided features shape = " + providedFeatures.getShape());
+
+		double diff = IntStream.range(0, rawFeatures.getShape().getTotalSize())
+				.mapToDouble(i -> Math.abs(rawFeatures.toDouble(i) - providedFeatures.toDouble(i)))
+				.average().orElseThrow();
+		log("Average difference = " + diff);
+		assertTrue(diff < 0.05);
 	}
 
 	protected double similarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b) {

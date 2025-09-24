@@ -29,6 +29,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AudioModulator implements AutoCloseable, CodeFeatures {
 	public static final int DIM = 8;
@@ -37,9 +38,13 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 	private double audioDuration;
 
 	public AudioModulator(String modelsPath) throws OrtException {
+		this(modelsPath, System.currentTimeMillis());
+	}
+
+	public AudioModulator(String modelsPath, long seed) throws OrtException {
 		this(new AssetGroup(
-						new Asset(new File(modelsPath + "/encoder.onnx")),
-						new Asset(new File(modelsPath + "/decoder.onnx"))));
+				new Asset(new File(modelsPath + "/encoder.onnx")),
+				new Asset(new File(modelsPath + "/decoder.onnx"))), seed);
 	}
 
 	public AudioModulator(AssetGroup onnxAssets) throws OrtException {
@@ -115,7 +120,10 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 			inputs.add(args[i]);
 		}
 
-		try (AudioModulator modulator = new AudioModulator(modelsPath)) {
+		long seed = 79;
+		Random rand = new Random(seed + 1000);
+
+		try (AudioModulator modulator = new AudioModulator(modelsPath, seed)) {
 			for (String in : inputs) {
 				WaveData wave = WaveData.load(new File(in));
 				if (wave.getSampleRate() != sampleRate) {
@@ -140,7 +148,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 			for (int i = 0; i < count; i++) {
 				PackedCollection<?> position =
 						new PackedCollection<>(new TraversalPolicy(DIM))
-								.randnFill();
+								.fill(rand::nextGaussian);
 
 				Path op = Path.of(outputPath).resolve("modulated_" + i + ".wav");
 				modulator.generateAudio(position, op.toFile());
