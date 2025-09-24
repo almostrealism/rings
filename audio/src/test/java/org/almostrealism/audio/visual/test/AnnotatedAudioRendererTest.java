@@ -43,7 +43,7 @@ public class AnnotatedAudioRendererTest {
 		AcceleratedTimeSeries annotation = new AcceleratedTimeSeries(50);
 
 		try (FileInputStream in = new FileInputStream("results/annotations.bin")) {
-			annotation.load(in);
+			annotation.read(in);
 		}
 
 		RGB blue[] = new RGB[] { new RGB(0.0, 0.0, 1.0), new RGB(0.0, 0.0, 0.5) };
