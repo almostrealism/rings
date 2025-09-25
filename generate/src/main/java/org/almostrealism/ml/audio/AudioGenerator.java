@@ -94,7 +94,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		// 3. Decode audio
 		long start = System.currentTimeMillis();
-		double[][] audio = decodeAudio(finalLatent);
+		double[][] audio = decodeAudio(finalLatent.reshape(OnnxAutoEncoder.LATENT_DIMENSIONS, -1));
 		log((System.currentTimeMillis() - start) + "ms for autoencoder");
 		return audio;
 	}
@@ -166,10 +166,10 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		log("Diffusion completed - " + samplingTotal + "ms sampling, " + modelTotal + "ms model");
 
-		double total = x.doubleStream().map(Math::abs).sum();
-
-		if (HardwareFeatures.outputMonitoring)
+		if (HardwareFeatures.outputMonitoring) {
+			double total = x.doubleStream().map(Math::abs).sum();
 			log("Average latent amplitude = " + (total / DIT_X_SIZE) + " (" + x.count(Double::isNaN) + " NaN values)");
+		}
 
 		return x;
 	}

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.almostrealsim.ml.audio.test;
+package org.almostrealism.ml.audio.test;
 
 import ai.onnxruntime.OrtException;
 import org.almostrealism.audio.data.WaveData;

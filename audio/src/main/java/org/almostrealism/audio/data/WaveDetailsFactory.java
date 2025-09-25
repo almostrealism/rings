@@ -23,7 +23,11 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.stream.DoubleStream;
+
 public class WaveDetailsFactory implements CodeFeatures {
+
+	public static boolean enableFreqSimilarity = false;
 
 	public static int defaultBins = 32; // 16;
 	public static double defaultWindow = 0.25; // 0.125;
@@ -138,16 +142,32 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	public double similarity(WaveDetails a, WaveDetails b) {
 		if (a.getFeatureData() != null && b.getFeatureData() != null) {
-			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()));
+			int limit = Math.max(a.getValidFeatureFrameCount(), b.getValidFeatureFrameCount());
+			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()), limit);
+		} else if (enableFreqSimilarity && a.getFreqData() != null && b.getFreqData() != null) {
+			return -WaveDetails.differenceSimilarity(a.getFreqData(0), b.getFreqData(0));
 		} else {
-			return WaveDetails.differenceSimilarity(a.getFreqData(), b.getFreqData());
+			return -Double.MAX_VALUE;
 		}
 	}
 
-	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b) {
-		return multiply(a, b).sum(1)
+	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
+		double values[] = multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
-				.evaluate().doubleStream().average().orElse(0.0);
+				.evaluate().doubleStream().limit(limit).toArray();
+		if (values.length == 0) return -1.0;
+
+		int skip = 0;
+		int total = values.length;
+		if (total > 10) {
+			// If there is enough material, remove the bottom 10%
+			// and the top 2 values to reduce outlier effects
+			skip = (int) (values.length * 0.1);
+			total = total - skip - 2;
+		}
+
+		// log("Skipping " + skip + " of " + values.length + " values, averaging " + total + " values");
+		return DoubleStream.of(values).sorted().skip(skip).limit(total).average().orElseThrow();
 	}
 
 	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {

@@ -22,6 +22,7 @@ import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
 import ai.onnxruntime.TensorInfo;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.kernel.KernelPreferences;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
@@ -33,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public interface OnnxFeatures extends CodeFeatures {
+	boolean enableCoreMl = false;
+
 	default OrtEnvironment getOnnxEnvironment() {
 		throw new UnsupportedOperationException();
 	}
@@ -122,8 +125,10 @@ public interface OnnxFeatures extends CodeFeatures {
 	static OrtSession.SessionOptions defaultOptions() {
 		try {
 			OrtSession.SessionOptions options = new OrtSession.SessionOptions();
-			options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
+			options.setIntraOpNumThreads(KernelPreferences.getCpuParallelism());
 			options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
+			if (enableCoreMl)
+				options.addCoreML();
 			return options;
 		} catch (OrtException e) {
 			throw new HardwareException("Failed to create ONNX session options", e);

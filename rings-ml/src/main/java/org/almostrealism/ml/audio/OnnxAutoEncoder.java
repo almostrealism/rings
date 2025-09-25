@@ -35,6 +35,7 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public static double MAX_DURATION = 11.0;
 	public static final int SAMPLE_RATE = 44100;
 	public static final int FRAME_COUNT = 2048 * 256;
+	public static final int LATENT_DIMENSIONS = 64;
 
 	private final OrtEnvironment env;
 	private final OrtSession encoderSession;
@@ -80,8 +81,8 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 
 	@Override
 	public Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent) {
-		if (!shape(latent).equalsIgnoreAxis(shape(64, 256))) {
-			throw new IllegalArgumentException();
+		if (!shape(latent).equalsIgnoreAxis(shape(LATENT_DIMENSIONS, 256))) {
+			throw new IllegalArgumentException(shape(latent).toStringDetail());
 		}
 
 		return func(shape(2, FRAME_COUNT),
@@ -90,7 +91,7 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 
 	@Override
 	public Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input) {
-		return func(shape(64, 256),
+		return func(shape(LATENT_DIMENSIONS, 256),
 				in -> args -> encode(in[0]), input);
 	}
 
