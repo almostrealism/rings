@@ -17,21 +17,18 @@
 package org.almostrealism.audio.test;
 
 import ai.onnxruntime.OrtException;
-import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.persistence.AudioLibraryPersistence;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.stream.AudioServer;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.audio.AutoEncoder;
 import org.almostrealism.ml.audio.AutoEncoderFeatureProvider;
 import org.almostrealism.ml.audio.OnnxAutoEncoder;
-import org.almostrealism.persistence.AssetGroup;
-import org.almostrealism.persistence.AssetGroupInfo;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -41,11 +38,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AudioLibraryTests implements TestFeatures {
 	public static String LIBRARY = "Library";
+
+	public static String resources;
 
 	static {
 		String env = System.getenv("AR_RINGS_LIBRARY");
@@ -53,6 +50,8 @@ public class AudioLibraryTests implements TestFeatures {
 
 		String arg = System.getProperty("AR_RINGS_LIBRARY");
 		if (arg != null) LIBRARY = arg;
+
+		resources = System.getProperty("AR_RINGS_RESOURCES");
 	}
 
 	@Test
@@ -93,26 +92,45 @@ public class AudioLibraryTests implements TestFeatures {
 		Thread.sleep(60 * 60 * 1000);
 	}
 
-	@Test
-	public void libraryRefresh() {
+	protected AudioLibrary getLibrary() {
 		AudioLibrary library = new AudioLibrary(new File(LIBRARY), OutputLine.sampleRate);
-
-		AssetGroup assets = new AssetGroup(AssetGroupInfo
-				.forDirectory(new File("assets/stable-audio")));
 
 		try {
 			AutoEncoder encoder = new OnnxAutoEncoder(
-					assets.getAssetPath("encoder.onnx"),
-					assets.getAssetPath("decoder.onnx"));
+					resources + "/assets/stable-audio-autoencoder/encoder.onnx",
+					resources + "/assets/stable-audio-autoencoder/decoder.onnx");
 			library.getWaveDetailsFactory()
 					.setFeatureProvider(new AutoEncoderFeatureProvider(encoder));
 		} catch (OrtException e) {
 			warn("Unable to create ONNX encoder", e);
 		}
 
+		return library;
+	}
+
+	@Test
+	public void libraryRefresh() {
+		AudioLibrary library = getLibrary();
+
 		library.refresh().thenRun(() -> {
 			AudioLibraryPersistence.saveLibrary(library, "library");
 		});
+	}
+
+	@Test
+	public void libraryDecode() {
+		AudioLibrary library = getLibrary();
+
+		AutoEncoderFeatureProvider provider = (AutoEncoderFeatureProvider)
+				library.getWaveDetailsFactory().getFeatureProvider();
+
+		WaveDetails details = library.getDetailsAwait("Library/Dip Flop DD 159.wav", false);
+		PackedCollection<?> features = details.getFeatureData(true);
+		PackedCollection<?> data = provider.getAutoEncoder().decode(cp(features)).evaluate();
+
+		new WaveData(data, 44100)
+				.save(new File("results/library-decode.wav"));
+		log("Saved library-decode.wav");
 	}
 
 	@Test
