@@ -73,7 +73,7 @@ public class AudioSceneContext {
 	}
 
 	public boolean includesChannel(int channel) {
-		return getChannels() != null && getChannels().stream().anyMatch(c -> c.getChannel() == channel);
+		return getChannels() != null && getChannels().stream().anyMatch(c -> c.getPatternChannel() == channel);
 	}
 
 	public DoubleToIntFunction getFrameForPosition() {

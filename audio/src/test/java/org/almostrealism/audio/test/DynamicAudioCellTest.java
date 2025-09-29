@@ -106,7 +106,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		Scalar choice = new Scalar();
 		SineWaveCell chooser = choice(choice);
 		DynamicAudioCell cell = cell(choice);
-		cell.setReceptor(output);
+		cell.setReceptor(output.getWriter(0));
 
 		chooser.setup().get().run();
 		cell.setup().get().run();

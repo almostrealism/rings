@@ -19,6 +19,7 @@ package org.almostrealism.audio.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.relation.Countable;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -33,7 +34,34 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 
 	double getDuration(double playbackRate);
 
-	WaveData get(double playbackRate);
+	int getChannelCount();
+
+	default WaveData get(int sampleRate) {
+		if (getSampleRate() == sampleRate) {
+			return get();
+		} else if (getChannelCount() == 1) {
+			return new WaveData(getChannelData(0, 1.0, sampleRate), sampleRate);
+		}
+
+		int frames = Math.toIntExact(getCountLong() * sampleRate / getSampleRate());
+		WaveData result = new WaveData(getChannelCount(), frames, sampleRate);
+
+		for (int i = 0; i < getChannelCount(); i++) {
+			result.getData().setMem(i * frames, getChannelData(i, 1.0, sampleRate));
+		}
+
+		return result;
+	}
+
+	default PackedCollection<?> getChannelData(int channel, double playbackRate, int sampleRate) {
+		if (getSampleRate() == sampleRate) {
+			return getChannelData(channel, playbackRate);
+		}
+
+		return getChannelData(channel, playbackRate * getSampleRate() / (double) sampleRate);
+	}
+
+	PackedCollection<?> getChannelData(int channel, double playbackRate);
 
 	@Override
 	default int compareTo(WaveDataProvider o) {

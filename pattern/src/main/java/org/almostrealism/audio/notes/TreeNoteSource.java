@@ -200,7 +200,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 				FileWaveDataProvider p = f.get();
 
 				try {
-					if (p == null || p.getSampleRate() != OutputLine.sampleRate) {
+					if (p == null) {
 						return;
 					}
 

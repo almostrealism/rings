@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 // TODO  This should implement AudioProcessor
-public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
+public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Destroyable, CellFeatures, EnvelopeFeatures {
 	public static double filterPeak = 20000;
 	public static int filterOrder = 40;
 
@@ -86,5 +87,17 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Cel
 		cutoffEnvelope.into(cf.traverseEach()).evaluate();
 		multiOrderFilter.into(output.traverse(1))
 				.evaluate(input.traverse(0), cf.traverse(0));
+	}
+
+	@Override
+	public void destroy() {
+		cutoff.destroy();
+		duration.destroy();
+		attack.destroy();
+		decay.destroy();
+		sustain.destroy();
+		release.destroy();
+		cutoffEnvelope = null;
+		multiOrderFilter = null;
 	}
 }

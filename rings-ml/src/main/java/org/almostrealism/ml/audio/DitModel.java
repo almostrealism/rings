@@ -20,10 +20,16 @@ import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.profile.OperationProfile;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.Map;
+
 public interface DitModel extends Destroyable {
 	PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
 								PackedCollection<?> crossAttnCond,
 								PackedCollection<?> globalCond);
+
+	default Map<Integer, PackedCollection<?>> getAttentionActivations() {
+		throw new UnsupportedOperationException();
+	}
 
 	default OperationProfile getProfile() { return null; }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package org.almostrealism.audio.data;
+package org.almostrealism.ml.audio;
 
-import org.almostrealism.graph.temporal.BaseAudioData;
+import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
 
-public interface ValueSequenceData extends BaseAudioData {
+public interface AutoEncoder extends Destroyable {
+
+	double getSampleRate();
+
+	double getLatentSampleRate();
+
+	double getMaximumDuration();
+
+	Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input);
+
+	Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent);
 }

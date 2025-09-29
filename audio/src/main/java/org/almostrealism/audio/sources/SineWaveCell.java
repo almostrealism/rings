@@ -53,36 +53,36 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	
 	public void setFreq(double hertz) { this.waveLength = hertz / (double) OutputLine.sampleRate; }
 
-	public Supplier<Runnable> setFreq(Producer<Scalar> hertz) {
-		return a(1, data.getWaveLength(), divide(hertz, scalar(OutputLine.sampleRate)));
+	public Supplier<Runnable> setFreq(Producer<PackedCollection<?>> hertz) {
+		return a(data.getWaveLength(), divide(hertz, c(OutputLine.sampleRate)));
 	}
 
 	// TODO  Rename to milli, default should be seconds
 	public void setNoteLength(int msec) { this.noteLength = toFramesMilli(msec); }
 
 	// TODO  Rename to milli, default should be seconds
-	public Supplier<Runnable> setNoteLength(Supplier<Evaluable<? extends Scalar>> noteLength) {
-		return a(1, data.getNoteLength(), toFramesMilli(noteLength));
+	public Supplier<Runnable> setNoteLength(Producer<PackedCollection<?>> noteLength) {
+		return a(data.getNoteLength(), toFramesMilli(noteLength));
 	}
 	
 	public void setPhase(double phase) { this.phase = phase; }
 	
 	public void setAmplitude(double amp) { amplitude = amp; }
 
-	public Supplier<Runnable> setAmplitude(Producer<Scalar> amp) {
-		return a(1, data.getAmplitude(), amp);
+	public Supplier<Runnable> setAmplitude(Producer<PackedCollection<?>> amp) {
+		return a(data.getAmplitude(), amp);
 	}
 
 	@Override
 	public Supplier<Runnable> setup() {
 		OperationList defaults = new OperationList("SineWaveCell Default Value Assignment");
-		defaults.add(a(1, data.getDepth(), scalar(CollectionTemporalCellAdapter.depth)));
-		defaults.add(a(1, data.getNotePosition(), scalar(0)));
-		defaults.add(a(1, data.getWavePosition(), scalar(0)));
-		defaults.add(a(1, data.getNoteLength(), scalar(noteLength)));
-		defaults.add(a(1, data.getWaveLength(), scalar(waveLength)));
-		defaults.add(a(1, data.getPhase(), scalar(phase)));
-		defaults.add(a(1, data.getAmplitude(), scalar(amplitude)));
+		defaults.add(a(data.getDepth(), c(CollectionTemporalCellAdapter.depth)));
+		defaults.add(a(data.getNotePosition(), c(0)));
+		defaults.add(a(data.getWavePosition(), c(0)));
+		defaults.add(a(data.getNoteLength(), c(noteLength)));
+		defaults.add(a(data.getWaveLength(), c(waveLength)));
+		defaults.add(a(data.getPhase(), c(phase)));
+		defaults.add(a(data.getAmplitude(), c(amplitude)));
 
 		Supplier<Runnable> customization = super.setup();
 
@@ -97,7 +97,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 		PackedCollection<?> value = new PackedCollection<>(1);
 		OperationList push = new OperationList("SineWaveCell Push");
 		push.add(new SineWavePush(data, env == null ? scalar(1.0) :
-					env.getResultant(data.getNotePosition()), value));
+					env.getResultant(cp(data.notePosition())), value));
 		push.add(super.push(p(value)));
 		return push;
 	}
@@ -106,7 +106,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("SineWaveCell Tick");
 		tick.add(new SineWaveTick(data, env == null ? scalar(1.0) :
-				env.getResultant(data.getNotePosition())));
+				env.getResultant(cp(data.notePosition()))));
 		tick.add(super.tick());
 		return tick;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -35,7 +34,8 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,27 +63,19 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	private List<NoteAudioChoice> choices;
 	private List<PatternLayerManager> patterns;
-	private ConfigurableGenome genome;
+	private List<ProjectedChromosome> chromosomes;
 
 	private PackedCollection<?> volume;
 	private PackedCollection<?> destination;
 
-	public PatternSystemManager() {
-		this(new ArrayList<>());
+	public PatternSystemManager( List<ProjectedChromosome> chromosomes) {
+		this(new ArrayList<>(), chromosomes);
 	}
 
-	public PatternSystemManager(List<NoteAudioChoice> choices) {
-		this(choices, new ConfigurableGenome());
-	}
-
-	public PatternSystemManager(ConfigurableGenome genome) {
-		this(new ArrayList<>(), genome);
-	}
-
-	public PatternSystemManager(List<NoteAudioChoice> choices, ConfigurableGenome genome) {
+	public PatternSystemManager(List<NoteAudioChoice> choices,  List<ProjectedChromosome> chromosomes) {
 		this.choices = choices;
 		this.patterns = new ArrayList<>();
-		this.genome = genome;
+		this.chromosomes = chromosomes;
 	}
 
 	public void init() {
@@ -128,7 +120,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 
 	public Settings getSettings() {
 		Settings settings = new Settings();
-		settings.getPatterns().addAll(patterns.stream().map(PatternLayerManager::getSettings).collect(Collectors.toList()));
+		settings.getPatterns().addAll(patterns.stream().map(PatternLayerManager::getSettings).toList());
 		return settings;
 	}
 
@@ -175,10 +167,10 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public PatternLayerManager addPattern(int channel, double measures, boolean melodic) {
-		PatternLayerManager pattern = new PatternLayerManager(choices,
-								genome.addSimpleChromosome(3),
-								genome.addSimpleChromosome(AutomationManager.GENE_LENGTH),
-								channel, measures, melodic);
+		PatternLayerManager pattern =
+				new PatternLayerManager(choices,
+						chromosomes.get(patterns.size()),
+						channel, measures, melodic);
 		patterns.add(pattern);
 		return pattern;
 	}
@@ -187,7 +179,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 		patterns.clear();
 	}
 
-	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
+	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context,
+								  ChannelInfo.Voicing voicing,
+								  ChannelInfo.StereoChannel audioChannel) {
 		OperationList updateDestinations = new OperationList("PatternSystemManager Update Destinations");
 		updateDestinations.add(() -> () -> this.destination = context.get().getDestination());
 		updateDestinations.add(() -> () ->
@@ -216,7 +210,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 					}
 
 					patternsForChannel.stream().forEach(i -> {
-						patterns.get(i).sum(context, voicing);
+						patterns.get(i).sum(context, voicing, audioChannel);
 					});
 
 					if (enableVerbose)
@@ -267,9 +261,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				pattern.setActiveSelection(ParameterizedPositionFunction.random());
 
 				if (p < activePatterns.applyAsInt(c)) {
-					IntStream.range(0, layersPerPattern.applyAsInt(c)).forEach(l -> {
-						pattern.getLayers().add(ParameterSet.random());
-					});
+					pattern.setLayerCount(layersPerPattern.applyAsInt(c));
 				}
 
 				settings.getPatterns().add(pattern);

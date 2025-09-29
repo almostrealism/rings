@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,21 @@ import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.data.ValueSequenceData;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.temporal.BaseAudioData;
 
 import java.util.function.Consumer;
 
 public class ValueSequenceTick extends ValueSequenceComputation {
-	public ValueSequenceTick(ValueSequenceData data, Producer<Scalar> durationFrames, Producer<PackedCollection<?>>... choices) {
+	public ValueSequenceTick(BaseAudioData data,
+							 Producer<PackedCollection<?>> durationFrames,
+							 Producer<PackedCollection<?>>... choices) {
 		this(data, durationFrames, true, choices);
 	}
 
-	public ValueSequenceTick(ValueSequenceData data, Producer<Scalar> durationFrames, boolean repeat, Producer<PackedCollection<?>>... choices) {
+	public ValueSequenceTick(BaseAudioData data,
+							 Producer<PackedCollection<?>> durationFrames,
+							 boolean repeat, Producer<PackedCollection<?>>... choices) {
 		super(data, durationFrames, new PackedCollection<>(1), repeat, choices);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.almostrealism.audio.test;
 import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.heredity.ParameterGenome;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,17 +40,17 @@ public class AudioSceneTest {
 
 		// Load a library of material to use for creating notes to use
 		// in the patterns that make up the arrangement
-		scene.setLibrary(AudioLibrary.load(new File("/Users/michael/Music/Samples"), sampleRate));
+		scene.setLibrary(new AudioLibrary(new File("/Users/michael/Music/Samples"), sampleRate));
 
 		// Create a random parameterization of the scene
-		ParameterGenome random = scene.getGenome().random();
+		ProjectedGenome random = scene.getGenome().random();
 		scene.assignGenome(random);
 
 		// Create a destination for the output audio
-		WaveOutput output = new WaveOutput(() -> new File("scene.wav"), 24, sampleRate, -1);
+		WaveOutput output = new WaveOutput(() -> new File("scene.wav"), 24, sampleRate, -1, false);
 
 		// Generate the media pipeline
-		Supplier<Runnable> process = scene.runner(output).iter(30 * sampleRate);
+		Supplier<Runnable> process = scene.runner(new MultiChannelAudioOutput(output)).iter(30 * sampleRate);
 
 		// Compile and run the pipeline
 		process.get().run();

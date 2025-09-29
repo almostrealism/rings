@@ -49,8 +49,7 @@ public class TorchDiffusion implements ProcessFeatures, ConsoleFeatures {
 				.toList();
 		log("Saving " + audio.size() + " audio files");
 		IntStream.range(0, audio.size()).forEach(i ->
-						new WaveData(audio.get(i).getAudio(), OutputLine.sampleRate)
-								.save(new File("audio/" + i + ".wav")));
+				audio.get(i).getWaveData().save(new File("audio/" + i + ".wav")));
 		log("Done saving audio files");
 	}
 

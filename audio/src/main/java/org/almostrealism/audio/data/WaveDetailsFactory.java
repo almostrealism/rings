@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,16 @@ package org.almostrealism.audio.data;
 
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 
+import java.util.stream.DoubleStream;
+
 public class WaveDetailsFactory implements CodeFeatures {
-	public static boolean enableNormalizeSimilarity = false;
-	public static boolean enableFeatures = false;
+
+	public static boolean enableFreqSimilarity = false;
 
 	public static int defaultBins = 32; // 16;
 	public static double defaultWindow = 0.25; // 0.125;
@@ -38,7 +41,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 	private int scaleBins, scaleTime;
 	private PackedCollection<?> buffer;
 	private Evaluable<PackedCollection<?>> sum;
-	private Evaluable<PackedCollection<?>> difference;
+
+	private WaveDataFeatureProvider featureProvider;
 
 	public WaveDetailsFactory(int sampleRate) {
 		this(defaultBins, defaultWindow, sampleRate);
@@ -64,124 +68,115 @@ public class WaveDetailsFactory implements CodeFeatures {
 				.traverse(3)
 				.sum()
 				.get();
-		difference = cv(shape(freqBins, 1), 0)
-				.subtract(cv(shape(freqBins, 1), 1))
-				.traverseEach()
-				.magnitude()
-				.get();
 	}
 
-	public int getSampleRate() {
-		return sampleRate;
+	public int getSampleRate() { return sampleRate; }
+
+	public WaveDataFeatureProvider getFeatureProvider() {
+		return featureProvider;
+	}
+
+	public void setFeatureProvider(WaveDataFeatureProvider featureProvider) {
+		this.featureProvider = featureProvider;
 	}
 
 	public WaveDetails forFile(String file) {
-		return forProvider(new FileWaveDataProvider(file));
+		return forProvider(new FileWaveDataProvider(file), null);
 	}
 
 	public WaveDetails forProvider(WaveDataProvider provider) {
-		return forWaveData(provider.getIdentifier(), provider.get());
+		return forProvider(provider, null);
 	}
 
-	public WaveDetails forWaveData(String identifier, WaveData data) {
-		if (data.getSampleRate() != getSampleRate()) {
-			return new WaveDetails(identifier, data.getSampleRate());
+	public WaveDetails forProvider(WaveDataProvider provider, WaveDetails existing) {
+		if (provider == null) return existing;
+
+		if (existing == null) {
+			existing = new WaveDetails(provider.getIdentifier(), provider.getSampleRate());
 		}
 
-		WaveDetails details = new WaveDetails(identifier);
-		details.setSampleRate(data.getSampleRate());
-		details.setChannelCount(1);
-		details.setFrameCount(data.getCollection().getMemLength());
-		details.setData(data.getCollection());
+		WaveData data = provider.get(getSampleRate());
+		if (data == null) return existing;
 
-		PackedCollection<?> fft = processFft(data.fft(true));
-		if (fft.getShape().length(0) < 1) {
-			throw new UnsupportedOperationException();
-		}
+		existing.setSampleRate(data.getSampleRate());
+		existing.setChannelCount(data.getChannelCount());
+		existing.setFrameCount(data.getFrameCount());
+		existing.setData(data.getData());
 
-		details.setFreqSampleRate(fftSampleRate / scaleTime);
-		details.setFreqChannelCount(1);
-		details.setFreqBinCount(freqBins);
-		details.setFreqFrameCount(fft.getShape().length(0));
-		details.setFreqData(fft);
+		if (existing.getFreqFrameCount() <= 1) {
+			PackedCollection<?> fft = null;
 
-		if (enableFeatures) {
-			PackedCollection<?> features = processFeatures(data.features());
-			if (features.getShape().length(0) < 1) {
-				throw new UnsupportedOperationException();
+			for (int c = 0; c < data.getChannelCount(); c++) {
+				PackedCollection<?> df = data.fft(c, true);
+
+				int count = df.getShape().length(0) / scaleTime;
+				if (df.getShape().length(0) % scaleTime != 0) count++;
+
+				if (fft == null) {
+					fft = new PackedCollection<>(data.getChannelCount(), count, freqBins, 1);
+				}
+
+				processFft(df, fft.range(shape(count, freqBins, 1), c * freqBins));
 			}
 
-			// TODO  This is not the most accurate way to determine the sample rate
-			details.setFeatureSampleRate(features.getShape().length(0) / data.getDuration());
-			details.setFeatureChannelCount(1);
-			details.setFeatureBinCount(features.getShape().length(1));
-			details.setFeatureFrameCount(features.getShape().length(0));
-			details.setFeatureData(features);
+			if (fft != null) {
+				existing.setFreqSampleRate(fftSampleRate / scaleTime);
+				existing.setFreqChannelCount(fft.getShape().length(0));
+				existing.setFreqFrameCount(fft.getShape().length(1));
+				existing.setFreqBinCount(freqBins);
+				existing.setFreqData(fft);
+			}
 		}
 
-		return details;
+		if (featureProvider != null) {
+			PackedCollection<?> features = prepareFeatures(provider);
+			existing.setFeatureSampleRate(featureProvider.getFeatureSampleRate());
+			existing.setFeatureChannelCount(1);
+			existing.setFeatureBinCount(features.getShape().length(1));
+			existing.setFeatureFrameCount(features.getShape().length(0));
+			existing.setFeatureData(features);
+		}
+
+		return existing;
 	}
 
 	public double similarity(WaveDetails a, WaveDetails b) {
-		int bins = freqBins;
-		int n;
-
-		if (a.getFreqBinCount() == b.getFreqBinCount()) {
-			n = Math.min(a.getFreqFrameCount(), b.getFreqFrameCount());
-			bins = a.getFreqBinCount();
+		if (a.getFeatureData() != null && b.getFeatureData() != null) {
+			int limit = Math.max(a.getValidFeatureFrameCount(), b.getValidFeatureFrameCount());
+			return productSimilarity(cp(a.getFeatureData()), cp(b.getFeatureData()), limit);
+		} else if (enableFreqSimilarity && a.getFreqData() != null && b.getFreqData() != null) {
+			return -WaveDetails.differenceSimilarity(a.getFreqData(0), b.getFreqData(0));
 		} else {
-			// WaveDetails with different shapes are not easily comparable
-			n = 0;
-		}
-
-		TraversalPolicy overlap = new TraversalPolicy(true, n, bins, 1);
-
-		double d = 0.0;
-
-		if (n > 0) {
-			PackedCollection<?> aFft = a.getFreqData().range(overlap).traverse(1);
-			PackedCollection<?> bFft = b.getFreqData().range(overlap).traverse(1);
-			PackedCollection diff = difference.evaluate(aFft, bFft);
-			d += diff.doubleStream().sum();
-		}
-
-		if (a.getFreqFrameCount() > n) {
-			d += a.getFreqData().range(shape(a.getFreqFrameCount() - n, a.getFreqBinCount(), 1), overlap.getTotalSize())
-					.doubleStream().map(Math::abs).sum();
-		}
-
-		if (b.getFreqFrameCount() > n) {
-			d += b.getFreqData().range(shape(b.getFreqFrameCount() - n, b.getFreqBinCount(), 1), overlap.getTotalSize())
-					.doubleStream().map(Math::abs).sum();
-		}
-
-		if (enableNormalizeSimilarity) {
-			double max = Math.max(
-					a.getFreqFrameCount() <= 0 ? 0.0 : a.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0),
-					b.getFreqFrameCount() <= 0 ? 0.0 : b.getFreqData().doubleStream().map(Math::abs).max().orElse(0.0));
-			max = max * freqBins * Math.max(a.getFreqFrameCount(), b.getFreqFrameCount());
-			double r = max == 0 ? Double.MAX_VALUE : (d / max);
-
-			if (r > 1.0 && max != 0) {
-				warn("Similarity = " + r);
-			}
-
-			return r;
-		} else {
-			return d;
+			return -Double.MAX_VALUE;
 		}
 	}
 
-	protected PackedCollection<?> processFft(PackedCollection<?> fft) {
+	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
+		double values[] = multiply(a, b).sum(1)
+				.divide(multiply(length(1, a), length(1, b)))
+				.evaluate().doubleStream().limit(limit).toArray();
+		if (values.length == 0) return -1.0;
+
+		int skip = 0;
+		int total = values.length;
+		if (total > 10) {
+			// If there is enough material, remove the bottom 10%
+			// and the top 2 values to reduce outlier effects
+			skip = (int) (values.length * 0.1);
+			total = total - skip - 2;
+		}
+
+		// log("Skipping " + skip + " of " + values.length + " values, averaging " + total + " values");
+		return DoubleStream.of(values).sorted().skip(skip).limit(total).average().orElseThrow();
+	}
+
+	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {
 		if (fft.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();
 		}
 
-		int count = fft.getShape().length(0) / scaleTime;
-		if (fft.getShape().length(0) % scaleTime != 0) count++;
-
+		int count = output.getShape().length(0);
 		TraversalPolicy inShape = shape(scaleTime, WaveData.FFT_POOL_BINS);
-		PackedCollection<?> output = new PackedCollection<>(count, freqBins, 1);
 
 		for (int i = 0; i < count; i++) {
 			PackedCollection in;
@@ -200,7 +195,9 @@ public class WaveDetailsFactory implements CodeFeatures {
 		return output;
 	}
 
-	protected PackedCollection<?> processFeatures(PackedCollection<?> features) {
+	protected PackedCollection<?> prepareFeatures(WaveDataProvider provider) {
+		PackedCollection<?> features = featureProvider.computeFeatures(provider);
+
 		if (features.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();
 		}

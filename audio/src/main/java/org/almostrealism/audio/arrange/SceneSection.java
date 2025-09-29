@@ -38,7 +38,7 @@ public class SceneSection implements Destroyable {
 	public int getPosition() { return position; }
 	public int getLength() { return length; }
 
-	public ChannelSection getChannelSection(ChannelInfo channel) { return channels.get(channel.getChannel()); }
+	public ChannelSection getChannelSection(ChannelInfo channel) { return channels.get(channel.getPatternChannel()); }
 
 	public static SceneSection createSection(int position, int length, int channels, Supplier<ChannelSection> supply) {
 		return new SceneSection(position, length, IntStream.range(0, channels)

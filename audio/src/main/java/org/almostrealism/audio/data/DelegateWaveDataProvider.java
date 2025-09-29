@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,9 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 	}
 
 	@Override
+	public int getChannelCount() { return delegate.getChannelCount(); }
+
+	@Override
 	public String getKey() {
 		return delegate.getKey() + "_" + delegateOffset + ":" + length;
 	}
@@ -65,7 +68,7 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 		WaveData source = delegate.get();
 		return new WaveData(
 				new PackedCollection<>(shape(length), 1,
-						source.getCollection(), delegateOffset),
+						source.getData(), delegateOffset),
 				source.getSampleRate());
 	}
 }

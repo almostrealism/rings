@@ -19,50 +19,71 @@ package org.almostrealism.audio.data;
 import java.util.Objects;
 
 public class ChannelInfo {
-	private int channel;
+	private int patternChannel;
 	private Type type;
 	private Voicing voicing;
+	private StereoChannel audioChannel;
 
-	public ChannelInfo(int channel) {
-		this(channel,  Type.PATTERN, null);
+	public ChannelInfo(int patternChannel) {
+		this(patternChannel, Type.PATTERN, null, null);
 	}
 
-	public ChannelInfo(int channel, Voicing voicing) {
-		this(channel, Type.PATTERN, voicing);
+	public ChannelInfo(int patternChannel, StereoChannel stereoChannel) {
+		this(patternChannel, Type.PATTERN, stereoChannel);
 	}
 
-	public ChannelInfo(int channel, Type type) {
-		this(channel, type, Voicing.MAIN);
+	public ChannelInfo(Voicing voicing, StereoChannel stereoChannel) {
+		this(-1, voicing, stereoChannel);
 	}
 
-	public ChannelInfo(int channel, Type type, Voicing voicing) {
-		this.channel = channel;
+	public ChannelInfo(int patternChannel, Voicing voicing, StereoChannel stereoChannel) {
+		this(patternChannel, Type.PATTERN, voicing, stereoChannel);
+	}
+
+	public ChannelInfo(int patternChannel, Type type, StereoChannel stereoChannel) {
+		this(patternChannel, type, Voicing.MAIN, stereoChannel);
+	}
+
+	public ChannelInfo(int patternChannel, Type type, Voicing voicing, StereoChannel audioChannel) {
+		this.patternChannel = patternChannel;
 		this.type = type;
 		this.voicing = voicing;
+		this.audioChannel = audioChannel;
 	}
 
-	public int getChannel() { return channel; }
+	public int getPatternChannel() { return patternChannel; }
 
 	public Type getType() { return type; }
 
 	public Voicing getVoicing() { return voicing; }
 
+	public StereoChannel getAudioChannel() { return audioChannel; }
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof ChannelInfo that)) return false;
-		return getChannel() == that.getChannel() &&
+		return getPatternChannel() == that.getPatternChannel() &&
 				getType() == that.getType() &&
-				getVoicing() == that.getVoicing();
+				getVoicing() == that.getVoicing() &&
+				getAudioChannel() == that.getAudioChannel();
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getChannel(), getVoicing());
+		return Objects.hash(getPatternChannel(), getVoicing());
 	}
 
 	public enum Voicing {
 		MAIN, WET
+	}
+
+	public enum StereoChannel {
+		LEFT, RIGHT;
+
+		public int getIndex() {
+			return this == LEFT ? 0 : 1;
+		}
 	}
 
 	public enum Type {

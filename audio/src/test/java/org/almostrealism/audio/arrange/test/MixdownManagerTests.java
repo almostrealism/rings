@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,14 +18,17 @@ package org.almostrealism.audio.arrange.test;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
-import org.almostrealism.heredity.ConfigurableGenome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
@@ -45,6 +48,8 @@ public class MixdownManagerTests implements CellFeatures {
 		setup.add(mixdown.setup());
 		setup.add(time.setup());
 
+		MultiChannelAudioOutput output = new MultiChannelAudioOutput();
+
 		List<WaveOutput> stemsOut = new ArrayList<>();
 		for (int i = 0; i < cells.size(); i++)
 			stemsOut.add(new WaveOutput(new File("results/" + name + "-stem" + i + ".wav")));
@@ -53,7 +58,7 @@ public class MixdownManagerTests implements CellFeatures {
 
 		WaveOutput mixOut = new WaveOutput(new File("results/" + name + "-mix.wav"));
 
-		cells = mixdown.cells(cells, stemsOut, mixOut);
+		cells = mixdown.cells(cells, output, ChannelInfo.StereoChannel.LEFT);
 		cells.addRequirement(time::tick);
 
 		setup.get().run();
@@ -80,17 +85,19 @@ public class MixdownManagerTests implements CellFeatures {
 		GlobalTimeManager time = new GlobalTimeManager(
 				measure -> (int) (measure * measureDuration * sampleRate));
 
-		ConfigurableGenome genome = new ConfigurableGenome();
+		int params = 8;
+		ProjectedGenome genome = new ProjectedGenome(params);
 		AutomationManager automation = new AutomationManager(
-				genome, time.getClock(),
+				genome.addChromosome(), time.getClock(),
 				() -> measureDuration, sampleRate);
-		MixdownManager mixdown = new MixdownManager(genome, 2, 3,
+		MixdownManager mixdown = new MixdownManager(genome.addChromosome(), 2, 3,
 										automation, time.getClock(), sampleRate);
 		mixdown.setReverbChannels(List.of(0, 1));
 
-		genome.assignTo(genome.getParameters().random());
 
-		CellList cells = w(c(0.0), c(1.0),
+		genome.assignTo(new PackedCollection<>(params).randFill());
+
+		CellList cells = w(0, c(0.0), c(1.0),
 				WaveData.load(new File("Library/Snare Gold 1.wav")),
 				WaveData.load(new File("Library/SN_Forever_Future.wav")));
 		run("mixdown1", time, mixdown, cells);

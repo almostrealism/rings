@@ -42,7 +42,7 @@ public class MultiOrderFilterTest implements TestFeatures {
 		WaveData data = WaveData.load(new File("Library/Snare Gold 1.wav"));
 
 		MultiOrderFilter filter = lowPass(
-					cp(data.getCollection()), c(2000),
+					cp(data.getChannelData(0)), c(2000),
 					data.getSampleRate(), 40);
 
 		PackedCollection<?> result = (optimized ? Process.optimized(filter) : filter).get().evaluate();
@@ -64,7 +64,7 @@ public class MultiOrderFilterTest implements TestFeatures {
 		WaveData data = WaveData.load(new File("Library/Snare Gold 1.wav"));
 
 		MultiOrderFilter filter = highPass(
-					cp(data.getCollection()), c(3000),
+					cp(data.getChannelData(0)), c(3000),
 					data.getSampleRate(), 40);
 
 		PackedCollection<?> result = (optimized ? Process.optimized(filter) : filter).get().evaluate();

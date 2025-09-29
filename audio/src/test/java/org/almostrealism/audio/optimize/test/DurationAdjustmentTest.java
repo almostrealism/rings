@@ -46,12 +46,12 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 				.greaterThan(c(5.0), c(1.0), c(0.5))
 				.get().evaluate(WaveOutput.timeline.getValue().range(adjustmentShape).traverse(1));
 
-		WaveCell adjustment = new WaveCell(adjustmentData, clock.frameScalar());
+		WaveCell adjustment = new WaveCell(adjustmentData, clock);
 		Factor<PackedCollection<?>> factor = adjustment.toFactor();
 
 		int count = 32;
 
-		CellList cells = w(c(0.0), factor.getResultant(c(1.0)),
+		CellList cells = w(0, c(0.0), factor.getResultant(c(1.0)),
 				"Library/Snare Perc DD.wav")
 				.addRequirements(clock, (TemporalFactor) factor)
 				.o(i -> new File("results/dynamic-repeat.wav"));
@@ -74,11 +74,11 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		Producer<PackedCollection<?>> params = concat(r, su);
 
 //		Producer<PackedCollection<?>> adjust = durationAdjustment(params, divide(c(clock.frame(), 0), c(sr)));
-		Producer<PackedCollection<?>> adjust = durationAdjustment(params, c(0.0), clock.time(sr));
+		Producer<PackedCollection<?>> adjust = durationAdjustment(r, su, c(0.0), clock.time(sr));
 
 		int count = 32;
 
-		CellList cells = w(c(0.0), adjust, "Library/Snare Perc DD.wav")
+		CellList cells = w(0, c(0.0), adjust, "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
 				.map(fc(i -> sf(0.1)))
 				.o(i -> new File("results/duration-adjustment.wav"));

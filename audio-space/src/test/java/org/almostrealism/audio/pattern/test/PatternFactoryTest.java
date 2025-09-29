@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,8 @@ import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.notes.TreeNoteSource;
@@ -34,7 +32,7 @@ import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.heredity.SimpleChromosome;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.Frequency;
 import org.junit.Test;
@@ -140,21 +138,19 @@ public class PatternFactoryTest implements CellFeatures {
 			c.setBias(1.0);
 		});
 
-		ChordProgressionManager chordProgression = new ChordProgressionManager();
+		ChordProgressionManager chordProgression = new ChordProgressionManager(8);
 		chordProgression.setSettings(settings.getChordProgression());
 		chordProgression.refreshParameters();
 
-		PatternLayerManager manager = new PatternLayerManager(choices,
-				new SimpleChromosome(3),
-				new SimpleChromosome(AutomationManager.GENE_LENGTH),
+		ProjectedGenome genome = new ProjectedGenome(8);
+
+		PatternLayerManager manager = new PatternLayerManager(
+				choices, genome.addChromosome(),
 				3, 16.0, true);
 		manager.setScaleTraversalDepth(3);
 
 		double a = Math.random(); // 0.2;
-		manager.addLayer(new ParameterSet(a, 0.3, 0.9));
-		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
-		manager.addLayer(new ParameterSet(a, 0.1, 0.9));
-//		manager.addLayer(new ParameterSet(0.2, 0.1, 0.9));
+		manager.setLayerCount(3);
 
 		System.out.println("a = " + a);
 
@@ -166,9 +162,10 @@ public class PatternFactoryTest implements CellFeatures {
 		context.setScaleForPosition(chordProgression::forPosition);
 
 		manager.updateDestination(context);
-		manager.sum(() -> context, ChannelInfo.Voicing.MAIN);
+		manager.sum(() -> context, ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT);
 
-		WaveData out = new WaveData(manager.getDestination().get(ChannelInfo.Voicing.MAIN), OutputLine.sampleRate);
+		WaveData out = new WaveData(manager.getDestination().get(
+				new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT)), OutputLine.sampleRate);
 		out.save(new File("results/pattern-layer-test.wav"));
 	}
 }

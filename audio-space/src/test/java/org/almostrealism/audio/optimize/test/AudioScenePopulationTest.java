@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.arrange.DefaultChannelSectionFactory;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.util.TestUtils;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.graph.Receptor;
-import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.util.KeyUtils;
 import org.junit.Test;
@@ -48,22 +47,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
-	protected AudioScenePopulation population(AudioScene<?> scene, List<Receptor<PackedCollection<?>>> measures, Receptor output) {
+	protected AudioScenePopulation population(AudioScene<?> scene, MultiChannelAudioOutput output) {
+		int params = 8;
 		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, 0.0, 0.0, false));
-		genomes.add(TestUtils.genome(0.0, 0.0, false));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
+		genomes.add(new ProjectedGenome(params));
 
 		AudioScenePopulation pop = new AudioScenePopulation(scene, genomes);
-		pop.init(genomes.get(0), measures, null, output);
+		pop.init(genomes.get(0), output);
 		return pop;
 	}
 
 	@Test
 	public void genomesFromPopulation() {
-		ReceptorCell out = (ReceptorCell) o(1, i -> new File("layered-organ-pop-test.wav")).get(0);
-		AudioScenePopulation pop = population(pattern(1, 1), null, out); // TODO
+		WaveOutput out = new WaveOutput(new File("layered-organ-pop-test.wav"));
+		AudioScenePopulation pop = population(pattern(1, 1), new MultiChannelAudioOutput(out));
 
 		TemporalRunner organRun = new TemporalRunner(pop.enableGenome(0), OutputLine.sampleRate);
 		pop.disableGenome();
@@ -76,8 +76,8 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 			first.run();
 			IntStream.range(0, 7).forEach(j -> next.run());
 
-			((WaveOutput) out.getReceptor()).write().get().run();
-			((WaveOutput) out.getReceptor()).reset();
+			out.write().get().run();
+			out.reset();
 
 			pop.disableGenome();
 		});
@@ -87,11 +87,11 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 	public void genomesFromPopulationHealth() {
 		AtomicInteger index = new AtomicInteger();
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(1);
+		StableDurationHealthComputation health = new StableDurationHealthComputation(1, false);
 		health.setMaxDuration(8);
 		health.setOutputFile(() -> "results/layered-organ-pop-health-test" + index.incrementAndGet() + ".wav");
 
-		AudioScenePopulation pop = population(pattern(1, 1), null, health.getOutput()); // TODO
+		AudioScenePopulation pop = population(pattern(1, 1), health.getOutput()); // TODO
 
 		IntStream.range(0, 4).forEach(i -> {
 			health.setTarget(pop.enableGenome(i));
@@ -102,8 +102,10 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void createGenomes() throws IOException {
-		int count = 12;
+		createGenomes(12);
+	}
 
+	public void createGenomes(int count) throws IOException {
 		File settings = new File(SystemUtils.getLocalDestination("scene-settings.json"));
 
 		AudioScene scene = AudioScene.load(settings.getCanonicalPath(), SystemUtils.getLocalDestination("pattern-factory.json"),
@@ -124,16 +126,14 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 	@Test
 	public void generate() throws Exception {
-		DefaultChannelSectionFactory.enableVolumeRiseFall = false;
-		DefaultChannelSectionFactory.enableFilter = false;
-		// EfxManager.enableEfx = false;
+		AudioSceneOptimizer.setFeatureLevel(4);
 
 		if (!new File(AudioSceneOptimizer.POPULATION_FILE).exists()) {
-			createGenomes();
+			createGenomes(1);
 		}
 
 		int channel = 2;
-		double duration = 16;
+		double duration = 8; // 16;
 
 		AudioScene scene = AudioScene.load(
 				SystemUtils.getLocalDestination("scene-settings.json"),
@@ -144,7 +144,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 				.stream().filter(c -> c.getChannel() == channel).filter(c -> c.getLayerCount() > 0).count();
 		log("Channel " + channel + " has " + activeLayers  + " active pattern layers");
 
-		int frames = scene.getContext(List.of(channel)).getFrameForPosition().applyAsInt(duration);
+		int frames = scene.getContext(new ChannelInfo(channel)).getFrameForPosition().applyAsInt(duration);
 
 		Heap heap = new Heap(8 * 1024 * 1024);
 
@@ -180,9 +180,14 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 		File file = new File(AudioSceneOptimizer.POPULATION_FILE);
 
 		if (file.exists()) {
-			List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
-			log("Loaded " + genomes.size() + " genomes from " + file);
-			return new AudioScenePopulation(scene, genomes);
+			try {
+				List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
+				log("Loaded " + genomes.size() + " genomes from " + file);
+				return new AudioScenePopulation(scene, genomes);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new AudioScenePopulation(scene);
+			}
 		}
 
 		throw new FileNotFoundException(AudioSceneOptimizer.POPULATION_FILE + " not found");

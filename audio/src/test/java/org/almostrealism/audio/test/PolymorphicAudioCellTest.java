@@ -97,7 +97,7 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		WaveOutput output = new WaveOutput(new File("results/polymorphic-cell-test.wav"));
 
 		CellList cells = cells(1);
-		cells.get(0).setReceptor(output);
+		cells.get(0).setReceptor(output.getWriter(0));
 
 		if (enableRunner) {
 			TemporalRunner runner = new TemporalRunner(cells, DURATION_FRAMES);
@@ -133,8 +133,8 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 
 		CellList cells1 = cells(1);
 		CellList cells2 = cells(1);
-		cells1.get(0).setReceptor(output1);
-		cells2.get(0).setReceptor(output2);
+		cells1.get(0).setReceptor(output1.getWriter(0));
+		cells2.get(0).setReceptor(output2.getWriter(0));
 		CollectionTemporalCellAdapter cell1 = (CollectionTemporalCellAdapter) cells1.get(0);
 		CollectionTemporalCellAdapter cell2 = (CollectionTemporalCellAdapter) cells2.get(0);
 
@@ -175,9 +175,9 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 
 		CellList cells1 = cells(1);
 		CellList cells2 = cells(2);
-		cells1.get(0).setReceptor(output1);
-		cells2.get(0).setReceptor(output2);
-		cells2.get(1).setReceptor(output3);
+		cells1.get(0).setReceptor(output1.getWriter(0));
+		cells2.get(0).setReceptor(output2.getWriter(0));
+		cells2.get(1).setReceptor(output3.getWriter(0));
 
 		/* One */
 		Computation list1 = (Computation) cells1.tick();

@@ -53,17 +53,17 @@ public class SimplePatternNote implements PatternNoteAudio, KeyboardTuned, Valid
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		return audio.getAudio(target);
+		return audio.getAudio(target, channel);
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
 												  double noteDuration,
 												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		return audio.getAudio(target);
+		return audio.getAudio(target, channel);
 	}
 
 	@Override

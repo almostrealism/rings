@@ -403,7 +403,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		}
 
 		int batches = t.getShape().length(0);
-		CollectionProducer<PackedCollection<?>> out = a.all().valueAt(t); // a.valueAt(integers(0, batches), t);
+		CollectionProducer<PackedCollection<?>> out = a.traverseAll().valueAt(t); // a.valueAt(integers(0, batches), t);
 
 		int depth = xShape.getDimensions();
 		TraversalPolicy resultShape =

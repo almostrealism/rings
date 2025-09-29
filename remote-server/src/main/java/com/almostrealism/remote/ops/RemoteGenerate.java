@@ -76,12 +76,12 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	}
 
 	protected void output(String requestId, String generatorId, int index, NoteAudio note) {
-		if (note.getAudio() == null) {
+		if (note.getWaveData() == null) {
 			System.out.println("RemoteGenerate: Empty result will not be published");
 			return;
 		}
 
-		publisher.publish(new WaveData(note.getAudio(), queue.getProvider().getSampleRate()), audio -> {
+		publisher.publish(note.getWaveData(), audio -> {
 			Generation.Output.Builder builder = Generation.Output.newBuilder();
 			builder.setRequestId(requestId);
 			builder.setGeneratorId(generatorId);

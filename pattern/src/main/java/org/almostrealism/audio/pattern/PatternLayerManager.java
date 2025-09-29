@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,10 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.SimpleChromosome;
-import org.almostrealism.heredity.SimpleGene;
+import org.almostrealism.heredity.HeredityFeatures;
+import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.io.SystemUtils;
 
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class PatternLayerManager implements PatternFeatures {
+public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
+	public static int MAX_LAYERS = 32;
+
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
 	public static boolean enableLogging = SystemUtils.isEnabled("AR_PATTERN_LOGGING").orElse(false);
 
@@ -56,30 +59,29 @@ public class PatternLayerManager implements PatternFeatures {
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private SimpleChromosome layerChoiceChromosome;
-	private SimpleChromosome envelopeAutomationChromosome;
+	private Chromosome<PackedCollection<?>> layerChoiceChromosome;
+	private Chromosome<PackedCollection<?>> envelopeAutomationChromosome;
 
-	private ParameterFunction factorySelection; // TODO  rename
+	private ParameterFunction noteSelection;
 	private ParameterizedPositionFunction activeSelection;
 	private PatternElementFactory elementFactory;
 
 	private List<PatternLayer> roots;
 	private List<ParameterSet> layerParams;
+	private int layerCount;
 
-	private Map<ChannelInfo.Voicing, PackedCollection<?>> destination;
+	private Map<ChannelInfo, PackedCollection<?>> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
-							   SimpleChromosome layerChoiceChromosome,
-							   SimpleChromosome envelopeAutomationChromosome,
+							   ProjectedChromosome chromosome,
 							   int channel, double measures, boolean melodic) {
 		this(NoteAudioChoice.choices(choices, false), NoteAudioChoice.choices(choices, true),
-				layerChoiceChromosome, envelopeAutomationChromosome, channel, measures, melodic);
+				chromosome, channel, measures, melodic);
 	}
 
 	public PatternLayerManager(Supplier<List<NoteAudioChoice>> percChoices,
 							   Supplier<List<NoteAudioChoice>> melodicChoices,
-							   SimpleChromosome layerChoiceChromosome,
-							   SimpleChromosome envelopeAutomationChromosome,
+							   ProjectedChromosome chromosome,
 							   int channel, double measures, boolean melodic) {
 		this.channel = channel;
 		this.duration = measures;
@@ -92,20 +94,25 @@ public class PatternLayerManager implements PatternFeatures {
 
 		this.percChoices = percChoices;
 		this.melodicChoices = melodicChoices;
-		this.layerChoiceChromosome = layerChoiceChromosome;
-		this.envelopeAutomationChromosome = envelopeAutomationChromosome;
 		this.roots = new ArrayList<>();
 		this.layerParams = new ArrayList<>();
-		init();
+		init(chromosome);
 	}
 
-	public void init() {
-		factorySelection = ParameterFunction.random();
+	public void init(ProjectedChromosome chromosome) {
+		noteSelection = ParameterFunction.random();
 		activeSelection = ParameterizedPositionFunction.random();
 		elementFactory = new PatternElementFactory();
+
+		layerChoiceChromosome = chromosome(IntStream.range(0, MAX_LAYERS)
+				.mapToObj(i -> chromosome.addGene(3))
+				.collect(Collectors.toList()));
+		envelopeAutomationChromosome = chromosome(IntStream.range(0, MAX_LAYERS)
+				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.collect(Collectors.toList()));
 	}
 
-	public Map<ChannelInfo.Voicing, PackedCollection<?>> getDestination() { return destination; }
+	public Map<ChannelInfo, PackedCollection<?>> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
 		if (context.getChannels() == null) return;
@@ -115,8 +122,10 @@ public class PatternLayerManager implements PatternFeatures {
 		}
 
 		context.getChannels().forEach(c -> {
-			if (c.getChannel() == channel) {
-				destination.put(c.getVoicing(), context.getDestination());
+			if (c.getPatternChannel() == channel) {
+				destination.put(
+						new ChannelInfo(c.getVoicing(), c.getAudioChannel()),
+						context.getDestination());
 			}
 		});
 	}
@@ -182,7 +191,7 @@ public class PatternLayerManager implements PatternFeatures {
 
 		if (options.isEmpty()) return null;
 
-		double c = factorySelection.apply(params);
+		double c = noteSelection.apply(params);
 		if (c < 0) c = c + 1.0;
 		return options.get((int) (options.size() * c));
 	}
@@ -216,10 +225,10 @@ public class PatternLayerManager implements PatternFeatures {
 		settings.setScaleTraversalDepth(scaleTraversalDepth);
 		settings.setMinLayerScale(minLayerScale);
 		settings.setMelodic(melodic);
-		settings.setFactorySelection(factorySelection);
+		settings.setFactorySelection(noteSelection);
 		settings.setActiveSelection(activeSelection);
 		settings.setElementFactory(elementFactory);
-		settings.getLayers().addAll(layerParams);
+		settings.setLayerCount(layerCount);
 		return settings;
 	}
 
@@ -232,7 +241,7 @@ public class PatternLayerManager implements PatternFeatures {
 		melodic = settings.isMelodic();
 
 		if (settings.getFactorySelection() != null)
-			factorySelection = settings.getFactorySelection();
+			noteSelection = settings.getFactorySelection();
 
 		if (settings.getActiveSelection() != null)
 			activeSelection = settings.getActiveSelection();
@@ -240,8 +249,7 @@ public class PatternLayerManager implements PatternFeatures {
 		if (settings.getElementFactory() != null)
 			elementFactory = settings.getElementFactory();
 
-		clear(true);
-		settings.getLayers().forEach(this::addLayer);
+		setLayerCount(settings.getLayerCount());
 	}
 
 	protected void decrement() { scale *= 2; }
@@ -266,36 +274,19 @@ public class PatternLayerManager implements PatternFeatures {
 		if (count < 0) throw new IllegalArgumentException(count + " is not a valid number of layers");
 		if (count == getLayerCount()) return;
 
-		if (getLayerCount() < count) {
-			while (getLayerCount() < count) addLayer(new ParameterSet());
-		} else {
-			while (getLayerCount() > count) removeLayer(true);
-		}
-	}
-
-	public void addLayer(ParameterSet params) {
-		envelopeAutomationChromosome.addGene();
-
-		SimpleGene g = layerChoiceChromosome.addGene();
-		g.set(0, params.getX());
-		g.set(1, params.getY());
-		g.set(2, params.getZ());
-		layer(params);
+		this.layerCount = count;
+		refresh();
 	}
 
 	public void layer(Gene<PackedCollection<?>> gene) {
-		ParameterSet params = new ParameterSet();
-		params.setX(gene.valueAt(0).getResultant(c(1.0)).get().evaluate().toDouble(0));
-		params.setY(gene.valueAt(1).getResultant(c(1.0)).get().evaluate().toDouble(0));
-		params.setZ(gene.valueAt(2).getResultant(c(1.0)).get().evaluate().toDouble(0));
-		layer(params);
+		layer(ParameterSet.fromGene(gene));
 	}
 
 	protected void layer(ParameterSet params) {
 		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
 		PackedCollection<?> automationParams =
-				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH)
-								.fill(pos -> automationGene.valueAt(pos[0]).getResultant(c(1.0)).evaluate().toDouble());
+				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
+						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 
 		if (rootCount() <= 0) {
 			PatternLayerSeeds seeds = getSeeds(params);
@@ -347,12 +338,7 @@ public class PatternLayerManager implements PatternFeatures {
 		increment();
 	}
 
-	public void removeLayer(boolean removeGene) {
-		if (removeGene) {
-			envelopeAutomationChromosome.removeGene(envelopeAutomationChromosome.length() - 1);
-			layerChoiceChromosome.removeGene(layerChoiceChromosome.length() - 1);
-		}
-
+	public void removeLayer() {
 		layerParams.remove(layerParams.size() - 1);
 		decrement();
 
@@ -365,20 +351,17 @@ public class PatternLayerManager implements PatternFeatures {
 		roots.forEach(layer -> layer.getLastParent().setChild(null));
 	}
 
-	public void clear(boolean removeGenes) {
-		if (removeGenes) {
-			while (getLayerCount() > 0) removeLayer(true);
-		} else {
-			while (depth() > 0) removeLayer(false);
-		}
+	public void clear() {
+		while (depth() > 0) removeLayer();
 	}
 
 	public void refresh() {
-		clear(false);
+		clear();
 		if (layerParams.size() != depth())
-			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() + " != " + layerChoiceChromosome.length() + ")");
+			throw new IllegalStateException("Layer count mismatch (" + layerParams.size() +
+											" != " + layerChoiceChromosome.length() + ")");
 
-		IntStream.range(0, layerChoiceChromosome.length()).forEach(i -> layer(layerChoiceChromosome.valueAt(i)));
+		IntStream.range(0, getLayerCount()).forEach(i -> layer(layerChoiceChromosome.valueAt(i)));
 	}
 
 	public NoteAudioChoice choose(double scale, ParameterSet params) {
@@ -390,12 +373,14 @@ public class PatternLayerManager implements PatternFeatures {
 
 		if (options.isEmpty()) return null;
 
-		double c = factorySelection.apply(params);
+		double c = noteSelection.apply(params);
 		if (c < 0) c = c + 1.0;
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(Supplier<AudioSceneContext> context, ChannelInfo.Voicing voicing) {
+	public void sum(Supplier<AudioSceneContext> context,
+					ChannelInfo.Voicing voicing,
+					ChannelInfo.StereoChannel audioChannel) {
 		Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
 		if (elements.isEmpty()) {
 			if (!roots.isEmpty() && enableWarnings)
@@ -425,11 +410,11 @@ public class PatternLayerManager implements PatternFeatures {
 			double offset = i * duration;
 			elements.keySet().forEach(choice -> {
 				NoteAudioContext audioContext =
-						new NoteAudioContext(voicing,
-							choice.getValidPatternNotes(),
-							this::nextNotePosition);
+						new NoteAudioContext(voicing, audioChannel,
+								choice.getValidPatternNotes(),
+								this::nextNotePosition);
 
-				if (destination.get(voicing) != ctx.getDestination()) {
+				if (destination.get(new ChannelInfo(voicing, audioChannel)) != ctx.getDestination()) {
 					throw new IllegalArgumentException();
 				}
 
@@ -504,12 +489,11 @@ public class PatternLayerManager implements PatternFeatures {
 		private int scaleTraversalDepth;
 		private double minLayerScale;
 		private boolean melodic;
+		private int layerCount;
 
 		private ParameterFunction factorySelection;
 		private ParameterizedPositionFunction activeSelection;
 		private PatternElementFactory elementFactory;
-
-		private List<ParameterSet> layers = new ArrayList<>();
 
 		public int getChannel() { return channel; }
 		public void setChannel(int channel) { this.channel = channel; }
@@ -538,7 +522,13 @@ public class PatternLayerManager implements PatternFeatures {
 		public PatternElementFactory getElementFactory() { return elementFactory; }
 		public void setElementFactory(PatternElementFactory elementFactory) { this.elementFactory = elementFactory; }
 
-		public List<ParameterSet> getLayers() { return layers; }
-		public void setLayers(List<ParameterSet> layers) { this.layers = layers; }
+		public void setLayers(List<ParameterSet> layers) {
+			if (layers != null) {
+				this.layerCount = layers.size();
+			}
+		}
+
+		public void setLayerCount(int layerCount) { this.layerCount = layerCount; }
+		public int getLayerCount() { return layerCount; }
 	}
 }

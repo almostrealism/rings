@@ -72,7 +72,7 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 	}
 
 	public static InterpolatedAudioSynthesisModel create(NoteAudio audio, KeyPosition<?> root, KeyboardTuning tuning) {
-		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root).evaluate(), audio.getSampleRate()).fft(true);
+		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root, -1).evaluate(), audio.getSampleRate()).fft(-1, true);
 
 		int samples = frequencies.getShape().length(0);
 		int frequencyCount = frequencies.getShape().length(1);

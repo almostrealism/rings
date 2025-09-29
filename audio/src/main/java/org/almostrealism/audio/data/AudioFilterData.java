@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.almostrealism.audio.data;
 
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
@@ -34,7 +33,7 @@ public interface AudioFilterData extends BaseAudioData {
 	default Scalar a3() { return get(6); }
 	default Scalar b1() { return get(7); }
 	default Scalar b2() { return get(8); }
-	default PackedCollection<?> output() { return get(9); }
+	default PackedCollection<?> output() { return get(9).range(shape(1)); }
 	default Scalar inputHistory0() { return get(10); }
 	default Scalar inputHistory1() { return get(11); }
 	default Scalar outputHistory0() { return get(12); }

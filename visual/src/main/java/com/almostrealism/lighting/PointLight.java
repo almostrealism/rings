@@ -155,7 +155,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		Producer<Scalar> d = lengthSq(add(point, scalarMultiply(v(location), -1.0)));
+		Producer<Scalar> d = vlengthSq(add(point, scalarMultiply(v(location), -1.0)));
 
 		RGB color = getColor().multiply(getIntensity());
 		return GeneratedColorProducer.fromProducer(this, attenuation(da, db, dc, v(color), d));
@@ -195,7 +195,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
 		ExpressionComputation<Vector> point = origin(intersection);
 		Producer<Vector> direction = add(point, scalarMultiply(v(getLocation()), -1.0));
-		direction = scalarMultiply(normalize(direction), -1.0);
+		direction = scalarMultiply(vnormalize(direction), -1.0);
 		context.setLightDirection(direction);
 		return surface.shade(context);
 	}

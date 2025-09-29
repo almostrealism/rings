@@ -46,7 +46,7 @@ Add ar-rings dependency:
         <dependency>
             <groupId>org.almostrealism</groupId>
             <artifactId>ar-rings</artifactId>
-            <version>0.40</version>
+            <version>0.41</version>
         </dependency>
 
 ## Using Rings
@@ -210,17 +210,17 @@ You can also create an **AudioScene** to generate audio in a more structured way
     
             // Load a library of material to use for creating notes to use
             // in the patterns that make up the arrangement
-            scene.setLibrary(AudioLibrary.load(new File("/Users/michael/Music/Samples"), sampleRate));
+            scene.setLibrary(new AudioLibrary(new File("/Users/michael/Music/Samples"), sampleRate));
     
             // Create a random parameterization of the scene
-            ParameterGenome random = scene.getGenome().random();
+            ProjectedGenome random = scene.getGenome().random();
             scene.assignGenome(random);
     
             // Create a destination for the output audio
-            WaveOutput output = new WaveOutput(() -> new File("scene.wav"), 24, sampleRate, -1);
+            WaveOutput output = new WaveOutput(() -> new File("scene.wav"), 24, sampleRate, -1, false);
     
             // Generate the media pipeline
-            Supplier<Runnable> process = scene.runner(output).iter(30 * sampleRate);
+            Supplier<Runnable> process = scene.runner(new MultiChannelAudioOutput(output)).iter(30 * sampleRate);
     
             // Compile and run the pipeline
             process.get().run();

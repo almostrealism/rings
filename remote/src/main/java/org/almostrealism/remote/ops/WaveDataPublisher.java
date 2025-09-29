@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 
 package org.almostrealism.remote.ops;
 
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.remote.api.Generation;
 import org.almostrealism.audio.data.WaveData;
 
 import java.util.function.Consumer;
 
-public class WaveDataPublisher {
+public class WaveDataPublisher implements ConsoleFeatures {
 	public static final int BATCH_SIZE = (int) Math.pow(2, 16);
 
 	public WaveDataPublisher() {
@@ -31,9 +33,15 @@ public class WaveDataPublisher {
 	public void publish(WaveData data, Consumer<Generation.AudioSegment> segment) {
 		int index = 0;
 
-		double samples[] = data.getCollection().toArray(0, data.getCollection().getMemLength());
+		if (data.getChannelCount() > 1) {
+			// TODO  This should be supported, but requires modification of AudioSegment
+			throw new IllegalArgumentException();
+		}
 
-		System.out.println("WaveDataPublisher: Publishing " + samples.length + " samples");
+		PackedCollection<?> cd = data.getChannelData(0);
+		double samples[] = cd.toArray(0, cd.getMemLength());
+
+		log("Publishing " + samples.length + " samples");
 
 		while (index < samples.length) {
 			Generation.AudioSegment.Builder builder = Generation.AudioSegment.newBuilder();

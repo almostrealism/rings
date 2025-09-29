@@ -29,11 +29,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.almostrealism.audio.AudioMeter;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveDetails;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
 import org.almostrealism.heredity.TemporalCellular;
 
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
@@ -51,12 +50,41 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	private Map<Integer, File> stemFiles;
 	private Consumer<WaveDetails> detailsProcessor;
 
-	private List<AudioMeter> measures;
+	private Map<ChannelInfo, AudioMeter> measures;
 	private List<WaveOutput> stems;
+	private MultiChannelAudioOutput output;
 
-	public HealthComputationAdapter(int channels) {
+	public HealthComputationAdapter(int channels, boolean stereo) {
 		this.channels = channels;
 		this.stemFiles = new HashMap<>();
+		initOutput(stereo);
+	}
+
+	protected void initOutput(boolean stereo) {
+		out = new WaveOutput(() ->
+							Optional.ofNullable(outputFileSupplier).map(s -> {
+								outputFile = new File(s.get());
+								return outputFile;
+							}).orElse(null),
+				24, OutputLine.sampleRate, standardDurationFrames, stereo);
+		measures = new HashMap<>();
+		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.LEFT), new AudioMeter());
+		measures.put(new ChannelInfo(ChannelInfo.Voicing.MAIN, ChannelInfo.StereoChannel.RIGHT), new AudioMeter());
+		measures.put(new ChannelInfo(ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.LEFT), new AudioMeter());
+		measures.put(new ChannelInfo(ChannelInfo.Voicing.WET, ChannelInfo.StereoChannel.RIGHT), new AudioMeter());
+		configureMeasures(measures);
+
+		stems = IntStream.range(0, channels).mapToObj(i ->
+				new WaveOutput(() ->
+						Optional.ofNullable(stemFileSupplier).map(s -> {
+							File f = new File(stemFileSupplier.apply(i));
+							stemFiles.put(i, f);
+							return f;
+						}).orElse(null),
+						24, OutputLine.sampleRate,
+						HealthComputationAdapter.standardDurationFrames, stereo)).collect(Collectors.toList());
+
+		output = new MultiChannelAudioOutput(out, stems, (channelInfo) -> new AudioMeter());
 	}
 
 	public TemporalCellular getTarget() { return target; }
@@ -64,44 +92,12 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 	@Override
 	public void setTarget(TemporalCellular target) { this.target = target; }
 
-	protected WaveOutput getWaveOut() { return out; }
+	public WaveOutput getMaster() { return out; }
+	public Map<ChannelInfo, AudioMeter> getMeasures() { return measures; }
+	public List<WaveOutput> getStems() { return stems; }
+	public MultiChannelAudioOutput getOutput() { return output; }
 
-	@Override
-	public synchronized Receptor<PackedCollection<?>> getOutput() {
-		if (out == null) {
-			out = new WaveOutput(() ->
-					Optional.ofNullable(outputFileSupplier).map(s -> {
-						outputFile = new File(s.get());
-						return outputFile;
-					}).orElse(null), 24, standardDurationFrames);
-		}
-
-		return out;
-	}
-
-	@Override
-	public List<AudioMeter> getMeasures() {
-		if (measures != null) return measures;
-		measures = IntStream.range(0, MEASURE_COUNT).mapToObj(i -> new AudioMeter()).collect(Collectors.toList());
-		configureMeasures(measures);
-		return measures;
-	}
-
-	@Override
-	public List<WaveOutput> getStems() {
-		if (stems == null && stemFileSupplier != null) {
-			stems = IntStream.range(0, channels).mapToObj(i ->
-				new WaveOutput(() -> {
-							File f = new File(stemFileSupplier.apply(i));
-							stemFiles.put(i, f);
-							return f;
-						}, 24, HealthComputationAdapter.standardDurationFrames)).collect(Collectors.toList());
-		}
-
-		return stems;
-	}
-
-	protected void configureMeasures(List<AudioMeter> measures) { }
+	protected void configureMeasures(Map<ChannelInfo, AudioMeter> measures) { }
 
 	public void setStemFile(IntFunction<String> file) { this.stemFileSupplier = file; }
 
@@ -124,7 +120,7 @@ public abstract class HealthComputationAdapter implements AudioHealthComputation
 		AudioHealthComputation.super.reset();
 		out.reset(); // TODO  Why is this called twice?
 		if (stems != null) stems.forEach(WaveOutput::reset);
-		measures.forEach(AudioMeter::reset);
+		measures.values().forEach(AudioMeter::reset);
 		out.reset();
 	}
 

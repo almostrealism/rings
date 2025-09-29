@@ -48,24 +48,25 @@ public abstract class PatternNoteAudioAdapter implements
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, double noteDuration,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel, double noteDuration,
 												  Factor<PackedCollection<?>> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
-		return computeAudio(target, noteDuration, automationLevel, audioSelection);
+		return computeAudio(target, channel, noteDuration, automationLevel, audioSelection);
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			warn("Loading audio from delegate without note duration, filter will be skipped");
-			return getDelegate().getAudio(target, audioSelection);
+			return getDelegate().getAudio(target, channel, audioSelection);
 		}
 
-		return getProvider(target, audioSelection).getAudio(target, audioSelection);
+		return getProvider(target, audioSelection).getAudio(target, channel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, double noteDuration,
+	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel,
+														 double noteDuration,
 														 Factor<PackedCollection<?>> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() == null) {
@@ -74,11 +75,11 @@ public abstract class PatternNoteAudioAdapter implements
 				throw new UnsupportedOperationException();
 			}
 
-			return p.getAudio(target, audioSelection);
+			return p.getAudio(target, channel, audioSelection);
 		} else if (noteDuration > 0) {
 			return sampling(getSampleRate(target, audioSelection), getDuration(target, audioSelection),
 					() -> getFilter().apply(getDelegate()
-									.getAudio(target, noteDuration,
+									.getAudio(target, channel, noteDuration,
 											automationLevel, audioSelection),
 												c(noteDuration), automationLevel.getResultant(c(0.0))));
 		} else {

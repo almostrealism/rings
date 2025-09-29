@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
 
 public interface SineWaveCellData extends BaseAudioData {
@@ -27,15 +27,33 @@ public interface SineWaveCellData extends BaseAudioData {
 	default Scalar phase() { return get(5); }
 	default Scalar depth() { return get(6); }
 
-	default Producer<Scalar> getNotePosition() { return p(notePosition()); }
-	default void setNotePosition(double notePosition) { notePosition().setValue(notePosition); }
+	default Producer<PackedCollection<?>> getNotePosition() {
+		return cp(notePosition().range(shape(1)));
+	}
 
-	default Producer<Scalar> getNoteLength() { return p(noteLength()); }
-	default void setNoteLength(double noteLength) { noteLength().setValue(noteLength); }
+	default void setNotePosition(double notePosition) {
+		notePosition().setValue(notePosition);
+	}
 
-	default Producer<Scalar> getPhase() { return p(phase()); }
-	default void setPhase(double phase) { phase().setValue(phase); }
+	default Producer<PackedCollection<?>> getNoteLength() {
+		return cp(noteLength().range(shape(1)));
+	}
 
-	default Producer<Scalar> getDepth() { return p(depth()); }
+	default void setNoteLength(double noteLength) {
+		noteLength().setValue(noteLength);
+	}
+
+	default Producer<PackedCollection<?>> getPhase() {
+		return cp(phase().range(shape(1)));
+	}
+
+	default void setPhase(double phase) {
+		phase().setValue(phase);
+	}
+
+	default Producer<PackedCollection<?>> getDepth() {
+		return p(depth().range(shape(1)));
+	}
+
 	default void setDepth(double depth) { depth().setValue(depth); }
 }

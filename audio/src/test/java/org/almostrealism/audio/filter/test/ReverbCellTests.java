@@ -32,7 +32,7 @@ public class ReverbCellTests implements CellFeatures, TestFeatures {
 
 	@Test
 	public void reverb1() {
-		CellList c = w("Library/Snare Perc DD.wav")
+		CellList c = w(0, "Library/Snare Perc DD.wav")
 				.map(fc(i -> new DelayNetwork(sampleRate, false)))
 				.o(i -> new File("results/reverb1.wav"));
 		Supplier<Runnable> r = c.sec(12);
@@ -43,7 +43,7 @@ public class ReverbCellTests implements CellFeatures, TestFeatures {
 	public void reverbAutomation() {
 		TimeCell clock = new TimeCell();
 
-		CellList c = w(c(0.35), "Library/organ.wav")
+		CellList c = w(0, c(0.35), "Library/organ.wav")
 				.map(fc(i -> in -> multiply(in, c(1.0).add(sin(clock.time(sampleRate))))))
 				.map(fc(i -> new DelayNetwork(sampleRate, false)))
 				.addRequirement(clock)
@@ -54,8 +54,8 @@ public class ReverbCellTests implements CellFeatures, TestFeatures {
 
 	@Test
 	public void delayReverb() {
-		CellList c = w("Library/Snare Perc DD.wav")
-				.d(i -> scalar(2.0))
+		CellList c = w(0, "Library/Snare Perc DD.wav")
+				.d(i -> c(2.0))
 				.map(fc(i -> new DelayNetwork(sampleRate, false)))
 				.o(i -> new File("results/delay-reverb.wav"));
 		Supplier<Runnable> r = c.sec(12);

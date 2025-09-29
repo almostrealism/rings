@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 		assertEquals(DELAY_FRAMES + 25, cursors.getDelayCursor());
 
 		AcceleratedTimeSeries buffer = delay.getBuffer();
-		TemporalScalar t = buffer.valueAt(delay.getDelay().get().evaluate().getValue() * OutputLine.sampleRate);
+		TemporalScalar t = buffer.valueAt(delay.getDelay().get().evaluate().toDouble() * OutputLine.sampleRate);
 		System.out.println(t);
 		assertEquals(0.1, t.getValue());
 	}
@@ -125,7 +125,7 @@ public class AdjustableDelayCellTest extends SineWaveCellTest {
 		WaveOutput output = new WaveOutput(new File("results/adjustable-delay-cell-test.wav"));
 
 		cell.setReceptor(delay);
-		delay.setReceptor(output);
+		delay.setReceptor(output.getWriter(0));
 
 		Runnable push = cell.push(c(0.0)).get();
 		Runnable tick = cell.tick().get();

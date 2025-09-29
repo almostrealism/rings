@@ -249,8 +249,8 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 		List<Audio.WaveRecording> recordings = new ArrayList<>();
 		queue.drainTo(recordings);
 		executor.submit(() -> {
-			try {
-				AudioLibraryPersistence.saveRecordings(recordings, destination.out());
+			try (LibraryDestination.Writer writer = destination.out()) {
+				AudioLibraryPersistence.saveRecordings(recordings, writer);
 //				totalData += recordings.stream()
 //						.mapToInt(Audio.WaveRecording::getDataCount)
 //						.sum();

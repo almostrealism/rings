@@ -52,7 +52,7 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 		Producer<PackedCollection<?>> freq = riseFall(0, 18000, 0.0,
 														d, m, s, e, clock.time(sr), c(seconds));
 
-		CellList cells = w(c(0.0), c(1.0), "Library/Snare Perc DD.wav")
+		CellList cells = w(0, c(0.0), c(1.0), "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
 				.map(fc(i -> sf(0.1)))
 				.map(fc(i -> lp(freq, c(0.2))))
@@ -82,7 +82,7 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 		Producer<PackedCollection<?>> freq = riseFall(0, 1.0, 0.0,
 				d, m, p, e, clock.time(sr), c(seconds));
 
-		CellList cells = w(c(0.0), c(1.0), "Library/Snare Perc DD.wav")
+		CellList cells = w(0, c(0.0), c(1.0), "Library/Snare Perc DD.wav")
 				.addRequirements(clock)
 				.map(fc(i -> sf(0.1)))
 				.map(fc(i -> in -> freq))
@@ -112,6 +112,6 @@ public class LinearAutomationTests implements CellFeatures, SamplingFeatures, Op
 						d, m, p, e, time(), c(seconds));
 
 		PackedCollection<?> data = new PackedCollection<>(seconds * sr);
-		new WaveData(data.traverseEach(), sr).sample(freq).save(new File("results/rise-fall-test.wav"));
+		new WaveData(data.traverseEach(), sr).sample(0, freq).save(new File("results/rise-fall-test.wav"));
 	}
 }
