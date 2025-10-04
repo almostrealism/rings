@@ -169,8 +169,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	}
 
 	public static void setFeatureLevel(int featureLevel) {
-		PatternElementFactory.enableVolumeEnvelope = true;
-		PatternElementFactory.enableFilterEnvelope = true;
+		PatternElementFactory.enableVolumeEnvelope = featureLevel > 0;
+		PatternElementFactory.enableFilterEnvelope = featureLevel > 0;
 
 		MixdownManager.enableReverb = featureLevel > 4;
 		MixdownManager.enableMainFilterUp = featureLevel > 2;
