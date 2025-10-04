@@ -67,7 +67,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
 	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
-	public static final int verbosity = 1;
+	public static final int verbosity = 0;
 	public static final int singleChannel = -1;
 
 	public static boolean enableVerbose = false;
@@ -172,16 +172,17 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		PatternElementFactory.enableVolumeEnvelope = featureLevel > 0;
 		PatternElementFactory.enableFilterEnvelope = featureLevel > 0;
 
-		MixdownManager.enableReverb = featureLevel > 4;
-		MixdownManager.enableMainFilterUp = featureLevel > 2;
-		MixdownManager.enableAutomationManager = featureLevel > 2;
-		MixdownManager.enableEfxFilters = featureLevel > 2;
-		MixdownManager.enableEfx = featureLevel > 2;
-		MixdownManager.enableWetInAdjustment = featureLevel > 3;
-		MixdownManager.enableMasterFilterDown = featureLevel > 3;
-		MixdownManager.enableTransmission = featureLevel > 1;
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = featureLevel < 0;
+
+		MixdownManager.enableReverb = featureLevel > 5;
+		MixdownManager.enableMainFilterUp = featureLevel > 3;
+		MixdownManager.enableAutomationManager = featureLevel > 3;
+		MixdownManager.enableEfxFilters = featureLevel > 2;
+		MixdownManager.enableEfx = false; // featureLevel > 2;
+		MixdownManager.enableWetInAdjustment = featureLevel > 4;
+		MixdownManager.enableMasterFilterDown = featureLevel > 4;
+		MixdownManager.enableTransmission = featureLevel > 3;
 		EfxManager.enableEfx = featureLevel > 1;
 
 		StableDurationHealthComputation.enableTimeout = false;
@@ -190,8 +191,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	}
 
 	public static OperationProfileNode setVerbosity(int verbosity, boolean enableProfile) {
-		// Verbosity level 0
-		enableBreeding = verbosity < 1;
+		// Verbosity level -1
+		enableBreeding = verbosity < 0;
 
 		// Verbosity level 1;
 		NoteAudioProvider.enableVerbose = verbosity > 0;
@@ -235,7 +236,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		// Setup features
 		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
-		setFeatureLevel(5);
+		setFeatureLevel(3);
 
 		// Create computations before applying Heap
 		AudioProcessingUtils.init();
