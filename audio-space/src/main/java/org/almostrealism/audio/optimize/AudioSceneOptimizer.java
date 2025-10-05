@@ -175,15 +175,15 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		MixdownManager.disableClean = false;
 		MixdownManager.enableSourcesOnly = featureLevel < 0;
 
-		MixdownManager.enableReverb = featureLevel > 5;
-		MixdownManager.enableMainFilterUp = featureLevel > 3;
-		MixdownManager.enableAutomationManager = featureLevel > 3;
-		MixdownManager.enableEfxFilters = featureLevel > 2;
-		MixdownManager.enableEfx = false; // featureLevel > 2;
-		MixdownManager.enableWetInAdjustment = featureLevel > 4;
-		MixdownManager.enableMasterFilterDown = featureLevel > 4;
-		MixdownManager.enableTransmission = featureLevel > 3;
 		EfxManager.enableEfx = featureLevel > 1;
+		MixdownManager.enableEfx = featureLevel > 2;
+		MixdownManager.enableEfxFilters = featureLevel > 2;
+		MixdownManager.enableTransmission = featureLevel > 3;
+		MixdownManager.enableMainFilterUp = featureLevel > 4;
+		MixdownManager.enableAutomationManager = featureLevel > 4;
+		MixdownManager.enableWetInAdjustment = featureLevel > 5;
+		MixdownManager.enableMasterFilterDown = featureLevel > 5;
+		MixdownManager.enableReverb = featureLevel > 6;
 
 		StableDurationHealthComputation.enableTimeout = false;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
@@ -236,7 +236,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		// Setup features
 		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
-		setFeatureLevel(3);
+		setFeatureLevel(4);
 
 		// Create computations before applying Heap
 		AudioProcessingUtils.init();
