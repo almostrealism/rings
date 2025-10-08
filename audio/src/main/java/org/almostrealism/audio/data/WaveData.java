@@ -70,8 +70,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 						.traverse(3)
 						.max()
 						.reshape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1)).get();
-		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
-					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
+		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(-1), 0),
+					o.multiply(o.v(o.shape(-1), 1), o.v(o.shape(1), 2))))
 				.get();
 		// mfcc = new FeatureComputer(getDefaultFeatureSettings());
 	}
