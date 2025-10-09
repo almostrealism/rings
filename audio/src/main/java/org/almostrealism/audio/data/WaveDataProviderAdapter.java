@@ -42,9 +42,9 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 		loaded = new HashMap<>();
 		interpolate = new DefaultContextSpecific<>(() ->
 				new Interpolate(
-						new PassThroughProducer<>(Ops.o().shape(-1), 0),
+						new PassThroughProducer<>(Ops.o().shape(1), 0),
 						new PassThroughProducer<>(Ops.o().shape(-1), 1),
-						new PassThroughProducer<>(Ops.o().shape(-1), 2),
+						new PassThroughProducer<>(Ops.o().shape(1), 2),
 						v -> Product.of(v, ExpressionFeatures.getInstance().e(1.0 / OutputLine.sampleRate)),
 						v -> Product.of(v, ExpressionFeatures.getInstance().e(OutputLine.sampleRate))).get());
 	}
