@@ -236,7 +236,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 		// Setup features
 		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
-		setFeatureLevel(4);
+		setFeatureLevel(7);
 
 		// Create computations before applying Heap
 		AudioProcessingUtils.init();
