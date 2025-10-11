@@ -188,6 +188,26 @@ Operations are automatically compiled for GPU when available. The framework:
 
 Default sample rate is `OutputLine.sampleRate` (typically 44100 Hz). Most components accept sample rate as a constructor parameter or use the global default.
 
+## Code Style and Formatting
+
+### Line Endings
+
+**CRITICAL**: This repository uses Unix-style line endings (LF) exclusively.
+
+- **NEVER** use Windows-style CRLF line endings (`\r\n`)
+- **ALWAYS** use Unix-style LF line endings (`\n`)
+- All files (Java, Markdown, XML, etc.) must use LF only
+- If you accidentally introduce CRLF separators, remove them with:
+  ```bash
+  sed -i '' 's/\r$//' <filename>
+  ```
+- Verify line endings with:
+  ```bash
+  file <filename>  # Should show "UTF-8 text" not "with CRLF"
+  ```
+
+This is standard for macOS/Linux development and critical for consistent git diffs and cross-platform compatibility.
+
 ## Important Notes
 
 - **Cell** interface is from ar-common, not defined in this repo
