@@ -20,6 +20,7 @@ import io.almostrealism.relation.Tree;
 import org.almostrealism.audio.AudioLibrary;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,12 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 		return resourcePath;
 	}
 
-	protected void computeChildren() {
+	public void prepareChildren() {
+		if (children == null)
+			refreshChildren();
+	}
+
+	protected void refreshChildren() {
 		children = library.getSimilarities(details).entrySet().stream()
 				.sorted(comparator)
 				.map(Map.Entry::getKey)
@@ -82,7 +88,6 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 
 	@Override
 	public Collection<WaveDetailsNode> getChildren() {
-		if (children == null) computeChildren();
-		return children;
+		return children == null ? Collections.emptyList() : children;
 	}
 }
