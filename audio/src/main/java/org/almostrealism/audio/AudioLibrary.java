@@ -137,6 +137,25 @@ public class AudioLibrary implements ConsoleFeatures {
 		return allDetails().toList();
 	}
 
+	public WaveDetails get(String identifier) { return info.get(identifier); }
+
+	public WaveDataProvider find(String identifier) {
+		return root.children()
+				.map(Supplier::get)
+				.filter(Objects::nonNull)
+				.filter(f -> Objects.equals(identifier, f.getIdentifier()))
+				.findFirst()
+				.orElse(null);
+	}
+
+	public void include(WaveDetails details) {
+		if (details.getIdentifier() == null) {
+			throw new IllegalArgumentException();
+		}
+
+		info.put(details.getIdentifier(), details);
+	}
+
 	public Optional<WaveDetails> getDetailsNow(String key) {
 		return getDetailsNow(new FileWaveDataProvider(key));
 	}
@@ -262,6 +281,10 @@ public class AudioLibrary implements ConsoleFeatures {
 		return getSimilarities(new FileWaveDataProvider(key));
 	}
 
+	public Map<String, Double> getSimilarities(WaveDetails details) {
+		return computeSimilarities(details).getSimilarities();
+	}
+
 	public Map<String, Double> getSimilarities(WaveDataProvider provider) {
 		return computeSimilarities(getDetailsAwait(provider, false)).getSimilarities();
 	}
@@ -269,23 +292,6 @@ public class AudioLibrary implements ConsoleFeatures {
 	public void resetSimilarities() {
 		getAllDetails().forEach(d -> d.getSimilarities().clear());
 		// log("Similarities reset");
-	}
-
-	public WaveDataProvider find(String identifier) {
-		return root.children()
-				.map(Supplier::get)
-				.filter(Objects::nonNull)
-				.filter(f -> Objects.equals(identifier, f.getIdentifier()))
-				.findFirst()
-				.orElse(null);
-	}
-
-	public void include(WaveDetails details) {
-		if (details.getIdentifier() == null) {
-			throw new IllegalArgumentException();
-		}
-
-		info.put(details.getIdentifier(), details);
 	}
 
 	protected WaveDetails processJob(WaveDetailsJob job) {
