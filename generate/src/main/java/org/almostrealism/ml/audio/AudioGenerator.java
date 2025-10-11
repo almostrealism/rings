@@ -37,7 +37,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private double audioDurationSeconds;
 	private DoubleConsumer progressMonitor;
 
-	// Sample-based generation (like AudioModulator)
 	private AudioComposer composer;
 	private double strength;
 	private int composerDim;
@@ -106,23 +105,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	public void addFeatures(PackedCollection<?> features) {
 		ensureComposer();
 		composer.addSource(cp(features));
-	}
-
-	/**
-	 * Clear all added samples and reset the composer.
-	 */
-	public void clearSamples() {
-		if (composer != null) {
-			composer.destroy();
-			composer = null;
-		}
-	}
-
-	/**
-	 * Check if samples have been added for sample-based generation.
-	 */
-	public boolean hasSamples() {
-		return composer != null;
 	}
 
 	private void ensureComposer() {
@@ -203,10 +185,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @return Generated stereo audio
 	 */
 	public double[][] generateAudioFromSamples(PackedCollection<?> position, long[] tokenIds, long seed) {
-		if (!hasSamples()) {
-			throw new IllegalStateException("No samples added. Use addAudio() or addFeatures() before calling this method.");
-		}
-
 		try {
 			log("Generating audio from samples with seed " + seed +
 					" (duration = " + getAudioDuration() + ", strength = " + getStrength() + ")");
@@ -331,15 +309,13 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// Generate new noise
-			float[] newNoise = new float[DIT_X_SIZE];
-			for (int i = 0; i < DIT_X_SIZE; i++) {
-				newNoise[i] = (float) random.nextGaussian();
-			}
+			PackedCollection<?> newNoise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			double[] newNoiseData = newNoise.toArray();
 
 			// Update x for next step
 			float[] newX = new float[DIT_X_SIZE];
 			for (int i = 0; i < DIT_X_SIZE; i++) {
-				newX[i] = (float) ((1.0f - nextT) * outputData[i]) + (nextT * newNoise[i]);
+				newX[i] = (float) ((1.0f - nextT) * outputData[i] + nextT * newNoiseData[i]);
 			}
 
 			// Update x for next iteration
@@ -362,7 +338,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	/**
 	 * Add noise to an interpolated latent matching the target sigma level.
 	 * This implements the "matched noise addition" strategy for img2img-style generation.
-	 *
+	 * <p>
 	 * Formula: noisy_latent = interpolated_latent + sigma * noise
 	 *
 	 * @param interpolatedLatent The clean interpolated latent from samples
@@ -373,12 +349,16 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private PackedCollection<?> addMatchedNoise(PackedCollection<?> interpolatedLatent,
 												float targetSigma,
 												Random random) {
+		// Generate noise and scale by target sigma
+		PackedCollection<?> noise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+
+		// Add scaled noise to interpolated latent
 		double[] interpData = interpolatedLatent.toArray();
+		double[] noiseData = noise.toArray();
 		float[] noisyData = new float[DIT_X_SIZE];
 
 		for (int i = 0; i < DIT_X_SIZE; i++) {
-			float noise = (float) random.nextGaussian();
-			noisyData[i] = (float) interpData[i] + (targetSigma * noise);
+			noisyData[i] = (float) (interpData[i] + targetSigma * noiseData[i]);
 		}
 
 		PackedCollection<?> result = new PackedCollection<>(shape(DIT_X_SHAPE));
@@ -399,14 +379,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * Initialize random noise.
 	 */
 	private PackedCollection<?> initialX(Random random) {
-		float[] initialX = new float[DIT_X_SIZE];
-		for (int i = 0; i < DIT_X_SIZE; i++) {
-			initialX[i] = (float) random.nextGaussian();
-		}
-
-		PackedCollection<?> x = new PackedCollection<>(shape(DIT_X_SHAPE));
-		x.setMem(initialX);
-		return x;
+		return new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
 	}
 
 	private double[][] decodeAudio(PackedCollection<?> latent) {
@@ -456,12 +429,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 				warn(nanCount + " NaN values detected at " + context);
 			}
 		}
-	}
-
-	@Override
-	public void destroy() {
-		clearSamples();
-		super.destroy();
 	}
 
 	public static void main(String[] args) throws Exception {
