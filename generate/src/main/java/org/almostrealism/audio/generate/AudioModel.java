@@ -84,13 +84,21 @@ public class AudioModel {
 	}
 
 	public String conditionSummary(UnaryOperator<String> audioDescription) {
+		StringBuilder builder = new StringBuilder();
+
 		if (textConditions != null && !textConditions.isEmpty()) {
-			return String.join(", ", textConditions);
-		} else if (audioConditions != null && !audioConditions.isEmpty()) {
-			return String.join(", ",
-					audioConditions.stream().map(audioDescription).toList());
+			builder.append(String.join(", ", textConditions));
 		}
 
-		return "";
+		if (audioConditions != null && !audioConditions.isEmpty()) {
+			if (builder.length() > 0) {
+				builder.append(" + ");
+			}
+
+			builder.append(String.join(", ",
+					audioConditions.stream().map(audioDescription).toList()));
+		}
+
+		return builder.toString();
 	}
 }
