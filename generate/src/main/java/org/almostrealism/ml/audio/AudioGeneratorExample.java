@@ -50,6 +50,8 @@ public class AudioGeneratorExample {
 		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
 			generator.setAudioDurationSeconds(1.2);
 
+			int total = 0;
+
 			if (useSamples) {
 				// ============================================================
 				// Sample-based generation (audio-to-audio / img2img style)
@@ -66,7 +68,7 @@ public class AudioGeneratorExample {
 				}
 
 				// Generate variations with different strength levels
-				double[] strengths = {0.2, 0.4, 0.6, 0.8};
+				double[] strengths = {0.3, 0.5, 0.7};
 
 				Random rand = new Random(42);
 
@@ -87,13 +89,10 @@ public class AudioGeneratorExample {
 						System.out.println("Generating with strength=" + strength +
 								", seed=" + seed);
 
-						generator.generateAudioFromSamples(position, prompt, seed, filename);
+						generator.generateAudio(position, prompt, seed, filename);
+						total++;
 					}
 				}
-
-				System.out.println("\nSample-based generation complete!");
-				System.out.println("Generated " + (strengths.length * 3) + " variations");
-
 			} else {
 				// ============================================================
 				// Pure generation (standard text-to-audio)
@@ -115,11 +114,12 @@ public class AudioGeneratorExample {
 					System.out.println("Generating variation " + (i + 1) + "/" + numVariations +
 							" (seed=" + seed + ")");
 					generator.generateAudio(prompt, seed, filename);
+					total++;
 				}
-
-				System.out.println("\nPure generation complete!");
-				System.out.println("Generated " + numVariations + " variations");
 			}
+
+
+			System.out.println("Generated " + total + " variations");
 		}
 	}
 }

@@ -113,16 +113,34 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 	}
 
-	public void generateAudio(String prompt, long seed, String outputPath) throws OrtException, IOException {
-		double[][] audio = generateAudio(prompt, seed);
+	public void generateAudio(String prompt, long seed, String outputPath) throws IOException {
+		generateAudio(null, prompt, seed, outputPath);
+	}
+
+	/**
+	 * Generate audio from samples and save to file.
+	 */
+	public void generateAudio(PackedCollection<?> position, String prompt,
+							  long seed, String outputPath) throws IOException {
+		double[][] audio = generateAudio(position, prompt, seed);
 		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, SAMPLE_RATE)) {
 			f.writeFrames(audio);
 		}
 	}
 
-	public double[][] generateAudio(String prompt, long seed) {
+	/**
+	 * Generate audio from samples using a position vector to control interpolation.
+	 * Samples must be added via addAudio() or addFeatures() before calling this method,
+	 * unless position is null (for pure generation).
+	 *
+	 * @param position PackedCollection representing the position in latent space [composerDim]
+	 * @param prompt Text prompt for conditioning
+	 * @param seed Random seed for noise generation
+	 * @return Generated stereo audio
+	 */
+	public double[][] generateAudio(PackedCollection<?> position, String prompt, long seed) {
 		try {
-			return generateAudio(tokenize(prompt), seed);
+			return generateAudio(position, tokenize(prompt), seed);
 		} finally {
 			if (progressMonitor != null) {
 				progressMonitor.accept(1.0);
@@ -130,72 +148,40 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 	}
 
-	public double[][] generateAudio(long[] tokenIds, long seed) {
-		log("Generating audio with seed " + seed +
-				" (duration = " + getAudioDuration() + ")");
-
-		// 1. Process tokens through conditioners
-		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(tokenIds);
-
-		// 2. Run diffusion steps
-		PackedCollection<?> finalLatent = runDiffusionSteps(
-				conditionerOutputs.get("cross_attention_input"),
-				conditionerOutputs.get("global_cond"),
-				seed
-		);
-
-		// 3. Decode audio
-		long start = System.currentTimeMillis();
-		double[][] audio = decodeAudio(finalLatent.reshape(OnnxAutoEncoder.LATENT_DIMENSIONS, -1));
-		log((System.currentTimeMillis() - start) + "ms for autoencoder");
-		return audio;
-	}
-
 	/**
-	 * Generate audio from samples and save to file.
-	 */
-	public void generateAudioFromSamples(PackedCollection<?> position, String prompt,
-										 long seed, String outputPath) throws IOException {
-		double[][] audio = generateAudioFromSamples(position, prompt, seed);
-		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, SAMPLE_RATE)) {
-			f.writeFrames(audio);
-		}
-	}
-
-	/**
-	 * Generate audio from samples using a position vector to control interpolation.
-	 * Samples must be added via addAudio() or addFeatures() before calling this method.
+	 * Generate audio with optional sample-based initialization.
+	 * <p>
+	 * If position is null, performs pure generation from noise.
+	 * If position is provided, performs sample-based generation by interpolating
+	 * samples (which must be added via addAudio() or addFeatures() first).
 	 *
-	 * @param position PackedCollection representing the position in latent space [composerDim]
-	 * @param prompt Text prompt for conditioning
-	 * @param seed Random seed for noise generation
-	 * @return Generated stereo audio
-	 */
-	public double[][] generateAudioFromSamples(PackedCollection<?> position, String prompt, long seed) {
-		return generateAudioFromSamples(position, tokenize(prompt), seed);
-	}
-
-	/**
-	 * Generate audio from samples using a position vector to control interpolation.
-	 * Samples must be added via addAudio() or addFeatures() before calling this method.
-	 *
-	 * @param position PackedCollection representing the position in latent space [composerDim]
+	 * @param position PackedCollection representing the position in latent space [composerDim], or null for pure generation
 	 * @param tokenIds Tokenized prompt for conditioning
 	 * @param seed Random seed for noise generation
 	 * @return Generated stereo audio
 	 */
-	public double[][] generateAudioFromSamples(PackedCollection<?> position, long[] tokenIds, long seed) {
+	public double[][] generateAudio(PackedCollection<?> position, long[] tokenIds, long seed) {
 		try {
-			log("Generating audio from samples with seed " + seed +
-					" (duration = " + getAudioDuration() + ", strength = " + getStrength() + ")");
+			if (position == null) {
+				// Pure generation from noise
+				log("Generating audio with seed " + seed +
+						" (duration = " + getAudioDuration() + ")");
+			} else {
+				// Sample-based generation
+				log("Generating audio from samples with seed " + seed +
+						" (duration = " + getAudioDuration() + ", strength = " + getStrength() + ")");
+			}
 
 			// 1. Process tokens through conditioners
 			Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(tokenIds);
 
-			// 2. Generate interpolated latent from samples
-			PackedCollection<?> interpolatedLatent = composer.getResultant(cp(position)).evaluate();
+			// 2. Generate interpolated latent from samples (if position provided)
+			PackedCollection<?> interpolatedLatent = null;
+			if (position != null) {
+				interpolatedLatent = composer.getResultant(cp(position)).evaluate();
+			}
 
-			// 3. Run diffusion with sample-based initialization
+			// 3. Run diffusion (with or without sample initialization)
 			PackedCollection<?> finalLatent = runDiffusionSteps(
 					conditionerOutputs.get("cross_attention_input"),
 					conditionerOutputs.get("global_cond"),
@@ -220,39 +206,47 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	}
 
 	/**
-	 * Run diffusion steps from pure noise (standard generation).
-	 */
-	private PackedCollection<?> runDiffusionSteps(PackedCollection<?> crossAttentionInput,
-												  PackedCollection<?> globalCond, long seed) {
-		Random random = new Random(seed);
-		PackedCollection<?> x = initialX(random);
-		return runDiffusionSteps(crossAttentionInput, globalCond, x, 0, seed);
-	}
-
-	/**
-	 * Run diffusion steps from an interpolated latent with matched noise addition.
+	 * Run diffusion steps with optional sample-based initialization.
+	 * <p>
+	 * If interpolatedLatent is null, starts from pure noise at step 0.
+	 * If interpolatedLatent is provided, adds matched noise and starts from a calculated step based on strength.
+	 *
+	 * @param crossAttentionInput Conditioning from text tokens
+	 * @param globalCond Global conditioning vector
+	 * @param interpolatedLatent Optional interpolated latent from samples (null for pure generation)
+	 * @param seed Random seed
+	 * @return Final latent after diffusion
 	 */
 	private PackedCollection<?> runDiffusionSteps(PackedCollection<?> crossAttentionInput,
 												  PackedCollection<?> globalCond,
 												  PackedCollection<?> interpolatedLatent,
 												  long seed) {
-		// Generate sigma values
-		float[] sigmas = new float[NUM_STEPS + 1];
-		fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
-
-		// Calculate start step based on strength
-		// strength = 0.0 → start at last step (no diffusion)
-		// strength = 0.5 → start at middle step
-		// strength = 1.0 → start at first step (full diffusion)
-		int startStep = (int) (strength * NUM_STEPS);
-		if (startStep >= NUM_STEPS) startStep = NUM_STEPS - 1;
-
-		// Add matched noise to interpolated latent
 		Random random = new Random(seed);
-		PackedCollection<?> x = addMatchedNoise(interpolatedLatent, sigmas[startStep], random);
+		PackedCollection<?> x;
+		int startStep;
 
-		log("Starting diffusion from step " + startStep + "/" + NUM_STEPS +
-				" (sigma=" + sigmas[startStep] + ", strength=" + strength + ")");
+		if (interpolatedLatent == null) {
+			// Pure generation: start from random noise at step 0
+			x = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			startStep = 0;
+		} else {
+			// Sample-based generation: add matched noise and start from calculated step
+			float[] sigmas = new float[NUM_STEPS + 1];
+			fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
+
+			// Calculate start step based on strength
+			// strength = 0.0 → start at last step (no diffusion)
+			// strength = 0.5 → start at middle step
+			// strength = 1.0 → start at first step (full diffusion)
+			startStep = (int) (strength * NUM_STEPS);
+			if (startStep >= NUM_STEPS) startStep = NUM_STEPS - 1;
+
+			// Add matched noise to interpolated latent
+			x = addMatchedNoise(interpolatedLatent, sigmas[startStep], random);
+
+			log("Starting diffusion from step " + startStep + "/" + NUM_STEPS +
+					" (sigma=" + sigmas[startStep] + ", strength=" + strength + ")");
+		}
 
 		return runDiffusionSteps(crossAttentionInput, globalCond, x, startStep, seed);
 	}
@@ -373,13 +367,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Initialize random noise.
-	 */
-	private PackedCollection<?> initialX(Random random) {
-		return new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
 	}
 
 	private double[][] decodeAudio(PackedCollection<?> latent) {
