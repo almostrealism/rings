@@ -64,6 +64,8 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		return autoencoder.getMaximumDuration();
 	}
 
+	public int getEmbeddingDimension() { return dim; }
+
 	public double getSampleRate() {
 		return autoencoder.getSampleRate();
 	}

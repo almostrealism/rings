@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,14 @@
 
 package org.almostrealism.remote.event;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DefaultEvent extends AbstractEvent {
 	private long time;
 	private long duration;
+
+	private Map<String, String> tags;
 
 	public DefaultEvent() { }
 
@@ -26,6 +31,15 @@ public class DefaultEvent extends AbstractEvent {
 		super(name);
 		setDuration(duration);
 		setTime(System.currentTimeMillis());
+	}
+
+	public Map<String, String> getTags() {
+		if (tags == null) tags = new HashMap<>();
+		return tags;
+	}
+
+	public boolean hasTags() {
+		return tags != null && !tags.isEmpty();
 	}
 
 	public long getTime() { return time; }

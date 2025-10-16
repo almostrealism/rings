@@ -39,7 +39,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 	private AudioComposer composer;
 	private double strength;
-	private int composerDim;
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
 		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
@@ -50,10 +49,15 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	}
 
 	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates) throws OrtException, IOException {
+		this(onnxAssets, ditStates, 8, System.currentTimeMillis());
+	}
+
+	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates,
+						  int composerDim, long composerSeed) throws OrtException, IOException {
 		super(onnxAssets, ditStates);
+		composer = new AudioComposer(getAutoencoder(), composerDim, composerSeed);
 		audioDurationSeconds = 10.0;
-		strength = 0.5;  // Default: balanced between preservation and generation
-		composerDim = 8;  // Default dimension for position vectors
+		strength = 0.5;
 	}
 
 	public double getAudioDuration() { return audioDurationSeconds; }
@@ -83,8 +87,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 	public double getStrength() { return strength; }
 
-	public void setComposerDimension(int dim) { this.composerDim = dim; }
-	public int getComposerDimension() { return composerDim; }
+	public int getComposerDimension() { return composer.getEmbeddingDimension(); }
 
 	/**
 	 * Add raw audio to be used as a starting point for generation.
@@ -93,7 +96,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param audio PackedCollection of audio data (stereo: [2, frames] or mono: [frames])
 	 */
 	public void addAudio(PackedCollection<?> audio) {
-		ensureComposer();
 		composer.addAudio(cp(audio));
 	}
 
@@ -103,14 +105,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param features PackedCollection of latent features [64, 256]
 	 */
 	public void addFeatures(PackedCollection<?> features) {
-		ensureComposer();
 		composer.addSource(cp(features));
-	}
-
-	private void ensureComposer() {
-		if (composer == null) {
-			composer = new AudioComposer(getAutoencoder(), composerDim);
-		}
 	}
 
 	public void generateAudio(String prompt, long seed, String outputPath) throws IOException {
