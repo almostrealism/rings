@@ -34,6 +34,7 @@ public class AudioModel {
 	private long seed;
 	private List<String> textConditions;
 	private List<String> audioConditions;
+	private Double creativity;
 
 	public AudioModel() {
 		this(null);
@@ -81,6 +82,11 @@ public class AudioModel {
 	public List<String> getAudioConditions() { return audioConditions; }
 	public void setAudioConditions(List<String> audioConditions) {
 		this.audioConditions = audioConditions;
+	}
+
+	public Double getCreativity() { return creativity; }
+	public void setCreativity(Double creativity) {
+		this.creativity = creativity;
 	}
 
 	public String conditionSummary(UnaryOperator<String> audioDescription) {
