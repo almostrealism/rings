@@ -22,9 +22,10 @@ import org.almostrealism.audio.AudioLibrary;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +36,14 @@ import java.util.stream.Collectors;
  * a navigable similarity tree. This enables exploration of audio libraries by
  * similarity, useful for sample selection, recommendation, and interpolation.
  * <p>
- * Children are lazy-loaded and cached to optimize memory usage. Similarity
- * scores are computed by the {@link AudioLibrary#getSimilarities(WaveDetails)}
+ * To avoid cycles and repetition in the tree, each node excludes certain samples
+ * when computing its children. Specifically, each child excludes its parent and
+ * all of its siblings, ensuring that navigating deeper in the tree reveals new
+ * samples rather than cycling through the same set. This means two nodes representing
+ * the same audio sample may have different children depending on the path taken to
+ * reach them.
+ * <p>
+ * Similarity scores are computed by the {@link AudioLibrary#getSimilarities(WaveDetails)}
  * method, typically based on audio features like spectral characteristics.
  * <p>
  * Example usage:
@@ -60,12 +67,6 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 			Map.Entry.<String, Double>comparingByValue().reversed();
 
 	/**
-	 * Shared cache of nodes to prevent duplicate node creation when
-	 * the same audio sample appears in multiple branches of the tree.
-	 */
-	private Map<String, WaveDetailsNode> cache;
-
-	/**
 	 * The audio library containing all available samples and similarity data.
 	 */
 	private AudioLibrary library;
@@ -79,6 +80,13 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 * Maximum number of children (similar samples) to create for this node.
 	 */
 	private int childLimit;
+
+	/**
+	 * Set of sample identifiers to exclude when computing children.
+	 * This prevents cycles and ensures navigation reveals new samples.
+	 * Typically contains the parent and sibling identifiers.
+	 */
+	private Set<String> excludedIdentifiers;
 
 	/**
 	 * Cached file path to the audio resource. Lazy-loaded on first access.
@@ -95,7 +103,7 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 * Creates a node for the audio sample identified by the given key.
 	 * <p>
 	 * The {@link WaveDetails} are retrieved from the library synchronously.
-	 * A new cache is created for this tree.
+	 * No samples are excluded from children.
 	 *
 	 * @param library the audio library containing the sample
 	 * @param key     the unique identifier for the audio sample
@@ -107,7 +115,7 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	/**
 	 * Creates a node for the given audio sample details with default settings.
 	 * <p>
-	 * Uses a child limit of 20 and creates a new cache for this tree.
+	 * Uses a child limit of 20 and no exclusions.
 	 *
 	 * @param library the audio library containing similar samples
 	 * @param details the audio sample metadata for this node
@@ -119,7 +127,7 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	/**
 	 * Creates a node for the given audio sample details with a custom child limit.
 	 * <p>
-	 * Creates a new cache for this tree.
+	 * No samples are excluded from children.
 	 *
 	 * @param library    the audio library containing similar samples
 	 * @param details    the audio sample metadata for this node
@@ -127,28 +135,26 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 */
 	public WaveDetailsNode(AudioLibrary library, WaveDetails details,
 						   int childLimit) {
-		this(new HashMap<>(), library, details, childLimit);
+		this(library, details, childLimit, Collections.emptySet());
 	}
 
 	/**
-	 * Creates a node with a shared cache for efficient tree construction.
+	 * Creates a node with specific samples excluded from children.
 	 * <p>
 	 * This is the primary constructor used internally when building the tree.
-	 * The cache prevents duplicate node creation when the same audio sample
-	 * appears in multiple branches.
+	 * The exclusion set prevents cycles by excluding parent and sibling samples.
 	 *
-	 * @param cache      shared node cache across the entire tree
-	 * @param library    the audio library containing similar samples
-	 * @param details    the audio sample metadata for this node
-	 * @param childLimit maximum number of similar samples to include as children
+	 * @param library             the audio library containing similar samples
+	 * @param details             the audio sample metadata for this node
+	 * @param childLimit          maximum number of similar samples to include as children
+	 * @param excludedIdentifiers set of sample identifiers to exclude from children
 	 */
-	public WaveDetailsNode(Map<String, WaveDetailsNode> cache,
-						   AudioLibrary library, WaveDetails details,
-						   int childLimit) {
-		this.cache = cache;
+	public WaveDetailsNode(AudioLibrary library, WaveDetails details,
+						   int childLimit, Set<String> excludedIdentifiers) {
 		this.library = library;
 		this.details = details;
 		this.childLimit = childLimit;
+		this.excludedIdentifiers = excludedIdentifiers;
 	}
 
 	/**
@@ -187,23 +193,34 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 * This method:
 	 * <ol>
 	 *   <li>Retrieves similarity scores from {@link AudioLibrary#getSimilarities(WaveDetails)}</li>
+	 *   <li>Filters out any samples in the exclusion set</li>
 	 *   <li>Sorts samples by similarity (highest first)</li>
-	 *   <li>Creates or retrieves cached nodes for the top matches</li>
-	 *   <li>Limits results to {@link #childLimit}</li>
+	 *   <li>Selects the top {@link #childLimit} matches</li>
+	 *   <li>Creates child nodes with exclusions set to this node plus all siblings</li>
 	 * </ol>
 	 * <p>
 	 * This method can be called multiple times to update the children based on
 	 * changes to the library's similarity data.
 	 */
 	protected void refreshChildren() {
-		children = library.getSimilarities(details).entrySet().stream()
+		// Get similarities and filter out excluded identifiers
+		List<String> childIdentifiers = library.getSimilarities(details).entrySet().stream()
+				.filter(e -> !excludedIdentifiers.contains(e.getKey()))
 				.sorted(comparator)
 				.map(Map.Entry::getKey)
-				.map(id -> cache.computeIfAbsent(id, k -> {
-					WaveDetails d = library.get(k);
-					return new WaveDetailsNode(cache, library, d, childLimit);
-				}))
 				.limit(childLimit)
+				.collect(Collectors.toList());
+
+		// Build exclusion set for children: this node + all siblings
+		Set<String> childExclusions = new HashSet<>(childIdentifiers);
+		childExclusions.add(details.getIdentifier());
+
+		// Create child nodes with proper exclusions
+		children = childIdentifiers.stream()
+				.map(id -> {
+					WaveDetails d = library.get(id);
+					return new WaveDetailsNode(library, d, childLimit, childExclusions);
+				})
 				.collect(Collectors.toList());
 	}
 
