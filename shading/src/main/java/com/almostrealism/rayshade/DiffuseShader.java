@@ -32,10 +32,30 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.CodeFeatures;
 
 /**
- * A {@link DiffuseShader} provides a shading method for diffuse surfaces.
- * The {@link DiffuseShader} class uses a lambertian shading algorithm.
- * 
+ * A {@link DiffuseShader} provides a shading method for diffuse (matte) surfaces using
+ * the Lambertian reflectance model.
+ *
+ * <p>The Lambertian model is the simplest physically-based shading model, representing
+ * surfaces that scatter light equally in all directions. The intensity of reflected light
+ * is proportional to the cosine of the angle between the surface normal and the light
+ * direction (Lambert's cosine law).</p>
+ *
+ * <p>Shading calculation:</p>
+ * <ol>
+ *   <li>Extract surface normal from the intersection (via DiscreteField)</li>
+ *   <li>Compute dot product between normal and light direction</li>
+ *   <li>Multiply surface color by light color by the dot product</li>
+ *   <li>Support both front-facing and back-facing shading if enabled on the surface</li>
+ *   <li>Return black if the surface faces away from the light</li>
+ * </ol>
+ *
+ * <p><b>Note:</b> This shader works with {@link org.almostrealism.geometry.ShadableIntersection}
+ * from ar-common, which provides the surface normal via the {@code getNormalAt} method
+ * (exposed through the Gradient interface).</p>
+ *
  * @author Michael Murray
+ * @see org.almostrealism.color.Shader
+ * @see org.almostrealism.geometry.ShadableIntersection
  */
 public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
 	public static DiffuseShader defaultDiffuseShader = new DiffuseShader();

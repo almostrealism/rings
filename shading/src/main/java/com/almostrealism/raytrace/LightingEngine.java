@@ -44,6 +44,38 @@ import io.almostrealism.relation.Evaluable;
 import java.util.*;
 import java.util.function.Supplier;
 
+/**
+ * {@link LightingEngine} computes the color contribution from a single light source at a ray
+ * intersection point on a surface. It combines shadow computation and surface shading to produce
+ * the final RGB color.
+ *
+ * <p>The lighting calculation process:</p>
+ * <ol>
+ *   <li>Compute the intersection between the ray and surface (passed as ContinuousField)</li>
+ *   <li>Calculate shadow mask if shadows are enabled</li>
+ *   <li>Invoke the surface's shader with the light and intersection information</li>
+ *   <li>Multiply shadow and shade to get final color contribution</li>
+ * </ol>
+ *
+ * <p>This class implements {@link ProducerWithRank} where the rank is the intersection distance.
+ * This allows {@link LightingEngineAggregator} to use ranked choice to select the closest visible
+ * surface.</p>
+ *
+ * <p><b>Type Parameter Note:</b> The type parameter T should extend ShadableIntersection (from ar-common)
+ * to ensure intersection distance is available as the rank. Currently constrained to ContinuousField
+ * due to legacy reasons - this is a TODO item.</p>
+ *
+ * <p><b>Known Issues:</b></p>
+ * <ul>
+ *   <li>Shadows are disabled by default ({@code enableShadows=false})</li>
+ *   <li>Some light types have migrated to new calculation methods (see deprecated lightingCalculation)</li>
+ *   <li>The surface shader interface (Shadable from ar-common) may not be fully implemented</li>
+ * </ul>
+ *
+ * @param <T> The type of intersection data, expected to be a ShadableIntersection
+ * @see IntersectionalLightingEngine
+ * @see org.almostrealism.geometry.ShadableIntersection
+ */
 // TODO  T must extend ShadableIntersection so that distance can be used as the rank
 public class LightingEngine<T extends ContinuousField> extends ProducerWithRankAdapter<RGB>
 				implements PathElement<Ray, RGB>, DimensionAware, CodeFeatures, RGBFeatures {

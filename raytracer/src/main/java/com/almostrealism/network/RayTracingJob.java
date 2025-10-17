@@ -55,9 +55,29 @@ import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.CodeFeatures;
 
 /**
- * A {@link RayTracingJob} provides an implementation of {@link Job}
- * that renders a section of an image.
- * 
+ * A {@link RayTracingJob} provides an implementation of {@link Job} that renders a rectangular
+ * section (panel) of an image using ray tracing. This class is designed for distributed rendering
+ * systems where a large image can be subdivided into smaller sections that are rendered independently
+ * and later combined.
+ *
+ * <p>The job lifecycle:</p>
+ * <ol>
+ *   <li>Job is created with scene URI, image coordinates, and rendering parameters</li>
+ *   <li>When {@link #run()} is called, the scene is loaded from the URI (or retrieved from cache)</li>
+ *   <li>A {@link RayTracedScene} is created with {@link RayIntersectionEngine}</li>
+ *   <li>The specified panel is rendered via ray tracing</li>
+ *   <li>Output is sent to a remote host or consumer as {@link RayTracingJobOutput}</li>
+ * </ol>
+ *
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>Scene caching to avoid reloading the same scene across multiple jobs</li>
+ *   <li>Support for custom {@link SceneLoader} implementations</li>
+ *   <li>Configurable camera parameters (position, direction, focal length, projection)</li>
+ *   <li>Supersampling support for anti-aliasing</li>
+ *   <li>Integration with distributed job execution framework</li>
+ * </ul>
+ *
  * @author  Michael Murray
  */
 public class RayTracingJob implements Job, CodeFeatures {
@@ -143,10 +163,31 @@ public class RayTracingJob implements Job, CodeFeatures {
 		this.jobId = jobId;
 	}
 	
+	/**
+	 * Returns the default output handler for ray tracing jobs.
+	 *
+	 * @return The default {@link RayTracingOutputHandler}, or null if not set.
+	 */
 	public static RayTracingOutputHandler getDefaultOutputHandler() {
 		return RayTracingJob.defaultOutputHandler;
 	}
-	
+
+	/**
+	 * Processes the output from a completed {@link RayTracingJob} by copying the rendered pixel data
+	 * into the appropriate position within a larger image array.
+	 *
+	 * <p>This is typically used by a coordinator/aggregator that collects results from multiple
+	 * distributed jobs and assembles them into a complete image.</p>
+	 *
+	 * @param data  The {@link RayTracingJobOutput} containing RGB pixel data for a panel
+	 * @param image The target image array to populate (indexed as [x][y])
+	 * @param x     X coordinate of the upper-left corner of the panel in the target image
+	 * @param y     Y coordinate of the upper-left corner of the panel in the target image
+	 * @param dx    Width of the panel in pixels
+	 * @param dy    Height of the panel in pixels
+	 * @return The updated image array
+	 * @throws IllegalArgumentException if the panel coordinates exceed the image bounds
+	 */
 	public static RGB[][] processOutput(RayTracingJobOutput data, RGB image[][], int x, int y, int dx, int dy) {
 		Iterator itr = data.iterator();
 
@@ -180,7 +221,20 @@ public class RayTracingJob implements Job, CodeFeatures {
 	public static boolean removeSceneCache(String s) { return(RayTracingJob.scenes.remove(s) != null); }
 	
 	/**
-	 * @return  The scene referenced by this {@link RayTracingJob}.
+	 * Returns the {@link Scene} referenced by this job's scene URI. The scene is loaded lazily
+	 * on first access and then cached for subsequent jobs using the same URI.
+	 *
+	 * <p>This method implements a thread-safe caching mechanism:</p>
+	 * <ul>
+	 *   <li>If the scene is already cached, it's returned immediately</li>
+	 *   <li>If another thread is loading the scene, this thread waits with exponential backoff</li>
+	 *   <li>If the scene is not cached and not being loaded, this thread loads it</li>
+	 * </ul>
+	 *
+	 * <p>Scene loading uses a {@link SceneLoader} which can be customized via {@link #setSceneLoader(String)}.
+	 * By default, scenes are loaded from XML via {@link FileDecoder}.</p>
+	 *
+	 * @return  The scene referenced by this {@link RayTracingJob}, or null if loading fails.
 	 */
 	public Scene<ShadableSurface> getScene() {
 		Scene<ShadableSurface> s = null;
@@ -448,6 +502,23 @@ public class RayTracingJob implements Job, CodeFeatures {
 	}
 	
 	/**
+	 * Executes the ray tracing job to render the specified panel of the image.
+	 *
+	 * <p>This method performs the following steps:</p>
+	 * <ol>
+	 *   <li>Loads the scene (from cache or URI)</li>
+	 *   <li>Configures verbose output if enabled (writes to raytracer.out and shaders.out)</li>
+	 *   <li>Applies any camera overrides (position, direction, focal length, projection size)</li>
+	 *   <li>Creates {@link RenderParameters} from the job's panel coordinates and supersample settings</li>
+	 *   <li>Constructs a {@link RayTracedScene} with {@link RayIntersectionEngine}</li>
+	 *   <li>Renders the panel by evaluating the ray tracing computation graph</li>
+	 *   <li>Packages the RGB pixel data into {@link RayTracingJobOutput}</li>
+	 *   <li>Sends output to the configured output host or consumer</li>
+	 *   <li>Optionally saves a JPEG preview if verbose rendering is enabled</li>
+	 * </ol>
+	 *
+	 * <p>If the scene cannot be loaded, the future is completed exceptionally and the method returns early.</p>
+	 *
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override

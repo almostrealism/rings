@@ -27,6 +27,21 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 
+/**
+ * {@link RayTracer} is a thin wrapper around an {@link Engine} that optionally provides
+ * thread pool-based parallel execution for ray tracing.
+ *
+ * <p>The tracer delegates the actual ray tracing work to the configured {@link Engine}
+ * (typically {@link com.almostrealism.raytrace.RayIntersectionEngine}). When
+ * {@code enableThreadPool} is true, each ray trace is submitted to an {@link ExecutorService}
+ * for potential parallel execution. Otherwise, traces complete synchronously.</p>
+ *
+ * <p><b>Note:</b> Thread pool execution is disabled by default ({@code enableThreadPool=false}).
+ * When enabled, it can improve performance on multi-core systems but adds scheduling overhead.</p>
+ *
+ * @see Engine
+ * @see com.almostrealism.raytrace.RayIntersectionEngine
+ */
 public class RayTracer {
 	public static boolean enableThreadPool = false;
 

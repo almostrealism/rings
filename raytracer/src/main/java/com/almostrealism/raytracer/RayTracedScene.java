@@ -39,6 +39,31 @@ import org.almostrealism.geometry.DimensionAware;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
+/**
+ * {@link RayTracedScene} coordinates the ray tracing process for rendering an image of a scene.
+ * It integrates the {@link Engine}, {@link Camera}, and {@link RenderParameters} to produce
+ * a {@link RealizableImage} that can be evaluated to generate pixel data.
+ *
+ * <p>The rendering pipeline:</p>
+ * <ol>
+ *   <li>Camera generates rays for each pixel position (including supersampling)</li>
+ *   <li>Rays are traced through the scene using the configured {@link Engine}</li>
+ *   <li>Each ray produces a {@link Producer} for an RGB color</li>
+ *   <li>Producers are assembled into a {@link RealizableImage}</li>
+ *   <li>Evaluation of the RealizableImage computes all colors and returns a 2D RGB array</li>
+ * </ol>
+ *
+ * <p><b>Supersampling:</b> When supersample width/height are greater than 1, multiple rays are
+ * cast per pixel and averaged together for anti-aliasing.</p>
+ *
+ * <p><b>Execution Model:</b> Ray tracing can optionally use an {@link ExecutorService} for
+ * parallel execution (controlled by {@link RayTracer#enableThreadPool}), though by default
+ * it builds a computation graph that is evaluated synchronously.</p>
+ *
+ * @see RayTracer
+ * @see Engine
+ * @see RayIntersectionEngine
+ */
 public class RayTracedScene implements Realization<RealizableImage, RenderParameters>, CodeFeatures, RGBFeatures {
 	private RayTracer tracer;
 	private Camera camera;

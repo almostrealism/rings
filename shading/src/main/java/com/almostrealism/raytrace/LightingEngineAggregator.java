@@ -39,6 +39,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * {@link LightingEngineAggregator} manages multiple {@link LightingEngine} instances and uses
+ * ranked choice selection to determine which surface is visible for each ray.
+ *
+ * <p>The aggregator creates one {@link IntersectionalLightingEngine} for each surface-light pair
+ * in the scene. Each lighting engine computes:</p>
+ * <ul>
+ *   <li>The intersection distance (rank) between the ray and its surface</li>
+ *   <li>The RGB color contribution from its light at the intersection point</li>
+ * </ul>
+ *
+ * <p>The aggregator then selects the lighting engine with the smallest positive rank (i.e., the
+ * closest surface to the camera along the ray) and returns its color contribution.</p>
+ *
+ * <p><b>Current Limitation:</b> This design creates surface-light pairs, meaning each surface is
+ * evaluated separately for each light. A more efficient design would aggregate lights per surface
+ * rather than using ranked choice (see TODO at line ~121). This would reduce redundant intersection
+ * calculations.</p>
+ *
+ * <p><b>Kernel Mode:</b> When constructed with {@code kernel=true}, the aggregator pre-computes
+ * all intersection ranks for all pixel positions and caches them for efficient reuse during
+ * evaluation. This is significantly faster but requires more memory.</p>
+ *
+ * @see IntersectionalLightingEngine
+ * @see LightingEngine
+ */
 public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implements PathElement<RGB, RGB>, DimensionAware {
 	public static boolean enableVerbose = false;
 

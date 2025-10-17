@@ -29,7 +29,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * {@link RayIntersectionEngine} is the primary implementation of the {@link Engine} interface,
+ * using ray-surface intersection to determine visibility and compute lighting.
+ *
+ * <p>This engine implements the classic ray tracing algorithm:</p>
+ * <ol>
+ *   <li>For each ray, find intersections with all surfaces in the scene</li>
+ *   <li>Determine the closest (nearest) intersection point</li>
+ *   <li>Compute lighting contributions from all lights at that point</li>
+ *   <li>Apply surface shading to produce final color</li>
+ * </ol>
+ *
+ * <p>The actual ray-surface-light computation is delegated to {@link LightingEngineAggregator},
+ * which creates a {@link IntersectionalLightingEngine} for each surface-light pair and uses
+ * ranked choice selection to determine which surface is visible (closest to camera).</p>
+ *
+ * <p>Note: This implementation does not currently support features like reflection, refraction,
+ * or recursive ray tracing (these would need to be added to the lighting/shader layer).</p>
+ *
  * @author  Michael Murray
+ * @see LightingEngineAggregator
+ * @see IntersectionalLightingEngine
  */
 public class RayIntersectionEngine implements Engine {
 	public static boolean enableAcceleratedAggregator = false;
@@ -38,11 +58,29 @@ public class RayIntersectionEngine implements Engine {
 	private ShaderContext sparams;
 	private FogParameters fparams;
 	
+	/**
+	 * Constructs a new {@link RayIntersectionEngine} for the given scene.
+	 *
+	 * @param s       The {@link Scene} containing surfaces and lights to render
+	 * @param fparams Fog parameters for atmospheric effects (currently unused in core tracing)
+	 */
 	public RayIntersectionEngine(Scene<? extends ShadableSurface> s, FogParameters fparams) {
 		this.scene = s;
 		this.fparams = fparams;
 	}
 
+	/**
+	 * Traces a ray through the scene by creating a {@link LightingEngineAggregator} that
+	 * computes all possible surface-light interactions and selects the closest visible surface.
+	 *
+	 * <p>The aggregator creates {@link IntersectionalLightingEngine} instances for each
+	 * surface-light pair in the scene. Each lighting engine computes the intersection distance
+	 * (rank) and color contribution. The aggregator then uses ranked choice to select the
+	 * surface with the smallest positive intersection distance.</p>
+	 *
+	 * @param r The ray to trace
+	 * @return A {@link Producer} that computes the RGB color where the ray intersects the scene
+	 */
 	@Override
 	public Producer<RGB> trace(Producer<Ray> r) {
 		List<Curve<RGB>> surfaces = new ArrayList<>();
