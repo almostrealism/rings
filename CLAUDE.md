@@ -188,6 +188,36 @@ Operations are automatically compiled for GPU when available. The framework:
 
 Default sample rate is `OutputLine.sampleRate` (typically 44100 Hz). Most components accept sample rate as a constructor parameter or use the global default.
 
+## Native Library Management
+
+### CRITICAL: Do NOT modify Java/Extensions directory
+
+**NEVER** delete or modify files in `/Users/michael/Library/Java/Extensions/`:
+- This directory contains native libraries (.dylib files) compiled at runtime
+- The framework automatically regenerates libraries when needed
+- Manually deleting these files does NOT solve architecture issues
+- Libraries are cached for performance and should not be tampered with
+
+### Test Timeouts
+
+**DO NOT use the system `timeout` command** with Maven tests:
+- The system `timeout` binary may cause architecture issues (x86_64 vs arm64)
+- This can force Maven to run under Rosetta emulation
+- Native library compilation will then target the wrong architecture
+
+**INSTEAD:** Use Maven's built-in `forkedProcessTimeoutInSeconds` configuration:
+- Already configured in the root pom.xml (default: 120 seconds)
+- Applies to all test modules automatically
+- Works correctly with native architecture
+
+**To adjust timeout for specific tests:**
+```bash
+# Run with custom timeout (300 seconds = 5 minutes)
+mvn test -pl raytracer -Dtest=SomeTest -DforkedProcessTimeoutInSeconds=300
+```
+
+The default timeout of 120 seconds (2 minutes) is sufficient for most tests.
+
 ## Code Style and Formatting
 
 ### Line Endings

@@ -43,18 +43,20 @@ public interface ProjectionFeatures extends CodeFeatures {
 		CollectionProducer<PackedCollection<?>> pdx = l(pd);
 		CollectionProducer<PackedCollection<?>> pdy = r(pd);
 
-		CollectionProducer<Scalar> p = pdx.multiply(l(pos))
-								.multiply(sdx.add(scalar(-1.0)).pow(scalar(-1.0))).add(pdx.multiply(scalar(-0.5)));
-		CollectionProducer<Scalar> q = pdy.multiply(r(pos))
-								.multiply(sdy.add(scalar(-1.0)).pow(-1.0)).add(pdy.multiply(scalar(-0.5)));
-		CollectionProducer<Scalar> r = scalar(-focalLength);
+		// Note: Don't use scalar() - use c() directly to avoid Scalar type (size 2) inference
+		// Scalar class has legacy certainty value making it size 2, but we need size 1
+		var p = pdx.multiply(l(pos))
+								.multiply(sdx.add(c(-1.0)).pow(c(-1.0))).add(pdx.multiply(c(-0.5)));
+		var q = pdy.multiply(r(pos))
+								.multiply(sdy.add(c(-1.0)).pow(-1.0)).add(pdy.multiply(c(-0.5)));
+		var r = c(-focalLength);
 
-		CollectionProducer<Scalar> x = p.multiply(scalar(u.getX())).add(q.multiply(scalar(v.getX()))).add(r.multiply(scalar(w.getX())));
-		CollectionProducer<Scalar> y = p.multiply(scalar(u.getY())).add(q.multiply(scalar(v.getY()))).add(r.multiply(scalar(w.getY())));
-		CollectionProducer<Scalar> z = p.multiply(scalar(u.getZ())).add(q.multiply(scalar(v.getZ()))).add(r.multiply(scalar(w.getZ())));
+		var x = p.multiply(c(u.getX())).add(q.multiply(c(v.getX()))).add(r.multiply(c(w.getX())));
+		var y = p.multiply(c(u.getY())).add(q.multiply(c(v.getY()))).add(r.multiply(c(w.getY())));
+		var z = p.multiply(c(u.getZ())).add(q.multiply(c(v.getZ()))).add(r.multiply(c(w.getZ())));
 
 		CollectionProducer<Vector> pqr = vector(x, y, z);
-		CollectionProducer<Scalar> len = length(pqr);
+		Producer<Scalar> len = length(pqr);  // length() still returns Scalar type (not migrated yet)
 
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
 			CollectionProducer<Vector> wv = normalize(pqr);
