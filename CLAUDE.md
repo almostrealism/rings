@@ -43,9 +43,12 @@ mvn test -pl audio -Dtest=CellListTests
 ```
 
 **Run a single test method:**
-```bash
-mvn test -pl audio -Dtest=CellListTests#export
-```
+Never attempt to run a single test method. It would be great if you could, but the presence of a
+pound sign causes the shell to require approval before executing the command, which interrupts
+automated workflows. You will just have to live with the fact that you can only run entire test
+classes. If this really bothers you, create a dedicated test class that only contains the single
+test method you want to run (or create a stub that you can use to call the test method as a
+workaround).
 
 **Skip tests during build:**
 ```bash
