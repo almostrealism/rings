@@ -27,7 +27,6 @@ import io.almostrealism.relation.Producer;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-// TODO  This can now be done with CollectionProducer::map
 public class SuperSampler implements Producer<RGB>, PathElement<RGB, RGB> {
 	protected Producer<RGB> samples[][];
 	private double scale;

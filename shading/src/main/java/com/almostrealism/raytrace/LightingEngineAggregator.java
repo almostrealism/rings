@@ -28,6 +28,7 @@ import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.graph.PathElement;
+import org.almostrealism.hardware.DestinationEvaluable;
 import org.almostrealism.hardware.MemoryBank;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.CollectionUtils;
@@ -219,6 +220,11 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		if (printLog) System.out.println(best + " was chosen\n----------");
 
 		return best == null ? null : best.get().evaluate(args);
+	}
+
+	@Override
+	public Evaluable<RGB> into(Object destination) {
+		return new DestinationEvaluable<>(this, (MemoryBank) destination);
 	}
 
 	@Override
