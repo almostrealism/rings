@@ -28,7 +28,7 @@ import java.util.List;
 
 public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	public static double adjustmentBase = 0.8;
-	public static double adjustmentAutomation = 0.5;
+	public static double adjustmentAutomation = 0.01;
 
 	private Mode mode;
 
@@ -75,8 +75,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			return voicing;
 		}
 
-		public double getAttack() {
-			return mode.getMaxAttack(getVoicing()) * getAttackSelection().positive().apply(params);
+		public double getAttack(double totalDuration) {
+			return mode.getMaxAttack(getVoicing(), totalDuration) * getAttackSelection().positive().apply(params);
 		}
 
 		public double getDecay() {
@@ -87,8 +87,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			return mode.getMaxSustain(getVoicing()) * getSustainSelection().positive().apply(params);
 		}
 
-		public double getRelease() {
-			return mode.getMaxRelease(getVoicing()) * getReleaseSelection().positive().apply(params);
+		public double getRelease(double totalDuration) {
+			return mode.getMaxRelease(getVoicing(), totalDuration) * getReleaseSelection().positive().apply(params);
 		}
 
 		@Override
@@ -105,15 +105,41 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				PackedCollection<?> dr = duration.get().evaluate();
 				PackedCollection<?> al = automationLevel.get().evaluate();
 
+				double dv = dr.toDouble(0);
 				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
+
+				double sustain = getSustain();
+				if (sustain > getMode().getMaxSustain(getVoicing())) {
+					throw new IllegalArgumentException();
+				}
+
+				sustain = sustain * adj;
+
+				if (sustain < 0.25) {
+					sustain = 0.25;
+				} else if (sustain > 1.0) {
+					sustain = 1.0;
+				}
+
+				double release = getRelease(dv);
+				if (release > getMode().getMaxRelease(getVoicing(), dv)) {
+					throw new IllegalArgumentException();
+				}
+
+				release = release * adj;
+				if (release > 0.7 * dv) {
+					release = 0.7 * dv;
+				}
+
 //				log("Processing volume envelope with duration (" + dr.toDouble(0) +
-//						", attack: " + getAttack() + ", decay: " + getDecay() +
-//						", sustain: " + getSustain() * adj +
-//						", release: " + getRelease() * adj + ")");
-				a.set(0, getAttack());
+//						", attack: " + getAttack(dr.toDouble()) + ", decay: " + getDecay() +
+//						", sustain: " + sustain +
+//						", release: " + sustain +
+//						" | a:adj = " + al.toDouble(0) + ":" + adj + ")");
+				a.set(0, getAttack(dr.toDouble()));
 				d.set(0, getDecay());
-				s.set(0, getSustain() * adj);
-				r.set(0, getRelease() * adj);
+				s.set(0, sustain);
+				r.set(0, release);
 
 				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
 						.evaluate(audioData.traverse(1), dr, a, d, s, r);
@@ -133,26 +159,26 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			if (obj == null || getClass() != obj.getClass()) return false;
 			Filter filter = (Filter) obj;
 
-			if (filter.getAttack() != getAttack()) return false;
+			if (filter.getAttack(10.0) != getAttack(10.0)) return false;
 			if (filter.getDecay() != getDecay()) return false;
 			if (filter.getSustain() != getSustain()) return false;
-			if (filter.getRelease() != getRelease()) return false;
+			if (filter.getRelease(10.0) != getRelease(10.0)) return false;
 			return true;
 		}
 
 		@Override
 		public int hashCode() {
-			return List.of(getAttack(), getDecay(), getSustain(), getRelease()).hashCode();
+			return List.of(getAttack(10.0), getDecay(), getSustain(), getRelease(10.0)).hashCode();
 		}
 	}
 
 	public enum Mode {
 		STANDARD_NOTE, NOTE_LAYER;
 
-		public double getMaxAttack(ChannelInfo.Voicing voicing) {
+		public double getMaxAttack(ChannelInfo.Voicing voicing, double totalDuration) {
 			return switch (this) {
 				case NOTE_LAYER -> 2.0;
-				default -> voicing == ChannelInfo.Voicing.WET ? 1.5 : 0.5;
+				default -> (voicing == ChannelInfo.Voicing.WET ? 1.0 : 0.2) * totalDuration;
 			};
 		}
 
@@ -176,13 +202,13 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			}
 		}
 
-		public double getMaxRelease(ChannelInfo.Voicing voicing) {
+		public double getMaxRelease(ChannelInfo.Voicing voicing, double totalDuration) {
 			switch (this) {
 				case NOTE_LAYER:
 					return 2.0;
 				case STANDARD_NOTE:
 				default:
-					return voicing == ChannelInfo.Voicing.WET ? 1.2 : 0.5;
+					return (voicing == ChannelInfo.Voicing.WET ? 0.7 : 0.2) * totalDuration;
 			}
 		}
 	}
