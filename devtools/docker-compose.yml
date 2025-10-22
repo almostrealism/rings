@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  rings-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rings-dev-environment
+    volumes:
+      # Mount the entire AlmostRealism directory
+      - /Users/michael/AlmostRealism/sandboxA/:/workspace/AlmostRealism
+      # Mount Maven cache to speed up builds
+      - maven-cache:/home/developer/.m2
+      # Mount Claude Code config (if you want to persist CLI settings)
+      - claude-config:/home/developer/.config/claude
+    working_dir: /workspace/AlmostRealism
+    # Keep container running
+    stdin_open: true
+    tty: true
+    # Optional: Expose ports if needed for debugging
+    # ports:
+    #   - "8080:8080"
+    # Environment variables
+    environment:
+      - TERM=xterm-256color
+      # Increase Maven memory for large builds
+      - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+    # Optional: Share host network for easier testing
+    # network_mode: host
+
+volumes:
+  maven-cache:
+    driver: local
+  claude-config:
+    driver: local

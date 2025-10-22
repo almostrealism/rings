@@ -1,0 +1,31 @@
+# Maven build outputs
+**/target/
+**/.m2/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Results and temporary files
+**/results/
+**/*.log
+
+# Claude Code
+.claude/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
