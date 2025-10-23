@@ -47,7 +47,9 @@ public class AudioGeneratorExample {
 		boolean useSamples = args.length > 3;
 
 		int variations = 5;
-		Random rand = new Random(42);
+
+		long seed = 79;
+		Random rand = new Random(seed + 1000);
 
 		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
 			if (useSamples) {
@@ -65,7 +67,7 @@ public class AudioGeneratorExample {
 					maxDuration = Math.max(wave.getDuration(), maxDuration);
 				}
 
-				double[] strengths = {0.1, 0.3, 0.5};
+				double[] strengths = {0.0, 0.5, 1.0};
 				generator.setAudioDurationSeconds(maxDuration);
 
 				for (double strength : strengths) {
@@ -75,8 +77,6 @@ public class AudioGeneratorExample {
 						// Create random position vector for interpolation
 						PackedCollection<?> position =
 								new PackedCollection<>(generator.getComposerDimension()).randnFill(rand);
-
-						long seed = rand.nextLong();
 
 						String filename = String.format("%s/sample_based_strength%.1f_%d_seed%d.wav",
 								outputPath, strength, i, seed);
@@ -93,7 +93,6 @@ public class AudioGeneratorExample {
 				generator.setAudioDurationSeconds(8.0);
 
 				for (int i = 0; i < variations; i++) {
-					long seed = rand.nextLong();
 					String filename = String.format("%s/pure_gen_%d_seed%d.wav",
 							outputPath, i, seed);
 					System.out.println("Generating variation " +
