@@ -1,194 +1,144 @@
-# AlmostRealism Development Docker Environment
+# Development Sandboxes
 
-This directory contains Docker configuration for running the AlmostRealism development environment in a container with all necessary tools.
+Docker-based development environment with 4 isolated sandboxes for parallel development and testing.
 
 ## What's Included
 
-- **Ubuntu 22.04 ARM64** - Base image for ARM systems
-- **Java 17** - OpenJDK for running the project
-- **Maven** - Build tool with optimized memory settings
-- **GCC/G++** - C/C++ compilers for native code generation
+- **Ubuntu 22.04 ARM64** - Base Linux environment
+- **Java 17** - OpenJDK with Maven (4GB heap, 1GB metaspace)
+- **Build Tools** - GCC, G++, Make, CMake
 - **Claude Code CLI** - AI-powered development assistant
-- **OpenCL** - Headers and libraries for GPU acceleration
-- **Git** - Version control
-
-## Prerequisites
-
-- Docker installed on your ARM system
-- Docker Compose (usually included with Docker Desktop)
+- **OpenCL** - GPU acceleration support
+- **tmux** - Terminal multiplexer for persistent sessions
+- **Git, Vim, Nano** - Standard development tools
 
 ## Quick Start
 
-### Build the Image
-
 ```bash
-cd /Users/michael/AlmostRealism/rings/devtools
+# Start all sandboxes
+docker-compose up -d
+
+# Connect to a sandbox
+docker exec -it dev-sandbox-a bash
+docker exec -it dev-sandbox-b bash
+docker exec -it dev-sandbox-c bash
+docker exec -it dev-sandbox-d bash
+
+# Stop all sandboxes
+docker-compose down
+
+# Rebuild after Dockerfile changes
 docker-compose build
-```
-
-### Start the Container
-
-```bash
 docker-compose up -d
 ```
 
-### Enter the Container
+## Sandbox Configuration
+
+Each sandbox mounts a different workspace:
+
+- **dev-sandbox-a** → `/Users/michael/AlmostRealism/sandboxA/`
+- **dev-sandbox-b** → `/Users/michael/AlmostRealism/sandboxB/`
+- **dev-sandbox-c** → `/Users/michael/AlmostRealism/sandboxC/`
+- **dev-sandbox-d** → `/Users/michael/AlmostRealism/sandboxD/`
+
+All sandboxes share the Claude config volume and use host networking.
+
+## Working Directory
+
+Inside each container, the working directory is `/workspace/project` which maps to the sandbox-specific mount.
+
+## Using tmux for Persistent Sessions
+
+tmux allows processes to continue running after you disconnect, essential for long-running builds and tests.
+
+### Basic Workflow
 
 ```bash
-docker-compose exec rings-dev bash
-```
+# Connect to sandbox
+docker exec -it dev-sandbox-a bash
 
-Or use a shorter command:
-```bash
-docker exec -it rings-dev-environment bash
-```
+# Start named tmux session
+tmux new -s build
 
-### Stop the Container
-
-```bash
-docker-compose down
-```
-
-## Usage
-
-### Building the Project
-
-Once inside the container:
-
-```bash
-# Navigate to the project root
-cd /workspace/AlmostRealism/common
-
-# Build the entire project
+# Run long process
 mvn clean install
 
-# Build a specific module
-mvn clean install -pl algebra
+# Detach (keeps running): Ctrl+b then d
+# Close terminal - process continues
+
+# Reconnect later
+docker exec -it dev-sandbox-a bash
+tmux attach -t build
+```
+
+### Essential Commands
+
+```bash
+tmux ls                      # List sessions
+tmux new -s <name>           # New session
+tmux attach -t <name>        # Reattach session
+tmux kill-session -t <name>  # Kill session
+```
+
+### Inside tmux
+
+- `Ctrl+b d` - Detach (leave running)
+- `Ctrl+b c` - New window
+- `Ctrl+b n` - Next window
+- `Ctrl+b p` - Previous window
+- `Ctrl+b %` - Split vertical
+- `Ctrl+b "` - Split horizontal
+
+### Pre-configured Features
+
+- Mouse support enabled
+- 10,000 line scrollback buffer
+- 256 color support
+- Window numbering starts at 1
+
+## Common Tasks
+
+```bash
+# Build project
+mvn clean install
+
+# Build specific module
+mvn clean install -pl audio
 
 # Run tests
-mvn test
+mvn test -pl audio-space
+
+# Run specific test
+mvn test -pl audio -Dtest=CellListTests#export
+
+# Skip tests
+mvn clean install -DskipTests
 ```
-
-### Using Claude Code CLI
-
-Inside the container:
-
-```bash
-# Start Claude Code CLI
-claude code
-
-# Or run a specific command
-claude code --help
-```
-
-### Working with the Raytracer
-
-```bash
-cd /workspace/AlmostRealism/rings/raytracer
-
-# Run specific tests
-mvn test -Dtest=SphereTest
-
-# Run with custom timeout
-mvn test -Dtest=SimpleRenderTest -DforkedProcessTimeoutInSeconds=300
-```
-
-## Volume Mounts
-
-The docker-compose.yml mounts the following:
-
-- **Project files**: `/Users/michael/AlmostRealism` → `/workspace/AlmostRealism`
-- **Maven cache**: Persisted in Docker volume for faster builds
-- **Claude config**: Persisted in Docker volume for CLI settings
-
-## Memory Configuration
-
-The container is configured with:
-- **MAVEN_OPTS**: `-Xmx4096m -XX:MaxMetaspaceSize=1024m`
-
-Adjust these in `docker-compose.yml` if you experience memory issues.
-
-## Customization
-
-### Increase Memory Limits
-
-Edit `docker-compose.yml`:
-
-```yaml
-environment:
-  - MAVEN_OPTS=-Xmx8192m -XX:MaxMetaspaceSize=2048m
-```
-
-### Expose Ports
-
-Uncomment the ports section in `docker-compose.yml`:
-
-```yaml
-ports:
-  - "8080:8080"
-```
-
-### Use Host Network
-
-Uncomment the network_mode line in `docker-compose.yml`:
-
-```yaml
-network_mode: host
-```
-
-## Troubleshooting
-
-### Container Won't Start
-
-Check platform compatibility:
-```bash
-docker-compose build --no-cache
-```
-
-### Out of Memory Errors
-
-Increase Maven memory in `docker-compose.yml` or run with fewer parallel threads:
-```bash
-mvn clean install -T 1
-```
-
-### Permission Issues
-
-The container runs as user `developer`. If you need root access:
-```bash
-docker-compose exec -u root rings-dev bash
-```
-
-### Native Library Issues
-
-The container includes GCC for native code generation. If you encounter architecture mismatches, ensure you're using the ARM64 platform:
-
-```bash
-docker-compose build --platform linux/arm64
-```
-
-## Development Workflow
-
-1. **Start container**: `docker-compose up -d`
-2. **Enter container**: `docker-compose exec rings-dev bash`
-3. **Make changes**: Edit files on your host (they're mounted into the container)
-4. **Build**: `mvn clean install` inside the container
-5. **Test**: `mvn test -pl <module>` inside the container
-6. **Exit**: `exit`
-7. **Stop container**: `docker-compose down` (when done for the day)
-
-## Persistent Data
-
-The following are preserved across container restarts:
-- Maven dependencies (`.m2` directory)
-- Claude CLI configuration
-- Git configuration
-
-Your source code changes are made directly on the host filesystem and are immediately visible in the container.
 
 ## Tips
 
-- Use `docker-compose logs -f` to see container output
-- Use `docker-compose restart` to restart without rebuilding
-- Use `docker system prune` to clean up unused Docker resources
-- Keep the container running and just exec into it multiple times rather than starting/stopping frequently
+- Keep containers running - just exec in/out as needed
+- Use separate tmux sessions for builds, tests, and interactive work
+- Use different sandboxes for parallel builds or testing different branches
+- Files edited on host are immediately visible in containers (volume mounts)
+- Maven cache and Claude config persist across container restarts
+
+## Troubleshooting
+
+**Out of memory during build:**
+```bash
+mvn clean install -T 1  # Single-threaded build
+```
+
+**Need root access:**
+```bash
+docker exec -it -u root dev-sandbox-a bash
+```
+
+**Clear Docker cache:**
+```bash
+docker-compose down
+docker system prune
+docker-compose build --no-cache
+docker-compose up -d
+```
