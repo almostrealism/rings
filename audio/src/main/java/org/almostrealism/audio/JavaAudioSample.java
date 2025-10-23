@@ -5,6 +5,12 @@ import javax.sound.sampled.AudioFormat;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.line.OutputLine;
 
+/**
+ * @deprecated This class uses the old byte[] approach and does not support
+ * Producer-based buffered writes with BufferedOutputScheduler. Use WaveData
+ * and WaveCell instead for modern audio playback.
+ */
+@Deprecated
 public class JavaAudioSample extends AudioSample implements Evaluable<byte[]> {
 	private boolean stop = true;
 	private boolean mute = false;
@@ -55,34 +61,20 @@ public class JavaAudioSample extends AudioSample implements Evaluable<byte[]> {
 		return s;
 	}
 	
+	/**
+	 * @deprecated Use BufferedOutputScheduler with WaveCell instead
+	 */
+	@Deprecated
 	public Thread playThread(final OutputLine line) {
-		return new Thread(() -> play(line));
+		throw new UnsupportedOperationException("Use BufferedOutputScheduler with WaveCell instead");
 	}
-	
+
+	/**
+	 * @deprecated Use BufferedOutputScheduler with WaveCell instead
+	 */
+	@Deprecated
 	public synchronized void play(OutputLine line) {
-		stop = false;
-		
-		if (fill)
-			pos = 0;
-		else
-			pos = loopStart;
-		
-		for ( ; pos < loopEnd; pos++) {
-			if (mute || pos < loopStart || pos > loopEnd) {
-				line.write(empty);
-			} else {
-				line.write(data[pos]);
-			}
-			
-			if (fill && loop && pos + 1 == this.data.length)
-					pos = -1;
-			else if (!fill && loop && pos + 1 == loopEnd)
-					pos = loopStart - 1;
-			
-			if (stop) return;
-		}
-		
-		stop = true;
+		throw new UnsupportedOperationException("Use BufferedOutputScheduler with WaveCell instead");
 	}
 	
 	public void stop() { stop = true; }

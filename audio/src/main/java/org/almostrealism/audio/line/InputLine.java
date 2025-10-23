@@ -23,9 +23,17 @@ import org.almostrealism.collect.PackedCollection;
 
 import java.util.function.Supplier;
 
+/**
+ * An audio input line for reading audio data from a source (e.g., microphone, line-in).
+ * Extends {@link BufferedAudio} for buffering configuration and {@link Destroyable}
+ * for lifecycle management.
+ */
 public interface InputLine extends BufferedAudio, Destroyable {
 	/**
-	 * The position in the buffer of the last frame that was received from the device.
+	 * Returns the position in the buffer where the last frame was written by the device.
+	 * This is used to track how much data has been captured and is available for reading.
+	 *
+	 * @return The write position in frames, or 0 if not tracking
 	 */
 	default int getWritePosition() {
 		return 0;

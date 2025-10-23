@@ -19,34 +19,23 @@ package org.almostrealism.audio.line;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.collect.PackedCollection;
 
-public class DefaultDualOutputLine implements DualOutputLine, Runnable, Evaluable<byte[]> {
-	protected static class HalfLine implements OutputLine {
+/**
+ * @deprecated This class uses the old byte[] approach and does not support
+ * Producer-based buffered writes with BufferedOutputScheduler. Do not use.
+ */
+@Deprecated
+public class DefaultDualOutputLine implements Runnable, Evaluable<byte[]> {
+	/**
+	 * @deprecated Part of deprecated DefaultDualOutputLine
+	 */
+	@Deprecated
+	protected static class HalfLine {
 		private DefaultDualOutputLine line;
 		private boolean isLeft;
-		
+
 		public HalfLine(DefaultDualOutputLine l, boolean left) {
 			this.line = l;
 			this.isLeft = left;
-		}
-		
-		public void write(byte[] b) {
-			if (this.isLeft) {
-				this.line.writeLeft(b);
-			} else {
-				this.line.writeRight(b);
-			}
-		}
-
-		public void write(double[][] frames) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void write(PackedCollection<?> sample) {
-			if (this.isLeft) {
-				this.line.writeLeft(sample);
-			} else {
-				this.line.writeRight(sample);
-			}
 		}
 	}
 	
@@ -67,8 +56,18 @@ public class DefaultDualOutputLine implements DualOutputLine, Runnable, Evaluabl
 //		new Thread(this).start();
 	}
 	
-	public OutputLine getLeftLine() { return this.left; }
-	public OutputLine getRightLine() { return this.right; }
+	/**
+	 * @deprecated Part of deprecated DefaultDualOutputLine
+	 */
+	@Deprecated
+	public HalfLine getLeftLine() { return this.left; }
+
+	/**
+	 * @deprecated Part of deprecated DefaultDualOutputLine
+	 */
+	@Deprecated
+	public HalfLine getRightLine() { return this.right; }
+
 	public double getMix() { return this.mix; }
 	public void setMix(double m) { this.mix = m; }
 	
@@ -135,15 +134,9 @@ public class DefaultDualOutputLine implements DualOutputLine, Runnable, Evaluabl
 //		this.rightBuf.notify();
 	}
 	
-	protected void write(byte b[]) {
-		this.output.write(b);
-	}
-
 	protected void write(PackedCollection<?> sample) {
 		this.output.write(sample);
 	}
-	
-	public void writeNext() { this.write(this.evaluate(new Object[0])); }
 
 	@Override
 	public byte[] evaluate(Object[] args) {

@@ -81,64 +81,148 @@ public class LineUtilities {
 		return s;
 	}
 
+	/**
+	 * Converts multi-channel audio frames to bytes in the specified format.
+	 * The input array format is frames[channel][sample].
+	 *
+	 * @param frames 2D array where first dimension is channel, second is sample
+	 * @param format The target audio format
+	 * @return Byte array containing interleaved audio frames
+	 */
 	public static byte[] toBytes(double frames[][], AudioFormat format) {
-		int byteCount = format.getFrameSize();
-		ByteBuffer buf = ByteBuffer.allocate(frames[0].length * byteCount);
+		if (frames.length == 0 || frames[0].length == 0) {
+			return new byte[0];
+		}
 
-		int offset = 0;
+		int channels = Math.min(frames.length, format.getChannels());
+		int sampleCount = frames[0].length;
+		int frameSize = format.getFrameSize();
+		int bytesPerSample = frameSize / format.getChannels();
+
+		ByteBuffer buf = ByteBuffer.allocate(sampleCount * frameSize);
+
+		if (!format.isBigEndian()) {
+			buf.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+		}
+
 		int bitRate = format.getSampleSizeInBits();
 		double floatOffset;
 		double floatScale;
 
 		if (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED) {
 			floatOffset = 0;
-			floatScale = Long.MAX_VALUE >> (64 - bitRate);
+			floatScale = (1L << (bitRate - 1)) - 1; // e.g., 32767 for 16-bit
 		} else if (format.getEncoding() == AudioFormat.Encoding.PCM_UNSIGNED) {
 			floatOffset = 1;
-			floatScale = 0.5 * ((1 << bitRate) - 1);
+			floatScale = 0.5 * ((1L << bitRate) - 1);
 		} else {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Encoding " + format.getEncoding() + " is not supported");
 		}
 
-		for (int f = 0; f < frames[0].length; f++) {
+		// Interleave channels: for each frame, write all channels
+		for (int s = 0; s < sampleCount; s++) {
 			for (int c = 0; c < format.getChannels(); c++) {
-				long val = (long) (floatScale * (floatOffset + frames[0][offset]));
-				for (int b = 0; b < format.getFrameSize() / format.getChannels(); b++) {
-					buf.put((byte) (val & 0xFF));
-					val >>= 8;
+				// Use channel data if available, otherwise use last available channel (or 0)
+				double sample = (c < channels) ? frames[c][s] : (channels > 0 ? frames[channels - 1][s] : 0.0);
+				// Clamp to [-1.0, 1.0] range
+				sample = Math.max(-1.0, Math.min(1.0, sample));
+
+				long val = (long) (floatScale * (floatOffset + sample));
+
+				// Write the sample in the appropriate format
+				if (bytesPerSample == 1) {
+					buf.put((byte) val);
+				} else if (bytesPerSample == 2) {
+					buf.putShort((short) val);
+				} else if (bytesPerSample == 3) {
+					// 24-bit audio
+					if (format.isBigEndian()) {
+						buf.put((byte) ((val >> 16) & 0xFF));
+						buf.put((byte) ((val >> 8) & 0xFF));
+						buf.put((byte) (val & 0xFF));
+					} else {
+						buf.put((byte) (val & 0xFF));
+						buf.put((byte) ((val >> 8) & 0xFF));
+						buf.put((byte) ((val >> 16) & 0xFF));
+					}
+				} else if (bytesPerSample == 4) {
+					buf.putInt((int) val);
+				} else {
+					throw new UnsupportedOperationException("Sample size " + bytesPerSample + " bytes is not supported");
 				}
 			}
-
-			offset++;
 		}
 
-		byte out[] = new byte[frames[0].length * byteCount];
-		buf.get(0, out);
-		return out;
+		return buf.array();
 	}
 
 	/**
-	 * Converts the specified long value to the bytes of one frame,
-	 * depending on the frame size of the specified {@link AudioFormat}.
+	 * Converts the specified PackedCollection to bytes representing audio frames
+	 * in the format specified by the AudioFormat.
+	 * <p>
+	 * The input collection is interpreted as interleaved audio samples
+	 * (e.g., for stereo: L, R, L, R, ...).
+	 *
+	 * @param samples The audio samples as a PackedCollection
+	 * @param format The target audio format
+	 * @return Byte array containing the encoded audio frames
 	 */
-	public static byte[] toFrame(PackedCollection<?> frame, AudioFormat format) {
-		if (frame.getMemLength() > 1) {
-			// TODO  This method should actually convert all the frames in the collection
-			CellFeatures.console.features(LineUtilities.class)
-					.warn("Frame has more than one element, using only the first");
+	public static byte[] toFrame(PackedCollection<?> samples, AudioFormat format) {
+		int sampleCount = samples.getMemLength();
+		int channels = format.getChannels();
+		int frameSize = format.getFrameSize();
+		int bytesPerSample = frameSize / channels;
+		int frameCount = sampleCount / channels;
+
+		byte[] frameBytes = new byte[frameCount * frameSize];
+		ByteBuffer buf = ByteBuffer.wrap(frameBytes);
+
+		if (!format.isBigEndian()) {
+			buf.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 		}
 
-		int frameSize = format.getFrameSize();
+		int bitRate = format.getSampleSizeInBits();
+		double floatOffset;
+		double floatScale;
 
-		byte frameBytes[] = null;
-
-		double frameAsDouble = frame.toDouble(0);
-
-		if (frameSize == 1) {
-			frameBytes = new byte[1];
-			frameBytes[0] = (byte) (Byte.MAX_VALUE * frameAsDouble);
+		if (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED) {
+			floatOffset = 0;
+			floatScale = (1L << (bitRate - 1)) - 1; // e.g., 32767 for 16-bit
+		} else if (format.getEncoding() == AudioFormat.Encoding.PCM_UNSIGNED) {
+			floatOffset = 1;
+			floatScale = 0.5 * ((1L << bitRate) - 1);
 		} else {
-			throw new IllegalArgumentException("Frame size " + frameSize + " is not supported");
+			throw new UnsupportedOperationException("Encoding " + format.getEncoding() + " is not supported");
+		}
+
+		for (int i = 0; i < sampleCount; i++) {
+			double sample = samples.toDouble(i);
+			// Clamp to [-1.0, 1.0] range
+			sample = Math.max(-1.0, Math.min(1.0, sample));
+
+			long value = (long) (floatScale * (floatOffset + sample));
+
+			// Write the sample in the appropriate format
+			if (bytesPerSample == 1) {
+				buf.put((byte) value);
+			} else if (bytesPerSample == 2) {
+				buf.putShort((short) value);
+			} else if (bytesPerSample == 3) {
+				// 24-bit audio (3 bytes per sample)
+				if (format.isBigEndian()) {
+					buf.put((byte) ((value >> 16) & 0xFF));
+					buf.put((byte) ((value >> 8) & 0xFF));
+					buf.put((byte) (value & 0xFF));
+				} else {
+					buf.put((byte) (value & 0xFF));
+					buf.put((byte) ((value >> 8) & 0xFF));
+					buf.put((byte) ((value >> 16) & 0xFF));
+				}
+			} else if (bytesPerSample == 4) {
+				buf.putInt((int) value);
+			} else {
+				throw new UnsupportedOperationException("Sample size " + bytesPerSample + " bytes is not supported");
+			}
 		}
 
 		return frameBytes;
