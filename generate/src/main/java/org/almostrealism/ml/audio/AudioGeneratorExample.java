@@ -67,7 +67,7 @@ public class AudioGeneratorExample {
 					maxDuration = Math.max(wave.getDuration(), maxDuration);
 				}
 
-				double[] strengths = {0.0, 0.5, 1.0};
+				double[] strengths = {0.2, 0.4, 0.6};
 				generator.setAudioDurationSeconds(maxDuration);
 
 				for (double strength : strengths) {
