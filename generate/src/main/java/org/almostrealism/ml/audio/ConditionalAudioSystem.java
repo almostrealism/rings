@@ -22,6 +22,7 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareException;
@@ -45,7 +46,7 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 	protected static final float SIGMA_MAX = 1.0f;
 
 	// Model dimensions
-	protected static final long[] DIT_X_SHAPE = new long[] { 1, 64, 256 };
+	protected static final TraversalPolicy DIT_X_SHAPE = new TraversalPolicy(1, 64, 256);
 	protected static final int DIT_X_SIZE = 64 * 256;
 	protected static final int T5_SEQ_LENGTH = 128;
 

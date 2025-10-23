@@ -181,7 +181,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			// 2. Generate interpolated latent from samples (if position provided)
 			PackedCollection<?> interpolatedLatent = null;
 			if (position != null) {
-				interpolatedLatent = composer.getResultant(cp(position)).evaluate();
+				interpolatedLatent = composer.getInterpolatedLatent(cp(position)).evaluate();
 			}
 
 			// 3. Run diffusion (with or without sample initialization)
@@ -230,7 +230,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		if (interpolatedLatent == null) {
 			// Pure generation: start from random noise at step 0
-			x = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			x = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 			startStep = 0;
 		} else {
 			// Special case: strength = 0.0 means no diffusion at all
@@ -311,7 +311,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// Generate new noise
-			PackedCollection<?> newNoise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			PackedCollection<?> newNoise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 			double[] newNoiseData = newNoise.toArray();
 
 			// Update x for next step
@@ -352,7 +352,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 												float targetSigma,
 												Random random) {
 		// Generate noise and scale by target sigma
-		PackedCollection<?> noise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+		PackedCollection<?> noise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 
 		// Add scaled noise to interpolated latent
 		double[] interpData = interpolatedLatent.toArray();
@@ -363,7 +363,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			noisyData[i] = (float) (interpData[i] + targetSigma * noiseData[i]);
 		}
 
-		PackedCollection<?> result = new PackedCollection<>(shape(DIT_X_SHAPE));
+		PackedCollection<?> result = new PackedCollection<>(DIT_X_SHAPE);
 		result.setMem(noisyData);
 
 		if (HardwareFeatures.outputMonitoring) {
