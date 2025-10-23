@@ -48,6 +48,14 @@ public class AudioGenerator extends ConditionalAudioSystem {
 				new StateDictionary(modelsPath + "/weights"));
 	}
 
+	public AudioGenerator(String modelsPath, long composerSeed) throws OrtException, IOException {
+		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
+				new Asset(new File(modelsPath + "/encoder.onnx")),
+				new Asset(new File(modelsPath + "/decoder.onnx")),
+				new Asset(new File(modelsPath + "/dit.onnx"))),
+				new StateDictionary(modelsPath + "/weights"), 8, composerSeed);
+	}
+
 	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates) throws OrtException, IOException {
 		this(onnxAssets, ditStates, 8, System.currentTimeMillis());
 	}
@@ -225,12 +233,17 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			x = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
 			startStep = 0;
 		} else {
+			// Special case: strength = 0.0 means no diffusion at all
+			if (strength == 0.0) {
+				log("Strength is 0.0 - skipping diffusion, returning interpolated latent directly");
+				return interpolatedLatent;
+			}
+
 			// Sample-based generation: add matched noise and start from calculated step
 			float[] sigmas = new float[NUM_STEPS + 1];
 			fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
 
 			// Calculate start step based on strength
-			// strength = 0.0 → start at last step (minimal diffusion, preserve samples)
 			// strength = 0.5 → start at middle step (balanced)
 			// strength = 1.0 → start at first step (full diffusion from noise)
 			startStep = (int) ((1.0 - strength) * NUM_STEPS);

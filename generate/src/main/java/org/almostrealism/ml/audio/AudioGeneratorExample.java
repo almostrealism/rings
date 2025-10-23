@@ -51,7 +51,7 @@ public class AudioGeneratorExample {
 		long seed = 79;
 		Random rand = new Random(seed + 1000);
 
-		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
+		try (AudioGenerator generator = new AudioGenerator(modelsPath, seed)) {
 			if (useSamples) {
 				System.out.println("\n=== Sample-Based Generation ===");
 				System.out.println("Prompt: \"" + prompt + "\"");
