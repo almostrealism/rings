@@ -25,7 +25,8 @@ Thumbs.db
 # Claude Code
 .claude/
 
-# Docker
+# Docker (but keep entrypoint.sh)
 Dockerfile
 docker-compose.yml
 .dockerignore
+!entrypoint.sh
