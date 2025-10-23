@@ -59,6 +59,14 @@ RUN useradd -m -s /bin/bash developer && \
     usermod -aG sudo developer && \
     echo "developer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Create .m2 and .config directories with correct ownership before switching users
+RUN mkdir -p /home/developer/.m2 /home/developer/.config/claude && \
+    chown -R developer:developer /home/developer/.m2 /home/developer/.config
+
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Switch to developer user
 USER developer
 WORKDIR /home/developer
@@ -75,6 +83,9 @@ RUN java -version && \
     node --version && \
     npm --version && \
     claude --version
+
+# Set entrypoint to fix permissions on startup
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Default command
 CMD ["/bin/bash"]
