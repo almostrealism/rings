@@ -83,11 +83,11 @@ public class RealtimePlaybackTest implements CellFeatures {
 		scheduler.start();
 
 		// Let it run for 3 seconds
-		Thread.sleep(3000);
+		Thread.sleep(10000);
 
 		// Verify playback is happening
 		int readPos = outputLine.getReadPosition();
-		System.out.println("Read position after 3 seconds: " + readPos);
+		System.out.println("Read position: " + readPos);
 		Assert.assertTrue("Read position should have advanced", readPos >= 0);
 
 		long renderedFrames = scheduler.getRenderedFrames();
@@ -101,7 +101,7 @@ public class RealtimePlaybackTest implements CellFeatures {
 		outputLine.destroy();
 		Assert.assertFalse("Line should be closed after destroy", outputLine.isOpen());
 
-		System.out.println("Successfully played buffered audio for 3 seconds via hardware");
+		System.out.println("Successfully played buffered audio");
 	}
 
 	/**
