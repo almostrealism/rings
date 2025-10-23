@@ -16,7 +16,6 @@
 
 package org.almostrealism.ml.audio;
 
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 
@@ -47,79 +46,61 @@ public class AudioGeneratorExample {
 		// Check if samples were provided
 		boolean useSamples = args.length > 3;
 
+		int variations = 5;
+		Random rand = new Random(42);
+
 		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
-			generator.setAudioDurationSeconds(1.2);
-
-			int total = 0;
-
 			if (useSamples) {
-				// ============================================================
-				// Sample-based generation (audio-to-audio / img2img style)
-				// ============================================================
 				System.out.println("\n=== Sample-Based Generation ===");
 				System.out.println("Prompt: \"" + prompt + "\"");
 				System.out.println("Loading " + (args.length - 3) + " samples...");
+
+				double maxDuration = 0.0;
 
 				// Load and add samples
 				for (int i = 3; i < args.length; i++) {
 					System.out.println("  Loading: " + args[i]);
 					WaveData wave = WaveData.load(new File(args[i]));
 					generator.addAudio(wave.getData());
+					maxDuration = Math.max(wave.getDuration(), maxDuration);
 				}
 
-				// Generate variations with different strength levels
-				double[] strengths = {0.3, 0.5, 0.7};
-
-				Random rand = new Random(42);
+				double[] strengths = {0.1, 0.3, 0.5};
+				generator.setAudioDurationSeconds(maxDuration);
 
 				for (double strength : strengths) {
 					generator.setStrength(strength);
 
-					for (int i = 0; i < 3; i++) {
+					for (int i = 0; i < variations; i++) {
 						// Create random position vector for interpolation
-						PackedCollection<?> position = new PackedCollection<>(
-								new TraversalPolicy(generator.getComposerDimension()))
-								.fill(rand::nextGaussian);
+						PackedCollection<?> position =
+								new PackedCollection<>(generator.getComposerDimension()).randnFill(rand);
 
 						long seed = rand.nextLong();
 
 						String filename = String.format("%s/sample_based_strength%.1f_%d_seed%d.wav",
 								outputPath, strength, i, seed);
 
-						System.out.println("Generating with strength=" + strength +
-								", seed=" + seed);
-
+						System.out.println("Generating with strength " +
+								strength + " (seed " + seed + ")");
 						generator.generateAudio(position, prompt, seed, filename);
-						total++;
 					}
 				}
 			} else {
-				// ============================================================
-				// Pure generation (standard text-to-audio)
-				// ============================================================
 				System.out.println("\n=== Pure Generation (No Samples) ===");
 				System.out.println("Prompt: \"" + prompt + "\"");
 
-				Random rand = new Random(42);
+				generator.setAudioDurationSeconds(8.0);
 
-				// Generate multiple variations with different seeds
-				int numVariations = 5;
-				for (int i = 0; i < numVariations; i++) {
+				for (int i = 0; i < variations; i++) {
 					long seed = rand.nextLong();
 					String filename = String.format("%s/pure_gen_%d_seed%d.wav",
-							outputPath,
-							i,
-							seed);
-
-					System.out.println("Generating variation " + (i + 1) + "/" + numVariations +
-							" (seed=" + seed + ")");
+							outputPath, i, seed);
+					System.out.println("Generating variation " +
+							(i + 1) + "/" + variations + " (seed " + seed + ")");
 					generator.generateAudio(prompt, seed, filename);
-					total++;
 				}
 			}
-
-
-			System.out.println("Generated " + total + " variations");
 		}
 	}
 }

@@ -230,10 +230,10 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
 
 			// Calculate start step based on strength
-			// strength = 0.0 → start at last step (no diffusion)
-			// strength = 0.5 → start at middle step
-			// strength = 1.0 → start at first step (full diffusion)
-			startStep = (int) (strength * NUM_STEPS);
+			// strength = 0.0 → start at last step (minimal diffusion, preserve samples)
+			// strength = 0.5 → start at middle step (balanced)
+			// strength = 1.0 → start at first step (full diffusion from noise)
+			startStep = (int) ((1.0 - strength) * NUM_STEPS);
 			if (startStep >= NUM_STEPS) startStep = NUM_STEPS - 1;
 
 			// Add matched noise to interpolated latent
