@@ -20,6 +20,130 @@ documentation is very limited its recommended that you get in touch with us if y
 to use it so that you can get the support that you need one on one. Contact information is
 found at the bottom of this document.
 
+## Development Environment
+
+### Prerequisites
+
+- **Java 17**: Required for building and running the project
+- **Maven 3.x**: Build tool for the multi-module project
+- **Docker & Docker Compose**: For containerized development (optional but recommended)
+
+### Building the Project
+
+This is a multi-module Maven project. To build the entire project:
+
+```bash
+mvn clean install
+```
+
+To build a specific module:
+
+```bash
+mvn clean install -pl audio
+mvn clean install -pl audio-space
+```
+
+To skip tests during build:
+
+```bash
+mvn clean install -DskipTests
+```
+
+### Running Tests
+
+Run all tests:
+
+```bash
+mvn test
+```
+
+Run tests for a specific module:
+
+```bash
+mvn test -pl audio
+```
+
+Run a single test class:
+
+```bash
+mvn test -pl audio -Dtest=CellListTests
+```
+
+Run a single test method:
+
+```bash
+mvn test -pl audio -Dtest=CellListTests#export
+```
+
+### Development Containers
+
+The project includes a Docker-based development environment with 4 isolated sandboxes (A, B, C, D). Each sandbox provides a complete development environment with Java 17, Maven, build tools, and Claude Code CLI.
+
+**Starting the containers:**
+
+```bash
+cd devtools
+docker-compose up -d
+```
+
+**Connecting to a sandbox:**
+
+```bash
+docker exec -it dev-sandbox-a bash
+docker exec -it dev-sandbox-b bash
+docker exec -it dev-sandbox-c bash
+docker exec -it dev-sandbox-d bash
+```
+
+**Stopping the containers:**
+
+```bash
+docker-compose down
+```
+
+### Using tmux for Persistent Sessions
+
+The dev containers include **tmux**, a terminal multiplexer that allows you to run processes that persist even after you close your terminal. This is essential for long-running builds, tests, or interactive development sessions.
+
+**Basic tmux workflow:**
+
+```bash
+# Connect to a container
+docker exec -it dev-sandbox-a bash
+
+# Start a new tmux session with a name
+tmux new -s build
+
+# Run your long-running process (e.g., Maven build)
+mvn clean install
+
+# Detach from tmux session (keeps process running)
+# Press: Ctrl+b, then d
+
+# Close your terminal - the process continues running
+
+# Later: reconnect to the container
+docker exec -it dev-sandbox-a bash
+
+# Reattach to your tmux session
+tmux attach -t build
+```
+
+**Useful tmux commands:**
+
+- `tmux ls` - List all active sessions
+- `tmux new -s <name>` - Create a new named session
+- `tmux attach -t <name>` - Reattach to a session
+- `tmux kill-session -t <name>` - Terminate a session
+- `Ctrl+b d` - Detach from current session
+- `Ctrl+b c` - Create new window within session
+- `Ctrl+b n` - Next window
+- `Ctrl+b p` - Previous window
+- `Ctrl+b %` - Split pane vertically
+- `Ctrl+b "` - Split pane horizontally
+
+The containers are pre-configured with mouse support and 10,000 line scrollback buffer for easier navigation.
+
 ## To use the libraries
 
 Add Maven Repository:

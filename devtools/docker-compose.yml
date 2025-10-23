@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  rings-dev-sandbox-a:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev-sandbox-a
+    volumes:
+      - /Users/michael/AlmostRealism/sandboxA/:/workspace/project
+      - claude-config:/home/developer/.config/claude
+    working_dir: /workspace/project
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+      - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+    network_mode: host
+  rings-dev-sandbox-b:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev-sandbox-b
+    volumes:
+      - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
+      - claude-config:/home/developer/.config/claude
+    working_dir: /workspace/project
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+      - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+    network_mode: host
+  rings-dev-sandbox-c:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev-sandbox-c
+    volumes:
+      - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
+      - claude-config:/home/developer/.config/claude
+    working_dir: /workspace/project
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+      - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+    network_mode: host
+  rings-dev-sandbox-d:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev-sandbox-d
+    volumes:
+      - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
+      - claude-config:/home/developer/.config/claude
+    working_dir: /workspace/project
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+      - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+    network_mode: host
+
+volumes:
+  claude-config:
+    driver: local

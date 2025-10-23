@@ -23,7 +23,12 @@ import io.almostrealism.relation.Evaluable;
 
 import javax.sound.sampled.AudioFormat;
 
-public class FilterOutputLine implements OutputLine, Evaluable<byte[]>, DataReceiver {
+/**
+ * @deprecated This class uses the old byte[] approach and does not support
+ * Producer-based buffered writes with BufferedOutputScheduler. Do not use.
+ */
+@Deprecated
+public class FilterOutputLine implements Evaluable<byte[]>, DataReceiver {
 	private ByteFunction<byte[]> filter;
 	private OutputLine line;
 	
@@ -31,31 +36,7 @@ public class FilterOutputLine implements OutputLine, Evaluable<byte[]>, DataRece
 	
 	public FilterOutputLine(ByteFunction<byte[]> filter, OutputLine line) {
 		this.filter = filter;
-		this.line = line; 
-	}
-
-	@Override
-	public void write(byte[] b) {
-		this.line.write(this.filter.operate(b));
-	}
-
-	@Override
-	public void write(double[][] d) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Converts the specified sample to a frame using
-	 * {@link LineUtilities#toFrame(PackedCollection, AudioFormat)}
-	 * and writes those bytes using {@link #write(byte[])}.
-	 *
-	 * TODO  We do not have the audio format, maybe we
-	 *       can use just the frame size. This method
-	 *       currently throws an exception.
-	 */
-	@Override
-	public void write(PackedCollection<?> sample) {
-		throw new RuntimeException("Not implemented");
+		this.line = line;
 	}
 
 	@Override
