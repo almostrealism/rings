@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     vim \
     nano \
+    # Terminal multiplexer for persistent sessions
+    tmux \
     # OpenCL support (for GPU acceleration)
     ocl-icd-opencl-dev \
     opencl-headers \
@@ -76,13 +78,27 @@ RUN echo 'export PS1="\u@\h:\w$ "' >> ~/.bashrc && \
     echo 'alias ll="ls -alh"' >> ~/.bashrc && \
     echo 'export EDITOR=vim' >> ~/.bashrc
 
+# Configure tmux for better usability
+RUN echo '# Enable mouse support' >> ~/.tmux.conf && \
+    echo 'set -g mouse on' >> ~/.tmux.conf && \
+    echo '' >> ~/.tmux.conf && \
+    echo '# Set scrollback buffer size' >> ~/.tmux.conf && \
+    echo 'set -g history-limit 10000' >> ~/.tmux.conf && \
+    echo '' >> ~/.tmux.conf && \
+    echo '# Start window numbering at 1' >> ~/.tmux.conf && \
+    echo 'set -g base-index 1' >> ~/.tmux.conf && \
+    echo '' >> ~/.tmux.conf && \
+    echo '# Enable 256 color support' >> ~/.tmux.conf && \
+    echo 'set -g default-terminal "screen-256color"' >> ~/.tmux.conf
+
 # Verify installations
 RUN java -version && \
     mvn -version && \
     gcc --version && \
     node --version && \
     npm --version && \
-    claude --version
+    claude --version && \
+    tmux -V
 
 # Set entrypoint to fix permissions on startup
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
