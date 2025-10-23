@@ -219,6 +219,9 @@ This is standard for macOS/Linux development and critical for consistent git dif
 
 ## Important Notes
 
+IF YOU EVER FIND THAT YOU HAVE INTRODUCED CODE WHICH CONTAINS MORE THAN 20 NEARLY-IDENTICAL LINES,
+YOU HAVE MADE A MISTAKE AND MUST REFACTOR THE CODE TO REMOVE THE DUPLICATION.
+
 - **Cell** interface is from ar-common, not defined in this repo
 - **Producer**, **Evaluable**, **Factor** are core computation abstractions from ar-common
 - Many modules (gl, raytracer, photonfield) are for visual rendering, not audio
