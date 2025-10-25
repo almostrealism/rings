@@ -18,6 +18,7 @@ package org.almostrealism.audio.line.test;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.SourceDataOutputLine;
 import org.junit.Assert;
@@ -245,5 +246,96 @@ public class RealtimePlaybackTest implements CellFeatures {
 		outputLine.destroy();
 
 		System.out.println("Custom buffer size test passed");
+	}
+
+	/**
+	 * Tests looped playback with larger buffer (BufferDefaults settings) and verbose logging.
+	 * This test helps diagnose scheduler rate consistency issues by:
+	 * 1. Using looped sample for continuous playback
+	 * 2. Using larger buffer size (BufferDefaults.defaultBufferSize = 65536)
+	 * 3. Enabling verbose logging to monitor sleep cycles
+	 * 4. Running for extended duration to observe timing patterns
+	 */
+	@Test
+	public void bufferedLoopedPlaybackWithVerboseLogging() throws Exception {
+		if (!TEST_FILE.exists()) {
+			System.out.println("Test file not found, skipping bufferedLoopedPlaybackWithVerboseLogging test");
+			return;
+		}
+
+		// Enable verbose logging to monitor scheduler behavior
+		boolean previousVerbose = BufferedOutputScheduler.enableVerbose;
+		int previousLogRate = BufferedOutputScheduler.logRate;
+		BufferedOutputScheduler.enableVerbose = true;
+		BufferedOutputScheduler.logRate = 64; // Log every 64 iterations for detailed monitoring
+
+		try {
+			// Create audio format with standard settings
+			AudioFormat format = new AudioFormat(
+					AudioFormat.Encoding.PCM_SIGNED,
+					44100, // sample rate
+					16,    // bits per sample
+					2,     // channels (stereo)
+					4,     // frame size (2 bytes * 2 channels)
+					44100, // frame rate
+					false  // little-endian
+			);
+
+			// Use larger buffer size from BufferDefaults (like MixerTests)
+			int bufferSize = BufferDefaults.defaultBufferSize;
+			System.out.println("Using buffer size: " + bufferSize + " frames");
+
+			// Calculate and display buffer characteristics
+			BufferDefaults.logBufferInfo(44100, bufferSize, System.out::println);
+
+			// Get and configure the output line
+			SourceDataLine line = AudioSystem.getSourceDataLine(format);
+			line.open(format, bufferSize * 4); // Hardware buffer
+			line.start();
+
+			SourceDataOutputLine outputLine = new SourceDataOutputLine(line, bufferSize);
+
+			// Load WAV file with loop enabled (repeat=c(1.0) makes it loop)
+			System.out.println("Loading " + TEST_FILE.getPath() + " with looping enabled");
+			CellList cells = w(0, c(1.0), TEST_FILE.getPath());
+
+			// Create BufferedOutputScheduler
+			BufferedOutputScheduler scheduler = cells.buffer(outputLine);
+
+			System.out.println("Starting looped playback with verbose logging...");
+			System.out.println("Monitor the sleep cycle times - very low values (<1ms) indicate");
+			System.out.println("that audio generation cannot keep up with playback rate.");
+			System.out.println("---");
+
+			// Start the scheduled buffered playback
+			scheduler.start();
+
+			// Run for extended time to observe patterns
+			Thread.sleep(15000); // 15 seconds
+
+			System.out.println("---");
+			System.out.println("Playback statistics:");
+			System.out.println("  Rendered frames: " + scheduler.getRenderedFrames());
+			System.out.println("  Rendered count: " + scheduler.getRenderedCount());
+			System.out.println("  Rendering gap: " + scheduler.getRenderingGap() + "ms");
+			System.out.println("  Read position: " + outputLine.getReadPosition());
+
+			// Verify playback is happening
+			long renderedFrames = scheduler.getRenderedFrames();
+			Assert.assertTrue("Should have rendered many frames", renderedFrames > 100000);
+
+			// Stop the scheduler
+			scheduler.stop();
+
+			// Clean up
+			outputLine.destroy();
+
+			System.out.println("Looped playback test completed");
+
+		} finally {
+			// Restore previous logging settings
+			BufferedOutputScheduler.enableVerbose = previousVerbose;
+			BufferedOutputScheduler.logRate = previousLogRate;
+		}
 	}
 }
