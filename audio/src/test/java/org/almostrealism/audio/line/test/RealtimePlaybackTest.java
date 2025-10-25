@@ -82,7 +82,7 @@ public class RealtimePlaybackTest implements CellFeatures {
 		// Start the scheduled buffered playback
 		scheduler.start();
 
-		// Let it run for 3 seconds
+		// Let it run for some time
 		Thread.sleep(10000);
 
 		// Verify playback is happening
