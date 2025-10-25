@@ -72,6 +72,9 @@ public interface ProjectionFeatures extends CodeFeatures {
 
 			pqr = scalarMultiply(pqr, len);
 			pqr = scalarMultiply(pqr, length(pqr).pow(-1.0));
+		} else {
+			// Normalize direction vector even when blur is 0 (required for correct intersection distances)
+			pqr = normalize(pqr);
 		}
 
 		return pqr;

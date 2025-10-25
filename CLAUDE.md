@@ -42,18 +42,94 @@ mvn test -pl audio-space
 mvn test -pl audio -Dtest=CellListTests
 ```
 
-**Run a single test method:**
-Never attempt to run a single test method. It would be great if you could, but the presence of a
-pound sign causes the shell to require approval before executing the command, which interrupts
-automated workflows. You will just have to live with the fact that you can only run entire test
-classes. If this really bothers you, create a dedicated test class that only contains the single
-test method you want to run (or create a stub that you can use to call the test method as a
-workaround).
+**CRITICAL: NEVER RUN SINGLE TEST METHODS:**
+
+**❌ NEVER DO THIS:**
+```bash
+# WRONG - Contains pound sign (#) which causes shell approval requirement
+mvn test -pl audio -Dtest=CellListTests#testMethod
+mvn test -Dtest=SomeTest#method1,SomeTest#method2
+```
+
+**✅ ONLY RUN ENTIRE TEST CLASSES:**
+```bash
+# CORRECT - Run entire test class
+mvn test -pl audio -Dtest=CellListTests
+mvn test -Dtest=SphereTest
+```
+
+**Why:** The Maven syntax for running single test methods uses the pound sign (`#`) to separate the class name from the method name. In bash, `#` starts a comment, which causes the shell to require user approval before executing. This interrupts automated workflows and is not allowed.
+
+**Workaround:** If you need to test a specific method:
+1. Run the entire test class (it's fast enough)
+2. Create a dedicated test class with only that method
+3. Temporarily comment out other `@Test` methods in the class
 
 **Skip tests during build:**
 ```bash
 mvn clean install -DskipTests
 ```
+
+### Maven Errors vs Warnings
+
+**CRITICAL: Distinguish between Maven errors and warnings**
+
+Maven output includes both errors (which block the build) and warnings (which do not):
+
+**Warnings (DO NOT block the build):**
+```
+[WARNING] Using platform encoding (ANSI_X3.4-1968 actually) to copy filtered resources
+[WARNING] File encoding has not been set, using platform encoding ANSI_X3.4-1968
+[INFO] /path/to/file.java: Some input files use unchecked or unsafe operations
+[INFO] /path/to/file.java: Some input files use or override a deprecated API
+```
+
+**Errors (BLOCK the build):**
+```
+[ERROR] /path/to/file.java:[line,col] cannot find symbol
+[ERROR] /path/to/file.java:[line,col] method getLast() is undefined
+[ERROR] COMPILATION ERROR
+```
+
+**Key distinction:**
+- Lines starting with `[WARNING]` or `[INFO]` are informational only
+- Lines starting with `[ERROR]` indicate actual build failures
+- UTF-8 encoding warnings are common and safe to ignore
+- Only focus on fixing `[ERROR]` lines when troubleshooting builds
+
+## Hardware Configuration
+
+**CRITICAL**: Before running any tests or code that uses ar-common's hardware acceleration, you must configure the native library path and driver.
+
+### Required Environment Setup
+
+```bash
+# Create native library directory
+mkdir -p /home/developer/.libs/
+
+# Set environment variables (required for all test/build sessions)
+export AR_HARDWARE_LIBS=/home/developer/.libs/
+export AR_HARDWARE_DRIVER=native
+```
+
+**Alternative: Use Maven/JVM System Properties**
+
+You can also configure these via system properties when running Maven:
+
+```bash
+mvn test -DAR_HARDWARE_LIBS=/home/developer/.libs/ -DAR_HARDWARE_DRIVER=native
+```
+
+**Why This Is Required:**
+- ar-common compiles computation graphs to native code at runtime
+- The native libraries (.so files on Linux, .dylib on macOS) are cached in AR_HARDWARE_LIBS
+- Without these settings, Hardware class initialization will fail with NullPointerException
+- The "native" driver uses CPU-based execution (GPU drivers also available: "opencl", "cuda")
+
+**Troubleshooting:**
+- If you get `Could not initialize class org.almostrealism.hardware.Hardware`, verify these environment variables are set
+- Check that `/home/developer/.libs/` exists and is writable
+- Native libraries will be automatically generated on first use
 
 ## Module Architecture
 

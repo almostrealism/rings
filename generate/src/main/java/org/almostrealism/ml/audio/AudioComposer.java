@@ -72,7 +72,7 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 
 	public TraversalPolicy getFeatureShape() {
 		if (features.isEmpty()) return null;
-		return features.getLast().getFeatureShape();
+		return features.get(features.size() - 1).getFeatureShape();
 	}
 
 	public void addAudio(Producer<PackedCollection<?>> audio) {

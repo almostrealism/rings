@@ -75,11 +75,13 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 	private boolean kernel;
 	private int width, height, ssw, ssh;
 
-	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context) {
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces,
+									Iterable<Light> lights, ShaderContext context) {
 		this(r, surfaces, lights, context, false);
 	}
 
-	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces, Iterable<Light> lights, ShaderContext context, boolean kernel) {
+	public LightingEngineAggregator(Producer<Ray> r, Iterable<Curve<RGB>> surfaces,
+									Iterable<Light> lights, ShaderContext context, boolean kernel) {
 		super(Intersection.e);
 		this.kernel = kernel;
 		init(r, surfaces, lights, context);
@@ -120,7 +122,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 	}
 
 	/**
-	 * Run rank computations for all {@link LightingEngine}s, if they are not already been available.
+	 * Run rank computations for all {@link LightingEngine}s, if they are not already available.
 	 */
 	public synchronized void initRankCache() {
 		if (this.ranks != null) return;
@@ -128,11 +130,34 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 			throw new IllegalArgumentException("Kernel input must be specified ahead of rank computation");
 
 		System.out.println("LightingEngineAggregator: Evaluating rank kernels...");
+		System.out.println("  Input count: " + input.getCount());
+		System.out.println("  Input sample (first 3 Pairs): ");
+		for (int j = 0; j < Math.min(3, input.getCount()); j++) {
+			System.out.println("    input[" + j + "] = (" + input.get(j).getA() + ", " + input.get(j).getB() + ")");
+		}
+		System.out.println("  Number of engines: " + size());
 
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
-			this.ranks.add(Scalar.scalarBank(input.getCount()));
-			((Evaluable) get(i).getRank().get()).into(ranks.get(i)).evaluate(input);
+			System.out.println("  Evaluating engine " + i + " (" + get(i) + ")...");
+
+			// Use shape (N, 1) for distance values instead of Scalar.scalarBank which creates (N, 2)
+			// CRITICAL: Use .each() to properly evaluate batch of rays - without it, only first ray processes correctly
+			PackedCollection<Scalar> rankCollection = new PackedCollection<>(shape(input.getCount(), 1).traverse(1));
+			this.ranks.add(rankCollection);
+
+			// Get the rank producer
+			Producer rankProducer = get(i).getRank();
+			System.out.println("    Rank producer: " + rankProducer);
+
+			// Evaluate it
+			((Evaluable) rankProducer.get()).into(rankCollection.each()).evaluate(input);
+
+			// Debug: Print first few rank values
+			System.out.println("    Ranks computed (first 5):");
+			for (int j = 0; j < Math.min(5, ranks.get(i).getCount()); j++) {
+				System.out.println("      rank[" + j + "] = " + ranks.get(i).valueAt(j, 0));
+			}
 		}
 
 		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
@@ -198,7 +223,8 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		r: for (int i = 0; i < size(); i++) {
 			ProducerWithRank<RGB, Scalar> p = get(i);
 
-			double r = ranks.get(i).get(position).getValue();
+			// Use valueAt(position, 0) for shape (N, 1) instead of get(position).getValue() for Scalar
+			double r = ranks.get(i).valueAt(position, 0);
 			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);
 			if (r < e) continue r;
 
@@ -219,7 +245,17 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 
 		if (printLog) System.out.println(best + " was chosen\n----------");
 
-		return best == null ? null : best.get().evaluate(args);
+		if (best == null) return null;
+
+		Object result = best.get().evaluate(args);
+		if (result instanceof RGB) {
+			return (RGB) result;
+		} else if (result instanceof PackedCollection) {
+			return new RGB((PackedCollection<?>) result, 0);
+		} else {
+			throw new IllegalStateException("Unexpected result type: " +
+				(result == null ? "null" : result.getClass().getName()));
+		}
 	}
 
 	@Override
