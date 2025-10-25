@@ -1,7 +1,21 @@
+/*
+ * Copyright 2025 Michael Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.almostrealism.audio.line;
 
-import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.JavaAudioSample;
 import org.almostrealism.collect.PackedCollection;
 
 import java.io.BufferedInputStream;
@@ -56,29 +70,6 @@ public class LineUtilities {
 		}
 		
 		return new SourceDataOutputLine(line);
-	}
-	
-	/**
-	 * Converts the specified sample so that it can be played using a line
-	 * configured with the current default format.
-	 * 
-	 * @param s  Sample to convert.
-	 * @return  Converted sample.
-	 */
-	public static JavaAudioSample convert(JavaAudioSample s) {
-		return convert(s, lastFormat);
-	}
-	
-	/**
-	 * Adjusts the specified sample so that it can be played using a line
-	 * configured with the specified format.
-	 * 
-	 * @param s  Sample to convert.
-	 * @param f  Format to convert to.
-	 * @return  Converted sample.
-	 */
-	public static JavaAudioSample convert(JavaAudioSample s, AudioFormat f) {
-		return s;
 	}
 
 	/**
