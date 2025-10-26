@@ -130,18 +130,8 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		if (this.input == null)
 			throw new IllegalArgumentException("Kernel input must be specified ahead of rank computation");
 
-		System.out.println("LightingEngineAggregator: Evaluating rank kernels...");
-		System.out.println("  Input count: " + input.getCount());
-		System.out.println("  Input sample (first 3 Pairs): ");
-		for (int j = 0; j < Math.min(3, input.getCount()); j++) {
-			System.out.println("    input[" + j + "] = (" + input.get(j).getA() + ", " + input.get(j).getB() + ")");
-		}
-		System.out.println("  Number of engines: " + size());
-
 		this.ranks = new ArrayList<>();
 		for (int i = 0; i < size(); i++) {
-			System.out.println("  Evaluating engine " + i + " (" + get(i) + ")...");
-
 			// CRITICAL: Never use Scalar.scalarBank here, it doesn't have the correct shape
 			// CRITICAL: Use .each() to properly evaluate batch of rays - without it, only first ray processes correctly
 			PackedCollection<Scalar> rankCollection = new PackedCollection<>(shape(input.getCount(), 1).traverse(1));
@@ -150,23 +140,7 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 			// Evaluate the rank producer
 			Producer rankProducer = get(i).getRank();
 			rankProducer.get().into(rankCollection.each()).evaluate(input);
-
-			System.out.println("LightingEngineAggregator: distinct rank results = " +
-					Arrays.toString(rankCollection.doubleStream().distinct().toArray()));
-
-			// Find and print ALL indices with valid ranks
-			List<Integer> validIndices = new ArrayList<>();
-			for (int j = 0; j < rankCollection.getCount(); j++) {
-				double rank = rankCollection.valueAt(j, 0);
-				if (rank >= e) {
-					validIndices.add(j);
-				}
-			}
-			System.out.println("LightingEngineAggregator: Found " + validIndices.size() + " valid ranks at indices: " +
-					(validIndices.size() <= 20 ? validIndices : validIndices.subList(0, 20) + "..."));
 		}
-
-		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
 	}
 
 	/**
@@ -219,10 +193,9 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 
 		int position = DimensionAware.getPosition(pos.getX(), pos.getY(), width, height, ssw, ssh);
 
-		// Log for pixels we know have valid ranks (30-34, 29-32)
 		int x = (int) pos.getX();
 		int y = (int) pos.getY();
-		boolean printLog = enableVerbose && (x >= 30 && x <= 34 && y >= 29 && y <= 32);
+		boolean printLog = enableVerbose;
 
 		if (printLog) {
 			System.out.println("RankedChoiceProducer: pixel(" + x + "," + y + ") -> position=" + position);

@@ -67,14 +67,6 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 	/** Method specified by the {@link Shader} interface. */
 	@Override
 	public Producer<RGB> shade(ShaderContext p, DiscreteField normals) {
-		if (produceOutput) {
-			System.out.println("DiffuseShader.shade() called");
-			System.out.println("  Surface: " + p.getSurface());
-			System.out.println("  Light: " + p.getLight());
-			System.out.println("  normals field: " + normals);
-			System.out.println("  normals.get(0): " + normals.get(0));
-		}
-
 		CollectionProducer<Vector> point = origin(normals.get(0));
 		CollectionProducer<Vector> n = normalize(direction(normals.get(0)));
 		CollectionProducer<PackedCollection<?>> scaleFront = dotProduct(n, p.getLightDirection());
@@ -82,50 +74,29 @@ public class DiffuseShader implements Shader<ShaderContext>, Editable, RGBFeatur
 		Producer<RGB> lightColor = p.getLight().getColorAt(point);
 		Producer<RGB> surfaceColor = p.getSurface().getValueAt(point);
 
-		if (produceOutput) {
-			System.out.println("  point producer: " + point);
-			System.out.println("  normal producer: " + n);
-			System.out.println("  scaleFront producer: " + scaleFront);
-			System.out.println("  lightColor producer: " + lightColor);
-			System.out.println("  surfaceColor producer: " + surfaceColor);
-		}
-
 		Producer<RGB> front = null, back = null;
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeFront()) {
 			Producer<RGB> color = multiply(surfaceColor, lightColor).multiply(cfromScalar(scaleFront));
 			front = new GreaterThanRGB(scaleFront, scalar(0),
 							color, black());
-			if (produceOutput) {
-				System.out.println("  front color producer created: " + front);
-			}
 		}
 
 		if (p.getSurface() instanceof ShadableSurface == false || ((ShadableSurface) p.getSurface()).getShadeBack()) {
 			Producer<RGB> color = multiply(surfaceColor, lightColor).multiply(cfromScalar(scaleBack));
 			back = new GreaterThanRGB(scaleBack, scalar(0),
 							color, black());
-			if (produceOutput) {
-				System.out.println("  back color producer created: " + back);
-			}
 		}
 
-		Producer<RGB> result;
 		if (front != null && back != null) {
-			result = GeneratedColorProducer.fromProducer(this, add(front, back));
+			return GeneratedColorProducer.fromProducer(this, add(front, back));
 		} else if (front != null) {
-			result = GeneratedColorProducer.fromProducer(this, front);
+			return GeneratedColorProducer.fromProducer(this, front);
 		} else if (back != null) {
-			result = GeneratedColorProducer.fromProducer(this, back);
+			return GeneratedColorProducer.fromProducer(this, back);
 		} else {
-			result = GeneratedColorProducer.fromProducer(this, RGB.blank());
+			return GeneratedColorProducer.fromProducer(this, RGB.blank());
 		}
-
-		if (produceOutput) {
-			System.out.println("  final result producer: " + result);
-		}
-
-		return result;
 	}
 	
 	/** Returns a zero length array. */
