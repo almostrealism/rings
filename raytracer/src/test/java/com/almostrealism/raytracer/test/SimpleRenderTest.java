@@ -105,6 +105,9 @@ public class SimpleRenderTest implements TestFeatures {
 	public void renderSingleSphere() throws Exception {
 		log("Creating simple scene with one sphere...");
 
+		// Enable verbose logging to see what's happening during rendering
+		com.almostrealism.raytrace.LightingEngineAggregator.enableVerbose = true;
+
 		// Create scene
 		Scene<ShadableSurface> scene = new Scene<>();
 

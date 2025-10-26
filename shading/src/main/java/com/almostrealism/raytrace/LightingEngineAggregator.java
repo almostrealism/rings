@@ -37,6 +37,7 @@ import io.almostrealism.relation.ProducerWithRank;
 import org.almostrealism.color.computations.RankedChoiceEvaluableForRGB;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -141,23 +142,17 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		for (int i = 0; i < size(); i++) {
 			System.out.println("  Evaluating engine " + i + " (" + get(i) + ")...");
 
-			// Use shape (N, 1) for distance values instead of Scalar.scalarBank which creates (N, 2)
+			// CRITICAL: Never use Scalar.scalarBank here, it doesn't have the correct shape
 			// CRITICAL: Use .each() to properly evaluate batch of rays - without it, only first ray processes correctly
 			PackedCollection<Scalar> rankCollection = new PackedCollection<>(shape(input.getCount(), 1).traverse(1));
 			this.ranks.add(rankCollection);
 
-			// Get the rank producer
+			// Evaluate the rank producer
 			Producer rankProducer = get(i).getRank();
-			System.out.println("    Rank producer: " + rankProducer);
+			rankProducer.get().into(rankCollection.each()).evaluate(input);
 
-			// Evaluate it
-			((Evaluable) rankProducer.get()).into(rankCollection.each()).evaluate(input);
-
-			// Debug: Print first few rank values
-			System.out.println("    Ranks computed (first 5):");
-			for (int j = 0; j < Math.min(5, ranks.get(i).getCount()); j++) {
-				System.out.println("      rank[" + j + "] = " + ranks.get(i).valueAt(j, 0));
-			}
+			System.out.println("LightingEngineAggregator: distinct rank results = " +
+					Arrays.toString(rankCollection.doubleStream().distinct().toArray()));
 		}
 
 		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
