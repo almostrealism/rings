@@ -21,11 +21,14 @@ import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Simple rendering tests to verify the ray tracing pipeline can produce output.
  */
 public class SimpleRenderTest implements TestFeatures {
+	int width = 640;
+	int height = 640;
 
 	@Test
 	public void testShaderIsolated() {
@@ -132,10 +135,10 @@ public class SimpleRenderTest implements TestFeatures {
 		log("Camera at (0, 0, 10), looking at (0, 0, -1)");
 		log("Focal length: 0.05, projection: 0.1x0.1");
 
-		// Generate ray for center pixel using 64x64 screen (same as renderSingleSphere)
-		// Center pixel is at (32, 32) in a 64x64 grid
-		Producer<org.almostrealism.algebra.Pair<?>> centerPos = pair(32.0, 32.0);
-		Producer<org.almostrealism.algebra.Pair<?>> screenDim = pair(64, 64);
+		// Generate ray for center pixel using width x height screen
+		// Center pixel is at (32, 32) in the width x height grid
+		Producer<org.almostrealism.algebra.Pair<?>> centerPos = pair(width / 2.0, height / 2.0);
+		Producer<org.almostrealism.algebra.Pair<?>> screenDim = pair(width, height);
 
 		Producer<Ray> cameraRay = camera.rayAt(centerPos, screenDim);
 
@@ -207,11 +210,11 @@ public class SimpleRenderTest implements TestFeatures {
 
 			// Create render parameters for a small image
 			RenderParameters params = new RenderParameters();
-			params.width = 64;   // Small for fast test
-			params.height = 64;
-			params.dx = 64;
-			params.dy = 64;
-			params.ssWidth = 1;  // No supersampling
+			params.width = width;
+			params.height = height;
+			params.dx = width;
+			params.dy = height;
+			params.ssWidth = 1;
 			params.ssHeight = 1;
 
 			log("Render parameters: 64x64, no supersampling");
@@ -249,8 +252,6 @@ public class SimpleRenderTest implements TestFeatures {
 
 			log("Non-black pixels: " + nonBlackPixels);
 
-			assertTrue("Should have some non-black pixels", nonBlackPixels > 0);
-
 			// Try to save the image
 			try {
 				File outputDir = new File("results");
@@ -264,10 +265,11 @@ public class SimpleRenderTest implements TestFeatures {
 				ImageCanvas.encodeImageFile(v(imageData).get(), outputFile, ImageCanvas.JPEGEncoding);
 
 				log("Image saved successfully!");
-			} catch (Exception e) {
+			} catch (IOException e) {
 				log("Warning: Could not save image: " + e.getMessage());
 			}
 
+			assertTrue("Should have some non-black pixels", nonBlackPixels > 0);
 		} catch (Exception e) {
 			log("Exception during render: " + e.getMessage());
 			e.printStackTrace();
