@@ -59,9 +59,9 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	public PointLight(Vector location) {
 		this.setIntensity(1.0);
 		this.setColor(new RGB(1.0, 1.0, 1.0));
-		
-		this.setLocation(new Vector(0.0, 0.0, 0.0));
-		
+
+		this.setLocation(location);
+
 		this.setAttenuationCoefficients(0.0, 0.0, 1.0);
 	}
 	

@@ -28,6 +28,142 @@ import java.io.File;
 public class SimpleRenderTest implements TestFeatures {
 
 	@Test
+	public void testShaderIsolated() {
+		log("Testing shader/lighting calculation in isolation...");
+
+		// Enable shader diagnostics
+		com.almostrealism.rayshade.DiffuseShader.produceOutput = true;
+
+		// Create sphere at origin with white diffuse color
+		Sphere sphere = new Sphere();
+		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
+		sphere.setSize(1.0);
+		sphere.setColor(new RGB(1.0, 1.0, 1.0)); // White surface
+		((AbstractSurface) sphere).setShaders(new org.almostrealism.color.Shader[] {
+			DiffuseShader.defaultDiffuseShader
+		});
+		log("Created white sphere at origin, radius 1.0");
+
+		// Create light source at (5, 5, 5) - above and to the side
+		PointLight light = new PointLight(new Vector(5.0, 5.0, 5.0));
+		light.setColor(new RGB(1.0, 1.0, 1.0));
+		light.setIntensity(1.0);
+		log("Created white light at (5, 5, 5)");
+
+		// Create a camera ray from (0, 0, 10) pointing towards sphere at (0, 0, -1)
+		// This should hit the sphere at approximately (0, 0, 1) on the front surface
+		Producer<org.almostrealism.geometry.Ray> testRay = ray(0.0, 0.0, 10.0, 0.0, 0.0, -1.0);
+		log("Created ray: origin (0, 0, 10), direction (0, 0, -1)");
+
+		// Create shader context
+		org.almostrealism.color.ShaderContext context = new org.almostrealism.color.ShaderContext(sphere, light);
+		log("Created shader context");
+
+		// Create lighting engine directly
+		com.almostrealism.raytrace.IntersectionalLightingEngine engine =
+			new com.almostrealism.raytrace.IntersectionalLightingEngine(
+				testRay, sphere, java.util.Collections.emptyList(), light, java.util.Collections.emptyList(), context);
+		log("Created IntersectionalLightingEngine");
+
+		// Get the color producer
+		Producer<RGB> colorProducer = engine.getProducer();
+		log("Got color producer: " + colorProducer);
+
+		// Evaluate with a pixel position argument (doesn't matter which, just need to match expected args)
+		org.almostrealism.algebra.Pair pixelPos = new org.almostrealism.algebra.Pair(32.0, 32.0);
+		Object result = colorProducer.get().evaluate(pixelPos);
+
+		// Handle PackedCollection -> RGB conversion
+		RGB color;
+		if (result instanceof RGB) {
+			color = (RGB) result;
+		} else if (result instanceof org.almostrealism.collect.PackedCollection) {
+			color = new RGB((org.almostrealism.collect.PackedCollection<?>) result, 0);
+		} else {
+			throw new IllegalStateException("Unexpected result type: " + result.getClass().getName());
+		}
+
+		log("Color evaluated: RGB(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ")");
+
+		// Check that color is non-black
+		boolean isNonBlack = color.getRed() > 0.01 || color.getGreen() > 0.01 || color.getBlue() > 0.01;
+		log("Is non-black: " + isNonBlack);
+
+		assertTrue("Shader should produce non-black color for lit sphere", isNonBlack);
+	}
+
+	@Test
+	public void debugShaderInputs() {
+		log("Testing intermediate shader values...");
+
+		// Create sphere at origin
+		Sphere sphere = new Sphere();
+		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
+		sphere.setSize(1.0);
+		sphere.setColor(new RGB(1.0, 1.0, 1.0)); // White surface
+
+		// Create ray from (0, 0, 10) pointing towards sphere
+		Producer<Ray> testRay = ray(0.0, 0.0, 10.0, 0.0, 0.0, -1.0);
+
+		// Get intersection
+		org.almostrealism.geometry.ShadableIntersection intersection = sphere.intersectAt(testRay);
+
+		// Evaluate intersection point
+		Producer<Ray> intersectionRay = intersection.get(0);
+		Ray intersectionData = new Ray(intersectionRay.get().evaluate(), 0);
+		log("Intersection origin: (" + intersectionData.getOrigin().getX() + ", " +
+			intersectionData.getOrigin().getY() + ", " + intersectionData.getOrigin().getZ() + ")");
+		log("Expected: around (0, 0, 1) - front of sphere");
+
+		// Get surface normal at intersection
+		Producer<Vector> normalVector = intersection.getNormalAt(c(0.0));
+		Object normalResult = normalVector.get().evaluate();
+		Vector normal;
+		if (normalResult instanceof Vector) {
+			normal = (Vector) normalResult;
+		} else if (normalResult instanceof org.almostrealism.collect.PackedCollection) {
+			normal = new Vector((org.almostrealism.collect.PackedCollection<?>) normalResult, 0);
+		} else {
+			throw new IllegalStateException("Unexpected normal type: " + normalResult.getClass().getName());
+		}
+		log("Surface normal: (" + normal.getX() + ", " + normal.getY() + ", " + normal.getZ() + ")");
+		log("Expected: pointing outward from sphere, roughly (0, 0, 1)");
+
+		// Create light at (5, 5, 5)
+		PointLight light = new PointLight(new Vector(5.0, 5.0, 5.0));
+		light.setColor(new RGB(1.0, 1.0, 1.0));
+		light.setIntensity(1.0);
+
+		// Evaluate surface color
+		Producer<RGB> surfaceColorProducer = sphere.getValueAt(origin(intersectionRay));
+		RGB surfaceColor = surfaceColorProducer.get().evaluate();
+		log("Surface color: RGB(" + surfaceColor.getRed() + ", " + surfaceColor.getGreen() + ", " + surfaceColor.getBlue() + ")");
+		log("Expected: RGB(1.0, 1.0, 1.0) - white");
+
+		// Evaluate light color at intersection point
+		Producer<RGB> lightColorProducer = light.getColorAt(origin(intersectionRay));
+		RGB lightColor = lightColorProducer.get().evaluate();
+		log("Light color at point: RGB(" + lightColor.getRed() + ", " + lightColor.getGreen() + ", " + lightColor.getBlue() + ")");
+		log("Expected: non-black");
+
+		// Manually compute light direction (from point to light)
+		Vector intersectionPoint = intersectionData.getOrigin();
+		Vector lightPos = light.getLocation();
+		Vector toLight = lightPos.subtract(intersectionPoint);
+		Vector toLightNorm = toLight.divide(toLight.length());
+		log("Light direction (point to light): (" + toLightNorm.getX() + ", " + toLightNorm.getY() + ", " + toLightNorm.getZ() + ")");
+
+		// Compute dot product manually
+		double dotProduct = normal.dotProduct(toLightNorm);
+		log("Dot product (normal dot light): " + dotProduct);
+		log("Expected: positive value if light is visible from surface");
+
+		assertTrue("Dot product should be positive (surface facing light)", dotProduct > 0);
+		assertTrue("Surface color should be non-black", surfaceColor.getRed() > 0.01 || surfaceColor.getGreen() > 0.01 || surfaceColor.getBlue() > 0.01);
+		assertTrue("Light color should be non-black", lightColor.getRed() > 0.01 || lightColor.getGreen() > 0.01 || lightColor.getBlue() > 0.01);
+	}
+
+	@Test
 	public void debugIntersection() {
 		log("Testing direct sphere intersection...");
 
@@ -141,7 +277,7 @@ public class SimpleRenderTest implements TestFeatures {
 			camera.setLocation(new Vector(0.0, 0.0, 10.0));
 			camera.setViewDirection(new Vector(0.0, 0.0, -1.0));
 			camera.setFocalLength(0.05);
-			camera.setProjectionDimensions(0.1, 0.1);
+			camera.setProjectionDimensions(0.04, 0.04);  // Zoomed in from 0.1
 
 			scene.setCamera(camera);
 			log("Camera created and configured");
@@ -254,7 +390,7 @@ public class SimpleRenderTest implements TestFeatures {
 		camera.setLocation(new Vector(0.0, 0.0, 10.0));
 		camera.setViewDirection(new Vector(0.0, 0.0, -1.0));
 		camera.setFocalLength(0.05);
-		camera.setProjectionDimensions(0.2, 0.2);
+		camera.setProjectionDimensions(0.15, 0.15);  // Zoomed in from 0.2
 
 		scene.setCamera(camera);
 

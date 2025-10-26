@@ -153,6 +153,17 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 
 			System.out.println("LightingEngineAggregator: distinct rank results = " +
 					Arrays.toString(rankCollection.doubleStream().distinct().toArray()));
+
+			// Find and print ALL indices with valid ranks
+			List<Integer> validIndices = new ArrayList<>();
+			for (int j = 0; j < rankCollection.getCount(); j++) {
+				double rank = rankCollection.valueAt(j, 0);
+				if (rank >= e) {
+					validIndices.add(j);
+				}
+			}
+			System.out.println("LightingEngineAggregator: Found " + validIndices.size() + " valid ranks at indices: " +
+					(validIndices.size() <= 20 ? validIndices : validIndices.subList(0, 20) + "..."));
 		}
 
 		System.out.println("LightingEngineAggregator: Done evaluating rank kernels");
@@ -206,21 +217,25 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		Producer<RGB> best = null;
 		double rank = Double.MAX_VALUE;
 
-		boolean printLog = enableVerbose && Math.random() < 0.04;
+		int position = DimensionAware.getPosition(pos.getX(), pos.getY(), width, height, ssw, ssh);
+
+		// Log for pixels we know have valid ranks (30-34, 29-32)
+		int x = (int) pos.getX();
+		int y = (int) pos.getY();
+		boolean printLog = enableVerbose && (x >= 30 && x <= 34 && y >= 29 && y <= 32);
 
 		if (printLog) {
-			System.out.println("RankedChoiceProducer: There are " + size() + " Producers to choose from");
+			System.out.println("RankedChoiceProducer: pixel(" + x + "," + y + ") -> position=" + position);
+			System.out.println("  There are " + size() + " Producers to choose from");
 		}
-
-		int position = DimensionAware.getPosition(pos.getX(), pos.getY(), width, height, ssw, ssh);
-		// assert pos.equals(input.get(position));
 
 		r: for (int i = 0; i < size(); i++) {
 			ProducerWithRank<RGB, Scalar> p = get(i);
 
 			// Use valueAt(position, 0) for shape (N, 1) instead of get(position).getValue() for Scalar
 			double r = ranks.get(i).valueAt(position, 0);
-			if (r < e && printLog) System.out.println(p + " was skipped due to being less than " + e);
+			if (printLog) System.out.println("  Engine " + i + ": rank[" + position + "] = " + r);
+			if (r < e && printLog) System.out.println("  " + p + " was skipped due to being less than " + e);
 			if (r < e) continue r;
 
 			if (best == null) {
@@ -243,14 +258,21 @@ public class LightingEngineAggregator extends RankedChoiceEvaluableForRGB implem
 		if (best == null) return null;
 
 		Object result = best.get().evaluate(args);
+		RGB color;
 		if (result instanceof RGB) {
-			return (RGB) result;
+			color = (RGB) result;
 		} else if (result instanceof PackedCollection) {
-			return new RGB((PackedCollection<?>) result, 0);
+			color = new RGB((PackedCollection<?>) result, 0);
 		} else {
 			throw new IllegalStateException("Unexpected result type: " +
 				(result == null ? "null" : result.getClass().getName()));
 		}
+
+		if (printLog) {
+			System.out.println("  Color evaluated: RGB(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ")");
+		}
+
+		return color;
 	}
 
 	@Override
