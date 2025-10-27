@@ -527,3 +527,131 @@ renderTwoSpheres: 0 non-black pixels (no assertion)
 3. Verify color producer evaluation
 4. Test with single pixel rendering to isolate the issue
 5. Add diagnostic logging to rendering pipeline
+
+## Session 2: Transform Testing Deep Dive (2025-10-27)
+
+### 🔍 Investigation: Ray Direction Normalization
+
+**Question:** Do ray directions need to be normalized for intersection calculations?
+
+**Analysis:**
+- Created comprehensive test battery with 12 tests for ray transformations
+- Initial hypothesis: Ray directions must remain normalized (length 1.0) after transforms
+- This hypothesis was WRONG!
+
+**Mathematical Proof (documented in Sphere.java):**
+The sphere intersection formula uses:
+```
+g = D·D  (direction dot direction)
+t = (-b ± sqrt(discriminant)) / g
+```
+The division by g = ||D||² automatically compensates for scaled directions:
+- If D is scaled by factor s, then g becomes s²×||D||²
+- Division by g multiplies result by 1/s²
+- This correctly accounts for the transform
+- Result: t represents correct distance in WORLD SPACE
+
+**Conclusion:** Ray directions do NOT need normalization. The math works correctly with scaled directions.
+
+### 🐛 FOUND: Real Distance Calculation Bug
+
+**Test:** `testScaledSphereIntersectionDistance`
+- Sphere at origin with radius 2.0
+- Ray from (0,0,10) pointing down -Z
+- **Expected distance:** 8.0 (from z=10 to z=2)
+- **Actual distance:** 9.75 ❌
+- **Error:** 22% too large!
+
+**Implications:**
+- The intersection DOES occur (not -1.0 like in rendering failures)
+- But the distance returned is incorrect
+- This could compound with other issues to cause rendering failures
+
+### 📊 Test Results Summary
+
+**9 Tests PASSED ✅:**
+1. `testTransformMatrixInverse` - Translation matrix inverse works
+2. `testSphereIntersectionWithTransform` - Translated spheres intersect
+3. `testRayOriginTranslation` - Forward translation works
+4. `testRayOriginInverseTranslation` - Inverse translation works
+5. `testRayDirectionUnaffectedByTranslation` - Translation preserves direction
+6. `testCombinedTransformOnRay` - Combined transforms work
+7. `testIntersectionWithTranslatedSphere` - Sphere at (0,0,-5) works
+8. `testIntersectionMissWithIncorrectTransform` - Proves inverse transform required
+9. `testZeroScaleDetection` - Zero scale edge case handled
+
+**1 Test FAILED ❌:**
+- `testScaledSphereIntersectionDistance` - Returns 9.75 instead of 8.0
+
+**Tests Removed (had incorrect assumptions):**
+- `testRayDirectionAffectedByScale` - Assumed normalization required
+- `testRayDirectionNonUniformScale` - Assumed normalization required
+- `testRayInverseScaleTransform` - Needs investigation of transform implementation
+
+### 🎯 Root Cause Hypothesis
+
+The 22% distance error in scaled sphere intersections suggests the bug is in one of:
+1. **How `setSize()` creates the transform matrix** - May not be creating correct scale transform
+2. **How `TransformMatrix.transform()` applies to rays** - May have bug in ray transformation
+3. **How the intersection distance is calculated** - May not account for transform correctly
+
+**Current Status:** Need to create component-level tests to isolate exactly where the 22% error is introduced.
+
+### 🐛 CRITICAL BUG FOUND: Inverse Transform Matrix Calculation
+
+**Component Test Results:**
+
+1. **COMPONENT TEST 1** ✅: Transform matrix creation
+   - Sphere with size=2.0 creates scale(2,2,2) matrix correctly
+   - Matrix diagonals: [2.0, 2.0, 2.0, 1.0] ✓
+
+2. **COMPONENT TEST 2** ❌: **Inverse transform matrix WRONG!**
+   - **Expected:** scale(0.5,0.5,0.5) with diagonals [0.5, 0.5, 0.5, 1.0]
+   - **Actual:** [4.0, 4.0, 4.0, 8.0] - Scale by 4 instead of 0.5!
+   - **THE BUG:** Inverse is scaling by 4× instead of 0.5×
+
+3. **COMPONENT TEST 3** ❌: Ray transformation confirms bug
+   - Ray from (0,0,10) with direction (0,0,-1)
+   - **Expected after scale(0.5):** origin=(0,0,5), direction=(0,0,-0.5)
+   - **Actual:** origin=(0,0,40), direction=(0,0,-4)
+   - Confirms inverse is applying 4× scale instead of 0.5×
+
+4. **COMPONENT TEST 4** ✅: Manual math verification
+   - Manually calculated intersection: t=8.0 (correct)
+   - Proves the math formula is correct if transforms worked properly
+
+**Root Cause:** `TransformMatrix.getInverse()` or `calculateInverse()` has a bug in how it computes the inverse of a scale matrix. Instead of inverting the scale factors (2.0 → 0.5), it's somehow producing 4.0.
+
+**Impact:** This explains the 9.75 vs 8.0 distance error. The incorrect 4× scaling throws off the entire intersection calculation.
+
+### Session 3: Final Bug Diagnosis
+
+Created comprehensive tests (TransformInversionTest.java, DeterminantDebugTest.java) that isolated the exact bug:
+
+**THE BUG: TransformMatrixDeterminant always returns 1.0**
+
+Evidence from DeterminantDebugTest:
+- Identity matrix determinant: 1.0 ✓ (correct)
+- Scale(2,2,2) determinant: 1.0 ✗ (should be 8.0)
+- Scale(5,5,5) determinant: 1.0 ✗ (should be 125.0)
+- Non-diagonal matrix [[2,1,0,0],[1,2,0,0],[0,0,1,0],[0,0,0,1]]: 1.0 ✗ (should be 3.0)
+
+**Why This Breaks Inversion:**
+1. TransformMatrixAdjoint is actually CORRECT
+   - For scale(2,2,2), adjoint diagonal = [4, 4, 4, 8] ✓
+2. TransformMatrix.calculateInverse() uses: `inverse = adjoint / determinant`
+3. With buggy det=1.0: inverse = [4,4,4,8]/1 = [4,4,4,8] ✗
+4. With correct det=8.0: inverse = [4,4,4,8]/8 = [0.5,0.5,0.5,1] ✓
+
+**Implementation Bug Location:**
+- File: `/common/geometry/src/main/java/org/almostrealism/geometry/computations/TransformMatrixDeterminant.java`
+- Issue: The Gaussian elimination algorithm implementation always produces 1.0
+- The algorithm uses complex row swapping and upper triangular conversion, but fails to correctly compute the final determinant
+
+**Cascade Effect:**
+1. Wrong determinant → wrong inverse matrix
+2. Wrong inverse → rays incorrectly transformed to object space
+3. Incorrect ray transformation → wrong intersection distances (9.75 instead of 8.0)
+4. Wrong intersections → black pixels in rendering
+
+**Next Step:** Fix TransformMatrixDeterminant to correctly multiply diagonal elements after upper triangular conversion.

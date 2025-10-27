@@ -292,7 +292,7 @@ public class TransformMatrixTest implements RayFeatures, TransformMatrixFeatures
 
 	// REMOVED: testRayDirectionNonUniformScale
 	// This test had incorrect expectations - directions don't need to be normalized.
-	// The intersection math divides by ||D||² which compensates for scaling.
+	// The intersection math divides by ||D||^2 which compensates for scaling.
 
 	// REMOVED: testRayInverseScaleTransform
 	// This test may have incorrect expectations about how TransformMatrix.transform() works.
@@ -401,6 +401,179 @@ public class TransformMatrixTest implements RayFeatures, TransformMatrixFeatures
 		assertTrue("Should HIT when transforms enabled (dist > 0)", dist2 > 0);
 
 		log("  Inverse transform requirement test passed!");
+	}
+
+	@Test
+	public void testSphereTransformMatrixCreation() {
+		log("========================================");
+		log("COMPONENT TEST 1: How Sphere.calculateTransform() creates the matrix");
+		log("========================================");
+
+		Sphere sphere = new Sphere();
+		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
+		sphere.setSize(2.0);
+		sphere.calculateTransform();
+
+		org.almostrealism.geometry.TransformMatrix transform = sphere.getTransform(true);
+		assertNotNull("Transform should exist", transform);
+
+		double[] matData = transform.toArray(0, 16);
+		log("Transform matrix for sphere with size 2.0:");
+		for (int i = 0; i < 4; i++) {
+			log("  [" + String.format("%6.3f, %6.3f, %6.3f, %6.3f",
+				matData[i*4], matData[i*4+1], matData[i*4+2], matData[i*4+3]) + "]");
+		}
+
+		// Expected: scale(2,2,2) matrix
+		// [2 0 0 0]
+		// [0 2 0 0]
+		// [0 0 2 0]
+		// [0 0 0 1]
+		log("Expected: scale(2,2,2) matrix");
+		assertTrue("M[0,0] should be 2.0", Math.abs(matData[0] - 2.0) < 0.001);
+		assertTrue("M[1,1] should be 2.0", Math.abs(matData[5] - 2.0) < 0.001);
+		assertTrue("M[2,2] should be 2.0", Math.abs(matData[10] - 2.0) < 0.001);
+		assertTrue("M[3,3] should be 1.0", Math.abs(matData[15] - 1.0) < 0.001);
+	}
+
+	@Test
+	public void testSphereInverseTransformMatrix() {
+		log("========================================");
+		log("COMPONENT TEST 2: Inverse transform matrix for scaled sphere");
+		log("========================================");
+
+		Sphere sphere = new Sphere();
+		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
+		sphere.setSize(2.0);
+		sphere.calculateTransform();
+
+		org.almostrealism.geometry.TransformMatrix transform = sphere.getTransform(true);
+		org.almostrealism.geometry.TransformMatrix inverse = transform.getInverse();
+
+		double[] invData = inverse.toArray(0, 16);
+		log("Inverse transform matrix:");
+		for (int i = 0; i < 4; i++) {
+			log("  [" + String.format("%6.3f, %6.3f, %6.3f, %6.3f",
+				invData[i*4], invData[i*4+1], invData[i*4+2], invData[i*4+3]) + "]");
+		}
+
+		// Expected: scale(0.5,0.5,0.5) matrix
+		// [0.5 0   0   0]
+		// [0   0.5 0   0]
+		// [0   0   0.5 0]
+		// [0   0   0   1]
+		log("Expected: scale(0.5,0.5,0.5) matrix");
+		assertTrue("M[0,0] should be 0.5", Math.abs(invData[0] - 0.5) < 0.001);
+		assertTrue("M[1,1] should be 0.5", Math.abs(invData[5] - 0.5) < 0.001);
+		assertTrue("M[2,2] should be 0.5", Math.abs(invData[10] - 0.5) < 0.001);
+		assertTrue("M[3,3] should be 1.0", Math.abs(invData[15] - 1.0) < 0.001);
+	}
+
+	@Test
+	public void testRayTransformationByInverseScale() {
+		log("========================================");
+		log("COMPONENT TEST 3: Ray transformation by inverse scale matrix");
+		log("========================================");
+
+		// Create scale(2,2,2) sphere
+		Sphere sphere = new Sphere();
+		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
+		sphere.setSize(2.0);
+		sphere.calculateTransform();
+
+		// Get inverse transform
+		org.almostrealism.geometry.TransformMatrix inverse = sphere.getTransform(true).getInverse();
+
+		// Create ray from (0,0,10) towards -Z
+		Producer<Ray> r = ray(0.0, 0.0, 10.0, 0.0, 0.0, -1.0);
+		Ray originalRay = new Ray(r.get().evaluate(), 0);
+		log("Original ray:");
+		log("  Origin: (" + originalRay.getOrigin().getX() + ", " +
+			originalRay.getOrigin().getY() + ", " + originalRay.getOrigin().getZ() + ")");
+		log("  Direction: (" + originalRay.getDirection().getX() + ", " +
+			originalRay.getDirection().getY() + ", " + originalRay.getDirection().getZ() + ")");
+
+		// Apply inverse transform
+		Producer<Ray> transformedProducer = inverse.transform(r);
+		Ray transformedRay = new Ray(transformedProducer.get().evaluate(), 0);
+		log("Transformed ray (after inverse scale 0.5):");
+		log("  Origin: (" + transformedRay.getOrigin().getX() + ", " +
+			transformedRay.getOrigin().getY() + ", " + transformedRay.getOrigin().getZ() + ")");
+		log("  Direction: (" + transformedRay.getDirection().getX() + ", " +
+			transformedRay.getDirection().getY() + ", " + transformedRay.getDirection().getZ() + ")");
+
+		// Expected: origin scaled to (0,0,5), direction scaled to (0,0,-0.5)
+		log("Expected: origin=(0,0,5), direction=(0,0,-0.5)");
+		assertTrue("Origin Z should be 5.0", Math.abs(transformedRay.getOrigin().getZ() - 5.0) < 0.001);
+		assertTrue("Direction Z should be -0.5", Math.abs(transformedRay.getDirection().getZ() - (-0.5)) < 0.001);
+
+		// Check direction length
+		double dirLength = Math.sqrt(
+			transformedRay.getDirection().getX() * transformedRay.getDirection().getX() +
+			transformedRay.getDirection().getY() * transformedRay.getDirection().getY() +
+			transformedRay.getDirection().getZ() * transformedRay.getDirection().getZ()
+		);
+		log("Transformed direction length: " + dirLength);
+		assertTrue("Direction length should be 0.5", Math.abs(dirLength - 0.5) < 0.001);
+	}
+
+	@Test
+	public void testManualIntersectionCalculation() {
+		log("========================================");
+		log("COMPONENT TEST 4: Manual intersection calculation step-by-step");
+		log("========================================");
+
+		// Manually compute intersection for transformed ray with unit sphere
+		// Ray: origin=(0,0,5), direction=(0,0,-0.5) [from test above]
+		// Sphere: unit sphere at origin
+
+		double ox = 0, oy = 0, oz = 5;      // Origin
+		double dx = 0, dy = 0, dz = -0.5;  // Direction
+
+		// Compute dot products
+		double oDotd = ox*dx + oy*dy + oz*dz;  // = 0 + 0 + 5*(-0.5) = -2.5
+		double oDoto = ox*ox + oy*oy + oz*oz;  // = 0 + 0 + 25 = 25
+		double dDotd = dx*dx + dy*dy + dz*dz;  // = 0 + 0 + 0.25 = 0.25
+
+		log("Ray-sphere intersection calculation:");
+		log("  oDotd (O.D) = " + oDotd);
+		log("  oDoto (O.O) = " + oDoto);
+		log("  dDotd (D.D) = " + dDotd);
+
+		// Compute discriminant: b^2 - g(c - 1)
+		// where b = oDotd, g = dDotd, c = oDoto
+		double discriminant = (oDotd * oDotd) - dDotd * (oDoto - 1.0);
+		log("  discriminant = b^2 - g(c-1) = " + (oDotd*oDotd) + " - " + dDotd + " * " + (oDoto - 1.0));
+		log("  discriminant = " + discriminant);
+
+		assertTrue("Discriminant should be positive", discriminant > 0);
+
+		// Compute t values
+		double sqrtDisc = Math.sqrt(discriminant);
+		double t1 = (-oDotd + sqrtDisc) / dDotd;
+		double t2 = (-oDotd - sqrtDisc) / dDotd;
+
+		log("  sqrt(discriminant) = " + sqrtDisc);
+		log("  t1 = (-b + sqrt(disc)) / g = " + t1);
+		log("  t2 = (-b - sqrt(disc)) / g = " + t2);
+
+		// Choose closer positive t
+		double t = (t1 > 0 && t2 > 0) ? Math.min(t1, t2) : (t1 > 0 ? t1 : t2);
+		log("  Selected t = " + t);
+
+		// Verify intersection point
+		double hitX = ox + t * dx;
+		double hitY = oy + t * dy;
+		double hitZ = oz + t * dz;
+		log("  Intersection point in sphere space: (" + hitX + ", " + hitY + ", " + hitZ + ")");
+
+		// Check if on unit sphere surface
+		double distFromOrigin = Math.sqrt(hitX*hitX + hitY*hitY + hitZ*hitZ);
+		log("  Distance from origin: " + distFromOrigin);
+		assertTrue("Hit point should be on unit sphere", Math.abs(distFromOrigin - 1.0) < 0.001);
+
+		// This t value should be 8.0 for correct world-space distance
+		log("  Final t value (should be 8.0 for world space): " + t);
 	}
 
 	@Test
