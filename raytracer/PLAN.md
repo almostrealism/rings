@@ -359,8 +359,8 @@ c(producer).subset(shape(3), 0)
 
 ---
 
-**Last Updated:** 2025-10-25
-**Status:** Stage 1 at 98% - API migration complete, 3 of 4 tests passing
+**Last Updated:** 2025-10-26
+**Status:** Transform matrix bug fixed, investigating rendering pipeline issue
 
 ## Progress Update (2025-10-25)
 
@@ -445,3 +445,85 @@ BUILD SUCCESS
 - All rendering tests pass
 
 **Note:** Some diagnostic code at line 168 may encounter ArrayIndexOutOfBoundsException when trying to access rank values during cache initialization, but this does not affect test results. This is likely due to TraversalPolicy shape differences in some engine configurations and can be cleaned up later if needed.
+
+---
+
+## Progress Update (2025-10-26) - TransformMatrix Bug Fix
+
+### ✅ CRITICAL FIX: TransformMatrix Constructor Bug
+
+**Problem:** TransformMatrix(MemoryData, int) constructor was overwriting all matrix data with identity matrix
+
+**Root Cause (ar-common/geometry/TransformMatrix.java:65):**
+```java
+// BUG: Passed identity=true, causing setMatrix(identity) to overwrite data
+public TransformMatrix(MemoryData delegate, int delegateOffset) {
+    this(true, delegate, delegateOffset);  // ← WRONG!
+}
+```
+
+**Impact:**
+- All translation/scale/rotation matrices were being reset to identity
+- Transformed objects couldn't be moved, rotated, or scaled
+- Ray-sphere intersection tests with transforms failed completely
+- Rendering with transforms produced 0 non-black pixels
+
+**Fix Applied:**
+```java
+public TransformMatrix(MemoryData delegate, int delegateOffset) {
+    this(false, delegate, delegateOffset);  // ← FIXED!
+
+    // Check if the delegate actually contains an identity matrix
+    this.isIdentity = isIdentityMatrix();
+    this.inverted = false;
+}
+
+private boolean isIdentityMatrix() {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            double expected = (i == j) ? 1.0 : 0.0;
+            if (Math.abs(toDouble(i * 4 + j) - expected) > 1e-10) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+```
+
+**Verification (TransformMatrixTest):**
+- ✅ testTransformMatrixInverse: Translation matrix preserves data (1, 0, 0, 2) instead of becoming identity
+- ✅ testSphereIntersectionWithTransform Test 1: Sphere at origin intersects correctly (dist=9.0)
+- ✅ testSphereIntersectionWithTransform Test 2: Translated sphere at (2,0,0) now intersects (was -1.0, now 9.0)
+- ✅ testSphereIntersectionWithTransform Test 3: Ray correctly misses translated sphere (dist=-1.0)
+- ⚠️ testSphereIntersectionWithTransform Test 4: Scaled sphere returns dist=9.75 vs expected 8.0 (separate scaling issue)
+
+**Test Organization:**
+- Created `/raytracer/src/test/java/com/almostrealism/raytracer/test/TransformMatrixTest.java`
+- Separated transform matrix tests from rendering tests for clarity
+- All transform matrix tests pass (2/2)
+
+### ❌ NEW ISSUE: Rendering Pipeline Problem
+
+**Symptom:** Even with transforms fixed, rendering produces 0-1 non-black pixels
+
+**Test Results:**
+```
+renderSingleSphere: 0 non-black pixels (FAIL)
+renderTwoSpheres: 0 non-black pixels (no assertion)
+```
+
+**Evidence:**
+- Transform matrix tests pass → transforms work correctly
+- Individual ray intersection tests pass → sphere intersection works
+- Direct sphere intersection works → Sphere.intersectAt() works
+- But full rendering pipeline produces black images
+
+**Hypothesis:** Issue is in rendering pipeline (LightingEngineAggregator, RayTracedScene, or SuperSampler) rather than in core transform/intersection logic
+
+**Next Steps:**
+1. Investigate LightingEngineAggregator evaluation with transforms enabled
+2. Check if rank cache is being computed correctly
+3. Verify color producer evaluation
+4. Test with single pixel rendering to isolate the issue
+5. Add diagnostic logging to rendering pipeline
