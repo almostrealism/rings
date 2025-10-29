@@ -524,7 +524,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	@Override
 	public void destroy() {
 		Destroyable.super.destroy();
-		dependencies.forEach(Destroyable::destroy);
+		Destroyable.destroy(dependencies);
 		dependencies.clear();
 	}
 

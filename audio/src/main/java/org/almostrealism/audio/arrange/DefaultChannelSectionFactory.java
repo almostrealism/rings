@@ -238,7 +238,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 		@Override
 		public void destroy() {
 			ChannelSection.super.destroy();
-			dependencies.forEach(Destroyable::destroy);
+			Destroyable.destroy(dependencies);
 			dependencies.clear();
 		}
 	}
