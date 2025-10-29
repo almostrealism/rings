@@ -70,6 +70,10 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		return autoencoder.getSampleRate();
 	}
 
+	public void setWeightSeed(long seed) {
+		this.random = new Random(seed);
+	}
+
 	public TraversalPolicy getFeatureShape() {
 		if (features.isEmpty()) return null;
 		return features.getLast().getFeatureShape();
@@ -90,6 +94,11 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		}
 
 		this.features.add(features);
+	}
+
+	public void clearSources() {
+		this.features.forEach(ComposableAudioFeatures::destroy);
+		this.features.clear();
 	}
 
 	/**
@@ -133,6 +142,11 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	public void destroy() {
 		if (autoencoder != null) {
 			autoencoder.destroy();
+		}
+
+		if (features != null) {
+			features.forEach(ComposableAudioFeatures::destroy);
+			features = null;
 		}
 	}
 }

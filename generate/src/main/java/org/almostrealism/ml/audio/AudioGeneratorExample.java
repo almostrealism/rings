@@ -16,8 +16,10 @@
 
 package org.almostrealism.ml.audio;
 
+import io.almostrealism.code.DataContext;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.hardware.Hardware;
 
 import java.io.File;
 import java.util.Random;
@@ -100,6 +102,8 @@ public class AudioGeneratorExample {
 					generator.generateAudio(prompt, seed, filename);
 				}
 			}
+		} finally {
+			Hardware.getLocalHardware().getAllDataContexts().forEach(DataContext::destroy);
 		}
 	}
 }

@@ -376,6 +376,14 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		if (stateDictionary != null) {
 			stateDictionary.destroy();
 		}
+
+		if (model != null) {
+			model.destroy();
+		}
+
+		if (compiled != null) {
+			compiled.destroy();
+		}
 	}
 
 	protected PackedCollection<?> createWeight(String key, int... dims) {

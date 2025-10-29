@@ -95,6 +95,8 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 	public double getStrength() { return strength; }
 
+	public AudioComposer getComposer() { return composer; }
+
 	public int getComposerDimension() { return composer.getEmbeddingDimension(); }
 
 	/**
