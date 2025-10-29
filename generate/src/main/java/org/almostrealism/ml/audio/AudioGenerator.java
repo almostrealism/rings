@@ -284,19 +284,21 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		PackedCollection<?> tPC = new PackedCollection<>(1);
 
+		double stepCount = NUM_STEPS - startStep;
+
 		// Run diffusion steps starting from startStep
 		for (int step = startStep; step < NUM_STEPS; step++) {
 			float currT = sigmas[step];
 			float nextT = sigmas[step + 1];
 			tPC.setMem(0, currT);
 
-			if (progressMonitor != null) {
-				progressMonitor.accept((double) step / NUM_STEPS);
-			}
-
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
 			PackedCollection<?> output = getDitModel().forward(x, tPC, crossAttentionInput, globalCond);
+
+			if (progressMonitor != null) {
+				progressMonitor.accept((1 + step - startStep) / stepCount);
+			}
 
 			checkNan(x, "input after model step " + step);
 			checkNan(output, "output after model step " + step);
