@@ -24,8 +24,6 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 
-import java.util.function.Supplier;
-
 public abstract class SineWaveComputation extends OperationComputationAdapter<PackedCollection<?>> {
 	protected static final double TWO_PI = 2 * Math.PI;
 
@@ -38,7 +36,7 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 				data.getPhase(),
 				data.getAmplitude(),
 				data.getDepth(),
-				(Supplier) envelope);
+				(Producer) envelope);
 	}
 
 	public ArrayVariable<Double> getOutput() { return getArgument(0); }

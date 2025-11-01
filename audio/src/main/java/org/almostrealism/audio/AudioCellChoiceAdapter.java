@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@
 package org.almostrealism.audio;
 
 import io.almostrealism.code.Computation;
-import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.computations.Switch;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
@@ -77,7 +74,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 
 	private void initParallel() {
 		getCellSet().forEach(c ->
-				c.setReceptor(a(indexes(c).mapToObj(storage::get).map(this::p).toArray(Supplier[]::new))));
+				c.setReceptor(a(indexes(c).mapToObj(storage::get).map(this::p).toArray(Producer[]::new))));
 	}
 
 	private IntStream indexes(CollectionTemporalCellAdapter c) {

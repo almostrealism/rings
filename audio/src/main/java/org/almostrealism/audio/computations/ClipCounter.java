@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,9 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.kernel.KernelStructureContext;
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.compute.ParallelProcess;
 import io.almostrealism.compute.Process;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.scope.Scope;
@@ -31,21 +31,20 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class ClipCounter extends OperationComputationAdapter<PackedCollection<?>> {
-	public ClipCounter(Supplier<Evaluable<? extends Scalar>> clipCount,
-					   Supplier<Evaluable<? extends Pair<?>>> clipSettings,
-					   Supplier<Evaluable<? extends PackedCollection<?>>> value) {
-		super(new Supplier[] { clipCount, clipSettings, value });
+	public ClipCounter(Producer<Scalar> clipCount,
+					   Producer<Pair<?>> clipSettings,
+					   Producer<PackedCollection<?>> value) {
+		super(new Producer[] { clipCount, clipSettings, value });
 	}
 
 	@Override
 	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
 		return new ClipCounter(
-				(Supplier<Evaluable<? extends Scalar>>) children.get(0),
-				(Supplier<Evaluable<? extends Pair<?>>>) children.get(1),
-				(Supplier<Evaluable<? extends PackedCollection<?>>>) children.get(2));
+				(Producer) children.get(0),
+				(Producer) children.get(1),
+				(Producer) children.get(2));
 	}
 
 	@Override

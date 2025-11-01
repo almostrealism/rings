@@ -32,7 +32,6 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
@@ -42,31 +41,31 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
 		super(data.getOutput(),
 				frequency,
-				(Supplier) resonance,
-				(Supplier) data.getSampleRate(),
-				(Supplier) data.getC(),
-				(Supplier) data.getA1(),
-				(Supplier) data.getA2(),
-				(Supplier) data.getA3(),
-				(Supplier) data.getB1(),
-				(Supplier) data.getB2(),
-				(Supplier) data.getInputHistory0(),
-				(Supplier) data.getInputHistory1(),
-				(Supplier) data.getOutputHistory0(),
-				(Supplier) data.getOutputHistory1(),
-				(Supplier) data.getOutputHistory2(),
-				(Supplier) input);
+				(Producer) resonance,
+				(Producer) data.getSampleRate(),
+				(Producer) data.getC(),
+				(Producer) data.getA1(),
+				(Producer) data.getA2(),
+				(Producer) data.getA3(),
+				(Producer) data.getB1(),
+				(Producer) data.getB2(),
+				(Producer) data.getInputHistory0(),
+				(Producer) data.getInputHistory1(),
+				(Producer) data.getOutputHistory0(),
+				(Producer) data.getOutputHistory1(),
+				(Producer) data.getOutputHistory2(),
+				(Producer) input);
 		this.high = high;
 	}
 
-	private AudioPassFilterComputation(boolean high, Supplier... arguments) {
+	private AudioPassFilterComputation(boolean high, Producer... arguments) {
 		super(arguments);
 		this.high = high;
 	}
 
 	@Override
 	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
-		return new AudioPassFilterComputation(high, children.toArray(Supplier[]::new));
+		return new AudioPassFilterComputation(high, children.toArray(Producer[]::new));
 	}
 
 	public ArrayVariable<Double> getOutput() { return getArgument(0); }
