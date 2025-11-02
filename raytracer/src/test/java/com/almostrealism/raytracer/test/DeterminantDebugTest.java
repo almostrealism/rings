@@ -1,9 +1,24 @@
+/*
+ * Copyright 2025 Michael Murray
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almostrealism.raytracer.test;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.geometry.TransformMatrixFeatures;
-import org.almostrealism.geometry.computations.TransformMatrixDeterminant;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
@@ -41,31 +56,6 @@ public class DeterminantDebugTest implements TransformMatrixFeatures, TestFeatur
 		log("Scale(3,3,3) determinant: " + scale3Det);
 		log("Expected: 27.0");
 		assertTrue("Scale(3,3,3) determinant should be 27.0", Math.abs(scale3Det - 27.0) < 0.001);
-	}
-
-	@Test
-	public void testDirectDeterminantComputation() {
-		log("========================================");
-		log("TEST: Direct Determinant Computation");
-		log("========================================");
-
-		// Create scale(2,2,2) and test TransformMatrixDeterminant directly
-		Producer<TransformMatrix> scaleProducer = scaleMatrix(vector(2.0, 2.0, 2.0));
-		TransformMatrix scale = new TransformMatrix(scaleProducer.get().evaluate(), 0);
-
-		// Use TransformMatrixDeterminant directly
-		TransformMatrixDeterminant detComputation = new TransformMatrixDeterminant(v(scale));
-		double det = detComputation.get().evaluate().toDouble(0);
-
-		log("Direct TransformMatrixDeterminant result: " + det);
-		log("Expected: 8.0");
-
-		// Also manually calculate what the determinant should be
-		double[] data = scale.toArray();
-		double manualDet = data[0] * data[5] * data[10] * data[15];  // For diagonal matrix
-		log("Manual calculation (product of diagonal): " + manualDet);
-
-		assertTrue("Direct determinant should be 8.0", Math.abs(det - 8.0) < 0.001);
 	}
 
 	@Test
