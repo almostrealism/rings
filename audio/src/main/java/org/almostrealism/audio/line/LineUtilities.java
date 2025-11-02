@@ -46,6 +46,14 @@ public class LineUtilities {
 
 		return getLine(lastFormat);
 	}
+
+	public static int frameCount(PackedCollection<?> sample) {
+		if (sample.getShape().getDimensions() == 1) {
+			return sample.getShape().length(0);
+		} else {
+			return sample.getShape().length(1);
+		}
+	}
 	
 	/**
 	 * Returns a SourceDataOutputLine for the specified format.
