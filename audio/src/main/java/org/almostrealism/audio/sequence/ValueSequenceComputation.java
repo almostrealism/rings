@@ -56,21 +56,21 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	public Producer<Scalar> wavePosition() { return (Producer) getInputs().get(1); }
 	public Producer<Scalar> durationFrames() { return (Producer) getInputs().get(3); }
 
-	public <T> List<T> choices(Function<Supplier<Evaluable<? extends Scalar>>, T> processor) {
+	public <T> List<T> choices(Function<Producer<Scalar>, T> processor) {
 		return IntStream.range(4, getInputs().size())
-				.mapToObj(i -> (T) processor.apply((Supplier) getInputs().get(i)))
+				.mapToObj(i -> (T) processor.apply((Producer) getInputs().get(i)))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public Scope getScope(KernelStructureContext context) { return scope; }
 
-	private static Supplier[] inputArgs(BaseAudioData data, Producer<PackedCollection<?>> durationFrames,
+	private static Producer[] inputArgs(BaseAudioData data, Producer<PackedCollection<?>> durationFrames,
 										PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
-		Supplier args[] = new Supplier[4 + choices.length];
+		Producer args[] = new Producer[4 + choices.length];
 		args[0] = () -> new Provider<>(output);
-		args[1] = data::getWavePosition;
-		args[2] = data::getWaveLength;
+		args[1] = data.getWavePosition();
+		args[2] = data.getWaveLength();
 		args[3] = durationFrames;
 		IntStream.range(0, choices.length).forEach(i -> args[i + 4] = choices[i]);
 		return args;

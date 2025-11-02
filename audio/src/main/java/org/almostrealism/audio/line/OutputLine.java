@@ -24,31 +24,30 @@ import org.almostrealism.io.SystemUtils;
 
 import java.util.function.Supplier;
 
+/**
+ * An audio output line for writing audio data to a destination (e.g., speakers, headphones, file).
+ * This is the primary interface for all audio output operations in the Rings framework.
+ * <p>
+ * Implementations should handle the conversion of {@link PackedCollection} audio data
+ * to the appropriate output format and manage buffering for real-time or offline rendering.
+ * <p>
+ * Extends {@link BufferedAudio} for buffering configuration and {@link Destroyable}
+ * for lifecycle management.
+ *
+ * @see SourceDataOutputLine for real-time audio playback to hardware
+ * @see BufferedOutputScheduler for managing buffered real-time output
+ */
 public interface OutputLine extends BufferedAudio, Destroyable {
 
 	/**
-	 * The position in the buffer of the last frame that was sent to the device.
+	 * Returns the position in the buffer where the last frame was read/consumed by the device.
+	 * This is critical for real-time audio playback to prevent buffer underruns and overruns.
+	 * Implementations should query the underlying hardware or output system for this value.
+	 *
+	 * @return The read position in frames, or 0 if not tracking
 	 */
 	default int getReadPosition() {
 		return 0;
-	}
-
-	/**
-	 * Write the specified bytes. Using this method, the caller must
-	 * be aware of the number of bytes in a sample to write a valid
-	 * set of samples.
-	 */
-	@Deprecated
-	default void write(byte b[]) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Write the specified frames.
-	 */
-	@Deprecated
-	default void write(double d[][]) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**

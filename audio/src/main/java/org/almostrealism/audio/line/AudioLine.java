@@ -16,8 +16,24 @@
 
 package org.almostrealism.audio.line;
 
+/**
+ * A bidirectional audio line that supports both input and output operations.
+ * This interface combines {@link InputLine} and {@link OutputLine} capabilities,
+ * typically used for full-duplex audio processing scenarios.
+ */
 public interface AudioLine extends InputLine, OutputLine {
+	/**
+	 * Sets the passthrough level, which controls how much of the input signal
+	 * is mixed directly into the output (monitoring).
+	 *
+	 * @param level Passthrough level from 0.0 (no passthrough) to 1.0 (full passthrough)
+	 */
 	default void setPassthroughLevel(double level) { }
 
+	/**
+	 * Returns the current passthrough level.
+	 *
+	 * @return Passthrough level from 0.0 to 1.0
+	 */
 	default double getPassthroughLevel() { return 0.0; }
 }

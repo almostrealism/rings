@@ -32,7 +32,6 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 import org.almostrealism.CodeFeatures;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
@@ -42,31 +41,31 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
 		super(data.getOutput(),
 				frequency,
-				(Supplier) resonance,
-				(Supplier) data.getSampleRate(),
-				(Supplier) data.getC(),
-				(Supplier) data.getA1(),
-				(Supplier) data.getA2(),
-				(Supplier) data.getA3(),
-				(Supplier) data.getB1(),
-				(Supplier) data.getB2(),
-				(Supplier) data.getInputHistory0(),
-				(Supplier) data.getInputHistory1(),
-				(Supplier) data.getOutputHistory0(),
-				(Supplier) data.getOutputHistory1(),
-				(Supplier) data.getOutputHistory2(),
-				(Supplier) input);
+				(Producer) resonance,
+				(Producer) data.getSampleRate(),
+				(Producer) data.getC(),
+				(Producer) data.getA1(),
+				(Producer) data.getA2(),
+				(Producer) data.getA3(),
+				(Producer) data.getB1(),
+				(Producer) data.getB2(),
+				(Producer) data.getInputHistory0(),
+				(Producer) data.getInputHistory1(),
+				(Producer) data.getOutputHistory0(),
+				(Producer) data.getOutputHistory1(),
+				(Producer) data.getOutputHistory2(),
+				(Producer) input);
 		this.high = high;
 	}
 
-	private AudioPassFilterComputation(boolean high, Supplier... arguments) {
+	private AudioPassFilterComputation(boolean high, Producer... arguments) {
 		super(arguments);
 		this.high = high;
 	}
 
 	@Override
 	public ParallelProcess<Process<?, ?>, Runnable> generate(List<Process<?, ?>> children) {
-		return new AudioPassFilterComputation(high, children.toArray(Supplier[]::new));
+		return new AudioPassFilterComputation(high, children.toArray(Producer[]::new));
 	}
 
 	public ArrayVariable<Double> getOutput() { return getArgument(0); }
@@ -113,30 +112,30 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 		Expression<Double> pi = e(Math.PI);
 
 		if (high) {
-			addVariable(getC().referenceRelative(0).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
-			addVariable(getA1().referenceRelative(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().referenceRelative(0).assign(e(-2.0).multiply(a1())));
-			addVariable(getA3().referenceRelative(0).assign(a1()));
-			addVariable(getB1().referenceRelative(0).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
-			addVariable(getB2().referenceRelative(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().reference(e(0)).assign(pi.multiply(frequency()).divide(sampleRate()).tan()));
+			addVariable(getA1().reference(e(0)).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().reference(e(0)).assign(e(-2.0).multiply(a1())));
+			addVariable(getA3().reference(e(0)).assign(a1()));
+			addVariable(getB1().reference(e(0)).assign(e(2.0).multiply(c().multiply(c()).subtract(one)).multiply(a1())));
+			addVariable(getB2().reference(e(0)).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		} else {
-			addVariable(getC().referenceRelative(0).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
-			addVariable(getA1().referenceRelative(0).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
-			addVariable(getA2().referenceRelative(0).assign(e(2.0).multiply(a1())));
-			addVariable(getA3().referenceRelative(0).assign(getA1().valueAt(0)));
-			addVariable(getB1().referenceRelative(0).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
-			addVariable(getB2().referenceRelative(0).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
+			addVariable(getC().reference(e(0)).assign(one.divide(pi.multiply(frequency()).divide(sampleRate()).tan())));
+			addVariable(getA1().reference(e(0)).assign(one.divide(one.add(resonance().multiply(c())).add(c().multiply(c())))));
+			addVariable(getA2().reference(e(0)).assign(e(2.0).multiply(a1())));
+			addVariable(getA3().reference(e(0)).assign(getA1().valueAt(0)));
+			addVariable(getB1().reference(e(0)).assign(e(2.0).multiply(one.subtract(c().multiply(c()))).multiply(a1())));
+			addVariable(getB2().reference(e(0)).assign(one.subtract(resonance().multiply(c())).add(c().multiply(c())).multiply(a1())));
 		}
 
 		Expression<Double> input = Max.of(Min.of(getInput().valueAt(0), e(MAX_INPUT)), e(-MAX_INPUT));
 
-		addVariable(getOutput().referenceRelative(0).assign(
+		addVariable(getOutput().reference(e(0)).assign(
 				a1().multiply(input).add(a2().multiply(inputHistory0())).add(a3().multiply(inputHistory1())).subtract(
 						b1().multiply(outputHistory0())).subtract(b2().multiply(outputHistory1()))));
-		addVariable(getInputHistory1().referenceRelative(0).assign(getInputHistory0().valueAt(0)));
-		addVariable(getInputHistory0().referenceRelative(0).assign(input));
-		addVariable(getOutputHistory2().referenceRelative(0).assign(getOutputHistory1().valueAt(0)));
-		addVariable(getOutputHistory1().referenceRelative(0).assign(getOutputHistory0().valueAt(0)));
-		addVariable(getOutputHistory0().referenceRelative(0).assign(getOutput().valueAt(0)));
+		addVariable(getInputHistory1().reference(e(0)).assign(getInputHistory0().valueAt(0)));
+		addVariable(getInputHistory0().reference(e(0)).assign(input));
+		addVariable(getOutputHistory2().reference(e(0)).assign(getOutputHistory1().valueAt(0)));
+		addVariable(getOutputHistory1().reference(e(0)).assign(getOutputHistory0().valueAt(0)));
+		addVariable(getOutputHistory0().reference(e(0)).assign(getOutput().valueAt(0)));
 	}
 }
