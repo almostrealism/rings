@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ import java.util.function.Supplier;
  *   <li>Multiply shadow and shade to get final color contribution</li>
  * </ol>
  *
- * <p>This class implements {@link ProducerWithRank} where the rank is the intersection distance.
+ * <p>This class implements {@link io.almostrealism.relation.ProducerWithRank} where the rank is the intersection distance.
  * This allows {@link LightingEngineAggregator} to use ranked choice to select the closest visible
  * surface.</p>
  *

@@ -1,6 +1,5 @@
 package com.almostrealism.raytracer.test;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorFeatures;
 import org.almostrealism.collect.CollectionProducer;
