@@ -19,6 +19,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-swing</artifactId>
+			<version>0.43</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.flowtree</groupId>
 			<artifactId>ar-graphpersist</artifactId>
 		</dependency>

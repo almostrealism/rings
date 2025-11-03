@@ -14,13 +14,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-physics</artifactId>
+			<artifactId>ar-utils</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-visual-space</artifactId>
-			<version>0.43</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-space</artifactId>
 		</dependency>
 	</dependencies>
 </project>
