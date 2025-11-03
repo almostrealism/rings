@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.almostrealism.shade;
+package com.almostrealism.renderable;
 
 public interface Colored {
 	void setColor(float r, float g, float b, float a);

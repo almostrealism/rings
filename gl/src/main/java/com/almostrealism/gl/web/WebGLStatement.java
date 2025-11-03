@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Murray
+ * Copyright 2016 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.almostrealism.webgl;
+package com.almostrealism.gl.web;
 
 import io.almostrealism.html.HTMLContent;
 
-public interface WebGLExportable {
-	HTMLContent getWebGLContent();
+public class WebGLStatement implements HTMLContent {
+	@Override
+	public String toHTML() { return null; }
 }

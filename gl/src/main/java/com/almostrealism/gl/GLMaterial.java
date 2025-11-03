@@ -16,8 +16,8 @@
 
 package com.almostrealism.gl;
 
-import com.almostrealism.shade.Diffuse;
-import com.almostrealism.shade.Specular;
+import com.almostrealism.renderable.Diffuse;
+import com.almostrealism.renderable.Specular;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.color.RGBA;
 

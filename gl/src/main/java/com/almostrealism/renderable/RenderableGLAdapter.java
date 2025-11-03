@@ -24,7 +24,6 @@ import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.GLDiffuseShader;
 import com.almostrealism.gl.shaders.VertexShader;
-import com.almostrealism.shade.Colored;
 import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;

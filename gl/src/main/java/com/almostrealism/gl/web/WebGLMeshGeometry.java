@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almostrealism.webgl;
+package com.almostrealism.gl.web;
 
 import io.almostrealism.html.HTMLContent;
 import org.almostrealism.space.Mesh;

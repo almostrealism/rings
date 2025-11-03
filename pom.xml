@@ -26,7 +26,6 @@
 		<module>audio</module>
 		<module>pattern</module>
 		<module>audio-space</module>
-		<module>shading</module>
 		<module>treeview</module>
 		<module>swing</module>
 		<module>gl</module>

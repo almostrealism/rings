@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2016 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-/**
- * Tools for generating WebGL content.
- * 
- * @author  Michael Murray
- */
-package com.almostrealism.webgl;
+package com.almostrealism.gl.web;
+
+import io.almostrealism.html.HTMLContent;
+import io.almostrealism.html.HTMLFragment;
+
+import java.util.ArrayList;
+
+public class WebGLStatementList extends ArrayList<WebGLStatement> implements WebGLExportable {
+	@Override
+	public HTMLContent getWebGLContent() {
+		HTMLFragment f = new HTMLFragment();
+		for (WebGLStatement g : this) { f.add(g); }
+		return f;
+	}
+}

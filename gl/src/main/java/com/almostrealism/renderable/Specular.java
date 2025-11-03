@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.almostrealism.webgl;
+package com.almostrealism.renderable;
 
-public enum WebGLMethod {
+public interface Specular {
+	void setSpecular(float r, float g, float b, float a);
 	
+	float[] getSpecular();
+	
+	void setShininess(float s);
+	
+	float getShininess();
 }

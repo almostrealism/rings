@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Murray
+ * Copyright 2020 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.shade;
+package com.almostrealism.gl.web;
 
-public interface Diffuse {
-	void setDiffuse(float r, float g, float b, float a);
-	
-	float[] getDiffuse();
+import io.almostrealism.html.HTMLContent;
+
+public interface WebGLExportable {
+	HTMLContent getWebGLContent();
 }

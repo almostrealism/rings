@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package com.almostrealism.webgl;
+package com.almostrealism.renderable;
 
-import io.almostrealism.html.HTMLContent;
-import io.almostrealism.html.HTMLFragment;
-
-import java.util.ArrayList;
-
-public class WebGLStatementList extends ArrayList<WebGLStatement> implements WebGLExportable {
-	@Override
-	public HTMLContent getWebGLContent() {
-		HTMLFragment f = new HTMLFragment();
-		for (WebGLStatement g : this) { f.add(g); }
-		return f;
-	}
+public interface Diffuse {
+	void setDiffuse(float r, float g, float b, float a);
+	
+	float[] getDiffuse();
 }
