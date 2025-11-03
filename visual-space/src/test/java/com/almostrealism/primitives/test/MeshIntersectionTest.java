@@ -16,7 +16,7 @@
 
 package com.almostrealism.primitives.test;
 
-import com.almostrealism.projection.ThinLensCamera;
+import org.almostrealism.projection.ThinLensCamera;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;

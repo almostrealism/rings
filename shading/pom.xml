@@ -16,11 +16,5 @@
 			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-utils</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-visual</artifactId>
-			<version>0.43</version>
-		</dependency>
 	</dependencies>
 </project>

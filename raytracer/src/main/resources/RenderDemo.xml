@@ -38,7 +38,7 @@
    </object>
   </void>
   <void property="camera">
-   <object class="com.almostrealism.projection.ThinLensCamera" id="ThinLensCamera0">
+   <object class="org.almostrealism.projection.ThinLensCamera" id="ThinLensCamera0">
     <void method="updateUVW"/>
     <void property="focus">
      <double>10.0</double>

@@ -19,7 +19,7 @@ package com.almostrealism.network;
 import com.almostrealism.lighting.StandardLightingRigs;
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.primitives.Sphere;
-import com.almostrealism.projection.ThinLensCamera;
+import org.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.SilhouetteShader;
