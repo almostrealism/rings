@@ -18,7 +18,7 @@ package com.almostrealism.renderable;
 
 import org.almostrealism.io.Console;
 import org.almostrealism.space.Mesh;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.space.ShadableSurfaceWrapper;

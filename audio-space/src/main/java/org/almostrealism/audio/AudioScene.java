@@ -55,7 +55,7 @@ import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.Animation;
 import io.almostrealism.uml.ModelEntity;
 import org.almostrealism.time.Frequency;

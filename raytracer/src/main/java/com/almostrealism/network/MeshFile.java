@@ -28,10 +28,10 @@ import org.almostrealism.geometry.Ray;
 import org.almostrealism.geometry.ContinuousField;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.Operator;
-import org.almostrealism.space.BoundingSolid;
+import org.almostrealism.geometry.BoundingSolid;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.MeshSource;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.ShadableSurfaceWrapper;
 
 public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSurface {

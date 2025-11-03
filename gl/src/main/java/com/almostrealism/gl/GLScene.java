@@ -23,7 +23,7 @@ import com.almostrealism.renderable.RenderableSurfaceFactory;
 import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 import java.util.ArrayList;
 import java.util.List;

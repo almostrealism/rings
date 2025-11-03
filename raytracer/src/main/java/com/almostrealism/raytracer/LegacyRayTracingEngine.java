@@ -30,7 +30,7 @@ import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
 

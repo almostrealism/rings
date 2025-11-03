@@ -32,7 +32,7 @@ import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.CodeFeatures;

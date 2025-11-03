@@ -1,7 +1,7 @@
 package com.almostrealism.raytracer.test;
 
 import org.almostrealism.color.PointLight;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;

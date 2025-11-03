@@ -26,7 +26,7 @@ import io.almostrealism.resource.IOStreams;
 import org.almostrealism.algebra.Gradient;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.ShadableSurfaceWrapper;
 
 /**

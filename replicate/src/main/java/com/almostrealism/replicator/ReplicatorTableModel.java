@@ -25,10 +25,10 @@ import javax.swing.table.TableModel;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.geometry.BasicGeometry;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.uml.ViewModel;
 
-import com.almostrealism.lighting.StandardLightingRigs;
+import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.projection.PinholeCamera;
 
 /**

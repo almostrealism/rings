@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.SurfaceGroup;
 
 /**

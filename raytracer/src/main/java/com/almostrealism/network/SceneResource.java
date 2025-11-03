@@ -4,7 +4,7 @@ import io.almostrealism.resource.IOStreams;
 import io.almostrealism.resource.Permissions;
 import io.almostrealism.resource.Resource;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 import java.io.IOException;
 import java.io.InputStream;

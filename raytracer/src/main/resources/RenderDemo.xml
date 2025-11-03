@@ -7,7 +7,7 @@
     <void property="shaders">
      <array class="com.almostrealism.rayshade.Shader" length="1">
       <void index="0">
-       <object class="com.almostrealism.rayshade.DiffuseShader" id="DiffuseShader0">
+       <object class="org.almostrealism.color.DiffuseShader" id="DiffuseShader0">
         <void id="ObjectArray0" property="propertyValues"/>
         <void property="propertyValues">
          <object idref="ObjectArray0"/>

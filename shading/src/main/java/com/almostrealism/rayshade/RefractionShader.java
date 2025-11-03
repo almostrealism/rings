@@ -27,7 +27,6 @@ import io.almostrealism.uml.Multiple;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Intersection;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
@@ -37,7 +36,7 @@ import org.almostrealism.hardware.DynamicProducerForMemoryData;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Evaluable;
 

@@ -43,11 +43,11 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 import org.almostrealism.io.FilePrintWriter;
 import org.almostrealism.projection.PinholeCamera;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.raytracer.Settings;
 
 import io.flowtree.job.Job;

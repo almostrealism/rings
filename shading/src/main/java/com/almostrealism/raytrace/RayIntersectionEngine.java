@@ -22,7 +22,7 @@ import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.geometry.DimensionAwareKernel;
 
 import java.util.ArrayList;

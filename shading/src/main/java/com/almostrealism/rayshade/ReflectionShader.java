@@ -35,8 +35,10 @@ import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Ray;
+import org.almostrealism.geometry.RayFeatures;
+import org.almostrealism.geometry.ReflectedRay;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.Texture;
 
 import java.util.ArrayList;
@@ -44,13 +46,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A ReflectionShader object provides a shading method for reflective surfaces.
+ * A {@link ReflectionShader} provides a shading method for reflective surfaces.
  * The ReflectionShader class uses a shading algorithm based on Shlick's
  * approximation to the Fresnel equations.
  * 
  * @author  Michael Murray
  */
-public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader<ShaderContext>, Editable, RGBFeatures, CodeFeatures {
+public class ReflectionShader extends ShaderSet<ShaderContext> implements
+		Shader<ShaderContext>, Editable, RGBFeatures, RayFeatures {
   public static int maxReflections = 4;
   
   private static final String propNames[] = {"Reflectivity", "Reflective Color",

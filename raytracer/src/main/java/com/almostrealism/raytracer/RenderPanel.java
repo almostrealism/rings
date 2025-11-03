@@ -32,7 +32,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;

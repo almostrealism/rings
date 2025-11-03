@@ -16,8 +16,8 @@
 
 package com.almostrealism.raytrace;
 
-import com.almostrealism.lighting.AmbientLight;
-import com.almostrealism.lighting.DirectionalAmbientLight;
+import org.almostrealism.color.AmbientLight;
+import org.almostrealism.color.DirectionalAmbientLight;
 import org.almostrealism.color.PointLight;
 import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.Ops;
@@ -143,8 +143,7 @@ public class LightingEngine<T extends ContinuousField> extends ProducerWithRankA
 
 			shade = surface instanceof Shadable ? ((Shadable) surface).shade(context) : null;
 		} else if (light instanceof AmbientLight) {
-			shade = AmbientLight.ambientLightingCalculation(surface, (AmbientLight) light,
-						origin(intersections.get(0)));
+			shade = ((AmbientLight) light).lightingCalculation(surface, origin(intersections.get(0)));
 		} else {
 			shade = RGBFeatures.getInstance().black();
 		}

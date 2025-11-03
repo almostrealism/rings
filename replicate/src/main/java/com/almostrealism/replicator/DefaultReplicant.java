@@ -17,12 +17,10 @@
 package com.almostrealism.replicator;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.almostrealism.geometry.BasicGeometry;
-import org.almostrealism.space.GeometryStack;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 public class DefaultReplicant<T extends ShadableSurface> extends Replicant<T> {
 	private Map<String, BasicGeometry> geo;

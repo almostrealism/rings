@@ -16,16 +16,16 @@
 
 package com.almostrealism.raytracer;
 
-import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.StandardLightingRigs;
+import org.almostrealism.color.DirectionalAmbientLight;
+import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.primitives.RigidPlane;
 import org.almostrealism.primitives.SphericalLight;
 import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.rayshade.BlendingShader;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.BlendingShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
-import com.almostrealism.rayshade.RigidBodyStateShader;
+import org.almostrealism.physics.RigidBodyStateShader;
 import org.almostrealism.primitives.RigidSphere;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RenderParameters;
@@ -36,7 +36,7 @@ import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.space.Animation;

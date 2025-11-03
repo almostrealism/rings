@@ -22,7 +22,7 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 
 import org.almostrealism.geometry.Camera;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.ShadableSurfaceWrapper;
 import org.almostrealism.swing.Dialog;
 import io.almostrealism.uml.Nameable;

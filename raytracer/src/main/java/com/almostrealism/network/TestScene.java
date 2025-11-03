@@ -16,13 +16,13 @@
 
 package com.almostrealism.network;
 
-import com.almostrealism.lighting.StandardLightingRigs;
+import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
-import com.almostrealism.rayshade.SilhouetteShader;
+import org.almostrealism.color.SilhouetteShader;
 import com.almostrealism.raytracer.Thing;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
@@ -35,7 +35,7 @@ import org.almostrealism.space.Mesh;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 import org.almostrealism.CodeFeatures;

@@ -37,7 +37,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.geometry.DimensionAware;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 /**
  * {@link RayTracedScene} coordinates the ray tracing process for rendering an image of a scene.

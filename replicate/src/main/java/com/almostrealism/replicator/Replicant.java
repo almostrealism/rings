@@ -25,7 +25,7 @@ import com.almostrealism.replicator.transform.TransformedSurfaceGroup;
 import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.geometry.BasicGeometry;
 import org.almostrealism.space.GeometryStack;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.SurfaceGroup;
 
 import com.almostrealism.renderable.Renderable;

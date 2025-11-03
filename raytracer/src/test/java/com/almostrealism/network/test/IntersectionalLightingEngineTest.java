@@ -20,7 +20,7 @@ import org.almostrealism.color.PointLight;
 import io.almostrealism.code.ComputableBase;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.primitives.Sphere;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;

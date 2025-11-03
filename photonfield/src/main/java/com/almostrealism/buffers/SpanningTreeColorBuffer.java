@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
 
 /**

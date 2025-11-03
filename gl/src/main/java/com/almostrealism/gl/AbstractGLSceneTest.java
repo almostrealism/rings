@@ -23,7 +23,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 public class AbstractGLSceneTest {
 	public Scene createTestScene() {

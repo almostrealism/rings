@@ -51,7 +51,7 @@ import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
 																MouseMotionListener, KeyListener {

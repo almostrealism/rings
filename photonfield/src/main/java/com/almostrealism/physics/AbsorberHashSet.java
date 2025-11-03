@@ -30,6 +30,7 @@ import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.*;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.geometry.BoundingSolid;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Ray;

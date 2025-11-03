@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RefractionShader;
 import com.almostrealism.raytrace.FogParameters;
@@ -16,7 +16,7 @@ import org.almostrealism.color.RealizableImage;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 
 import org.almostrealism.color.PointLight;

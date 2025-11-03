@@ -22,7 +22,7 @@ import org.almostrealism.color.computations.AverageColor;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
 
 /**

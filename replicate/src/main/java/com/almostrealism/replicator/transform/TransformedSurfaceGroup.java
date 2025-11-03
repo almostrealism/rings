@@ -2,7 +2,7 @@ package com.almostrealism.replicator.transform;
 
 import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.geometry.BasicGeometry;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.SurfaceGroup;
 
 // TODO  Move to Common

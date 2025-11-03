@@ -43,7 +43,7 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
 import io.almostrealism.relation.Factory;

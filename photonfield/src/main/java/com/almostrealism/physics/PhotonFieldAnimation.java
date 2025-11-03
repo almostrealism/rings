@@ -4,7 +4,7 @@ import com.almostrealism.raytracer.RayTracedAnimation;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.PhotonField;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 
 import java.util.Collection;
 import java.util.Iterator;

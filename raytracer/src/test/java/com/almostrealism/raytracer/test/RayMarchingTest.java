@@ -18,7 +18,7 @@ import org.almostrealism.space.DistanceEstimator;
 import org.almostrealism.texture.Animation;
 
 import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.rayshade.DiffuseShader;
+import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.raytrace.RayMarchingEngine;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytrace.RenderParameters;

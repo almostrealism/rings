@@ -29,7 +29,7 @@ import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProbabilisticFactory;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
 
 import org.almostrealism.color.PointLight;
