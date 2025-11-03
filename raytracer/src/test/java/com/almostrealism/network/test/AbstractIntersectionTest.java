@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package com.almostrealism.network.test;
 
-import com.almostrealism.projection.ProjectionFeatures;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.projection.ProjectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.primitives.Sphere;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 
-public class AbstractIntersectionTest implements ProjectionFeatures {
+public class AbstractIntersectionTest implements ProjectionFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;
 
 	protected Producer<PackedCollection<?>> combined() {
@@ -39,7 +39,7 @@ public class AbstractIntersectionTest implements ProjectionFeatures {
 		Vector v = w.crossProduct(u);
 
 		return
-				new Sphere().intersectAt(rayAt((Producer) v(Pair.shape(), 0),
+				new Sphere().intersectAt(rayAt(v(Pair.shape(), 0),
 						pair(width, height),
 						new Vector(0.0, 0.0, 5.0),
 						new Pair(1.0, 1.0),

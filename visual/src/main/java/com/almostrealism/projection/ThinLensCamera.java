@@ -17,6 +17,7 @@
 package com.almostrealism.projection;
 
 import io.almostrealism.uml.ModelEntity;
+import org.almostrealism.projection.PinholeCamera;
 
 /**
  * A {@link ThinLensCamera} provides a camera with viewing rays that originate

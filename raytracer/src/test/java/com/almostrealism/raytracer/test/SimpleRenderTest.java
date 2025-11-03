@@ -1,7 +1,7 @@
 package com.almostrealism.raytracer.test;
 
 import org.almostrealism.color.PointLight;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;

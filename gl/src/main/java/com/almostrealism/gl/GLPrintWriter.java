@@ -22,7 +22,7 @@ import io.almostrealism.expression.IntegerConstant;
 import io.almostrealism.expression.StaticReference;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;

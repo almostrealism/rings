@@ -20,7 +20,7 @@ import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.StandardLightingRigs;
 import com.almostrealism.primitives.RigidPlane;
 import com.almostrealism.primitives.SphericalLight;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import com.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;

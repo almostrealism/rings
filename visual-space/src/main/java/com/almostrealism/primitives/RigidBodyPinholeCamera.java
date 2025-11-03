@@ -16,7 +16,7 @@
 
 package com.almostrealism.primitives;
 
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.RigidBody;
 import org.almostrealism.time.Temporal;

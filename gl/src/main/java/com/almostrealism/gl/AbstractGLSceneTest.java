@@ -18,7 +18,7 @@ package com.almostrealism.gl;
 
 import org.almostrealism.color.PointLight;
 import org.almostrealism.primitives.Sphere;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.RGB;

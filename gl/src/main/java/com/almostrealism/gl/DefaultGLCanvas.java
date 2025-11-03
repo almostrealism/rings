@@ -46,7 +46,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.BasicGeometry;
 
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import com.almostrealism.renderable.Renderable;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.util.FPSAnimator;

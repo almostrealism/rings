@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.renderable.Gear;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 
 /**
  * @author  Michael Murray

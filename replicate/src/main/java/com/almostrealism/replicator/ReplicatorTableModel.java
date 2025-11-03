@@ -29,7 +29,7 @@ import org.almostrealism.space.ShadableSurface;
 import io.almostrealism.uml.ViewModel;
 
 import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 
 /**
  * TODO  Add listener support

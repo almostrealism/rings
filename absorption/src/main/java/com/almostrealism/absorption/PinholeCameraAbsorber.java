@@ -18,7 +18,6 @@ package com.almostrealism.absorption;
 
 import com.almostrealism.primitives.AbsorptionPlane;
 import com.almostrealism.primitives.Pinhole;
-import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
@@ -26,7 +25,6 @@ import org.almostrealism.color.Colorable;
 import org.almostrealism.color.RGB;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.hardware.DynamicProducerForMemoryData;
-import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.physics.Absorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Volume;
@@ -34,7 +32,7 @@ import org.almostrealism.physics.Clock;
 
 import org.almostrealism.util.PriorityQueue;
 
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 
 /**
  * @author  Michael Murray

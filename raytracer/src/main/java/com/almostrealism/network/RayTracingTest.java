@@ -20,7 +20,7 @@ import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 
 import org.almostrealism.color.PointLight;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
 import com.almostrealism.raytrace.RenderParameters;

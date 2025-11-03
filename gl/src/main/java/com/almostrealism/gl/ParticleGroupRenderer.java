@@ -21,7 +21,7 @@ import java.awt.Graphics;
 import org.almostrealism.algebra.ParticleGroup;
 import org.almostrealism.geometry.TransformMatrix;
 
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 
 import static org.almostrealism.Ops.*;
