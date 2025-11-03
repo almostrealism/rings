@@ -1,12 +1,13 @@
 package com.almostrealism.raytracer.test;
 
 import org.almostrealism.color.PointLight;
+import org.almostrealism.color.Shader;
 import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.raytracer.RayTracedScene;
+import org.almostrealism.render.RayTracedScene;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
@@ -424,9 +425,7 @@ public class SimpleRenderTest implements TestFeatures {
 		sphere.setLocation(new Vector(0.0, 0.0, 0.0));
 		sphere.setSize(1.0);
 		sphere.setColor(new RGB(0.8, 0.2, 0.2)); // Red sphere
-		((AbstractSurface) sphere).setShaders(new org.almostrealism.color.Shader[] {
-			DiffuseShader.defaultDiffuseShader
-		});
+		sphere.setShaders(new Shader[] { DiffuseShader.defaultDiffuseShader });
 
 		// Ensure transform is calculated before adding to scene
 		sphere.calculateTransform();

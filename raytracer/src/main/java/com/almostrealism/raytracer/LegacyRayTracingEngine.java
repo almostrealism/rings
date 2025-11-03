@@ -29,6 +29,7 @@ import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;

@@ -31,6 +31,7 @@ import org.almostrealism.raytrace.RenderParameters;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.RGB;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.Event;

@@ -20,7 +20,7 @@ import com.almostrealism.network.TestScene;
 import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
-import com.almostrealism.raytracer.RayTracedScene;
+import org.almostrealism.render.RayTracedScene;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;

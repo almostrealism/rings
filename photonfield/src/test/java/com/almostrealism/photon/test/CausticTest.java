@@ -25,7 +25,7 @@ import org.almostrealism.rayshade.RefractionShader;
 import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
-import com.almostrealism.raytracer.RayTracedScene;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;

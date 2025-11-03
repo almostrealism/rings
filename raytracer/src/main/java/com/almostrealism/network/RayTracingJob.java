@@ -31,11 +31,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
+import org.almostrealism.render.RayTracer;
 import org.almostrealism.space.SceneLoader;
 import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
-import com.almostrealism.raytracer.RayTracedScene;
+import org.almostrealism.render.RayTracedScene;
 import io.flowtree.job.JobFactory;
 import io.flowtree.job.Output;
 import org.almostrealism.geometry.Camera;
@@ -674,7 +675,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 	}
 
 	/**
-	 * Provide the {@link ExecutorService} to be used by {@link com.almostrealism.raytracer.RayTracer}.
+	 * Provide the {@link ExecutorService} to be used by {@link RayTracer}.
 	 */
 	@Override
 	public void setExecutorService(ExecutorService pool) {
@@ -682,7 +683,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 	}
 
 	/**
-	 * Return the {@link ExecutorService} to be used by {@link com.almostrealism.raytracer.RayTracer}.
+	 * Return the {@link ExecutorService} to be used by {@link RayTracer}.
 	 */
 	public ExecutorService getExecutorService() {
 		return this.pool;

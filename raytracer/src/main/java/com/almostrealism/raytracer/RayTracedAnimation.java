@@ -17,6 +17,7 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.color.DirectionalAmbientLight;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.primitives.RigidPlane;
 import org.almostrealism.primitives.SphericalLight;
