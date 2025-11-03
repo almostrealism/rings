@@ -18,15 +18,15 @@ package com.almostrealism.raytracer;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
 import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.primitives.RigidPlane;
-import com.almostrealism.primitives.SphericalLight;
+import org.almostrealism.primitives.RigidPlane;
+import org.almostrealism.primitives.SphericalLight;
 import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.projection.ThinLensCamera;
 import com.almostrealism.rayshade.BlendingShader;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.rayshade.ReflectionShader;
 import com.almostrealism.rayshade.RigidBodyStateShader;
-import com.almostrealism.primitives.RigidSphere;
+import org.almostrealism.primitives.RigidSphere;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.algebra.Vector;

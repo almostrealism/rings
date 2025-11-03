@@ -21,7 +21,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import com.almostrealism.chem.PotentialMap;
-import com.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.AbsorptionPlane;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;

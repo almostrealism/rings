@@ -24,7 +24,7 @@ import com.almostrealism.physics.AbsorberHashSet;
 import com.almostrealism.physics.BlackBody;
 import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.VolumeAbsorber;
-import com.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.Ops;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.Clock;

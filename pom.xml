@@ -29,7 +29,6 @@
 		<module>shading</module>
 		<module>treeview</module>
 		<module>swing</module>
-		<module>visual-space</module>
 		<module>absorption</module>
 		<module>gl</module>
 		<module>raytracer</module>

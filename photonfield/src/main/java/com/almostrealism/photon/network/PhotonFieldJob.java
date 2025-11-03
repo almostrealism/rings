@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.AbsorptionPlane;
 import io.almostrealism.resource.Resource;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.util.KeyUtils;

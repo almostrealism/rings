@@ -28,7 +28,7 @@
     <void index="0"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane0" class="com.almostrealism.primitives.Plane">
+       <object id="Plane0" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -82,7 +82,7 @@
     <void index="1"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane1" class="com.almostrealism.primitives.Plane">
+       <object id="Plane1" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -139,7 +139,7 @@
     <void index="2"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane2" class="com.almostrealism.primitives.Plane">
+       <object id="Plane2" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -190,7 +190,7 @@
     <void index="3"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane3" class="com.almostrealism.primitives.Plane">
+       <object id="Plane3" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
@@ -241,7 +241,7 @@
     <void index="4"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane4" class="com.almostrealism.primitives.Plane">
+       <object id="Plane4" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 

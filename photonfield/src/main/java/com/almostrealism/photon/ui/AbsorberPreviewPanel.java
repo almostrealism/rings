@@ -22,7 +22,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 
 import com.almostrealism.absorption.PinholeCameraAbsorber;
-import com.almostrealism.primitives.Plane;
+import org.almostrealism.primitives.Plane;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.ProbabilityDistribution;

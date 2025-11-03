@@ -22,9 +22,9 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
-import com.almostrealism.primitives.AbsorptionPlane;
-import com.almostrealism.primitives.Pinhole;
-import com.almostrealism.primitives.Plane;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.Pinhole;
+import org.almostrealism.primitives.Plane;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;

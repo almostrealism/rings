@@ -16,8 +16,8 @@
 
 package com.almostrealism.absorption;
 
-import com.almostrealism.primitives.AbsorptionPlane;
-import com.almostrealism.primitives.Pinhole;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.Pinhole;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;

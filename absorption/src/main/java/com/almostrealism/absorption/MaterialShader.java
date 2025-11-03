@@ -16,7 +16,7 @@
 
 package com.almostrealism.absorption;
 
-import com.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.chem.Material;
 import org.almostrealism.color.RGB;
