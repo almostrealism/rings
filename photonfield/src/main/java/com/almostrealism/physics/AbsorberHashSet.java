@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.almostrealism.raytrace.LightingEngineAggregator;
+import org.almostrealism.raytrace.LightingEngineAggregator;
 import com.almostrealism.chem.PotentialMap;
 
 import org.almostrealism.algebra.Scalar;

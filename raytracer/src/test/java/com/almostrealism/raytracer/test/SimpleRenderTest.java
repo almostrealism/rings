@@ -2,9 +2,9 @@ package com.almostrealism.raytracer.test;
 
 import org.almostrealism.color.PointLight;
 import org.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytrace.FogParameters;
-import com.almostrealism.raytrace.RayIntersectionEngine;
-import com.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.color.DiffuseShader;
 import com.almostrealism.raytracer.RayTracedScene;
 import io.almostrealism.relation.Producer;
@@ -13,6 +13,8 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.RealizableImage;
 import org.almostrealism.geometry.Ray;
 import org.almostrealism.primitives.Sphere;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
+import org.almostrealism.raytrace.LightingEngineAggregator;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
@@ -97,7 +99,7 @@ public class SimpleRenderTest implements TestFeatures {
 		log("Starting single pixel render...");
 
 		// Enable verbose logging
-		com.almostrealism.raytrace.LightingEngineAggregator.enableVerbose = true;
+		LightingEngineAggregator.enableVerbose = true;
 
 		// Render
 		RealizableImage realizableImage = rayTracedScene.realize(params);
@@ -302,8 +304,8 @@ public class SimpleRenderTest implements TestFeatures {
 		log("Created shader context");
 
 		// Create lighting engine directly
-		com.almostrealism.raytrace.IntersectionalLightingEngine engine =
-			new com.almostrealism.raytrace.IntersectionalLightingEngine(
+		IntersectionalLightingEngine engine =
+			new IntersectionalLightingEngine(
 				testRay, sphere, java.util.Collections.emptyList(), light, java.util.Collections.emptyList(), context);
 		log("Created IntersectionalLightingEngine");
 

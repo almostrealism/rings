@@ -22,5 +22,10 @@
 			<artifactId>ar-photonfield</artifactId>
 			<version>0.43</version>
 		</dependency>
+		<dependency>
+			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-gl</artifactId>
+			<version>0.43</version>
+		</dependency>
 	</dependencies>
 </project>

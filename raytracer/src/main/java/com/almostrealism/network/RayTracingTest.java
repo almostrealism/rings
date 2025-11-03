@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.rayshade.ReflectionShader;
-import com.almostrealism.rayshade.RefractionShader;
-import com.almostrealism.raytrace.FogParameters;
+import org.almostrealism.rayshade.ReflectionShader;
+import org.almostrealism.rayshade.RefractionShader;
+import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
@@ -21,9 +21,9 @@ import org.almostrealism.texture.ImageCanvas;
 
 import org.almostrealism.color.PointLight;
 import org.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytracer.RayTracedScene;
-import com.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.texture.StripeTexture;
 

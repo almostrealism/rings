@@ -17,9 +17,9 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.network.TestScene;
-import com.almostrealism.raytrace.FogParameters;
-import com.almostrealism.raytrace.RayIntersectionEngine;
-import com.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.algebra.Pair;

@@ -21,7 +21,7 @@ import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.projection.ThinLensCamera;
 import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.rayshade.ReflectionShader;
+import org.almostrealism.rayshade.ReflectionShader;
 import org.almostrealism.color.SilhouetteShader;
 import com.almostrealism.raytracer.Thing;
 import io.almostrealism.relation.Producer;

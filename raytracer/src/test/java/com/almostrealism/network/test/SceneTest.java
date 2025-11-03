@@ -1,9 +1,8 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.network.TestScene;
-import com.almostrealism.raytrace.IntersectionalLightingEngine;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;

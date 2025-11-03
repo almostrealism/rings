@@ -21,7 +21,7 @@ import io.almostrealism.code.ComputableBase;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.raytrace.IntersectionalLightingEngine;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;

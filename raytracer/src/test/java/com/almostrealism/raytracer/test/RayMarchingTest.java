@@ -19,9 +19,9 @@ import org.almostrealism.texture.Animation;
 
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.raytrace.RayMarchingEngine;
+import org.almostrealism.raytrace.RayMarchingEngine;
 import com.almostrealism.raytracer.RayTracedScene;
-import com.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.texture.ImageCanvas;
 
 public class RayMarchingTest {

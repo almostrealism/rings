@@ -32,9 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 import org.almostrealism.space.SceneLoader;
-import com.almostrealism.raytrace.FogParameters;
-import com.almostrealism.raytrace.RayIntersectionEngine;
-import com.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
 import com.almostrealism.raytracer.RayTracedScene;
 import io.flowtree.job.JobFactory;
 import io.flowtree.job.Output;

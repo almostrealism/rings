@@ -25,7 +25,7 @@ import io.almostrealism.lang.LanguageOperations;
 import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;
