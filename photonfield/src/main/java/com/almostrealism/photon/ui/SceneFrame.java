@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.*;
 
-import com.almostrealism.absorption.PinholeCameraAbsorber;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
 import com.almostrealism.photon.xml.Node;
 import org.almostrealism.algebra.Vector;
 

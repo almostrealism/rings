@@ -16,7 +16,7 @@
 
 package com.almostrealism.physics;
 
-import org.almostrealism.util.PriorityQueue;
+import org.almostrealism.utils.PriorityQueue;
 
 public class PhotonSet {
 	private int max, last = -1;

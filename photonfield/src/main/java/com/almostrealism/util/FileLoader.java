@@ -35,7 +35,7 @@ import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import com.almostrealism.absorption.PinholeCameraAbsorber;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
 import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.algebra.ZeroVector;

@@ -40,7 +40,7 @@ import com.almostrealism.stats.UniformHemisphericalDistribution;
 import com.almostrealism.geometry.Sphere;
 import com.almostrealism.light.PlanarLight;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.util.PriorityQueue;
+import org.almostrealism.utils.PriorityQueue;
 
 import java.lang.Math;
 

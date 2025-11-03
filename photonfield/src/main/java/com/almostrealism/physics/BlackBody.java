@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
-import com.almostrealism.absorption.PinholeCameraAbsorber;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
 import com.almostrealism.chem.ElectronCloud;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
