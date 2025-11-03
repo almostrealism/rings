@@ -48,6 +48,14 @@ public class AudioGenerator extends ConditionalAudioSystem {
 				new StateDictionary(modelsPath + "/weights"));
 	}
 
+	public AudioGenerator(String modelsPath, long composerSeed) throws OrtException, IOException {
+		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
+				new Asset(new File(modelsPath + "/encoder.onnx")),
+				new Asset(new File(modelsPath + "/decoder.onnx")),
+				new Asset(new File(modelsPath + "/dit.onnx"))),
+				new StateDictionary(modelsPath + "/weights"), 8, composerSeed);
+	}
+
 	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates) throws OrtException, IOException {
 		this(onnxAssets, ditStates, 8, System.currentTimeMillis());
 	}
@@ -86,6 +94,8 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	}
 
 	public double getStrength() { return strength; }
+
+	public AudioComposer getComposer() { return composer; }
 
 	public int getComposerDimension() { return composer.getEmbeddingDimension(); }
 
@@ -173,7 +183,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			// 2. Generate interpolated latent from samples (if position provided)
 			PackedCollection<?> interpolatedLatent = null;
 			if (position != null) {
-				interpolatedLatent = composer.getResultant(cp(position)).evaluate();
+				interpolatedLatent = composer.getInterpolatedLatent(cp(position)).evaluate();
 			}
 
 			// 3. Run diffusion (with or without sample initialization)
@@ -222,18 +232,23 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		if (interpolatedLatent == null) {
 			// Pure generation: start from random noise at step 0
-			x = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			x = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 			startStep = 0;
 		} else {
+			// Special case: strength = 0.0 means no diffusion at all
+			if (strength == 0.0) {
+				log("Strength is 0.0 - skipping diffusion, returning interpolated latent directly");
+				return interpolatedLatent;
+			}
+
 			// Sample-based generation: add matched noise and start from calculated step
 			float[] sigmas = new float[NUM_STEPS + 1];
 			fillSigmas(sigmas, LOGSNR_MAX, 2.0f);
 
 			// Calculate start step based on strength
-			// strength = 0.0 → start at last step (no diffusion)
-			// strength = 0.5 → start at middle step
-			// strength = 1.0 → start at first step (full diffusion)
-			startStep = (int) (strength * NUM_STEPS);
+			// strength = 0.5 → start at middle step (balanced)
+			// strength = 1.0 → start at first step (full diffusion from noise)
+			startStep = (int) ((1.0 - strength) * NUM_STEPS);
 			if (startStep >= NUM_STEPS) startStep = NUM_STEPS - 1;
 
 			// Add matched noise to interpolated latent
@@ -269,19 +284,21 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 		PackedCollection<?> tPC = new PackedCollection<>(1);
 
+		double stepCount = NUM_STEPS - startStep;
+
 		// Run diffusion steps starting from startStep
 		for (int step = startStep; step < NUM_STEPS; step++) {
 			float currT = sigmas[step];
 			float nextT = sigmas[step + 1];
 			tPC.setMem(0, currT);
 
-			if (progressMonitor != null) {
-				progressMonitor.accept((double) step / NUM_STEPS);
-			}
-
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
 			PackedCollection<?> output = getDitModel().forward(x, tPC, crossAttentionInput, globalCond);
+
+			if (progressMonitor != null) {
+				progressMonitor.accept((1 + step - startStep) / stepCount);
+			}
 
 			checkNan(x, "input after model step " + step);
 			checkNan(output, "output after model step " + step);
@@ -298,7 +315,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// Generate new noise
-			PackedCollection<?> newNoise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+			PackedCollection<?> newNoise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 			double[] newNoiseData = newNoise.toArray();
 
 			// Update x for next step
@@ -339,7 +356,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 												float targetSigma,
 												Random random) {
 		// Generate noise and scale by target sigma
-		PackedCollection<?> noise = new PackedCollection<>(shape(DIT_X_SHAPE)).randnFill(random);
+		PackedCollection<?> noise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
 
 		// Add scaled noise to interpolated latent
 		double[] interpData = interpolatedLatent.toArray();
@@ -350,7 +367,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			noisyData[i] = (float) (interpData[i] + targetSigma * noiseData[i]);
 		}
 
-		PackedCollection<?> result = new PackedCollection<>(shape(DIT_X_SHAPE));
+		PackedCollection<?> result = new PackedCollection<>(DIT_X_SHAPE);
 		result.setMem(noisyData);
 
 		if (HardwareFeatures.outputMonitoring) {
