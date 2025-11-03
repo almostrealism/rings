@@ -1,6 +1,6 @@
 package com.almostrealism.network;
 
-import com.almostrealism.io.SceneLoader;
+import org.almostrealism.space.SceneLoader;
 import org.almostrealism.space.Scene;
 
 import java.io.FileInputStream;

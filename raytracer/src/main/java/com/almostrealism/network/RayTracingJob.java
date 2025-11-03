@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
-import com.almostrealism.io.SceneLoader;
+import org.almostrealism.space.SceneLoader;
 import com.almostrealism.raytrace.FogParameters;
 import com.almostrealism.raytrace.RayIntersectionEngine;
 import com.almostrealism.raytrace.RenderParameters;
@@ -45,7 +45,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 
-import com.almostrealism.io.FilePrintWriter;
+import org.almostrealism.io.FilePrintWriter;
 import com.almostrealism.projection.PinholeCamera;
 import com.almostrealism.rayshade.DiffuseShader;
 import com.almostrealism.raytracer.Settings;

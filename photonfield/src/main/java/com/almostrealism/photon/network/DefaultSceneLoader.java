@@ -1,6 +1,6 @@
 package com.almostrealism.photon.network;
 
-import com.almostrealism.io.SceneLoader;
+import org.almostrealism.space.SceneLoader;
 import com.almostrealism.network.FileDecoder;
 import io.flowtree.fs.OutputServer;
 import io.almostrealism.resource.Resource;
