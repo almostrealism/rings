@@ -16,7 +16,7 @@
 
 package com.almostrealism.network.test;
 
-import com.almostrealism.lighting.PointLight;
+import org.almostrealism.color.PointLight;
 import io.almostrealism.code.ComputableBase;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.primitives.Sphere;

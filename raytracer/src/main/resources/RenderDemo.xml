@@ -65,7 +65,7 @@
   <void property="lights">
    <array class="com.almostrealism.lighting.Light" length="1">
     <void index="0">
-     <object class="com.almostrealism.lighting.PointLight" id="PointLight0">
+     <object class="org.almostrealism.color.PointLight" id="PointLight0">
       <void property="location">
        <void property="x">
         <double>4.0</double>

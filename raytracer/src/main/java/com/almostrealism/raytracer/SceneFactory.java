@@ -32,7 +32,7 @@ import org.almostrealism.space.Scene;
 import org.almostrealism.space.ShadableSurface;
 import io.almostrealism.relation.Factory;
 
-import com.almostrealism.lighting.PointLight;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.projection.ThinLensCamera;
 import org.almostrealism.primitives.Sphere;

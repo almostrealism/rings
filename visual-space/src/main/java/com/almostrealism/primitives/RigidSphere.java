@@ -16,7 +16,7 @@
 
 package com.almostrealism.primitives;
 
-import com.almostrealism.lighting.SurfaceLight;
+import org.almostrealism.color.SurfaceLight;
 
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.ParticleGroup;
@@ -236,7 +236,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 	 */
 	public SphericalLight getLight() { return this.light; }
 	
-	/** @see com.almostrealism.lighting.SurfaceLight#getSamples(int) */
+	/** @see SurfaceLight#getSamples(int) */
 	public Light[] getSamples(int samples) {
 		if (this.light == null)
 			return new Light[0];
@@ -244,7 +244,7 @@ public class RigidSphere extends Sphere implements RigidBody, ParticleGroup, Sur
 			return this.light.getSamples(samples);
 	}
 	
-	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
+	/** @see SurfaceLight#getSamples() */
 	public Light[] getSamples() {
 		if (this.light == null)
 			return new Light[0];

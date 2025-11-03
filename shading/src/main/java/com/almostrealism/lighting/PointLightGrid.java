@@ -20,6 +20,7 @@ import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.RGB;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.code.Operator;

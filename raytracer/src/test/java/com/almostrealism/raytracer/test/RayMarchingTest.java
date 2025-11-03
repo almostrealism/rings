@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.text.NumberFormatter;
 
-import com.almostrealism.lighting.PointLight;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;

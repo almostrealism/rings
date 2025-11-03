@@ -16,8 +16,8 @@
 
 package com.almostrealism.primitives;
 
-import com.almostrealism.lighting.PointLight;
-import com.almostrealism.lighting.SurfaceLight;
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
@@ -84,7 +84,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 	public int getSampleCount() { return this.samples; }
 	
 	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
+	 * @see SurfaceLight#getSamples(int)
 	 */
 	@Override
 	public Light[] getSamples(int total) {
@@ -112,7 +112,7 @@ public class SphericalLight extends Sphere implements SurfaceLight {
 		return l;
 	}
 	
-	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
+	/** @see SurfaceLight#getSamples() */
 	@Override
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 

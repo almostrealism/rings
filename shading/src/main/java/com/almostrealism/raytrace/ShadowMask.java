@@ -17,7 +17,7 @@
 package com.almostrealism.raytrace;
 
 import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.PointLight;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.geometry.ClosestIntersection;
 import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.geometry.Intersection;

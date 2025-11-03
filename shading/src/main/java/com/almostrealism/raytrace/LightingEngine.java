@@ -18,8 +18,8 @@ package com.almostrealism.raytrace;
 
 import com.almostrealism.lighting.AmbientLight;
 import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.PointLight;
-import com.almostrealism.lighting.SurfaceLight;
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.computations.ProducerWithRankAdapter;
 import org.almostrealism.collect.CollectionProducer;

@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.test;
 
-import com.almostrealism.lighting.PointLight;
+import org.almostrealism.color.PointLight;
 import com.almostrealism.network.FileDecoder;
 import org.almostrealism.primitives.Sphere;
 import com.almostrealism.projection.ThinLensCamera;

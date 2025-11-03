@@ -16,6 +16,8 @@
 
 package com.almostrealism.lighting;
 
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
@@ -83,7 +85,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 	public int getSampleCount() { return this.samples; }
 	
 	/**
-	 * @see com.almostrealism.lighting.SurfaceLight#getSamples(int)
+	 * @see SurfaceLight#getSamples(int)
 	 */
 	public Light[] getSamples(int total) {
 		Light l[] = new Light[total];
@@ -117,7 +119,7 @@ public class RectangularLight extends Plane implements SurfaceLight {
 		return l;
 	}
 
-	/** @see com.almostrealism.lighting.SurfaceLight#getSamples() */
+	/** @see SurfaceLight#getSamples() */
 	@Override
 	public Light[] getSamples() { return this.getSamples(this.samples); }
 	

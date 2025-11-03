@@ -16,6 +16,7 @@
 package com.almostrealism.lighting;
 
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.RGB;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;

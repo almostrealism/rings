@@ -21,8 +21,8 @@ import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 
-import com.almostrealism.lighting.PointLight;
-import com.almostrealism.lighting.SurfaceLight;
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.geometry.Locatable;
 import org.almostrealism.geometry.UniformSphericalRandom;
 import io.almostrealism.relation.Producer;
