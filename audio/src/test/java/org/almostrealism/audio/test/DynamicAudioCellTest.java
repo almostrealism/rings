@@ -53,12 +53,12 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 	private static final int DURATION_FRAMES = 10 * OutputLine.sampleRate;
 
 	protected Receptor<PackedCollection<?>> loggingReceptor() {
-		return protein -> () -> () -> System.out.println(protein.get().evaluate());
+		return protein -> () -> () -> log(protein.get().evaluate());
 	}
 
 	protected Cell<PackedCollection<?>> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
 
-	protected SineWaveCell choice(Scalar destination) {
+	protected SineWaveCell choice(PackedCollection<?> destination) {
 		SineWaveCell c = new SineWaveCell();
 		c.setFreq(0.5);
 		c.setAmplitude(1.0);
@@ -92,7 +92,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void sineWave() {
-		DynamicAudioCell cell = cell(new Scalar());
+		DynamicAudioCell cell = cell(new PackedCollection<>(1));
 		cell.setReceptor(loggingReceptor());
 		Runnable push = cell.push(c(0.0)).get();
 		IntStream.range(0, 100).forEach(i -> push.run());
@@ -103,7 +103,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 	public void withOutput() {
 		WaveOutput output = new WaveOutput(new File("results/dynamic-cell-test.wav"));
 
-		Scalar choice = new Scalar();
+		PackedCollection<?> choice = new PackedCollection<>(1);
 		SineWaveCell chooser = choice(choice);
 		DynamicAudioCell cell = cell(choice);
 		cell.setReceptor(output.getWriter(0));
@@ -155,7 +155,7 @@ public class DynamicAudioCellTest implements CellFeatures, TestFeatures {
 		BasicDelayCell delay = new BasicDelayCell(1);
 		delay.setReceptor(loggingReceptor());
 
-		DynamicAudioCell cell = cell(new Scalar());
+		DynamicAudioCell cell = cell(new PackedCollection<>(1));
 		cell.setReceptor(delay);
 
 		Runnable push = cell.push(null).get();

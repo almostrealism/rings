@@ -61,14 +61,14 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 
 		PackedCollection<?> values = WavFile.channel(data, 0, padFrames);
 		PackedCollection<?> out = new PackedCollection<>(values.getMemLength());
-		Scalar current = new Scalar();
+		PackedCollection<?> current = new PackedCollection<>(1);
 
 		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
 		Runnable tick = optimize ? Process.optimized(filter.tick()).get() : filter.tick().get();
 
 		Runnable r = () -> {
 			for (int i = 0; i < values.getMemLength(); i++) {
-				current.setValue(values.toDouble(i));
+				current.setMem(values.toDouble(i));
 				out.setMem(i, ev.evaluate().toDouble(0));
 				tick.run();
 			}

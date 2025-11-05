@@ -65,7 +65,7 @@ public class BasicDelayCell extends SummationCell implements CodeFeatures {
 
 	@Override
 	public synchronized Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
-		Scalar value = new Scalar();
+		PackedCollection<?> value = new PackedCollection<>(1);
 		Supplier<Runnable> push = super.push(p(value));
 
 		return () -> () -> {

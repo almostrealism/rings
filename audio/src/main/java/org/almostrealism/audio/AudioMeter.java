@@ -38,11 +38,11 @@ import java.util.function.Supplier;
 public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, ScalarFeatures, PairFeatures {
 	private Receptor<PackedCollection<?>> forwarding;
 	
-	private Scalar clipCount = new Scalar();
+	private PackedCollection<?> clipCount = new PackedCollection<>(1);
 	private Pair clipSettings = new Pair(-1.0, 1.0);
 	
-	private Scalar silenceValue = new Scalar();
-	private Scalar silenceDuration = new Scalar();
+	private PackedCollection<?> silenceValue = new PackedCollection<>(1);
+	private PackedCollection<?> silenceDuration = new PackedCollection<>(1);
 
 	private List<Consumer<Scalar>> listeners;
 	
@@ -53,14 +53,14 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	public void setForwarding(Receptor<PackedCollection<?>> r) { this.forwarding = r; }
 	public Receptor<PackedCollection<?>> getForwarding() { return this.forwarding; }
 
-	public void setSilenceValue(double value) { this.silenceValue.setA(value); }
+	public void setSilenceValue(double value) { this.silenceValue.setMem(value); }
 	
-	public long getSilenceDuration() { return (long) this.silenceDuration.getValue(); }
+	public long getSilenceDuration() { return (long) this.silenceDuration.toDouble(); }
 
 	public void setClipMinValue(double value) { this.clipSettings.setA(value); }
 	public void setClipMaxValue(double value) { this.clipSettings.setB(value); }
 	
-	public long getClipCount() { return (long) clipCount.getValue(); }
+	public long getClipCount() { return (long) clipCount.toDouble(); }
 
 	public void addListener(Consumer<Scalar> listener) {
 		listeners.add(listener);
@@ -74,7 +74,7 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
 		OperationList push = new OperationList("AudioMeter Push");
 		push.add(new ClipCounter(() -> new Provider<>(clipCount), v(clipSettings), protein));
-		push.add(new SilenceDurationComputation(() -> new Provider<>(silenceDuration), v(silenceValue), protein));
+		push.add(new SilenceDurationComputation(() -> new Provider<>(silenceDuration), c(silenceValue), protein));
 		if (forwarding != null)  push.add(forwarding.push(protein));
 
 		if (!listeners.isEmpty()) {
@@ -88,8 +88,8 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	@Override
 	public void reset() {
 		Lifecycle.super.reset();
-		silenceDuration.setValue(0.0);
-		silenceValue.setValue(0.0);
-		clipCount.setValue(0.0);
+		silenceDuration.setMem(0.0);
+		silenceValue.setMem(0.0);
+		clipCount.setMem(0.0);
 	}
 }

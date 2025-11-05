@@ -22,7 +22,6 @@ import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 
@@ -30,10 +29,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SilenceDurationComputation extends OperationComputationAdapter<PackedCollection<?>> {
-	public SilenceDurationComputation(Producer<Scalar> silenceDuration,
-									  Producer<Scalar> silenceSettings,
+	public SilenceDurationComputation(Producer<PackedCollection<?>> silenceDuration,
+									  Producer<PackedCollection<?>> silenceSettings,
 									  Producer<PackedCollection<?>> value) {
-		super(new Producer[] { silenceDuration, silenceSettings, value });
+		super(silenceDuration, silenceSettings, value);
 	}
 
 	@Override

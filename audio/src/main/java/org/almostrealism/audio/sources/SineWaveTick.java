@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 
 public class SineWaveTick extends SineWaveComputation {
 	public SineWaveTick(SineWaveCellData data, Producer<Scalar> envelope) {
-		super(data, envelope, new Scalar());
+		super(data, envelope, new PackedCollection<>(1));
 	}
 
 	@Override
