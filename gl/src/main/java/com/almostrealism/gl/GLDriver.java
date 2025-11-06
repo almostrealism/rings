@@ -22,6 +22,9 @@ import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.code.Precision;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.lang.LanguageOperations;
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.projection.PinholeCamera;
@@ -33,7 +36,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Camera;
@@ -542,7 +544,13 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
 
-	public void setMatrix(TransformMatrix m) { transform = m; }
+	public void setMatrix(TransformMatrix m) {
+		if (m == null) {
+			transform = new TransformMatrix();
+		} else {
+			transform = m;
+		}
+	}
 
 	public void glRasterPos(Vector pos) {
 		if (isDoublePrecision()) {
