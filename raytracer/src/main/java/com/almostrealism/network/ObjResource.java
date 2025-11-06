@@ -8,6 +8,7 @@ import org.almostrealism.space.Mesh;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -15,6 +16,10 @@ public class ObjResource extends UnicodeResource {
 	public ObjResource() { }
 
 	public ObjResource(File f) throws IOException { super(f); }
+
+	public ObjResource(InputStream in) throws IOException {
+		super(in);
+	}
 
 	public static class MeshTranscoder implements ResourceTranscoder<MeshResource, ObjResource> {
 		@Override
