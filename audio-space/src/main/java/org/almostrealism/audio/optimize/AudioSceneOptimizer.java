@@ -161,7 +161,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 			PackedCollection<?> combined = new PackedCollection<>(len);
 
 			for (int i = 0; i < len; i++) {
-				combined.setMem(0, Breeders.perturbation(a.toDouble(i), b.toDouble(i), magnitude));
+				combined.setMem(i, Breeders.perturbation(a.toDouble(i), b.toDouble(i), magnitude));
 			}
 
 			return new ProjectedGenome(new PackedCollection<>(combined));
