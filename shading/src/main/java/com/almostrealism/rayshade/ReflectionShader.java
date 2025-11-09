@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,32 @@
 
 package com.almostrealism.rayshade;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.almostrealism.raytrace.LightingEngineAggregator;
 import io.almostrealism.relation.Editable;
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Scalar;
-import org.almostrealism.collect.computations.DynamicCollectionProducer;
-import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.geometry.DiscreteField;
-import org.almostrealism.geometry.computations.AcceleratedRankedChoiceEvaluable;
 import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.*;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.computations.DynamicCollectionProducer;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shader;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.ShaderSet;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
+import org.almostrealism.geometry.DiscreteField;
 import org.almostrealism.geometry.Ray;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.CodeFeatures;
-import com.almostrealism.raytrace.LightingEngineAggregator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A ReflectionShader object provides a shading method for reflective surfaces.
@@ -107,14 +112,14 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 
 		final Producer<RGB> fr = r;
 
-		ExpressionComputation<Vector> point = origin(p.getIntersection().get(0));
+		CollectionProducer<Vector> point = origin(p.getIntersection().get(0));
 		Producer<Vector> n = direction(normals.iterator().next());
 		Producer<Vector> nor = p.getIntersection().getNormalAt(point);
 
 		Producer<Ray> transform = transform(((AbstractSurface) p.getSurface()).getTransform(true), p.getIntersection().get(0));
-		ExpressionComputation<Vector> loc = origin(transform);
+		CollectionProducer<Vector> loc = origin(transform);
 
-		Producer<Scalar> cp = vlength(nor).multiply(vlength(n));
+		Producer<Scalar> cp = length(nor).multiply(length(n));
 
 		Producer<RGB> tc = null;
 
@@ -125,7 +130,7 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			Producer<Ray> reflectedRay = new ReflectedRay(loc, nor, n, blur);
 
 			// TODO  Environment map should be a feature of the aggregator
-			AcceleratedRankedChoiceEvaluable<RGB> aggegator = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
+			Evaluable<RGB> aggegator = new LightingEngineAggregator(reflectedRay, Arrays.asList(p.getOtherSurfaces()), allLights, p).getAccelerated();
 			Producer<RGB> color = () -> aggegator;
 			/*
 			if (color == null || color.evaluate(args) == null) { // TODO  Avoid evaluation here
@@ -140,10 +145,10 @@ public class ReflectionShader extends ShaderSet<ShaderContext> implements Shader
 			 */
 
 			Producer<Scalar> c = scalar(1).subtract(dotProduct(minus(n), nor).divide(cp));
-			Producer<Scalar> reflective = scalarAdd(scalar(reflectivity), scalar(1 - reflectivity)
-							.multiply(scalarPow(c, scalar(5.0))));
+			CollectionProducer<?> reflective = add(c(reflectivity),
+					c(1 - reflectivity).multiply(pow(c, c(5.0))));
 			Producer<RGB> fcolor = color;
-			color = multiply(cfromScalar(reflective), fr).multiply(fcolor);
+			color = reflective.multiply(fr).multiply(fcolor);
 
 			if (tc == null) {
 				tc = color;

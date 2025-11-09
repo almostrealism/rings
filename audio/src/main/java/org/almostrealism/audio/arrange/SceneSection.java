@@ -48,7 +48,7 @@ public class SceneSection implements Destroyable {
 	@Override
 	public void destroy() {
 		Destroyable.super.destroy();
-		if (channels != null) channels.forEach(Destroyable::destroy);
+		Destroyable.destroy(channels);
 		channels = null;
 	}
 }

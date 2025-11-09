@@ -53,8 +53,8 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 				sampling(sampleRate, () -> envelope.get().getResultant(c(filterPeak)));
 
 		cutoffEnvelope = env.get();
-		multiOrderFilter = lowPass(v(shape(maxFrames), 0),
-								v(shape(maxFrames), 1),
+		multiOrderFilter = lowPass(v(shape(-1, maxFrames), 0),
+								v(shape(-1, maxFrames), 1),
 								sampleRate, filterOrder)
 							.get();
 	}

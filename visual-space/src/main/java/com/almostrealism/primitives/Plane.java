@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package com.almostrealism.primitives;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
-import org.almostrealism.hardware.HardwareFeatures;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.space.Volume;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 public class Plane implements Volume<RGB>, CodeFeatures {
 	public static double d = 0.0;
@@ -87,17 +85,17 @@ public class Plane implements Volume<RGB>, CodeFeatures {
 
 	@Override
 	public boolean inside(Producer<Vector> x) {
-		double d = Math.abs(dotProduct(x, normal).get().evaluate().getValue());
+		double d = Math.abs(dotProduct(x, normal).get().evaluate().toDouble());
 		Plane.d = d;
 		if (d > this.thick) return false;
 		
-		double y = Math.abs(dotProduct(x, vector(up[0], up[1], up[2])).get().evaluate().getValue());
+		double y = Math.abs(dotProduct(x, vector(up[0], up[1], up[2])).get().evaluate().toDouble());
 		if (y > this.h / 2.0) return false;
 		
 		if (this.across == null)
 			this.across = new Vector(this.up).crossProduct(normal.get().evaluate()).toArray();
 		
-		double z = Math.abs(dotProduct(x, vector(across[0], across[1], across[2])).get().evaluate().getValue());
+		double z = Math.abs(dotProduct(x, vector(across[0], across[1], across[2])).get().evaluate().toDouble());
 		if (z > this.w / 2.0) return false;
 		
 		return true;

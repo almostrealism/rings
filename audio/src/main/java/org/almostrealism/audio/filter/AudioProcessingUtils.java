@@ -46,8 +46,8 @@ public class AudioProcessingUtils {
 			throw new RuntimeException();
 		}
 
-		reverse = o.c(o.cv(o.shape(1), 0),
-					o.sizeOf(o.cv(o.shape(1), 0)).subtract(o.integers()))
+		reverse = o.c(o.cv(o.shape(-1), 0),
+					o.sizeOf(o.cv(o.shape(-1), 0)).subtract(o.integers()))
 				.get();
 
 		CollectionProducer<PackedCollection<?>> mainDuration = o.cv(o.shape(1), 1);
@@ -64,14 +64,14 @@ public class AudioProcessingUtils {
 						o.v(1, 2), o.v(1, 3),
 						o.v(1, 4), o.v(1, 5)).get();
 		volumeEnv = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> volumeFactor.getResultant(o.v(1, 0))).get();
+				() -> volumeFactor.getResultant(o.v(o.shape(-1), 0))).get();
 
 		Factor<PackedCollection<?>> layerFactor =
 				o.envelope(o.linear(o.c(0.0), duration0, volume0, volume1))
 						.andThenRelease(duration0, volume1, duration1.subtract(duration0), volume2)
 						.andThenRelease(duration1, volume2, duration2.subtract(duration1), volume3).get();
 		layerEnv = o.sampling(OutputLine.sampleRate, MAX_SECONDS,
-				() -> layerFactor.getResultant(o.v(1, 0))).get();
+				() -> layerFactor.getResultant(o.v(o.shape(-1), 0))).get();
 
 		if (enableMultiOrderFilter) {
 			filterEnv = new MultiOrderFilterEnvelopeProcessor(OutputLine.sampleRate, MAX_SECONDS_FILTER);

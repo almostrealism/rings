@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 
 package com.almostrealism.lighting;
 
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.collect.computations.ExpressionComputation;
-import org.almostrealism.color.*;
-import org.almostrealism.color.computations.GeneratedColorProducer;
-import org.almostrealism.geometry.Positioned;
-
-import org.almostrealism.geometry.Ray;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Scalar;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.color.Light;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.Shadable;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.geometry.Positioned;
+import org.almostrealism.geometry.Ray;
 
 /**
  * An {@link PointLight} object represents a light which has its source at a point in the scene.
@@ -155,7 +158,7 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	@Override
 	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		Producer<Scalar> d = vlengthSq(add(point, scalarMultiply(v(location), -1.0)));
+		Producer<Scalar> d = lengthSq(add(point, minus(v(location))));
 
 		RGB color = getColor().multiply(getIntensity());
 		return GeneratedColorProducer.fromProducer(this, attenuation(da, db, dc, v(color), d));
@@ -193,9 +196,9 @@ public class PointLight implements Light, Positioned, RGBFeatures, CodeFeatures 
 	 */
 	// TODO  This should be a method of the Light interface
 	public Producer<RGB> forShadable(Shadable surface, Producer<Ray> intersection, ShaderContext context) {
-		ExpressionComputation<Vector> point = origin(intersection);
-		Producer<Vector> direction = add(point, scalarMultiply(v(getLocation()), -1.0));
-		direction = scalarMultiply(vnormalize(direction), -1.0);
+		CollectionProducer<Vector> point = origin(intersection);
+		Producer<Vector> direction = add(point, minus(v(getLocation())));
+		direction = minus(normalize(direction));
 		context.setLightDirection(direction);
 		return surface.shade(context);
 	}

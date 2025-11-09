@@ -16,20 +16,16 @@
 
 package org.almostrealism.audio.filter;
 
-import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.notes.NoteAudioFilter;
-import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
 import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
-	public static boolean enableReusableProducer = false;
 
 	private ParameterizedEnvelopeLayers parent;
 	private int layer;
@@ -106,40 +102,20 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 			PackedCollection<?> v3 = new PackedCollection<>(1);
 			v3.set(0, getVolume3());
 
-			if (enableReusableProducer) {
-				return instruct("ParameterizedLayerEnvelope.filter", p -> {
-					CollectionProducer<PackedCollection<?>> mainDuration = c(p[1]);
-					CollectionProducer<PackedCollection<?>> duration0 = mainDuration.multiply(c(p[2]));
-					CollectionProducer<PackedCollection<?>> duration1 = mainDuration.multiply(c(p[3]));
-					CollectionProducer<PackedCollection<?>> duration2 = mainDuration.multiply(c(p[4]));
-					CollectionProducer<PackedCollection<?>> volume0 = c(p[5]);
-					CollectionProducer<PackedCollection<?>> volume1 = c(p[6]);
-					CollectionProducer<PackedCollection<?>> volume2 = c(p[7]);
-					CollectionProducer<PackedCollection<?>> volume3 = c(p[8]);
+			return new DynamicCollectionProducer<>(shape(audio), args -> {
+				PackedCollection<?> audioData = audio.get().evaluate();
+				PackedCollection<?> dr = duration.get().evaluate();
 
-					Factor<PackedCollection<?>> factor =
-							envelope(linear(c(0.0), duration0, volume0, volume1))
-									.andThenRelease(duration0, volume1, duration1.subtract(duration0), volume2)
-									.andThenRelease(duration1, volume2, duration2.subtract(duration1), volume3).get();
-					return sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
-							() -> factor.getResultant(p[0]));
-				}, audio, duration, p(d0), p(d1), p(d2), p(v0), p(v1), p(v2), p(v3));
-			} else {
-				return new DynamicCollectionProducer<>(shape(audio), args -> {
-					PackedCollection<?> audioData = audio.get().evaluate();
-					PackedCollection<?> dr = duration.get().evaluate();
+				PackedCollection<?> out = AudioProcessingUtils.getLayerEnv()
+						.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
 
-					PackedCollection<?> out = AudioProcessingUtils.getLayerEnv()
-							.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
+				if (out.getShape().getTotalSize() == 1) {
+					warn("Envelope produced a value with shape " +
+							out.getShape().toStringDetail());
+				}
 
-					if (out.getShape().getTotalSize() == 1) {
-						warn("Envelope produced a value with shape " +
-								out.getShape().toStringDetail());
-					}
-
-					return out;
-				}, false);
-			}
+				return out;
+			}, false);
 		}
 
 		@Override

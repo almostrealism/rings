@@ -60,7 +60,7 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	 */
 	@Override
 	public Producer<Vector> getNormalAt(Producer<Vector> x) {
-		return vnormalize(x);
+		return normalize(x);
 	}
 	
 	/**

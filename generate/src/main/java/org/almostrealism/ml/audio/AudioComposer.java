@@ -64,8 +64,14 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		return autoencoder.getMaximumDuration();
 	}
 
+	public int getEmbeddingDimension() { return dim; }
+
 	public double getSampleRate() {
 		return autoencoder.getSampleRate();
+	}
+
+	public void setWeightSeed(long seed) {
+		this.random = new Random(seed);
 	}
 
 	public TraversalPolicy getFeatureShape() {
@@ -90,13 +96,35 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 		this.features.add(features);
 	}
 
-	@Override
-	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
+	public void clearSources() {
+		this.features.forEach(ComposableAudioFeatures::destroy);
+		this.features.clear();
+	}
+
+	/**
+	 * Get the interpolated latent features (before decoding to audio).
+	 *
+	 * @param value the position vector to use for interpolation
+	 * @return interpolated latent features [64, 256]
+	 */
+	public Producer<PackedCollection<?>> getInterpolatedLatent(Producer<PackedCollection<?>> value) {
+		if (features.isEmpty()) {
+			throw new IllegalStateException("No features have been added to the composer");
+		}
+
 		List<Producer<?>> components = new ArrayList<>();
 		features.stream()
 				.map(features -> features.getResultant(value))
 				.forEach(components::add);
-		return autoencoder.decode(add(components));
+
+		// Sum all the weighted feature components
+		// Each component has shape matching getFeatureShape(), typically (64, 256)
+		return add(components);
+	}
+
+	@Override
+	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
+		return autoencoder.decode(getInterpolatedLatent(value));
 	}
 
 	protected CollectionProducer<PackedCollection<?>> createWeights(Producer<PackedCollection<?>> features) {
@@ -114,6 +142,11 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	public void destroy() {
 		if (autoencoder != null) {
 			autoencoder.destroy();
+		}
+
+		if (features != null) {
+			features.forEach(ComposableAudioFeatures::destroy);
+			features = null;
 		}
 	}
 }

@@ -528,7 +528,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList grid(CellList cells, double duration, int segments, IntFunction<Producer<PackedCollection<?>>> choices) {
-		PackedCollection<?> out = new PackedCollection<>();
+		PackedCollection<?> out = new PackedCollection<>(1);
 		List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> cellChoices =
 				cells.stream()
 						.map(c -> (Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>) data -> (CollectionTemporalCellAdapter) c).collect(Collectors.toList());

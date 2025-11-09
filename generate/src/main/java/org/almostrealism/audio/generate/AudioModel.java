@@ -34,6 +34,7 @@ public class AudioModel {
 	private long seed;
 	private List<String> textConditions;
 	private List<String> audioConditions;
+	private Double creativity;
 
 	public AudioModel() {
 		this(null);
@@ -83,14 +84,27 @@ public class AudioModel {
 		this.audioConditions = audioConditions;
 	}
 
+	public Double getCreativity() { return creativity; }
+	public void setCreativity(Double creativity) {
+		this.creativity = creativity;
+	}
+
 	public String conditionSummary(UnaryOperator<String> audioDescription) {
+		StringBuilder builder = new StringBuilder();
+
 		if (textConditions != null && !textConditions.isEmpty()) {
-			return String.join(", ", textConditions);
-		} else if (audioConditions != null && !audioConditions.isEmpty()) {
-			return String.join(", ",
-					audioConditions.stream().map(audioDescription).toList());
+			builder.append(String.join(", ", textConditions));
 		}
 
-		return "";
+		if (audioConditions != null && !audioConditions.isEmpty()) {
+			if (builder.length() > 0) {
+				builder.append(" + ");
+			}
+
+			builder.append(String.join(", ",
+					audioConditions.stream().map(audioDescription).toList()));
+		}
+
+		return builder.toString();
 	}
 }

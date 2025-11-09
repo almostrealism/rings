@@ -38,7 +38,7 @@ public class Thing extends AbstractSurface implements ScalarFeatures {
 		if (Math.random() > 0.5) {
 			return this.p.intersectAt(ray);
 		} else {
-			return new ShadableIntersection(this, ray, scalar(-1));
+			return new ShadableIntersection(this, ray, c(-1));
 		}
 	}
 

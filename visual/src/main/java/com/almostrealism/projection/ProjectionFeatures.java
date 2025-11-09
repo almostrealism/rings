@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package com.almostrealism.projection;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.Ops;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.collect.computations.ExpressionComputation;
 import org.almostrealism.geometry.Ray;
 
 public interface ProjectionFeatures extends CodeFeatures {
@@ -34,15 +32,16 @@ public interface ProjectionFeatures extends CodeFeatures {
 				direction(pos, sd, projectionDimensions, focalLength, u, v, w, new Pair(blur, blur)));
 	}
 
-	default CollectionProducer<Vector> direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd, Pair projectionDimensions, double focalLength,
-													Vector u, Vector v, Vector w, Pair blur) {
+	default CollectionProducer<Vector> direction(Producer<Pair<?>> pos, Producer<Pair<?>> sd,
+												 Pair projectionDimensions, double focalLength,
+												 Vector u, Vector v, Vector w, Pair blur) {
 		Producer<Pair<?>> pd = v(projectionDimensions);
 
-		ExpressionComputation<Scalar> sdx = l(sd);
-		ExpressionComputation<Scalar> sdy = r(sd);
+		CollectionProducer<PackedCollection<?>> sdx = l(sd);
+		CollectionProducer<PackedCollection<?>> sdy = r(sd);
 
-		ExpressionComputation<Scalar> pdx = l(pd);
-		ExpressionComputation<Scalar> pdy = r(pd);
+		CollectionProducer<PackedCollection<?>> pdx = l(pd);
+		CollectionProducer<PackedCollection<?>> pdy = r(pd);
 
 		CollectionProducer<Scalar> p = pdx.multiply(l(pos))
 								.multiply(sdx.add(scalar(-1.0)).pow(scalar(-1.0))).add(pdx.multiply(scalar(-0.5)));
@@ -55,22 +54,22 @@ public interface ProjectionFeatures extends CodeFeatures {
 		CollectionProducer<Scalar> z = p.multiply(scalar(u.getZ())).add(q.multiply(scalar(v.getZ()))).add(r.multiply(scalar(w.getZ())));
 
 		CollectionProducer<Vector> pqr = vector(x, y, z);
-		CollectionProducer<Scalar> len = vlength(pqr);
+		CollectionProducer<Scalar> len = length(pqr);
 
 		if (blur.getX() != 0.0 || blur.getY() != 0.0) {
-			CollectionProducer<Vector> wv = vnormalize(pqr);
+			CollectionProducer<Vector> wv = normalize(pqr);
 			CollectionProducer<Vector> uv = u(wv, t(pqr));
 			CollectionProducer<Vector> vv = v(wv, uv);
 
 			Producer<PackedCollection<?>> random = rand(2);
-			Producer<Scalar> rx = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 0)), 0));
-			Producer<Scalar> ry = Ops.op(o -> o.scalar(o.shape(1), o.add(o.c(-0.5), o.c(random, 1)), 0));
+			Producer<PackedCollection<?>> rx = add(c(-0.5), c(random, 0));
+			Producer<PackedCollection<?>> ry = add(c(-0.5), c(random, 1));
 
-			pqr = pqr.add(scalarMultiply(scalarMultiply(uv, blur.getX()), rx));
-			pqr = pqr.add(scalarMultiply(scalarMultiply(vv, blur.getY()), ry));
+			pqr = (CollectionProducer) pqr.add(multiply(uv, c(blur.getX())).multiply(rx));
+			pqr = (CollectionProducer) pqr.add(multiply(vv, c(blur.getY())).multiply(ry));
 
 			pqr = scalarMultiply(pqr, len);
-			pqr = scalarMultiply(pqr, vlength(pqr).pow(-1.0));
+			pqr = scalarMultiply(pqr, length(pqr).pow(-1.0));
 		}
 
 		return pqr;
@@ -87,11 +86,11 @@ public interface ProjectionFeatures extends CodeFeatures {
 		return t;
 	}
 
-	private ExpressionComputation<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
-		CollectionProducer<Scalar>  x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
+	private CollectionProducer<Vector> u(CollectionProducer<Vector> w, Producer<Vector> t) {
+		CollectionProducer<Scalar> x = y(t).multiply(z(w)).add(z(t).multiply(y(w)).multiply(scalar(-1.0)));
 		CollectionProducer<Scalar> y = z(t).multiply(x(w)).add(x(t).multiply(z(w)).multiply(scalar(-1.0)));
-		CollectionProducer<Scalar>  z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
-		return vnormalize(vector(x, y, z));
+		CollectionProducer<Scalar> z = x(t).multiply(y(w)).add(y(t).multiply(x(w)).multiply(scalar(-1.0)));
+		return normalize(vector(x, y, z));
 	}
 
 	private CollectionProducer<Vector> v(CollectionProducer<Vector> w, CollectionProducer<Vector> u) {

@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
+	public static String TEST_INPUT = "Library/Res Multi Acid C3 01.wav";
 
 	int filterOrder = 40;
 
@@ -119,7 +120,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		TimeCell clock = new TimeCell();
 		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
 
-		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		cells(1, i -> audio.toCell(clock))
 				.addRequirement(clock)
 				.f(i -> lp(freq, c(0.1)))
@@ -136,14 +137,14 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		double sustain = 0.04;
 		double release = 1.5;
 
-		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		int sampleRate = audio.getSampleRate();
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
 		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
-		data = new WaveData(data, sampleRate).sample(-1, envelope).getChannelData(0);
+		data = new WaveData(data, sampleRate).sample(0, envelope).getChannelData(0);
 
 		MultiOrderFilter filter =
 				lowPass(p(audio.getChannelData(0)), cp(data.traverse(0)), audio.getSampleRate(), filterOrder);
@@ -161,7 +162,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		double sustain = 0.04;
 		double release = 1.5;
 
-		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		int sampleRate = audio.getSampleRate();
 		int maxFrames = (int) (duration * sampleRate);
 		int frames = audio.getFrameCount();
@@ -183,13 +184,13 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 	@Test
 	public void adsrMultiOrderFilterArguments2() throws IOException {
-		double duration = 4.0;
+		double duration = 8.0;
 		double attack = 0.1;
 		double decay = 0.16;
 		double sustain = 0.04;
 		double release = 1.5;
 
-		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		int sampleRate = audio.getSampleRate();
 		int maxFrames = (int) (duration * sampleRate);
 		int frames = audio.getFrameCount();
@@ -198,13 +199,13 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
-		data = new WaveData(data, sampleRate).sample(-1, envelope).getChannelData(0);
+		data = new WaveData(data, sampleRate).sample(0, envelope).getChannelData(0);
 
 		int inputAxis = 0;
 
 		MultiOrderFilter filter =
-				lowPass(cv(shape(maxFrames).traverse(inputAxis), 0),
-						cv(shape(maxFrames), 1),
+				lowPass(cv(shape(-1, maxFrames).traverse(inputAxis), 0),
+						cv(shape(-1, maxFrames), 1),
 						audio.getSampleRate(), filterOrder);
 
 		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
@@ -221,7 +222,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		double sustain = 0.04;
 		double release = 1.5;
 
-		WaveData audio = WaveData.load(new File("Library/organ.wav"));
+		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		int sampleRate = audio.getSampleRate();
 		int maxFrames = (int) (duration * sampleRate);
 		int frames = audio.getFrameCount();
@@ -247,7 +248,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	@Test
 	public void parameterizedVolumeEnvelope() {
 		NoteAudioProvider provider =
-				NoteAudioProvider.create("Library/organ.wav");
+				NoteAudioProvider.create(TEST_INPUT);
 
 		ParameterizedVolumeEnvelope penv = ParameterizedVolumeEnvelope
 				.random(ParameterizedVolumeEnvelope.Mode.STANDARD_NOTE);
@@ -261,7 +262,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 	@Test
 	public void parameterizedFilterEnvelope() {
 		NoteAudioProvider provider =
-				NoteAudioProvider.create("Library/organ.wav");
+				NoteAudioProvider.create(TEST_INPUT);
 
 		ParameterizedFilterEnvelope penv = ParameterizedFilterEnvelope
 				.random(ParameterizedFilterEnvelope.Mode.STANDARD_NOTE);

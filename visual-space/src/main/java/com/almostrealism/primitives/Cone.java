@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,10 +19,6 @@ package com.almostrealism.primitives;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 
 import org.almostrealism.algebra.*;
 import org.almostrealism.color.RGB;
@@ -82,7 +78,7 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 		TransformMatrix m = getTransform(true);
 		if (m != null) r = m.getInverse().transform(r);
 
-		final Supplier<Evaluable<? extends Ray>> fr = r;
+		final Producer<Ray> fr = r;
 
 		Producer<Scalar> s = new DynamicProducerForMemoryData<>(args -> {
 				Ray ray = fr.get().evaluate(args);
@@ -111,25 +107,25 @@ public class Cone extends AbstractSurface implements CodeFeatures {
 						double invC2 = 1.0 / c2;
 
 						double t = (-c1 - root) * invC2;
-						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
-						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+						Vector p = ray.pointAt(c(t)).get().evaluate(args);
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 
 						t = (-c1 + root) * invC2;
-						p = ray.pointAt(scalar(t)).get().evaluate(args);
-						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+						p = ray.pointAt(c(t)).get().evaluate(args);
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 					} else {
 						double t = -c1 / c2;
-						Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
+						Vector p = ray.pointAt(c(t)).get().evaluate(args);
 
-						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+						if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 					}
 				} else if (Math.abs(c1) >= Intersection.e) {
 					double t = -0.5 * c0 / c1;
-					Vector p = ray.pointAt(scalar(t)).get().evaluate(args);
-					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(new Double(t));
+					Vector p = ray.pointAt(c(t)).get().evaluate(args);
+					if (p.getY() > 0.0 && p.getY() < 1.0) inter.add(t);
 				} else if (Math.abs(c0) < Intersection.e) {
-					inter.add(new Double(0.0));
-					inter.add(new Double(1.0));
+					inter.add(0.0);
+					inter.add(1.0);
 				}
 
 				double t = Double.MAX_VALUE;

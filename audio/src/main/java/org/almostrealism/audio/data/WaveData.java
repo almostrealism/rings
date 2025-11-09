@@ -21,12 +21,8 @@ import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
-import org.almostrealism.audio.feature.FeatureComputer;
-import org.almostrealism.audio.feature.FeatureSettings;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
@@ -58,8 +54,6 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	private static Evaluable<PackedCollection<?>> pool2d;
 	private static Evaluable<PackedCollection<?>> scaledAdd;
 
-	private static FeatureComputer mfcc;
-
 	static {
 		fft = Ops.op(o ->
 				o.fft(FFT_BINS, o.v(o.shape(FFT_BINS, 2), 0),
@@ -76,8 +70,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 						.traverse(3)
 						.max()
 						.reshape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1)).get();
-		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(1), 0),
-					o.multiply(o.v(o.shape(1), 1), o.v(o.shape(1), 2))))
+		scaledAdd = Ops.op(o -> o.add(o.v(o.shape(-1), 0),
+					o.multiply(o.v(o.shape(-1), 1), o.v(o.shape(1), 2))))
 				.get();
 		// mfcc = new FeatureComputer(getDefaultFeatureSettings());
 	}
@@ -298,16 +292,6 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		}
 	}
 
-	public PackedCollection<?> features() {
-		TraversalPolicy inputShape = shape(getFrameCount(), 2);
-		PackedCollection input = PackedCollection.factory()
-				.apply(inputShape.getTotalSize()).reshape(inputShape).traverse(1)
-				.fill((int pos[]) -> pos[1] == 0 ? getChannelData(0).toDouble(pos[0]) : 1.0);
-		return mfcc.computeFeatures(
-				Scalar.scalarBank(input.getCount(), input),
-				getSampleRate(), PackedCollection::new);
-	}
-
 	public boolean save(File file) {
 		if (getFrameCount() <= 0) {
 			Console.root.features(WavFile.class).log("No frames to write");
@@ -383,9 +367,5 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 			return new WaveData(in, (int) w.getSampleRate());
 		}
-	}
-
-	public static FeatureSettings getDefaultFeatureSettings() {
-		return new FeatureSettings(OutputLine.sampleRate);
 	}
 }

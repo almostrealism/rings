@@ -18,6 +18,7 @@ package com.almostrealism.network.test;
 
 import com.almostrealism.projection.ProjectionFeatures;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.primitives.Sphere;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
@@ -26,7 +27,7 @@ import org.almostrealism.algebra.Vector;
 public class AbstractIntersectionTest implements ProjectionFeatures {
 	protected final int width = 400, height = 400;
 
-	protected Producer<Scalar> combined() {
+	protected Producer<PackedCollection<?>> combined() {
 		Vector viewDirection = new Vector(0.0, 0.0,  -1.0);
 		Vector upDirection = new Vector(0.0, 1.0, 0.0);
 

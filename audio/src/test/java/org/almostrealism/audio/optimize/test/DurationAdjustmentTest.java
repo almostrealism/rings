@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Michael Murray
+ * Copyright 2025 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,9 +71,6 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		Producer<PackedCollection<?>> r = c(repeat);
 		Producer<PackedCollection<?>> su = c(speedUp);
 
-		Producer<PackedCollection<?>> params = concat(r, su);
-
-//		Producer<PackedCollection<?>> adjust = durationAdjustment(params, divide(c(clock.frame(), 0), c(sr)));
 		Producer<PackedCollection<?>> adjust = durationAdjustment(r, su, c(0.0), clock.time(sr));
 
 		int count = 32;

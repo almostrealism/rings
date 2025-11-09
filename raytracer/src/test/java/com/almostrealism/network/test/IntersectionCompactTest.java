@@ -16,23 +16,25 @@
 
 package com.almostrealism.network.test;
 
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.junit.Test;
 
 public class IntersectionCompactTest extends AbstractIntersectionTest {
 	@Test
 	public void compact() {
-		Producer<Scalar> combined = combined();
-		AcceleratedComputationEvaluable<Scalar> ev = (AcceleratedComputationEvaluable<Scalar>) combined.get();
+		Producer<PackedCollection<?>> combined = combined();
+		Evaluable<PackedCollection<?>> ev = combined.get();
 
-		Scalar r = ev.evaluate(new Pair(50, 50));
+		Pair r = new Pair(ev.evaluate(new Pair(50, 50)));
 		System.out.println(r.getX());
 		assert r.getX() > 0;
 
-		r = ev.evaluate(new Pair(0, 0));
+		r = new Pair(ev.evaluate(new Pair(0, 0)));
 		System.out.println(r.getX());
 		assert r.getX() < 0;
 	}
