@@ -47,7 +47,6 @@ import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
@@ -67,14 +66,14 @@ import org.almostrealism.optimize.PopulationOptimizer;
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
 	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
-	public static final int verbosity = 0;
+	public static final int verbosity = -1;
 	public static final int singleChannel = -1;
 
 	public static boolean enableVerbose = false;
 	public static boolean enableProfile = true;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
-	public static double breederPerturbation = 0.01;
+	public static double breederPerturbation = 0.02;
 
 	public static String LIBRARY = "Library";
 
@@ -160,8 +159,9 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 			int len = a.getShape().getTotalSize();
 			PackedCollection<?> combined = new PackedCollection<>(len);
 
+			double scale = (1 + Math.random()) * magnitude / 2;
 			for (int i = 0; i < len; i++) {
-				combined.setMem(0, Breeders.perturbation(a.toDouble(i), b.toDouble(i), magnitude));
+				combined.setMem(i, Breeders.perturbation(a.toDouble(i), b.toDouble(i), scale));
 			}
 
 			return new ProjectedGenome(new PackedCollection<>(combined));
@@ -235,7 +235,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		OperationProfileNode profile = setVerbosity(verbosity, enableProfile);
 
 		// Setup features
-		PopulationOptimizer.popSize = enableBreeding ? 40 : 3;
+		PopulationOptimizer.popSize = enableBreeding ? 10 : 3;
 		setFeatureLevel(7);
 
 		// Create computations before applying Heap
@@ -248,7 +248,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 			heap.use(() -> {
 				try {
 					AudioScene<?> scene = createScene();
-					AudioSceneOptimizer opt = build(scene, enableBreeding ? 10 : 1);
+					AudioSceneOptimizer opt = build(scene, enableBreeding ? 5 : 1);
 					opt.init();
 					opt.run();
 
