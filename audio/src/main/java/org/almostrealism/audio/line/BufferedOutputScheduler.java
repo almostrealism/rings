@@ -220,8 +220,24 @@ public class BufferedOutputScheduler implements CellFeatures {
 
 				target = getTarget();
 				lastDuration = System.nanoTime() - s;
+
+				if (enableVerbose && count % logRate == 0) {
+					log("Active cycle " + count +
+							" | render=" + NumberFormats.formatNumber(lastDuration / 10e6) + "ms" +
+							" | sleep=" + target + "ms" +
+							" | gap=" + getRenderingGap() + "ms" +
+							" | wp=" + getWritePosition() +
+							" | rp=" + output.getReadPosition());
+				}
 			} else {
 				target = getTarget();
+
+				if (enableVerbose && count % logRate == 0) {
+					log("Paused cycle " + count +
+							" | sleep=" + target + "ms" +
+							" | wp=" + getWritePosition() +
+							" | rp=" + output.getReadPosition());
+				}
 			}
 
 			try {
