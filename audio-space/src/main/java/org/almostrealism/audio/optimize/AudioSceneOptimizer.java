@@ -66,7 +66,7 @@ import org.almostrealism.optimize.PopulationOptimizer;
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
 	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
-	public static final int verbosity = -1;
+	public static final int verbosity = SystemUtils.getInt("AR_AUDIO_OPT_VERBOSITY").orElse(0);
 	public static final int singleChannel = -1;
 
 	public static boolean enableVerbose = false;

@@ -247,11 +247,11 @@
 			<url>https://jogamp.org/deployment/maven/</url>
 		</repository>
 
-<!--		<repository>-->
-<!--			<id>almostrealism</id>-->
-<!--			<url>https://maven.pkg.github.com/almostrealism/common</url>-->
-<!--			<releases><enabled>true</enabled></releases>-->
-<!--			<snapshots><enabled>true</enabled></snapshots>-->
-<!--		</repository>-->
+		<repository>
+			<id>almostrealism-common</id>
+			<url>https://maven.pkg.github.com/almostrealism/common</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
 	</repositories>
 </project>
