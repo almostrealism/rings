@@ -17,6 +17,7 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.profile.OperationProfileNode;
+import io.almostrealism.relation.Evaluable;
 import org.almostrealism.audio.filter.MultiOrderFilterEnvelopeProcessor;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
@@ -34,6 +35,13 @@ import java.util.Random;
 /**
  * Performance test for {@link MultiOrderFilterEnvelopeProcessor} that replicates
  * real-world usage patterns by loading histogram data from actual runs.
+ * <p>
+ * The test supports a "distractor computation" feature that simulates pipeline state
+ * switching by randomly executing a separate multiply operation between filter calls.
+ * This better models real-world performance where the GPU/CPU is switching between
+ * different compute kernels. The distractor probability can be configured via
+ * {@link #distractorProbability}.
+ * </p>
  */
 public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFeatures {
 	public static final int SAMPLE_RATE = OutputLine.sampleRate;
@@ -41,27 +49,31 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 
 	public static boolean enableProfile = true;
 
+	/** Size of distractor computation buffers (frames). */
+	public static final int DISTRACTOR_SIZE = 50000;
+
+	/** Probability of running distractor computation between filter calls (0.0 to 1.0). */
+	public static double distractorProbability = 0.1;
+
 	/**
 	 * Loads histogram data from results/filter_dist.csv and runs the processor
 	 * with the same distribution of input sizes to measure realistic performance.
 	 * <p>
 	 * This is a full-scale test that replicates all 400k+ calls from the histogram.
-	 * Use {@link #realisticDistributionScaled()} for a faster test.
+	 * Use {@link #scaled()} for a faster test.
 	 * </p>
 	 */
 	@Test
-	public void realisticDistribution() throws IOException {
-		OperationProfileNode profile = enableProfile ?
-				new OperationProfileNode("MultiOrderFilterEnvelopeProcessorPerformanceTest") : null;
-		Hardware.getLocalHardware().assignProfile(profile);
+	public void standard() throws IOException {
+		runDistribution("filterEnv", 1.0, 0.0);
+	}
 
-		try {
-			runRealisticDistribution(1.0);
-		} finally {
-			if (profile != null) {
-				profile.save("results/filterEnvelope.xml");
-			}
-		}
+	/**
+	 * Runs the scaled test with 25% distractor probability.
+	 */
+	@Test
+	public void highDistractor() throws IOException {
+		runDistribution("filterEnvHighDistractor", 1.0, 0.9);
 	}
 
 	/**
@@ -69,16 +81,31 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 	 * This is faster while still maintaining the distribution shape.
 	 */
 	@Test
-	public void realisticDistributionScaled() throws IOException {
+	public void scaled() throws IOException {
+		runDistribution("filterEnvScaled", 0.1, 0.0);
+	}
+
+	/**
+	 * Runs the scaled test with 90% distractor probability.
+	 */
+	@Test
+	public void scaledHighDistractor() throws IOException {
+		runDistribution("filterEnvScaledHighDistractor", 0.1, 0.9);
+	}
+
+	/**
+	 * Helper method that runs realistic distribution with profiling.
+	 */
+	protected void runDistribution(String name, double scaleFactor, double distractorProbability) throws IOException {
 		OperationProfileNode profile = enableProfile ?
 				new OperationProfileNode("MultiOrderFilterEnvelopeProcessorPerformanceTest") : null;
 		Hardware.getLocalHardware().assignProfile(profile);
 
 		try {
-			runRealisticDistribution(0.1);
+			runDistribution(scaleFactor, distractorProbability);
 		} finally {
 			if (profile != null) {
-				profile.save("results/filterEnvelopeScaled.xml");
+				profile.save("results/" + name + ".xml");
 			}
 		}
 	}
@@ -88,7 +115,7 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 	 *
 	 * @param scaleFactor  Fraction of calls to process (0.0 to 1.0)
 	 */
-	private void runRealisticDistribution(double scaleFactor) throws IOException {
+	protected void runDistribution(double scaleFactor, double distractorProbability) throws IOException {
 		// Try multiple possible paths for the histogram file
 		File histogramFile = new File("audio/results/filter_dist.csv");
 		if (!histogramFile.exists()) {
@@ -138,6 +165,20 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		List<Integer> inputSizes = generateInputSizes(histogram, scaleFactor);
 		log("Generated " + inputSizes.size() + " test inputs");
 
+		// Create distractor computation to simulate pipeline state switching
+		Evaluable<PackedCollection<?>> distractor = null;
+		PackedCollection<?> distractorA = null;
+		PackedCollection<?> distractorB = null;
+		PackedCollection<?> distractorResult = null;
+
+		if (distractorProbability > 0.0) {
+			log("Distractor computation enabled (probability: " + (distractorProbability * 100) + "%)");
+			distractorA = new PackedCollection<>(DISTRACTOR_SIZE);
+			distractorB = new PackedCollection<>(DISTRACTOR_SIZE);
+			distractorResult = new PackedCollection<>(DISTRACTOR_SIZE);
+			distractor = multiply(p(distractorA), p(distractorB)).get();
+		}
+
 		// Warm-up phase
 		log("Warming up...");
 		warmUp(processor, 100);
@@ -146,8 +187,16 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		log("Running performance test...");
 		long startTime = System.nanoTime();
 		long totalFramesProcessed = 0;
+		long distractorExecutions = 0;
+		Random distractorRandom = new Random(999);
 
 		for (int inputSize : inputSizes) {
+			// Randomly execute distractor computation to force pipeline state switching
+			if (distractor != null && distractorRandom.nextDouble() < distractorProbability) {
+				distractor.into(distractorResult).evaluate();
+				distractorExecutions++;
+			}
+
 			PackedCollection<?> input = new PackedCollection<>(inputSize);
 			PackedCollection<?> output = new PackedCollection<>(inputSize);
 
@@ -160,6 +209,11 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 			output.destroy();
 		}
 
+		// Cleanup distractor resources
+		if (distractorA != null) distractorA.destroy();
+		if (distractorB != null) distractorB.destroy();
+		if (distractorResult != null) distractorResult.destroy();
+
 		long endTime = System.nanoTime();
 		double elapsedSeconds = (endTime - startTime) / 1_000_000_000.0;
 
@@ -167,6 +221,10 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		log("\n=== Performance Results ===");
 		log("Total calls: " + inputSizes.size());
 		log("Total frames processed: " + totalFramesProcessed);
+		if (distractorExecutions > 0) {
+			log("Distractor executions: " + distractorExecutions +
+				" (" + String.format("%.1f", (distractorExecutions * 100.0) / inputSizes.size()) + "%)");
+		}
 		log("Total time: " + String.format("%.3f", elapsedSeconds) + " seconds");
 		log("Average time per call: " +
 			String.format("%.3f", (elapsedSeconds / inputSizes.size()) * 1000) + " ms");
