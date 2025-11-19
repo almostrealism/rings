@@ -22,6 +22,12 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.collect.PackedCollection;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 /**
  * A high-order low-pass filter with time-varying cutoff frequency controlled by an ADSR envelope.
  * <p>
@@ -69,6 +75,18 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	/** Order of the low-pass filter. Higher values produce steeper rolloff. */
 	public static int filterOrder = 40;
 
+	/** Number of histogram bins for tracking input frame distribution. */
+	public static final int HISTOGRAM_BINS = 100;
+
+	/** Minimum frame count for histogram tracking. */
+	public static final int HISTOGRAM_MIN_FRAMES = 10;
+
+	/** Maximum frame count for histogram tracking. */
+	public static final int HISTOGRAM_MAX_FRAMES = 1_000_000;
+
+	/** Width of each histogram bin in frames. */
+	private static final int HISTOGRAM_BIN_WIDTH = (HISTOGRAM_MAX_FRAMES - HISTOGRAM_MIN_FRAMES) / HISTOGRAM_BINS;
+
 	private PackedCollection<?> cutoff;
 
 	private PackedCollection<?> duration;
@@ -79,6 +97,9 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 
 	private Evaluable<PackedCollection<?>> cutoffEnvelope;
 	private Evaluable<PackedCollection<?>> multiOrderFilter;
+
+	private boolean histogramEnabled;
+	private long[] histogram;
 
 	/**
 	 * Constructs a new multi-order filter envelope processor.
@@ -178,6 +199,63 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	}
 
 	/**
+	 * Enables histogram tracking of input frame sizes.
+	 * <p>
+	 * When enabled, each call to {@link #process(PackedCollection, PackedCollection)} will
+	 * increment a histogram bin based on the input size. The histogram has {@value #HISTOGRAM_BINS}
+	 * bins covering frame counts from {@value #HISTOGRAM_MIN_FRAMES} to {@value #HISTOGRAM_MAX_FRAMES}.
+	 * </p>
+	 * <p>
+	 * Use {@link #saveHistogram(File)} to export the collected data for analysis or replication
+	 * in performance tests.
+	 * </p>
+	 *
+	 * @param enabled  {@code true} to enable histogram tracking, {@code false} to disable
+	 */
+	public void setHistogramEnabled(boolean enabled) {
+		this.histogramEnabled = enabled;
+		if (enabled && histogram == null) {
+			histogram = new long[HISTOGRAM_BINS];
+		}
+	}
+
+	/**
+	 * Returns whether histogram tracking is currently enabled.
+	 *
+	 * @return {@code true} if histogram tracking is enabled
+	 */
+	public boolean isHistogramEnabled() {
+		return histogramEnabled;
+	}
+
+	/**
+	 * Returns a copy of the current histogram data.
+	 * <p>
+	 * The returned array has {@value #HISTOGRAM_BINS} elements, where each element contains
+	 * the count of process() calls with input sizes falling in that bin's range.
+	 * </p>
+	 *
+	 * @return Copy of histogram counts, or {@code null} if histogram is not enabled
+	 */
+	public long[] getHistogram() {
+		if (histogram == null) {
+			return null;
+		}
+		return histogram.clone();
+	}
+
+	/**
+	 * Resets all histogram bins to zero.
+	 */
+	public void resetHistogram() {
+		if (histogram != null) {
+			for (int i = 0; i < histogram.length; i++) {
+				histogram[i] = 0;
+			}
+		}
+	}
+
+	/**
 	 * Applies the time-varying low-pass filter to the input audio.
 	 * <p>
 	 * This method performs the following steps:
@@ -201,10 +279,100 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	public void process(PackedCollection<?> input, PackedCollection<?> output) {
 		int frames = input.getShape().getTotalSize();
 
+		// Update histogram if enabled
+		if (histogramEnabled && histogram != null) {
+			int binIndex = (frames - HISTOGRAM_MIN_FRAMES) / HISTOGRAM_BIN_WIDTH;
+			binIndex = Math.min(HISTOGRAM_BINS - 1, Math.max(0, binIndex));
+			histogram[binIndex]++;
+		}
+
 		PackedCollection<?> cf = cutoff.range(shape(frames));
 		cutoffEnvelope.into(cf.traverseEach()).evaluate();
 		multiOrderFilter.into(output.traverse(1))
 				.evaluate(input.traverse(0), cf.traverse(0));
+	}
+
+	/**
+	 * Saves the histogram data to a CSV file.
+	 * <p>
+	 * The CSV format includes a header row and one row per bin with columns:
+	 * </p>
+	 * <ul>
+	 *   <li><b>bin</b>: Bin index (0 to {@value #HISTOGRAM_BINS} - 1)</li>
+	 *   <li><b>min_frames</b>: Minimum frame count for this bin (inclusive)</li>
+	 *   <li><b>max_frames</b>: Maximum frame count for this bin (inclusive)</li>
+	 *   <li><b>count</b>: Number of process() calls with input sizes in this range</li>
+	 * </ul>
+	 *
+	 * @param file  The file to write the CSV data to
+	 * @throws IOException if an I/O error occurs
+	 * @throws IllegalStateException if histogram tracking is not enabled
+	 */
+	public void saveHistogram(File file) throws IOException {
+		if (histogram == null) {
+			throw new IllegalStateException("Histogram tracking is not enabled");
+		}
+
+		try (PrintWriter writer = new PrintWriter(file)) {
+			writer.println("bin,min_frames,max_frames,count");
+			for (int i = 0; i < HISTOGRAM_BINS; i++) {
+				int minFrames = HISTOGRAM_MIN_FRAMES + (i * HISTOGRAM_BIN_WIDTH);
+				int maxFrames = minFrames + HISTOGRAM_BIN_WIDTH - 1;
+				if (i == HISTOGRAM_BINS - 1) {
+					maxFrames = HISTOGRAM_MAX_FRAMES;
+				}
+				writer.printf("%d,%d,%d,%d%n", i, minFrames, maxFrames, histogram[i]);
+			}
+		}
+	}
+
+	/**
+	 * Loads histogram data from a CSV file previously saved with {@link #saveHistogram(File)}.
+	 * <p>
+	 * This method can be used in performance tests to replicate a realistic distribution of
+	 * input sizes. The CSV must match the format produced by {@link #saveHistogram(File)}.
+	 * </p>
+	 * <p>
+	 * Histogram tracking will be automatically enabled if it was not already enabled.
+	 * </p>
+	 *
+	 * @param file  The CSV file to load
+	 * @throws IOException if an I/O error occurs or the file format is invalid
+	 */
+	public void loadHistogram(File file) throws IOException {
+		if (histogram == null) {
+			histogram = new long[HISTOGRAM_BINS];
+		}
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			String header = reader.readLine();
+			if (header == null || !header.startsWith("bin,")) {
+				throw new IOException("Invalid histogram CSV format: missing or invalid header");
+			}
+
+			for (int i = 0; i < HISTOGRAM_BINS; i++) {
+				String line = reader.readLine();
+				if (line == null) {
+					throw new IOException("Unexpected end of file at bin " + i);
+				}
+
+				String[] parts = line.split(",");
+				if (parts.length != 4) {
+					throw new IOException("Invalid line format at bin " + i + ": expected 4 columns");
+				}
+
+				int binIndex = Integer.parseInt(parts[0].trim());
+				long count = Long.parseLong(parts[3].trim());
+
+				if (binIndex != i) {
+					throw new IOException("Bin index mismatch at line " + (i + 2) + ": expected " + i + ", got " + binIndex);
+				}
+
+				histogram[i] = count;
+			}
+		}
+
+		histogramEnabled = true;
 	}
 
 	/**
