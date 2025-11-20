@@ -107,22 +107,23 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 	@Test
 	public void cellsPatternSmall() {
+		int channels = 5;
+
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		MixdownManager.enableMainFilterUp = false;
 		MixdownManager.enableEfxFilters = false;
 
-		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
 		HealthComputationAdapter.setStandardDuration(150);
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
+		StableDurationHealthComputation health =
+				new StableDurationHealthComputation(channels + 1); // extra channel for efx
 		health.setOutputFile("results/cells-pattern-small.wav");
 
-		AudioScene<?> pattern = pattern(2, 2, true);
+		AudioScene<?> pattern = pattern(channels, 2, true);
 		pattern.assignGenome(pattern.getGenome().random());
 
 		Cells organ = randomOrgan(pattern, health.getOutput());
 
-		organ.reset();
 		health.setTarget(organ);
 		health.computeHealth();
 	}
