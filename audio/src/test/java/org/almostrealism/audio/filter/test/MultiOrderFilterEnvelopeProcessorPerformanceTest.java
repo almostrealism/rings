@@ -165,27 +165,28 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		List<Integer> inputSizes = generateInputSizes(histogram, scaleFactor);
 		log("Generated " + inputSizes.size() + " test inputs");
 
-		// Create distractor computations to simulate pipeline state switching
-		Evaluable<PackedCollection<?>> distractorMultiply = null;
-		Evaluable<PackedCollection<?>> distractorAdd = null;
-		Evaluable<PackedCollection<?>> distractorSum = null;
-		PackedCollection<?> distractorA = null;
-		PackedCollection<?> distractorB = null;
-		PackedCollection<?> distractorResult = null;
-		PackedCollection<?> distractorSumResult = null;
-
+		// Create distractor runner to simulate pipeline state switching
+		DistractionRunner distractor = null;
 		if (distractorProbability > 0.0) {
-			log("Distractor computations enabled (probability: " + (distractorProbability * 100) + "%)");
-			distractorA = new PackedCollection<>(100, 100).randnFill();
-			distractorB = new PackedCollection<>(DISTRACTOR_SIZE).randnFill();
-			distractorResult = new PackedCollection<>(DISTRACTOR_SIZE);
-			distractorSumResult = new PackedCollection<>(1);
+			distractor = new DistractionRunner(DISTRACTOR_SIZE, distractorProbability);
+			distractor.initialize();
 
-			// Create multiple different computation types to maximize pipeline state diversity
-			distractorMultiply = multiply(p(distractorA), p(distractorB)).get();
-			distractorAdd = add(p(distractorA), p(distractorB)).get();
-			distractorSum = cp(distractorA).sum(1).get();
-			log("Initialized 3 distractor types: multiply, add, sum");
+			// Add diverse operation types to maximize pipeline state diversity
+			distractor.addMultiply();
+			distractor.addAdd();
+			distractor.addSubtract();
+			distractor.addDivide();
+			distractor.addSum();
+			distractor.addExp();
+			distractor.addPow();
+			distractor.addSqrt();
+			distractor.addAbs();
+			distractor.addMin();
+			distractor.addMax();
+			distractor.addZeros();
+
+			log("Distractor enabled with " + distractor.getOperationCount() +
+				" operation types (probability: " + (distractorProbability * 100) + "%)");
 		}
 
 		// Warm-up phase
@@ -196,26 +197,11 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		log("Running performance test...");
 		long startTime = System.nanoTime();
 		long totalFramesProcessed = 0;
-		long distractorExecutions = 0;
-		Random distractorRandom = new Random(999);
 
 		for (int inputSize : inputSizes) {
 			// Randomly execute distractor computation to force pipeline state switching
-			if (distractorMultiply != null && distractorRandom.nextDouble() < distractorProbability) {
-				// Randomly select which distractor type to execute
-				int distractorType = distractorRandom.nextInt(3);
-				switch (distractorType) {
-					case 0:
-						distractorMultiply.into(distractorResult).evaluate();
-						break;
-					case 1:
-						distractorAdd.into(distractorResult).evaluate();
-						break;
-					case 2:
-						distractorSum.into(distractorSumResult).evaluate();
-						break;
-				}
-				distractorExecutions++;
+			if (distractor != null) {
+				distractor.maybeExecute();
 			}
 
 			PackedCollection<?> input = new PackedCollection<>(inputSize).randnFill();
@@ -229,10 +215,9 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		}
 
 		// Cleanup distractor resources
-		if (distractorA != null) distractorA.destroy();
-		if (distractorB != null) distractorB.destroy();
-		if (distractorResult != null) distractorResult.destroy();
-		if (distractorSumResult != null) distractorSumResult.destroy();
+		if (distractor != null) {
+			distractor.destroy();
+		}
 
 		long endTime = System.nanoTime();
 		double elapsedSeconds = (endTime - startTime) / 1_000_000_000.0;
@@ -241,9 +226,10 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		log("\n=== Performance Results ===");
 		log("Total calls: " + inputSizes.size());
 		log("Total frames processed: " + totalFramesProcessed);
-		if (distractorExecutions > 0) {
-			log("Distractor executions: " + distractorExecutions +
-				" (" + String.format("%.1f", (distractorExecutions * 100.0) / inputSizes.size()) + "%)");
+		if (distractor != null && distractor.getExecutionCount() > 0) {
+			log("Distractor executions: " + distractor.getExecutionCount() +
+				" (" + String.format("%.1f", (distractor.getExecutionCount() * 100.0) / inputSizes.size()) + "%)");
+			log("Distractor operation types: " + distractor.getOperationCount());
 		}
 		log("Total time: " + String.format("%.3f", elapsedSeconds) + " seconds");
 		log("Average time per call: " +
