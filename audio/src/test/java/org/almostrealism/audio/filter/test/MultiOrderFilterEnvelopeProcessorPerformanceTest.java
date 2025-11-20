@@ -173,9 +173,10 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 
 		if (distractorProbability > 0.0) {
 			log("Distractor computation enabled (probability: " + (distractorProbability * 100) + "%)");
-			distractorA = new PackedCollection<>(DISTRACTOR_SIZE);
-			distractorB = new PackedCollection<>(DISTRACTOR_SIZE);
+			distractorA = new PackedCollection<>(DISTRACTOR_SIZE).randnFill();
+			distractorB = new PackedCollection<>(DISTRACTOR_SIZE).randnFill();
 			distractorResult = new PackedCollection<>(DISTRACTOR_SIZE);
+
 			distractor = multiply(p(distractorA), p(distractorB)).get();
 		}
 
@@ -197,10 +198,8 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 				distractorExecutions++;
 			}
 
-			PackedCollection<?> input = new PackedCollection<>(inputSize);
-			PackedCollection<?> output = new PackedCollection<>(inputSize);
-
-			// Fill input with test data (silence is fine for performance testing)
+			PackedCollection<?> input = new PackedCollection<>(inputSize).randnFill();
+			PackedCollection<?> output = new PackedCollection<>(inputSize).randnFill();
 			processor.process(input, output);
 
 			totalFramesProcessed += inputSize;
