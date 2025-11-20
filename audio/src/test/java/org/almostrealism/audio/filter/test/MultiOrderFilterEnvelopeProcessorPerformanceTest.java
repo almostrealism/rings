@@ -165,19 +165,27 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		List<Integer> inputSizes = generateInputSizes(histogram, scaleFactor);
 		log("Generated " + inputSizes.size() + " test inputs");
 
-		// Create distractor computation to simulate pipeline state switching
-		Evaluable<PackedCollection<?>> distractor = null;
+		// Create distractor computations to simulate pipeline state switching
+		Evaluable<PackedCollection<?>> distractorMultiply = null;
+		Evaluable<PackedCollection<?>> distractorAdd = null;
+		Evaluable<PackedCollection<?>> distractorSum = null;
 		PackedCollection<?> distractorA = null;
 		PackedCollection<?> distractorB = null;
 		PackedCollection<?> distractorResult = null;
+		PackedCollection<?> distractorSumResult = null;
 
 		if (distractorProbability > 0.0) {
-			log("Distractor computation enabled (probability: " + (distractorProbability * 100) + "%)");
-			distractorA = new PackedCollection<>(DISTRACTOR_SIZE).randnFill();
+			log("Distractor computations enabled (probability: " + (distractorProbability * 100) + "%)");
+			distractorA = new PackedCollection<>(100, 100).randnFill();
 			distractorB = new PackedCollection<>(DISTRACTOR_SIZE).randnFill();
 			distractorResult = new PackedCollection<>(DISTRACTOR_SIZE);
+			distractorSumResult = new PackedCollection<>(1);
 
-			distractor = multiply(p(distractorA), p(distractorB)).get();
+			// Create multiple different computation types to maximize pipeline state diversity
+			distractorMultiply = multiply(p(distractorA), p(distractorB)).get();
+			distractorAdd = add(p(distractorA), p(distractorB)).get();
+			distractorSum = cp(distractorA).sum(1).get();
+			log("Initialized 3 distractor types: multiply, add, sum");
 		}
 
 		// Warm-up phase
@@ -193,8 +201,20 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 
 		for (int inputSize : inputSizes) {
 			// Randomly execute distractor computation to force pipeline state switching
-			if (distractor != null && distractorRandom.nextDouble() < distractorProbability) {
-				distractor.into(distractorResult).evaluate();
+			if (distractorMultiply != null && distractorRandom.nextDouble() < distractorProbability) {
+				// Randomly select which distractor type to execute
+				int distractorType = distractorRandom.nextInt(3);
+				switch (distractorType) {
+					case 0:
+						distractorMultiply.into(distractorResult).evaluate();
+						break;
+					case 1:
+						distractorAdd.into(distractorResult).evaluate();
+						break;
+					case 2:
+						distractorSum.into(distractorSumResult).evaluate();
+						break;
+				}
 				distractorExecutions++;
 			}
 
@@ -212,6 +232,7 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		if (distractorA != null) distractorA.destroy();
 		if (distractorB != null) distractorB.destroy();
 		if (distractorResult != null) distractorResult.destroy();
+		if (distractorSumResult != null) distractorSumResult.destroy();
 
 		long endTime = System.nanoTime();
 		double elapsedSeconds = (endTime - startTime) / 1_000_000_000.0;
