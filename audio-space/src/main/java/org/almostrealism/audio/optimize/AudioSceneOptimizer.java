@@ -35,8 +35,8 @@ import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.filter.AudioSumProvider;
-import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
+import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.line.OutputLine;
@@ -47,13 +47,11 @@ import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.jni.NativeComputeContext;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.hardware.mem.MemoryDataReplacementMap;
-import org.almostrealism.hardware.metal.MTLComputeCommandEncoder;
 import org.almostrealism.heredity.Breeders;
 import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
@@ -73,6 +71,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 	public static boolean enableVerbose = false;
 	public static boolean enableProfile = true;
+	public static boolean enableHeap = false;
+	public static boolean enableShort = false;
 
 	public static int DEFAULT_HEAP_SIZE = 384 * 1024 * 1024;
 	public static double breederPerturbation = 0.02;
@@ -192,6 +192,10 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		StableDurationHealthComputation.enableTimeout = false;
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		enableStemOutput = true;
+
+		if (enableShort) {
+			HealthComputationAdapter.setStandardDuration(16);
+		}
 	}
 
 	public static OperationProfileNode setVerbosity(int verbosity, boolean enableProfile) {
@@ -247,29 +251,12 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		WaveData.init();
 
 		try {
-			Heap heap = new Heap(DEFAULT_HEAP_SIZE);
-
-			heap.use(() -> {
-				AudioScene<?> scene = createScene();
-				AudioSceneOptimizer opt = build(scene, enableBreeding ? 5 : 1);
-				opt.init();
-				opt.run();
-
-				if (profile != null)
-					profile.print();
-
-				if (enableVerbose)
-					PatternLayerManager.sizes.print();
-
-				if (AudioSumProvider.timing.getTotal() > 120)
-					AudioSumProvider.timing.print();
-
-				if (MemoryDataReplacementMap.profile != null &&
-						MemoryDataReplacementMap.profile.getMetric().getTotal() > 10)
-					MemoryDataReplacementMap.profile.print();
-
-				AcceleratedOperation.printTimes();
-			});
+			if (enableHeap) {
+				Heap heap = new Heap(DEFAULT_HEAP_SIZE);
+				heap.use(() -> run(profile));
+			} else {
+				run(profile);
+			}
 		} finally {
 			File results = new File("results");
 			if (!results.exists()) results.mkdir();
@@ -280,14 +267,34 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		}
 	}
 
+	public static void run(OperationProfileNode profile) {
+		try {
+			AudioScene<?> scene = createScene();
+			AudioSceneOptimizer opt = build(scene, enableBreeding ? 5 : 1);
+			opt.init();
+			opt.run();
+		} finally {
+			if (profile != null)
+				profile.print();
+
+			if (enableVerbose)
+				PatternLayerManager.sizes.print();
+
+			if (AudioSumProvider.timing.getTotal() > 120)
+				AudioSumProvider.timing.print();
+
+			if (MemoryDataReplacementMap.profile != null &&
+					MemoryDataReplacementMap.profile.getMetric().getTotal() > 10)
+				MemoryDataReplacementMap.profile.print();
+		}
+	}
+
 	public static AudioScene<?> createScene() {
 		double bpm = 120.0;
 		int sourceCount = AudioScene.DEFAULT_SOURCE_COUNT;
 		int delayLayers = AudioScene.DEFAULT_DELAY_LAYERS;
 
-		AudioScene<?> scene = new AudioScene<>(null, bpm, sourceCount, delayLayers,
-											OutputLine.sampleRate, new ArrayList<>(),
-											new NoOpGenerationProvider());
+		AudioScene<?> scene = new AudioScene<>(bpm, sourceCount, delayLayers, OutputLine.sampleRate);
 		loadChoices(scene);
 
 		scene.setTuning(new DefaultKeyboardTuning());
@@ -313,6 +320,12 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		}
 
 		scene.setSettings(settings);
+
+		if (enableShort) {
+			scene.setTotalMeasures(8);
+			scene.setPatternActivityBias(1.0);
+		}
+
 		return scene;
 	}
 

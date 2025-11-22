@@ -236,6 +236,43 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	}
 
 	/**
+	 * Executes N random distraction operations to flood the pipeline.
+	 * <p>
+	 * This method is useful when you want to execute multiple distractions
+	 * in a row to ensure the target operation's pipeline state is not cached.
+	 * </p>
+	 *
+	 * @param count  Number of distraction operations to execute
+	 */
+	public void executeMultiple(int count) {
+		if (operations.isEmpty()) return;
+
+		for (int i = 0; i < count; i++) {
+			int index = random.nextInt(operations.size());
+			DistractionOperation op = operations.get(index);
+			op.execute();
+			executionCount++;
+		}
+	}
+
+	/**
+	 * Calculates how many distraction operations to execute based on probability.
+	 * <p>
+	 * With probability P, this returns N such that the target operation represents
+	 * (1-P) of the total operations. For example, with P=0.9, this returns 9,
+	 * meaning 9 distractions should be executed per 1 target operation.
+	 * </p>
+	 *
+	 * @return Number of distraction operations to execute per target operation
+	 */
+	public int getDistractionsPerOperation() {
+		if (probability <= 0.0 || probability >= 1.0) {
+			return 0;
+		}
+		return (int) Math.round(probability / (1.0 - probability));
+	}
+
+	/**
 	 * Returns the total number of distractions executed.
 	 */
 	public long getExecutionCount() {

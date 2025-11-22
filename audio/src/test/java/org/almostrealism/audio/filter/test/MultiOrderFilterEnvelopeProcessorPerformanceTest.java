@@ -167,6 +167,7 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 
 		// Create distractor runner to simulate pipeline state switching
 		DistractionRunner distractor = null;
+		int distractionsPerOp = 0;
 		if (distractorProbability > 0.0) {
 			distractor = new DistractionRunner(DISTRACTOR_SIZE, distractorProbability);
 			distractor.initialize();
@@ -185,8 +186,15 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 			distractor.addMax();
 			distractor.addZeros();
 
-			log("Distractor enabled with " + distractor.getOperationCount() +
-				" operation types (probability: " + (distractorProbability * 100) + "%)");
+			distractionsPerOp = distractor.getDistractionsPerOperation();
+			long totalDistractorOps = (long) inputSizes.size() * distractionsPerOp;
+			long totalOps = inputSizes.size() + totalDistractorOps;
+
+			log("Distractor enabled with " + distractor.getOperationCount() + " operation types");
+			log("Distractor probability: " + (distractorProbability * 100) + "%");
+			log("Distractions per filter operation: " + distractionsPerOp);
+			log("Total operations: " + totalOps + " (" + inputSizes.size() +
+				" filter + " + totalDistractorOps + " distractor)");
 		}
 
 		// Warm-up phase
@@ -199,9 +207,9 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		long totalFramesProcessed = 0;
 
 		for (int inputSize : inputSizes) {
-			// Randomly execute distractor computation to force pipeline state switching
-			if (distractor != null) {
-				distractor.maybeExecute();
+			// Execute N distractor operations to flood the pipeline before the target operation
+			if (distractor != null && distractionsPerOp > 0) {
+				distractor.executeMultiple(distractionsPerOp);
 			}
 
 			PackedCollection<?> input = new PackedCollection<>(inputSize).randnFill();

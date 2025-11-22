@@ -115,8 +115,6 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 		System.out.println();
 		hardwareProfile.print();
 		System.out.println();
-
-		AcceleratedOperation.printTimes();
 	}
 
 	@Test
