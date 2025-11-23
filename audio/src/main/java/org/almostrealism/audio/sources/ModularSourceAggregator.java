@@ -53,27 +53,25 @@ public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
 			producers[i + 1] = sources[i];
 		}
 
-		return instruct("ModularSourceAggregator.aggregate_" + index, p -> {
-			Producer<PackedCollection<?>>[] src = new Producer[sources.length];
-			for (int i = 0; i < sources.length; i++) {
-				src[i] = p[i + 1];
-			}
+		Producer<PackedCollection<?>>[] src = new Producer[sources.length];
+		for (int i = 0; i < sources.length; i++) {
+			src[i] = producers[i + 1];
+		}
 
-			Producer<PackedCollection<?>>[] eq = extractInputs(InputType.FREQUENCY, src);
-			Producer<PackedCollection<?>>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);
-			src = extractInputs(InputType.SOURCE, src);
+		Producer<PackedCollection<?>>[] eq = extractInputs(InputType.FREQUENCY, src);
+		Producer<PackedCollection<?>>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);
+		src = extractInputs(InputType.SOURCE, src);
 
-			Producer<PackedCollection<?>> input = sum.aggregate(buffer, null, p[0], src);
-			Producer<PackedCollection<?>> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, p[0], eq) : null;
-			Producer<PackedCollection<?>> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, p[0], volume) : null;
+		Producer<PackedCollection<?>> input = sum.aggregate(buffer, null, producers[0], src);
+		Producer<PackedCollection<?>> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, producers[0], eq) : null;
+		Producer<PackedCollection<?>> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, producers[0], volume) : null;
 
-			Producer<PackedCollection<?>> out = input;
-			out = eqInput == null ? out :
-					eqAdjust.aggregate(buffer, null, p[0], input, eqInput);
-			out = volumeInput == null ? out :
-					volumeAdjust.aggregate(buffer, null, p[0], out, volumeInput);
-			return out;
-		}, producers);
+		Producer<PackedCollection<?>> out = input;
+		out = eqInput == null ? out :
+				eqAdjust.aggregate(buffer, null, producers[0], input, eqInput);
+		out = volumeInput == null ? out :
+				volumeAdjust.aggregate(buffer, null, producers[0], out, volumeInput);
+		return out;
 	}
 
 	protected Producer<PackedCollection<?>>[] extractInputs(InputType type, Producer<PackedCollection<?>>... sources) {
