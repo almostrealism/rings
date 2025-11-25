@@ -83,6 +83,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
 	private Double bpm;
+	private int sampleRate;
 
 	private Map<NoteAudioKey, Producer<PackedCollection<?>>> notes;
 
@@ -91,15 +92,17 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	}
 
 	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root, Double bpm) {
-		this(provider, root, bpm, null);
+		this(provider, root, bpm, OutputLine.sampleRate, null);
 	}
 
-	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root, Double bpm, KeyboardTuning tuning) {
+	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root,
+							 Double bpm, int sampleRate, KeyboardTuning tuning) {
 		this.provider = provider;
 		this.tuning = tuning;
 		setRoot(root);
 		setBpm(bpm);
-		notes = new HashMap<>();
+		this.sampleRate = sampleRate;
+		this.notes = new HashMap<>();
 	}
 
 	public WaveDataProvider getProvider() { return provider; }
@@ -125,9 +128,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 
 	@JsonIgnore
 	@Override
-	public int getSampleRate() {
-		return provider.getSampleRate();
-	}
+	public int getSampleRate() { return sampleRate; }
 
 	@JsonIgnore
 	@Override
@@ -140,7 +141,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 
 	public TraversalPolicy getShape(NoteAudioKey key) {
 		double r = tuning.getTone(key.getPosition()).asHertz() / tuning.getTone(getRoot()).asHertz();
-		return new TraversalPolicy((int) (provider.getCount() / r)).traverse(1);
+		return new TraversalPolicy(provider.getCount(r, sampleRate)).traverse(1);
 	}
 
 	@Override
@@ -162,7 +163,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		return () -> args -> {
 			double r = key.getPosition() == null ? 1.0 :
 					(tuning.getTone(key.getPosition()).asHertz() / tuning.getTone(getRoot()).asHertz());
-			return provider.getChannelData(key.getAudioChannel(), r, OutputLine.sampleRate);
+			return provider.getChannelData(key.getAudioChannel(), r, sampleRate);
 		};
 	}
 
@@ -195,11 +196,11 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 			throw new IllegalArgumentException();
 
 		double duration = durationBeats * 60.0 / getBpm();
-		int frames = (int) (duration * OutputLine.sampleRate);
-		int total = (int) (getProvider().getCount() / (duration * OutputLine.sampleRate));
+		int frames = (int) (duration * sampleRate);
+		int total = (int) (getProvider().getCount() / (duration * sampleRate));
 		return IntStream.range(0, total)
 				.mapToObj(i -> new DelegateWaveDataProvider(getProvider(), i * frames, frames))
-				.map(p -> new NoteAudioProvider(p, getRoot(), getBpm(), tuning))
+				.map(p -> new NoteAudioProvider(p, getRoot(), getBpm(), sampleRate, tuning))
 				.collect(Collectors.toList());
 	}
 
@@ -222,7 +223,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	}
 
 	public static NoteAudioProvider create(String source, KeyPosition root, KeyboardTuning tuning) {
-		return new NoteAudioProvider(new FileWaveDataProvider(source), root, null, tuning);
+		return new NoteAudioProvider(new FileWaveDataProvider(source), root, null, OutputLine.sampleRate, tuning);
 	}
 
 	public static NoteAudioProvider create(Supplier<PackedCollection<?>> audioSupplier) {

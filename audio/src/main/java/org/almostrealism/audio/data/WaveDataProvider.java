@@ -30,6 +30,16 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 	@JsonIgnore
 	String getKey();
 
+	default int getCount(double playbackRate, int sampleRate) {
+		if (getSampleRate() == sampleRate) {
+			return getCount(playbackRate);
+		}
+
+		return getCount(playbackRate * getSampleRate() / (double) sampleRate);
+	}
+
+	int getCount(double playbackRate);
+
 	double getDuration();
 
 	double getDuration(double playbackRate);

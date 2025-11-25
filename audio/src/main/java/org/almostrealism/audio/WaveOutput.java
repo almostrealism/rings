@@ -203,7 +203,13 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 				long start = System.currentTimeMillis();
 
 				try {
-					this.wav = WavFile.newWavFile(file.get(), 2, frames, bits, sampleRate);
+					File f = file.get();
+					if (f == null) {
+						warn("No destination file provided");
+						return;
+					}
+
+					this.wav = WavFile.newWavFile(f, 2, frames, bits, sampleRate);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return;

@@ -196,14 +196,6 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public List<PatternElement> getTailElements() {
-		return roots.stream()
-				.map(PatternLayer::getTail)
-				.map(PatternLayer::getElements)
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
-	}
-
 	public Map<NoteAudioChoice, List<PatternElement>> getAllElementsByChoice(double start, double end) {
 		Map<NoteAudioChoice, List<PatternElement>> result = new HashMap<>();
 		roots.forEach(l -> l.putAllElementsByChoice(result, start, end));

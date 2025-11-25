@@ -63,6 +63,11 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 	}
 
 	@Override
+	public int getCount(double playbackRate) {
+		return (int) (getCount() / playbackRate);
+	}
+
+	@Override
 	public PackedCollection<?> getChannelData(int channel, double playbackRate) {
 		WaveData original = get();
 		if (playbackRate == 1.0) return original.getChannelData(channel);

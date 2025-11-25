@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -135,7 +136,7 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 */
 	public WaveDetailsNode(AudioLibrary library, WaveDetails details,
 						   int childLimit) {
-		this(library, details, childLimit, Collections.emptySet());
+		this(library, details, null, childLimit, Collections.emptySet());
 	}
 
 	/**
@@ -146,16 +147,29 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 *
 	 * @param library             the audio library containing similar samples
 	 * @param details             the audio sample metadata for this node
+	 * @param resourcePath        the path to the resource, if it exists
 	 * @param childLimit          maximum number of similar samples to include as children
 	 * @param excludedIdentifiers set of sample identifiers to exclude from children
 	 */
 	public WaveDetailsNode(AudioLibrary library, WaveDetails details,
-						   int childLimit, Set<String> excludedIdentifiers) {
+						   String resourcePath, int childLimit,
+						   Set<String> excludedIdentifiers) {
 		this.library = library;
 		this.details = details;
+		this.resourcePath = resourcePath;
 		this.childLimit = childLimit;
 		this.excludedIdentifiers = excludedIdentifiers;
 	}
+
+	protected WaveDetailsNode(WaveDetailsNode existing, Set<String> excludedIdentifiers) {
+		this.library = existing.library;
+		this.childLimit = existing.childLimit;
+		this.details = existing.getDetails();
+		this.resourcePath = existing.getResourcePath();
+		this.excludedIdentifiers = excludedIdentifiers;
+	}
+
+	public WaveDetails getDetails() { return details; }
 
 	/**
 	 * Returns the file system path to the audio resource represented by this node.
@@ -165,13 +179,7 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 *
 	 * @return the absolute or relative path to the audio file
 	 */
-	public String getResourcePath() {
-		if (resourcePath == null) {
-			resourcePath = ((FileWaveDataProvider) library.find(details.getIdentifier())).getResourcePath();
-		}
-
-		return resourcePath;
-	}
+	public String getResourcePath() { return resourcePath; }
 
 	/**
 	 * Ensures that child nodes are populated.
@@ -204,24 +212,41 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 */
 	protected void refreshChildren() {
 		// Get similarities and filter out excluded identifiers
-		List<String> childIdentifiers = library.getSimilarities(details).entrySet().stream()
+		List<WaveDetailsNode> nodes = library.getSimilarities(details).entrySet().stream()
 				.filter(e -> !excludedIdentifiers.contains(e.getKey()))
 				.sorted(comparator)
 				.map(Map.Entry::getKey)
-				.limit(childLimit)
-				.collect(Collectors.toList());
+				.map(library::get)
+				.map(d -> {
+					String path = pathForIdentifier(d.getIdentifier());
+					if (path == null) return null;
 
-		// Build exclusion set for children: this node + all siblings
-		Set<String> childExclusions = new HashSet<>(childIdentifiers);
-		childExclusions.add(details.getIdentifier());
-
-		// Create child nodes with proper exclusions
-		children = childIdentifiers.stream()
-				.map(id -> {
-					WaveDetails d = library.get(id);
-					return new WaveDetailsNode(library, d, childLimit, childExclusions);
+					return new WaveDetailsNode(library, d, path, childLimit, null);
 				})
+				.filter(Objects::nonNull)
+				.limit(childLimit)
+				.toList();
+
+		// Build exclusion set for children: this node + all siblings,
+		// and create children which respect the relevant exclusions
+		Set<String> childExclusions = new HashSet<>();
+		childExclusions.add(details.getIdentifier());
+		nodes.stream()
+				.map(WaveDetailsNode::getDetails)
+				.map(WaveDetails::getIdentifier)
+				.forEach(childExclusions::add);
+		this.children = nodes.stream()
+				.map(node -> new WaveDetailsNode(node, childExclusions))
 				.collect(Collectors.toList());
+	}
+
+	protected String pathForIdentifier(String identifier) {
+		WaveDataProvider provider = library.find(identifier);
+		if (provider instanceof FileWaveDataProvider) {
+			return ((FileWaveDataProvider) provider).getResourcePath();
+		}
+
+		return null;
 	}
 
 	/**

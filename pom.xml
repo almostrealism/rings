@@ -135,13 +135,13 @@
 			<dependency>
 				<groupId>org.jogamp.gluegen</groupId>
 				<artifactId>gluegen-rt-main</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.0</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.jogamp.jogl</groupId>
 				<artifactId>jogl-all-main</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.0</version>
 			</dependency>
 
 			<dependency>
@@ -242,11 +242,16 @@
 			<url>https://maven.google.com/</url>
 		</repository>
 
-<!--		<repository>-->
-<!--			<id>almostrealism</id>-->
-<!--			<url>https://maven.pkg.github.com/almostrealism/common</url>-->
-<!--			<releases><enabled>true</enabled></releases>-->
-<!--			<snapshots><enabled>true</enabled></snapshots>-->
-<!--		</repository>-->
+		<repository>
+			<id>jogamp</id>
+			<url>https://jogamp.org/deployment/maven/</url>
+		</repository>
+
+		<repository>
+			<id>almostrealism-common</id>
+			<url>https://maven.pkg.github.com/almostrealism/common</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
 	</repositories>
 </project>

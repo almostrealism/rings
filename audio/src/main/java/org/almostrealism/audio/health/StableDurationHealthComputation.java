@@ -67,6 +67,10 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private boolean endTimeoutTrigger;
 	private long startTime, iterStart;
 	private Scalar abortFlag;
+
+	public StableDurationHealthComputation(int channels) {
+		this(channels, true);
+	}
 	
 	public StableDurationHealthComputation(int channels, boolean stereo) {
 		super(channels, stereo, 6);
