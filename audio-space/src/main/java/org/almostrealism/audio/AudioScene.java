@@ -575,7 +575,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		OperationList op = new OperationList("AudioScene Pattern Setup (Channel " + channel + ")");
 		op.add(() -> () -> refreshPatternDestination(channel, true));
-		op.add(patterns.sum(ctx, channel.getVoicing(), channel.getAudioChannel()));
+		op.add(patterns.sum(ctx, channel));
 		return op;
 	}
 

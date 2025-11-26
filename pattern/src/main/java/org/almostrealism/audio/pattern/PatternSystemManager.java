@@ -180,8 +180,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context,
-								  ChannelInfo.Voicing voicing,
-								  ChannelInfo.StereoChannel audioChannel) {
+								  ChannelInfo channel) {
 		OperationList updateDestinations = new OperationList("PatternSystemManager Update Destinations");
 		updateDestinations.add(() -> () -> this.destination = context.get().getDestination());
 		updateDestinations.add(() -> () ->
@@ -196,27 +195,18 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			updateDestinations.get().run();
 		}
 
-		op.add(OperationWithInfo.of(new OperationMetadata("PatternSystemManager.patternsSum", "PatternSystemManager.patternsSum"),
-				() -> () -> {
-					AudioSceneContext ctx = context.get();
+		List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
+				.filter(i -> channel.getPatternChannel() == patterns.get(i).getChannel())
+				.boxed().toList();
 
-					List<Integer> patternsForChannel = IntStream.range(0, patterns.size())
-							.filter(i -> ctx.includesChannel(patterns.get(i).getChannel()))
-							.boxed().toList();
+		if (patternsForChannel.isEmpty()) {
+			if (enableWarnings) warn("No patterns");
+			return op;
+		}
 
-					if (patternsForChannel.isEmpty()) {
-						if (enableWarnings) warn("No patterns");
-						return;
-					}
-
-					patternsForChannel.stream().forEach(i -> {
-						patterns.get(i).sum(context, voicing, audioChannel);
-					});
-
-					if (enableVerbose)
-						log("Rendered patterns for channel(s) " + Arrays.toString(ctx.getChannels().toArray()));
-				}
-		));
+		patternsForChannel.forEach(i -> {
+			op.add(patterns.get(i).sum(context, channel.getVoicing(), channel.getAudioChannel()));
+		});
 
 		if (enableAutoVolume) {
 			if (enableLazyDestination) {
