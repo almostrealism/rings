@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio.filter.test;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
@@ -24,7 +25,6 @@ import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.tone.WesternChromatic;
 import  org.almostrealism.audio.tone.WesternScales;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
@@ -67,8 +67,8 @@ public class AssignableGenomeTest implements CellFeatures {
 		CellList cells =
 					w(frequencies.iterator().next(), frequencies.iterator().next())
 							.d(i -> c(1.0))
-							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, c(0.0), scalar(0.1), true)
-										.andThen(new AudioPassFilter(OutputLine.sampleRate, c(20000), scalar(0.1), false))),
+							.mself(fc(i -> new AudioPassFilter(OutputLine.sampleRate, (Producer) c(0.0), (Producer) scalar(0.1), true)
+										.andThen(new AudioPassFilter(OutputLine.sampleRate, (Producer) c(20000), (Producer) scalar(0.1), false))),
 									i -> {
 										if (i == 0) {
 											return g(0.0, 1.0);

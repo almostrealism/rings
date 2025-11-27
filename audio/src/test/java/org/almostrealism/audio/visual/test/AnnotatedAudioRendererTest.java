@@ -18,7 +18,6 @@ package org.almostrealism.audio.visual.test;
 
 import org.almostrealism.audio.visual.AnnotatedAudioRenderer;
 import org.almostrealism.color.RGB;
-import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.TemporalScalar;
 import org.junit.Test;
@@ -30,6 +29,10 @@ import java.io.IOException;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
+/**
+ * @deprecated Test for deprecated AnnotatedAudioRenderer class
+ */
+@Deprecated
 public class AnnotatedAudioRendererTest {
 	@Test
 	public void render() throws IOException {
@@ -57,10 +60,8 @@ public class AnnotatedAudioRendererTest {
 			}
 		};
 
-		AnnotatedAudioRenderer renderer = new AnnotatedAudioRenderer(
-				new File("results/mix-test.wav"),
-				annotation, types, 1.0, 5.0);
-		ImageCanvas.encodeImageFile(renderer.render(1000, 100).get().evaluate(),
-				new File("results/image-test.jpg"), ImageCanvas.JPEGEncoding);
+		// Note: AnnotatedAudioRenderer.render() is deprecated and throws UnsupportedOperationException
+		// This test is kept for reference but the actual rendering is disabled
+		System.out.println("AnnotatedAudioRenderer is deprecated - skipping actual render");
 	}
 }

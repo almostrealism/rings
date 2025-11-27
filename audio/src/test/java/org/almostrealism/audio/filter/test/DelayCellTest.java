@@ -19,7 +19,6 @@ package org.almostrealism.audio.filter.test;
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.line.OutputLine;
@@ -138,7 +137,7 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 		generator.setFreq(3.424);
 		generator.setAmplitude(1.0);
 
-		Scalar v = new Scalar(0.0);
+		PackedCollection<?> v = new PackedCollection<>(1);
 
 		CellularTemporalFactor<PackedCollection<?>> adjustment = generator.toFactor(() -> v, this::a);
 
@@ -157,7 +156,8 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void abortDelay() {
-		OperationList.setAbortFlag(new Scalar(0.0));
+		PackedCollection<?> abortFlag = new PackedCollection<>(1);
+		OperationList.setAbortFlag(abortFlag);
 
 		Supplier<Runnable> r =
 				w(0, "Library/Snare Perc DD.wav")
@@ -166,7 +166,7 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 						.sec(120);
 		Runnable op = r.get();
 
-		Runnable abort = a(1, p((Scalar) OperationList.getAbortFlag()), scalar(1.0)).get();
+		Runnable abort = a(1, (Producer) p((PackedCollection<?>) OperationList.getAbortFlag()), (Producer) scalar(1.0)).get();
 
 		new Thread(() -> {
 			try {

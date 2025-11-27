@@ -23,7 +23,6 @@ import io.almostrealism.code.Precision;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.lang.LanguageOperations;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.projection.OrthographicCamera;
@@ -126,22 +125,22 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void setLighting(GLLightingConfiguration lighting) {
 		this.lighting = lighting;
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight0Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight0Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight1Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight1Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight2Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight2Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight3Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight3Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight4Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight4Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight5Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight5Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight6Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight6Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight7Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight7Diffuse().toArray())));
 	}
 
 	public void glColor(RGB color) {
@@ -167,15 +166,15 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glMaterial(GLMaterial mat) {
 		if (isDoublePrecision()) {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess}, 0);
 		} else {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess}, 0);
 		}
 	}
 
@@ -269,7 +268,7 @@ public class GLDriver implements ExpressionFeatures {
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
 	@Deprecated
 	public void glLightModel(int code, RGBA color) {
-		gl.glLightModelfv(code, FloatBuffer.wrap(Scalar.toFloat(color.toArray())));
+		gl.glLightModelfv(code, FloatBuffer.wrap(toFloat(color.toArray())));
 	}
 
 	public boolean isLightingOn() { return gl.glIsEnabled(GL2.GL_LIGHTING); }
@@ -340,7 +339,7 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void setFog(FogParameters f) {
 		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
-		gl.glFogfv(GL2.GL_FOG_COLOR, FloatBuffer.wrap(Scalar.toFloat(f.fogColor.toArray())));
+		gl.glFogfv(GL2.GL_FOG_COLOR, FloatBuffer.wrap(toFloat(f.fogColor.toArray())));
 		gl.glFogf(GL2.GL_FOG_DENSITY, (float) f.fogDensity);
 		gl.glFogf(GL2.GL_FOG_START, 0.0f);
 		gl.glFogf(GL2.GL_FOG_END, Float.MAX_VALUE);
@@ -586,8 +585,16 @@ public class GLDriver implements ExpressionFeatures {
 
 	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
 		return glu.gluUnProject((float) w.getX(), (float) w.getY(), (float) w.getZ(),
-				FloatBuffer.wrap(Scalar.toFloat(modelview)), FloatBuffer.wrap(Scalar.toFloat(projection)),
-				IntBuffer.wrap(viewport), FloatBuffer.wrap(Scalar.toFloat(worldpos.toArray())));
+				FloatBuffer.wrap(toFloat(modelview)), FloatBuffer.wrap(toFloat(projection)),
+				IntBuffer.wrap(viewport), FloatBuffer.wrap(toFloat(worldpos.toArray())));
+	}
+
+	private static float[] toFloat(double[] d) {
+		float[] f = new float[d.length];
+		for (int i = 0; i < d.length; i++) {
+			f[i] = (float) d[i];
+		}
+		return f;
 	}
 
 	public boolean gluUnProject(Vector w, Vector worldpos) {

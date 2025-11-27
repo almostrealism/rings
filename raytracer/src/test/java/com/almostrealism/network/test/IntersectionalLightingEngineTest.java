@@ -25,7 +25,7 @@ import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
@@ -58,8 +58,8 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 		return (GeneratedColorProducer) ((OperationAdapter) engine).getInputs().get(2);
 	}
 
-	protected CollectionProducer<Scalar> dotProduct() {
-		return (CollectionProducer<Scalar>)
+	protected CollectionProducer<PackedCollection<?>> dotProduct() {
+		return (CollectionProducer<PackedCollection<?>>)
 				((OperationAdapter) generatedColorProducer().getProducer()).getInputs().get(1);
 	}
 
@@ -67,12 +67,12 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 		return (CollectionProducer<Vector>) ((ComputableBase) dotProduct()).getInputs().get(1);
 	}
 
-	protected CollectionProducer<Scalar> scalarProduct() {
-		return (CollectionProducer<Scalar>) ((ComputableBase) vectorFromScalars()).getInputs().get(1);
+	protected CollectionProducer<PackedCollection<?>> scalarProduct() {
+		return (CollectionProducer<PackedCollection<?>>) ((ComputableBase) vectorFromScalars()).getInputs().get(1);
 	}
 
-	protected CollectionProducer<Scalar> scalarFromVector() {
-		return (CollectionProducer<Scalar>) ((ComputableBase) scalarProduct()).getInputs().get(1);
+	protected CollectionProducer<PackedCollection<?>> scalarFromVector() {
+		return (CollectionProducer<PackedCollection<?>>) ((ComputableBase) scalarProduct()).getInputs().get(1);
 	}
 
 	protected Producer<Vector> rayDirection() {
@@ -81,12 +81,12 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateDotProduct() {
-		CollectionProducer<Scalar> dp = dotProduct();
-		Evaluable<Scalar> ev = dp.get();
+		CollectionProducer<PackedCollection<?>> dp = dotProduct();
+		Evaluable<PackedCollection<?>> ev = dp.get();
 
-		Scalar s = ev.evaluate();
+		PackedCollection<?> s = ev.evaluate();
 		System.out.println(s);
-		assertEquals(s.getValue(), -1.0);
+		assertEquals(s.toDouble(0), -1.0);
 	}
 
 	@Test
@@ -103,22 +103,22 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 
 	@Test
 	public void evaluateScalarProduct() {
-		CollectionProducer<Scalar> dp = scalarProduct();
-		Evaluable<Scalar> ev = dp.get();
+		CollectionProducer<PackedCollection<?>> dp = scalarProduct();
+		Evaluable<PackedCollection<?>> ev = dp.get();
 
-		Scalar s = ev.evaluate();
+		PackedCollection<?> s = ev.evaluate();
 		System.out.println(s);
-		assertEquals(0.0, s.getValue());
+		assertEquals(0.0, s.toDouble(0));
 	}
 
 	@Test
 	public void evaluateScalarFromVector() {
-		CollectionProducer<Scalar> dp = scalarFromVector();
-		Evaluable<Scalar> ev = dp.get();
+		CollectionProducer<PackedCollection<?>> dp = scalarFromVector();
+		Evaluable<PackedCollection<?>> ev = dp.get();
 
-		Scalar s = ev.evaluate();
+		PackedCollection<?> s = ev.evaluate();
 		System.out.println(s);
-		assertEquals(s.getValue(), 0.0);
+		assertEquals(s.toDouble(0), 0.0);
 	}
 
 	@Test

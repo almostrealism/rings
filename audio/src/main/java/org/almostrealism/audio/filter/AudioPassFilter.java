@@ -18,7 +18,6 @@ package org.almostrealism.audio.filter;
 
 import io.almostrealism.relation.Producer;
 import io.almostrealism.lifecycle.Lifecycle;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
@@ -31,16 +30,16 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 
 	private AudioFilterData data;
 	private Producer<PackedCollection<?>> frequency;
-	private Producer<Scalar> resonance;
+	private Producer<PackedCollection<?>> resonance;
 	private Producer<PackedCollection<?>> input;
 
 	private boolean high;
 
-	public AudioPassFilter(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, boolean high) {
+	public AudioPassFilter(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, boolean high) {
 		this(sampleRate, new PolymorphicAudioData(), frequency, resonance, high);
 	}
 
-	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, boolean high) {
+	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, boolean high) {
 		this.data = data;
 		this.frequency = bound(frequency, MIN_FREQUENCY, 20000);
 		this.resonance = resonance;
@@ -53,15 +52,15 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 		this.frequency = frequency;
 	}
 
-	public Producer<Scalar> getResonance() {
+	public Producer<PackedCollection<?>> getResonance() {
 		return resonance;
 	}
-	public void setResonance(Producer<Scalar> resonance) {
+	public void setResonance(Producer<PackedCollection<?>> resonance) {
 		this.resonance = resonance;
 	}
 
 	public int getSampleRate() {
-		return (int) data.sampleRate().getValue();
+		return (int) data.sampleRate().toDouble(0);
 	}
 	public void setSampleRate(int sampleRate) {
 		data.setSampleRate(sampleRate);

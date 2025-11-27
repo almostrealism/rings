@@ -23,7 +23,6 @@ import io.almostrealism.scope.Scope;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Provider;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
 import org.almostrealism.hardware.OperationComputationAdapter;
@@ -52,11 +51,11 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	public ArrayVariable getWaveLength() { return getArgument(2); }
 	public ArrayVariable getDurationFrames() { return getArgument(3); }
 
-	public Producer<Scalar> output() { return (Producer) getInputs().get(0); }
-	public Producer<Scalar> wavePosition() { return (Producer) getInputs().get(1); }
-	public Producer<Scalar> durationFrames() { return (Producer) getInputs().get(3); }
+	public Producer<PackedCollection<?>> output() { return (Producer) getInputs().get(0); }
+	public Producer<PackedCollection<?>> wavePosition() { return (Producer) getInputs().get(1); }
+	public Producer<PackedCollection<?>> durationFrames() { return (Producer) getInputs().get(3); }
 
-	public <T> List<T> choices(Function<Producer<Scalar>, T> processor) {
+	public <T> List<T> choices(Function<Producer<PackedCollection<?>>, T> processor) {
 		return IntStream.range(4, getInputs().size())
 				.mapToObj(i -> (T) processor.apply((Producer) getInputs().get(i)))
 				.collect(Collectors.toList());

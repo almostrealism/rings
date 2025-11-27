@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.line.OutputLine;
@@ -100,13 +99,13 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 	public int getCount() { return (int) (getDuration() * OutputLine.sampleRate); }
 
 	@Deprecated
-	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
+	public WaveDataProviderList create(Producer<PackedCollection<?>> x, Producer<PackedCollection<?>> y, Producer<PackedCollection<?>> z, List<Frequency> playbackRates) {
 		PackedCollection<?> export = new PackedCollection<>(getCount());
 		WaveData destination = new WaveData(export, OutputLine.sampleRate);
 
-		Evaluable<Scalar> evX = x.get();
-		Evaluable<Scalar> evY = y.get();
-		Evaluable<Scalar> evZ = z.get();
+		Evaluable<PackedCollection<?>> evX = x.get();
+		Evaluable<PackedCollection<?>> evY = y.get();
+		Evaluable<PackedCollection<?>> evZ = z.get();
 
 		WaveOutput output = new WaveOutput();
 		CellList cells = silence();
@@ -124,7 +123,7 @@ public class GridSequencer implements StatelessSource, TempoAware, CellFeatures 
 		cells = cells
 				.grid(bpm.l(getStepSize() * getStepCount()), getStepCount(),
 						(IntFunction<Producer<PackedCollection<?>>>) i -> () -> args -> {
-							ParameterSet params = new ParameterSet(evX.evaluate().getValue(), evY.evaluate().getValue(), evZ.evaluate().getValue());
+							ParameterSet params = new ParameterSet(evX.evaluate().toDouble(0), evY.evaluate().toDouble(0), evZ.evaluate().toDouble(0));
 							PackedCollection s = new PackedCollection(1);
 							s.setMem(sequence.apply(i).apply(params));
 							return s;

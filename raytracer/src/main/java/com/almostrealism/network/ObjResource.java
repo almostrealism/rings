@@ -13,12 +13,21 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ObjResource extends UnicodeResource {
+	private InputStream inputStream;
+
 	public ObjResource() { }
 
 	public ObjResource(File f) throws IOException { super(f); }
 
 	public ObjResource(InputStream in) throws IOException {
-		super(in);
+		super("");
+		this.inputStream = in;
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		if (inputStream != null) return inputStream;
+		return super.getInputStream();
 	}
 
 	public static class MeshTranscoder implements ResourceTranscoder<MeshResource, ObjResource> {

@@ -16,13 +16,10 @@
 
 package org.almostrealism.audio.visual;
 
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
-import org.almostrealism.color.RealizableImage;
 import org.almostrealism.time.AcceleratedTimeSeries;
 
 import java.io.File;
@@ -30,9 +27,14 @@ import java.io.IOException;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
+/**
+ * @deprecated This class depends on APIs that have been removed from ar-common v0.71
+ *             (RealizableImage.of and AcceleratedTimeSeries.getTypeAt).
+ */
+@Deprecated
 public class AnnotatedAudioRenderer implements CellFeatures {
 	private double sampleRate;
-	private PackedCollection<Scalar> wav;
+	private PackedCollection<?> wav;
 	private AcceleratedTimeSeries annotation;
 	private IntFunction<RGB[]> typeColors;
 	private double annotationFrequency;
@@ -47,7 +49,7 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 		loadWav(wav);
 	}
 
-	public AnnotatedAudioRenderer(double sampleRate, PackedCollection<Scalar> wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
+	public AnnotatedAudioRenderer(double sampleRate, PackedCollection<?> wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
 		this.sampleRate = sampleRate;
 		this.wav = wav;
 		this.annotation = annotation;
@@ -56,29 +58,20 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 		this.ampGain = ampGain;
 	}
 
-	public RealizableImage render(double w, double h) {
-		double scale = wav.getCount() / w;
-		return new RealizableImage(coords -> {
-			double pos = coords.getY() / h;
-			int index = (int) (scale * coords.getX());
-			double loc = snapToGrid(scale * coords.getX() / sampleRate);
-
-			int type = (int) annotation.valueAt(loc).getValue();
-
-			if (pos < ampGain * Math.pow(wav.get(index).getValue(), 2.0)) {
-				return typeColors.apply(type)[0];
-			} else {
-				return typeColors.apply(type)[1];
-			}
-		}, new Pair(w, h));
+	/**
+	 * @deprecated RealizableImage.of has been removed from ar-common v0.71
+	 */
+	@Deprecated
+	public Object render(double w, double h) {
+		throw new UnsupportedOperationException("RealizableImage.of has been removed from ar-common v0.71");
 	}
 
-	private double snapToGrid(double loc) {
-		double pos = 0;
-		while (true) {
-			if (pos + annotationFrequency > loc) return pos;
-			pos += annotationFrequency;
-		}
+	/**
+	 * @deprecated AcceleratedTimeSeries.getTypeAt has been removed from ar-common v0.71
+	 */
+	@Deprecated
+	public void printAnnotationStats() {
+		throw new UnsupportedOperationException("AcceleratedTimeSeries.getTypeAt has been removed from ar-common v0.71");
 	}
 
 	private void loadWav(File f) throws IOException {
@@ -87,8 +80,8 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 			double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(data, (int) in.getFramesRemaining());
 
-			wav = Scalar.scalarBank(data[0].length);
-			IntStream.range(0, wav.getCount()).forEach(i -> wav.set(i, data[0][i]));
+			wav = new PackedCollection<>(data[0].length).traverse(1);
+			IntStream.range(0, wav.getCount()).forEach(i -> wav.setMem(i, data[0][i]));
 		}
 	}
 }

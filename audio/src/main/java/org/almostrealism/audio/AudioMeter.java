@@ -20,7 +20,6 @@ package org.almostrealism.audio;
 import io.almostrealism.lifecycle.Lifecycle;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairFeatures;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.ScalarFeatures;
 import org.almostrealism.audio.computations.ClipCounter;
 import org.almostrealism.audio.computations.SilenceDurationComputation;
@@ -44,7 +43,7 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	private PackedCollection<?> silenceValue = new PackedCollection<>(1);
 	private PackedCollection<?> silenceDuration = new PackedCollection<>(1);
 
-	private List<Consumer<Scalar>> listeners;
+	private List<Consumer<PackedCollection<?>>> listeners;
 	
 	public AudioMeter() {
 		listeners = new ArrayList<>();
@@ -62,11 +61,11 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	
 	public long getClipCount() { return (long) clipCount.toDouble(); }
 
-	public void addListener(Consumer<Scalar> listener) {
+	public void addListener(Consumer<PackedCollection<?>> listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListener(Consumer<Scalar> listener) {
+	public void removeListener(Consumer<PackedCollection<?>> listener) {
 		listeners.remove(listener);
 	}
 

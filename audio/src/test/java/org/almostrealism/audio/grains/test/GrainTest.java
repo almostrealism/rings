@@ -18,7 +18,6 @@ package org.almostrealism.audio.grains.test;
 
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
@@ -55,7 +54,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		grain.setRate(2.0);
 
 		TraversalPolicy grainShape = new TraversalPolicy(3);
-		Producer in = v(Scalar.shape(), 0);
+		Producer in = v(shape(1), 0);
 		Producer<PackedCollection<?>> g = v(shape(3).traverseEach(), 1);
 
 		CollectionProducer<PackedCollection<?>> start = c(g, 0);
@@ -212,7 +211,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		GrainSet set = synth.addFile("Library/organ.wav");
 		set.addGrain(new Grain(0.2, 0.015, 2.0));
 
-		WaveDataProviderList providers = synth.create(scalar(0.0), scalar(0.0), scalar(0.0), List.of(new Frequency(1.0)));
+		WaveDataProviderList providers = synth.create((Producer) scalar(0.0), (Producer) scalar(0.0), (Producer) scalar(0.0), List.of(new Frequency(1.0)));
 		providers.setup().get().run();
 		providers.getProviders().get(0).get().save(new File("results/granular-synth-test.wav"));
 	}

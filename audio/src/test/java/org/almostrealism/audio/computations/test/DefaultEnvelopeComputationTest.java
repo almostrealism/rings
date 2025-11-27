@@ -17,13 +17,17 @@
 package org.almostrealism.audio.computations.test;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 public class DefaultEnvelopeComputationTest implements TestFeatures {
-	private static Scalar input = new Scalar(0.5);
+	private static PackedCollection<?> input = new PackedCollection<>(1);
+
+	static {
+		input.setMem(0, 0.5);
+	}
 
 	public DefaultEnvelopeComputation computation() {
 		return new DefaultEnvelopeComputation(p(input));
@@ -31,11 +35,11 @@ public class DefaultEnvelopeComputationTest implements TestFeatures {
 
 	@Test
 	public void evaluate() {
-		Evaluable<Scalar> s = computation().get();
+		Evaluable<PackedCollection<?>> s = computation().get();
 
-		input.setValue(0.5);
-		assertEquals(0.7071067811865, s.evaluate().getValue());
-		input.setValue(1.0);
-		assertEquals(0.0, s.evaluate().getValue());
+		input.setMem(0, 0.5);
+		assertEquals(0.7071067811865, s.evaluate().toDouble(0));
+		input.setMem(0, 1.0);
+		assertEquals(0.0, s.evaluate().toDouble(0));
 	}
 }

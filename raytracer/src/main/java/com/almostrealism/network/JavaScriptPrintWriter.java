@@ -28,7 +28,7 @@ import io.almostrealism.resource.ResourceVariable;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Variable;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.PrintWriter;
 import io.almostrealism.resource.JsonResource;
 
@@ -141,8 +141,8 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 			o = ((Evaluable) o).evaluate();
 		}
 
-		if (o instanceof Scalar) {
-			o = ((Scalar) o).getValue();
+		if (o instanceof PackedCollection) {
+			o = ((PackedCollection<?>) o).toDouble(0);
 		}
 
 		if (o instanceof String) {

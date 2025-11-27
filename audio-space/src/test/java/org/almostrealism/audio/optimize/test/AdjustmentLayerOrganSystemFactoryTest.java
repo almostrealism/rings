@@ -18,7 +18,6 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;

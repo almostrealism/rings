@@ -17,8 +17,8 @@
 package com.almostrealism.raytracer;
 
 import org.almostrealism.algebra.ScalarFeatures;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.ContinuousField;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
@@ -43,12 +43,12 @@ public class Thing extends AbstractSurface implements ScalarFeatures {
 	}
 
 	@Override
-	public Operator<Scalar> expect() {
+	public Operator<PackedCollection<?>> expect() {
 		return p.expect();
 	}
 
 	@Override
-	public Operator<Scalar> get() {
+	public Operator<PackedCollection<?>> get() {
 		return p.get();
 	}
 

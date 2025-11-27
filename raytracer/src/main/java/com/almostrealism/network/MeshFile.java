@@ -20,8 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.Ray;
@@ -89,10 +89,10 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 	@Override public Producer<Vector> getNormalAt(Producer<Vector> point) { return this.getSurface().getNormalAt(point); }
 	@Override public ContinuousField intersectAt(Producer<Ray> ray) { return this.getSurface().intersectAt(ray); }
 
-	@Override public Operator<Scalar> get() { return getSurface().get(); }
+	@Override public Operator<PackedCollection<?>> get() { return getSurface().get(); }
 
 	@Override
-	public Operator<Scalar> expect() { return getSurface().expect(); }
+	public Operator<PackedCollection<?>> expect() { return getSurface().expect(); }
 
 	@Override public Producer<RGB> shade(ShaderContext p) { return this.getSurface().shade(p); }
 }

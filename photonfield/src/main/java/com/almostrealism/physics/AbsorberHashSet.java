@@ -24,8 +24,8 @@ import java.util.Set;
 import org.almostrealism.raytrace.LightingEngineAggregator;
 import com.almostrealism.chem.PotentialMap;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.*;
@@ -69,7 +69,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	public static final boolean enableFrontBackDetection = false;
 
 	@Override
-	public Operator<Scalar> get() {
+	public Operator<PackedCollection<?>> get() {
 		return null;
 	}
 
@@ -838,15 +838,17 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 
 	@Override
 	public ShadableIntersection intersectAt(Producer<Ray> r) {
-		return new ShadableIntersection(this, r, () -> (Evaluable<Scalar>) args -> {
+		return new ShadableIntersection(this, r, () -> (Evaluable<PackedCollection<?>>) args -> {
 			Ray ray = r.get().evaluate(args);
 
 			double dist = getDistance(ray.getOrigin(), ray.getDirection(), false, true);
 
-			Scalar di = null;
+			PackedCollection<?> di = null;
 
-			if (dist < Double.MAX_VALUE - 2 && dist > 0 && AbsorberHashSet.this.closest != null)
-				di = new Scalar(dist);
+			if (dist < Double.MAX_VALUE - 2 && dist > 0 && AbsorberHashSet.this.closest != null) {
+				di = new PackedCollection<>(1);
+				di.setMem(0, dist);
+			}
 
 			AbsorberHashSet.this.rclosest = AbsorberHashSet.this.closest;
 			return di;
@@ -854,7 +856,7 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	}
 
 	@Override
-	public Operator<Scalar> expect() {
+	public Operator<PackedCollection<?>> expect() {
 		return null;
 	}
 

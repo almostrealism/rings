@@ -22,7 +22,6 @@ import io.almostrealism.code.Execution;
 import io.almostrealism.code.Precision;
 import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.tensorflow.TensorFlowArgument;

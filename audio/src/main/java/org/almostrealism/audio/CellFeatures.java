@@ -19,7 +19,6 @@ package org.almostrealism.audio;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
@@ -626,10 +625,6 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default ScaleFactor sf(double scale) {
-		return sf(new Scalar(scale));
-	}
-
-	default ScaleFactor sf(Scalar scale) {
 		return new ScaleFactor(scale);
 	}
 
@@ -638,15 +633,15 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default AudioPassFilter hp(int sampleRate, double frequency, double resonance) {
-		return hp(sampleRate, c(frequency), scalar(resonance));
+		return hp(sampleRate, (Producer) c(frequency), (Producer) scalar(resonance));
 	}
 
-	default AudioPassFilter hp(Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
+	default <T extends PackedCollection<?>> AudioPassFilter hp(Producer<T> frequency, Producer<T> resonance) {
 		return hp(OutputLine.sampleRate, frequency, resonance);
 	}
 
-	default AudioPassFilter hp(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
-		return new AudioPassFilter(sampleRate, frequency, resonance, true);
+	default <T extends PackedCollection<?>> AudioPassFilter hp(int sampleRate, Producer<T> frequency, Producer<T> resonance) {
+		return new AudioPassFilter(sampleRate, (Producer) frequency, (Producer) resonance, true);
 	}
 
 	default AudioPassFilter lp(double frequency, double resonance) {
@@ -654,15 +649,15 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default AudioPassFilter lp(int sampleRate, double frequency, double resonance) {
-		return lp(sampleRate, c(frequency), scalar(resonance));
+		return lp(sampleRate, (Producer) c(frequency), (Producer) scalar(resonance));
 	}
 
-	default AudioPassFilter lp(Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
+	default <T extends PackedCollection<?>> AudioPassFilter lp(Producer<T> frequency, Producer<T> resonance) {
 		return lp(OutputLine.sampleRate, frequency, resonance);
 	}
 
-	default AudioPassFilter lp(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance) {
-		return new AudioPassFilter(sampleRate, frequency, resonance, false);
+	default <T extends PackedCollection<?>> AudioPassFilter lp(int sampleRate, Producer<T> frequency, Producer<T> resonance) {
+		return new AudioPassFilter(sampleRate, (Producer) frequency, (Producer) resonance, false);
 	}
 
 	static CellFeatures getInstance() {

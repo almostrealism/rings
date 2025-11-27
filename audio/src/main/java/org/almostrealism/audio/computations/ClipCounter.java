@@ -25,7 +25,6 @@ import io.almostrealism.scope.HybridScope;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 

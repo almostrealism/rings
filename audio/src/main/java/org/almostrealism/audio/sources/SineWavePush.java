@@ -21,11 +21,10 @@ import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
 public class SineWavePush extends SineWaveComputation implements ExpressionFeatures {
-	public SineWavePush(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
+	public SineWavePush(SineWaveCellData data, Producer<PackedCollection<?>> envelope, PackedCollection<?> output) {
 		super(data, envelope, output);
 	}
 

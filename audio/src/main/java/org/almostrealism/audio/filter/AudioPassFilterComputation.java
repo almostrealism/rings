@@ -25,7 +25,6 @@ import io.almostrealism.compute.Process;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
@@ -38,7 +37,7 @@ public class AudioPassFilterComputation extends OperationComputationAdapter<Pack
 
 	private boolean high;
 
-	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<Scalar> resonance, Producer<PackedCollection<?>> input, boolean high) {
+	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, Producer<PackedCollection<?>> input, boolean high) {
 		super(data.getOutput(),
 				frequency,
 				(Producer) resonance,

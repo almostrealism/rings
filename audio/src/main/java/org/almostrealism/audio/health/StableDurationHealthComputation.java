@@ -18,12 +18,12 @@ package org.almostrealism.audio.health;
 
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveDetailsFactory;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * The {@link StableDurationHealthComputation} is a {@link HealthComputationAdapter} which
  * computes a health score based on the duration that a {@link Temporal} can be used before
  * a min or max clip value is reached.
- * 
+ *
  * @author  Michael Murray
  */
 public class StableDurationHealthComputation extends SilenceDurationHealthComputation implements CellFeatures {
@@ -66,12 +66,12 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private Thread timeoutTrigger;
 	private boolean endTimeoutTrigger;
 	private long startTime, iterStart;
-	private Scalar abortFlag;
+	private PackedCollection<?> abortFlag;
 
 	public StableDurationHealthComputation(int channels) {
 		this(channels, true);
 	}
-	
+
 	public StableDurationHealthComputation(int channels, boolean stereo) {
 		super(channels, stereo, 6);
 		addSilenceListener(() -> encounteredSilence = true);
@@ -81,13 +81,14 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public void setBatchSize(int iter) {
 		this.iter = iter;
 	}
-	
+
 	public void setMaxDuration(long sec) { this.max = (int) (sec * OutputLine.sampleRate); }
 
 	public void setTarget(TemporalCellular target) {
 		if (getTarget() == null) {
 			super.setTarget(target);
-			this.abortFlag = new Scalar(0.0);
+			this.abortFlag = new PackedCollection<>(1);
+			this.abortFlag.setMem(0, 0.0);
 			this.runner = new TemporalRunner(target, iter);
 			this.runner.setProfile(profile);
 		} else if (getTarget() != target) {
@@ -120,7 +121,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				if (!endTimeoutTrigger && isTimeout()) {
 					if (enableVerbose) log("Trigger timeout");
 
-					abortFlag.setValue(1.0);
+					abortFlag.setMem(0, 1.0);
 
 					if (enableVerbose) {
 						log("Timeout flag set");
@@ -144,7 +145,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 	protected void endTimeoutTrigger() {
 		endTimeoutTrigger = true;
-		abortFlag.setValue(0.0);
+		abortFlag.setMem(0, 0.0);
 	}
 
 	protected boolean isTimeout() {
@@ -154,7 +155,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	@Override
 	public void reset() {
 		if (abortFlag != null)
-			abortFlag.setValue(0.0);
+			abortFlag.setMem(0, 0.0);
 
 		super.reset();
 		getTarget().reset();
@@ -310,22 +311,22 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 
-	private class AverageAmplitude implements Consumer<Scalar> {
-		private List<Scalar> values = new ArrayList<>();
+	private class AverageAmplitude implements Consumer<PackedCollection<?>> {
+		private List<PackedCollection<?>> values = new ArrayList<>();
 
 		@Override
-		public void accept(Scalar s) {
+		public void accept(PackedCollection<?> s) {
 			values.add(s);
 		}
 
 		public double average() {
-			return values.stream().mapToDouble(Scalar::getValue).map(Math::abs).average().orElse(0.0);
+			return values.stream().mapToDouble(v -> v.toDouble(0)).map(Math::abs).average().orElse(0.0);
 		}
 
 		public int framesUntilAverage() {
 			double avg = average();
 			for (int i = 0; i < values.size(); i++) {
-				if (Math.abs(values.get(i).getValue()) >= avg) return i;
+				if (Math.abs(values.get(i).toDouble(0)) >= avg) return i;
 			}
 
 			return -1; // The mean value theorem states this should never happen

@@ -323,14 +323,14 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 							automation.getAggregatedValue(
 									mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)),
 									p(mainFilterUpAdjustmentScale), -40.0);
-					return hp(scalar(20000).multiply(v), scalar(FixedFilterChromosome.defaultResonance));
+					return hp((Producer) scalar(20000).multiply(v), (Producer) scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			} else {
 				cells = cells.map(fc(i -> {
 					Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
 							p(mainFilterUpAdjustmentScale), mainFilterUpSimple,
 							channelIndex.applyAsInt(i)).valueAt(0);
-					return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
+					return hp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			}
 		}
@@ -500,7 +500,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
 						p(mainFilterDownAdjustmentScale), mainFilterDownSimple,
 						channelIndex.applyAsInt(i)).valueAt(0);
-				return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
+				return lp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
 			}));
 		}
 

@@ -22,7 +22,6 @@ import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import org.almostrealism.algebra.Scalar;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
 import io.almostrealism.relation.Factor;
@@ -31,7 +30,7 @@ import java.util.function.Supplier;
 
 // TODO  Reimplement as a function of org.almostrealism.graph.TimeCell
 public class SineWaveCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private Factor<Scalar> env;
+	private Factor<PackedCollection<?>> env;
 	private final SineWaveCellData data;
 
 	private double noteLength;
@@ -47,7 +46,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 		this.data = data;
 	}
 
-	public void setEnvelope(Factor<Scalar> e) { this.env = e; }
+	public void setEnvelope(Factor<PackedCollection<?>> e) { this.env = e; }
 
 	public void strike() { data.setNotePosition(0); }
 	
@@ -96,8 +95,9 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
 		PackedCollection<?> value = new PackedCollection<>(1);
 		OperationList push = new OperationList("SineWaveCell Push");
-		push.add(new SineWavePush(data, env == null ? scalar(1.0) :
-					env.getResultant(cp(data.notePosition())), value));
+		Producer<PackedCollection<?>> envelope = env == null ? (Producer) scalar(1.0) :
+					env.getResultant(cp(data.notePosition()));
+		push.add(new SineWavePush(data, envelope, value));
 		push.add(super.push(p(value)));
 		return push;
 	}
@@ -105,8 +105,9 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	@Override
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("SineWaveCell Tick");
-		tick.add(new SineWaveTick(data, env == null ? scalar(1.0) :
-				env.getResultant(cp(data.notePosition()))));
+		Producer<PackedCollection<?>> envelope = env == null ? (Producer) scalar(1.0) :
+				env.getResultant(cp(data.notePosition()));
+		tick.add(new SineWaveTick(data, envelope));
 		tick.add(super.tick());
 		return tick;
 	}

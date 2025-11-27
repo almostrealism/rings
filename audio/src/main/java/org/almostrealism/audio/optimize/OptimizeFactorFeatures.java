@@ -19,7 +19,6 @@ package org.almostrealism.audio.optimize;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
@@ -281,9 +280,9 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 															  Producer<PackedCollection<?>> e,
 															  Producer<PackedCollection<?>> time,
 															  Producer<PackedCollection<?>> duration) {
-		PackedCollection<Scalar> directionChoices = new PackedCollection<>(shape(2, 1).traverse(1));
-		directionChoices.set(0, -1);
-		directionChoices.set(1, 1);
+		PackedCollection<?> directionChoices = new PackedCollection<>(shape(2, 1).traverse(1));
+		directionChoices.setMem(0, -1);
+		directionChoices.setMem(1, 1);
 
 		double sc = maxValue - minValue;
 

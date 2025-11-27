@@ -19,7 +19,6 @@ package com.almostrealism.network.test;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.junit.Test;

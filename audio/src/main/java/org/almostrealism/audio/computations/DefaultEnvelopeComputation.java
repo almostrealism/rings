@@ -17,27 +17,27 @@
 package org.almostrealism.audio.computations;
 
 import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, Scalar> implements ProducerComputation<Scalar> {
+public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, PackedCollection<?>> implements ProducerComputation<PackedCollection<?>> {
 
-	public DefaultEnvelopeComputation(Producer<Scalar> notePosition) {
-		super(null, Scalar.shape(), (Producer) notePosition);
+	public DefaultEnvelopeComputation(Producer<PackedCollection<?>> notePosition) {
+		super(null, new TraversalPolicy(1), (Producer) notePosition);
 	}
 
 	@Override
-	public Scope<Scalar> getScope(KernelStructureContext context) {
-		HybridScope<Scalar> scope = new HybridScope<>(this);
+	public Scope<PackedCollection<?>> getScope(KernelStructureContext context) {
+		HybridScope<PackedCollection<?>> scope = new HybridScope<>(this);
 
 		String position = getArgument(1).valueAt(0).getSimpleExpression(getLanguage());
 		String result = ((ArrayVariable) getOutputVariable()).valueAt(0).getSimpleExpression(getLanguage());

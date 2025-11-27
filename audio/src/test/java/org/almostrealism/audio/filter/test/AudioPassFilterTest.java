@@ -17,8 +17,8 @@
 package org.almostrealism.audio.filter.test;
 
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.compute.Process;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.filter.AudioPassFilter;
@@ -36,14 +36,14 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 	@Test
 	public void highPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(2000), scalar(0.1), true);
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), (Producer) c(2000), (Producer) scalar(0.1), true);
 		runFilter("high-pass", f, filter);
 	}
 
 	@Test
 	public void lowPass() throws IOException {
 		WavFile f = WavFile.openWavFile(new File("Library/Snare Perc DD.wav"));
-		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), c(1800), scalar(0.1), false);
+		AudioPassFilter filter = new AudioPassFilter((int) f.getSampleRate(), (Producer) c(1800), (Producer) scalar(0.1), false);
 		runFilter("low-pass", f, filter);
 	}
 

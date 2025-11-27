@@ -18,7 +18,6 @@ package org.almostrealism.audio.test;
 
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.DynamicAudioCell;
 import org.almostrealism.audio.line.OutputLine;

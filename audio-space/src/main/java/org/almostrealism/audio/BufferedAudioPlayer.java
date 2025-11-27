@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.line.AudioLine;
 import org.almostrealism.audio.line.AudioLineInputRecord;
@@ -48,7 +47,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 
 	private SampleMixer mixer;
 	private TimeCell clock;
-	private Scalar level[];
+	private PackedCollection<?>[] level;
 	private PackedCollection<?> loopDuration[];
 	private AudioLine outputLine;
 
@@ -85,7 +84,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void initMixer() {
-		level = new Scalar[mixer.getChannelCount()];
+		level = new PackedCollection<?>[mixer.getChannelCount()];
 
 		if (enableUnifiedClock) {
 			this.clock = new TimeCell();
@@ -221,7 +220,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void setLevel(int c, double v) {
-		level[c].setMem(v);
+		level[c].setMem(0, v);
 	}
 
 	protected void setLoopDuration(int c, double duration) {

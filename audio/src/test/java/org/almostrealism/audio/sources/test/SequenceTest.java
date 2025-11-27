@@ -17,7 +17,6 @@
 package org.almostrealism.audio.sources.test;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.DynamicAudioCell;
@@ -242,14 +241,14 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 
 		cells.sec(10).get().run();
 
-		PackedCollection<Scalar> export = Scalar.scalarBank(WaveOutput.defaultTimelineFrames);
+		PackedCollection<?> export = new PackedCollection<>(WaveOutput.defaultTimelineFrames).traverse(1);
 		output.export(0, export).get().run();
 
 		WavFile f = WavFile.newWavFile(new File("results/mix-export-test.wav"), 1,
 				10 * OutputLine.sampleRate, 24, OutputLine.sampleRate);
 
 		for (int i = 0; i < 10 * OutputLine.sampleRate; i++) {
-			f.writeFrames(new double[] { export.get(i).getValue() }, 1);
+			f.writeFrames(new double[] { export.toDouble(i) }, 1);
 		}
 
 		f.close();

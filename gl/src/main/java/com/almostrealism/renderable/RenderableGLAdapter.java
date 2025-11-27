@@ -25,7 +25,6 @@ import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.GLDiffuseShader;
 import com.almostrealism.gl.shaders.VertexShader;
 import io.almostrealism.lang.CodePrintWriter;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Oriented;
@@ -138,7 +137,15 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	}
 
 	@Override
-	public float[] getColor() { return Scalar.toFloat(mat.diffuse.toArray()); }
+	public float[] getColor() { return toFloat(mat.diffuse.toArray()); }
+
+	private static float[] toFloat(double[] d) {
+		float[] f = new float[d.length];
+		for (int i = 0; i < d.length; i++) {
+			f[i] = (float) d[i];
+		}
+		return f;
+	}
 	
 	public void setMaterial(GLMaterial m) { this.mat = m; }
 	public GLMaterial getMaterial() { return this.mat; }

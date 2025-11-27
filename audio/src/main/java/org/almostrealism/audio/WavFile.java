@@ -8,7 +8,6 @@
 
 package org.almostrealism.audio;
 
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
 import java.io.File;
@@ -192,11 +191,11 @@ public class WavFile implements AutoCloseable {
 	}
 
 	@Deprecated
-	public static PackedCollection<Scalar> channelScalar(int[][] data, int chan) {
-		PackedCollection<Scalar> waveform = Scalar.scalarBank(data[chan].length);
+	public static PackedCollection<?> channelScalar(int[][] data, int chan) {
+		PackedCollection<?> waveform = new PackedCollection<>(data[chan].length).traverse(1);
 
 		int index = 0;
-		for (double frame : data[chan]) waveform.set(index++, frame);
+		for (int frame : data[chan]) waveform.setMem(index++, frame);
 		return waveform;
 	}
 

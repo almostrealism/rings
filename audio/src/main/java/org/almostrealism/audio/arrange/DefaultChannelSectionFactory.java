@@ -221,9 +221,10 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 				Producer<PackedCollection<?>> p = lowPassFilter.valueAt(channel, 2).getResultant(c(1.0));
 				Producer<PackedCollection<?>> e = lowPassFilterExp.valueAt(channel, 0).getResultant(c(1.0));
 
-				Producer<PackedCollection<?>> lp = riseFall(0, MAX_FILTER_RISE, 0.0,
+				Producer<PackedCollection<?>> lpFreq = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
-				cells = cells.map(fc(i -> lp(lp, scalar(FixedFilterChromosome.defaultResonance))));
+				Producer<PackedCollection<?>> resonance = (Producer) scalar(FixedFilterChromosome.defaultResonance);
+				cells = cells.map(fc(i -> lp(lpFreq, resonance)));
 			}
 
 			dependencies.add(cells);

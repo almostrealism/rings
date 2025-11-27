@@ -20,14 +20,13 @@ import io.almostrealism.expression.InstanceReference;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
 
 public abstract class SineWaveComputation extends OperationComputationAdapter<PackedCollection<?>> {
 	protected static final double TWO_PI = 2 * Math.PI;
 
-	public SineWaveComputation(SineWaveCellData data, Producer<Scalar> envelope, PackedCollection<?> output) {
+	public SineWaveComputation(SineWaveCellData data, Producer<PackedCollection<?>> envelope, PackedCollection<?> output) {
 		super(Ops.o().p(output),
 				data.getWavePosition(),
 				data.getWaveLength(),

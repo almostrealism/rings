@@ -18,10 +18,43 @@ package com.almostrealism.renderable;
 
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.gl.GLDriver;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 
 public class SuperShape extends GLSpatial {
+
+	/**
+	 * Supershape function based on Paul Bourke's formula.
+	 * params[offset+0] = m, params[offset+1] = a, params[offset+2] = b,
+	 * params[offset+3] = n1, params[offset+4] = n2, params[offset+5] = n3
+	 */
+	private static float ssFunc(float t, float[] p, int offset) {
+		float m = p[offset];
+		float a = p[offset + 1];
+		float b = p[offset + 2];
+		float n1 = p[offset + 3];
+		float n2 = p[offset + 4];
+		float n3 = p[offset + 5];
+
+		double r;
+		double t1 = Math.cos(m * t / 4) / a;
+		t1 = Math.abs(t1);
+		t1 = Math.pow(t1, n2);
+
+		double t2 = Math.sin(m * t / 4) / b;
+		t2 = Math.abs(t2);
+		t2 = Math.pow(t2, n3);
+
+		r = Math.pow(t1 + t2, 1 / n1);
+		if (Math.abs(r) == 0) {
+			return 0;
+		}
+		r = 1 / r;
+		return (float) r;
+	}
+
+	private static float ssFunc(float t, float[] p) {
+		return ssFunc(t, p, 0);
+	}
 	public static final int PARAMS = 15;
 
 	public static final float sParams[][] =
@@ -75,10 +108,10 @@ public class SuperShape extends GLSpatial {
 				float p2 = (float) (-Math.PI / 2 + (params.latitude + 1) * 2 * Math.PI / params.resol2);
 				float r0, r1, r2, r3;
 
-				r0 = Scalar.ssFunc(t1, params.params);
-				r1 = Scalar.ssFunc(p1, params.params, 6);
-				r2 = Scalar.ssFunc(t2, params.params);
-				r3 = Scalar.ssFunc(p2, params.params, 6);
+				r0 = ssFunc(t1, params.params);
+				r1 = ssFunc(p1, params.params, 6);
+				r2 = ssFunc(t2, params.params);
+				r3 = ssFunc(p2, params.params, 6);
 
 				if (r0 != 0 && r1 != 0 && r2 != 0 && r3 != 0) {
 					Vector pa = new Vector(), pb = new Vector(), pc = new Vector(), pd = new Vector();

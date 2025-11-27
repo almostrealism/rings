@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
@@ -97,10 +96,10 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 	}
 
 	@Deprecated
-	public WaveDataProviderList create(Producer<Scalar> x, Producer<Scalar> y, Producer<Scalar> z, List<Frequency> playbackRates) {
-		Evaluable<Scalar> evX = x.get();
-		Evaluable<Scalar> evY = y.get();
-		Evaluable<Scalar> evZ = z.get();
+	public WaveDataProviderList create(Producer<PackedCollection<?>> x, Producer<PackedCollection<?>> y, Producer<PackedCollection<?>> z, List<Frequency> playbackRates) {
+		Evaluable<PackedCollection<?>> evX = x.get();
+		Evaluable<PackedCollection<?>> evY = y.get();
+		Evaluable<PackedCollection<?>> evZ = z.get();
 
 		List<WaveDataProvider> providers = new ArrayList<>();
 		playbackRates.forEach(rate -> {
@@ -110,16 +109,16 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 		});
 
 		return new WaveDataProviderList(providers, () -> () -> {
-			ParameterSet params = new ParameterSet(evX.evaluate().getValue(), evY.evaluate().getValue(), evZ.evaluate().getValue());
+			ParameterSet params = new ParameterSet(evX.evaluate().toDouble(0), evY.evaluate().toDouble(0), evZ.evaluate().toDouble(0));
 
-			PackedCollection<Scalar> playbackRate = Scalar.scalarBank(1);
+			PackedCollection<?> playbackRate = new PackedCollection<>(1);
 
 			PackedCollection<?> w = new PackedCollection<>(1);
 			PackedCollection<?> p = new PackedCollection<>(1);
 			PackedCollection<?> a = new PackedCollection<>(1);
 
 			for (int i = 0; i < playbackRates.size(); i++) {
-				playbackRate.get(0).setValue(playbackRates.get(i).asHertz());
+				playbackRate.setMem(0, playbackRates.get(i).asHertz());
 				if (WaveOutput.enableVerbose)
 					System.out.println("GranularSynthesizer: Rendering grains for playback rate " + playbackRates.get(i) + "...");
 

@@ -19,11 +19,10 @@ package org.almostrealism.audio.sources;
 import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
 
 public class SineWaveTick extends SineWaveComputation {
-	public SineWaveTick(SineWaveCellData data, Producer<Scalar> envelope) {
+	public SineWaveTick(SineWaveCellData data, Producer<PackedCollection<?>> envelope) {
 		super(data, envelope, new PackedCollection<>(1));
 	}
 
